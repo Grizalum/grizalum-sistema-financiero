@@ -19,8 +19,38 @@
     <!-- FontAwesome -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     
+    
     <!-- Chart.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
+   <!-- PWA MANIFEST -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- META TAGS PARA PWA -->
+    <meta name="application-name" content="GRIZALUM">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="GRIZALUM">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="msapplication-TileColor" content="#d4af37">
+    <meta name="theme-color" content="#d4af37">
+    <meta name="msapplication-tap-highlight" content="no">
+    
+    <!-- ICONOS ADICIONALES -->
+    <link rel="icon" type="image/png" sizes="32x32" href="src/assets/images/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="src/assets/images/icon-16x16.png">
+    <link rel="apple-touch-icon" href="src/assets/images/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="src/assets/images/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="src/assets/images/icon-180x180.png">
+    
+    <!-- Microsoft tiles -->
+    <meta name="msapplication-TileImage" content="src/assets/images/icon-144x144.png">
+    <meta name="msapplication-config" content="browserconfig.xml">
+    
+    <!-- ========== FIN DE LÍNEAS NUEVAS ========== -->
+    
+    <!-- Styles - RUTAS DESDE LA RAÍZ -->
+    <link rel="stylesheet" href="src/assets/css/styles.css">
+    <link rel="stylesheet" href="src/assets/css/responsive.css">
     
     <!-- Styles - RUTAS DESDE LA RAÍZ -->
     <link rel="stylesheet" href="src/assets/css/styles.css">
@@ -523,5 +553,447 @@
     <script src="src/assets/js/main.js"></script>
     <script src="src/assets/js/charts.js"></script>
     <script src="src/assets/js/ai.js"></script>
+    
+    <!-- ========== SERVICE WORKER Y PWA COMPLETO ========== -->
+    <script>
+    // REGISTRO DEL SERVICE WORKER Y PWA
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', async function() {
+            try {
+                // Registrar Service Worker
+                const registration = await navigator.serviceWorker.register('/sw.js', {
+                    scope: '/'
+                });
+                
+                console.log('✅ GRIZALUM SW registrado:', registration.scope);
+                
+                // Manejar actualizaciones
+                registration.addEventListener('updatefound', () => {
+                    const newWorker = registration.installing;
+                    newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            showUpdateAvailableNotification();
+                        }
+                    });
+                });
+                
+                // Escuchar mensajes del Service Worker
+                navigator.serviceWorker.addEventListener('message', event => {
+                    const { type, message } = event.data;
+                    
+                    switch (type) {
+                        case 'OFFLINE_MODE':
+                            showOfflineModeNotification(message);
+                            break;
+                        case 'CACHE_UPDATED':
+                            showCacheUpdatedNotification();
+                            break;
+                    }
+                });
+                
+            } catch (error) {
+                console.error('❌ Error registrando Service Worker:', error);
+            }
+        });
+    }
+
+    // INSTALACIÓN DE PWA
+    let deferredPrompt;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        console.log('💾 PWA instalable detectada');
+        e.preventDefault();
+        deferredPrompt = e;
+        showInstallPrompt();
+    });
+
+    // Mostrar prompt de instalación
+    function showInstallPrompt() {
+        const installBanner = document.createElement('div');
+        installBanner.id = 'install-banner';
+        installBanner.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 600;
+            animation: slideInRight 0.5s ease;
+            max-width: 350px;
+        `;
+        
+        installBanner.innerHTML = `
+            <i class="fas fa-download" style="font-size: 1.5rem;"></i>
+            <div>
+                <div style="margin-bottom: 0.5rem;">¡Instala GRIZALUM!</div>
+                <div style="font-size: 0.8rem; opacity: 0.9;">Acceso rápido desde tu escritorio</div>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <button id="install-yes" style="
+                    background: rgba(255,255,255,0.2);
+                    border: none;
+                    color: white;
+                    padding: 0.5rem 1rem;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-weight: 600;
+                ">Instalar</button>
+                <button id="install-no" style="
+                    background: rgba(0,0,0,0.2);
+                    border: none;
+                    color: white;
+                    padding: 0.5rem 1rem;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-weight: 600;
+                ">Después</button>
+            </div>
+        `;
+        
+        document.body.appendChild(installBanner);
+        
+        // Manejar clicks
+        document.getElementById('install-yes').addEventListener('click', installPWA);
+        document.getElementById('install-no').addEventListener('click', () => {
+            installBanner.remove();
+        });
+        
+        // Auto-hide después de 10 segundos
+        setTimeout(() => {
+            if (document.getElementById('install-banner')) {
+                installBanner.remove();
+            }
+        }, 10000);
+    }
+
+    // Instalar PWA
+    async function installPWA() {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            
+            if (outcome === 'accepted') {
+                console.log('✅ PWA instalada exitosamente');
+                showSuccessMessage('🎉 GRIZALUM instalado correctamente');
+            }
+            
+            deferredPrompt = null;
+            document.getElementById('install-banner')?.remove();
+        }
+    }
+
+    // Detectar cuando la app fue instalada
+    window.addEventListener('appinstalled', (evt) => {
+        console.log('🎉 GRIZALUM PWA instalada');
+        showSuccessMessage('¡Bienvenido a GRIZALUM instalado! 🚀');
+    });
+
+    // Notificaciones del sistema
+    function showUpdateAvailableNotification() {
+        const updateBanner = document.createElement('div');
+        updateBanner.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        `;
+        
+        updateBanner.innerHTML = `
+            <i class="fas fa-sync-alt"></i>
+            <div>
+                <div>Actualización disponible</div>
+                <div style="font-size: 0.8rem; opacity: 0.9;">Click para actualizar</div>
+            </div>
+        `;
+        
+        updateBanner.addEventListener('click', () => {
+            location.reload();
+        });
+        
+        document.body.appendChild(updateBanner);
+        
+        setTimeout(() => updateBanner.remove(), 8000);
+    }
+
+    function showOfflineModeNotification(message) {
+        const offlineBanner = document.createElement('div');
+        offlineBanner.style.cssText = `
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 10000;
+            text-align: center;
+            font-weight: 600;
+        `;
+        
+        offlineBanner.innerHTML = `
+            <i class="fas fa-wifi-slash" style="margin-right: 0.5rem;"></i>
+            ${message} - Trabajando en modo offline
+        `;
+        
+        document.body.appendChild(offlineBanner);
+        
+        setTimeout(() => offlineBanner.remove(), 5000);
+    }
+
+    // GESTIÓN DE CONEXIÓN
+    window.addEventListener('online', () => {
+        console.log('🌐 Conexión restaurada');
+        showSuccessMessage('🌐 Conexión a internet restaurada');
+        
+        // Sincronizar datos pendientes
+        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+                type: 'SYNC_PENDING_DATA'
+            });
+        }
+    });
+
+    window.addEventListener('offline', () => {
+        console.log('📱 Trabajando offline');
+        showOfflineModeNotification('Sin conexión a internet');
+    });
+
+    // CONFIGURACIÓN DE ACCESOS DIRECTOS DE TECLADO PARA PWA
+    document.addEventListener('keydown', (event) => {
+        // Solo funcionar si no estamos escribiendo en un input
+        if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
+            return;
+        }
+        
+        // Ctrl/Cmd + Shift + D = Dashboard
+        if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'D') {
+            event.preventDefault();
+            showSection('dashboard');
+        }
+        
+        // Ctrl/Cmd + Shift + F = Flujo de Caja
+        if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'F') {
+            event.preventDefault();
+            showSection('cash-flow');
+        }
+        
+        // Ctrl/Cmd + Shift + N = Nueva Transacción
+        if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'N') {
+            event.preventDefault();
+            showCashFlowForm();
+        }
+        
+        // Ctrl/Cmd + Shift + I = Instalar PWA
+        if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'I') {
+            event.preventDefault();
+            if (deferredPrompt) {
+                installPWA();
+            }
+        }
+    });
+
+    // MÉTRICAS DE RENDIMIENTO
+    function trackPerformanceMetrics() {
+        if ('performance' in window) {
+            window.addEventListener('load', () => {
+                setTimeout(() => {
+                    const perfData = performance.getEntriesByType('navigation')[0];
+                    const metrics = {
+                        loadTime: perfData.loadEventEnd - perfData.loadEventStart,
+                        domContentLoaded: perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart,
+                        firstPaint: performance.getEntriesByType('paint')[0]?.startTime || 0,
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    console.log('📊 Métricas de rendimiento:', metrics);
+                }, 0);
+            });
+        }
+    }
+
+    // FUNCIONES PARA GESTIONAR CACHÉ
+    async function clearAppCache() {
+        if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            await Promise.all(cacheNames.map(name => caches.delete(name)));
+            showSuccessMessage('🗑️ Caché limpiado correctamente');
+            location.reload();
+        }
+    }
+
+    async function getCacheSize() {
+        if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            let totalSize = 0;
+            
+            for (const cacheName of cacheNames) {
+                const cache = await caches.open(cacheName);
+                const keys = await cache.keys();
+                totalSize += keys.length;
+            }
+            
+            return totalSize;
+        }
+        return 0;
+    }
+
+    // INICIALIZACIÓN DE PWA
+    function initializePWA() {
+        trackPerformanceMetrics();
+        
+        // Mostrar información de la app si es la primera visita
+        if (!localStorage.getItem('grizalum-first-visit')) {
+            setTimeout(() => {
+                showWelcomeMessage();
+                localStorage.setItem('grizalum-first-visit', 'true');
+            }, 3000);
+        }
+        
+        console.log('🚀 PWA GRIZALUM inicializada correctamente');
+    }
+
+    function showWelcomeMessage() {
+        const welcomeModal = document.createElement('div');
+        welcomeModal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        `;
+        
+        welcomeModal.innerHTML = `
+            <div style="
+                background: white;
+                padding: 3rem;
+                border-radius: 24px;
+                max-width: 500px;
+                text-align: center;
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
+            ">
+                <div style="
+                    width: 80px;
+                    height: 80px;
+                    background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+                    border-radius: 20px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 0 auto 2rem;
+                    font-size: 2rem;
+                    color: white;
+                ">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h2 style="margin-bottom: 1rem; color: #1e293b; font-size: 1.5rem;">¡Bienvenido a GRIZALUM!</h2>
+                <p style="color: #64748b; margin-bottom: 2rem; line-height: 1.6;">
+                    Sistema financiero empresarial premium diseñado específicamente para empresas peruanas. 
+                    Gestiona tu flujo de caja, análisis predictivo con IA y contabilidad completa.
+                </p>
+                <div style="display: flex; gap: 1rem; justify-content: center;">
+                    <button id="welcome-start" style="
+                        background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+                        color: white;
+                        border: none;
+                        padding: 1rem 2rem;
+                        border-radius: 12px;
+                        font-weight: 600;
+                        cursor: pointer;
+                    ">Comenzar</button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(welcomeModal);
+        
+        document.getElementById('welcome-start').addEventListener('click', () => {
+            welcomeModal.remove();
+        });
+    }
+
+    // Inicializar PWA cuando el DOM esté listo
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializePWA);
+    } else {
+        initializePWA();
+    }
+
+    // Estilos adicionales para PWA
+    const pwaStyles = document.createElement('style');
+    pwaStyles.textContent = `
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    /* Estilos para cuando la app está instalada */
+    @media (display-mode: standalone) {
+        body {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        
+        .pwa-only {
+            display: block !important;
+        }
+        
+        .browser-only {
+            display: none !important;
+        }
+    }
+
+    /* Optimizaciones para pantallas táctiles */
+    @media (pointer: coarse) {
+        .btn, .nav-link, .kpi-card {
+            min-height: 44px;
+        }
+        
+        .form-input {
+            font-size: 16px; /* Previene zoom en iOS */
+        }
+    }
+
+    /* Animaciones optimizadas para PWA */
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+    `;
+    document.head.appendChild(pwaStyles);
+    </script>
 </body>
 </html>
