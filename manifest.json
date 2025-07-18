@@ -1,185 +1,146 @@
 {
   "name": "GRIZALUM - Sistema Financiero Empresarial Premium",
   "short_name": "GRIZALUM",
-  "description": "Sistema de gestión financiera empresarial con IA integrada para empresas peruanas. Dashboard ejecutivo, flujo de caja, análisis predictivo.",
-  "version": "2.0.0",
+  "description": "Sistema de gestión financiera empresarial desarrollado específicamente para empresas peruanas con IA integrada para empresas peruanas. Dashboard ejecutivo, flujo de caja, análisis predictivo y contabilidad completa.",
+  "version": "1.2.0",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#0f172a",
   "theme_color": "#d4af37",
-  "lang": "es",
+  "background_color": "#0f172a",
+  "lang": "es-PE",
   "dir": "ltr",
-  
-  "categories": [
-    "business",
-    "finance", 
-    "productivity",
-    "utilities"
-  ],
-  
-  "screenshots": [
-    {
-      "src": "src/assets/images/screenshot-desktop.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Dashboard Ejecutivo - Vista Desktop"
-    },
-    {
-      "src": "src/assets/images/screenshot-mobile.png", 
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Dashboard Móvil - Vista Portrait"
-    }
-  ],
   
   "icons": [
     {
-      "src": "src/assets/images/icon-72.png",
+      "src": "/src/assets/images/icon-72x72.png",
       "sizes": "72x72",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "src/assets/images/icon-96.png",
-      "sizes": "96x96", 
+      "src": "/src/assets/images/icon-96x96.png",
+      "sizes": "96x96",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "src/assets/images/icon-128.png",
+      "src": "/src/assets/images/icon-128x128.png",
       "sizes": "128x128",
-      "type": "image/png", 
-      "purpose": "any"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "src/assets/images/icon-144.png",
+      "src": "/src/assets/images/icon-144x144.png",
       "sizes": "144x144",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "src/assets/images/icon-152.png",
+      "src": "/src/assets/images/icon-152x152.png",
       "sizes": "152x152",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "src/assets/images/icon-192.png",
+      "src": "/src/assets/images/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "src/assets/images/icon-384.png", 
+      "src": "/src/assets/images/icon-384x384.png",
       "sizes": "384x384",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "src/assets/images/icon-512.png",
-      "sizes": "512x512", 
+      "src": "/src/assets/images/icon-512x512.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
   ],
   
+  "screenshots": [
+    {
+      "src": "/src/assets/images/screenshot-desktop-1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Dashboard Ejecutivo GRIZALUM"
+    },
+    {
+      "src": "/src/assets/images/screenshot-mobile-1.png",
+      "sizes": "375x812",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Vista móvil del flujo de caja"
+    }
+  ],
+  
+  "categories": [
+    "finance",
+    "business",
+    "productivity",
+    "utilities"
+  ],
+  
   "shortcuts": [
     {
       "name": "Dashboard",
-      "short_name": "Dashboard", 
-      "description": "Ver dashboard ejecutivo principal",
-      "url": "/?section=dashboard",
+      "short_name": "Dashboard",
+      "description": "Ver dashboard ejecutivo",
+      "url": "/#dashboard",
       "icons": [
         {
-          "src": "src/assets/images/shortcut-dashboard.png",
+          "src": "/src/assets/images/shortcut-dashboard.png",
           "sizes": "96x96"
         }
       ]
     },
     {
       "name": "Flujo de Caja",
-      "short_name": "Flujo",
+      "short_name": "Cash Flow",
       "description": "Gestionar flujo de caja",
-      "url": "/?section=cash-flow", 
+      "url": "/#cash-flow",
       "icons": [
         {
-          "src": "src/assets/images/shortcut-cashflow.png",
+          "src": "/src/assets/images/shortcut-cashflow.png",
           "sizes": "96x96"
         }
       ]
     },
     {
-      "name": "Análisis IA",
+      "name": "Nueva Transacción",
+      "short_name": "Nueva",
+      "description": "Agregar transacción rápida",
+      "url": "/#cash-flow?action=new",
+      "icons": [
+        {
+          "src": "/src/assets/images/shortcut-new.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Reportes IA",
       "short_name": "IA",
-      "description": "Generar análisis con inteligencia artificial",
-      "url": "/?section=ai-analysis",
+      "description": "Análisis con inteligencia artificial",
+      "url": "/#reports?ai=true",
       "icons": [
         {
-          "src": "src/assets/images/shortcut-ai.png", 
+          "src": "/src/assets/images/shortcut-ai.png",
           "sizes": "96x96"
         }
       ]
-    },
-    {
-      "name": "Reportes",
-      "short_name": "Reportes",
-      "description": "Exportar reportes financieros",
-      "url": "/?section=reports",
-      "icons": [
-        {
-          "src": "src/assets/images/shortcut-reports.png",
-          "sizes": "96x96" 
-        }
-      ]
     }
   ],
   
-  "share_target": {
-    "action": "/share",
-    "method": "POST",
-    "enctype": "multipart/form-data",
-    "params": {
-      "title": "title",
-      "text": "text", 
-      "url": "url",
-      "files": [
-        {
-          "name": "file",
-          "accept": [
-            ".csv",
-            ".xlsx", 
-            ".pdf",
-            "text/csv",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            "application/pdf"
-          ]
-        }
-      ]
-    }
-  },
-  
-  "protocol_handlers": [
-    {
-      "protocol": "web+grizalum",
-      "url": "/?action=%s"
-    }
-  ],
+  "related_applications": [],
   
   "prefer_related_applications": false,
-  "related_applications": [
-    {
-      "platform": "webapp",
-      "url": "https://grizalum.github.io/grizalum-sistema-financiero/manifest.json"
-    }
-  ],
-  
-  "launch_handler": {
-    "client_mode": "navigate-new"
-  },
   
   "edge_side_panel": {
     "preferred_width": 400
@@ -192,18 +153,30 @@
     "browser"
   ],
   
+  "protocol_handlers": [
+    {
+      "protocol": "web+grizalum",
+      "url": "/?action=%s"
+    }
+  ],
+  
   "file_handlers": [
     {
-      "action": "/",
+      "action": "/import",
       "accept": {
         "text/csv": [".csv"],
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"]
+        "application/vnd.ms-excel": [".xls"],
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
+        "application/json": [".json"]
       }
     }
   ],
   
-  "permissions": [
-    "notifications",
-    "persistent-storage"
-  ]
+  "launch_handler": {
+    "client_mode": "auto"
+  },
+  
+  "handle_links": "preferred",
+  
+  "capture_links": "new-client"
 }
