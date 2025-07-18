@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRIZALUM - Trabajando Offline</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        .offline-container {
+            text-align: center;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 3rem;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
+        }
+        
+        .brand-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 2rem;
+            color: #0f172a;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        h1 {
+            font-size: 2rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #d4af37 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .offline-message {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .offline-icon {
+            font-size: 4rem;
+            color: #f59e0b;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .retry-btn {
+            background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+            color: #0f172a;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+        
+        .retry-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4);
+        }
+        
+        .features-list {
+            margin-top: 2rem;
+            text-align: left;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        .features-list h3 {
+            color: #d4af37;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .features-list ul {
+            list-style: none;
+        }
+        
+        .features-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+            opacity: 0.8;
+        }
+        
+        .features-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: bold;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: rgba(245, 158, 11, 0.2);
+            border-radius: 12px;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            background: #f59e0b;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="brand-icon">
+            <i class="fas fa-chart-line"></i>
+        </div>
+        
+        <div class="offline-icon">
+            <i class="fas fa-wifi-slash"></i>
+        </div>
+        
+        <h1>GRIZALUM</h1>
+        
+        <div class="offline-message">
+            <strong>Trabajando en modo offline</strong><br>
+            No hay conexión a internet, pero puedes seguir usando las funciones básicas de GRIZALUM.
+        </div>
+        
+        <div class="status-indicator">
+            <div class="status-dot"></div>
+            <span>Modo Offline Activo</span>
+        </div>
+        
+        <div class="features-list">
+            <h3>Disponible sin conexión:</h3>
+            <ul>
+                <li>Ver dashboard y KPIs guardados</li>
+                <li>Consultar transacciones recientes</li>
+                <li>Crear nuevas transacciones (se sincronizarán)</li>
+                <li>Generar reportes básicos</li>
+                <li>Consultar datos en caché</li>
+            </ul>
+        </div>
+        
+        <button class="retry-btn" onclick="location.reload()">
+            <i class="fas fa-sync-alt"></i>
+            Reintentar Conexión
+        </button>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    
+    <script>
+        // Verificar conexión automáticamente
+        function checkConnection() {
+            if (navigator.onLine) {
+                // Si hay conexión, redirigir al index
+                window.location.href = '/';
+            } else {
+                // Revisar cada 5 segundos
+                setTimeout(checkConnection, 5000);
+            }
+        }
+        
+        // Iniciar verificación
+        checkConnection();
+        
+        // Escuchar evento de conexión
+        window.addEventListener('online', () => {
+            window.location.href = '/';
+        });
+        
+        console.log('📱 GRIZALUM - Página offline cargada');
+    </script>
+</body>
+</html>
