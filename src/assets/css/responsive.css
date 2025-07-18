@@ -1,0 +1,617 @@
+/* ===================================================================
+   GRIZALUM - Responsive Design
+   CSS Responsive para móviles y tablets
+   ================================================================== */
+
+/* ===================================================================
+   TABLETS (1200px y menor)
+   ================================================================== */
+@media (max-width: 1200px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 10000;
+    }
+    
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .kpi-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+    }
+    
+    .charts-section {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .executive-header {
+        padding: 1rem 1.5rem;
+    }
+    
+    .mobile-menu-toggle {
+        display: block;
+    }
+    
+    .header-controls {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .time-period-selector {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ===================================================================
+   TABLETS PEQUEÑAS (992px y menor)
+   ================================================================== */
+@media (max-width: 992px) {
+    .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .kpi-card {
+        padding: 1.5rem;
+    }
+    
+    .kpi-value {
+        font-size: 2rem;
+    }
+    
+    .chart-card {
+        padding: 1.5rem;
+    }
+    
+    .executive-card {
+        padding: 1.5rem;
+    }
+    
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .card-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    
+    .financial-table {
+        font-size: 0.9rem;
+    }
+    
+    .financial-table th,
+    .financial-table td {
+        padding: 0.75rem 1rem;
+    }
+}
+
+/* ===================================================================
+   MÓVILES GRANDES (768px y menor)
+   ================================================================== */
+@media (max-width: 768px) {
+    .content-area {
+        padding: 1rem;
+    }
+    
+    .executive-header {
+        padding: 1rem;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+    }
+    
+    .page-subtitle {
+        font-size: 0.8rem;
+    }
+    
+    .ai-insights {
+        font-size: 0.7rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .header-controls {
+        flex-direction: column;
+        gap: 1rem;
+        width: 100%;
+    }
+    
+    .time-period-selector {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .period-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.7rem;
+        flex: 1;
+        min-width: 60px;
+    }
+    
+    .notification-center {
+        padding: 0.75rem;
+    }
+    
+    .executive-profile {
+        padding: 0.75rem 1rem;
+    }
+    
+    .profile-name {
+        font-size: 0.8rem;
+    }
+    
+    .profile-role {
+        font-size: 0.7rem;
+    }
+    
+    .kpi-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .kpi-card {
+        padding: 1.25rem;
+    }
+    
+    .kpi-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .kpi-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 1.25rem;
+    }
+    
+    .kpi-value {
+        font-size: 1.8rem;
+    }
+    
+    .kpi-change {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .change-indicator {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.7rem;
+    }
+    
+    .ai-prediction {
+        padding: 0.75rem;
+        font-size: 0.75rem;
+    }
+    
+    .charts-section {
+        gap: 1rem;
+    }
+    
+    .chart-card {
+        padding: 1rem;
+    }
+    
+    .chart-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .chart-title {
+        font-size: 1rem;
+    }
+    
+    .chart-container {
+        height: 250px;
+    }
+    
+    .executive-card {
+        padding: 1rem;
+    }
+    
+    .card-title {
+        font-size: 1.25rem;
+    }
+    
+    .btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.8rem;
+    }
+    
+    .btn-sm {
+        padding: 0.5rem 1rem;
+        font-size: 0.75rem;
+    }
+}
+
+/* ===================================================================
+   MÓVILES MEDIANOS (576px y menor)
+   ================================================================== */
+@media (max-width: 576px) {
+    .sidebar {
+        width: 280px;
+    }
+    
+    .sidebar-header {
+        padding: 1.5rem 1rem;
+    }
+    
+    .brand-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+    
+    .brand-text h1 {
+        font-size: 1.5rem;
+    }
+    
+    .brand-text p {
+        font-size: 0.7rem;
+    }
+    
+    .financial-summary {
+        padding: 1rem;
+    }
+    
+    .summary-item {
+        margin-bottom: 0.75rem;
+    }
+    
+    .summary-label {
+        font-size: 0.65rem;
+    }
+    
+    .summary-value {
+        font-size: 0.8rem;
+    }
+    
+    .nav-section-title {
+        font-size: 0.65rem;
+        padding: 0 1rem 0.75rem;
+    }
+    
+    .nav-link {
+        padding: 0.75rem 1rem;
+        font-size: 0.8rem;
+    }
+    
+    .nav-icon {
+        font-size: 1rem;
+        width: 20px;
+    }
+    
+    .content-area {
+        padding: 0.75rem;
+    }
+    
+    .page-title {
+        font-size: 1.25rem;
+    }
+    
+    .kpi-card {
+        padding: 1rem;
+    }
+    
+    .kpi-value {
+        font-size: 1.5rem;
+    }
+    
+    .chart-container {
+        height: 200px;
+    }
+    
+    .financial-table {
+        font-size: 0.8rem;
+        overflow-x: auto;
+        display: block;
+        white-space: nowrap;
+    }
+    
+    .financial-table thead,
+    .financial-table tbody,
+    .financial-table th,
+    .financial-table td,
+    .financial-table tr {
+        display: block;
+    }
+    
+    .financial-table thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    
+    .financial-table tr {
+        border: 1px solid var(--gray-200);
+        margin-bottom: 0.5rem;
+        padding: 0.5rem;
+        border-radius: 8px;
+        background: white;
+    }
+    
+    .financial-table td {
+        border: none;
+        position: relative;
+        padding: 0.5rem 0.5rem 0.5rem 30%;
+    }
+    
+    .financial-table td:before {
+        content: attr(data-label) ": ";
+        position: absolute;
+        left: 6px;
+        width: 25%;
+        padding-right: 10px;
+        white-space: nowrap;
+        font-weight: bold;
+        color: var(--gray-600);
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .form-input {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .empty-state-executive {
+        padding: 2rem 1rem;
+    }
+    
+    .empty-state-icon {
+        font-size: 3rem;
+    }
+    
+    .empty-state-title {
+        font-size: 1.25rem;
+    }
+    
+    .empty-state-subtitle {
+        font-size: 0.9rem;
+    }
+}
+
+/* ===================================================================
+   MÓVILES PEQUEÑOS (480px y menor)
+   ================================================================== */
+@media (max-width: 480px) {
+    .sidebar {
+        width: 100%;
+    }
+    
+    .content-area {
+        padding: 0.5rem;
+    }
+    
+    .executive-header {
+        padding: 0.75rem;
+    }
+    
+    .page-title {
+        font-size: 1.1rem;
+    }
+    
+    .kpi-card {
+        padding: 0.75rem;
+    }
+    
+    .kpi-value {
+        font-size: 1.3rem;
+    }
+    
+    .chart-card {
+        padding: 0.75rem;
+    }
+    
+    .chart-container {
+        height: 180px;
+    }
+    
+    .executive-card {
+        padding: 0.75rem;
+    }
+    
+    .card-title {
+        font-size: 1.1rem;
+    }
+    
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.75rem;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .card-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .time-period-selector {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .period-btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* ===================================================================
+   ORIENTACIÓN LANDSCAPE EN MÓVILES
+   ================================================================== */
+@media (max-height: 500px) and (orientation: landscape) {
+    .sidebar {
+        width: 250px;
+    }
+    
+    .sidebar-header {
+        padding: 1rem;
+    }
+    
+    .brand-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.25rem;
+    }
+    
+    .brand-text h1 {
+        font-size: 1.25rem;
+    }
+    
+    .financial-summary {
+        padding: 0.75rem;
+    }
+    
+    .nav-section {
+        margin-bottom: 1rem;
+    }
+    
+    .nav-link {
+        padding: 0.5rem 1rem;
+    }
+    
+    .executive-header {
+        padding: 0.5rem 1rem;
+    }
+    
+    .content-area {
+        padding: 1rem;
+    }
+    
+    .chart-container {
+        height: 200px;
+    }
+}
+
+/* ===================================================================
+   MEJORAS DE ACCESIBILIDAD MÓVIL
+   ================================================================== */
+@media (max-width: 768px) {
+    /* Aumentar área de toque para botones */
+    .btn {
+        min-height: 44px;
+    }
+    
+    .nav-link {
+        min-height: 44px;
+    }
+    
+    .period-btn {
+        min-height: 40px;
+    }
+    
+    /* Mejorar contraste en pantallas pequeñas */
+    .nav-link {
+        background: rgba(255, 255, 255, 0.05);
+        margin-bottom: 0.25rem;
+    }
+    
+    .nav-link:hover {
+        background: rgba(212, 175, 55, 0.3);
+    }
+    
+    /* Optimizar espaciado */
+    .kpi-grid {
+        gap: 0.75rem;
+    }
+    
+    .charts-section {
+        gap: 0.75rem;
+    }
+    
+    /* Mejorar legibilidad */
+    .financial-table {
+        border-radius: 12px;
+    }
+    
+    .summary-value {
+        font-size: 0.85rem;
+        font-weight: 900;
+    }
+}
+
+/* ===================================================================
+   DARK MODE (OPCIONAL)
+   ================================================================== */
+@media (prefers-color-scheme: dark) {
+    @media (max-width: 768px) {
+        .kpi-card {
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        .chart-card {
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        .executive-card {
+            background: rgba(255, 255, 255, 0.95);
+        }
+    }
+}
+
+/* ===================================================================
+   OPTIMIZACIONES DE RENDIMIENTO MÓVIL
+   ================================================================== */
+@media (max-width: 768px) {
+    /* Reducir animaciones en dispositivos lentos */
+    .kpi-card {
+        transition: transform 0.2s ease;
+    }
+    
+    .chart-card {
+        transition: transform 0.2s ease;
+    }
+    
+    .nav-link::before {
+        display: none;
+    }
+    
+    .change-indicator::before {
+        display: none;
+    }
+    
+    .btn::before {
+        display: none;
+    }
+    
+    /* Optimizar sombras */
+    .kpi-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .chart-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+}
