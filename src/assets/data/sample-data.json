@@ -1,0 +1,735 @@
+{
+  "metadata": {
+    "version": "2.0.0",
+    "generatedAt": "2025-01-17T10:30:00.000Z",
+    "description": "Datos de ejemplo realistas para demostración del sistema GRIZALUM",
+    "company": "Empresa Demo SAC",
+    "period": "2025",
+    "currency": "PEN"
+  },
+  
+  "company": {
+    "name": "Comercializadora Demo SAC",
+    "ruc": "20123456789",
+    "address": "Av. El Sol 123, Miraflores, Lima",
+    "phone": "+51 1 234-5678",
+    "email": "contacto@demo.com",
+    "industry": "Comercio General",
+    "employees": 25,
+    "foundedYear": 2018
+  },
+
+  "currentPeriod": {
+    "year": 2025,
+    "month": 1,
+    "quarter": 1,
+    "fiscalYearStart": "2025-01-01",
+    "fiscalYearEnd": "2025-12-31"
+  },
+
+  "kpis": {
+    "cashFlow": {
+      "current": 24500,
+      "previous": 20650,
+      "target": 30000,
+      "variance": 18.65,
+      "trend": "positive",
+      "lastUpdated": "2025-01-17T09:15:00.000Z"
+    },
+    "revenue": {
+      "current": 45200,
+      "previous": 40300,
+      "target": 50000,
+      "variance": 12.15,
+      "trend": "positive",
+      "lastUpdated": "2025-01-17T09:15:00.000Z"
+    },
+    "expenses": {
+      "current": 28700,
+      "previous": 30200,
+      "target": 25000,
+      "variance": -4.97,
+      "trend": "positive",
+      "lastUpdated": "2025-01-17T09:15:00.000Z"
+    },
+    "profit": {
+      "current": 16500,
+      "previous": 10100,
+      "target": 15000,
+      "variance": 63.37,
+      "trend": "positive",
+      "margin": 36.5,
+      "lastUpdated": "2025-01-17T09:15:00.000Z"
+    },
+    "accountsReceivable": {
+      "total": 32800,
+      "overdue": 8200,
+      "averageCollectionDays": 24,
+      "trend": "neutral"
+    },
+    "accountsPayable": {
+      "total": 18900,
+      "overdue": 2100,
+      "averagePaymentDays": 15,
+      "trend": "neutral"
+    },
+    "inventory": {
+      "total": 67300,
+      "turnoverRate": 12.5,
+      "daysOnHand": 29,
+      "trend": "neutral"
+    }
+  },
+
+  "transactions": [
+    {
+      "id": 1,
+      "date": "2025-01-17",
+      "description": "Venta productos enero - Cliente ABC SAC",
+      "category": "Venta de productos",
+      "type": "Operativo",
+      "amount": 15200,
+      "flow": "entrada",
+      "reference": "FAC-2025-001",
+      "customer": "ABC Distribuidores SAC",
+      "status": "completed"
+    },
+    {
+      "id": 2,
+      "date": "2025-01-16",
+      "description": "Pago proveedores - Mercadería diciembre",
+      "category": "Compra de mercaderías",
+      "type": "Operativo",
+      "amount": 8500,
+      "flow": "salida",
+      "reference": "PAG-2025-012",
+      "supplier": "Proveedor XYZ EIRL",
+      "status": "completed"
+    },
+    {
+      "id": 3,
+      "date": "2025-01-15",
+      "description": "Préstamo bancario - Capital de trabajo",
+      "category": "Préstamo bancario",
+      "type": "Financiamiento",
+      "amount": 25000,
+      "flow": "entrada",
+      "reference": "PREST-2025-001",
+      "bank": "Banco de Crédito del Perú",
+      "status": "completed"
+    },
+    {
+      "id": 4,
+      "date": "2025-01-14",
+      "description": "Pago planilla enero - Personal",
+      "category": "Gasto operativo",
+      "type": "Operativo",
+      "amount": 12300,
+      "flow": "salida",
+      "reference": "PLAN-2025-001",
+      "employees": 25,
+      "status": "completed"
+    },
+    {
+      "id": 5,
+      "date": "2025-01-13",
+      "description": "Servicios básicos - Electricidad y agua",
+      "category": "Gasto operativo",
+      "type": "Operativo",
+      "amount": 850,
+      "flow": "salida",
+      "reference": "SERV-2025-003",
+      "status": "completed"
+    },
+    {
+      "id": 6,
+      "date": "2025-01-12",
+      "description": "Venta servicios - Consultoría empresarial",
+      "category": "Prestación de servicios",
+      "type": "Operativo",
+      "amount": 5800,
+      "flow": "entrada",
+      "reference": "FAC-2025-002",
+      "customer": "Constructora DEF SA",
+      "status": "completed"
+    },
+    {
+      "id": 7,
+      "date": "2025-01-11",
+      "description": "Compra equipos - Computadoras nuevas",
+      "category": "Inversión en activos",
+      "type": "Inversión",
+      "amount": 4200,
+      "flow": "salida",
+      "reference": "INV-2025-001",
+      "asset": "Equipos de cómputo",
+      "status": "completed"
+    },
+    {
+      "id": 8,
+      "date": "2025-01-10",
+      "description": "Cobro factura pendiente - Cliente GHI",
+      "category": "Venta de productos",
+      "type": "Operativo",
+      "amount": 9200,
+      "flow": "entrada",
+      "reference": "COB-2024-087",
+      "customer": "GHI Comercial EIRL",
+      "status": "completed"
+    }
+  ],
+
+  "chartData": {
+    "revenue": {
+      "labels": ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+      "data": [35000, 38000, 42000, 39000, 44000, 40300, 45200, 48000, 42500, 46800, 49200, 52000],
+      "target": [40000, 41000, 42000, 43000, 44000, 45000, 46000, 47000, 48000, 49000, 50000, 51000]
+    },
+    "expenses": {
+      "labels": ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+      "data": [28000, 29500, 31000, 30200, 32500, 30200, 28700, 30500, 29800, 31200, 32800, 33500],
+      "categories": {
+        "Operativos": [12500, 13200, 13800, 13400, 14200, 13600, 12800, 13500, 13100, 13700, 14300, 14800],
+        "Administrativos": [8200, 8500, 8900, 8600, 9200, 8800, 8200, 8700, 8400, 8900, 9300, 9600],
+        "Ventas": [5500, 5800, 6200, 6000, 6500, 6200, 5500, 6000, 5800, 6200, 6600, 6900],
+        "Financieros": [1800, 2000, 2100, 2200, 2600, 1600, 2200, 2300, 2500, 2400, 2600, 2200]
+      }
+    },
+    "cashFlow": {
+      "historical": {
+        "labels": ["01 Ene", "05 Ene", "10 Ene", "15 Ene", "20 Ene", "25 Ene", "30 Ene"],
+        "data": [15000, 18500, 22000, 17800, 21500, 19800, 24500]
+      },
+      "projected": {
+        "labels": ["Feb", "Mar", "Abr", "May", "Jun", "Jul"],
+        "data": [28000, 32000, 35000, 38000, 42000, 45000],
+        "confidence": [0.85, 0.82, 0.78, 0.75, 0.72, 0.68]
+      }
+    },
+    "profitability": {
+      "labels": ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul"],
+      "grossMargin": [32, 35, 38, 34, 40, 37, 42],
+      "netMargin": [18, 21, 24, 20, 26, 23, 28],
+      "ebitdaMargin": [25, 28, 31, 27, 33, 30, 35]
+    },
+    "accountsReceivableAging": {
+      "labels": ["0-30 días", "31-60 días", "61-90 días", "+90 días"],
+      "data": [18200, 9800, 3200, 1600],
+      "percentages": [55.5, 29.9, 9.8, 4.9]
+    }
+  },
+
+  "customers": [
+    {
+      "id": 1,
+      "name": "ABC Distribuidores SAC",
+      "ruc": "20987654321",
+      "creditLimit": 50000,
+      "currentBalance": 12500,
+      "averagePaymentDays": 18,
+      "lastTransaction": "2025-01-17",
+      "category": "A",
+      "status": "active"
+    },
+    {
+      "id": 2,
+      "name": "Constructora DEF SA",
+      "ruc": "20876543210",
+      "creditLimit": 75000,
+      "currentBalance": 8900,
+      "averagePaymentDays": 22,
+      "lastTransaction": "2025-01-12",
+      "category": "A",
+      "status": "active"
+    },
+    {
+      "id": 3,
+      "name": "GHI Comercial EIRL",
+      "ruc": "20765432109",
+      "creditLimit": 30000,
+      "currentBalance": 5200,
+      "averagePaymentDays": 35,
+      "lastTransaction": "2025-01-10",
+      "category": "B",
+      "status": "active"
+    },
+    {
+      "id": 4,
+      "name": "JKL Importaciones SAC",
+      "ruc": "20654321098",
+      "creditLimit": 40000,
+      "currentBalance": 6200,
+      "averagePaymentDays": 28,
+      "lastTransaction": "2025-01-08",
+      "category": "B",
+      "status": "active"
+    }
+  ],
+
+  "suppliers": [
+    {
+      "id": 1,
+      "name": "Proveedor XYZ EIRL",
+      "ruc": "20111222333",
+      "category": "Mercadería",
+      "paymentTerms": 30,
+      "currentBalance": 8500,
+      "lastPayment": "2025-01-16",
+      "reliability": "high",
+      "status": "active"
+    },
+    {
+      "id": 2,
+      "name": "Distribuidora Norte SA",
+      "ruc": "20222333444",
+      "category": "Servicios",
+      "paymentTerms": 15,
+      "currentBalance": 3200,
+      "lastPayment": "2025-01-14",
+      "reliability": "high",
+      "status": "active"
+    },
+    {
+      "id": 3,
+      "name": "Tech Solutions EIRL",
+      "ruc": "20333444555",
+      "category": "Tecnología",
+      "paymentTerms": 45,
+      "currentBalance": 4200,
+      "lastPayment": "2025-01-11",
+      "reliability": "medium",
+      "status": "active"
+    }
+  ],
+
+  "inventory": [
+    {
+      "id": 1,
+      "code": "PROD-001",
+      "name": "Material Premium Tipo A",
+      "category": "Materia Prima",
+      "currentStock": 150,
+      "minimumStock": 50,
+      "maximumStock": 300,
+      "unitCost": 45.50,
+      "totalValue": 6825,
+      "turnoverRate": 8.5,
+      "daysOnHand": 43,
+      "status": "normal"
+    },
+    {
+      "id": 2,
+      "code": "PROD-002",
+      "name": "Producto Terminado B",
+      "category": "Productos Terminados",
+      "currentStock": 85,
+      "minimumStock": 20,
+      "maximumStock": 150,
+      "unitCost": 125.00,
+      "totalValue": 10625,
+      "turnoverRate": 12.2,
+      "daysOnHand": 30,
+      "status": "normal"
+    },
+    {
+      "id": 3,
+      "code": "PROD-003",
+      "name": "Insumo Crítico C",
+      "category": "Suministros",
+      "currentStock": 15,
+      "minimumStock": 25,
+      "maximumStock": 100,
+      "unitCost": 78.30,
+      "totalValue": 1174.50,
+      "turnoverRate": 6.8,
+      "daysOnHand": 54,
+      "status": "critical"
+    }
+  ],
+
+  "aiPredictions": {
+    "cashFlowForecast": {
+      "nextSixMonths": [28000, 32000, 35000, 38000, 42000, 45000],
+      "confidence": 0.85,
+      "trend": "positive",
+      "riskFactors": ["Estacionalidad", "Cobranza lenta"],
+      "recommendations": [
+        "Acelerar proceso de cobranzas",
+        "Mantener reserva de efectivo",
+        "Considerar línea de crédito preventiva"
+      ]
+    },
+    "salesForecast": {
+      "nextQuarter": [48000, 52000, 55000],
+      "confidence": 0.82,
+      "growthRate": 0.15,
+      "seasonalityFactor": 1.12,
+      "recommendations": [
+        "Incrementar inventario en marzo",
+        "Expandir equipo de ventas",
+        "Optimizar canales digitales"
+      ]
+    },
+    "riskAssessment": {
+      "liquidityRisk": {
+        "level": "low",
+        "score": 25,
+        "factors": ["Flujo positivo", "Reservas adecuadas"]
+      },
+      "creditRisk": {
+        "level": "medium",
+        "score": 45,
+        "factors": ["Concentración en 3 clientes", "Plazo promedio alto"]
+      },
+      "operationalRisk": {
+        "level": "low",
+        "score": 20,
+        "factors": ["Procesos estables", "Equipo capacitado"]
+      }
+    },
+    "opportunities": [
+      {
+        "type": "cost_optimization",
+        "description": "Renegociar contrato con proveedor principal",
+        "potentialSaving": 3200,
+        "effort": "medium",
+        "timeline": "30 días"
+      },
+      {
+        "type": "revenue_growth",
+        "description": "Expandir a mercado regional",
+        "potentialRevenue": 15000,
+        "effort": "high",
+        "timeline": "90 días"
+      },
+      {
+        "type": "efficiency",
+        "description": "Automatizar proceso de facturación",
+        "potentialSaving": 800,
+        "effort": "low",
+        "timeline": "15 días"
+      }
+    ]
+  },
+
+  "alerts": [
+    {
+      "id": 1,
+      "type": "warning",
+      "severity": "medium",
+      "title": "Stock bajo en producto crítico",
+      "message": "Insumo Crítico C está por debajo del stock mínimo (15 unidades)",
+      "recommendation": "Generar orden de compra por 50 unidades",
+      "createdAt": "2025-01-17T08:30:00.000Z",
+      "acknowledged": false,
+      "priority": "high"
+    },
+    {
+      "id": 2,
+      "type": "info",
+      "severity": "low",
+      "title": "Nuevo cliente potencial",
+      "message": "MNO Corporación ha solicitado cotización por S/. 25,000",
+      "recommendation": "Preparar propuesta comercial competitiva",
+      "createdAt": "2025-01-17T07:15:00.000Z",
+      "acknowledged": false,
+      "priority": "medium"
+    },
+    {
+      "id": 3,
+      "type": "success",
+      "severity": "low",
+      "title": "Meta mensual superada",
+      "message": "Ingresos de enero superaron la meta en 12.4%",
+      "recommendation": "Analizar factores de éxito para replicar",
+      "createdAt": "2025-01-17T06:00:00.000Z",
+      "acknowledged": true,
+      "priority": "low"
+    }
+  ],
+
+  "financialRatios": {
+    "liquidity": {
+      "currentRatio": 2.85,
+      "quickRatio": 1.92,
+      "cashRatio": 0.67,
+      "workingCapital": 45200
+    },
+    "profitability": {
+      "grossProfitMargin": 0.42,
+      "netProfitMargin": 0.28,
+      "returnOnAssets": 0.18,
+      "returnOnEquity": 0.24
+    },
+    "efficiency": {
+      "assetTurnover": 1.85,
+      "inventoryTurnover": 12.5,
+      "receivablesTurnover": 15.2,
+      "payablesTurnover": 18.7
+    },
+    "leverage": {
+      "debtToEquity": 0.45,
+      "debtToAssets": 0.31,
+      "interestCoverage": 8.5,
+      "debtService": 0.12
+    }
+  },
+
+  "budget": {
+    "annual": {
+      "revenue": 600000,
+      "expenses": 420000,
+      "netIncome": 180000,
+      "cashFlow": 200000
+    },
+    "monthly": {
+      "revenue": 50000,
+      "expenses": 35000,
+      "netIncome": 15000,
+      "cashFlow": 16500
+    },
+    "variance": {
+      "revenueVariance": 0.096,
+      "expenseVariance": -0.032,
+      "netIncomeVariance": 0.185
+    }
+  },
+
+  "reports": {
+    "lastGenerated": {
+      "cashFlowStatement": "2025-01-17T09:00:00.000Z",
+      "incomeStatement": "2025-01-16T17:30:00.000Z",
+      "balanceSheet": "2025-01-16T17:30:00.000Z",
+      "managementReport": "2025-01-17T08:00:00.000Z"
+    },
+    "scheduled": [
+      {
+        "type": "daily_cash_flow",
+        "frequency": "daily",
+        "time": "08:00",
+        "recipients": ["gerencia@demo.com"],
+        "enabled": true
+      },
+      {
+        "type": "weekly_summary",
+        "frequency": "weekly",
+        "day": "monday",
+        "time": "09:00",
+        "recipients": ["gerencia@demo.com", "contabilidad@demo.com"],
+        "enabled": true
+      },
+      {
+        "type": "monthly_financial",
+        "frequency": "monthly",
+        "day": 1,
+        "time": "10:00",
+        "recipients": ["gerencia@demo.com", "directorio@demo.com"],
+        "enabled": true
+      }
+    ]
+  },
+
+  "systemConfiguration": {
+    "autoRefresh": {
+      "enabled": true,
+      "interval": 120000,
+      "lastUpdate": "2025-01-17T09:15:00.000Z"
+    },
+    "notifications": {
+      "enabled": true,
+      "sound": true,
+      "email": false,
+      "push": false
+    },
+    "display": {
+      "theme": "default",
+      "currency": "PEN",
+      "dateFormat": "DD/MM/YYYY",
+      "numberFormat": "es-PE",
+      "timezone": "America/Lima"
+    },
+    "backup": {
+      "enabled": true,
+      "frequency": "daily",
+      "retention": 30,
+      "lastBackup": "2025-01-17T02:00:00.000Z"
+    }
+  },
+
+  "marketData": {
+    "exchangeRates": {
+      "USD_PEN": 3.72,
+      "EUR_PEN": 4.05,
+      "lastUpdated": "2025-01-17T09:00:00.000Z"
+    },
+    "inflation": {
+      "currentRate": 0.024,
+      "projection": 0.028,
+      "lastUpdated": "2025-01-15T00:00:00.000Z"
+    },
+    "interestRates": {
+      "bcr": 0.075,
+      "referenceRate": 0.0725,
+      "lastUpdated": "2025-01-16T00:00:00.000Z"
+    }
+  },
+
+  "performance": {
+    "systemHealth": {
+      "uptime": 99.98,
+      "responseTime": 1.2,
+      "errorRate": 0.001,
+      "lastCheck": "2025-01-17T09:15:00.000Z"
+    },
+    "userActivity": {
+      "dailyActiveUsers": 8,
+      "weeklyActiveUsers": 12,
+      "monthlyActiveUsers": 25,
+      "averageSessionTime": 1847
+    },
+    "features": {
+      "mostUsed": [
+        "dashboard",
+        "cash_flow",
+        "transactions",
+        "reports",
+        "charts"
+      ],
+      "leastUsed": [
+        "advanced_analytics",
+        "export_excel",
+        "custom_alerts"
+      ]
+    }
+  },
+
+  "analytics": {
+    "trends": {
+      "revenue": {
+        "direction": "up",
+        "percentage": 12.15,
+        "period": "month_over_month"
+      },
+      "expenses": {
+        "direction": "down",
+        "percentage": 4.97,
+        "period": "month_over_month"
+      },
+      "profitability": {
+        "direction": "up",
+        "percentage": 28.7,
+        "period": "month_over_month"
+      }
+    },
+    "seasonality": {
+      "highSeasons": ["March", "July", "November"],
+      "lowSeasons": ["January", "May", "September"],
+      "peakMonth": "November",
+      "lowestMonth": "January"
+    },
+    "correlations": {
+      "revenue_marketing": 0.78,
+      "expenses_revenue": 0.65,
+      "cashflow_collections": 0.82
+    }
+  },
+
+  "goals": {
+    "annual": [
+      {
+        "metric": "revenue",
+        "target": 600000,
+        "current": 45200,
+        "progress": 7.53,
+        "onTrack": true
+      },
+      {
+        "metric": "profit_margin",
+        "target": 0.30,
+        "current": 0.365,
+        "progress": 121.67,
+        "onTrack": true
+      },
+      {
+        "metric": "cash_flow",
+        "target": 200000,
+        "current": 24500,
+        "progress": 12.25,
+        "onTrack": true
+      },
+      {
+        "metric": "customer_acquisition",
+        "target": 50,
+        "current": 4,
+        "progress": 8.0,
+        "onTrack": false
+      }
+    ],
+    "quarterly": [
+      {
+        "metric": "revenue",
+        "target": 150000,
+        "current": 45200,
+        "progress": 30.13,
+        "onTrack": true
+      },
+      {
+        "metric": "new_customers",
+        "target": 12,
+        "current": 2,
+        "progress": 16.67,
+        "onTrack": false
+      }
+    ]
+  },
+
+  "benchmarks": {
+    "industry": {
+      "averageMargin": 0.22,
+      "averageTurnover": 8.5,
+      "averageROI": 0.15,
+      "dataSource": "INEI - Encuesta Económica Anual",
+      "lastUpdated": "2024-12-15"
+    },
+    "competitors": [
+      {
+        "name": "Competidor A",
+        "revenue": 800000,
+        "margin": 0.25,
+        "marketShare": 0.15
+      },
+      {
+        "name": "Competidor B",
+        "revenue": 650000,
+        "margin": 0.28,
+        "marketShare": 0.12
+      },
+      {
+        "name": "Competidor C",
+        "revenue": 450000,
+        "margin": 0.20,
+        "marketShare": 0.08
+      }
+    ]
+  },
+
+  "notes": {
+    "dataGeneration": "Los datos han sido generados de forma realista para demostración",
+    "currency": "Todos los montos están en Soles Peruanos (PEN)",
+    "methodology": "Los pronósticos usan regresión lineal y análisis de estacionalidad",
+    "confidence": "Los niveles de confianza están basados en varianza histórica",
+    "updateFrequency": "Los datos se actualizan cada 2 minutos en el sistema real"
+  },
+
+  "version": {
+    "dataSchema": "2.0.0",
+    "compatibility": ["2.0.x", "2.1.x"],
+    "deprecated": [],
+    "changes": [
+      "Agregado análisis de correlaciones",
+      "Mejorados pronósticos de IA",
+      "Incluidos datos de benchmarking",
+      "Optimizada estructura de alertas"
+    ]
+  }
+}
