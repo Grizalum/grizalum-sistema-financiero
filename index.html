@@ -523,19 +523,5 @@
     <script src="src/assets/js/main.js"></script>
     <script src="src/assets/js/charts.js"></script>
     <script src="src/assets/js/ai.js"></script>
-    <!-- Service Worker Registration -->
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(registration => {
-        console.log('✅ SW registrado:', registration);
-      })
-      .catch(registrationError => {
-        console.log('❌ SW falló:', registrationError);
-      });
-  });
-}
-</script>
 </body>
 </html>
