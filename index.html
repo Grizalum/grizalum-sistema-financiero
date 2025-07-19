@@ -3023,20 +3023,7 @@ function initializeAI() {
     
     console.log('🤖 IA Conversacional GRIZALUM inicializada');
 }
-
-// FUNCIÓN TOGGLE IA
-function toggleAIAssistant() {
-    const panel = document.getElementById('aiAssistantPanel');
     
-    if (panel.classList.contains('show')) {
-        panel.classList.remove('show');
-        console.log('🤖 IA cerrada');
-    } else {
-        panel.classList.add('show');
-        console.log('🤖 IA abierta');
-    }
-}
-
 // ACTUALIZAR STATUS IA
 function updateAIStatus() {
     const currentCompany = getCurrentSelectedCompany();
@@ -3649,6 +3636,7 @@ setTimeout(() => {
 }, 5000);
 
 console.log('🤖 IA Conversacional GRIZALUM completamente cargada');
+    
 // FUNCIÓN TOGGLE IA - ARREGLO DEFINITIVO
 function toggleAIAssistant() {
     console.log('🤖 toggleAIAssistant llamada');
