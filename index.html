@@ -708,6 +708,621 @@ document.addEventListener('click', function(event) {
 
 console.log('🏢 Selector de empresas GRIZALUM cargado');
 </script>
+<!-- AGREGAR DESPUÉS DEL SCRIPT ANTERIOR -->
+
+<!-- MODAL PARA GESTIÓN DE EMPRESAS -->
+<div id="companyManagementModal" class="management-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>⚙️ Gestión de Empresas</h3>
+            <button class="close-modal" onclick="closeManagementModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="companies-management-list" id="managementList">
+                <!-- Se llena dinámicamente -->
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn btn-neutral" onclick="closeManagementModal()">
+                Cerrar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL PARA EDITAR EMPRESA -->
+<div id="editCompanyModal" class="management-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>✏️ Editar Empresa</h3>
+            <button class="close-modal" onclick="closeEditModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">Nombre de la Empresa</label>
+                <input type="text" id="editCompanyName" class="form-input" placeholder="Ej: Import LM">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Icono</label>
+                <div class="icon-selector">
+                    <div class="icon-option" data-icon="🔥" onclick="selectIcon('🔥')">🔥</div>
+                    <div class="icon-option" data-icon="🐔" onclick="selectIcon('🐔')">🐔</div>
+                    <div class="icon-option" data-icon="🏪" onclick="selectIcon('🏪')">🏪</div>
+                    <div class="icon-option" data-icon="📦" onclick="selectIcon('📦')">📦</div>
+                    <div class="icon-option" data-icon="🏭" onclick="selectIcon('🏭')">🏭</div>
+                    <div class="icon-option" data-icon="🚛" onclick="selectIcon('🚛')">🚛</div>
+                    <div class="icon-option" data-icon="💼" onclick="selectIcon('💼')">💼</div>
+                    <div class="icon-option" data-icon="🏢" onclick="selectIcon('🏢')">🏢</div>
+                </div>
+                <input type="hidden" id="editCompanyIcon" value="🔥">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Estado</label>
+                <select id="editCompanyStatus" class="form-input">
+                    <option value="Operativo">🟢 Operativo</option>
+                    <option value="Regular">🟡 Regular</option>
+                    <option value="Mantenimiento">🔵 Mantenimiento</option>
+                    <option value="Cerrado">🔴 Cerrado</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn btn-success" onclick="saveCompanyChanges()">
+                <i class="fas fa-save"></i>
+                Guardar Cambios
+            </button>
+            <button class="btn btn-neutral" onclick="closeEditModal()">
+                Cancelar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ESTILOS PARA MODALES -->
+<style>
+.management-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 10000;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: var(--gray-800);
+    font-weight: 700;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--gray-500);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.close-modal:hover {
+    background: var(--gray-100);
+    color: var(--gray-700);
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.modal-footer {
+    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--gray-200);
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.management-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem;
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.management-item:hover {
+    border-color: var(--peru-gold);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.management-item-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.management-item-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--gray-100);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.management-item-details h4 {
+    margin: 0 0 0.25rem 0;
+    color: var(--gray-800);
+    font-weight: 600;
+}
+
+.management-item-details p {
+    margin: 0;
+    color: var(--gray-600);
+    font-size: 0.9rem;
+}
+
+.management-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-action {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-edit {
+    background: var(--gradient-blue);
+    color: white;
+}
+
+.btn-delete {
+    background: var(--gradient-loss);
+    color: white;
+}
+
+.btn-action:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.icon-selector {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.icon-option {
+    width: 50px;
+    height: 50px;
+    border: 2px solid var(--gray-200);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.icon-option:hover {
+    border-color: var(--peru-gold);
+    background: rgba(212, 175, 55, 0.1);
+}
+
+.icon-option.selected {
+    border-color: var(--peru-gold);
+    background: rgba(212, 175, 55, 0.2);
+}
+
+/* Animaciones */
+.management-modal.show {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+</style>
+
+<!-- JAVASCRIPT PARA GESTIÓN DE EMPRESAS -->
+<script>
+let currentEditingCompany = null;
+
+// ABRIR MODAL DE GESTIÓN
+function openCompanyManagement() {
+    loadManagementList();
+    document.getElementById('companyManagementModal').classList.add('show');
+    document.getElementById('companyManagementModal').style.display = 'block';
+}
+
+// CERRAR MODAL DE GESTIÓN
+function closeManagementModal() {
+    document.getElementById('companyManagementModal').style.display = 'none';
+    document.getElementById('companyManagementModal').classList.remove('show');
+}
+
+// CARGAR LISTA DE EMPRESAS PARA GESTIÓN
+function loadManagementList() {
+    const companies = getCompaniesData();
+    const listContainer = document.getElementById('managementList');
+    
+    listContainer.innerHTML = '';
+    
+    Object.entries(companies).forEach(([id, company]) => {
+        const item = document.createElement('div');
+        item.className = 'management-item';
+        item.innerHTML = `
+            <div class="management-item-info">
+                <div class="management-item-icon">${company.icon}</div>
+                <div class="management-item-details">
+                    <h4>${company.name}</h4>
+                    <p>Estado: ${company.status} | Flujo: S/. ${company.data.cashFlow.toLocaleString()}</p>
+                </div>
+            </div>
+            <div class="management-actions">
+                <button class="btn-action btn-edit" onclick="editCompany('${id}')">
+                    <i class="fas fa-edit"></i>
+                    Editar
+                </button>
+                <button class="btn-action btn-delete" onclick="deleteCompany('${id}')">
+                    <i class="fas fa-trash"></i>
+                    Eliminar
+                </button>
+            </div>
+        `;
+        listContainer.appendChild(item);
+    });
+}
+
+// EDITAR EMPRESA
+function editCompany(companyId) {
+    currentEditingCompany = companyId;
+    const companies = getCompaniesData();
+    const company = companies[companyId];
+    
+    if (company) {
+        document.getElementById('editCompanyName').value = company.name;
+        document.getElementById('editCompanyIcon').value = company.icon;
+        document.getElementById('editCompanyStatus').value = company.status;
+        
+        // Marcar icono seleccionado
+        document.querySelectorAll('.icon-option').forEach(option => {
+            option.classList.remove('selected');
+            if (option.dataset.icon === company.icon) {
+                option.classList.add('selected');
+            }
+        });
+        
+        closeManagementModal();
+        document.getElementById('editCompanyModal').style.display = 'block';
+        document.getElementById('editCompanyModal').classList.add('show');
+    }
+}
+
+// SELECCIONAR ICONO
+function selectIcon(icon) {
+    document.querySelectorAll('.icon-option').forEach(option => {
+        option.classList.remove('selected');
+    });
+    
+    event.target.classList.add('selected');
+    document.getElementById('editCompanyIcon').value = icon;
+}
+
+// GUARDAR CAMBIOS DE EMPRESA
+function saveCompanyChanges() {
+    if (!currentEditingCompany) return;
+    
+    const newName = document.getElementById('editCompanyName').value.trim();
+    const newIcon = document.getElementById('editCompanyIcon').value;
+    const newStatus = document.getElementById('editCompanyStatus').value;
+    
+    if (!newName) {
+        alert('❌ El nombre de la empresa es obligatorio');
+        return;
+    }
+    
+    // Actualizar datos de la empresa
+    const companies = getCompaniesData();
+    if (companies[currentEditingCompany]) {
+        companies[currentEditingCompany].name = newName;
+        companies[currentEditingCompany].icon = newIcon;
+        companies[currentEditingCompany].status = newStatus;
+        
+        // Guardar en localStorage
+        saveCompaniesData(companies);
+        
+        // Actualizar interfaz
+        updateCompanySelector();
+        
+        // Si es la empresa actual, actualizar vista
+        const currentCompany = getCurrentSelectedCompany();
+        if (currentCompany === currentEditingCompany) {
+            updateSelectedCompany(currentEditingCompany);
+        }
+        
+        closeEditModal();
+        showNotification(`✅ Empresa "${newName}" actualizada correctamente`, 'success');
+    }
+}
+
+// CERRAR MODAL DE EDICIÓN
+function closeEditModal() {
+    document.getElementById('editCompanyModal').style.display = 'none';
+    document.getElementById('editCompanyModal').classList.remove('show');
+    currentEditingCompany = null;
+}
+
+// ELIMINAR EMPRESA (CON CÓDIGO DE SEGURIDAD)
+function deleteCompany(companyId) {
+    const companies = getCompaniesData();
+    const company = companies[companyId];
+    
+    if (!company) return;
+    
+    // Verificar que no sea la única empresa
+    const companyCount = Object.keys(companies).length;
+    if (companyCount <= 1) {
+        alert('❌ No puedes eliminar la única empresa. Debe haber al menos una empresa activa.');
+        return;
+    }
+    
+    // Solicitar código de seguridad
+    const securityCode = prompt(`🔒 CONFIRMACIÓN DE ELIMINACIÓN
+    
+Empresa: ${company.name}
+    
+⚠️ ESTA ACCIÓN NO SE PUEDE DESHACER
+    
+Para confirmar la eliminación, ingresa el código de seguridad:`);
+    
+    if (securityCode === null) return; // Usuario canceló
+    
+    if (securityCode !== 'joelgty123456') {
+        alert('❌ Código de seguridad incorrecto. Eliminación cancelada.');
+        return;
+    }
+    
+    // Confirmar eliminación
+    const confirmDelete = confirm(`✅ Código correcto.
+
+¿Estás COMPLETAMENTE SEGURO de eliminar "${company.name}"?
+
+Se perderán TODOS los datos de esta empresa.
+
+¿Continuar?`);
+    
+    if (!confirmDelete) return;
+    
+    // Eliminar empresa
+    delete companies[companyId];
+    saveCompaniesData(companies);
+    
+    // Si era la empresa actual, cambiar a otra
+    const currentCompany = getCurrentSelectedCompany();
+    if (currentCompany === companyId) {
+        const remainingCompanies = Object.keys(companies);
+        if (remainingCompanies.length > 0) {
+            selectCompany(remainingCompanies[0]);
+        }
+    }
+    
+    // Actualizar interfaz
+    updateCompanySelector();
+    loadManagementList();
+    
+    showNotification(`🗑️ Empresa "${company.name}" eliminada correctamente`, 'success');
+}
+
+// GUARDAR DATOS DE EMPRESAS EN LOCALSTORAGE
+function saveCompaniesData(companies) {
+    localStorage.setItem('grizalum_companies', JSON.stringify(companies));
+}
+
+// CARGAR DATOS DE EMPRESAS DESDE LOCALSTORAGE
+function loadCompaniesData() {
+    const saved = localStorage.getItem('grizalum_companies');
+    if (saved) {
+        return JSON.parse(saved);
+    }
+    return getCompaniesData(); // Datos por defecto
+}
+
+// ACTUALIZAR SELECTOR DE EMPRESAS
+function updateCompanySelector() {
+    const companies = loadCompaniesData();
+    const companiesList = document.querySelector('.companies-list');
+    
+    companiesList.innerHTML = '';
+    
+    Object.entries(companies).forEach(([id, company]) => {
+        const item = document.createElement('div');
+        item.className = 'company-item';
+        item.dataset.company = id;
+        item.onclick = () => selectCompany(id);
+        
+        item.innerHTML = `
+            <div class="company-item-icon">${company.icon}</div>
+            <div class="company-item-info">
+                <div class="company-item-name">${company.name}</div>
+                <div class="company-item-stats">Flujo: S/. ${company.data.cashFlow.toLocaleString()}</div>
+            </div>
+            <div class="company-item-status">${company.status === 'Operativo' ? '🟢' : company.status === 'Regular' ? '🟡' : '🔴'}</div>
+        `;
+        
+        companiesList.appendChild(item);
+    });
+}
+
+// OBTENER EMPRESA ACTUAL SELECCIONADA
+function getCurrentSelectedCompany() {
+    const activeItem = document.querySelector('.company-item.active');
+    return activeItem ? activeItem.dataset.company : null;
+}
+
+// ACTUALIZAR FUNCIÓN getCompaniesData para usar localStorage
+function getCompaniesData() {
+    const saved = localStorage.getItem('grizalum_companies');
+    if (saved) {
+        return JSON.parse(saved);
+    }
+    
+    // Datos por defecto (primera vez)
+    const defaultCompanies = {
+        'fundicion-laguna': {
+            name: 'Fundición Laguna',
+            icon: '🔥',
+            status: 'Operativo',
+            theme: { primary: '#dc2626', secondary: '#ea580c' },
+            data: {
+                cashFlow: 24500,
+                revenue: 45200,
+                expenses: 28700,
+                profit: 16500
+            }
+        },
+        'fundicion-joel': {
+            name: 'Fundición Joel',
+            icon: '🔥',
+            status: 'Operativo',
+            theme: { primary: '#ea580c', secondary: '#f97316' },
+            data: {
+                cashFlow: 18300,
+                revenue: 32100,
+                expenses: 21800,
+                profit: 10300
+            }
+        },
+        'avicola-san-juan': {
+            name: 'Avícola San Juan',
+            icon: '🐔',
+            status: 'Operativo',
+            theme: { primary: '#059669', secondary: '#10b981' },
+            data: {
+                cashFlow: 32100,
+                revenue: 58300,
+                expenses: 41200,
+                profit: 17100
+            }
+        },
+        'import-lm': {
+            name: 'Import LM',
+            icon: '📦',
+            status: 'Operativo',
+            theme: { primary: '#8b5cf6', secondary: '#a78bfa' },
+            data: {
+                cashFlow: 45200,
+                revenue: 72800,
+                expenses: 48600,
+                profit: 24200
+            }
+        },
+        'bodega-central': {
+            name: 'Bodega Central',
+            icon: '🏪',
+            status: 'Regular',
+            theme: { primary: '#3b82f6', secondary: '#60a5fa' },
+            data: {
+                cashFlow: 15800,
+                revenue: 28500,
+                expenses: 19700,
+                profit: 8800
+            }
+        }
+    };
+    
+    saveCompaniesData(defaultCompanies);
+    return defaultCompanies;
+}
+
+// AGREGAR BOTÓN DE GESTIÓN AL DROPDOWN
+function updateDropdownWithManagement() {
+    const dropdownFooter = document.querySelector('.dropdown-footer');
+    if (dropdownFooter && !document.getElementById('manageCompaniesBtn')) {
+        dropdownFooter.innerHTML = `
+            <button id="manageCompaniesBtn" class="btn btn-sm btn-neutral" onclick="openCompanyManagement()" style="margin-bottom: 0.5rem; width: 100%;">
+                <i class="fas fa-cog"></i>
+                Gestionar Empresas
+            </button>
+            <div class="total-companies">
+                <strong>📊 Total Holding: S/. 135,900</strong>
+            </div>
+        `;
+    }
+}
+
+// INICIALIZAR AL CARGAR
+document.addEventListener('DOMContentLoaded', function() {
+    // Actualizar selector con datos guardados
+    updateCompanySelector();
+    updateDropdownWithManagement();
+    
+    // Cargar empresa por defecto
+    const companies = getCompaniesData();
+    const firstCompany = Object.keys(companies)[0];
+    if (firstCompany) {
+        updateSelectedCompany(firstCompany);
+    }
+});
+
+console.log('⚙️ Sistema de gestión de empresas GRIZALUM cargado');
+console.log('🔑 Código de seguridad para eliminación configurado');
+</script>                    
                 </div>
             </header>
 
