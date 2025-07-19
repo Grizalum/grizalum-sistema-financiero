@@ -33,23 +33,20 @@
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
         }
         
-        .brand-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .brand-logo {
+            width: 120px;
+            height: 120px;
             margin: 0 auto 2rem;
-            font-size: 2rem;
-            color: #0f172a;
+            background-image: url('src/assets/imagen/grizalum-logo.png.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
             animation: pulse 2s infinite;
         }
         
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
         }
         
         h1 {
@@ -156,9 +153,7 @@
 </head>
 <body>
     <div class="offline-container">
-        <div class="brand-icon">
-            <i class="fas fa-chart-line"></i>
-        </div>
+        <div class="brand-logo"></div>
         
         <div class="offline-icon">
             <i class="fas fa-wifi-slash"></i>
@@ -199,18 +194,14 @@
         // Verificar conexión automáticamente
         function checkConnection() {
             if (navigator.onLine) {
-                // Si hay conexión, redirigir al index
                 window.location.href = '/';
             } else {
-                // Revisar cada 5 segundos
                 setTimeout(checkConnection, 5000);
             }
         }
         
-        // Iniciar verificación
         checkConnection();
         
-        // Escuchar evento de conexión
         window.addEventListener('online', () => {
             window.location.href = '/';
         });
