@@ -1192,17 +1192,19 @@ Se perderán TODOS los datos de esta empresa.
     
     // Si era la empresa actual, cambiar a otra
     const currentCompany = getCurrentSelectedCompany();
-    if (currentCompany === companyId) {
+ if (currentCompany === companyId) {
         const remainingCompanies = Object.keys(companies);
         if (remainingCompanies.length > 0) {
             selectCompany(remainingCompanies[0]);
+        }
+    }
     
     // Actualizar interfaz    
     updateCompanySelector();
     loadManagementList();
     
     showNotification(`🗑️ Empresa "${company.name}" eliminada correctamente`, 'success');
-}
+    }
 
 // GUARDAR DATOS DE EMPRESAS EN LOCALSTORAGE
 function saveCompaniesData(companies) {
