@@ -547,6 +547,13 @@ function selectCompany(companyId) {
     // Cerrar dropdown
     toggleCompanyDropdown();
     
+    // Actualizar tema de IA
+    const companies = getCompaniesData();
+    const company = companies[companyId];
+    if (company && company.theme) {
+        updateAITheme(company.theme);
+    }
+    
     // Mostrar mensaje de cambio
     showNotification(`🏢 Cambiado a ${getCompanyName(companyId)}`, 'success');
 }
@@ -695,7 +702,8 @@ function updateAITheme(theme) {
     
     if (aiHeader && theme) {
         aiHeader.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
-  }    
+   }
+  }  
 
 function getCompanyName(companyId) {
     const companies = getCompaniesData();
@@ -1101,6 +1109,10 @@ function saveCompanyChanges() {
         
         // Actualizar interfaz
         updateCompanySelector();
+        loadManagementList();
+    
+    showNotification(`🗑️ Empresa "${company.name}" eliminada correctamente`, 'success');
+}
         
         // Si es la empresa actual, actualizar vista
         const currentCompany = getCurrentSelectedCompany();
@@ -1171,14 +1183,6 @@ Se perderán TODOS los datos de esta empresa.
         const remainingCompanies = Object.keys(companies);
         if (remainingCompanies.length > 0) {
             selectCompany(remainingCompanies[0]);
-
-     // Actualizar tema de IA
-const companies = getCompaniesData();
-const company = companies[companyId];
-if (company && company.theme) {
-    updateAITheme(company.theme);       
-        }
-    }
     
     // Actualizar interfaz    
     updateCompanySelector();
