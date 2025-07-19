@@ -2562,6 +2562,9 @@ console.log('  • Personalización completa');
                 <button class="ai-voice-btn" onclick="startVoiceInput()" id="voiceInputBtn">
                     <i class="fas fa-microphone"></i>
                 </button>
+                <button class="ai-control-btn" onclick="toggleColorPalette()" title="Cambiar colores">
+                <i class="fas fa-palette"></i>
+              </button>
             </div>
         </div>
     </div>
@@ -3356,6 +3359,281 @@ function stopVoiceInput() {
 initializeVoiceRecognition();
 
 console.log('🎤 Sistema de voz activado');
+
+// SISTEMA DE CAMBIO DE COLORES PREMIUM
+const premiumColorPalettes = [
+    {
+        name: 'Oro Ejecutivo',
+        primary: '#d4af37',
+        secondary: '#b87333',
+        accent: '#f4d03f'
+    },
+    {
+        name: 'Azul Corporativo',
+        primary: '#1e40af',
+        secondary: '#3b82f6',
+        accent: '#60a5fa'
+    },
+    {
+        name: 'Verde Prosperidad',
+        primary: '#059669',
+        secondary: '#10b981',
+        accent: '#34d399'
+    },
+    {
+        name: 'Púrpura Premium',
+        primary: '#7c3aed',
+        secondary: '#8b5cf6',
+        accent: '#a78bfa'
+    },
+    {
+        name: 'Rojo Ejecutivo',
+        primary: '#dc2626',
+        secondary: '#ef4444',
+        accent: '#f87171'
+    },
+    {
+        name: 'Naranja Dinámico',
+        primary: '#ea580c',
+        secondary: '#f97316',
+        accent: '#fb923c'
+    },
+    {
+        name: 'Turquesa Moderno',
+        primary: '#0891b2',
+        secondary: '#06b6d4',
+        accent: '#22d3ee'
+    },
+    {
+        name: 'Rosa Elegante',
+        primary: '#ec4899',
+        secondary: '#f472b6',
+        accent: '#f9a8d4'
+    }
+];
+
+let currentPaletteIndex = 0;
+
+function showColorPalettePicker() {
+    // Crear modal de colores
+    const modal = document.createElement('div');
+    modal.id = 'colorPaletteModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(8px);
+    `;
+    
+    modal.innerHTML = `
+        <div style="
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        ">
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 2rem;
+                border-bottom: 1px solid #e5e7eb;
+                padding-bottom: 1rem;
+            ">
+                <h3 style="margin: 0; color: #1f2937; font-weight: 700; font-size: 1.5rem;">
+                    🎨 Paletas de Colores Premium
+                </h3>
+                <button onclick="closeColorPicker()" style="
+                    background: none;
+                    border: none;
+                    font-size: 1.5rem;
+                    color: #6b7280;
+                    cursor: pointer;
+                    padding: 0.5rem;
+                    border-radius: 8px;
+                    transition: all 0.3s ease;
+                ">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1.5rem;
+            ">
+                ${premiumColorPalettes.map((palette, index) => `
+                    <div class="palette-option" onclick="applyPalette(${index})" style="
+                        padding: 1.5rem;
+                        border-radius: 16px;
+                        border: 2px solid transparent;
+                        background: linear-gradient(135deg, ${palette.primary} 0%, ${palette.secondary} 100%);
+                        color: white;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        text-align: center;
+                        position: relative;
+                        overflow: hidden;
+                    ">
+                        <h4 style="margin: 0 0 1rem 0; font-weight: 600;">${palette.name}</h4>
+                        <div style="
+                            display: flex;
+                            justify-content: center;
+                            gap: 0.5rem;
+                            margin-bottom: 1rem;
+                        ">
+                            <div style="
+                                width: 30px;
+                                height: 30px;
+                                background: ${palette.primary};
+                                border-radius: 50%;
+                                border: 2px solid white;
+                            "></div>
+                            <div style="
+                                width: 30px;
+                                height: 30px;
+                                background: ${palette.secondary};
+                                border-radius: 50%;
+                                border: 2px solid white;
+                            "></div>
+                            <div style="
+                                width: 30px;
+                                height: 30px;
+                                background: ${palette.accent};
+                                border-radius: 50%;
+                                border: 2px solid white;
+                            "></div>
+                        </div>
+                        <p style="margin: 0; font-size: 0.8rem; opacity: 0.9;">Click para aplicar</p>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <div style="
+                margin-top: 2rem;
+                padding-top: 1rem;
+                border-top: 1px solid #e5e7eb;
+                text-align: center;
+            ">
+                <button onclick="resetToDefaultPalette()" style="
+                    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+                    color: white;
+                    border: none;
+                    padding: 0.75rem 2rem;
+                    border-radius: 12px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                ">
+                    🔄 Restaurar Colores Originales
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Efecto hover para las paletas
+    const paletteOptions = document.querySelectorAll('.palette-option');
+    paletteOptions.forEach(option => {
+        option.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-4px) scale(1.02)';
+            this.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.2)';
+        });
+        option.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+            this.style.boxShadow = 'none';
+        });
+    });
+}
+
+function applyPalette(index) {
+    const palette = premiumColorPalettes[index];
+    currentPaletteIndex = index;
+    
+    // Aplicar colores al sistema
+    document.documentElement.style.setProperty('--peru-gold', palette.primary);
+    document.documentElement.style.setProperty('--company-primary', palette.primary);
+    document.documentElement.style.setProperty('--company-secondary', palette.secondary);
+    
+    // Actualizar botones principales
+    const buttons = document.querySelectorAll('.btn-primary, .btn-add-company');
+    buttons.forEach(btn => {
+        btn.style.background = `linear-gradient(135deg, ${palette.primary} 0%, ${palette.secondary} 100%)`;
+    });
+    
+    // Actualizar botón IA
+    const aiButton = document.getElementById('aiAssistantButton');
+    if (aiButton) {
+        aiButton.style.background = `linear-gradient(135deg, ${palette.primary} 0%, ${palette.secondary} 100%)`;
+    }
+    
+    // Actualizar header IA
+    const aiHeader = document.querySelector('.ai-panel-header');
+    if (aiHeader) {
+        aiHeader.style.background = `linear-gradient(135deg, ${palette.primary} 0%, ${palette.secondary} 100%)`;
+    }
+    
+    // Guardar preferencia
+    localStorage.setItem('grizalum_color_palette', index.toString());
+    
+    // Cerrar modal
+    closeColorPicker();
+    
+    // Mostrar notificación
+    showNotification(`🎨 Paleta "${palette.name}" aplicada correctamente`, 'success');
+    
+    console.log(`🎨 Paleta aplicada: ${palette.name}`);
+}
+
+function closeColorPicker() {
+    const modal = document.getElementById('colorPaletteModal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+function resetToDefaultPalette() {
+    applyPalette(0); // Volver al oro ejecutivo
+    localStorage.removeItem('grizalum_color_palette');
+}
+
+// Cargar paleta guardada al iniciar
+function loadSavedPalette() {
+    const savedIndex = localStorage.getItem('grizalum_color_palette');
+    if (savedIndex !== null) {
+        applyPalette(parseInt(savedIndex));
+    }
+}
+
+// Función para el botón pincel
+function toggleColorPalette() {
+    showColorPalettePicker();
+}
+
+// ASEGURAR QUE LOS BOTONES FUNCIONEN
+document.addEventListener('DOMContentLoaded', function() {
+    // Cargar paleta guardada
+    loadSavedPalette();
+    
+    // Asegurar que el input funcione
+    const aiInput = document.getElementById('aiChatInput');
+    if (aiInput) {
+        aiInput.addEventListener('keydown', handleAIChatKeypress);
+    }
+});
+
+console.log('🎨 Sistema de paletas premium activado');    
     
 // PREGUNTAR A IA (BOTONES RÁPIDOS)
 function askAI(question) {
