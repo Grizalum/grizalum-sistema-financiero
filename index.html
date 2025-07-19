@@ -1932,6 +1932,627 @@ ${canInvest ?
     console.log('  • Análisis financiero detallado');
     console.log('🚀 ¡Disfruta tu asistente IA!');
     </script>
+    // FUNCIONES FALTANTES - AGREGAR AL FINAL DEL SCRIPT
+let currentEditingCompany = null;
+
+function saveCompaniesData(companies) {
+    localStorage.setItem('grizalum_companies', JSON.stringify(companies));
+}
+
+function closeManagementModal() {
+    // Función placeholder
+    console.log('Modal cerrado');
+}
+    <!-- MODAL PARA EDITAR EMPRESA CON SELECTOR DE COLORES -->
+<div id="editCompanyModal" class="management-modal">
+    <div class="modal-content enhanced-modal">
+        <div class="modal-header">
+            <h3>✏️ Editar Empresa</h3>
+            <button class="close-modal" onclick="closeEditModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">Nombre de la Empresa</label>
+                <input type="text" id="editCompanyName" class="form-input" placeholder="Ej: Fundición Laguna">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Icono</label>
+                <div class="icon-selector">
+                    <div class="icon-option" data-icon="🔥" onclick="selectIcon('🔥')">🔥</div>
+                    <div class="icon-option" data-icon="🐔" onclick="selectIcon('🐔')">🐔</div>
+                    <div class="icon-option" data-icon="🏪" onclick="selectIcon('🏪')">🏪</div>
+                    <div class="icon-option" data-icon="📦" onclick="selectIcon('📦')">📦</div>
+                    <div class="icon-option" data-icon="🏭" onclick="selectIcon('🏭')">🏭</div>
+                    <div class="icon-option" data-icon="🚛" onclick="selectIcon('🚛')">🚛</div>
+                    <div class="icon-option" data-icon="💼" onclick="selectIcon('💼')">💼</div>
+                    <div class="icon-option" data-icon="🏢" onclick="selectIcon('🏢')">🏢</div>
+                </div>
+                <input type="hidden" id="editCompanyIcon" value="🔥">
+            </div>
+
+            <!-- NUEVO SELECTOR DE PALETAS DE COLORES -->
+            <div class="form-group">
+                <label class="form-label">🎨 Paleta de Colores Corporativa</label>
+                <p class="form-help">Elige los colores que representen tu empresa</p>
+                
+                <div class="color-palette-selector">
+                    <!-- Paleta Oro Ejecutivo -->
+                    <div class="palette-card" data-palette="gold" onclick="selectCompanyPalette('gold')">
+                        <div class="palette-preview">
+                            <div class="color-circle" style="background: #d4af37;"></div>
+                            <div class="color-circle" style="background: #b87333;"></div>
+                            <div class="color-circle" style="background: #f4d03f;"></div>
+                        </div>
+                        <div class="palette-info">
+                            <h4>Oro Ejecutivo</h4>
+                            <p>Elegancia y prestigio</p>
+                        </div>
+                        <div class="palette-check">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </div>
+
+                    <!-- Paleta Verde Prosperidad -->
+                    <div class="palette-card" data-palette="green" onclick="selectCompanyPalette('green')">
+                        <div class="palette-preview">
+                            <div class="color-circle" style="background: #059669;"></div>
+                            <div class="color-circle" style="background: #10b981;"></div>
+                            <div class="color-circle" style="background: #34d399;"></div>
+                        </div>
+                        <div class="palette-info">
+                            <h4>Verde Prosperidad</h4>
+                            <p>Crecimiento y éxito</p>
+                        </div>
+                        <div class="palette-check">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </div>
+
+                    <!-- Paleta Azul Corporativo -->
+                    <div class="palette-card" data-palette="blue" onclick="selectCompanyPalette('blue')">
+                        <div class="palette-preview">
+                            <div class="color-circle" style="background: #1e40af;"></div>
+                            <div class="color-circle" style="background: #3b82f6;"></div>
+                            <div class="color-circle" style="background: #60a5fa;"></div>
+                        </div>
+                        <div class="palette-info">
+                            <h4>Azul Corporativo</h4>
+                            <p>Confianza y solidez</p>
+                        </div>
+                        <div class="palette-check">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </div>
+
+                    <!-- Paleta Púrpura Premium -->
+                    <div class="palette-card" data-palette="purple" onclick="selectCompanyPalette('purple')">
+                        <div class="palette-preview">
+                            <div class="color-circle" style="background: #7c3aed;"></div>
+                            <div class="color-circle" style="background: #8b5cf6;"></div>
+                            <div class="color-circle" style="background: #a78bfa;"></div>
+                        </div>
+                        <div class="palette-info">
+                            <h4>Púrpura Premium</h4>
+                            <p>Innovación y lujo</p>
+                        </div>
+                        <div class="palette-check">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </div>
+
+                    <!-- Paleta Rojo Dinámico -->
+                    <div class="palette-card" data-palette="red" onclick="selectCompanyPalette('red')">
+                        <div class="palette-preview">
+                            <div class="color-circle" style="background: #dc2626;"></div>
+                            <div class="color-circle" style="background: #ef4444;"></div>
+                            <div class="color-circle" style="background: #f87171;"></div>
+                        </div>
+                        <div class="palette-info">
+                            <h4>Rojo Dinámico</h4>
+                            <p>Energía y pasión</p>
+                        </div>
+                        <div class="palette-check">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </div>
+
+                    <!-- Paleta Naranja Energético -->
+                    <div class="palette-card" data-palette="orange" onclick="selectCompanyPalette('orange')">
+                        <div class="palette-preview">
+                            <div class="color-circle" style="background: #ea580c;"></div>
+                            <div class="color-circle" style="background: #f97316;"></div>
+                            <div class="color-circle" style="background: #fb923c;"></div>
+                        </div>
+                        <div class="palette-info">
+                            <h4>Naranja Energético</h4>
+                            <p>Creatividad y vitalidad</p>
+                        </div>
+                        <div class="palette-check">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </div>
+
+                    <!-- Paleta Turquesa Moderno -->
+                    <div class="palette-card" data-palette="teal" onclick="selectCompanyPalette('teal')">
+                        <div class="palette-preview">
+                            <div class="color-circle" style="background: #0891b2;"></div>
+                            <div class="color-circle" style="background: #06b6d4;"></div>
+                            <div class="color-circle" style="background: #22d3ee;"></div>
+                        </div>
+                        <div class="palette-info">
+                            <h4>Turquesa Moderno</h4>
+                            <p>Frescura y modernidad</p>
+                        </div>
+                        <div class="palette-check">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </div>
+
+                    <!-- Paleta Rosa Elegante -->
+                    <div class="palette-card" data-palette="pink" onclick="selectCompanyPalette('pink')">
+                        <div class="palette-preview">
+                            <div class="color-circle" style="background: #ec4899;"></div>
+                            <div class="color-circle" style="background: #f472b6;"></div>
+                            <div class="color-circle" style="background: #f9a8d4;"></div>
+                        </div>
+                        <div class="palette-info">
+                            <h4>Rosa Elegante</h4>
+                            <p>Estilo y sofisticación</p>
+                        </div>
+                        <div class="palette-check">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vista previa de la paleta seleccionada -->
+                <div class="selected-palette-preview" id="selectedPalettePreview">
+                    <h4>Vista Previa</h4>
+                    <div class="preview-company-card">
+                        <div class="preview-icon" id="previewIcon">🔥</div>
+                        <div class="preview-info">
+                            <div class="preview-name" id="previewName">Fundición Laguna</div>
+                            <div class="preview-status">🟢 Operativo</div>
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" id="selectedCompanyPalette" value="gold">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Estado</label>
+                <select id="editCompanyStatus" class="form-input">
+                    <option value="Operativo">🟢 Operativo</option>
+                    <option value="Regular">🟡 Regular</option>
+                    <option value="Mantenimiento">🔵 Mantenimiento</option>
+                    <option value="Cerrado">🔴 Cerrado</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn btn-success" onclick="saveCompanyChanges()">
+                <i class="fas fa-save"></i>
+                Guardar Cambios
+            </button>
+            <button class="btn btn-neutral" onclick="closeEditModal()">
+                Cancelar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ESTILOS PARA EL SELECTOR DE PALETAS -->
+<style>
+.enhanced-modal {
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.form-help {
+    font-size: 0.8rem;
+    color: var(--gray-600);
+    margin: 0.25rem 0 1rem 0;
+    line-height: 1.4;
+}
+
+.color-palette-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.palette-card {
+    background: white;
+    border: 2px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.palette-card:hover {
+    border-color: var(--peru-gold);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.palette-card.selected {
+    border-color: var(--peru-gold);
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, rgba(184, 115, 51, 0.05) 100%);
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.2);
+}
+
+.palette-preview {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    justify-content: center;
+}
+
+.color-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+}
+
+.palette-card:hover .color-circle {
+    transform: scale(1.1);
+}
+
+.palette-info {
+    text-align: center;
+}
+
+.palette-info h4 {
+    margin: 0 0 0.25rem 0;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--gray-800);
+}
+
+.palette-info p {
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--gray-600);
+    font-style: italic;
+}
+
+.palette-check {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 24px;
+    height: 24px;
+    background: var(--peru-gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.8rem;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s ease;
+}
+
+.palette-card.selected .palette-check {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.selected-palette-preview {
+    background: var(--gray-50);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+}
+
+.selected-palette-preview h4 {
+    margin: 0 0 1rem 0;
+    color: var(--gray-800);
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.preview-company-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: white;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 2px solid var(--gray-200);
+    transition: all 0.3s ease;
+}
+
+.preview-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+    transition: all 0.3s ease;
+}
+
+.preview-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gray-800);
+    margin-bottom: 0.25rem;
+}
+
+.preview-status {
+    font-size: 0.8rem;
+    color: var(--gray-600);
+    font-weight: 500;
+}
+
+/* Animaciones */
+@keyframes paletteSelect {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1.02); }
+}
+
+.palette-card.selected {
+    animation: paletteSelect 0.3s ease;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .color-palette-selector {
+        grid-template-columns: 1fr;
+    }
+    
+    .enhanced-modal {
+        max-width: 95%;
+    }
+}
+</style>
+
+<!-- JAVASCRIPT PARA EL SELECTOR DE PALETAS -->
+<script>
+// Definir paletas de colores
+const companyColorPalettes = {
+    gold: {
+        name: 'Oro Ejecutivo',
+        primary: '#d4af37',
+        secondary: '#b87333',
+        accent: '#f4d03f'
+    },
+    green: {
+        name: 'Verde Prosperidad',
+        primary: '#059669',
+        secondary: '#10b981',
+        accent: '#34d399'
+    },
+    blue: {
+        name: 'Azul Corporativo',
+        primary: '#1e40af',
+        secondary: '#3b82f6',
+        accent: '#60a5fa'
+    },
+    purple: {
+        name: 'Púrpura Premium',
+        primary: '#7c3aed',
+        secondary: '#8b5cf6',
+        accent: '#a78bfa'
+    },
+    red: {
+        name: 'Rojo Dinámico',
+        primary: '#dc2626',
+        secondary: '#ef4444',
+        accent: '#f87171'
+    },
+    orange: {
+        name: 'Naranja Energético',
+        primary: '#ea580c',
+        secondary: '#f97316',
+        accent: '#fb923c'
+    },
+    teal: {
+        name: 'Turquesa Moderno',
+        primary: '#0891b2',
+        secondary: '#06b6d4',
+        accent: '#22d3ee'
+    },
+    pink: {
+        name: 'Rosa Elegante',
+        primary: '#ec4899',
+        secondary: '#f472b6',
+        accent: '#f9a8d4'
+    }
+};
+
+// Seleccionar paleta de empresa
+function selectCompanyPalette(paletteId) {
+    console.log(`🎨 Seleccionando paleta: ${paletteId}`);
+    
+    // Actualizar clases activas
+    document.querySelectorAll('.palette-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+    document.querySelector(`[data-palette="${paletteId}"]`).classList.add('selected');
+    
+    // Guardar selección
+    document.getElementById('selectedCompanyPalette').value = paletteId;
+    
+    // Actualizar vista previa
+    updatePalettePreview(paletteId);
+    
+    // Aplicar colores temporalmente a la vista previa
+    applyPreviewColors(paletteId);
+}
+
+// Actualizar vista previa
+function updatePalettePreview(paletteId) {
+    const palette = companyColorPalettes[paletteId];
+    const previewIcon = document.getElementById('previewIcon');
+    const previewName = document.getElementById('previewName');
+    
+    // Actualizar icono de vista previa
+    const selectedIcon = document.querySelector('.icon-option.selected');
+    if (selectedIcon) {
+        previewIcon.textContent = selectedIcon.dataset.icon;
+    }
+    
+    // Actualizar nombre de vista previa
+    const companyName = document.getElementById('editCompanyName').value;
+    if (companyName) {
+        previewName.textContent = companyName;
+    }
+    
+    // Aplicar colores de la paleta
+    previewIcon.style.background = `linear-gradient(135deg, ${palette.primary} 0%, ${palette.secondary} 100%)`;
+    
+    console.log(`✅ Vista previa actualizada con paleta: ${palette.name}`);
+}
+
+// Aplicar colores de vista previa
+function applyPreviewColors(paletteId) {
+    const palette = companyColorPalettes[paletteId];
+    const previewCard = document.querySelector('.preview-company-card');
+    
+    // Actualizar borde de la tarjeta de vista previa
+    previewCard.style.borderColor = palette.primary;
+    previewCard.style.background = `linear-gradient(135deg, ${palette.primary}08 0%, ${palette.secondary}08 100%)`;
+}
+
+// Función mejorada para seleccionar icono que actualiza la vista previa
+function selectIcon(icon) {
+    document.querySelectorAll('.icon-option').forEach(option => {
+        option.classList.remove('selected');
+    });
+    
+    event.target.classList.add('selected');
+    document.getElementById('editCompanyIcon').value = icon;
+    
+    // Actualizar vista previa
+    document.getElementById('previewIcon').textContent = icon;
+}
+
+// Actualizar vista previa cuando cambie el nombre
+document.addEventListener('DOMContentLoaded', function() {
+    const nameInput = document.getElementById('editCompanyName');
+    if (nameInput) {
+        nameInput.addEventListener('input', function() {
+            document.getElementById('previewName').textContent = this.value || 'Nombre de Empresa';
+        });
+    }
+});
+
+// Función mejorada para guardar cambios con paleta
+function saveCompanyChanges() {
+    if (!currentEditingCompany) return;
+    
+    const newName = document.getElementById('editCompanyName').value.trim();
+    const newIcon = document.getElementById('editCompanyIcon').value;
+    const newStatus = document.getElementById('editCompanyStatus').value;
+    const selectedPalette = document.getElementById('selectedCompanyPalette').value;
+    
+    if (!newName) {
+        alert('❌ El nombre de la empresa es obligatorio');
+        return;
+    }
+    
+    // Obtener datos de la paleta seleccionada
+    const paletteData = companyColorPalettes[selectedPalette];
+    
+    // Actualizar datos de la empresa
+    const companies = getCompaniesData();
+    if (companies[currentEditingCompany]) {
+        companies[currentEditingCompany].name = newName;
+        companies[currentEditingCompany].icon = newIcon;
+        companies[currentEditingCompany].status = newStatus;
+        companies[currentEditingCompany].theme = {
+            primary: paletteData.primary,
+            secondary: paletteData.secondary,
+            accent: paletteData.accent
+        };
+        companies[currentEditingCompany].paletteName = paletteData.name;
+        
+        // Guardar en localStorage
+        saveCompaniesData(companies);
+        
+        // Actualizar interfaz
+        updateCompanySelector();
+        
+        // Si es la empresa actual, actualizar vista
+        const currentCompany = getCurrentSelectedCompany();
+        if (currentCompany === currentEditingCompany) {
+            updateSelectedCompany(currentEditingCompany);
+            updateCompanyTheme(companies[currentEditingCompany].theme);
+        }
+        
+        closeEditModal();
+        showNotification(`✅ Empresa "${newName}" actualizada con paleta "${paletteData.name}"`, 'success');
+    }
+}
+
+// Inicializar paleta por defecto al abrir modal
+function editCompany(companyId) {
+    currentEditingCompany = companyId;
+    const companies = getCompaniesData();
+    const company = companies[companyId];
+    
+    if (company) {
+        document.getElementById('editCompanyName').value = company.name;
+        document.getElementById('editCompanyIcon').value = company.icon;
+        document.getElementById('editCompanyStatus').value = company.status;
+        
+        // Marcar icono seleccionado
+        document.querySelectorAll('.icon-option').forEach(option => {
+            option.classList.remove('selected');
+            if (option.dataset.icon === company.icon) {
+                option.classList.add('selected');
+            }
+        });
+        
+        // Seleccionar paleta actual de la empresa
+        const currentPalette = company.theme ? findPaletteByColors(company.theme) : 'gold';
+        selectCompanyPalette(currentPalette);
+        
+        closeManagementModal();
+        document.getElementById('editCompanyModal').style.display = 'block';
+        document.getElementById('editCompanyModal').classList.add('show');
+    }
+}
+
+// Función auxiliar para encontrar paleta por colores
+function findPaletteByColors(theme) {
+    for (const [id, palette] of Object.entries(companyColorPalettes)) {
+        if (palette.primary === theme.primary) {
+            return id;
+        }
+    }
+    return 'gold'; // default
+}
+
+console.log('🎨 Selector de paletas corporativas cargado');
+</script>
 
     <!-- JAVASCRIPT PARA FUNCIONALIDAD DEL SELECTOR DE EMPRESAS -->
     <script>
