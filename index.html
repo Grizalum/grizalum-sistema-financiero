@@ -19,12 +19,8 @@
     <!-- FontAwesome -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     
-    
     <!-- Chart.js -->
-  <!-- Chart.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
-    
-    <!-- ========== AGREGAR ESTAS LÍNEAS NUEVAS ========== -->
     
     <!-- PWA MANIFEST -->
     <link rel="manifest" href="manifest.json">
@@ -49,8 +45,6 @@
     <!-- Microsoft tiles -->
     <meta name="msapplication-TileImage" content="src/assets/images/icon-144x144.png">
     <meta name="msapplication-config" content="browserconfig.xml">
-    
-    <!-- ========== FIN DE LÍNEAS NUEVAS ========== -->
     
     <!-- Styles - RUTAS DESDE LA RAÍZ -->
     <link rel="stylesheet" href="src/assets/css/styles.css">
@@ -234,7 +228,7 @@
                         <span class="notification-badge">3</span>
                     </button>
 
-<!-- SELECTOR DE EMPRESAS - REEMPLAZAR LA SECCIÓN executive-profile -->
+<!-- SELECTOR DE EMPRESAS -->
 <div class="company-selector" id="companySelector">
     <div class="selected-company" onclick="toggleCompanyDropdown()">
         <div class="company-info">
@@ -526,4062 +520,6 @@
 }
 </style>
 
-<!-- JAVASCRIPT PARA FUNCIONALIDAD -->
-<script>
-// FUNCIONES DEL SELECTOR DE EMPRESAS
-function toggleCompanyDropdown() {
-    const dropdown = document.getElementById('companyDropdown');
-    const arrow = document.getElementById('dropdownArrow');
-    
-    dropdown.classList.toggle('show');
-    arrow.classList.toggle('rotate');
-}
-
-function selectCompany(companyId) {
-    // Actualizar empresa seleccionada
-    updateSelectedCompany(companyId);
-    
-    // Actualizar datos de la empresa
-    updateCompanyData(companyId);
-    
-    // Cerrar dropdown
-    toggleCompanyDropdown();
-    
-    // Actualizar tema de IA
-    const companies = getCompaniesData();
-    const company = companies[companyId];
-    if (company && company.theme) {
-        updateAITheme(company.theme);
-    }
-    
-    // Mostrar mensaje de cambio
-    showNotification(`🏢 Cambiado a ${getCompanyName(companyId)}`, 'success');
-}
-
-function updateSelectedCompany(companyId) {
-    const companies = getCompaniesData();
-    const company = companies[companyId];
-    
-    if (company) {
-        document.getElementById('currentCompanyIcon').textContent = company.icon;
-        document.getElementById('currentCompanyName').textContent = company.name;
-        document.getElementById('currentCompanyStatus').textContent = `🟢 ${company.status}`;
-        
-        // Actualizar clase activa
-        document.querySelectorAll('.company-item').forEach(item => {
-            item.classList.remove('active');
-        });
-        document.querySelector(`[data-company="${companyId}"]`).classList.add('active');
-    }
-}
-
-function updateCompanyData(companyId) {
-    const companies = getCompaniesData();
-    const company = companies[companyId];
-    
-    if (company) {
-        // Actualizar KPIs del dashboard
-        updateKPIs(company.data);
-        
-        // Actualizar sidebar
-        updateSidebar(company.data);
-        
-        // Actualizar tema de colores
-        updateCompanyTheme(company.theme);
-        
-        console.log(`📊 Datos actualizados para: ${company.name}`);
-    }
-}
-
-function getCompaniesData() {
-    return {
-        'fundicion-laguna': {
-            name: 'Fundición Laguna',
-            icon: '🔥',
-            status: 'Operativo',
-            theme: { primary: '#dc2626', secondary: '#ea580c' },
-            data: {
-                cashFlow: 24500,
-                revenue: 45200,
-                expenses: 28700,
-                profit: 16500
-            }
-        },
-        'fundicion-joel': {
-            name: 'Fundición Joel',
-            icon: '🔥',
-            status: 'Operativo',
-            theme: { primary: '#ea580c', secondary: '#f97316' },
-            data: {
-                cashFlow: 18300,
-                revenue: 32100,
-                expenses: 21800,
-                profit: 10300
-            }
-        },
-        'avicola-san-juan': {
-            name: 'Avícola San Juan',
-            icon: '🐔',
-            status: 'Operativo',
-            theme: { primary: '#059669', secondary: '#10b981' },
-            data: {
-                cashFlow: 32100,
-                revenue: 58300,
-                expenses: 41200,
-                profit: 17100
-            }
-        },
-        'bodega-central': {
-            name: 'Bodega Central',
-            icon: '🏪',
-            status: 'Regular',
-            theme: { primary: '#3b82f6', secondary: '#60a5fa' },
-            data: {
-                cashFlow: 15800,
-                revenue: 28500,
-                expenses: 19700,
-                profit: 8800
-            }
-        },
-        'importaciones-gz': {
-            name: 'Importaciones GZ',
-            icon: '📦',
-            status: 'Operativo',
-            theme: { primary: '#8b5cf6', secondary: '#a78bfa' },
-            data: {
-                cashFlow: 45200,
-                revenue: 72800,
-                expenses: 48600,
-                profit: 24200
-            }
-        }
-    };
-}
-
-function updateKPIs(data) {
-    // Actualizar valores en las tarjetas KPI
-    const kpiValues = document.querySelectorAll('.kpi-value-animation');
-    if (kpiValues.length >= 4) {
-        kpiValues[0].textContent = `S/. ${data.cashFlow.toLocaleString()}`;
-        kpiValues[1].textContent = `S/. ${data.revenue.toLocaleString()}`;
-        kpiValues[2].textContent = `S/. ${data.expenses.toLocaleString()}`;
-        kpiValues[3].textContent = `S/. ${data.profit.toLocaleString()}`;
-    }
-}
-
-function updateSidebar(data) {
-    // Actualizar valores en el sidebar
-    const elements = {
-        'sidebarCashFlow': data.cashFlow,
-        'sidebarRevenue': data.revenue,
-        'sidebarExpenses': data.expenses,
-        'sidebarProfit': data.profit
-    };
-    
-    Object.entries(elements).forEach(([id, value]) => {
-        const element = document.getElementById(id);
-        if (element) {
-            element.textContent = `S/. ${value.toLocaleString()}`;
-        }
-    });
-}
-
-function updateCompanyTheme(theme) {
-    console.log('🎨 Actualizando tema global:', theme);
-    
-    // Cambiar colores del tema según la empresa
-    document.documentElement.style.setProperty('--company-primary', theme.primary);
-    document.documentElement.style.setProperty('--company-secondary', theme.secondary);
-    
-    // Actualizar colores específicos del sistema
-    document.documentElement.style.setProperty('--peru-gold', theme.primary);
-    document.documentElement.style.setProperty('--gradient-gold', `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`);
-    
-    // Actualizar tarjetas KPI con los nuevos colores
-    const kpiCards = document.querySelectorAll('.kpi-card');
-    kpiCards.forEach(card => {
-        if (card.classList.contains('profit') || card.classList.contains('gold-glow')) {
-            card.style.background = `linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, rgba(184, 115, 51, 0.05) 100%)`;
-            card.style.borderColor = theme.primary;
-        }
-    });
-    
-    // Actualizar botones y elementos principales
-    const buttons = document.querySelectorAll('.btn-primary');
-    buttons.forEach(btn => {
-        btn.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
-    });
-    
-    // Actualizar selector de empresa
-    const selectedCompany = document.querySelector('.selected-company');
-    if (selectedCompany) {
-        selectedCompany.style.background = `linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(184, 115, 51, 0.1) 100%)`;
-        selectedCompany.style.borderColor = `rgba(${hexToRgb(theme.primary)}, 0.3)`;
-    }
-    
-    console.log('✅ Tema actualizado correctamente');
-}
-
-// FUNCIÓN AUXILIAR PARA CONVERTIR HEX A RGB
-function hexToRgb(hex) {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? 
-        `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : 
-        '212, 175, 55';
-}
-    
-function updateAITheme(theme) {
-    const aiButton = document.getElementById('aiAssistantButton');
-    const aiHeader = document.querySelector('.ai-panel-header');
-    
-    if (aiButton && theme) {
-        aiButton.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
-    }
-    
-    if (aiHeader && theme) {
-        aiHeader.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
-   }
-  }  
-
-function getCompanyName(companyId) {
-    const companies = getCompaniesData();
-    return companies[companyId]?.name || 'Empresa';
-}
-
-function showAddCompanyWizard() {
-    currentWizardStep = 1;
-    wizardData = {};
-    
-    // Resetear formulario
-    document.getElementById('wizardCompanyName').value = '';
-    document.getElementById('wizardCompanyDescription').value = '';
-    
-    // Mostrar paso 1
-    showWizardStep(1);
-    
-    // Mostrar modal
-    document.getElementById('addCompanyWizard').style.display = 'block';
-    document.getElementById('addCompanyWizard').classList.add('show');
-    
-    // Cerrar dropdown de empresas
-    toggleCompanyDropdown();
-    
-    console.log('🚀 Wizard abierto');
-}
-
-// Cerrar dropdown al hacer clic fuera
-document.addEventListener('click', function(event) {
-    const selector = document.getElementById('companySelector');
-    const dropdown = document.getElementById('companyDropdown');
-    
-    if (selector && !selector.contains(event.target)) {
-        dropdown.classList.remove('show');
-        document.getElementById('dropdownArrow').classList.remove('rotate');
-    }
-});
-
-console.log('🏢 Selector de empresas GRIZALUM cargado');
-</script>
-<!-- AGREGAR DESPUÉS DEL SCRIPT ANTERIOR -->
-
-<!-- MODAL PARA GESTIÓN DE EMPRESAS -->
-<div id="companyManagementModal" class="management-modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>⚙️ Gestión de Empresas</h3>
-            <button class="close-modal" onclick="closeManagementModal()">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        
-        <div class="modal-body">
-            <div class="companies-management-list" id="managementList">
-                <!-- Se llena dinámicamente -->
-            </div>
-        </div>
-        
-        <div class="modal-footer">
-            <button class="btn btn-neutral" onclick="closeManagementModal()">
-                Cerrar
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL PARA EDITAR EMPRESA -->
-<div id="editCompanyModal" class="management-modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>✏️ Editar Empresa</h3>
-            <button class="close-modal" onclick="closeEditModal()">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        
-        <div class="modal-body">
-            <div class="form-group">
-                <label class="form-label">Nombre de la Empresa</label>
-                <input type="text" id="editCompanyName" class="form-input" placeholder="Ej: Import LM">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Icono</label>
-                <div class="icon-selector">
-                    <div class="icon-option" data-icon="🔥" onclick="selectIcon('🔥')">🔥</div>
-                    <div class="icon-option" data-icon="🐔" onclick="selectIcon('🐔')">🐔</div>
-                    <div class="icon-option" data-icon="🏪" onclick="selectIcon('🏪')">🏪</div>
-                    <div class="icon-option" data-icon="📦" onclick="selectIcon('📦')">📦</div>
-                    <div class="icon-option" data-icon="🏭" onclick="selectIcon('🏭')">🏭</div>
-                    <div class="icon-option" data-icon="🚛" onclick="selectIcon('🚛')">🚛</div>
-                    <div class="icon-option" data-icon="💼" onclick="selectIcon('💼')">💼</div>
-                    <div class="icon-option" data-icon="🏢" onclick="selectIcon('🏢')">🏢</div>
-                </div>
-                <input type="hidden" id="editCompanyIcon" value="🔥">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Estado</label>
-                <select id="editCompanyStatus" class="form-input">
-                    <option value="Operativo">🟢 Operativo</option>
-                    <option value="Regular">🟡 Regular</option>
-                    <option value="Mantenimiento">🔵 Mantenimiento</option>
-                    <option value="Cerrado">🔴 Cerrado</option>
-                </select>
-            </div>
-        </div>
-        
-        <div class="modal-footer">
-            <button class="btn btn-success" onclick="saveCompanyChanges()">
-                <i class="fas fa-save"></i>
-                Guardar Cambios
-            </button>
-            <button class="btn btn-neutral" onclick="closeEditModal()">
-                Cancelar
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- ESTILOS PARA MODALES -->
-<style>
-.management-modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    z-index: 10000;
-    backdrop-filter: blur(5px);
-}
-
-.modal-content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    border-radius: 20px;
-    width: 90%;
-    max-width: 600px;
-    max-height: 80vh;
-    overflow-y: auto;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 2rem;
-    border-bottom: 1px solid var(--gray-200);
-}
-
-.modal-header h3 {
-    margin: 0;
-    color: var(--gray-800);
-    font-weight: 700;
-}
-
-.close-modal {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: var(--gray-500);
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
-
-.close-modal:hover {
-    background: var(--gray-100);
-    color: var(--gray-700);
-}
-
-.modal-body {
-    padding: 2rem;
-}
-
-.modal-footer {
-    padding: 1.5rem 2rem;
-    border-top: 1px solid var(--gray-200);
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
-}
-
-.management-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.5rem;
-    border: 1px solid var(--gray-200);
-    border-radius: 12px;
-    margin-bottom: 1rem;
-    transition: all 0.3s ease;
-}
-
-.management-item:hover {
-    border-color: var(--peru-gold);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.management-item-info {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.management-item-icon {
-    width: 50px;
-    height: 50px;
-    background: var(--gray-100);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-}
-
-.management-item-details h4 {
-    margin: 0 0 0.25rem 0;
-    color: var(--gray-800);
-    font-weight: 600;
-}
-
-.management-item-details p {
-    margin: 0;
-    color: var(--gray-600);
-    font-size: 0.9rem;
-}
-
-.management-actions {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.btn-action {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.btn-edit {
-    background: var(--gradient-blue);
-    color: white;
-}
-
-.btn-delete {
-    background: var(--gradient-loss);
-    color: white;
-}
-
-.btn-action:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.icon-selector {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-}
-
-.icon-option {
-    width: 50px;
-    height: 50px;
-    border: 2px solid var(--gray-200);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.icon-option:hover {
-    border-color: var(--peru-gold);
-    background: rgba(212, 175, 55, 0.1);
-}
-
-.icon-option.selected {
-    border-color: var(--peru-gold);
-    background: rgba(212, 175, 55, 0.2);
-}
-
-/* Animaciones */
-.management-modal.show {
-    display: block;
-    animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-</style>
-
-<!-- JAVASCRIPT PARA GESTIÓN DE EMPRESAS -->
-<script>
-let currentEditingCompany = null;
-
-// ABRIR MODAL DE GESTIÓN
-function openCompanyManagement() {
-    loadManagementList();
-    document.getElementById('companyManagementModal').classList.add('show');
-    document.getElementById('companyManagementModal').style.display = 'block';
-}
-
-// CERRAR MODAL DE GESTIÓN
-function closeManagementModal() {
-    document.getElementById('companyManagementModal').style.display = 'none';
-    document.getElementById('companyManagementModal').classList.remove('show');
-}
-
-// CARGAR LISTA DE EMPRESAS PARA GESTIÓN
-function loadManagementList() {
-    const companies = getCompaniesData();
-    const listContainer = document.getElementById('managementList');
-    
-    listContainer.innerHTML = '';
-    
-    Object.entries(companies).forEach(([id, company]) => {
-        const item = document.createElement('div');
-        item.className = 'management-item';
-        item.innerHTML = `
-            <div class="management-item-info">
-                <div class="management-item-icon">${company.icon}</div>
-                <div class="management-item-details">
-                    <h4>${company.name}</h4>
-                    <p>Estado: ${company.status} | Flujo: S/. ${company.data.cashFlow.toLocaleString()}</p>
-                </div>
-            </div>
-            <div class="management-actions">
-                <button class="btn-action btn-edit" onclick="editCompany('${id}')">
-                    <i class="fas fa-edit"></i>
-                    Editar
-                </button>
-                <button class="btn-action btn-delete" onclick="deleteCompany('${id}')">
-                    <i class="fas fa-trash"></i>
-                    Eliminar
-                </button>
-            </div>
-        `;
-        listContainer.appendChild(item);
-    });
-}
-
-// EDITAR EMPRESA
-function editCompany(companyId) {
-    currentEditingCompany = companyId;
-    const companies = getCompaniesData();
-    const company = companies[companyId];
-    
-    if (company) {
-        document.getElementById('editCompanyName').value = company.name;
-        document.getElementById('editCompanyIcon').value = company.icon;
-        document.getElementById('editCompanyStatus').value = company.status;
-        
-        // Marcar icono seleccionado
-        document.querySelectorAll('.icon-option').forEach(option => {
-            option.classList.remove('selected');
-            if (option.dataset.icon === company.icon) {
-                option.classList.add('selected');
-            }
-        });
-        
-        closeManagementModal();
-        document.getElementById('editCompanyModal').style.display = 'block';
-        document.getElementById('editCompanyModal').classList.add('show');
-    }
-}
-
-// SELECCIONAR ICONO
-function selectIcon(icon) {
-    document.querySelectorAll('.icon-option').forEach(option => {
-        option.classList.remove('selected');
-    });
-    
-    event.target.classList.add('selected');
-    document.getElementById('editCompanyIcon').value = icon;
-}
-
-// GUARDAR CAMBIOS DE EMPRESA
-function saveCompanyChanges() {
-    if (!currentEditingCompany) return;
-    
-    const newName = document.getElementById('editCompanyName').value.trim();
-    const newIcon = document.getElementById('editCompanyIcon').value;
-    const newStatus = document.getElementById('editCompanyStatus').value;
-    
-    if (!newName) {
-        alert('❌ El nombre de la empresa es obligatorio');
-        return;
-    }
-    
-    // Actualizar datos de la empresa
-    const companies = getCompaniesData();
-    if (companies[currentEditingCompany]) {
-        companies[currentEditingCompany].name = newName;
-        companies[currentEditingCompany].icon = newIcon;
-        companies[currentEditingCompany].status = newStatus;
-        
-        // Guardar en localStorage
-        saveCompaniesData(companies);
-        
-        // Actualizar interfaz
-        updateCompanySelector();
-        loadManagementList();
-        
-        // Si es la empresa actual, actualizar vista
-        const currentCompany = getCurrentSelectedCompany();
-        if (currentCompany === currentEditingCompany) {
-            updateSelectedCompany(currentEditingCompany);
-        }
-        
-        closeEditModal();
-        showNotification(`✅ Empresa "${newName}" actualizada correctamente`, 'success');
-    }
-}
-
-// CERRAR MODAL DE EDICIÓN
-function closeEditModal() {    
-    document.getElementById('editCompanyModal').style.display = 'none';
-    document.getElementById('editCompanyModal').classList.remove('show');
-    currentEditingCompany = null;
-}
-
-// ELIMINAR EMPRESA (CON CÓDIGO DE SEGURIDAD)
-function deleteCompany(companyId) {
-    const companies = getCompaniesData();
-    const company = companies[companyId];
-    
-    if (!company) return;
-    
-    // Verificar que no sea la única empresa
-    const companyCount = Object.keys(companies).length;
-    if (companyCount <= 1) {
-        alert('❌ No puedes eliminar la única empresa. Debe haber al menos una empresa activa.');
-        return;
-    }
-    
-    // Solicitar código de seguridad
-    const securityCode = prompt(`🔒 CONFIRMACIÓN DE ELIMINACIÓN
-    
-Empresa: ${company.name}
-    
-⚠️ ESTA ACCIÓN NO SE PUEDE DESHACER
-    
-Para confirmar la eliminación, ingresa el código de seguridad:`);
-    
-    if (securityCode === null) return; // Usuario canceló
-    
-    if (securityCode !== 'joelgty123456') {
-        alert('❌ Código de seguridad incorrecto. Eliminación cancelada.');
-        return;
-    }
-    
-    // Confirmar eliminación
-    const confirmDelete = confirm(`✅ Código correcto.
-
-¿Estás COMPLETAMENTE SEGURO de eliminar "${company.name}"?
-
-Se perderán TODOS los datos de esta empresa.
-
-¿Continuar?`);
-    
-    if (!confirmDelete) return;
-    
-    // Eliminar empresa
-    delete companies[companyId];
-    saveCompaniesData(companies);
-    
-    // Si era la empresa actual, cambiar a otra
-    const currentCompany = getCurrentSelectedCompany();
- if (currentCompany === companyId) {
-        const remainingCompanies = Object.keys(companies);
-        if (remainingCompanies.length > 0) {
-            selectCompany(remainingCompanies[0]);
-        }
-    }
-    
-    // Actualizar interfaz    
-    updateCompanySelector();
-    loadManagementList();
-    
-    showNotification(`🗑️ Empresa "${company.name}" eliminada correctamente`, 'success');
-    }
-
-// GUARDAR DATOS DE EMPRESAS EN LOCALSTORAGE
-function saveCompaniesData(companies) {
-    localStorage.setItem('grizalum_companies', JSON.stringify(companies));
-}
-
-// CARGAR DATOS DE EMPRESAS DESDE LOCALSTORAGE
-function loadCompaniesData() {
-    const saved = localStorage.getItem('grizalum_companies');
-    if (saved) {
-        return JSON.parse(saved);
-    }
-    return getCompaniesData(); // Datos por defecto
-}
-
-// ACTUALIZAR SELECTOR DE EMPRESAS
-function updateCompanySelector() {
-    const companies = loadCompaniesData();
-    const companiesList = document.querySelector('.companies-list');
-    
-    companiesList.innerHTML = '';
-    
-    Object.entries(companies).forEach(([id, company]) => {
-        const item = document.createElement('div');
-        item.className = 'company-item';
-        item.dataset.company = id;
-        item.onclick = () => selectCompany(id);
-        
-        item.innerHTML = `
-            <div class="company-item-icon">${company.icon}</div>
-            <div class="company-item-info">
-                <div class="company-item-name">${company.name}</div>
-                <div class="company-item-stats">Flujo: S/. ${company.data.cashFlow.toLocaleString()}</div>
-            </div>
-            <div class="company-item-status">${company.status === 'Operativo' ? '🟢' : company.status === 'Regular' ? '🟡' : '🔴'}</div>
-        `;
-        
-        companiesList.appendChild(item);
-    });
-}
-
-// OBTENER EMPRESA ACTUAL SELECCIONADA
-function getCurrentSelectedCompany() {
-    const activeItem = document.querySelector('.company-item.active');
-    return activeItem ? activeItem.dataset.company : null;
-}
-
-// ACTUALIZAR FUNCIÓN getCompaniesData para usar localStorage
-function getCompaniesData() {
-    const saved = localStorage.getItem('grizalum_companies');
-    if (saved) {
-        return JSON.parse(saved);
-    }
-    
-    // Datos por defecto (primera vez)
-    const defaultCompanies = {
-        'fundicion-laguna': {
-            name: 'Fundición Laguna',
-            icon: '🔥',
-            status: 'Operativo',
-            theme: { primary: '#dc2626', secondary: '#ea580c' },
-            data: {
-                cashFlow: 24500,
-                revenue: 45200,
-                expenses: 28700,
-                profit: 16500
-            }
-        },
-        'fundicion-joel': {
-            name: 'Fundición Joel',
-            icon: '🔥',
-            status: 'Operativo',
-            theme: { primary: '#ea580c', secondary: '#f97316' },
-            data: {
-                cashFlow: 18300,
-                revenue: 32100,
-                expenses: 21800,
-                profit: 10300
-            }
-        },
-        'avicola-san-juan': {
-            name: 'Avícola San Juan',
-            icon: '🐔',
-            status: 'Operativo',
-            theme: { primary: '#059669', secondary: '#10b981' },
-            data: {
-                cashFlow: 32100,
-                revenue: 58300,
-                expenses: 41200,
-                profit: 17100
-            }
-        },
-        'import-lm': {
-            name: 'Import LM',
-            icon: '📦',
-            status: 'Operativo',
-            theme: { primary: '#8b5cf6', secondary: '#a78bfa' },
-            data: {
-                cashFlow: 45200,
-                revenue: 72800,
-                expenses: 48600,
-                profit: 24200
-            }
-        },
-        'bodega-central': {
-            name: 'Bodega Central',
-            icon: '🏪',
-            status: 'Regular',
-            theme: { primary: '#3b82f6', secondary: '#60a5fa' },
-            data: {
-                cashFlow: 15800,
-                revenue: 28500,
-                expenses: 19700,
-                profit: 8800
-            }
-        }
-    };
-    
-    saveCompaniesData(defaultCompanies);
-    return defaultCompanies;
-}
-
-// AGREGAR BOTÓN DE GESTIÓN AL DROPDOWN
-function updateDropdownWithManagement() {
-    const dropdownFooter = document.querySelector('.dropdown-footer');
-    if (dropdownFooter && !document.getElementById('manageCompaniesBtn')) {
-        dropdownFooter.innerHTML = `
-            <button id="manageCompaniesBtn" class="btn btn-sm btn-neutral" onclick="openCompanyManagement()" style="margin-bottom: 0.5rem; width: 100%;">
-                <i class="fas fa-cog"></i>
-                Gestionar Empresas
-            </button>
-            <div class="total-companies">
-                <strong>📊 Total Holding: S/. 135,900</strong>
-            </div>
-        `;
-    }
-}
-
-// INICIALIZAR AL CARGAR
-document.addEventListener('DOMContentLoaded', function() {
-    // Actualizar selector con datos guardados
-    updateCompanySelector();
-    updateDropdownWithManagement();
-    
-    // Cargar empresa por defecto
-    const companies = getCompaniesData();
-    const firstCompany = Object.keys(companies)[0];
-    if (firstCompany) {
-        updateSelectedCompany(firstCompany);
-    }
-});
-
-console.log('⚙️ Sistema de gestión de empresas GRIZALUM cargado');
-// FUNCIÓN PARA CAMBIAR COLORES DE LA IA
-function updateAITheme(theme) {
-    console.log('🎨 Actualizando tema IA:', theme);
-    
-    const aiButton = document.getElementById('aiAssistantButton');
-    const aiHeader = document.querySelector('.ai-panel-header');
-    
-    if (aiButton && theme) {
-        aiButton.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
-        console.log('✅ Botón IA actualizado');
-    }
-    
-    if (aiHeader && theme) {
-        aiHeader.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
-        console.log('✅ Header IA actualizado');
-    }
-}    
-console.log('🔑 Código de seguridad para eliminación configurado');
-</script>  
-<!-- WIZARD PARA AGREGAR EMPRESAS CON IA -->
-
-<!-- MODAL DEL WIZARD -->
-<div id="addCompanyWizard" class="wizard-modal">
-    <div class="wizard-container">
-        <div class="wizard-header">
-            <h2>🚀 Agregar Nueva Empresa</h2>
-            <div class="wizard-steps">
-                <div class="step-indicator active" data-step="1">1</div>
-                <div class="step-line"></div>
-                <div class="step-indicator" data-step="2">2</div>
-                <div class="step-line"></div>
-                <div class="step-indicator" data-step="3">3</div>
-                <div class="step-line"></div>
-                <div class="step-indicator" data-step="4">4</div>
-            </div>
-            <button class="close-wizard" onclick="closeWizard()">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-
-        <!-- PASO 1: Información Básica -->
-        <div class="wizard-step active" id="wizardStep1">
-            <div class="step-content">
-                <div class="step-icon">📝</div>
-                <h3>Información Básica</h3>
-                <p>Cuéntanos sobre tu nueva empresa</p>
-                
-                <div class="form-group">
-                    <label class="form-label">Nombre de la Empresa</label>
-                    <input type="text" id="wizardCompanyName" class="form-input" 
-                           placeholder="Ej: Zapatería Future, Restaurante El Sol..." 
-                           oninput="validateStep1()">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Describe tu negocio</label>
-                    <textarea id="wizardCompanyDescription" class="form-input" rows="3" 
-                              placeholder="Ej: Venta de calzado deportivo y casual para jóvenes..."
-                              oninput="validateStep1()"></textarea>
-                </div>
-                
-                <div class="wizard-actions">
-                    <button id="analyzeWithAI" class="btn btn-primary btn-ai" onclick="analyzeWithAI()" disabled>
-                        <i class="fas fa-brain"></i>
-                        <span class="btn-text">Analizar con IA</span>
-                        <div class="ai-loader" style="display: none;">
-                            <div class="ai-dots">
-                                <div class="dot"></div>
-                                <div class="dot"></div>
-                                <div class="dot"></div>
-                            </div>
-                        </div>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- PASO 2: Sugerencias de IA -->
-        <div class="wizard-step" id="wizardStep2">
-            <div class="step-content">
-                <div class="step-icon">🤖</div>
-                <h3>La IA ha analizado tu negocio</h3>
-                <p>Estas son nuestras sugerencias inteligentes</p>
-                
-                <div class="ai-analysis" id="aiAnalysisResults">
-                    <!-- Se llena dinámicamente -->
-                </div>
-                
-                <div class="wizard-actions">
-                    <button class="btn btn-neutral" onclick="previousStep()">
-                        <i class="fas fa-arrow-left"></i>
-                        Anterior
-                    </button>
-                    <button class="btn btn-primary" onclick="nextStep()">
-                        Me gusta, continuar
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- PASO 3: Personalización -->
-        <div class="wizard-step" id="wizardStep3">
-            <div class="step-content">
-                <div class="step-icon">🎨</div>
-                <h3>Personalizar Empresa</h3>
-                <p>Ajusta los detalles según tus preferencias</p>
-                
-                <div class="customization-grid">
-                    <div class="custom-section">
-                        <h4>🎨 Colores</h4>
-                        <div class="color-options" id="colorOptions">
-                            <!-- Se llena dinámicamente -->
-                        </div>
-                        <div class="custom-color-section">
-                            <label class="form-label">O elige tu propio color</label>
-                            <input type="color" id="customColor" class="color-picker" onchange="applyCustomColor()">
-                        </div>
-                    </div>
-                    
-                    <div class="custom-section">
-                        <h4>📊 KPIs Principales</h4>
-                        <div class="kpi-checklist" id="kpiChecklist">
-                            <!-- Se llena dinámicamente -->
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="wizard-actions">
-                    <button class="btn btn-neutral" onclick="previousStep()">
-                        <i class="fas fa-arrow-left"></i>
-                        Anterior
-                    </button>
-                    <button class="btn btn-primary" onclick="nextStep()">
-                        Continuar
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- PASO 4: Vista Previa y Confirmación -->
-        <div class="wizard-step" id="wizardStep4">
-            <div class="step-content">
-                <div class="step-icon">✅</div>
-                <h3>¡Todo listo para crear!</h3>
-                <p>Revisa los detalles antes de crear tu empresa</p>
-                
-                <div class="preview-card" id="previewCard">
-                    <!-- Se llena dinámicamente -->
-                </div>
-                
-                <div class="final-options">
-                    <div class="form-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="generateSampleData" checked>
-                            <span class="checkmark"></span>
-                            Generar datos de ejemplo para probar
-                        </label>
-                    </div>
-                    <div class="form-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="setAsActive" checked>
-                            <span class="checkmark"></span>
-                            Activar esta empresa inmediatamente
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="wizard-actions">
-                    <button class="btn btn-neutral" onclick="previousStep()">
-                        <i class="fas fa-arrow-left"></i>
-                        Anterior
-                    </button>
-                    <button class="btn btn-success" onclick="createCompany()">
-                        <i class="fas fa-rocket"></i>
-                        ¡Crear Empresa!
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ESTILOS PARA EL WIZARD -->
-<style>
-.wizard-modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.8);
-    z-index: 10001;
-    backdrop-filter: blur(8px);
-}
-
-.wizard-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    border-radius: 24px;
-    width: 90%;
-    max-width: 800px;
-    max-height: 90vh;
-    overflow: hidden;
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
-}
-
-.wizard-header {
-    background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
-    color: white;
-    padding: 2rem;
-    position: relative;
-}
-
-.wizard-header h2 {
-    margin: 0 0 1.5rem 0;
-    font-size: 1.5rem;
-    font-weight: 800;
-}
-
-.wizard-steps {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-}
-
-.step-indicator {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
-}
-
-.step-indicator.active {
-    background: white;
-    color: var(--peru-gold);
-    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
-}
-
-.step-indicator.completed {
-    background: #10b981;
-    color: white;
-}
-
-.step-line {
-    width: 60px;
-    height: 3px;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 2px;
-}
-
-.step-line.completed {
-    background: #10b981;
-}
-
-.close-wizard {
-    position: absolute;
-    top: 1.5rem;
-    right: 1.5rem;
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 1.2rem;
-    transition: all 0.3s ease;
-}
-
-.close-wizard:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: scale(1.1);
-}
-
-.wizard-step {
-    display: none;
-    padding: 3rem;
-    min-height: 500px;
-}
-
-.wizard-step.active {
-    display: block;
-    animation: slideIn 0.5s ease;
-}
-
-@keyframes slideIn {
-    from { opacity: 0; transform: translateX(20px); }
-    to { opacity: 1; transform: translateX(0); }
-}
-
-.step-content {
-    text-align: center;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.step-icon {
-    font-size: 4rem;
-    margin-bottom: 1.5rem;
-    opacity: 0.8;
-}
-
-.step-content h3 {
-    margin-bottom: 0.5rem;
-    color: var(--gray-800);
-    font-size: 1.8rem;
-    font-weight: 700;
-}
-
-.step-content p {
-    margin-bottom: 2rem;
-    color: var(--gray-600);
-    font-size: 1.1rem;
-}
-
-.btn-ai {
-    position: relative;
-    overflow: hidden;
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    color: white;
-    border: none;
-    padding: 1rem 2rem;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.btn-ai:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.btn-ai:not(:disabled):hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
-}
-
-.ai-loader {
-    display: flex;
-    align-items: center;
-}
-
-.ai-dots {
-    display: flex;
-    gap: 4px;
-}
-
-.dot {
-    width: 8px;
-    height: 8px;
-    background: white;
-    border-radius: 50%;
-    animation: dotPulse 1.4s infinite ease-in-out;
-}
-
-.dot:nth-child(1) { animation-delay: -0.32s; }
-.dot:nth-child(2) { animation-delay: -0.16s; }
-
-@keyframes dotPulse {
-    0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
-    40% { transform: scale(1); opacity: 1; }
-}
-
-.wizard-actions {
-    margin-top: 3rem;
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-}
-
-.ai-analysis {
-    text-align: left;
-    background: var(--gray-50);
-    border-radius: 16px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-}
-
-.analysis-section {
-    margin-bottom: 2rem;
-}
-
-.analysis-section h4 {
-    color: var(--gray-800);
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.detected-type {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-weight: 600;
-    display: inline-block;
-}
-
-.color-preview {
-    display: flex;
-    gap: 1rem;
-    margin: 1rem 0;
-}
-
-.color-swatch {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    border: 3px solid white;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: 700;
-    font-size: 0.8rem;
-}
-
-.kpi-suggestions {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-}
-
-.kpi-suggestion {
-    background: white;
-    padding: 1rem;
-    border-radius: 12px;
-    border: 2px solid var(--gray-200);
-    text-align: center;
-}
-
-.customization-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    text-align: left;
-}
-
-.custom-section h4 {
-    margin-bottom: 1rem;
-    color: var(--gray-800);
-}
-
-.color-options {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.color-option {
-    width: 80px;
-    height: 80px;
-    border-radius: 16px;
-    cursor: pointer;
-    border: 3px solid transparent;
-    transition: all 0.3s ease;
-    position: relative;
-}
-
-.color-option:hover {
-    transform: scale(1.1);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-}
-
-.color-option.selected {
-    border-color: var(--peru-gold);
-    transform: scale(1.1);
-}
-
-.color-option::after {
-    content: '✓';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    font-size: 1.5rem;
-    font-weight: bold;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.color-option.selected::after {
-    opacity: 1;
-}
-
-.color-picker {
-    width: 60px;
-    height: 60px;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-}
-
-.kpi-checklist {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.checkbox-label {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 8px;
-    transition: background 0.3s ease;
-}
-
-.checkbox-label:hover {
-    background: var(--gray-50);
-}
-
-.checkbox-label input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    accent-color: var(--peru-gold);
-}
-
-.preview-card {
-    background: var(--gray-50);
-    border-radius: 20px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    text-align: left;
-}
-
-.preview-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.preview-icon {
-    width: 80px;
-    height: 80px;
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    color: white;
-}
-
-.preview-info h4 {
-    margin: 0 0 0.5rem 0;
-    color: var(--gray-800);
-    font-size: 1.3rem;
-}
-
-.preview-info p {
-    margin: 0;
-    color: var(--gray-600);
-}
-
-.final-options {
-    margin-bottom: 2rem;
-    text-align: left;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .wizard-container {
-        width: 95%;
-        max-height: 95vh;
-    }
-    
-    .wizard-step {
-        padding: 2rem 1.5rem;
-    }
-    
-    .customization-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-    
-    .wizard-steps {
-        gap: 0.5rem;
-    }
-    
-    .step-line {
-        width: 30px;
-    }
-}
-</style>
-
-<!-- JAVASCRIPT DEL WIZARD -->
-<script>
-let currentWizardStep = 1;
-let wizardData = {};
-
-// ABRIR WIZARD
-function showAddCompanyWizard() {
-    currentWizardStep = 1;
-    wizardData = {};
-    
-    // Resetear formulario
-    document.getElementById('wizardCompanyName').value = '';
-    document.getElementById('wizardCompanyDescription').value = '';
-    
-    // Mostrar paso 1
-    showWizardStep(1);
-    
-    // Mostrar modal
-    document.getElementById('addCompanyWizard').style.display = 'block';
-    document.getElementById('addCompanyWizard').classList.add('show');
-    
-    // Cerrar dropdown de empresas
-    toggleCompanyDropdown();
-}
-
-// CERRAR WIZARD
-function closeWizard() {
-    document.getElementById('addCompanyWizard').style.display = 'none';
-    document.getElementById('addCompanyWizard').classList.remove('show');
-}
-
-// MOSTRAR PASO DEL WIZARD
-function showWizardStep(stepNumber) {
-    // Ocultar todos los pasos
-    document.querySelectorAll('.wizard-step').forEach(step => {
-        step.classList.remove('active');
-    });
-    
-    // Mostrar paso actual
-    document.getElementById(`wizardStep${stepNumber}`).classList.add('active');
-    
-    // Actualizar indicadores
-    updateStepIndicators(stepNumber);
-    
-    currentWizardStep = stepNumber;
-}
-
-// ACTUALIZAR INDICADORES DE PASOS
-function updateStepIndicators(currentStep) {
-    document.querySelectorAll('.step-indicator').forEach((indicator, index) => {
-        const stepNum = index + 1;
-        indicator.classList.remove('active', 'completed');
-        
-        if (stepNum < currentStep) {
-            indicator.classList.add('completed');
-            indicator.innerHTML = '<i class="fas fa-check"></i>';
-        } else if (stepNum === currentStep) {
-            indicator.classList.add('active');
-            indicator.innerHTML = stepNum;
-        } else {
-            indicator.innerHTML = stepNum;
-        }
-    });
-    
-    // Actualizar líneas
-    document.querySelectorAll('.step-line').forEach((line, index) => {
-        line.classList.remove('completed');
-        if (index + 1 < currentStep) {
-            line.classList.add('completed');
-        }
-    });
-}
-
-// VALIDAR PASO 1
-function validateStep1() {
-    const name = document.getElementById('wizardCompanyName').value.trim();
-    const description = document.getElementById('wizardCompanyDescription').value.trim();
-    const button = document.getElementById('analyzeWithAI');
-    
-    if (name.length >= 3 && description.length >= 10) {
-        button.disabled = false;
-    } else {
-        button.disabled = true;
-    }
-}
-
-// ANALIZAR CON IA
-function analyzeWithAI() {
-    const name = document.getElementById('wizardCompanyName').value.trim();
-    const description = document.getElementById('wizardCompanyDescription').value.trim();
-    
-    // Mostrar cargando
-    const button = document.getElementById('analyzeWithAI');
-    const btnText = button.querySelector('.btn-text');
-    const loader = button.querySelector('.ai-loader');
-    
-    btnText.style.display = 'none';
-    loader.style.display = 'flex';
-    button.disabled = true;
-    
-    // Simular análisis IA
-    setTimeout(() => {
-        const analysis = performAIAnalysis(name, description);
-        showAIResults(analysis);
-        nextStep();
-        
-        // Restaurar botón
-        btnText.style.display = 'block';
-        loader.style.display = 'none';
-        button.disabled = false;
-    }, 3000);
-}
-
-// REALIZAR ANÁLISIS IA
-function performAIAnalysis(name, description) {
-    const text = (name + ' ' + description).toLowerCase();
-    
-    // Detectar tipo de negocio
-    const businessTypes = {
-        'zapateria': {
-            type: 'Zapatería/Calzado',
-            icon: '👟',
-            colors: [
-                { name: 'Rosa Moderno', primary: '#ec4899', secondary: '#f472b6' },
-                { name: 'Púrpura Elegante', primary: '#8b5cf6', secondary: '#a78bfa' },
-                { name: 'Azul Juvenil', primary: '#3b82f6', secondary: '#60a5fa' }
-            ],
-            kpis: [
-                { name: 'Ventas Diarias', icon: '👟', description: 'Pares vendidos por día' },
-                { name: 'Inventario Stock', icon: '📦', description: 'Cantidad de pares en stock' },
-                { name: 'Ticket Promedio', icon: '💰', description: 'Venta promedio por cliente' },
-                { name: 'Rotación Stock', icon: '🔄', description: 'Velocidad de rotación de inventario' }
-            ]
-        },
-        'restaurante': {
-            type: 'Restaurante/Gastronomía',
-            icon: '🍽️',
-            colors: [
-                { name: 'Rojo Apetitoso', primary: '#dc2626', secondary: '#ef4444' },
-                { name: 'Naranja Cálido', primary: '#ea580c', secondary: '#f97316' },
-                { name: 'Verde Fresco', primary: '#059669', secondary: '#10b981' }
-            ],
-            kpis: [
-                { name: 'Mesas Ocupadas', icon: '🪑', description: 'Porcentaje de ocupación' },
-                { name: 'Ticket Promedio', icon: '🍽️', description: 'Consumo promedio por mesa' },
-                { name: 'Rotación Mesas', icon: '🔄', description: 'Veces que se ocupa cada mesa' },
-                { name: 'Satisfacción', icon: '⭐', description: 'Rating promedio de clientes' }
-            ]
-        },
-        'construccion': {
-            type: 'Construcción/Inmobiliaria',
-            icon: '🏗️',
-            colors: [
-                { name: 'Marrón Tierra', primary: '#92400e', secondary: '#b45309' },
-                { name: 'Verde Industrial', primary: '#059669', secondary: '#10b981' },
-                { name: 'Gris Acero', primary: '#374151', secondary: '#4b5563' }
-            ],
-            kpis: [
-                { name: 'Proyectos Activos', icon: '🏗️', description: 'Construcciones en proceso' },
-                { name: 'Materiales Stock', icon: '🧱', description: 'Inventario de materiales' },
-                { name: 'Equipos Operativos', icon: '🚛', description: 'Maquinaria disponible' },
-                { name: 'Contratos Pendientes', icon: '📋', description: 'Proyectos por iniciar' }
-            ]
-        },
-        'default': {
-            type: 'Comercio General',
-            icon: '🏢',
-            colors: [
-                { name: 'Azul Corporativo', primary: '#3b82f6', secondary: '#60a5fa' },
-                { name: 'Verde Éxito', primary: '#059669', secondary: '#10b981' },
-                { name: 'Púrpura Premium', primary: '#7c3aed', secondary: '#8b5cf6' }
-            ],
-            kpis: [
-                { name: 'Ventas Mensuales', icon: '📈', description: 'Ingresos por ventas' },
-                { name: 'Clientes Activos', icon: '👥', description: 'Base de clientes' },
-                { name: 'Inventario Total', icon: '📦', description: 'Stock disponible' },
-                { name: 'Margen Ganancia', icon: '💰', description: 'Rentabilidad promedio' }
-            ]
-        }
-    };
-    
-    // Detectar tipo
-    let detectedType = 'default';
-    
-    const keywords = {
-        'zapateria': ['zapato', 'zapatilla', 'calzado', 'sneaker', 'deportivo', 'tenis'],
-        'restaurante': ['restaurante', 'comida', 'cocina', 'chef', 'gastronomia', 'plato'],
-        'construccion': ['construccion', 'inmobiliaria', 'casa', 'edificio', 'obra', 'material']
-    };
-    
-    Object.entries(keywords).forEach(([type, words]) => {
-        if (words.some(word => text.includes(word))) {
-            detectedType = type;
-        }
-    });
-    
-    const result = businessTypes[detectedType];
-    
-    // Guardar en wizardData
-    wizardData = {
-        name,
-        description,
-        detectedType: result.type,
-        icon: result.icon,
-        colors: result.colors,
-        kpis: result.kpis,
-        selectedColor: result.colors[0],
-        selectedKPIs: result.kpis.map(kpi => kpi.name)
-    };
-    
-    return result;
-}
-
-// MOSTRAR RESULTADOS IA
-function showAIResults(analysis) {
-    const container = document.getElementById('aiAnalysisResults');
-    
-    container.innerHTML = `
-        <div class="analysis-section">
-            <h4>🎯 Tipo de negocio detectado</h4>
-            <div class="detected-type">${analysis.type}</div>
-        </div>
-        
-        <div class="analysis-section">
-            <h4>🎨 Colores sugeridos</h4>
-            <div class="color-preview">
-                ${analysis.colors.map(color => 
-                    `<div class="color-swatch" style="background: ${color.primary};">${color.name}</div>`
-                ).join('')}
-            </div>
-        </div>
-        
-        <div class="analysis-section">
-            <h4>📊 KPIs recomendados</h4>
-            <div class="kpi-suggestions">
-                ${analysis.kpis.map(kpi => 
-                    `<div class="kpi-suggestion">
-                        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">${kpi.icon}</div>
-                        <strong>${kpi.name}</strong>
-                        <p style="font-size: 0.8rem; color: var(--gray-600); margin: 0.25rem 0 0 0;">${kpi.description}</p>
-                    </div>`
-                ).join('')}
-            </div>
-        </div>
-    `;
-}
-
-// SIGUIENTE PASO
-function nextStep() {
-    if (currentWizardStep < 4) {
-        if (currentWizardStep === 2) {
-            setupCustomizationStep();
-        } else if (currentWizardStep === 3) {
-            setupPreviewStep();
-        }
-        showWizardStep(currentWizardStep + 1);
-    }
-}
-
-// PASO ANTERIOR
-function previousStep() {
-    if (currentWizardStep > 1) {
-        showWizardStep(currentWizardStep - 1);
-    }
-}
-
-// CONFIGURAR PASO DE PERSONALIZACIÓN
-function setupCustomizationStep() {
-    // Configurar opciones de colores
-    const colorContainer = document.getElementById('colorOptions');
-    colorContainer.innerHTML = '';
-    
-    wizardData.colors.forEach((color, index) => {
-        const colorDiv = document.createElement('div');
-        colorDiv.className = `color-option ${index === 0 ? 'selected' : ''}`;
-        colorDiv.style.background = `linear-gradient(135deg, ${color.primary} 0%, ${color.secondary} 100%)`;
-        colorDiv.onclick = () => selectColor(index);
-        colorContainer.appendChild(colorDiv);
-    });
-    
-    // Configurar checklist de KPIs
-    const kpiContainer = document.getElementById('kpiChecklist');
-    kpiContainer.innerHTML = '';
-    
-    wizardData.kpis.forEach(kpi => {
-        const label = document.createElement('label');
-        label.className = 'checkbox-label';
-        label.innerHTML = `
-            <input type="checkbox" checked data-kpi="${kpi.name}">
-            <span>${kpi.icon} ${kpi.name}</span>
-        `;
-        kpiContainer.appendChild(label);
-    });
-}
-
-// SELECCIONAR COLOR
-function selectColor(index) {
-    document.querySelectorAll('.color-option').forEach(option => {
-        option.classList.remove('selected');
-    });
-    
-    document.querySelectorAll('.color-option')[index].classList.add('selected');
-    wizardData.selectedColor = wizardData.colors[index];
-}
-
-// APLICAR COLOR PERSONALIZADO
-function applyCustomColor() {
-    const customColor = document.getElementById('customColor').value;
-    
-    // Deseleccionar colores predefinidos
-    document.querySelectorAll('.color-option').forEach(option => {
-        option.classList.remove('selected');
-    });
-    
-    // Crear color personalizado
-    wizardData.selectedColor = {
-        name: 'Color Personalizado',
-        primary: customColor,
-        secondary: customColor
-    };
-}
-
-// CONFIGURAR PASO DE VISTA PREVIA
-function setupPreviewStep() {
-    // Recopilar KPIs seleccionados
-    const selectedKPIs = [];
-    document.querySelectorAll('#kpiChecklist input[type="checkbox"]:checked').forEach(checkbox => {
-        const kpiName = checkbox.dataset.kpi;
-        const kpi = wizardData.kpis.find(k => k.name === kpiName);
-        if (kpi) selectedKPIs.push(kpi);
-    });
-    
-    wizardData.selectedKPIs = selectedKPIs;
-    
-    // Mostrar vista previa
-    const previewContainer = document.getElementById('previewCard');
-    previewContainer.innerHTML = `
-        <div class="preview-header">
-            <div class="preview-icon" style="background: linear-gradient(135deg, ${wizardData.selectedColor.primary} 0%, ${wizardData.selectedColor.secondary} 100%);">
-                ${wizardData.icon}
-            </div>
-            <div class="preview-info">
-                <h4>${wizardData.name}</h4>
-                <p>${wizardData.detectedType}</p>
-                <p style="margin-top: 0.5rem; font-size: 0.9rem;">${wizardData.description}</p>
-            </div>
-        </div>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-            <div>
-                <h5 style="margin-bottom: 0.5rem; color: var(--gray-700);">🎨 Colores</h5>
-                <div style="display: flex; gap: 0.5rem;">
-                    <div style="width: 30px; height: 30px; background: ${wizardData.selectedColor.primary}; border-radius: 6px;"></div>
-                    <div style="width: 30px; height: 30px; background: ${wizardData.selectedColor.secondary}; border-radius: 6px;"></div>
-                </div>
-                <p style="font-size: 0.8rem; color: var(--gray-600); margin-top: 0.25rem;">${wizardData.selectedColor.name}</p>
-            </div>
-            
-            <div>
-                <h5 style="margin-bottom: 0.5rem; color: var(--gray-700);">📊 KPIs (${selectedKPIs.length})</h5>
-                <div style="font-size: 0.8rem; color: var(--gray-600);">
-                    ${selectedKPIs.map(kpi => `${kpi.icon} ${kpi.name}`).join(', ')}
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-// CREAR EMPRESA
-function createCompany() {
-    const generateSample = document.getElementById('generateSampleData').checked;
-    const setActive = document.getElementById('setAsActive').checked;
-    
-    // Generar ID único
-    const companyId = 'company_' + Date.now();
-    
-    // Generar datos de ejemplo si está marcado
-    let sampleData = {
-        cashFlow: 0,
-        revenue: 0,
-        expenses: 0,
-        profit: 0
-    };
-    
-    if (generateSample) {
-        sampleData = generateSampleData(wizardData.detectedType);
-    }
-    
-    // Crear objeto de empresa
-    const newCompany = {
-        name: wizardData.name,
-        icon: wizardData.icon,
-        status: 'Operativo',
-        theme: {
-            primary: wizardData.selectedColor.primary,
-            secondary: wizardData.selectedColor.secondary
-        },
-        data: sampleData,
-        kpis: wizardData.selectedKPIs,
-        createdAt: new Date().toISOString(),
-        description: wizardData.description,
-        type: wizardData.detectedType
-    };
-    
-    // Agregar a la lista de empresas
-    const companies = getCompaniesData();
-    companies[companyId] = newCompany;
-    saveCompaniesData(companies);
-    
-    // Actualizar interfaz
-    updateCompanySelector();
-    
-    // Activar si está marcado
-    if (setActive) {
-        selectCompany(companyId);
-    }
-    
-    // Cerrar wizard
-    closeWizard();
-    
-    // Mostrar mensaje de éxito
-    showNotification(`🎉 ¡Empresa "${wizardData.name}" creada exitosamente!`, 'success');
-    
-    // Mostrar mensaje con IA
-    setTimeout(() => {
-        showNotification(`🤖 IA: Tu nueva empresa está lista para generar ingresos`, 'info');
-    }, 2000);
-}
-
-// GENERAR DATOS DE EJEMPLO
-function generateSampleData(businessType) {
-    const generators = {
-        'Zapatería/Calzado': () => ({
-            cashFlow: Math.floor(Math.random() * 20000) + 10000,
-            revenue: Math.floor(Math.random() * 40000) + 20000,
-            expenses: Math.floor(Math.random() * 25000) + 15000,
-            profit: Math.floor(Math.random() * 15000) + 5000
-        }),
-        'Restaurante/Gastronomía': () => ({
-            cashFlow: Math.floor(Math.random() * 30000) + 15000,
-            revenue: Math.floor(Math.random() * 50000) + 25000,
-            expenses: Math.floor(Math.random() * 35000) + 20000,
-            profit: Math.floor(Math.random() * 20000) + 8000
-        }),
-        'Construcción/Inmobiliaria': () => ({
-            cashFlow: Math.floor(Math.random() * 50000) + 25000,
-            revenue: Math.floor(Math.random() * 80000) + 40000,
-            expenses: Math.floor(Math.random() * 60000) + 30000,
-            profit: Math.floor(Math.random() * 25000) + 10000
-        })
-    };
-    
-    const generator = generators[businessType] || generators['Zapatería/Calzado'];
-    return generator();
-}
-
-// CERRAR MODAL AL HACER CLIC FUERA
-document.addEventListener('click', function(event) {
-    const wizard = document.getElementById('addCompanyWizard');
-    const wizardContainer = document.querySelector('.wizard-container');
-    
-    if (wizard && wizard.style.display === 'block' && 
-        !wizardContainer.contains(event.target)) {
-        closeWizard();
-    }
-});
-
-// NAVEGACIÓN CON TECLADO
-document.addEventListener('keydown', function(event) {
-    const wizard = document.getElementById('addCompanyWizard');
-    
-    if (wizard && wizard.style.display === 'block') {
-        if (event.key === 'Escape') {
-            closeWizard();
-        } else if (event.key === 'ArrowRight' && currentWizardStep < 4) {
-            nextStep();
-        } else if (event.key === 'ArrowLeft' && currentWizardStep > 1) {
-            previousStep();
-        }
-    }
-});
-
-console.log('🧠 Wizard Inteligente GRIZALUM cargado correctamente');
-console.log('🎯 Funcionalidades:');
-console.log('  • Detección automática de tipo de negocio');
-console.log('  • Sugerencias de colores por industria');
-console.log('  • KPIs específicos del sector');
-console.log('  • Generación de datos de ejemplo');
-console.log('  • Personalización completa');
-</script> 
-<!-- IA CONVERSACIONAL Y ASISTENTE INTELIGENTE -->
-
-<!-- BOTÓN FLOTANTE DE IA -->
-<div id="aiAssistantButton" class="ai-assistant-button" onclick="document.getElementById('aiAssistantPanel').classList.toggle('show'); console.log('IA toggled');">
-    <div class="ai-icon">
-        <i class="fas fa-brain"></i>
-    </div>
-    <div class="ai-pulse"></div>
-    <div class="ai-notifications" id="aiNotifications">0</div>
-</div>
-
-<!-- PANEL DEL ASISTENTE IA -->
-<div id="aiAssistantPanel" class="ai-assistant-panel">
-    <div class="ai-panel-header">
-        <div class="ai-avatar">
-            <i class="fas fa-robot"></i>
-        </div>
-        <div class="ai-info">
-            <h4>GRIZALUM IA</h4>
-            <p id="aiStatus">Analizando tu empresa...</p>
-        </div>
-        <div class="ai-controls">
-            <button class="ai-control-btn" onclick="toggleVoiceMode()" id="voiceToggle">
-                <i class="fas fa-microphone-slash"></i>
-            </button>
-            <button class="ai-control-btn" onclick="clearAIChat()">
-                <i class="fas fa-broom"></i>
-            </button>
-            <button class="ai-control-btn" onclick="toggleAIAssistant()">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-    </div>
-
-    <div class="ai-insights-section">
-        <h5>🎯 Insights Automáticos</h5>
-        <div id="aiInsights" class="ai-insights-container">
-            <!-- Se llena automáticamente -->
-        </div>
-    </div>
-
-    <div class="ai-chat-container">
-        <div class="ai-chat-messages" id="aiChatMessages">
-            <div class="ai-message">
-                <div class="ai-message-avatar">🤖</div>
-                <div class="ai-message-content">
-                    <p>¡Hola! Soy tu asistente financiero IA. Puedo ayudarte con:</p>
-                    <div class="ai-quick-actions">
-                        <button class="quick-action-btn" onclick="askAI('¿Cómo van las ventas?')">📈 ¿Cómo van las ventas?</button>
-                        <button class="quick-action-btn" onclick="askAI('¿Puedo invertir más?')">💰 ¿Puedo invertir?</button>
-                        <button class="quick-action-btn" onclick="askAI('Analiza mi flujo de caja')">💧 Analizar flujo</button>
-                        <button class="quick-action-btn" onclick="askAI('Dame predicciones')">🔮 Predicciones</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="ai-chat-input">
-            <div class="ai-input-container">
-                <input type="text" id="aiChatInput" placeholder="Pregúntame sobre tu empresa..." 
-                       onkeydown="handleAIChatKeypress(event)">
-                <button class="ai-send-btn" onclick="sendAIMessage()">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-                <button class="ai-voice-btn" onclick="startVoiceInput()" id="voiceInputBtn">
-                    <i class="fas fa-microphone"></i>
-                </button>
-                <button class="ai-control-btn" onclick="toggleColorPalette()" title="Cambiar colores">
-                <i class="fas fa-palette"></i>
-              </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ESTILOS PARA IA CONVERSACIONAL -->
-<style>
-.ai-assistant-button {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 70px;
-    height: 70px;
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
-    z-index: 1000;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: visible;
-}
-
-.ai-assistant-button:hover {
-    transform: translateY(-5px) scale(1.1);
-    box-shadow: 0 15px 40px rgba(99, 102, 241, 0.6);
-}
-
-.ai-icon {
-    color: white;
-    font-size: 1.8rem;
-    z-index: 2;
-}
-
-.ai-pulse {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    opacity: 0.7;
-    animation: aiPulse 2s infinite;
-}
-
-@keyframes aiPulse {
-    0% { transform: scale(1); opacity: 0.7; }
-    50% { transform: scale(1.2); opacity: 0.3; }
-    100% { transform: scale(1.4); opacity: 0; }
-}
-
-.ai-notifications {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background: #ef4444;
-    color: white;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
-    font-weight: 700;
-    opacity: 0;
-    transform: scale(0);
-    transition: all 0.3s ease;
-}
-
-.ai-notifications.show {
-    opacity: 1;
-    transform: scale(1);
-    animation: notificationBounce 0.5s ease;
-}
-
-@keyframes notificationBounce {
-    0% { transform: scale(0); }
-    50% { transform: scale(1.3); }
-    100% { transform: scale(1); }
-}
-
-.ai-assistant-panel {
-    position: fixed;
-    bottom: 120px;
-    right: 30px;
-    width: 500px;
-    height: 700px;
-    background: white;
-    border-radius: 24px;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-    z-index: 999;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(20px) scale(0.95);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: hidden;
-    border: 1px solid var(--gray-200);
-}
-
-.ai-assistant-panel.show {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0) scale(1);
-}
-
-.ai-panel-header {
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    color: white;
-    padding: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.ai-avatar {
-    width: 50px;
-    height: 50px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-}
-
-.ai-info {
-    flex: 1;
-}
-
-.ai-info h4 {
-    margin: 0 0 0.25rem 0;
-    font-size: 1.1rem;
-    font-weight: 700;
-}
-
-.ai-info p {
-    margin: 0;
-    font-size: 0.9rem;
-    opacity: 0.9;
-}
-
-.ai-controls {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.ai-control-btn {
-    width: 36px;
-    height: 36px;
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    border-radius: 8px;
-    color: white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-}
-
-.ai-control-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: scale(1.1);
-}
-
-.ai-insights-section {
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid var(--gray-200);
-    background: var(--gray-50);
-}
-
-.ai-insights-section h5 {
-    margin: 0 0 1rem 0;
-    color: var(--gray-800);
-    font-size: 0.9rem;
-    font-weight: 700;
-}
-
-.ai-insights-container {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    max-height: 120px;
-    overflow-y: auto;
-}
-
-.ai-insight-item {
-    background: white;
-    padding: 0.75rem;
-    border-radius: 8px;
-    font-size: 0.8rem;
-    border-left: 3px solid;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.ai-insight-item:hover {
-    transform: translateX(4px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.ai-insight-item.success { border-color: #10b981; background: rgba(16, 185, 129, 0.05); }
-.ai-insight-item.warning { border-color: #f59e0b; background: rgba(245, 158, 11, 0.05); }
-.ai-insight-item.info { border-color: #3b82f6; background: rgba(59, 130, 246, 0.05); }
-.ai-insight-item.danger { border-color: #ef4444; background: rgba(239, 68, 68, 0.05); }
-
-.ai-chat-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    height: calc(100% - 200px);
-}
-
-.ai-chat-messages {
-    flex: 1;
-    padding: 1rem;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.ai-message, .user-message {
-    display: flex;
-    gap: 0.75rem;
-    align-items: flex-start;
-}
-
-.user-message {
-    flex-direction: row-reverse;
-}
-
-.ai-message-avatar, .user-message-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    flex-shrink: 0;
-}
-
-.ai-message-avatar {
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    color: white;
-}
-
-.user-message-avatar {
-    background: var(--peru-gold);
-    color: white;
-}
-
-.ai-message-content, .user-message-content {
-    background: var(--gray-50);
-    padding: 0.75rem 1rem;
-    border-radius: 12px;
-    max-width: 280px;
-    font-size: 0.9rem;
-    line-height: 1.4;
-}
-
-.user-message-content {
-    background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
-    color: white;
-}
-
-.ai-message-content p {
-    margin: 0 0 0.5rem 0;
-}
-
-.ai-message-content p:last-child {
-    margin-bottom: 0;
-}
-
-.ai-quick-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 0.75rem;
-}
-
-.quick-action-btn {
-    background: white;
-    border: 1px solid var(--gray-300);
-    padding: 0.5rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    color: var(--gray-700);
-}
-
-.quick-action-btn:hover {
-    background: var(--peru-gold);
-    color: white;
-    border-color: var(--peru-gold);
-    transform: translateY(-1px);
-}
-
-.ai-chat-input {
-    padding: 1rem;
-    border-top: 1px solid var(--gray-200);
-    background: white;
-}
-
-.ai-input-container {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-}
-
-.ai-input-container input {
-    flex: 1;
-    padding: 0.75rem 1rem;
-    border: 2px solid var(--gray-200);
-    border-radius: 20px;
-    font-size: 0.9rem;
-    outline: none;
-    transition: all 0.3s ease;
-}
-
-.ai-input-container input:focus {
-    border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-}
-
-.ai-send-btn, .ai-voice-btn {
-    width: 40px;
-    height: 40px;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-}
-
-.ai-send-btn {
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    color: white;
-}
-
-.ai-voice-btn {
-    background: var(--gray-200);
-    color: var(--gray-600);
-}
-
-.ai-voice-btn.active {
-    background: #ef4444;
-    color: white;
-    animation: voicePulse 1s infinite;
-}
-
-@keyframes voicePulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-}
-
-.ai-send-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
-}
-
-.ai-voice-btn:hover {
-    background: var(--gray-300);
-}
-
-.ai-typing {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--gray-500);
-    font-style: italic;
-    font-size: 0.8rem;
-}
-
-.typing-dots {
-    display: flex;
-    gap: 2px;
-}
-
-.typing-dot {
-    width: 4px;
-    height: 4px;
-    background: var(--gray-400);
-    border-radius: 50%;
-    animation: typingDot 1.4s infinite ease-in-out;
-}
-
-.typing-dot:nth-child(1) { animation-delay: -0.32s; }
-.typing-dot:nth-child(2) { animation-delay: -0.16s; }
-
-@keyframes typingDot {
-    0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
-    40% { transform: scale(1); opacity: 1; }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .ai-assistant-panel {
-        bottom: 20px;
-        right: 20px;
-        left: 20px;
-        width: auto;
-        height: 70vh;
-    }
-    
-    .ai-assistant-button {
-        bottom: 20px;
-        right: 20px;
-    }
-}
-
-/* Animaciones de entrada */
-.ai-insight-item.new {
-    animation: slideInRight 0.5s ease;
-}
-
-@keyframes slideInRight {
-    from { transform: translateX(100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-}
-
-.ai-message.new {
-    animation: messageSlideIn 0.5s ease;
-}
-
-@keyframes messageSlideIn {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-</style>
-
-<!-- JAVASCRIPT PARA IA CONVERSACIONAL -->
-<script>
-let aiAssistantOpen = false;
-let voiceMode = false;
-let aiInsightsCount = 0;
-let recognition = null;
-let currentCompanyAnalysis = null;
-
-// INICIALIZAR IA AL CARGAR
-document.addEventListener('DOMContentLoaded', function() {
-    initializeAI();
-    setInterval(updateAIInsights, 30000); // Actualizar cada 30 segundos
-    setInterval(generateProactiveInsights, 60000); // Insights cada minuto
-});
-
-// INICIALIZAR IA
-function initializeAI() {
-    setupVoiceRecognition();
-    updateAIStatus();
-    generateInitialInsights();
-    
-    console.log('🤖 IA Conversacional GRIZALUM inicializada');
-}
-
-// FUNCIÓN TOGGLE IA
-function toggleAIAssistant() {
-    const panel = document.getElementById('aiAssistantPanel');
-    
-    if (panel.classList.contains('show')) {
-        panel.classList.remove('show');
-        console.log('🤖 IA cerrada');
-    } else {
-        panel.classList.add('show');
-        console.log('🤖 IA abierta');
-    }
-}
-
-// ACTUALIZAR STATUS IA
-function updateAIStatus() {
-    const currentCompany = getCurrentSelectedCompany();
-    const companies = getCompaniesData();
-    const company = companies[currentCompany];
-    
-    const statusElement = document.getElementById('aiStatus');
-    
-    if (company) {
-        statusElement.textContent = `Monitoreando ${company.name}`;
-    } else {
-        statusElement.textContent = 'Listo para ayudar';
-    }
-}
-
-// GENERAR INSIGHTS INICIALES
-function generateInitialInsights() {
-    const insights = [
-        {
-            type: 'success',
-            message: '📈 Flujo de caja estable este mes',
-            action: 'Ver detalles'
-        },
-        {
-            type: 'info',
-            message: '🎯 IA lista para analizar tus datos',
-            action: 'Comenzar análisis'
-        }
-    ];
-    
-    insights.forEach(insight => addAIInsight(insight));
-}
-
-// AGREGAR INSIGHT IA
-function addAIInsight(insight) {
-    const container = document.getElementById('aiInsights');
-    
-    const insightElement = document.createElement('div');
-    insightElement.className = `ai-insight-item ${insight.type} new`;
-    insightElement.innerHTML = `
-        <div style="font-weight: 600; margin-bottom: 0.25rem;">${insight.message}</div>
-        ${insight.action ? `<div style="font-size: 0.7rem; opacity: 0.8;">💡 ${insight.action}</div>` : ''}
-    `;
-    
-    insightElement.onclick = () => {
-        if (insight.action) {
-            askAI(insight.message);
-        }
-    };
-    
-    container.appendChild(insightElement);
-    
-    // Limit to 5 insights
-    const insights = container.children;
-    if (insights.length > 5) {
-        container.removeChild(insights[0]);
-    }
-    
-    // Incrementar contador de notificaciones
-    if (!aiAssistantOpen) {
-        aiInsightsCount++;
-        updateNotificationBadge();
-    }
-}
-
-// ACTUALIZAR BADGE DE NOTIFICACIONES
-function updateNotificationBadge() {
-    const badge = document.getElementById('aiNotifications');
-    badge.textContent = aiInsightsCount;
-    badge.classList.add('show');
-}
-
-// ANÁLISIS PROACTIVO
-function generateProactiveInsights() {
-    const currentCompany = getCurrentSelectedCompany();
-    const companies = getCompaniesData();
-    const company = companies[currentCompany];
-    
-    if (!company) return;
-    
-    const insights = analyzeCompanyData(company);
-    
-    // Agregar insight aleatorio cada minuto
-    if (insights.length > 0) {
-        const randomInsight = insights[Math.floor(Math.random() * insights.length)];
-        addAIInsight(randomInsight);
-    }
-}
-
-// ANALIZAR DATOS DE EMPRESA
-function analyzeCompanyData(company) {
-    const insights = [];
-    const data = company.data;
-    
-    // Análisis de flujo de caja
-    if (data.cashFlow > 30000) {
-        insights.push({
-            type: 'success',
-            message: `💰 Excelente flujo de caja en ${company.name}`,
-            action: 'Ver oportunidades de inversión'
-        });
-    } else if (data.cashFlow < 15000) {
-        insights.push({
-            type: 'warning',
-            message: `⚠️ Flujo de caja bajo en ${company.name}`,
-            action: 'Sugerencias para mejorar'
-        });
-    }
-    
-    // Análisis de rentabilidad
-    const margin = (data.profit / data.revenue) * 100;
-    if (margin > 25) {
-        insights.push({
-            type: 'success',
-            message: `🎯 Excelente margen de ganancia: ${margin.toFixed(1)}%`,
-            action: 'Estrategias para mantener'
-        });
-    } else if (margin < 10) {
-        insights.push({
-            type: 'danger',
-            message: `🚨 Margen bajo: ${margin.toFixed(1)}%`,
-            action: 'Plan de optimización'
-        });
-    }
-    
-    // Análisis específico por tipo
-    if (company.type && company.type.includes('Zapatería')) {
-        insights.push({
-            type: 'info',
-            message: '👟 Temporada alta de calzado detectada',
-            action: 'Optimizar inventario'
-        });
-    }
-    
-    return insights;
-}
-
-// MANEJAR ENTRADA DE CHAT
-function handleAIChatKeypress(event) {
-    if (event.key === 'Enter' && !event.shiftKey) {
-        event.preventDefault();
-        sendAIMessage();
-    }
-}
-
-// ARREGLO DEFINITIVO DEL CHAT IA
-function sendAIMessage() {
-    console.log('📤 Enviando mensaje IA');
-    
-    const input = document.getElementById('aiChatInput');
-    if (!input) {
-        console.error('❌ Input no encontrado');
-        return;
-    }
-    
-    const message = input.value.trim();
-    if (!message) return;
-    
-    // Agregar mensaje del usuario
-    addChatMessage(message, 'user');
-    input.value = '';
-    
-    // Respuesta IA con jerga peruana profesional
-    setTimeout(() => {
-        const response = generateAIResponsePeru(message);
-        addChatMessage(response, 'ai');
-    }, 1000);
-}
-
-function generateAIResponsePeru(userMessage) {
-    const message = userMessage.toLowerCase();
-    const currentCompany = getCurrentSelectedCompany();
-    const companies = getCompaniesData();
-    const company = companies[currentCompany];
-    
-    // RESPUESTAS PROFESIONALES CON JERGA PERUANA
-    if (message.includes('ventas') || message.includes('ingresos')) {
-        if (company) {
-            const growth = Math.random() > 0.5 ? '+' : '';
-            const percentage = (Math.random() * 20 - 10).toFixed(1);
-            return `📈 Las ventas de ${company.name} presentan un ${growth}${percentage}% respecto al mes anterior. Registro actual: S/. ${company.data.revenue.toLocaleString()}. ${percentage > 0 ? 'Excelente performance, recomiendo mantener esta estrategia.' : 'Sugiero implementar estrategias de marketing digital para mejorar los resultados.'}`;
-        }
-        return '📊 Para analizar las ventas específicas, por favor seleccione una empresa del portafolio.';
-    }
-    
-    if (message.includes('flujo') || message.includes('caja')) {
-        if (company) {
-            const status = company.data.cashFlow > 20000 ? 'óptimo' : 'requiere atención';
-            const advice = company.data.cashFlow > 20000 ? 
-                'El nivel actual permite considerar inversiones estratégicas.' : 
-                'Recomiendo acelerar las cobranzas y optimizar los gastos operativos.';
-            return `💧 El flujo de caja de ${company.name} se encuentra ${status}: S/. ${company.data.cashFlow.toLocaleString()}. ${advice}`;
-        }
-        return '💰 Seleccione una empresa para revisar su flujo de caja específico.';
-    }
-    
-    if (message.includes('hola') || message.includes('buenos días') || message.includes('buenas tardes')) {
-        return '¡Saludos! Soy su asistente financiero IA. Estoy aquí para ayudarle con análisis empresariales, predicciones y estrategias de crecimiento. ¿En qué puedo asistirle hoy?';
-    }
-    
-    // Respuesta por defecto profesional
-    return `Entiendo su consulta sobre "${userMessage}". Para brindarle una respuesta precisa, ¿podría especificar si se refiere a análisis financiero, proyecciones, optimización de procesos o estrategias de crecimiento?`;
-}
-
-function handleAIChatKeypress(event) {
-    if (event.key === 'Enter' && !event.shiftKey) {
-        event.preventDefault();
-        sendAIMessage();
-    }
-}
-
-function addChatMessage(message, sender) {
-    const container = document.getElementById('aiChatMessages');
-    if (!container) return;
-    
-    const messageElement = document.createElement('div');
-    messageElement.className = `${sender}-message new`;
-    
-    const avatar = sender === 'ai' ? '🤖' : '👤';
-    const avatarClass = sender === 'ai' ? 'ai-message-avatar' : 'user-message-avatar';
-    const contentClass = sender === 'ai' ? 'ai-message-content' : 'user-message-content';
-    
-    messageElement.innerHTML = `
-        <div class="${avatarClass}">${avatar}</div>
-        <div class="${contentClass}">
-            <p>${message}</p>
-        </div>
-    `;
-    
-    container.appendChild(messageElement);
-    container.scrollTop = container.scrollHeight;
-}
-
-// FORZAR FUNCIONES
-window.sendAIMessage = sendAIMessage;
-window.handleAIChatKeypress = handleAIChatKeypress;
-window.addChatMessage = addChatMessage;
-
-console.log('✅ Chat IA Profesional Peruano activado');
-
-// FUNCIONALIDAD DE MICRÓFONO
-let isRecording = false;
-let recognition = null;
-
-function initializeVoiceRecognition() {
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognition = new SpeechRecognition();
-        
-        recognition.continuous = false;
-        recognition.interimResults = false;
-        recognition.lang = 'es-PE'; // Español de Perú
-        
-        recognition.onresult = function(event) {
-            const transcript = event.results[0][0].transcript;
-            document.getElementById('aiChatInput').value = transcript;
-            stopVoiceInput();
-            
-            // Auto-enviar mensaje
-            setTimeout(() => {
-                sendAIMessage();
-            }, 500);
-        };
-        
-        recognition.onerror = function(event) {
-            console.warn('Error de reconocimiento:', event.error);
-            stopVoiceInput();
-            addChatMessage('Error en el reconocimiento de voz. Intente nuevamente.', 'ai');
-        };
-        
-        recognition.onend = function() {
-            stopVoiceInput();
-        };
-        
-        console.log('🎤 Reconocimiento de voz inicializado');
-    }
-}
-
-function startVoiceInput() {
-    if (!recognition) {
-        addChatMessage('El reconocimiento de voz no está disponible en este navegador.', 'ai');
-        return;
-    }
-    
-    if (isRecording) {
-        stopVoiceInput();
-        return;
-    }
-    
-    isRecording = true;
-    const button = document.getElementById('voiceInputBtn');
-    if (button) {
-        button.classList.add('active');
-        button.innerHTML = '<i class="fas fa-stop"></i>';
-        button.style.background = '#ef4444';
-    }
-    
-    recognition.start();
-    addChatMessage('🎤 Escuchando... Hable ahora.', 'ai');
-}
-
-function stopVoiceInput() {
-    isRecording = false;
-    if (recognition) {
-        recognition.stop();
-    }
-    
-    const button = document.getElementById('voiceInputBtn');
-    if (button) {
-        button.classList.remove('active');
-        button.innerHTML = '<i class="fas fa-microphone"></i>';
-        button.style.background = '#6b7280';
-    }
-}
-
-// Inicializar al cargar
-initializeVoiceRecognition();
-
-console.log('🎤 Sistema de voz activado');
-
-// SISTEMA DE CAMBIO DE COLORES PREMIUM
-const premiumColorPalettes = [
-    {
-        name: 'Oro Ejecutivo',
-        primary: '#d4af37',
-        secondary: '#b87333',
-        accent: '#f4d03f'
-    },
-    {
-        name: 'Azul Corporativo',
-        primary: '#1e40af',
-        secondary: '#3b82f6',
-        accent: '#60a5fa'
-    },
-    {
-        name: 'Verde Prosperidad',
-        primary: '#059669',
-        secondary: '#10b981',
-        accent: '#34d399'
-    },
-    {
-        name: 'Púrpura Premium',
-        primary: '#7c3aed',
-        secondary: '#8b5cf6',
-        accent: '#a78bfa'
-    },
-    {
-        name: 'Rojo Ejecutivo',
-        primary: '#dc2626',
-        secondary: '#ef4444',
-        accent: '#f87171'
-    },
-    {
-        name: 'Naranja Dinámico',
-        primary: '#ea580c',
-        secondary: '#f97316',
-        accent: '#fb923c'
-    },
-    {
-        name: 'Turquesa Moderno',
-        primary: '#0891b2',
-        secondary: '#06b6d4',
-        accent: '#22d3ee'
-    },
-    {
-        name: 'Rosa Elegante',
-        primary: '#ec4899',
-        secondary: '#f472b6',
-        accent: '#f9a8d4'
-    }
-];
-
-let currentPaletteIndex = 0;
-
-function showColorPalettePicker() {
-    // Crear modal de colores
-    const modal = document.createElement('div');
-    modal.id = 'colorPaletteModal';
-    modal.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.8);
-        z-index: 10000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        backdrop-filter: blur(8px);
-    `;
-    
-    modal.innerHTML = `
-        <div style="
-            background: white;
-            border-radius: 24px;
-            padding: 2rem;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        ">
-            <div style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 2rem;
-                border-bottom: 1px solid #e5e7eb;
-                padding-bottom: 1rem;
-            ">
-                <h3 style="margin: 0; color: #1f2937; font-weight: 700; font-size: 1.5rem;">
-                    🎨 Paletas de Colores Premium
-                </h3>
-                <button onclick="closeColorPicker()" style="
-                    background: none;
-                    border: none;
-                    font-size: 1.5rem;
-                    color: #6b7280;
-                    cursor: pointer;
-                    padding: 0.5rem;
-                    border-radius: 8px;
-                    transition: all 0.3s ease;
-                ">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <div style="
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                gap: 1.5rem;
-            ">
-                ${premiumColorPalettes.map((palette, index) => `
-                    <div class="palette-option" onclick="applyPalette(${index})" style="
-                        padding: 1.5rem;
-                        border-radius: 16px;
-                        border: 2px solid transparent;
-                        background: linear-gradient(135deg, ${palette.primary} 0%, ${palette.secondary} 100%);
-                        color: white;
-                        cursor: pointer;
-                        transition: all 0.3s ease;
-                        text-align: center;
-                        position: relative;
-                        overflow: hidden;
-                    ">
-                        <h4 style="margin: 0 0 1rem 0; font-weight: 600;">${palette.name}</h4>
-                        <div style="
-                            display: flex;
-                            justify-content: center;
-                            gap: 0.5rem;
-                            margin-bottom: 1rem;
-                        ">
-                            <div style="
-                                width: 30px;
-                                height: 30px;
-                                background: ${palette.primary};
-                                border-radius: 50%;
-                                border: 2px solid white;
-                            "></div>
-                            <div style="
-                                width: 30px;
-                                height: 30px;
-                                background: ${palette.secondary};
-                                border-radius: 50%;
-                                border: 2px solid white;
-                            "></div>
-                            <div style="
-                                width: 30px;
-                                height: 30px;
-                                background: ${palette.accent};
-                                border-radius: 50%;
-                                border: 2px solid white;
-                            "></div>
-                        </div>
-                        <p style="margin: 0; font-size: 0.8rem; opacity: 0.9;">Click para aplicar</p>
-                    </div>
-                `).join('')}
-            </div>
-            
-            <div style="
-                margin-top: 2rem;
-                padding-top: 1rem;
-                border-top: 1px solid #e5e7eb;
-                text-align: center;
-            ">
-                <button onclick="resetToDefaultPalette()" style="
-                    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
-                    color: white;
-                    border: none;
-                    padding: 0.75rem 2rem;
-                    border-radius: 12px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                ">
-                    🔄 Restaurar Colores Originales
-                </button>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-    
-    // Efecto hover para las paletas
-    const paletteOptions = document.querySelectorAll('.palette-option');
-    paletteOptions.forEach(option => {
-        option.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-4px) scale(1.02)';
-            this.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.2)';
-        });
-        option.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0) scale(1)';
-            this.style.boxShadow = 'none';
-        });
-    });
-}
-
-function applyPalette(index) {
-    const palette = premiumColorPalettes[index];
-    currentPaletteIndex = index;
-    
-    // Aplicar colores al sistema
-    document.documentElement.style.setProperty('--peru-gold', palette.primary);
-    document.documentElement.style.setProperty('--company-primary', palette.primary);
-    document.documentElement.style.setProperty('--company-secondary', palette.secondary);
-    
-    // Actualizar botones principales
-    const buttons = document.querySelectorAll('.btn-primary, .btn-add-company');
-    buttons.forEach(btn => {
-        btn.style.background = `linear-gradient(135deg, ${palette.primary} 0%, ${palette.secondary} 100%)`;
-    });
-    
-    // Actualizar botón IA
-    const aiButton = document.getElementById('aiAssistantButton');
-    if (aiButton) {
-        aiButton.style.background = `linear-gradient(135deg, ${palette.primary} 0%, ${palette.secondary} 100%)`;
-    }
-    
-    // Actualizar header IA
-    const aiHeader = document.querySelector('.ai-panel-header');
-    if (aiHeader) {
-        aiHeader.style.background = `linear-gradient(135deg, ${palette.primary} 0%, ${palette.secondary} 100%)`;
-    }
-    
-    // Guardar preferencia
-    localStorage.setItem('grizalum_color_palette', index.toString());
-    
-    // Cerrar modal
-    closeColorPicker();
-    
-    // Mostrar notificación
-    showNotification(`🎨 Paleta "${palette.name}" aplicada correctamente`, 'success');
-    
-    console.log(`🎨 Paleta aplicada: ${palette.name}`);
-}
-
-function closeColorPicker() {
-    const modal = document.getElementById('colorPaletteModal');
-    if (modal) {
-        modal.remove();
-    }
-}
-
-function resetToDefaultPalette() {
-    applyPalette(0); // Volver al oro ejecutivo
-    localStorage.removeItem('grizalum_color_palette');
-}
-
-// Cargar paleta guardada al iniciar
-function loadSavedPalette() {
-    const savedIndex = localStorage.getItem('grizalum_color_palette');
-    if (savedIndex !== null) {
-        applyPalette(parseInt(savedIndex));
-    }
-}
-
-// Función para el botón pincel
-function toggleColorPalette() {
-    showColorPalettePicker();
-}
-
-// ASEGURAR QUE LOS BOTONES FUNCIONEN
-document.addEventListener('DOMContentLoaded', function() {
-    // Cargar paleta guardada
-    loadSavedPalette();
-    
-    // Asegurar que el input funcione
-    const aiInput = document.getElementById('aiChatInput');
-    if (aiInput) {
-        aiInput.addEventListener('keydown', handleAIChatKeypress);
-    }
-});
-
-console.log('🎨 Sistema de paletas premium activado');    
-    
-// PREGUNTAR A IA (BOTONES RÁPIDOS)
-function askAI(question) {
-    document.getElementById('aiChatInput').value = question;
-    sendAIMessage();
-}
-
-// AGREGAR MENSAJE AL CHAT
-function addChatMessage(message, sender) {
-    const container = document.getElementById('aiChatMessages');
-    
-    const messageElement = document.createElement('div');
-    messageElement.className = `${sender}-message new`;
-    
-    const avatar = sender === 'ai' ? '🤖' : '👤';
-    const avatarClass = sender === 'ai' ? 'ai-message-avatar' : 'user-message-avatar';
-    const contentClass = sender === 'ai' ? 'ai-message-content' : 'user-message-content';
-    
-    messageElement.innerHTML = `
-        <div class="${avatarClass}">${avatar}</div>
-        <div class="${contentClass}">
-            <p>${message}</p>
-        </div>
-    `;
-    
-    container.appendChild(messageElement);
-    container.scrollTop = container.scrollHeight;
-}
-
-// MOSTRAR TYPING INDICATOR
-function showAITyping() {
-    const container = document.getElementById('aiChatMessages');
-    
-    const typingElement = document.createElement('div');
-    typingElement.className = 'ai-message';
-    typingElement.id = 'aiTypingIndicator';
-    
-    typingElement.innerHTML = `
-        <div class="ai-message-avatar">🤖</div>
-        <div class="ai-typing">
-            <span>IA está escribiendo</span>
-            <div class="typing-dots">
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-            </div>
-        </div>
-    `;
-    
-    container.appendChild(typingElement);
-    container.scrollTop = container.scrollHeight;
-}
-
-// OCULTAR TYPING INDICATOR
-function hideAITyping() {
-    const typingIndicator = document.getElementById('aiTypingIndicator');
-    if (typingIndicator) {
-        typingIndicator.remove();
-    }
-}
-
-// GENERAR RESPUESTA IA
-function generateAIResponse(userMessage) {
-    const message = userMessage.toLowerCase();
-    const currentCompany = getCurrentSelectedCompany();
-    const companies = getCompaniesData();
-    const company = companies[currentCompany];
-    
-    // Respuestas específicas
-    if (message.includes('ventas') || message.includes('ingresos')) {
-    if (company) {
-        const growth = Math.random() > 0.5 ? '+' : '';
-        const percentage = (Math.random() * 20 - 10).toFixed(1);
-        return `📈 ¡Oye! Las ventas de ${company.name} van ${growth}${percentage}% comparado con el mes pasado. Tienes S/. ${company.data.revenue.toLocaleString()} en ingresos. ${percentage > 0 ? '¡Está jalazo! 🚀' : 'Hay que meterle más ganas al marketing, pata 💪'}`;
-    }
-    return '📊 Hermano, para analizar las ventas necesito que elijas una empresa específica primero.';
-}
-    
-  if (message.includes('flujo') || message.includes('caja')) {
-    if (company) {
-        const status = company.data.cashFlow > 20000 ? 'bacán' : 'medio ajustado';
-        const advice = company.data.cashFlow > 20000 ? 
-            'Ahora sí puedes pensar en invertir en algo más, pues.' : 
-            'Te recomiendo apurar las cobranzas y revisar bien los gastos, causa.';
-        return `💧 El flujo de caja de ${company.name} está ${status}: S/. ${company.data.cashFlow.toLocaleString()}. ${advice}`;
-    }
-    return '💰 Elige una empresa para ver cómo anda su flujo de caja, pues.';
-}
-    
-   if (message.includes('invertir') || message.includes('inversión')) {
-    if (company) {
-        const canInvest = company.data.cashFlow > 25000;
-        return canInvest ? 
-            `✅ ¡Dale que sí! ${company.name} tiene buena plata para invertir. Con S/. ${company.data.cashFlow.toLocaleString()} en caja, podrías meter más en inventario, marketing digital, o equipos nuevos. ¡A darle!` :
-            `⚠️ Mejor esperamos un toque, pata. ${company.name} necesita mejorar su flujo antes de meterse en inversiones grandes. Tienes S/. ${company.data.cashFlow.toLocaleString()}. Primero enfócate en generar más plata.`;
-    }
-    return '💡 Para saber si puedes invertir, elige una empresa primero, compadre.';
-}
-    
-    if (message.includes('predicción') || message.includes('futuro') || message.includes('pronóstico')) {
-        if (company) {
-            const nextMonth = Math.round(company.data.revenue * (1 + (Math.random() * 0.3 - 0.15)));
-            const trend = nextMonth > company.data.revenue ? 'crecimiento' : 'disminución';
-            return `🔮 Predicción para ${company.name} próximo mes: S/. ${nextMonth.toLocaleString()} en ingresos (${trend}). Basado en tendencias históricas y factores estacionales.`;
-        }
-        return '🔮 Selecciona una empresa para generar predicciones específicas.';
-    }
-    
-    if (message.includes('mejor') || message.includes('optimizar')) {
-        if (company) {
-            const suggestions = [
-                '🎯 Enfócate en productos de mayor margen',
-                '📱 Implementa marketing digital segmentado',
-                '⏰ Optimiza horarios de mayor demanda',
-                '🤝 Desarrolla programa de fidelización',
-                '📊 Automatiza procesos repetitivos'
-            ];
-            const suggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
-            return `💡 Para optimizar ${company.name}: ${suggestion}. También analicé tus datos y sugiero revisar gastos operativos que representan ${((company.data.expenses/company.data.revenue)*100).toFixed(1)}% de tus ingresos.`;
-        }
-        return '🚀 Selecciona una empresa para recibir sugerencias de optimización personalizadas.';
-    }
-    
-    if (message.includes('competencia') || message.includes('mercado')) {
-        const industryInsights = [
-            '📊 El sector retail creció 8% este trimestre en Perú',
-            '🏭 La industria metalúrgica está en auge (+12%)',
-            '🍽️ Gastronomía se recuperó post-pandemia (+15%)',
-            '🏗️ Construcción mantiene crecimiento sostenido (+6%)'
-        ];
-        const insight = industryInsights[Math.floor(Math.random() * industryInsights.length)];
-        return `🌍 Análisis de mercado: ${insight}. Tu empresa está bien posicionada para aprovechar estas tendencias.`;
-    }
-    
-    if (message.includes('gracias') || message.includes('thank')) {
-        return '😊 ¡De nada! Estoy aquí 24/7 para ayudarte a hacer crecer tu negocio. ¿Hay algo más que pueda analizar?';
-    }
-    
-   if (message.includes('hola') || message.includes('hello')) {
-    const greetings = [
-        '¡Ey, qué tal! 👋 Listo para revisar tus números.',
-        '¡Hola, causa! 🚀 ¿En qué empresa le metemos ganas hoy?',
-        '¡Saludos, pata! 📊 ¿Qué KPI quieres que revisemos?'
-    ];
-    return greetings[Math.floor(Math.random() * greetings.length)];
-}
-    
-    // Respuesta por defecto inteligente
-    const responses = [
-        `🤖 Entiendo que quieres saber sobre "${userMessage}". Para darte una respuesta más precisa, ¿podrías ser más específico? Puedo ayudarte con análisis financiero, predicciones, optimización y estrategias.`,
-        `💡 Interesante pregunta sobre "${userMessage}". Te puedo ayudar mejor si me dices qué empresa quieres analizar y qué aspecto específico te interesa.`,
-        `🎯 Sobre "${userMessage}", puedo hacer un análisis detallado. ¿Te refieres a flujo de caja, ventas, gastos, o algo más específico?`
-    ];
-    
-    return responses[Math.floor(Math.random() * responses.length)];
-}
-
-// LIMPIAR CHAT
-function clearAIChat() {
-    const container = document.getElementById('aiChatMessages');
-    container.innerHTML = `
-        <div class="ai-message">
-            <div class="ai-message-avatar">🤖</div>
-            <div class="ai-message-content">
-                <p>Chat limpiado. ¿En qué puedo ayudarte ahora?</p>
-                <div class="ai-quick-actions">
-                    <button class="quick-action-btn" onclick="askAI('¿Cómo van las ventas?')">📈 ¿Cómo van las ventas?</button>
-                    <button class="quick-action-btn" onclick="askAI('¿Puedo invertir más?')">💰 ¿Puedo invertir?</button>
-                    <button class="quick-action-btn" onclick="askAI('Analiza mi flujo de caja')">💧 Analizar flujo</button>
-                    <button class="quick-action-btn" onclick="askAI('Dame predicciones')">🔮 Predicciones</button>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-// ACTUALIZAR ANÁLISIS AL CAMBIAR EMPRESA
-function updateCurrentCompanyAnalysis() {
-    const currentCompany = getCurrentSelectedCompany();
-    const companies = getCompaniesData();
-    const company = companies[currentCompany];
-    
-    if (company && company !== currentCompanyAnalysis) {
-        currentCompanyAnalysis = company;
-        
-        // Generar insights específicos de la empresa
-        setTimeout(() => {
-            const insights = analyzeCompanyData(company);
-            if (insights.length > 0) {
-                addAIInsight(insights[0]);
-            }
-            
-            // Mensaje automático en el chat
-            setTimeout(() => {
-                const analysisMessage = `🔄 Cambié el análisis a ${company.name}. Estado actual: Flujo S/. ${company.data.cashFlow.toLocaleString()}, Ingresos S/. ${company.data.revenue.toLocaleString()}. ¿Qué quieres analizar?`;
-                addChatMessage(analysisMessage, 'ai');
-            }, 1000);
-        }, 500);
-        
-        updateAIStatus();
-    }
-}
-
-// CONFIGURACIÓN DE VOZ
-function setupVoiceRecognition() {
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognition = new SpeechRecognition();
-        
-        recognition.continuous = false;
-        recognition.interimResults = false;
-        recognition.lang = 'es-ES';
-        
-        recognition.onresult = function(event) {
-            const transcript = event.results[0][0].transcript;
-            document.getElementById('aiChatInput').value = transcript;
-            stopVoiceInput();
-            
-            // Auto-enviar después de capturar voz
-            setTimeout(() => {
-                sendAIMessage();
-            }, 500);
-        };
-        
-        recognition.onerror = function(event) {
-            console.warn('Error de reconocimiento de voz:', event.error);
-            stopVoiceInput();
-        };
-        
-        recognition.onend = function() {
-            stopVoiceInput();
-        };
-        
-        console.log('🎤 Reconocimiento de voz disponible');
-    } else {
-        console.warn('⚠️ Reconocimiento de voz no disponible en este navegador');
-    }
-}
-
-// TOGGLE MODO VOZ
-function toggleVoiceMode() {
-    voiceMode = !voiceMode;
-    const button = document.getElementById('voiceToggle');
-    
-    if (voiceMode) {
-        button.innerHTML = '<i class="fas fa-microphone"></i>';
-        button.style.background = 'rgba(16, 185, 129, 0.3)';
-        addChatMessage('🎤 Modo voz activado. Puedes hablar directamente para hacer preguntas.', 'ai');
-    } else {
-        button.innerHTML = '<i class="fas fa-microphone-slash"></i>';
-        button.style.background = 'rgba(255, 255, 255, 0.2)';
-        addChatMessage('⌨️ Modo voz desactivado. Usa el teclado para escribir.', 'ai');
-    }
-}
-
-// INICIAR ENTRADA DE VOZ
-function startVoiceInput() {
-    if (!recognition) {
-        addChatMessage('❌ Reconocimiento de voz no disponible en tu navegador.', 'ai');
-        return;
-    }
-    
-    const button = document.getElementById('voiceInputBtn');
-    button.classList.add('active');
-    button.innerHTML = '<i class="fas fa-stop"></i>';
-    
-    recognition.start();
-    
-    addChatMessage('🎤 Escuchando... Habla ahora.', 'ai');
-}
-
-// DETENER ENTRADA DE VOZ
-function stopVoiceInput() {
-    if (recognition) {
-        recognition.stop();
-    }
-    
-    const button = document.getElementById('voiceInputBtn');
-    button.classList.remove('active');
-    button.innerHTML = '<i class="fas fa-microphone"></i>';
-}
-
-// OVERRIDE FUNCIÓN selectCompany PARA ACTUALIZAR IA
-const originalSelectCompany = selectCompany;
-selectCompany = function(companyId) {
-    originalSelectCompany(companyId);
-    
-    // Actualizar análisis IA
-    setTimeout(() => {
-        updateCurrentCompanyAnalysis();
-    }, 500);
-};
-
-// INSIGHTS AUTOMÁTICOS ADICIONALES
-function generateAdvancedInsights() {
-    const companies = getCompaniesData();
-    const allCompanies = Object.values(companies);
-    
-    if (allCompanies.length === 0) return;
-    
-    // Análisis comparativo
-    const bestPerformer = allCompanies.reduce((best, current) => 
-        current.data.profit > best.data.profit ? current : best
-    );
-    
-    const worstPerformer = allCompanies.reduce((worst, current) => 
-        current.data.profit < worst.data.profit ? current : worst
-    );
-    
-    // Insight comparativo
-    if (bestPerformer !== worstPerformer) {
-        addAIInsight({
-            type: 'info',
-            message: `🏆 ${bestPerformer.name} lidera con S/. ${bestPerformer.data.profit.toLocaleString()} de ganancia`,
-            action: 'Ver estrategias exitosas'
-        });
-    }
-    
-    // Análisis de diversificación
-    const totalProfit = allCompanies.reduce((sum, company) => sum + company.data.profit, 0);
-    if (totalProfit > 50000) {
-        addAIInsight({
-            type: 'success',
-            message: `💎 Portfolio sólido: S/. ${totalProfit.toLocaleString()} ganancia total`,
-            action: 'Oportunidades de expansión'
-        });
-    }
-    
-    // Alertas de riesgo
-    const riskCompanies = allCompanies.filter(company => company.data.cashFlow < 15000);
-    if (riskCompanies.length > 0) {
-        addAIInsight({
-            type: 'warning',
-            message: `⚠️ ${riskCompanies.length} empresa(s) con flujo bajo`,
-            action: 'Plan de contingencia'
-        });
-    }
-}
-
-// PREDICCIONES AVANZADAS
-function generateBusinessPredictions() {
-    const currentCompany = getCurrentSelectedCompany();
-    const companies = getCompaniesData();
-    const company = companies[currentCompany];
-    
-    if (!company) return;
-    
-    // Predicción basada en tendencias
-    const monthlyGrowth = Math.random() * 0.2 - 0.1; // -10% a +10%
-    const predictedRevenue = Math.round(company.data.revenue * (1 + monthlyGrowth));
-    
-    const predictionInsight = {
-        type: monthlyGrowth > 0 ? 'success' : 'warning',
-        message: `🔮 Predicción próximo mes: S/. ${predictedRevenue.toLocaleString()} (${monthlyGrowth > 0 ? '+' : ''}${(monthlyGrowth * 100).toFixed(1)}%)`,
-        action: 'Ver análisis completo'
-    };
-    
-    addAIInsight(predictionInsight);
-}
-
-// MONITOREO CONTINUO
-function startContinuousMonitoring() {
-    // Insights avanzados cada 2 minutos
-    setInterval(generateAdvancedInsights, 120000);
-    
-    // Predicciones cada 3 minutos
-    setInterval(generateBusinessPredictions, 180000);
-    
-    // Análisis de alertas cada 90 segundos
-    setInterval(() => {
-        const currentCompany = getCurrentSelectedCompany();
-        const companies = getCompaniesData();
-        const company = companies[currentCompany];
-        
-        if (company) {
-            // Alerta de oportunidad
-            if (company.data.cashFlow > 40000 && Math.random() > 0.7) {
-                addAIInsight({
-                    type: 'success',
-                    message: '🚀 Oportunidad detectada: Momento ideal para expansión',
-                    action: 'Estrategias recomendadas'
-                });
-            }
-            
-            // Alerta de optimización
-            if (company.data.expenses / company.data.revenue > 0.8 && Math.random() > 0.8) {
-                addAIInsight({
-                    type: 'danger',
-                    message: '🔧 Gastos altos detectados: Optimización necesaria',
-                    action: 'Plan de reducción'
-                });
-            }
-        }
-    }, 90000);
-}
-
-// COMANDOS DE VOZ AVANZADOS
-function processVoiceCommand(command) {
-    const cmd = command.toLowerCase();
-    
-    // Comandos específicos
-    if (cmd.includes('cambiar empresa') || cmd.includes('cambiar a')) {
-        const companies = getCompaniesData();
-        const companyNames = Object.values(companies).map(c => c.name.toLowerCase());
-        
-        for (const [id, company] of Object.entries(companies)) {
-            if (cmd.includes(company.name.toLowerCase())) {
-                selectCompany(id);
-                return `✅ Cambiado a ${company.name}`;
-            }
-        }
-        return '❓ No entendí a qué empresa quieres cambiar';
-    }
-    
-    if (cmd.includes('abrir wizard') || cmd.includes('nueva empresa')) {
-        showAddCompanyWizard();
-        return '🚀 Abriendo wizard para crear nueva empresa';
-    }
-    
-    if (cmd.includes('exportar') || cmd.includes('descargar')) {
-        exportCashFlow();
-        return '📄 Iniciando exportación de datos';
-    }
-    
-    // Procesar como pregunta normal
-    return generateAIResponse(command);
-}
-
-// INICIALIZAR MONITOREO AL CARGAR
-setTimeout(() => {
-    startContinuousMonitoring();
-    
-    // Mensaje de bienvenida personalizado
-    setTimeout(() => {
-        const currentCompany = getCurrentSelectedCompany();
-        const companies = getCompaniesData();
-        const company = companies[currentCompany];
-        
-        if (company) {
-            addChatMessage(`¡Hola! 👋 Estoy monitoreando ${company.name}. Puedo ayudarte con análisis financiero, predicciones y optimización. ¿Qué quieres revisar?`, 'ai');
-        }
-    }, 2000);
-}, 5000);
-
-console.log('🤖 IA Conversacional GRIZALUM completamente cargada');
-// FUNCIÓN TOGGLE IA - ARREGLO DEFINITIVO
-function toggleAIAssistant() {
-    console.log('🤖 toggleAIAssistant llamada');
-    
-    const panel = document.getElementById('aiAssistantPanel');
-    
-    if (!panel) {
-        console.error('❌ Panel IA no encontrado');
-        return;
-    }
-    
-    const isOpen = panel.classList.contains('show');
-    
-    if (isOpen) {
-        panel.classList.remove('show');
-        console.log('🤖 Panel IA cerrado');
-    } else {
-        panel.classList.add('show');
-        console.log('🤖 Panel IA abierto');
-    }
-}
-
-// ENVIAR MENSAJE IA
-function sendAIMessage() {
-    console.log('📤 sendAIMessage llamada');
-    
-    const input = document.getElementById('aiChatInput');
-    if (!input) {
-        console.error('❌ Input IA no encontrado');
-        return;
-    }
-    
-    const message = input.value.trim();
-    if (!message) {
-        console.log('⚠️ Mensaje vacío');
-        return;
-    }
-    
-    console.log('💬 Enviando mensaje:', message);
-    
-    // Agregar mensaje del usuario
-    addChatMessage(message, 'user');
-    input.value = '';
-    
-    // Respuesta IA después de 1 segundo
-    setTimeout(() => {
-        const response = generateAIResponsePeru(message);
-        addChatMessage(response, 'ai');
-    }, 1000);
-}
-
-// MANEJAR ENTER EN EL INPUT
-function handleAIChatKeypress(event) {
-    console.log('⌨️ Tecla presionada:', event.key);
-    
-    if (event.key === 'Enter' && !event.shiftKey) {
-        event.preventDefault();
-        sendAIMessage();
-    }
-}
-
-// AGREGAR MENSAJE AL CHAT
-function addChatMessage(message, sender) {
-    console.log(`💬 Agregando mensaje de ${sender}:`, message);
-    
-    const container = document.getElementById('aiChatMessages');
-    if (!container) {
-        console.error('❌ Contenedor de mensajes no encontrado');
-        return;
-    }
-    
-    const messageElement = document.createElement('div');
-    messageElement.className = `${sender}-message new`;
-    
-    const avatar = sender === 'ai' ? '🤖' : '👤';
-    const avatarClass = sender === 'ai' ? 'ai-message-avatar' : 'user-message-avatar';
-    const contentClass = sender === 'ai' ? 'ai-message-content' : 'user-message-content';
-    
-    messageElement.innerHTML = `
-        <div class="${avatarClass}">${avatar}</div>
-        <div class="${contentClass}">
-            <p>${message}</p>
-        </div>
-    `;
-    
-    container.appendChild(messageElement);
-    container.scrollTop = container.scrollHeight;
-}
-
-// GENERAR RESPUESTA IA PROFESIONAL PERUANA
-function generateAIResponsePeru(userMessage) {
-    const message = userMessage.toLowerCase();
-    const currentCompany = getCurrentSelectedCompany();
-    const companies = getCompaniesData();
-    const company = companies[currentCompany];
-    
-    console.log('🧠 Generando respuesta para:', message);
-    
-    // RESPUESTAS PROFESIONALES CON TOQUE PERUANO
-    if (message.includes('ventas') || message.includes('ingresos')) {
-        if (company) {
-            const growth = Math.random() > 0.5 ? '+' : '';
-            const percentage = (Math.random() * 20 - 10).toFixed(1);
-            return `📈 Las ventas de ${company.name} presentan un ${growth}${percentage}% respecto al mes anterior. Registro actual: S/. ${company.data.revenue.toLocaleString()}. ${percentage > 0 ? 'Excelente performance, recomiendo mantener esta estrategia.' : 'Sugiero implementar estrategias de marketing digital para optimizar resultados.'}`;
-        }
-        return '📊 Para analizar las ventas específicas, seleccione una empresa del portafolio.';
-    }
-    
-    if (message.includes('flujo') || message.includes('caja')) {
-        if (company) {
-            const status = company.data.cashFlow > 20000 ? 'óptimo' : 'requiere atención';
-            const advice = company.data.cashFlow > 20000 ? 
-                'El nivel actual permite considerar inversiones estratégicas.' : 
-                'Recomiendo acelerar las cobranzas y optimizar gastos operativos.';
-            return `💧 El flujo de caja de ${company.name} se encuentra ${status}: S/. ${company.data.cashFlow.toLocaleString()}. ${advice}`;
-        }
-        return '💰 Seleccione una empresa para revisar su flujo de caja específico.';
-    }
-    
-    if (message.includes('invertir') || message.includes('inversión')) {
-        if (company) {
-            const canInvest = company.data.cashFlow > 25000;
-            return canInvest ? 
-                `✅ ${company.name} tiene capacidad financiera para inversiones. Con S/. ${company.data.cashFlow.toLocaleString()} disponibles, puede considerar expansión de inventario, marketing digital o equipamiento.` :
-                `⚠️ ${company.name} debe fortalecer su flujo antes de inversiones mayores. Actual: S/. ${company.data.cashFlow.toLocaleString()}. Enfoque en optimización de ingresos.`;
-        }
-        return '💡 Seleccione una empresa para evaluar capacidad de inversión.';
-    }
-    
-    if (message.includes('predicción') || message.includes('futuro') || message.includes('pronóstico')) {
-        if (company) {
-            const nextMonth = Math.round(company.data.revenue * (1 + (Math.random() * 0.3 - 0.15)));
-            const trend = nextMonth > company.data.revenue ? 'crecimiento' : 'consolidación';
-            return `🔮 Proyección ${company.name} próximo mes: S/. ${nextMonth.toLocaleString()} en ingresos (${trend}). Basado en análisis de tendencias históricas y factores estacionales del mercado peruano.`;
-        }
-        return '🔮 Seleccione una empresa para generar proyecciones específicas.';
-    }
-    
-    if (message.includes('hola') || message.includes('buenos días') || message.includes('buenas tardes')) {
-        return '¡Saludos! Soy su asistente financiero inteligente. Especializado en análisis empresarial, proyecciones financieras y estrategias de crecimiento para el mercado peruano. ¿En qué puedo asistirle hoy?';
-    }
-    
-    if (message.includes('gracias') || message.includes('thank')) {
-        return '¡Siempre a su servicio! Estoy disponible 24/7 para análisis financieros y estrategias empresariales. ¿Hay algún otro aspecto de su negocio que desee revisar?';
-    }
-    
-    // Respuesta por defecto profesional
-    return `Entiendo su consulta sobre "${userMessage}". Para brindarle una respuesta precisa y detallada, ¿podría especificar si se refiere a análisis financiero, proyecciones de crecimiento, optimización de procesos o estrategias de mercado?`;
-}
-
-// PREGUNTAR A LA IA (BOTONES RÁPIDOS)
-function askAI(question) {
-    console.log('🎯 Pregunta rápida:', question);
-    
-    const input = document.getElementById('aiChatInput');
-    if (input) {
-        input.value = question;
-        sendAIMessage();
-    }
-}
-
-// LIMPIAR CHAT
-function clearAIChat() {
-    console.log('🧹 Limpiando chat IA');
-    
-    const container = document.getElementById('aiChatMessages');
-    if (!container) return;
-    
-    container.innerHTML = `
-        <div class="ai-message">
-            <div class="ai-message-avatar">🤖</div>
-            <div class="ai-message-content">
-                <p>Chat reiniciado. Soy su asistente financiero IA. ¿En qué puedo ayudarle?</p>
-                <div class="ai-quick-actions">
-                    <button class="quick-action-btn" onclick="askAI('¿Cómo van las ventas?')">📈 ¿Cómo van las ventas?</button>
-                    <button class="quick-action-btn" onclick="askAI('¿Puedo invertir más?')">💰 ¿Puedo invertir?</button>
-                    <button class="quick-action-btn" onclick="askAI('Analiza mi flujo de caja')">💧 Analizar flujo</button>
-                    <button class="quick-action-btn" onclick="askAI('Dame predicciones')">🔮 Predicciones</button>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-// FUNCIONALIDAD DE MICRÓFONO
-let isRecording = false;
-let recognition = null;
-
-function initializeVoiceRecognition() {
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognition = new SpeechRecognition();
-        
-        recognition.continuous = false;
-        recognition.interimResults = false;
-        recognition.lang = 'es-PE'; // Español de Perú
-        
-        recognition.onresult = function(event) {
-            const transcript = event.results[0][0].transcript;
-            const input = document.getElementById('aiChatInput');
-            if (input) {
-                input.value = transcript;
-                stopVoiceInput();
-                
-                // Auto-enviar mensaje
-                setTimeout(() => {
-                    sendAIMessage();
-                }, 500);
-            }
-        };
-        
-        recognition.onerror = function(event) {
-            console.warn('Error de reconocimiento:', event.error);
-            stopVoiceInput();
-            addChatMessage('❌ Error en reconocimiento de voz. Intente nuevamente.', 'ai');
-        };
-        
-        recognition.onend = function() {
-            stopVoiceInput();
-        };
-        
-        console.log('🎤 Reconocimiento de voz inicializado');
-    } else {
-        console.log('⚠️ Reconocimiento de voz no disponible');
-    }
-}
-
-function startVoiceInput() {
-    console.log('🎤 Iniciando grabación de voz');
-    
-    if (!recognition) {
-        addChatMessage('❌ Reconocimiento de voz no disponible en este navegador.', 'ai');
-        return;
-    }
-    
-    if (isRecording) {
-        stopVoiceInput();
-        return;
-    }
-    
-    isRecording = true;
-    const button = document.getElementById('voiceInputBtn');
-    if (button) {
-        button.classList.add('active');
-        button.innerHTML = '<i class="fas fa-stop"></i>';
-        button.style.background = '#ef4444';
-    }
-    
-    recognition.start();
-    addChatMessage('🎤 Escuchando... Hable ahora.', 'ai');
-}
-
-function stopVoiceInput() {
-    console.log('🎤 Deteniendo grabación de voz');
-    
-    isRecording = false;
-    if (recognition) {
-        recognition.stop();
-    }
-    
-    const button = document.getElementById('voiceInputBtn');
-    if (button) {
-        button.classList.remove('active');
-        button.innerHTML = '<i class="fas fa-microphone"></i>';
-        button.style.background = '#6b7280';
-    }
-}
-
-// SISTEMA DE CAMBIO DE COLORES PREMIUM
-const premiumColorPalettes = [
-    { name: 'Oro Ejecutivo', primary: '#d4af37', secondary: '#b87333', accent: '#f4d03f' },
-    { name: 'Azul Corporativo', primary: '#1e40af', secondary: '#3b82f6', accent: '#60a5fa' },
-    { name: 'Verde Prosperidad', primary: '#059669', secondary: '#10b981', accent: '#34d399' },
-    { name: 'Púrpura Premium', primary: '#7c3aed', secondary: '#8b5cf6', accent: '#a78bfa' },
-    { name: 'Rojo Ejecutivo', primary: '#dc2626', secondary: '#ef4444', accent: '#f87171' },
-    { name: 'Naranja Dinámico', primary: '#ea580c', secondary: '#f97316', accent: '#fb923c' },
-    { name: 'Turquesa Moderno', primary: '#0891b2', secondary: '#06b6d4', accent: '#22d3ee' },
-    { name: 'Rosa Elegante', primary: '#ec4899', secondary: '#f472b6', accent: '#f9a8d4' }
-];
-
-function toggleColorPalette() {
-    console.log('🎨 Abriendo selector de colores');
-    showColorPalettePicker();
-}
-
-function showColorPalettePicker() {
-    // Crear modal de colores
-    const modal = document.createElement('div');
-    modal.id = 'colorPaletteModal';
-    modal.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.8);
-        z-index: 10000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        backdrop-filter: blur(8px);
-    `;
-    
-    modal.innerHTML = `
-        <div style="
-            background: white;
-            border-radius: 24px;
-            padding: 2rem;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        ">
-            <div style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 2rem;
-                border-bottom: 1px solid #e5e7eb;
-                padding-bottom: 1rem;
-            ">
-                <h3 style="margin: 0; color: #1f2937; font-weight: 700; font-size: 1.5rem;">
-                    🎨 Paletas Premium GRIZALUM
-                </h3>
-                <button onclick="closeColorPicker()" style="
-                    background: none;
-                    border: none;
-                    font-size: 1.5rem;
-                    color: #6b7280;
-                    cursor: pointer;
-                    padding: 0.5rem;
-                    border-radius: 8px;
-                    transition: all 0.3s ease;
-                ">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <div style="
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                gap: 1.5rem;
-            ">
-                ${premiumColorPalettes.map((palette, index) => `
-                    <div class="palette-option" onclick="applyPalette(${index})" style="
-                        padding: 1.5rem;
-                        border-radius: 16px;
-                        border: 2px solid transparent;
-                        background: linear-gradient(135deg, ${palette.primary} 0%, ${palette.secondary} 100%);
-                        color: white;
-                        cursor: pointer;
-                        transition: all 0.3s ease;
-                        text-align: center;
-                        position: relative;
-                        overflow: hidden;
-                    ">
-                        <h4 style="margin: 0 0 1rem 0; font-weight: 600;">${palette.name}</h4>
-                        <div style="
-                            display: flex;
-                            justify-content: center;
-                            gap: 0.5rem;
-                            margin-bottom: 1rem;
-                        ">
-                            <div style="width: 30px; height: 30px; background: ${palette.primary}; border-radius: 50%; border: 2px solid white;"></div>
-                            <div style="width: 30px; height: 30px; background: ${palette.secondary}; border-radius: 50%; border: 2px solid white;"></div>
-                            <div style="width: 30px; height: 30px; background: ${palette.accent}; border-radius: 50%; border: 2px solid white;"></div>
-                        </div>
-                        <p style="margin: 0; font-size: 0.8rem; opacity: 0.9;">Click para aplicar</p>
-                    </div>
-                `).join('')}
-            </div>
-            
-            <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #e5e7eb; text-align: center;">
-                <button onclick="resetToDefaultPalette()" style="
-                    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
-                    color: white;
-                    border: none;
-                    padding: 0.75rem 2rem;
-                    border-radius: 12px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                ">
-                    🔄 Restaurar Colores Originales
-                </button>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-}
-
-function applyPalette(index) {
-    const palette = premiumColorPalettes[index];
-    
-    console.log(`🎨 Aplicando paleta: ${palette.name}`);
-    
-    // Aplicar colores al sistema
-    document.documentElement.style.setProperty('--peru-gold', palette.primary);
-    document.documentElement.style.setProperty('--company-primary', palette.primary);
-    document.documentElement.style.setProperty('--company-secondary', palette.secondary);
-    
-    // Actualizar botones principales
-    const buttons = document.querySelectorAll('.btn-primary, .btn-add-company');
-    buttons.forEach(btn => {
-        btn.style.background = `linear-gradient(135deg, ${palette.primary} 0%, ${palette.secondary} 100%)`;
-    });
-    
-    // Actualizar botón IA
-    const aiButton = document.getElementById('aiAssistantButton');
-    if (aiButton) {
-        aiButton.style.background = `linear-gradient(135deg, ${palette.primary} 0%, ${palette.secondary} 100%)`;
-    }
-    
-    // Actualizar header IA
-    const aiHeader = document.querySelector('.ai-panel-header');
-    if (aiHeader) {
-        aiHeader.style.background = `linear-gradient(135deg, ${palette.primary} 0%, ${palette.secondary} 100%)`;
-    }
-    
-    // Guardar preferencia
-    localStorage.setItem('grizalum_color_palette', index.toString());
-    
-    // Cerrar modal
-    closeColorPicker();
-    
-    // Mostrar notificación
-    showNotification(`🎨 Paleta "${palette.name}" aplicada correctamente`, 'success');
-}
-
-function closeColorPicker() {
-    const modal = document.getElementById('colorPaletteModal');
-    if (modal) {
-        modal.remove();
-    }
-}
-
-function resetToDefaultPalette() {
-    applyPalette(0); // Volver al oro ejecutivo
-    localStorage.removeItem('grizalum_color_palette');
-}
-
-// FORZAR TODAS LAS FUNCIONES AL SCOPE GLOBAL
-window.toggleAIAssistant = toggleAIAssistant;
-window.sendAIMessage = sendAIMessage;
-window.handleAIChatKeypress = handleAIChatKeypress;
-window.addChatMessage = addChatMessage;
-window.generateAIResponsePeru = generateAIResponsePeru;
-window.askAI = askAI;
-window.clearAIChat = clearAIChat;
-window.startVoiceInput = startVoiceInput;
-window.stopVoiceInput = stopVoiceInput;
-window.toggleColorPalette = toggleColorPalette;
-window.showColorPalettePicker = showColorPalettePicker;
-window.applyPalette = applyPalette;
-window.closeColorPicker = closeColorPicker;
-window.resetToDefaultPalette = resetToDefaultPalette;
-
-// INICIALIZAR AL CARGAR
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Inicializando IA GRIZALUM');
-    
-    // Inicializar reconocimiento de voz
-    initializeVoiceRecognition();
-    
-    // Cargar paleta guardada
-    const savedIndex = localStorage.getItem('grizalum_color_palette');
-    if (savedIndex !== null) {
-        applyPalette(parseInt(savedIndex));
-    }
-    
-    // Asegurar que el input funcione
-    const aiInput = document.getElementById('aiChatInput');
-    if (aiInput) {
-        aiInput.addEventListener('keydown', handleAIChatKeypress);
-        console.log('✅ Input IA conectado');
-    } else {
-        console.error('❌ Input IA no encontrado');
-    }
-    
-    // Verificar botones
-    const sendBtn = document.querySelector('.ai-send-btn');
-    if (sendBtn) {
-        sendBtn.addEventListener('click', sendAIMessage);
-        console.log('✅ Botón enviar conectado');
-    }
-    
-    const voiceBtn = document.getElementById('voiceInputBtn');
-    if (voiceBtn) {
-        voiceBtn.addEventListener('click', startVoiceInput);
-        console.log('✅ Botón voz conectado');
-    }
-});
-
-console.log('✅ IA CONVERSACIONAL GRIZALUM COMPLETAMENTE FUNCIONAL');
-console.log('🎯 Funciones disponibles:');
-console.log('  • Chat inteligente con respuestas profesionales');
-console.log('  • Reconocimiento de voz en español peruano');
-console.log('  • 8 paletas de colores premium');
-console.log('  • Análisis financiero contextual');
-console.log('  • Botones de acciones rápidas');
-console.log('🚀 ¡Listo para usar!');
-</script>                    
                 </div>
             </header>
 
@@ -4888,450 +826,1237 @@ console.log('🚀 ¡Listo para usar!');
         </main>
     </div>
 
-    <!-- Scripts - RUTAS DESDE LA RAÍZ -->
+    <!-- IA CONVERSACIONAL FUNCIONAL -->
+
+    <!-- BOTÓN FLOTANTE DE IA -->
+    <div id="aiAssistantButton" class="ai-assistant-button" onclick="toggleAIAssistant()">
+        <div class="ai-icon">
+            <i class="fas fa-brain"></i>
+        </div>
+        <div class="ai-pulse"></div>
+    </div>
+
+    <!-- PANEL DEL ASISTENTE IA -->
+    <div id="aiAssistantPanel" class="ai-assistant-panel">
+        <div class="ai-panel-header">
+            <div class="ai-avatar">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div class="ai-info">
+                <h4>GRIZALUM IA</h4>
+                <p>Listo para ayudarte</p>
+            </div>
+            <div class="ai-controls">
+                <button class="ai-control-btn" onclick="toggleColorPalette()" title="Cambiar colores">
+                    <i class="fas fa-palette"></i>
+                </button>
+                <button class="ai-control-btn" onclick="clearAIChat()">
+                    <i class="fas fa-broom"></i>
+                </button>
+                <button class="ai-control-btn" onclick="toggleAIAssistant()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="ai-insights-section">
+            <h5>🎯 Insights Automáticos</h5>
+            <div id="aiInsights" class="ai-insights-container">
+                <div class="ai-insight-item success">
+                    <div style="font-weight: 600; margin-bottom: 0.25rem;">📈 Flujo de caja estable este mes</div>
+                    <div style="font-size: 0.7rem; opacity: 0.8;">💡 Ver detalles</div>
+                </div>
+                <div class="ai-insight-item info">
+                    <div style="font-weight: 600; margin-bottom: 0.25rem;">🎯 IA lista para analizar tus datos</div>
+                    <div style="font-size: 0.7rem; opacity: 0.8;">💡 Comenzar análisis</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ai-chat-container">
+            <div class="ai-chat-messages" id="aiChatMessages">
+                <div class="ai-message">
+                    <div class="ai-message-avatar">🤖</div>
+                    <div class="ai-message-content">
+                        <p>¡Hola! Soy tu asistente financiero IA especializado en empresas peruanas. Puedo ayudarte con:</p>
+                        <div class="ai-quick-actions">
+                            <button class="quick-action-btn" onclick="askAI('¿Cómo van mis ventas?')">📈 ¿Cómo van las ventas?</button>
+                            <button class="quick-action-btn" onclick="askAI('¿Puedo invertir más dinero?')">💰 ¿Puedo invertir?</button>
+                            <button class="quick-action-btn" onclick="askAI('¿Cómo está mi flujo de caja?')">💧 Flujo de caja</button>
+                            <button class="quick-action-btn" onclick="askAI('Dame predicciones para el próximo mes')">🔮 Predicciones</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ai-chat-input">
+                <div class="ai-input-container">
+                    <input type="text" id="aiChatInput" placeholder="Pregúntame sobre tu empresa..." 
+                           onkeydown="handleAIChatKeypress(event)">
+                    <button class="ai-send-btn" onclick="sendAIMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                    <button class="ai-voice-btn" onclick="startVoiceInput()" id="voiceInputBtn">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ESTILOS PARA IA -->
+    <style>
+    .ai-assistant-button {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+        z-index: 1000;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: visible;
+    }
+
+    .ai-assistant-button:hover {
+        transform: translateY(-5px) scale(1.1);
+        box-shadow: 0 15px 40px rgba(99, 102, 241, 0.6);
+    }
+
+    .ai-icon {
+        color: white;
+        font-size: 1.8rem;
+        z-index: 2;
+    }
+
+    .ai-pulse {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        opacity: 0.7;
+        animation: aiPulse 2s infinite;
+    }
+
+    @keyframes aiPulse {
+        0% { transform: scale(1); opacity: 0.7; }
+        50% { transform: scale(1.2); opacity: 0.3; }
+        100% { transform: scale(1.4); opacity: 0; }
+    }
+
+    .ai-assistant-panel {
+        position: fixed;
+        bottom: 120px;
+        right: 30px;
+        width: 500px;
+        height: 700px;
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(20px) scale(0.95);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+        border: 1px solid var(--gray-200);
+    }
+
+    .ai-assistant-panel.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+    }
+
+    .ai-panel-header {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        color: white;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .ai-avatar {
+        width: 50px;
+        height: 50px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .ai-info {
+        flex: 1;
+    }
+
+    .ai-info h4 {
+        margin: 0 0 0.25rem 0;
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+
+    .ai-info p {
+        margin: 0;
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    .ai-controls {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .ai-control-btn {
+        width: 36px;
+        height: 36px;
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .ai-control-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
+    }
+
+    .ai-insights-section {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--gray-200);
+        background: var(--gray-50);
+    }
+
+    .ai-insights-section h5 {
+        margin: 0 0 1rem 0;
+        color: var(--gray-800);
+        font-size: 0.9rem;
+        font-weight: 700;
+    }
+
+    .ai-insights-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        max-height: 120px;
+        overflow-y: auto;
+    }
+
+    .ai-insight-item {
+        background: white;
+        padding: 0.75rem;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        border-left: 3px solid;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .ai-insight-item:hover {
+        transform: translateX(4px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .ai-insight-item.success { border-color: #10b981; background: rgba(16, 185, 129, 0.05); }
+    .ai-insight-item.warning { border-color: #f59e0b; background: rgba(245, 158, 11, 0.05); }
+    .ai-insight-item.info { border-color: #3b82f6; background: rgba(59, 130, 246, 0.05); }
+    .ai-insight-item.danger { border-color: #ef4444; background: rgba(239, 68, 68, 0.05); }
+
+    .ai-chat-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        height: calc(100% - 200px);
+    }
+
+    .ai-chat-messages {
+        flex: 1;
+        padding: 1rem;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .ai-message, .user-message {
+        display: flex;
+        gap: 0.75rem;
+        align-items: flex-start;
+    }
+
+    .user-message {
+        flex-direction: row-reverse;
+    }
+
+    .ai-message-avatar, .user-message-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+
+    .ai-message-avatar {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        color: white;
+    }
+
+    .user-message-avatar {
+        background: var(--peru-gold);
+        color: white;
+    }
+
+    .ai-message-content, .user-message-content {
+        background: var(--gray-50);
+        padding: 0.75rem 1rem;
+        border-radius: 12px;
+        max-width: 280px;
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+
+    .user-message-content {
+        background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+        color: white;
+    }
+
+    .ai-message-content p {
+        margin: 0 0 0.5rem 0;
+    }
+
+    .ai-message-content p:last-child {
+        margin-bottom: 0;
+    }
+
+    .ai-quick-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+    }
+
+    .quick-action-btn {
+        background: white;
+        border: 1px solid var(--gray-300);
+        padding: 0.5rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: var(--gray-700);
+    }
+
+    .quick-action-btn:hover {
+        background: var(--peru-gold);
+        color: white;
+        border-color: var(--peru-gold);
+        transform: translateY(-1px);
+    }
+
+    .ai-chat-input {
+        padding: 1rem;
+        border-top: 1px solid var(--gray-200);
+        background: white;
+    }
+
+    .ai-input-container {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .ai-input-container input {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        border: 2px solid var(--gray-200);
+        border-radius: 20px;
+        font-size: 0.9rem;
+        outline: none;
+        transition: all 0.3s ease;
+    }
+
+    .ai-input-container input:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .ai-send-btn, .ai-voice-btn {
+        width: 40px;
+        height: 40px;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .ai-send-btn {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        color: white;
+    }
+
+    .ai-voice-btn {
+        background: var(--gray-200);
+        color: var(--gray-600);
+    }
+
+    .ai-voice-btn.active {
+        background: #ef4444;
+        color: white;
+        animation: voicePulse 1s infinite;
+    }
+
+    @keyframes voicePulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    .ai-send-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+
+    .ai-voice-btn:hover {
+        background: var(--gray-300);
+    }
+
+    .typing-indicator {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 8px 0;
+    }
+
+    .typing-indicator span {
+        height: 8px;
+        width: 8px;
+        background: #6b7280;
+        border-radius: 50%;
+        display: inline-block;
+        animation: typing 1.4s infinite ease-in-out;
+    }
+
+    .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+    .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0s; }
+
+    @keyframes typing {
+        0%, 80%, 100% { 
+            transform: scale(0.8);
+            opacity: 0.5;
+        }
+        40% { 
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .ai-assistant-panel {
+            bottom: 20px;
+            right: 20px;
+            left: 20px;
+            width: auto;
+            height: 70vh;
+        }
+        
+        .ai-assistant-button {
+            bottom: 20px;
+            right: 20px;
+        }
+    }
+    </style>
+
+    <!-- JAVASCRIPT FUNCIONAL -->
+    <script>
+    // ======= IA CONVERSACIONAL GRIZALUM - VERSIÓN FUNCIONAL =======
+
+    // VARIABLES GLOBALES
+    const colorPalettes = [
+        { name: 'Oro Empresarial', primary: '#d4af37', secondary: '#b87333' },
+        { name: 'Verde Prosperidad', primary: '#059669', secondary: '#10b981' },
+        { name: 'Azul Corporativo', primary: '#1e40af', secondary: '#3b82f6' },
+        { name: 'Púrpura Premium', primary: '#7c3aed', secondary: '#8b5cf6' },
+        { name: 'Rojo Dinámico', primary: '#dc2626', secondary: '#ef4444' },
+        { name: 'Naranja Energético', primary: '#ea580c', secondary: '#f97316' },
+        { name: 'Turquesa Moderno', primary: '#0891b2', secondary: '#06b6d4' },
+        { name: 'Rosa Innovador', primary: '#ec4899', secondary: '#f472b6' }
+    ];
+
+    let currentPaletteIndex = 0;
+    let recognition = null;
+    let isRecording = false;
+
+    // FUNCIÓN TOGGLE IA
+    function toggleAIAssistant() {
+        console.log('🤖 Toggling IA');
+        
+        const panel = document.getElementById('aiAssistantPanel');
+        if (!panel) {
+            console.error('❌ Panel IA no encontrado');
+            return;
+        }
+        
+        panel.classList.toggle('show');
+        console.log('✅ Panel IA toggled');
+    }
+
+    // ENVIAR MENSAJE IA
+    function sendAIMessage() {
+        console.log('📤 Enviando mensaje...');
+        
+        const input = document.getElementById('aiChatInput');
+        if (!input) {
+            console.error('❌ Input no encontrado');
+            return;
+        }
+        
+        const message = input.value.trim();
+        if (!message) {
+            console.log('⚠️ Mensaje vacío');
+            return;
+        }
+        
+        console.log('💬 Mensaje:', message);
+        
+        // Agregar mensaje del usuario
+        addChatMessage(message, 'user');
+        
+        // Limpiar input
+        input.value = '';
+        
+        // Mostrar que IA está escribiendo
+        showTypingIndicator();
+        
+        // Generar respuesta después de 1.5 segundos
+        setTimeout(() => {
+            hideTypingIndicator();
+            const response = generateSmartAIResponse(message);
+            addChatMessage(response, 'ai');
+        }, 1500);
+    }
+
+    // MOSTRAR INDICADOR DE ESCRITURA
+    function showTypingIndicator() {
+        const container = document.getElementById('aiChatMessages');
+        const typingDiv = document.createElement('div');
+        typingDiv.id = 'typingIndicator';
+        typingDiv.className = 'ai-message';
+        typingDiv.innerHTML = `
+            <div class="ai-message-avatar">🤖</div>
+            <div class="ai-message-content">
+                <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        `;
+        container.appendChild(typingDiv);
+        container.scrollTop = container.scrollHeight;
+    }
+
+    // OCULTAR INDICADOR DE ESCRITURA
+    function hideTypingIndicator() {
+        const typing = document.getElementById('typingIndicator');
+        if (typing) {
+            typing.remove();
+        }
+    }
+
+    // AGREGAR MENSAJE AL CHAT
+    function addChatMessage(message, sender) {
+        console.log(`💬 Agregando mensaje de ${sender}`);
+        
+        const container = document.getElementById('aiChatMessages');
+        if (!container) return;
+        
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `${sender}-message`;
+        
+        const avatar = sender === 'ai' ? '🤖' : '👤';
+        const avatarClass = sender === 'ai' ? 'ai-message-avatar' : 'user-message-avatar';
+        const contentClass = sender === 'ai' ? 'ai-message-content' : 'user-message-content';
+        
+        messageDiv.innerHTML = `
+            <div class="${avatarClass}">${avatar}</div>
+            <div class="${contentClass}">
+                <p>${message}</p>
+            </div>
+        `;
+        
+        container.appendChild(messageDiv);
+        container.scrollTop = container.scrollHeight;
+        
+        // Animación suave
+        messageDiv.style.opacity = '0';
+        messageDiv.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            messageDiv.style.transition = 'all 0.3s ease';
+            messageDiv.style.opacity = '1';
+            messageDiv.style.transform = 'translateY(0)';
+        }, 100);
+    }
+
+    // GENERAR RESPUESTA INTELIGENTE DE IA
+    function generateSmartAIResponse(userMessage) {
+        const message = userMessage.toLowerCase();
+        const currentCompany = getCurrentSelectedCompany();
+        const companies = getCompaniesData();
+        const company = companies[currentCompany];
+        
+        console.log('🧠 Generando respuesta para:', message);
+        
+        // RESPUESTAS SOBRE VENTAS
+        if (message.includes('ventas') || message.includes('vender') || message.includes('ingresos')) {
+            if (company) {
+                const growth = Math.random() > 0.5 ? 'crecimiento' : 'estabilidad';
+                const percentage = (Math.random() * 25 + 5).toFixed(1);
+                const advice = growth === 'crecimiento' ? 
+                    'Recomiendo mantener esta estrategia y considerar expansión.' : 
+                    'Sugiero implementar nuevas estrategias de marketing digital.';
+                
+                return `📈 **Análisis de Ventas - ${company.name}**
+
+Las ventas actuales son S/. ${company.data.revenue.toLocaleString()} con una tendencia de ${growth} del ${percentage}%.
+
+${advice}
+
+**Recomendaciones:**
+• Enfócate en productos de mayor margen
+• Implementa programas de fidelización
+• Considera promociones estacionales`;
+            }
+            return '📊 Selecciona una empresa específica para analizar sus ventas en detalle.';
+        }
+        
+        // RESPUESTAS SOBRE FLUJO DE CAJA
+        if (message.includes('flujo') || message.includes('caja') || message.includes('liquidez')) {
+            if (company) {
+                const health = company.data.cashFlow > 25000 ? 'excelente' : 
+                              company.data.cashFlow > 15000 ? 'bueno' : 'necesita atención';
+                const color = company.data.cashFlow > 25000 ? '🟢' : 
+                             company.data.cashFlow > 15000 ? '🟡' : '🔴';
+                
+                return `💧 **Flujo de Caja - ${company.name}**
+
+${color} Estado: ${health.toUpperCase()}
+💰 Disponible: S/. ${company.data.cashFlow.toLocaleString()}
+
+**Análisis:**
+${company.data.cashFlow > 25000 ? 
+    '• Excelente liquidez para inversiones\n• Considera expansión o nuevos equipos\n• Mantén reserva del 20% para emergencias' :
+    '• Acelera cobranzas pendientes\n• Revisa gastos no esenciales\n• Negocia mejores términos con proveedores'}`;
+            }
+            return '💰 Necesito que selecciones una empresa para revisar su flujo de caja.';
+        }
+        
+        // RESPUESTAS SOBRE INVERSIÓN
+        if (message.includes('invertir') || message.includes('inversión') || message.includes('expandir')) {
+            if (company) {
+                const canInvest = company.data.cashFlow > 30000;
+                const riskLevel = company.data.profit / company.data.revenue > 0.2 ? 'bajo' : 'moderado';
+                
+                return `💡 **Análisis de Inversión - ${company.name}**
+
+${canInvest ? '✅ RECOMENDADO' : '⚠️ PRECAUCIÓN'}
+
+**Capacidad actual:**
+• Flujo disponible: S/. ${company.data.cashFlow.toLocaleString()}
+• Margen de ganancia: ${((company.data.profit/company.data.revenue)*100).toFixed(1)}%
+• Nivel de riesgo: ${riskLevel}
+
+**Recomendación:**
+${canInvest ? 
+    'Puedes invertir hasta S/. ' + Math.floor(company.data.cashFlow * 0.6).toLocaleString() + ' manteniendo liquidez segura.' :
+    'Fortalece primero el flujo de caja antes de inversiones grandes. Enfócate en optimizar operaciones actuales.'}`;
+            }
+            return '💡 Selecciona una empresa para evaluar su capacidad de inversión.';
+        }
+        
+        // RESPUESTAS SOBRE GASTOS
+        if (message.includes('gastos') || message.includes('costos') || message.includes('reducir')) {
+            if (company) {
+                const expenseRatio = (company.data.expenses / company.data.revenue * 100).toFixed(1);
+                const efficiency = expenseRatio < 60 ? 'excelente' : expenseRatio < 75 ? 'buena' : 'necesita mejora';
+                
+                return `💸 **Análisis de Gastos - ${company.name}**
+
+📊 Gastos actuales: S/. ${company.data.expenses.toLocaleString()}
+📈 Porcentaje de ingresos: ${expenseRatio}%
+⚡ Eficiencia: ${efficiency}
+
+**Oportunidades de optimización:**
+• Renegociar contratos con proveedores principales
+• Automatizar procesos repetitivos
+• Revisar gastos de marketing menos efectivos
+• Considerar equipos más eficientes energéticamente`;
+            }
+            return '💸 Elige una empresa para analizar sus gastos y encontrar oportunidades de ahorro.';
+        }
+        
+        // RESPUESTAS SOBRE PREDICCIONES
+        if (message.includes('futuro') || message.includes('predicción') || message.includes('pronóstico')) {
+            if (company) {
+                const trend = Math.random() > 0.5 ? 'positiva' : 'estable';
+                const nextMonth = Math.round(company.data.revenue * (trend === 'positiva' ? 1.15 : 1.05));
+                
+                return `🔮 **Predicción Financiera - ${company.name}**
+
+**Próximo mes:**
+📈 Ingresos proyectados: S/. ${nextMonth.toLocaleString()}
+📊 Tendencia: ${trend}
+🎯 Confianza: 85%
+
+**Factores considerados:**
+• Tendencias históricas de la empresa
+• Estacionalidad del sector
+• Condiciones del mercado peruano
+• Indicadores económicos actuales
+
+**Recomendación:** ${trend === 'positiva' ? 'Prepárate para el crecimiento aumentando inventario' : 'Mantén operaciones estables y enfócate en eficiencia'}`;
+            }
+            return '🔮 Selecciona una empresa para generar predicciones específicas basadas en sus datos.';
+        }
+        
+        // RESPUESTAS DE SALUDO
+        if (message.includes('hola') || message.includes('buenos') || message.includes('buenas')) {
+            const greetings = [
+                '¡Hola! 👋 Soy tu asistente financiero inteligente. Puedo ayudarte con análisis de ventas, flujo de caja, predicciones y estrategias de crecimiento.',
+                '¡Saludos! 🚀 Estoy aquí para optimizar las finanzas de tu empresa. ¿Qué aspecto de tu negocio quieres revisar?',
+                '¡Buen día! 📊 Especialista en análisis empresarial a tu servicio. ¿Comenzamos con un análisis de rentabilidad?'
+            ];
+            return greetings[Math.floor(Math.random() * greetings.length)];
+        }
+        
+        // RESPUESTAS DE AGRADECIMIENTO
+        if (message.includes('gracias') || message.includes('thank')) {
+            return '😊 ¡Siempre a tu servicio! Estoy disponible 24/7 para ayudarte a hacer crecer tu negocio. ¿Hay algo más que pueda analizar para ti?';
+        }
+        
+        // RESPUESTA POR DEFECTO INTELIGENTE
+        const defaultResponses = [
+            `🤔 Entiendo que preguntas sobre "${userMessage}". Puedo ayudarte con:
+
+📈 **Análisis de Ventas** - Tendencias y oportunidades
+💧 **Flujo de Caja** - Liquidez y gestión financiera  
+💡 **Estrategias de Inversión** - Cuándo y dónde invertir
+🔮 **Predicciones** - Proyecciones basadas en datos
+💸 **Optimización de Gastos** - Reducir costos sin afectar calidad
+
+¿Sobre cuál de estos temas te gustaría que profundice?`,
+            
+            `💡 Interesante consulta sobre "${userMessage}". Para darte la mejor respuesta, ¿te refieres a:
+
+• **Análisis financiero** de una empresa específica
+• **Comparación** entre tus diferentes negocios  
+• **Estrategias** para mejorar rentabilidad
+• **Predicciones** de crecimiento futuro
+
+¡Dime qué necesitas y te ayudo con datos precisos!`
+        ];
+        
+        return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+    }
+
+    // MANEJAR TECLA ENTER
+    function handleAIChatKeypress(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            sendAIMessage();
+        }
+    }
+
+    // BOTONES RÁPIDOS
+    function askAI(question) {
+        const input = document.getElementById('aiChatInput');
+        if (input) {
+            input.value = question;
+            sendAIMessage();
+        }
+    }
+
+    // LIMPIAR CHAT
+    function clearAIChat() {
+        const container = document.getElementById('aiChatMessages');
+        if (!container) return;
+        
+        container.innerHTML = `
+            <div class="ai-message">
+                <div class="ai-message-avatar">🤖</div>
+                <div class="ai-message-content">
+                    <p>Chat reiniciado. Soy tu asistente financiero IA especializado en empresas peruanas. ¿En qué puedo ayudarte?</p>
+                    <div class="ai-quick-actions">
+                        <button class="quick-action-btn" onclick="askAI('¿Cómo van mis ventas?')">📈 Analizar Ventas</button>
+                        <button class="quick-action-btn" onclick="askAI('¿Puedo invertir más dinero?')">💰 ¿Puedo Invertir?</button>
+                        <button class="quick-action-btn" onclick="askAI('¿Cómo está mi flujo de caja?')">💧 Flujo de Caja</button>
+                        <button class="quick-action-btn" onclick="askAI('Dame predicciones para el próximo mes')">🔮 Predicciones</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // ======= SISTEMA DE CAMBIO DE COLORES ALEATORIO =======
+
+    // CAMBIAR PALETA ALEATORIAMENTE
+    function toggleColorPalette() {
+        console.log('🎨 Cambiando paleta de colores...');
+        
+        // Seleccionar paleta aleatoria (diferente a la actual)
+        let newIndex;
+        do {
+            newIndex = Math.floor(Math.random() * colorPalettes.length);
+        } while (newIndex === currentPaletteIndex);
+        
+        currentPaletteIndex = newIndex;
+        const palette = colorPalettes[newIndex];
+        
+        applyColorPalette(palette);
+        
+        // Mostrar notificación
+        showColorChangeNotification(palette.name);
+    }
+
+    // APLICAR PALETA DE COLORES
+    function applyColorPalette(palette) {
+        console.log(`🎨 Aplicando: ${palette.name}`);
+        
+        // Actualizar variables CSS
+        document.documentElement.style.setProperty('--peru-gold', palette.primary);
+        document.documentElement.style.setProperty('--company-primary', palette.primary);
+        document.documentElement.style.setProperty('--company-secondary', palette.secondary);
+        
+        // Actualizar botones principales
+        const buttons = document.querySelectorAll('.btn-primary, .btn-add-company');
+        buttons.forEach(btn => {
+            btn.style.background = `linear-gradient(135deg, ${palette.primary} 0%, ${palette.secondary} 100%)`;
+        });
+        
+        // Actualizar botón IA
+        const aiButton = document.getElementById('aiAssistantButton');
+        if (aiButton) {
+            aiButton.style.background = `linear-gradient(135deg, ${palette.primary} 0%, ${palette.secondary} 100%)`;
+        }
+        
+        // Actualizar header IA
+        const aiHeader = document.querySelector('.ai-panel-header');
+        if (aiHeader) {
+            aiHeader.style.background = `linear-gradient(135deg, ${palette.primary} 0%, ${palette.secondary} 100%)`;
+        }
+        
+        // Actualizar selector de empresa
+        const selectedCompany = document.querySelector('.selected-company');
+        if (selectedCompany) {
+            selectedCompany.style.borderColor = palette.primary + '80'; // 50% transparencia
+        }
+        
+        // Guardar preferencia
+        localStorage.setItem('grizalum_current_palette', JSON.stringify(palette));
+        
+        console.log('✅ Paleta aplicada correctamente');
+    }
+
+    // MOSTRAR NOTIFICACIÓN DE CAMBIO DE COLOR
+    function showColorChangeNotification(paletteName) {
+        // Crear notificación temporal
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--company-primary), var(--company-secondary));
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            z-index: 10000;
+            font-weight: 600;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        `;
+        
+        notification.innerHTML = `
+            🎨 Paleta cambiada a: ${paletteName}
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Animar entrada
+        setTimeout(() => {
+            notification.style.transform = 'translateX(0)';
+        }, 100);
+        
+        // Quitar después de 3 segundos
+        setTimeout(() => {
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 3000);
+    }
+
+    // ======= RECONOCIMIENTO DE VOZ =======
+
+    function initializeVoiceRecognition() {
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'es-PE';
+            
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                const input = document.getElementById('aiChatInput');
+                if (input) {
+                    input.value = transcript;
+                    stopVoiceInput();
+                    setTimeout(() => sendAIMessage(), 500);
+                }
+            };
+            
+            recognition.onerror = function(event) {
+                console.warn('Error de voz:', event.error);
+                stopVoiceInput();
+                addChatMessage('❌ Error en reconocimiento de voz. Intenta nuevamente.', 'ai');
+            };
+            
+            recognition.onend = function() {
+                stopVoiceInput();
+            };
+            
+            console.log('🎤 Reconocimiento de voz listo');
+        }
+    }
+
+    function startVoiceInput() {
+        if (!recognition) {
+            addChatMessage('❌ Reconocimiento de voz no disponible.', 'ai');
+            return;
+        }
+        
+        if (isRecording) {
+            stopVoiceInput();
+            return;
+        }
+        
+        isRecording = true;
+        const button = document.getElementById('voiceInputBtn');
+        if (button) {
+            button.style.background = '#ef4444';
+            button.innerHTML = '<i class="fas fa-stop"></i>';
+            button.classList.add('active');
+        }
+        
+        recognition.start();
+        addChatMessage('🎤 Escuchando... Habla ahora', 'ai');
+    }
+
+    function stopVoiceInput() {
+        isRecording = false;
+        if (recognition) recognition.stop();
+        
+        const button = document.getElementById('voiceInputBtn');
+        if (button) {
+            button.style.background = '#6b7280';
+            button.innerHTML = '<i class="fas fa-microphone"></i>';
+            button.classList.remove('active');
+        }
+    }
+
+    // ======= FUNCIONES AUXILIARES =======
+
+    function getCurrentSelectedCompany() {
+        const activeItem = document.querySelector('.company-item.active');
+        return activeItem ? activeItem.dataset.company : 'fundicion-laguna';
+    }
+
+    function getCompaniesData() {
+        return {
+            'fundicion-laguna': {
+                name: 'Fundición Laguna',
+                icon: '🔥',
+                status: 'Operativo',
+                theme: { primary: '#dc2626', secondary: '#ea580c' },
+                data: {
+                    cashFlow: 24500,
+                    revenue: 45200,
+                    expenses: 28700,
+                    profit: 16500
+                }
+            },
+            'fundicion-joel': {
+                name: 'Fundición Joel',
+                icon: '🔥',
+                status: 'Operativo',
+                theme: { primary: '#ea580c', secondary: '#f97316' },
+                data: {
+                    cashFlow: 18300,
+                    revenue: 32100,
+                    expenses: 21800,
+                    profit: 10300
+                }
+            },
+            'avicola-san-juan': {
+                name: 'Avícola San Juan',
+                icon: '🐔',
+                status: 'Operativo',
+                theme: { primary: '#059669', secondary: '#10b981' },
+                data: {
+                    cashFlow: 32100,
+                    revenue: 58300,
+                    expenses: 41200,
+                    profit: 17100
+                }
+            },
+            'bodega-central': {
+                name: 'Bodega Central',
+                icon: '🏪',
+                status: 'Regular',
+                theme: { primary: '#3b82f6', secondary: '#60a5fa' },
+                data: {
+                    cashFlow: 15800,
+                    revenue: 28500,
+                    expenses: 19700,
+                    profit: 8800
+                }
+            },
+            'importaciones-gz': {
+                name: 'Importaciones GZ',
+                icon: '📦',
+                status: 'Operativo',
+                theme: { primary: '#8b5cf6', secondary: '#a78bfa' },
+                data: {
+                    cashFlow: 45200,
+                    revenue: 72800,
+                    expenses: 48600,
+                    profit: 24200
+                }
+            }
+        };
+    }
+
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'success' ? '#10b981' : '#3b82f6'};
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            z-index: 10000;
+            font-weight: 600;
+        `;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => notification.remove(), 3000);
+    }
+
+    // ======= INICIALIZACIÓN =======
+
+    // INICIALIZAR AL CARGAR PÁGINA
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🚀 Inicializando IA GRIZALUM');
+        
+        // Configurar reconocimiento de voz
+        initializeVoiceRecognition();
+        
+        // Cargar paleta guardada
+        const savedPalette = localStorage.getItem('grizalum_current_palette');
+        if (savedPalette) {
+            try {
+                const palette = JSON.parse(savedPalette);
+                applyColorPalette(palette);
+            } catch (e) {
+                console.log('No se pudo cargar paleta guardada');
+            }
+        }
+        
+        // Conectar eventos del input
+        const aiInput = document.getElementById('aiChatInput');
+        if (aiInput) {
+            aiInput.addEventListener('keydown', handleAIChatKeypress);
+            console.log('✅ Input IA conectado');
+        }
+        
+        // Conectar botón enviar
+        const sendBtn = document.querySelector('.ai-send-btn');
+        if (sendBtn) {
+            sendBtn.addEventListener('click', sendAIMessage);
+            console.log('✅ Botón enviar conectado');
+        }
+        
+        // Conectar botón de voz
+        const voiceBtn = document.getElementById('voiceInputBtn');
+        if (voiceBtn) {
+            voiceBtn.addEventListener('click', startVoiceInput);
+            console.log('✅ Botón voz conectado');
+        }
+        
+        console.log('✅ IA GRIZALUM COMPLETAMENTE FUNCIONAL');
+    });
+
+    console.log('🎯 IA GRIZALUM LISTA PARA USAR');
+    console.log('✨ Funciones activas:');
+    console.log('  • Chat inteligente y conversacional');
+    console.log('  • Cambio de colores aleatorio con el botón pincel');
+    console.log('  • Reconocimiento de voz en español');
+    console.log('  • Respuestas contextuales sobre el negocio');
+    console.log('  • Análisis financiero detallado');
+    console.log('🚀 ¡Disfruta tu asistente IA!');
+    </script>
+
+    <!-- JAVASCRIPT PARA FUNCIONALIDAD DEL SELECTOR DE EMPRESAS -->
+    <script>
+    // FUNCIONES DEL SELECTOR DE EMPRESAS
+    function toggleCompanyDropdown() {
+        const dropdown = document.getElementById('companyDropdown');
+        const arrow = document.getElementById('dropdownArrow');
+        
+        dropdown.classList.toggle('show');
+        arrow.classList.toggle('rotate');
+    }
+
+    function selectCompany(companyId) {
+        // Actualizar empresa seleccionada
+        updateSelectedCompany(companyId);
+        
+        // Actualizar datos de la empresa
+        updateCompanyData(companyId);
+        
+        // Cerrar dropdown
+        toggleCompanyDropdown();
+        
+        // Mostrar mensaje de cambio
+        showNotification(`🏢 Cambiado a ${getCompanyName(companyId)}`, 'success');
+    }
+
+    function updateSelectedCompany(companyId) {
+        const companies = getCompaniesData();
+        const company = companies[companyId];
+        
+        if (company) {
+            document.getElementById('currentCompanyIcon').textContent = company.icon;
+            document.getElementById('currentCompanyName').textContent = company.name;
+            document.getElementById('currentCompanyStatus').textContent = `🟢 ${company.status}`;
+            
+            // Actualizar clase activa
+            document.querySelectorAll('.company-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`[data-company="${companyId}"]`).classList.add('active');
+        }
+    }
+
+    function updateCompanyData(companyId) {
+        const companies = getCompaniesData();
+        const company = companies[companyId];
+        
+        if (company) {
+            // Actualizar KPIs del dashboard
+            updateKPIs(company.data);
+            
+            // Actualizar sidebar
+            updateSidebar(company.data);
+            
+            console.log(`📊 Datos actualizados para: ${company.name}`);
+        }
+    }
+
+    function updateKPIs(data) {
+        // Actualizar valores en las tarjetas KPI
+        const kpiValues = document.querySelectorAll('.kpi-value-animation');
+        if (kpiValues.length >= 4) {
+            kpiValues[0].textContent = `S/. ${data.cashFlow.toLocaleString()}`;
+            kpiValues[1].textContent = `S/. ${data.revenue.toLocaleString()}`;
+            kpiValues[2].textContent = `S/. ${data.expenses.toLocaleString()}`;
+            kpiValues[3].textContent = `S/. ${data.profit.toLocaleString()}`;
+        }
+    }
+
+    function updateSidebar(data) {
+        // Actualizar valores en el sidebar
+        const elements = {
+            'sidebarCashFlow': data.cashFlow,
+            'sidebarRevenue': data.revenue,
+            'sidebarExpenses': data.expenses,
+            'sidebarProfit': data.profit
+        };
+        
+        Object.entries(elements).forEach(([id, value]) => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = `S/. ${value.toLocaleString()}`;
+            }
+        });
+    }
+
+    function getCompanyName(companyId) {
+        const companies = getCompaniesData();
+        return companies[companyId]?.name || 'Empresa';
+    }
+
+    // Cerrar dropdown al hacer clic fuera
+    document.addEventListener('click', function(event) {
+        const selector = document.getElementById('companySelector');
+        const dropdown = document.getElementById('companyDropdown');
+        
+        if (selector && !selector.contains(event.target)) {
+            dropdown.classList.remove('show');
+            document.getElementById('dropdownArrow').classList.remove('rotate');
+        }
+    });
+
+    console.log('🏢 Selector de empresas GRIZALUM cargado');
+    </script>
+
+    <!-- Scripts adicionales -->
     <script src="src/assets/js/main.js"></script>
     <script src="src/assets/js/charts.js"></script>
-    <script src="src/assets/js/ai.js"></script>
     
     <script>
     // REGISTRO DEL SERVICE WORKER Y PWA
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', async function() {
             try {
-                // Registrar Service Worker
                 const registration = await navigator.serviceWorker.register('/sw.js', {
                     scope: '/'
                 });
-                
                 console.log('✅ GRIZALUM SW registrado:', registration.scope);
-                
-                // Manejar actualizaciones
-                registration.addEventListener('updatefound', () => {
-                    const newWorker = registration.installing;
-                    newWorker.addEventListener('statechange', () => {
-                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                            showUpdateAvailableNotification();
-                        }
-                    });
-                });
-                
-                // Escuchar mensajes del Service Worker
-                navigator.serviceWorker.addEventListener('message', event => {
-                    const { type, message } = event.data;
-                    
-                    switch (type) {
-                        case 'OFFLINE_MODE':
-                            showOfflineModeNotification(message);
-                            break;
-                        case 'CACHE_UPDATED':
-                            showCacheUpdatedNotification();
-                            break;
-                    }
-                });
-                
             } catch (error) {
                 console.error('❌ Error registrando Service Worker:', error);
             }
         });
     }
 
-    // INSTALACIÓN DE PWA
-    let deferredPrompt;
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-        console.log('💾 PWA instalable detectada');
-        e.preventDefault();
-        deferredPrompt = e;
-        showInstallPrompt();
-    });
-
-    // Mostrar prompt de instalación
-    function showInstallPrompt() {
-        const installBanner = document.createElement('div');
-        installBanner.id = 'install-banner';
-        installBanner.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            font-weight: 600;
-            animation: slideInRight 0.5s ease;
-            max-width: 350px;
-        `;
-        
-        installBanner.innerHTML = `
-            <i class="fas fa-download" style="font-size: 1.5rem;"></i>
-            <div>
-                <div style="margin-bottom: 0.5rem;">¡Instala GRIZALUM!</div>
-                <div style="font-size: 0.8rem; opacity: 0.9;">Acceso rápido desde tu escritorio</div>
-            </div>
-            <div style="display: flex; gap: 0.5rem;">
-                <button id="install-yes" style="
-                    background: rgba(255,255,255,0.2);
-                    border: none;
-                    color: white;
-                    padding: 0.5rem 1rem;
-                    border-radius: 8px;
-                    cursor: pointer;
-                    font-weight: 600;
-                ">Instalar</button>
-                <button id="install-no" style="
-                    background: rgba(0,0,0,0.2);
-                    border: none;
-                    color: white;
-                    padding: 0.5rem 1rem;
-                    border-radius: 8px;
-                    cursor: pointer;
-                    font-weight: 600;
-                ">Después</button>
-            </div>
-        `;
-        
-        document.body.appendChild(installBanner);
-        
-        // Manejar clicks
-        document.getElementById('install-yes').addEventListener('click', installPWA);
-        document.getElementById('install-no').addEventListener('click', () => {
-            installBanner.remove();
-        });
-        
-        // Auto-hide después de 10 segundos
-        setTimeout(() => {
-            if (document.getElementById('install-banner')) {
-                installBanner.remove();
-            }
-        }, 10000);
-    }
-
-    // Instalar PWA
-    async function installPWA() {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            
-            if (outcome === 'accepted') {
-                console.log('✅ PWA instalada exitosamente');
-                showSuccessMessage('🎉 GRIZALUM instalado correctamente');
-            }
-            
-            deferredPrompt = null;
-            document.getElementById('install-banner')?.remove();
-        }
-    }
-
-    // Detectar cuando la app fue instalada
-    window.addEventListener('appinstalled', (evt) => {
-        console.log('🎉 GRIZALUM PWA instalada');
-        showSuccessMessage('¡Bienvenido a GRIZALUM instalado! 🚀');
-    });
-
-    // Notificaciones del sistema
-    function showUpdateAvailableNotification() {
-        const updateBanner = document.createElement('div');
-        updateBanner.style.cssText = `
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-        `;
-        
-        updateBanner.innerHTML = `
-            <i class="fas fa-sync-alt"></i>
-            <div>
-                <div>Actualización disponible</div>
-                <div style="font-size: 0.8rem; opacity: 0.9;">Click para actualizar</div>
-            </div>
-        `;
-        
-        updateBanner.addEventListener('click', () => {
-            location.reload();
-        });
-        
-        document.body.appendChild(updateBanner);
-        
-        setTimeout(() => updateBanner.remove(), 8000);
-    }
-
-    function showOfflineModeNotification(message) {
-        const offlineBanner = document.createElement('div');
-        offlineBanner.style.cssText = `
-            position: fixed;
-            top: 80px;
-            left: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            color: white;
-            padding: 1rem;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            z-index: 10000;
-            text-align: center;
-            font-weight: 600;
-        `;
-        
-        offlineBanner.innerHTML = `
-            <i class="fas fa-wifi-slash" style="margin-right: 0.5rem;"></i>
-            ${message} - Trabajando en modo offline
-        `;
-        
-        document.body.appendChild(offlineBanner);
-        
-        setTimeout(() => offlineBanner.remove(), 5000);
-    }
-
-    // GESTIÓN DE CONEXIÓN
-    window.addEventListener('online', () => {
-        console.log('🌐 Conexión restaurada');
-        showSuccessMessage('🌐 Conexión a internet restaurada');
-        
-        // Sincronizar datos pendientes
-        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-            navigator.serviceWorker.controller.postMessage({
-                type: 'SYNC_PENDING_DATA'
-            });
-        }
-    });
-
-    window.addEventListener('offline', () => {
-        console.log('📱 Trabajando offline');
-        showOfflineModeNotification('Sin conexión a internet');
-    });
-
-    // CONFIGURACIÓN DE ACCESOS DIRECTOS DE TECLADO PARA PWA
-    document.addEventListener('keydown', (event) => {
-        // Solo funcionar si no estamos escribiendo en un input
-        if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
-            return;
-        }
-        
-        // Ctrl/Cmd + Shift + D = Dashboard
-        if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'D') {
-            event.preventDefault();
-            showSection('dashboard');
-        }
-        
-        // Ctrl/Cmd + Shift + F = Flujo de Caja
-        if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'F') {
-            event.preventDefault();
-            showSection('cash-flow');
-        }
-        
-        // Ctrl/Cmd + Shift + N = Nueva Transacción
-        if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'N') {
-            event.preventDefault();
-            showCashFlowForm();
-        }
-        
-        // Ctrl/Cmd + Shift + I = Instalar PWA
-        if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'I') {
-            event.preventDefault();
-            if (deferredPrompt) {
-                installPWA();
-            }
-        }
-    });
-
-    // MÉTRICAS DE RENDIMIENTO
-    function trackPerformanceMetrics() {
-        if ('performance' in window) {
-            window.addEventListener('load', () => {
-                setTimeout(() => {
-                    const perfData = performance.getEntriesByType('navigation')[0];
-                    const metrics = {
-                        loadTime: perfData.loadEventEnd - perfData.loadEventStart,
-                        domContentLoaded: perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart,
-                        firstPaint: performance.getEntriesByType('paint')[0]?.startTime || 0,
-                        timestamp: new Date().toISOString()
-                    };
-                    
-                    console.log('📊 Métricas de rendimiento:', metrics);
-                }, 0);
-            });
-        }
-    }
-
-    // FUNCIONES PARA GESTIONAR CACHÉ
-    async function clearAppCache() {
-        if ('caches' in window) {
-            const cacheNames = await caches.keys();
-            await Promise.all(cacheNames.map(name => caches.delete(name)));
-            showSuccessMessage('🗑️ Caché limpiado correctamente');
-            location.reload();
-        }
-    }
-
-    async function getCacheSize() {
-        if ('caches' in window) {
-            const cacheNames = await caches.keys();
-            let totalSize = 0;
-            
-            for (const cacheName of cacheNames) {
-                const cache = await caches.open(cacheName);
-                const keys = await cache.keys();
-                totalSize += keys.length;
-            }
-            
-            return totalSize;
-        }
-        return 0;
-    }
-
-    // INICIALIZACIÓN DE PWA
-    function initializePWA() {
-        trackPerformanceMetrics();
-        
-        // Mostrar información de la app si es la primera visita
-        if (!localStorage.getItem('grizalum-first-visit')) {
-            setTimeout(() => {
-                showWelcomeMessage();
-                localStorage.setItem('grizalum-first-visit', 'true');
-            }, 3000);
-        }
-        
-        console.log('🚀 PWA GRIZALUM inicializada correctamente');
-    }
-
-    function showWelcomeMessage() {
-        const welcomeModal = document.createElement('div');
-        welcomeModal.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(5px);
-        `;
-        
-        welcomeModal.innerHTML = `
-            <div style="
-                background: white;
-                padding: 3rem;
-                border-radius: 24px;
-                max-width: 500px;
-                text-align: center;
-                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
-            ">
-                <div style="
-                    width: 80px;
-                    height: 80px;
-                    background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
-                    border-radius: 20px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    margin: 0 auto 2rem;
-                    font-size: 2rem;
-                    color: white;
-                ">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <h2 style="margin-bottom: 1rem; color: #1e293b; font-size: 1.5rem;">¡Bienvenido a GRIZALUM!</h2>
-                <p style="color: #64748b; margin-bottom: 2rem; line-height: 1.6;">
-                    Sistema financiero empresarial premium diseñado específicamente para empresas peruanas. 
-                    Gestiona tu flujo de caja, análisis predictivo con IA y contabilidad completa.
-                </p>
-                <div style="display: flex; gap: 1rem; justify-content: center;">
-                    <button id="welcome-start" style="
-                        background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
-                        color: white;
-                        border: none;
-                        padding: 1rem 2rem;
-                        border-radius: 12px;
-                        font-weight: 600;
-                        cursor: pointer;
-                    ">Comenzar</button>
-                </div>
-            </div>
-        `;
-        
-        document.body.appendChild(welcomeModal);
-        
-        document.getElementById('welcome-start').addEventListener('click', () => {
-            welcomeModal.remove();
-        });
-    }
-
-    // Inicializar PWA cuando el DOM esté listo
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializePWA);
-    } else {
-        initializePWA();
-    }
-
-    // Estilos adicionales para PWA
-    const pwaStyles = document.createElement('style');
-    pwaStyles.textContent = `
-    @keyframes slideInRight {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-
-    /* Estilos para cuando la app está instalada */
-    @media (display-mode: standalone) {
-        body {
-            user-select: none;
-            -webkit-user-select: none;
-        }
-        
-        .pwa-only {
-            display: block !important;
-        }
-        
-        .browser-only {
-            display: none !important;
-        }
-    }
-
-    /* Optimizaciones para pantallas táctiles */
-    @media (pointer: coarse) {
-        .btn, .nav-link, .kpi-card {
-            min-height: 44px;
-        }
-        
-        .form-input {
-            font-size: 16px; /* Previene zoom en iOS */
-        }
-    }
-
-    /* Animaciones optimizadas para PWA */
-    @media (prefers-reduced-motion: reduce) {
-        * {
-            animation-duration: 0.01ms !important;
-            animation-iteration-count: 1 !important;
-            transition-duration: 0.01ms !important;
-        }
-    }
-    `;
-    document.head.appendChild(pwaStyles);
+    console.log('🚀 GRIZALUM Sistema Completo Cargado');
     </script>
 </body>
 </html>
