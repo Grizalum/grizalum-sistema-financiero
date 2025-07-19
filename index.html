@@ -1322,6 +1322,1086 @@ document.addEventListener('DOMContentLoaded', function() {
 
 console.log('⚙️ Sistema de gestión de empresas GRIZALUM cargado');
 console.log('🔑 Código de seguridad para eliminación configurado');
+</script>  
+<!-- WIZARD PARA AGREGAR EMPRESAS CON IA -->
+
+<!-- MODAL DEL WIZARD -->
+<div id="addCompanyWizard" class="wizard-modal">
+    <div class="wizard-container">
+        <div class="wizard-header">
+            <h2>🚀 Agregar Nueva Empresa</h2>
+            <div class="wizard-steps">
+                <div class="step-indicator active" data-step="1">1</div>
+                <div class="step-line"></div>
+                <div class="step-indicator" data-step="2">2</div>
+                <div class="step-line"></div>
+                <div class="step-indicator" data-step="3">3</div>
+                <div class="step-line"></div>
+                <div class="step-indicator" data-step="4">4</div>
+            </div>
+            <button class="close-wizard" onclick="closeWizard()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- PASO 1: Información Básica -->
+        <div class="wizard-step active" id="wizardStep1">
+            <div class="step-content">
+                <div class="step-icon">📝</div>
+                <h3>Información Básica</h3>
+                <p>Cuéntanos sobre tu nueva empresa</p>
+                
+                <div class="form-group">
+                    <label class="form-label">Nombre de la Empresa</label>
+                    <input type="text" id="wizardCompanyName" class="form-input" 
+                           placeholder="Ej: Zapatería Future, Restaurante El Sol..." 
+                           oninput="validateStep1()">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Describe tu negocio</label>
+                    <textarea id="wizardCompanyDescription" class="form-input" rows="3" 
+                              placeholder="Ej: Venta de calzado deportivo y casual para jóvenes..."
+                              oninput="validateStep1()"></textarea>
+                </div>
+                
+                <div class="wizard-actions">
+                    <button id="analyzeWithAI" class="btn btn-primary btn-ai" onclick="analyzeWithAI()" disabled>
+                        <i class="fas fa-brain"></i>
+                        <span class="btn-text">Analizar con IA</span>
+                        <div class="ai-loader" style="display: none;">
+                            <div class="ai-dots">
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 2: Sugerencias de IA -->
+        <div class="wizard-step" id="wizardStep2">
+            <div class="step-content">
+                <div class="step-icon">🤖</div>
+                <h3>La IA ha analizado tu negocio</h3>
+                <p>Estas son nuestras sugerencias inteligentes</p>
+                
+                <div class="ai-analysis" id="aiAnalysisResults">
+                    <!-- Se llena dinámicamente -->
+                </div>
+                
+                <div class="wizard-actions">
+                    <button class="btn btn-neutral" onclick="previousStep()">
+                        <i class="fas fa-arrow-left"></i>
+                        Anterior
+                    </button>
+                    <button class="btn btn-primary" onclick="nextStep()">
+                        Me gusta, continuar
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 3: Personalización -->
+        <div class="wizard-step" id="wizardStep3">
+            <div class="step-content">
+                <div class="step-icon">🎨</div>
+                <h3>Personalizar Empresa</h3>
+                <p>Ajusta los detalles según tus preferencias</p>
+                
+                <div class="customization-grid">
+                    <div class="custom-section">
+                        <h4>🎨 Colores</h4>
+                        <div class="color-options" id="colorOptions">
+                            <!-- Se llena dinámicamente -->
+                        </div>
+                        <div class="custom-color-section">
+                            <label class="form-label">O elige tu propio color</label>
+                            <input type="color" id="customColor" class="color-picker" onchange="applyCustomColor()">
+                        </div>
+                    </div>
+                    
+                    <div class="custom-section">
+                        <h4>📊 KPIs Principales</h4>
+                        <div class="kpi-checklist" id="kpiChecklist">
+                            <!-- Se llena dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="wizard-actions">
+                    <button class="btn btn-neutral" onclick="previousStep()">
+                        <i class="fas fa-arrow-left"></i>
+                        Anterior
+                    </button>
+                    <button class="btn btn-primary" onclick="nextStep()">
+                        Continuar
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASO 4: Vista Previa y Confirmación -->
+        <div class="wizard-step" id="wizardStep4">
+            <div class="step-content">
+                <div class="step-icon">✅</div>
+                <h3>¡Todo listo para crear!</h3>
+                <p>Revisa los detalles antes de crear tu empresa</p>
+                
+                <div class="preview-card" id="previewCard">
+                    <!-- Se llena dinámicamente -->
+                </div>
+                
+                <div class="final-options">
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="generateSampleData" checked>
+                            <span class="checkmark"></span>
+                            Generar datos de ejemplo para probar
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="setAsActive" checked>
+                            <span class="checkmark"></span>
+                            Activar esta empresa inmediatamente
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="wizard-actions">
+                    <button class="btn btn-neutral" onclick="previousStep()">
+                        <i class="fas fa-arrow-left"></i>
+                        Anterior
+                    </button>
+                    <button class="btn btn-success" onclick="createCompany()">
+                        <i class="fas fa-rocket"></i>
+                        ¡Crear Empresa!
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ESTILOS PARA EL WIZARD -->
+<style>
+.wizard-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 10001;
+    backdrop-filter: blur(8px);
+}
+
+.wizard-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 24px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow: hidden;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+}
+
+.wizard-header {
+    background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+    color: white;
+    padding: 2rem;
+    position: relative;
+}
+
+.wizard-header h2 {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+.wizard-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.step-indicator {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+.step-indicator.active {
+    background: white;
+    color: var(--peru-gold);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+}
+
+.step-indicator.completed {
+    background: #10b981;
+    color: white;
+}
+
+.step-line {
+    width: 60px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+}
+
+.step-line.completed {
+    background: #10b981;
+}
+
+.close-wizard {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.close-wizard:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+.wizard-step {
+    display: none;
+    padding: 3rem;
+    min-height: 500px;
+}
+
+.wizard-step.active {
+    display: block;
+    animation: slideIn 0.5s ease;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.step-content {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.step-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.8;
+}
+
+.step-content h3 {
+    margin-bottom: 0.5rem;
+    color: var(--gray-800);
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.step-content p {
+    margin-bottom: 2rem;
+    color: var(--gray-600);
+    font-size: 1.1rem;
+}
+
+.btn-ai {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.btn-ai:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-ai:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+}
+
+.ai-loader {
+    display: flex;
+    align-items: center;
+}
+
+.ai-dots {
+    display: flex;
+    gap: 4px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    animation: dotPulse 1.4s infinite ease-in-out;
+}
+
+.dot:nth-child(1) { animation-delay: -0.32s; }
+.dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes dotPulse {
+    0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+    40% { transform: scale(1); opacity: 1; }
+}
+
+.wizard-actions {
+    margin-top: 3rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.ai-analysis {
+    text-align: left;
+    background: var(--gray-50);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.analysis-section {
+    margin-bottom: 2rem;
+}
+
+.analysis-section h4 {
+    color: var(--gray-800);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.detected-type {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.color-preview {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.color-swatch {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    border: 3px solid white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 0.8rem;
+}
+
+.kpi-suggestions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.kpi-suggestion {
+    background: white;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 2px solid var(--gray-200);
+    text-align: center;
+}
+
+.customization-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    text-align: left;
+}
+
+.custom-section h4 {
+    margin-bottom: 1rem;
+    color: var(--gray-800);
+}
+
+.color-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.color-option {
+    width: 80px;
+    height: 80px;
+    border-radius: 16px;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.color-option:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.color-option.selected {
+    border-color: var(--peru-gold);
+    transform: scale(1.1);
+}
+
+.color-option::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.color-option.selected::after {
+    opacity: 1;
+}
+
+.color-picker {
+    width: 60px;
+    height: 60px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.kpi-checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+}
+
+.checkbox-label:hover {
+    background: var(--gray-50);
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--peru-gold);
+}
+
+.preview-card {
+    background: var(--gray-50);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.preview-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.preview-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+}
+
+.preview-info h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--gray-800);
+    font-size: 1.3rem;
+}
+
+.preview-info p {
+    margin: 0;
+    color: var(--gray-600);
+}
+
+.final-options {
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .wizard-container {
+        width: 95%;
+        max-height: 95vh;
+    }
+    
+    .wizard-step {
+        padding: 2rem 1.5rem;
+    }
+    
+    .customization-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .wizard-steps {
+        gap: 0.5rem;
+    }
+    
+    .step-line {
+        width: 30px;
+    }
+}
+</style>
+
+<!-- JAVASCRIPT DEL WIZARD -->
+<script>
+let currentWizardStep = 1;
+let wizardData = {};
+
+// ABRIR WIZARD
+function showAddCompanyWizard() {
+    currentWizardStep = 1;
+    wizardData = {};
+    
+    // Resetear formulario
+    document.getElementById('wizardCompanyName').value = '';
+    document.getElementById('wizardCompanyDescription').value = '';
+    
+    // Mostrar paso 1
+    showWizardStep(1);
+    
+    // Mostrar modal
+    document.getElementById('addCompanyWizard').style.display = 'block';
+    document.getElementById('addCompanyWizard').classList.add('show');
+    
+    // Cerrar dropdown de empresas
+    toggleCompanyDropdown();
+}
+
+// CERRAR WIZARD
+function closeWizard() {
+    document.getElementById('addCompanyWizard').style.display = 'none';
+    document.getElementById('addCompanyWizard').classList.remove('show');
+}
+
+// MOSTRAR PASO DEL WIZARD
+function showWizardStep(stepNumber) {
+    // Ocultar todos los pasos
+    document.querySelectorAll('.wizard-step').forEach(step => {
+        step.classList.remove('active');
+    });
+    
+    // Mostrar paso actual
+    document.getElementById(`wizardStep${stepNumber}`).classList.add('active');
+    
+    // Actualizar indicadores
+    updateStepIndicators(stepNumber);
+    
+    currentWizardStep = stepNumber;
+}
+
+// ACTUALIZAR INDICADORES DE PASOS
+function updateStepIndicators(currentStep) {
+    document.querySelectorAll('.step-indicator').forEach((indicator, index) => {
+        const stepNum = index + 1;
+        indicator.classList.remove('active', 'completed');
+        
+        if (stepNum < currentStep) {
+            indicator.classList.add('completed');
+            indicator.innerHTML = '<i class="fas fa-check"></i>';
+        } else if (stepNum === currentStep) {
+            indicator.classList.add('active');
+            indicator.innerHTML = stepNum;
+        } else {
+            indicator.innerHTML = stepNum;
+        }
+    });
+    
+    // Actualizar líneas
+    document.querySelectorAll('.step-line').forEach((line, index) => {
+        line.classList.remove('completed');
+        if (index + 1 < currentStep) {
+            line.classList.add('completed');
+        }
+    });
+}
+
+// VALIDAR PASO 1
+function validateStep1() {
+    const name = document.getElementById('wizardCompanyName').value.trim();
+    const description = document.getElementById('wizardCompanyDescription').value.trim();
+    const button = document.getElementById('analyzeWithAI');
+    
+    if (name.length >= 3 && description.length >= 10) {
+        button.disabled = false;
+    } else {
+        button.disabled = true;
+    }
+}
+
+// ANALIZAR CON IA
+function analyzeWithAI() {
+    const name = document.getElementById('wizardCompanyName').value.trim();
+    const description = document.getElementById('wizardCompanyDescription').value.trim();
+    
+    // Mostrar cargando
+    const button = document.getElementById('analyzeWithAI');
+    const btnText = button.querySelector('.btn-text');
+    const loader = button.querySelector('.ai-loader');
+    
+    btnText.style.display = 'none';
+    loader.style.display = 'flex';
+    button.disabled = true;
+    
+    // Simular análisis IA
+    setTimeout(() => {
+        const analysis = performAIAnalysis(name, description);
+        showAIResults(analysis);
+        nextStep();
+        
+        // Restaurar botón
+        btnText.style.display = 'block';
+        loader.style.display = 'none';
+        button.disabled = false;
+    }, 3000);
+}
+
+// REALIZAR ANÁLISIS IA
+function performAIAnalysis(name, description) {
+    const text = (name + ' ' + description).toLowerCase();
+    
+    // Detectar tipo de negocio
+    const businessTypes = {
+        'zapateria': {
+            type: 'Zapatería/Calzado',
+            icon: '👟',
+            colors: [
+                { name: 'Rosa Moderno', primary: '#ec4899', secondary: '#f472b6' },
+                { name: 'Púrpura Elegante', primary: '#8b5cf6', secondary: '#a78bfa' },
+                { name: 'Azul Juvenil', primary: '#3b82f6', secondary: '#60a5fa' }
+            ],
+            kpis: [
+                { name: 'Ventas Diarias', icon: '👟', description: 'Pares vendidos por día' },
+                { name: 'Inventario Stock', icon: '📦', description: 'Cantidad de pares en stock' },
+                { name: 'Ticket Promedio', icon: '💰', description: 'Venta promedio por cliente' },
+                { name: 'Rotación Stock', icon: '🔄', description: 'Velocidad de rotación de inventario' }
+            ]
+        },
+        'restaurante': {
+            type: 'Restaurante/Gastronomía',
+            icon: '🍽️',
+            colors: [
+                { name: 'Rojo Apetitoso', primary: '#dc2626', secondary: '#ef4444' },
+                { name: 'Naranja Cálido', primary: '#ea580c', secondary: '#f97316' },
+                { name: 'Verde Fresco', primary: '#059669', secondary: '#10b981' }
+            ],
+            kpis: [
+                { name: 'Mesas Ocupadas', icon: '🪑', description: 'Porcentaje de ocupación' },
+                { name: 'Ticket Promedio', icon: '🍽️', description: 'Consumo promedio por mesa' },
+                { name: 'Rotación Mesas', icon: '🔄', description: 'Veces que se ocupa cada mesa' },
+                { name: 'Satisfacción', icon: '⭐', description: 'Rating promedio de clientes' }
+            ]
+        },
+        'construccion': {
+            type: 'Construcción/Inmobiliaria',
+            icon: '🏗️',
+            colors: [
+                { name: 'Marrón Tierra', primary: '#92400e', secondary: '#b45309' },
+                { name: 'Verde Industrial', primary: '#059669', secondary: '#10b981' },
+                { name: 'Gris Acero', primary: '#374151', secondary: '#4b5563' }
+            ],
+            kpis: [
+                { name: 'Proyectos Activos', icon: '🏗️', description: 'Construcciones en proceso' },
+                { name: 'Materiales Stock', icon: '🧱', description: 'Inventario de materiales' },
+                { name: 'Equipos Operativos', icon: '🚛', description: 'Maquinaria disponible' },
+                { name: 'Contratos Pendientes', icon: '📋', description: 'Proyectos por iniciar' }
+            ]
+        },
+        'default': {
+            type: 'Comercio General',
+            icon: '🏢',
+            colors: [
+                { name: 'Azul Corporativo', primary: '#3b82f6', secondary: '#60a5fa' },
+                { name: 'Verde Éxito', primary: '#059669', secondary: '#10b981' },
+                { name: 'Púrpura Premium', primary: '#7c3aed', secondary: '#8b5cf6' }
+            ],
+            kpis: [
+                { name: 'Ventas Mensuales', icon: '📈', description: 'Ingresos por ventas' },
+                { name: 'Clientes Activos', icon: '👥', description: 'Base de clientes' },
+                { name: 'Inventario Total', icon: '📦', description: 'Stock disponible' },
+                { name: 'Margen Ganancia', icon: '💰', description: 'Rentabilidad promedio' }
+            ]
+        }
+    };
+    
+    // Detectar tipo
+    let detectedType = 'default';
+    
+    const keywords = {
+        'zapateria': ['zapato', 'zapatilla', 'calzado', 'sneaker', 'deportivo', 'tenis'],
+        'restaurante': ['restaurante', 'comida', 'cocina', 'chef', 'gastronomia', 'plato'],
+        'construccion': ['construccion', 'inmobiliaria', 'casa', 'edificio', 'obra', 'material']
+    };
+    
+    Object.entries(keywords).forEach(([type, words]) => {
+        if (words.some(word => text.includes(word))) {
+            detectedType = type;
+        }
+    });
+    
+    const result = businessTypes[detectedType];
+    
+    // Guardar en wizardData
+    wizardData = {
+        name,
+        description,
+        detectedType: result.type,
+        icon: result.icon,
+        colors: result.colors,
+        kpis: result.kpis,
+        selectedColor: result.colors[0],
+        selectedKPIs: result.kpis.map(kpi => kpi.name)
+    };
+    
+    return result;
+}
+
+// MOSTRAR RESULTADOS IA
+function showAIResults(analysis) {
+    const container = document.getElementById('aiAnalysisResults');
+    
+    container.innerHTML = `
+        <div class="analysis-section">
+            <h4>🎯 Tipo de negocio detectado</h4>
+            <div class="detected-type">${analysis.type}</div>
+        </div>
+        
+        <div class="analysis-section">
+            <h4>🎨 Colores sugeridos</h4>
+            <div class="color-preview">
+                ${analysis.colors.map(color => 
+                    `<div class="color-swatch" style="background: ${color.primary};">${color.name}</div>`
+                ).join('')}
+            </div>
+        </div>
+        
+        <div class="analysis-section">
+            <h4>📊 KPIs recomendados</h4>
+            <div class="kpi-suggestions">
+                ${analysis.kpis.map(kpi => 
+                    `<div class="kpi-suggestion">
+                        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">${kpi.icon}</div>
+                        <strong>${kpi.name}</strong>
+                        <p style="font-size: 0.8rem; color: var(--gray-600); margin: 0.25rem 0 0 0;">${kpi.description}</p>
+                    </div>`
+                ).join('')}
+            </div>
+        </div>
+    `;
+}
+
+// SIGUIENTE PASO
+function nextStep() {
+    if (currentWizardStep < 4) {
+        if (currentWizardStep === 2) {
+            setupCustomizationStep();
+        } else if (currentWizardStep === 3) {
+            setupPreviewStep();
+        }
+        showWizardStep(currentWizardStep + 1);
+    }
+}
+
+// PASO ANTERIOR
+function previousStep() {
+    if (currentWizardStep > 1) {
+        showWizardStep(currentWizardStep - 1);
+    }
+}
+
+// CONFIGURAR PASO DE PERSONALIZACIÓN
+function setupCustomizationStep() {
+    // Configurar opciones de colores
+    const colorContainer = document.getElementById('colorOptions');
+    colorContainer.innerHTML = '';
+    
+    wizardData.colors.forEach((color, index) => {
+        const colorDiv = document.createElement('div');
+        colorDiv.className = `color-option ${index === 0 ? 'selected' : ''}`;
+        colorDiv.style.background = `linear-gradient(135deg, ${color.primary} 0%, ${color.secondary} 100%)`;
+        colorDiv.onclick = () => selectColor(index);
+        colorContainer.appendChild(colorDiv);
+    });
+    
+    // Configurar checklist de KPIs
+    const kpiContainer = document.getElementById('kpiChecklist');
+    kpiContainer.innerHTML = '';
+    
+    wizardData.kpis.forEach(kpi => {
+        const label = document.createElement('label');
+        label.className = 'checkbox-label';
+        label.innerHTML = `
+            <input type="checkbox" checked data-kpi="${kpi.name}">
+            <span>${kpi.icon} ${kpi.name}</span>
+        `;
+        kpiContainer.appendChild(label);
+    });
+}
+
+// SELECCIONAR COLOR
+function selectColor(index) {
+    document.querySelectorAll('.color-option').forEach(option => {
+        option.classList.remove('selected');
+    });
+    
+    document.querySelectorAll('.color-option')[index].classList.add('selected');
+    wizardData.selectedColor = wizardData.colors[index];
+}
+
+// APLICAR COLOR PERSONALIZADO
+function applyCustomColor() {
+    const customColor = document.getElementById('customColor').value;
+    
+    // Deseleccionar colores predefinidos
+    document.querySelectorAll('.color-option').forEach(option => {
+        option.classList.remove('selected');
+    });
+    
+    // Crear color personalizado
+    wizardData.selectedColor = {
+        name: 'Color Personalizado',
+        primary: customColor,
+        secondary: customColor
+    };
+}
+
+// CONFIGURAR PASO DE VISTA PREVIA
+function setupPreviewStep() {
+    // Recopilar KPIs seleccionados
+    const selectedKPIs = [];
+    document.querySelectorAll('#kpiChecklist input[type="checkbox"]:checked').forEach(checkbox => {
+        const kpiName = checkbox.dataset.kpi;
+        const kpi = wizardData.kpis.find(k => k.name === kpiName);
+        if (kpi) selectedKPIs.push(kpi);
+    });
+    
+    wizardData.selectedKPIs = selectedKPIs;
+    
+    // Mostrar vista previa
+    const previewContainer = document.getElementById('previewCard');
+    previewContainer.innerHTML = `
+        <div class="preview-header">
+            <div class="preview-icon" style="background: linear-gradient(135deg, ${wizardData.selectedColor.primary} 0%, ${wizardData.selectedColor.secondary} 100%);">
+                ${wizardData.icon}
+            </div>
+            <div class="preview-info">
+                <h4>${wizardData.name}</h4>
+                <p>${wizardData.detectedType}</p>
+                <p style="margin-top: 0.5rem; font-size: 0.9rem;">${wizardData.description}</p>
+            </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div>
+                <h5 style="margin-bottom: 0.5rem; color: var(--gray-700);">🎨 Colores</h5>
+                <div style="display: flex; gap: 0.5rem;">
+                    <div style="width: 30px; height: 30px; background: ${wizardData.selectedColor.primary}; border-radius: 6px;"></div>
+                    <div style="width: 30px; height: 30px; background: ${wizardData.selectedColor.secondary}; border-radius: 6px;"></div>
+                </div>
+                <p style="font-size: 0.8rem; color: var(--gray-600); margin-top: 0.25rem;">${wizardData.selectedColor.name}</p>
+            </div>
+            
+            <div>
+                <h5 style="margin-bottom: 0.5rem; color: var(--gray-700);">📊 KPIs (${selectedKPIs.length})</h5>
+                <div style="font-size: 0.8rem; color: var(--gray-600);">
+                    ${selectedKPIs.map(kpi => `${kpi.icon} ${kpi.name}`).join(', ')}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// CREAR EMPRESA
+function createCompany() {
+    const generateSample = document.getElementById('generateSampleData').checked;
+    const setActive = document.getElementById('setAsActive').checked;
+    
+    // Generar ID único
+    const companyId = 'company_' + Date.now();
+    
+    // Generar datos de ejemplo si está marcado
+    let sampleData = {
+        cashFlow: 0,
+        revenue: 0,
+        expenses: 0,
+        profit: 0
+    };
+    
+    if (generateSample) {
+        sampleData = generateSampleData(wizardData.detectedType);
+    }
+    
+    // Crear objeto de empresa
+    const newCompany = {
+        name: wizardData.name,
+        icon: wizardData.icon,
+        status: 'Operativo',
+        theme: {
+            primary: wizardData.selectedColor.primary,
+            secondary: wizardData.selectedColor.secondary
+        },
+        data: sampleData,
+        kpis: wizardData.selectedKPIs,
+        createdAt: new Date().toISOString(),
+        description: wizardData.description,
+        type: wizardData.detectedType
+    };
+    
+    // Agregar a la lista de empresas
+    const companies = getCompaniesData();
+    companies[companyId] = newCompany;
+    saveCompaniesData(companies);
+    
+    // Actualizar interfaz
+    updateCompanySelector();
+    
+    // Activar si está marcado
+    if (setActive) {
+        selectCompany(companyId);
+    }
+    
+    // Cerrar wizard
+    closeWizard();
+    
+    // Mostrar mensaje de éxito
+    showNotification(`🎉 ¡Empresa "${wizardData.name}" creada exitosamente!`, 'success');
+    
+    // Mostrar mensaje con IA
+    setTimeout(() => {
+        showNotification(`🤖 IA: Tu nueva empresa está lista para generar ingresos`, 'info');
+    }, 2000);
+}
+
+// GENERAR DATOS DE EJEMPLO
+function generateSampleData(businessType) {
+    const generators = {
+        'Zapatería/Calzado': () => ({
+            cashFlow: Math.floor(Math.random() * 20000) + 10000,
+            revenue: Math.floor(Math.random() * 40000) + 20000,
+            expenses: Math.floor(Math.random() * 25000) + 15000,
+            profit: Math.floor(Math.random() * 15000) + 5000
+        }),
+        'Restaurante/Gastronomía': () => ({
+            cashFlow: Math.floor(Math.random() * 30000) + 15000,
+            revenue: Math.floor(Math.random() * 50000) + 25000,
+            expenses: Math.floor(Math.random() * 35000) + 20000,
+            profit: Math.floor(Math.random() * 20000) + 8000
+        }),
+        'Construcción/Inmobiliaria': () => ({
+            cashFlow: Math.floor(Math.random() * 50000) + 25000,
+            revenue: Math.floor(Math.random() * 80000) + 40000,
+            expenses: Math.floor(Math.random() * 60000) + 30000,
+            profit: Math.floor(Math.random() * 25000) + 10000
+        })
+    };
+    
+    const generator = generators[businessType] || generators['Zapatería/Calzado'];
+    return generator();
+}
+
+// CERRAR MODAL AL HACER CLIC FUERA
+document.addEventListener('click', function(event) {
+    const wizard = document.getElementById('addCompanyWizard');
+    const wizardContainer = document.querySelector('.wizard-container');
+    
+    if (wizard && wizard.style.display === 'block' && 
+        !wizardContainer.contains(event.target)) {
+        closeWizard();
+    }
+});
+
+// NAVEGACIÓN CON TECLADO
+document.addEventListener('keydown', function(event) {
+    const wizard = document.getElementById('addCompanyWizard');
+    
+    if (wizard && wizard.style.display === 'block') {
+        if (event.key === 'Escape') {
+            closeWizard();
+        } else if (event.key === 'ArrowRight' && currentWizardStep < 4) {
+            nextStep();
+        } else if (event.key === 'ArrowLeft' && currentWizardStep > 1) {
+            previousStep();
+        }
+    }
+});
+
+console.log('🧠 Wizard Inteligente GRIZALUM cargado correctamente');
+console.log('🎯 Funcionalidades:');
+console.log('  • Detección automática de tipo de negocio');
+console.log('  • Sugerencias de colores por industria');
+console.log('  • KPIs específicos del sector');
+console.log('  • Generación de datos de ejemplo');
+console.log('  • Personalización completa');
 </script>                    
                 </div>
             </header>
