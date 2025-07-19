@@ -2402,6 +2402,1174 @@ console.log('  • Sugerencias de colores por industria');
 console.log('  • KPIs específicos del sector');
 console.log('  • Generación de datos de ejemplo');
 console.log('  • Personalización completa');
+</script> 
+<!-- IA CONVERSACIONAL Y ASISTENTE INTELIGENTE -->
+
+<!-- BOTÓN FLOTANTE DE IA -->
+<div id="aiAssistantButton" class="ai-assistant-button" onclick="toggleAIAssistant()">
+    <div class="ai-icon">
+        <i class="fas fa-brain"></i>
+    </div>
+    <div class="ai-pulse"></div>
+    <div class="ai-notifications" id="aiNotifications">0</div>
+</div>
+
+<!-- PANEL DEL ASISTENTE IA -->
+<div id="aiAssistantPanel" class="ai-assistant-panel">
+    <div class="ai-panel-header">
+        <div class="ai-avatar">
+            <i class="fas fa-robot"></i>
+        </div>
+        <div class="ai-info">
+            <h4>GRIZALUM IA</h4>
+            <p id="aiStatus">Analizando tu empresa...</p>
+        </div>
+        <div class="ai-controls">
+            <button class="ai-control-btn" onclick="toggleVoiceMode()" id="voiceToggle">
+                <i class="fas fa-microphone-slash"></i>
+            </button>
+            <button class="ai-control-btn" onclick="clearAIChat()">
+                <i class="fas fa-broom"></i>
+            </button>
+            <button class="ai-control-btn" onclick="toggleAIAssistant()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="ai-insights-section">
+        <h5>🎯 Insights Automáticos</h5>
+        <div id="aiInsights" class="ai-insights-container">
+            <!-- Se llena automáticamente -->
+        </div>
+    </div>
+
+    <div class="ai-chat-container">
+        <div class="ai-chat-messages" id="aiChatMessages">
+            <div class="ai-message">
+                <div class="ai-message-avatar">🤖</div>
+                <div class="ai-message-content">
+                    <p>¡Hola! Soy tu asistente financiero IA. Puedo ayudarte con:</p>
+                    <div class="ai-quick-actions">
+                        <button class="quick-action-btn" onclick="askAI('¿Cómo van las ventas?')">📈 ¿Cómo van las ventas?</button>
+                        <button class="quick-action-btn" onclick="askAI('¿Puedo invertir más?')">💰 ¿Puedo invertir?</button>
+                        <button class="quick-action-btn" onclick="askAI('Analiza mi flujo de caja')">💧 Analizar flujo</button>
+                        <button class="quick-action-btn" onclick="askAI('Dame predicciones')">🔮 Predicciones</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ai-chat-input">
+            <div class="ai-input-container">
+                <input type="text" id="aiChatInput" placeholder="Pregúntame sobre tu empresa..." 
+                       onkeypress="handleAIChatKeypress(event)">
+                <button class="ai-send-btn" onclick="sendAIMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+                <button class="ai-voice-btn" onclick="startVoiceInput()" id="voiceInputBtn">
+                    <i class="fas fa-microphone"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ESTILOS PARA IA CONVERSACIONAL -->
+<style>
+.ai-assistant-button {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: visible;
+}
+
+.ai-assistant-button:hover {
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: 0 15px 40px rgba(99, 102, 241, 0.6);
+}
+
+.ai-icon {
+    color: white;
+    font-size: 1.8rem;
+    z-index: 2;
+}
+
+.ai-pulse {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    opacity: 0.7;
+    animation: aiPulse 2s infinite;
+}
+
+@keyframes aiPulse {
+    0% { transform: scale(1); opacity: 0.7; }
+    50% { transform: scale(1.2); opacity: 0.3; }
+    100% { transform: scale(1.4); opacity: 0; }
+}
+
+.ai-notifications {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ef4444;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s ease;
+}
+
+.ai-notifications.show {
+    opacity: 1;
+    transform: scale(1);
+    animation: notificationBounce 0.5s ease;
+}
+
+@keyframes notificationBounce {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+.ai-assistant-panel {
+    position: fixed;
+    bottom: 120px;
+    right: 30px;
+    width: 420px;
+    height: 600px;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px) scale(0.95);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    border: 1px solid var(--gray-200);
+}
+
+.ai-assistant-panel.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+.ai-panel-header {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.ai-avatar {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.ai-info {
+    flex: 1;
+}
+
+.ai-info h4 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.ai-info p {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.ai-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.ai-control-btn {
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.ai-control-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+.ai-insights-section {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--gray-200);
+    background: var(--gray-50);
+}
+
+.ai-insights-section h5 {
+    margin: 0 0 1rem 0;
+    color: var(--gray-800);
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.ai-insights-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+.ai-insight-item {
+    background: white;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    border-left: 3px solid;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.ai-insight-item:hover {
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.ai-insight-item.success { border-color: #10b981; background: rgba(16, 185, 129, 0.05); }
+.ai-insight-item.warning { border-color: #f59e0b; background: rgba(245, 158, 11, 0.05); }
+.ai-insight-item.info { border-color: #3b82f6; background: rgba(59, 130, 246, 0.05); }
+.ai-insight-item.danger { border-color: #ef4444; background: rgba(239, 68, 68, 0.05); }
+
+.ai-chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 200px);
+}
+
+.ai-chat-messages {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.ai-message, .user-message {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+.user-message {
+    flex-direction: row-reverse;
+}
+
+.ai-message-avatar, .user-message-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.ai-message-avatar {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+}
+
+.user-message-avatar {
+    background: var(--peru-gold);
+    color: white;
+}
+
+.ai-message-content, .user-message-content {
+    background: var(--gray-50);
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    max-width: 280px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.user-message-content {
+    background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+    color: white;
+}
+
+.ai-message-content p {
+    margin: 0 0 0.5rem 0;
+}
+
+.ai-message-content p:last-child {
+    margin-bottom: 0;
+}
+
+.ai-quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.quick-action-btn {
+    background: white;
+    border: 1px solid var(--gray-300);
+    padding: 0.5rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--gray-700);
+}
+
+.quick-action-btn:hover {
+    background: var(--peru-gold);
+    color: white;
+    border-color: var(--peru-gold);
+    transform: translateY(-1px);
+}
+
+.ai-chat-input {
+    padding: 1rem;
+    border-top: 1px solid var(--gray-200);
+    background: white;
+}
+
+.ai-input-container {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.ai-input-container input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--gray-200);
+    border-radius: 20px;
+    font-size: 0.9rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.ai-input-container input:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.ai-send-btn, .ai-voice-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.ai-send-btn {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+}
+
+.ai-voice-btn {
+    background: var(--gray-200);
+    color: var(--gray-600);
+}
+
+.ai-voice-btn.active {
+    background: #ef4444;
+    color: white;
+    animation: voicePulse 1s infinite;
+}
+
+@keyframes voicePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.ai-send-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+.ai-voice-btn:hover {
+    background: var(--gray-300);
+}
+
+.ai-typing {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--gray-500);
+    font-style: italic;
+    font-size: 0.8rem;
+}
+
+.typing-dots {
+    display: flex;
+    gap: 2px;
+}
+
+.typing-dot {
+    width: 4px;
+    height: 4px;
+    background: var(--gray-400);
+    border-radius: 50%;
+    animation: typingDot 1.4s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typingDot {
+    0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+    40% { transform: scale(1); opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .ai-assistant-panel {
+        bottom: 20px;
+        right: 20px;
+        left: 20px;
+        width: auto;
+        height: 70vh;
+    }
+    
+    .ai-assistant-button {
+        bottom: 20px;
+        right: 20px;
+    }
+}
+
+/* Animaciones de entrada */
+.ai-insight-item.new {
+    animation: slideInRight 0.5s ease;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.ai-message.new {
+    animation: messageSlideIn 0.5s ease;
+}
+
+@keyframes messageSlideIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+</style>
+
+<!-- JAVASCRIPT PARA IA CONVERSACIONAL -->
+<script>
+let aiAssistantOpen = false;
+let voiceMode = false;
+let aiInsightsCount = 0;
+let recognition = null;
+let currentCompanyAnalysis = null;
+
+// INICIALIZAR IA AL CARGAR
+document.addEventListener('DOMContentLoaded', function() {
+    initializeAI();
+    setInterval(updateAIInsights, 30000); // Actualizar cada 30 segundos
+    setInterval(generateProactiveInsights, 60000); // Insights cada minuto
+});
+
+// INICIALIZAR IA
+function initializeAI() {
+    setupVoiceRecognition();
+    updateAIStatus();
+    generateInitialInsights();
+    
+    console.log('🤖 IA Conversacional GRIZALUM inicializada');
+}
+
+// TOGGLE PANEL IA
+function toggleAIAssistant() {
+    const panel = document.getElementById('aiAssistantPanel');
+    aiAssistantOpen = !aiAssistantOpen;
+    
+    if (aiAssistantOpen) {
+        panel.classList.add('show');
+        updateCurrentCompanyAnalysis();
+        // Reset notificaciones
+        const notifications = document.getElementById('aiNotifications');
+        notifications.textContent = '0';
+        notifications.classList.remove('show');
+    } else {
+        panel.classList.remove('show');
+    }
+}
+
+// ACTUALIZAR STATUS IA
+function updateAIStatus() {
+    const currentCompany = getCurrentSelectedCompany();
+    const companies = getCompaniesData();
+    const company = companies[currentCompany];
+    
+    const statusElement = document.getElementById('aiStatus');
+    
+    if (company) {
+        statusElement.textContent = `Monitoreando ${company.name}`;
+    } else {
+        statusElement.textContent = 'Listo para ayudar';
+    }
+}
+
+// GENERAR INSIGHTS INICIALES
+function generateInitialInsights() {
+    const insights = [
+        {
+            type: 'success',
+            message: '📈 Flujo de caja estable este mes',
+            action: 'Ver detalles'
+        },
+        {
+            type: 'info',
+            message: '🎯 IA lista para analizar tus datos',
+            action: 'Comenzar análisis'
+        }
+    ];
+    
+    insights.forEach(insight => addAIInsight(insight));
+}
+
+// AGREGAR INSIGHT IA
+function addAIInsight(insight) {
+    const container = document.getElementById('aiInsights');
+    
+    const insightElement = document.createElement('div');
+    insightElement.className = `ai-insight-item ${insight.type} new`;
+    insightElement.innerHTML = `
+        <div style="font-weight: 600; margin-bottom: 0.25rem;">${insight.message}</div>
+        ${insight.action ? `<div style="font-size: 0.7rem; opacity: 0.8;">💡 ${insight.action}</div>` : ''}
+    `;
+    
+    insightElement.onclick = () => {
+        if (insight.action) {
+            askAI(insight.message);
+        }
+    };
+    
+    container.appendChild(insightElement);
+    
+    // Limit to 5 insights
+    const insights = container.children;
+    if (insights.length > 5) {
+        container.removeChild(insights[0]);
+    }
+    
+    // Incrementar contador de notificaciones
+    if (!aiAssistantOpen) {
+        aiInsightsCount++;
+        updateNotificationBadge();
+    }
+}
+
+// ACTUALIZAR BADGE DE NOTIFICACIONES
+function updateNotificationBadge() {
+    const badge = document.getElementById('aiNotifications');
+    badge.textContent = aiInsightsCount;
+    badge.classList.add('show');
+}
+
+// ANÁLISIS PROACTIVO
+function generateProactiveInsights() {
+    const currentCompany = getCurrentSelectedCompany();
+    const companies = getCompaniesData();
+    const company = companies[currentCompany];
+    
+    if (!company) return;
+    
+    const insights = analyzeCompanyData(company);
+    
+    // Agregar insight aleatorio cada minuto
+    if (insights.length > 0) {
+        const randomInsight = insights[Math.floor(Math.random() * insights.length)];
+        addAIInsight(randomInsight);
+    }
+}
+
+// ANALIZAR DATOS DE EMPRESA
+function analyzeCompanyData(company) {
+    const insights = [];
+    const data = company.data;
+    
+    // Análisis de flujo de caja
+    if (data.cashFlow > 30000) {
+        insights.push({
+            type: 'success',
+            message: `💰 Excelente flujo de caja en ${company.name}`,
+            action: 'Ver oportunidades de inversión'
+        });
+    } else if (data.cashFlow < 15000) {
+        insights.push({
+            type: 'warning',
+            message: `⚠️ Flujo de caja bajo en ${company.name}`,
+            action: 'Sugerencias para mejorar'
+        });
+    }
+    
+    // Análisis de rentabilidad
+    const margin = (data.profit / data.revenue) * 100;
+    if (margin > 25) {
+        insights.push({
+            type: 'success',
+            message: `🎯 Excelente margen de ganancia: ${margin.toFixed(1)}%`,
+            action: 'Estrategias para mantener'
+        });
+    } else if (margin < 10) {
+        insights.push({
+            type: 'danger',
+            message: `🚨 Margen bajo: ${margin.toFixed(1)}%`,
+            action: 'Plan de optimización'
+        });
+    }
+    
+    // Análisis específico por tipo
+    if (company.type && company.type.includes('Zapatería')) {
+        insights.push({
+            type: 'info',
+            message: '👟 Temporada alta de calzado detectada',
+            action: 'Optimizar inventario'
+        });
+    }
+    
+    return insights;
+}
+
+// MANEJAR ENTRADA DE CHAT
+function handleAIChatKeypress(event) {
+    if (event.key === 'Enter') {
+        sendAIMessage();
+    }
+}
+
+// ENVIAR MENSAJE IA
+function sendAIMessage() {
+    const input = document.getElementById('aiChatInput');
+    const message = input.value.trim();
+    
+    if (!message) return;
+    
+    // Agregar mensaje del usuario
+    addChatMessage(message, 'user');
+    
+    // Limpiar input
+    input.value = '';
+    
+    // Mostrar typing indicator
+    showAITyping();
+    
+    // Simular respuesta IA
+    setTimeout(() => {
+        const response = generateAIResponse(message);
+        hideAITyping();
+        addChatMessage(response, 'ai');
+    }, 1500 + Math.random() * 1000);
+}
+
+// PREGUNTAR A IA (BOTONES RÁPIDOS)
+function askAI(question) {
+    document.getElementById('aiChatInput').value = question;
+    sendAIMessage();
+}
+
+// AGREGAR MENSAJE AL CHAT
+function addChatMessage(message, sender) {
+    const container = document.getElementById('aiChatMessages');
+    
+    const messageElement = document.createElement('div');
+    messageElement.className = `${sender}-message new`;
+    
+    const avatar = sender === 'ai' ? '🤖' : '👤';
+    const avatarClass = sender === 'ai' ? 'ai-message-avatar' : 'user-message-avatar';
+    const contentClass = sender === 'ai' ? 'ai-message-content' : 'user-message-content';
+    
+    messageElement.innerHTML = `
+        <div class="${avatarClass}">${avatar}</div>
+        <div class="${contentClass}">
+            <p>${message}</p>
+        </div>
+    `;
+    
+    container.appendChild(messageElement);
+    container.scrollTop = container.scrollHeight;
+}
+
+// MOSTRAR TYPING INDICATOR
+function showAITyping() {
+    const container = document.getElementById('aiChatMessages');
+    
+    const typingElement = document.createElement('div');
+    typingElement.className = 'ai-message';
+    typingElement.id = 'aiTypingIndicator';
+    
+    typingElement.innerHTML = `
+        <div class="ai-message-avatar">🤖</div>
+        <div class="ai-typing">
+            <span>IA está escribiendo</span>
+            <div class="typing-dots">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+        </div>
+    `;
+    
+    container.appendChild(typingElement);
+    container.scrollTop = container.scrollHeight;
+}
+
+// OCULTAR TYPING INDICATOR
+function hideAITyping() {
+    const typingIndicator = document.getElementById('aiTypingIndicator');
+    if (typingIndicator) {
+        typingIndicator.remove();
+    }
+}
+
+// GENERAR RESPUESTA IA
+function generateAIResponse(userMessage) {
+    const message = userMessage.toLowerCase();
+    const currentCompany = getCurrentSelectedCompany();
+    const companies = getCompaniesData();
+    const company = companies[currentCompany];
+    
+    // Respuestas específicas
+    if (message.includes('ventas') || message.includes('ingresos')) {
+        if (company) {
+            const growth = Math.random() > 0.5 ? '+' : '';
+            const percentage = (Math.random() * 20 - 10).toFixed(1);
+            return `📈 Las ventas de ${company.name} van ${growth}${percentage}% vs mes anterior. Revenue actual: S/. ${company.data.revenue.toLocaleString()}. ${percentage > 0 ? '¡Excelente tendencia!' : 'Recomiendo revisar estrategias de marketing.'}`;
+        }
+        return '📊 Para analizar ventas, necesito que selecciones una empresa específica.';
+    }
+    
+    if (message.includes('flujo') || message.includes('caja')) {
+        if (company) {
+            const status = company.data.cashFlow > 20000 ? 'saludable' : 'necesita atención';
+            const advice = company.data.cashFlow > 20000 ? 
+                'Es un buen momento para considerar inversiones.' : 
+                'Recomiendo acelerar cobranzas y revisar gastos.';
+            return `💧 El flujo de caja de ${company.name} está ${status}: S/. ${company.data.cashFlow.toLocaleString()}. ${advice}`;
+        }
+        return '💰 Selecciona una empresa para analizar su flujo de caja.';
+    }
+    
+    if (message.includes('invertir') || message.includes('inversión')) {
+        if (company) {
+            const canInvest = company.data.cashFlow > 25000;
+            return canInvest ? 
+                `✅ ${company.name} tiene capacidad de inversión. Con S/. ${company.data.cashFlow.toLocaleString()} en caja, puedes considerar: expansión de inventario, marketing digital, o nuevos equipos.` :
+                `⚠️ ${company.name} necesita mejorar su flujo antes de grandes inversiones. Actual: S/. ${company.data.cashFlow.toLocaleString()}. Recomiendo enfocarse en aumentar ingresos primero.`;
+        }
+        return '💡 Para evaluar capacidad de inversión, selecciona una empresa.';
+    }
+    
+    if (message.includes('predicción') || message.includes('futuro') || message.includes('pronóstico')) {
+        if (company) {
+            const nextMonth = Math.round(company.data.revenue * (1 + (Math.random() * 0.3 - 0.15)));
+            const trend = nextMonth > company.data.revenue ? 'crecimiento' : 'disminución';
+            return `🔮 Predicción para ${company.name} próximo mes: S/. ${nextMonth.toLocaleString()} en ingresos (${trend}). Basado en tendencias históricas y factores estacionales.`;
+        }
+        return '🔮 Selecciona una empresa para generar predicciones específicas.';
+    }
+    
+    if (message.includes('mejor') || message.includes('optimizar')) {
+        if (company) {
+            const suggestions = [
+                '🎯 Enfócate en productos de mayor margen',
+                '📱 Implementa marketing digital segmentado',
+                '⏰ Optimiza horarios de mayor demanda',
+                '🤝 Desarrolla programa de fidelización',
+                '📊 Automatiza procesos repetitivos'
+            ];
+            const suggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
+            return `💡 Para optimizar ${company.name}: ${suggestion}. También analicé tus datos y sugiero revisar gastos operativos que representan ${((company.data.expenses/company.data.revenue)*100).toFixed(1)}% de tus ingresos.`;
+        }
+        return '🚀 Selecciona una empresa para recibir sugerencias de optimización personalizadas.';
+    }
+    
+    if (message.includes('competencia') || message.includes('mercado')) {
+        const industryInsights = [
+            '📊 El sector retail creció 8% este trimestre en Perú',
+            '🏭 La industria metalúrgica está en auge (+12%)',
+            '🍽️ Gastronomía se recuperó post-pandemia (+15%)',
+            '🏗️ Construcción mantiene crecimiento sostenido (+6%)'
+        ];
+        const insight = industryInsights[Math.floor(Math.random() * industryInsights.length)];
+        return `🌍 Análisis de mercado: ${insight}. Tu empresa está bien posicionada para aprovechar estas tendencias.`;
+    }
+    
+    if (message.includes('gracias') || message.includes('thank')) {
+        return '😊 ¡De nada! Estoy aquí 24/7 para ayudarte a hacer crecer tu negocio. ¿Hay algo más que pueda analizar?';
+    }
+    
+    if (message.includes('hola') || message.includes('hello')) {
+        const greetings = [
+            '¡Hola! 👋 Listo para analizar tus finanzas.',
+            '¡Qué tal! 🚀 ¿En qué empresa te ayudo hoy?',
+            '¡Saludos! 📊 ¿Quieres revisar algún KPI específico?'
+        ];
+        return greetings[Math.floor(Math.random() * greetings.length)];
+    }
+    
+    // Respuesta por defecto inteligente
+    const responses = [
+        `🤖 Entiendo que quieres saber sobre "${userMessage}". Para darte una respuesta más precisa, ¿podrías ser más específico? Puedo ayudarte con análisis financiero, predicciones, optimización y estrategias.`,
+        `💡 Interesante pregunta sobre "${userMessage}". Te puedo ayudar mejor si me dices qué empresa quieres analizar y qué aspecto específico te interesa.`,
+        `🎯 Sobre "${userMessage}", puedo hacer un análisis detallado. ¿Te refieres a flujo de caja, ventas, gastos, o algo más específico?`
+    ];
+    
+    return responses[Math.floor(Math.random() * responses.length)];
+}
+
+// LIMPIAR CHAT
+function clearAIChat() {
+    const container = document.getElementById('aiChatMessages');
+    container.innerHTML = `
+        <div class="ai-message">
+            <div class="ai-message-avatar">🤖</div>
+            <div class="ai-message-content">
+                <p>Chat limpiado. ¿En qué puedo ayudarte ahora?</p>
+                <div class="ai-quick-actions">
+                    <button class="quick-action-btn" onclick="askAI('¿Cómo van las ventas?')">📈 ¿Cómo van las ventas?</button>
+                    <button class="quick-action-btn" onclick="askAI('¿Puedo invertir más?')">💰 ¿Puedo invertir?</button>
+                    <button class="quick-action-btn" onclick="askAI('Analiza mi flujo de caja')">💧 Analizar flujo</button>
+                    <button class="quick-action-btn" onclick="askAI('Dame predicciones')">🔮 Predicciones</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// ACTUALIZAR ANÁLISIS AL CAMBIAR EMPRESA
+function updateCurrentCompanyAnalysis() {
+    const currentCompany = getCurrentSelectedCompany();
+    const companies = getCompaniesData();
+    const company = companies[currentCompany];
+    
+    if (company && company !== currentCompanyAnalysis) {
+        currentCompanyAnalysis = company;
+        
+        // Generar insights específicos de la empresa
+        setTimeout(() => {
+            const insights = analyzeCompanyData(company);
+            if (insights.length > 0) {
+                addAIInsight(insights[0]);
+            }
+            
+            // Mensaje automático en el chat
+            setTimeout(() => {
+                const analysisMessage = `🔄 Cambié el análisis a ${company.name}. Estado actual: Flujo S/. ${company.data.cashFlow.toLocaleString()}, Ingresos S/. ${company.data.revenue.toLocaleString()}. ¿Qué quieres analizar?`;
+                addChatMessage(analysisMessage, 'ai');
+            }, 1000);
+        }, 500);
+        
+        updateAIStatus();
+    }
+}
+
+// CONFIGURACIÓN DE VOZ
+function setupVoiceRecognition() {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'es-ES';
+        
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+            document.getElementById('aiChatInput').value = transcript;
+            stopVoiceInput();
+            
+            // Auto-enviar después de capturar voz
+            setTimeout(() => {
+                sendAIMessage();
+            }, 500);
+        };
+        
+        recognition.onerror = function(event) {
+            console.warn('Error de reconocimiento de voz:', event.error);
+            stopVoiceInput();
+        };
+        
+        recognition.onend = function() {
+            stopVoiceInput();
+        };
+        
+        console.log('🎤 Reconocimiento de voz disponible');
+    } else {
+        console.warn('⚠️ Reconocimiento de voz no disponible en este navegador');
+    }
+}
+
+// TOGGLE MODO VOZ
+function toggleVoiceMode() {
+    voiceMode = !voiceMode;
+    const button = document.getElementById('voiceToggle');
+    
+    if (voiceMode) {
+        button.innerHTML = '<i class="fas fa-microphone"></i>';
+        button.style.background = 'rgba(16, 185, 129, 0.3)';
+        addChatMessage('🎤 Modo voz activado. Puedes hablar directamente para hacer preguntas.', 'ai');
+    } else {
+        button.innerHTML = '<i class="fas fa-microphone-slash"></i>';
+        button.style.background = 'rgba(255, 255, 255, 0.2)';
+        addChatMessage('⌨️ Modo voz desactivado. Usa el teclado para escribir.', 'ai');
+    }
+}
+
+// INICIAR ENTRADA DE VOZ
+function startVoiceInput() {
+    if (!recognition) {
+        addChatMessage('❌ Reconocimiento de voz no disponible en tu navegador.', 'ai');
+        return;
+    }
+    
+    const button = document.getElementById('voiceInputBtn');
+    button.classList.add('active');
+    button.innerHTML = '<i class="fas fa-stop"></i>';
+    
+    recognition.start();
+    
+    addChatMessage('🎤 Escuchando... Habla ahora.', 'ai');
+}
+
+// DETENER ENTRADA DE VOZ
+function stopVoiceInput() {
+    if (recognition) {
+        recognition.stop();
+    }
+    
+    const button = document.getElementById('voiceInputBtn');
+    button.classList.remove('active');
+    button.innerHTML = '<i class="fas fa-microphone"></i>';
+}
+
+// OVERRIDE FUNCIÓN selectCompany PARA ACTUALIZAR IA
+const originalSelectCompany = selectCompany;
+selectCompany = function(companyId) {
+    originalSelectCompany(companyId);
+    
+    // Actualizar análisis IA
+    setTimeout(() => {
+        updateCurrentCompanyAnalysis();
+    }, 500);
+};
+
+// INSIGHTS AUTOMÁTICOS ADICIONALES
+function generateAdvancedInsights() {
+    const companies = getCompaniesData();
+    const allCompanies = Object.values(companies);
+    
+    if (allCompanies.length === 0) return;
+    
+    // Análisis comparativo
+    const bestPerformer = allCompanies.reduce((best, current) => 
+        current.data.profit > best.data.profit ? current : best
+    );
+    
+    const worstPerformer = allCompanies.reduce((worst, current) => 
+        current.data.profit < worst.data.profit ? current : worst
+    );
+    
+    // Insight comparativo
+    if (bestPerformer !== worstPerformer) {
+        addAIInsight({
+            type: 'info',
+            message: `🏆 ${bestPerformer.name} lidera con S/. ${bestPerformer.data.profit.toLocaleString()} de ganancia`,
+            action: 'Ver estrategias exitosas'
+        });
+    }
+    
+    // Análisis de diversificación
+    const totalProfit = allCompanies.reduce((sum, company) => sum + company.data.profit, 0);
+    if (totalProfit > 50000) {
+        addAIInsight({
+            type: 'success',
+            message: `💎 Portfolio sólido: S/. ${totalProfit.toLocaleString()} ganancia total`,
+            action: 'Oportunidades de expansión'
+        });
+    }
+    
+    // Alertas de riesgo
+    const riskCompanies = allCompanies.filter(company => company.data.cashFlow < 15000);
+    if (riskCompanies.length > 0) {
+        addAIInsight({
+            type: 'warning',
+            message: `⚠️ ${riskCompanies.length} empresa(s) con flujo bajo`,
+            action: 'Plan de contingencia'
+        });
+    }
+}
+
+// PREDICCIONES AVANZADAS
+function generateBusinessPredictions() {
+    const currentCompany = getCurrentSelectedCompany();
+    const companies = getCompaniesData();
+    const company = companies[currentCompany];
+    
+    if (!company) return;
+    
+    // Predicción basada en tendencias
+    const monthlyGrowth = Math.random() * 0.2 - 0.1; // -10% a +10%
+    const predictedRevenue = Math.round(company.data.revenue * (1 + monthlyGrowth));
+    
+    const predictionInsight = {
+        type: monthlyGrowth > 0 ? 'success' : 'warning',
+        message: `🔮 Predicción próximo mes: S/. ${predictedRevenue.toLocaleString()} (${monthlyGrowth > 0 ? '+' : ''}${(monthlyGrowth * 100).toFixed(1)}%)`,
+        action: 'Ver análisis completo'
+    };
+    
+    addAIInsight(predictionInsight);
+}
+
+// MONITOREO CONTINUO
+function startContinuousMonitoring() {
+    // Insights avanzados cada 2 minutos
+    setInterval(generateAdvancedInsights, 120000);
+    
+    // Predicciones cada 3 minutos
+    setInterval(generateBusinessPredictions, 180000);
+    
+    // Análisis de alertas cada 90 segundos
+    setInterval(() => {
+        const currentCompany = getCurrentSelectedCompany();
+        const companies = getCompaniesData();
+        const company = companies[currentCompany];
+        
+        if (company) {
+            // Alerta de oportunidad
+            if (company.data.cashFlow > 40000 && Math.random() > 0.7) {
+                addAIInsight({
+                    type: 'success',
+                    message: '🚀 Oportunidad detectada: Momento ideal para expansión',
+                    action: 'Estrategias recomendadas'
+                });
+            }
+            
+            // Alerta de optimización
+            if (company.data.expenses / company.data.revenue > 0.8 && Math.random() > 0.8) {
+                addAIInsight({
+                    type: 'danger',
+                    message: '🔧 Gastos altos detectados: Optimización necesaria',
+                    action: 'Plan de reducción'
+                });
+            }
+        }
+    }, 90000);
+}
+
+// COMANDOS DE VOZ AVANZADOS
+function processVoiceCommand(command) {
+    const cmd = command.toLowerCase();
+    
+    // Comandos específicos
+    if (cmd.includes('cambiar empresa') || cmd.includes('cambiar a')) {
+        const companies = getCompaniesData();
+        const companyNames = Object.values(companies).map(c => c.name.toLowerCase());
+        
+        for (const [id, company] of Object.entries(companies)) {
+            if (cmd.includes(company.name.toLowerCase())) {
+                selectCompany(id);
+                return `✅ Cambiado a ${company.name}`;
+            }
+        }
+        return '❓ No entendí a qué empresa quieres cambiar';
+    }
+    
+    if (cmd.includes('abrir wizard') || cmd.includes('nueva empresa')) {
+        showAddCompanyWizard();
+        return '🚀 Abriendo wizard para crear nueva empresa';
+    }
+    
+    if (cmd.includes('exportar') || cmd.includes('descargar')) {
+        exportCashFlow();
+        return '📄 Iniciando exportación de datos';
+    }
+    
+    // Procesar como pregunta normal
+    return generateAIResponse(command);
+}
+
+// INICIALIZAR MONITOREO AL CARGAR
+setTimeout(() => {
+    startContinuousMonitoring();
+    
+    // Mensaje de bienvenida personalizado
+    setTimeout(() => {
+        const currentCompany = getCurrentSelectedCompany();
+        const companies = getCompaniesData();
+        const company = companies[currentCompany];
+        
+        if (company) {
+            addChatMessage(`¡Hola! 👋 Estoy monitoreando ${company.name}. Puedo ayudarte con análisis financiero, predicciones y optimización. ¿Qué quieres revisar?`, 'ai');
+        }
+    }, 2000);
+}, 5000);
+
+console.log('🤖 IA Conversacional GRIZALUM completamente cargada');
+console.log('🎯 Características activas:');
+console.log('  • Chat inteligente con contexto empresarial');
+console.log('  • Análisis automático por empresa');
+console.log('  • Insights proactivos cada 30-60 segundos');
+console.log('  • Reconocimiento de voz (si está disponible)');
+console.log('  • Predicciones basadas en datos reales');
+console.log('  • Monitoreo continuo de alertas');
+console.log('  • Análisis comparativo entre empresas');
+console.log('  • Respuestas contextuales según tipo de negocio');
 </script>                    
                 </div>
             </header>
