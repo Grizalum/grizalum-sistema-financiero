@@ -683,7 +683,19 @@ function updateCompanyTheme(theme) {
     // Cambiar colores del tema según la empresa
     document.documentElement.style.setProperty('--company-primary', theme.primary);
     document.documentElement.style.setProperty('--company-secondary', theme.secondary);
-}
+ }
+    
+function updateAITheme(theme) {
+    const aiButton = document.getElementById('aiAssistantButton');
+    const aiHeader = document.querySelector('.ai-panel-header');
+    
+    if (aiButton && theme) {
+        aiButton.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
+    }
+    
+    if (aiHeader && theme) {
+        aiHeader.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
+  }    
 
 function getCompanyName(companyId) {
     const companies = getCompaniesData();
@@ -1159,10 +1171,16 @@ Se perderán TODOS los datos de esta empresa.
         const remainingCompanies = Object.keys(companies);
         if (remainingCompanies.length > 0) {
             selectCompany(remainingCompanies[0]);
+
+     // Actualizar tema de IA
+const companies = getCompaniesData();
+const company = companies[companyId];
+if (company && company.theme) {
+    updateAITheme(company.theme);       
         }
     }
     
-    // Actualizar interfaz
+    // Actualizar interfaz    
     updateCompanySelector();
     loadManagementList();
     
@@ -1321,6 +1339,23 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 console.log('⚙️ Sistema de gestión de empresas GRIZALUM cargado');
+// FUNCIÓN PARA CAMBIAR COLORES DE LA IA
+function updateAITheme(theme) {
+    console.log('🎨 Actualizando tema IA:', theme);
+    
+    const aiButton = document.getElementById('aiAssistantButton');
+    const aiHeader = document.querySelector('.ai-panel-header');
+    
+    if (aiButton && theme) {
+        aiButton.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
+        console.log('✅ Botón IA actualizado');
+    }
+    
+    if (aiHeader && theme) {
+        aiHeader.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
+        console.log('✅ Header IA actualizado');
+    }
+}    
 console.log('🔑 Código de seguridad para eliminación configurado');
 </script>  
 <!-- WIZARD PARA AGREGAR EMPRESAS CON IA -->
@@ -2463,7 +2498,7 @@ console.log('  • Personalización completa');
         <div class="ai-chat-input">
             <div class="ai-input-container">
                 <input type="text" id="aiChatInput" placeholder="Pregúntame sobre tu empresa..." 
-                       onkeypress="handleAIChatKeypress(event)">
+                       onkeydown="handleAIChatKeypress(event)">
                 <button class="ai-send-btn" onclick="sendAIMessage()">
                     <i class="fas fa-paper-plane"></i>
                 </button>
@@ -2558,8 +2593,8 @@ console.log('  • Personalización completa');
     position: fixed;
     bottom: 120px;
     right: 30px;
-    width: 420px;
-    height: 600px;
+    width: 500px;
+    height: 700px;
     background: white;
     border-radius: 24px;
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
