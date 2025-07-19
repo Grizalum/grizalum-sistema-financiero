@@ -711,8 +711,24 @@ function getCompanyName(companyId) {
 }
 
 function showAddCompanyWizard() {
-    alert('🚀 Wizard para agregar empresa próximamente...');
+    currentWizardStep = 1;
+    wizardData = {};
+    
+    // Resetear formulario
+    document.getElementById('wizardCompanyName').value = '';
+    document.getElementById('wizardCompanyDescription').value = '';
+    
+    // Mostrar paso 1
+    showWizardStep(1);
+    
+    // Mostrar modal
+    document.getElementById('addCompanyWizard').style.display = 'block';
+    document.getElementById('addCompanyWizard').classList.add('show');
+    
+    // Cerrar dropdown de empresas
     toggleCompanyDropdown();
+    
+    console.log('🚀 Wizard abierto');
 }
 
 // Cerrar dropdown al hacer clic fuera
@@ -2971,20 +2987,16 @@ function initializeAI() {
     console.log('🤖 IA Conversacional GRIZALUM inicializada');
 }
 
-// TOGGLE PANEL IA
+// FUNCIÓN TOGGLE IA
 function toggleAIAssistant() {
     const panel = document.getElementById('aiAssistantPanel');
-    aiAssistantOpen = !aiAssistantOpen;
     
-    if (aiAssistantOpen) {
-        panel.classList.add('show');
-        updateCurrentCompanyAnalysis();
-        // Reset notificaciones
-        const notifications = document.getElementById('aiNotifications');
-        notifications.textContent = '0';
-        notifications.classList.remove('show');
-    } else {
+    if (panel.classList.contains('show')) {
         panel.classList.remove('show');
+        console.log('🤖 IA cerrada');
+    } else {
+        panel.classList.add('show');
+        console.log('🤖 IA abierta');
     }
 }
 
