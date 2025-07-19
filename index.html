@@ -234,15 +234,480 @@
                         <span class="notification-badge">3</span>
                     </button>
 
-                    <div class="executive-profile">
-                        <div class="profile-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="profile-info">
-                            <div class="profile-name">Admin Usuario</div>
-                            <div class="profile-role">Gerente General</div>
-                        </div>
-                    </div>
+<!-- SELECTOR DE EMPRESAS - REEMPLAZAR LA SECCIÓN executive-profile -->
+<div class="company-selector" id="companySelector">
+    <div class="selected-company" onclick="toggleCompanyDropdown()">
+        <div class="company-info">
+            <div class="company-icon" id="currentCompanyIcon">🔥</div>
+            <div class="company-details">
+                <div class="company-name" id="currentCompanyName">Fundición Laguna</div>
+                <div class="company-status" id="currentCompanyStatus">🟢 Operativo</div>
+            </div>
+        </div>
+        <div class="dropdown-arrow">
+            <i class="fas fa-chevron-down" id="dropdownArrow"></i>
+        </div>
+    </div>
+    
+    <div class="company-dropdown" id="companyDropdown">
+        <div class="dropdown-header">
+            <h4>🏢 Empresas GRIZALUM</h4>
+            <button class="btn-add-company" onclick="showAddCompanyWizard()">
+                <i class="fas fa-plus"></i>
+                Agregar Nueva
+            </button>
+        </div>
+        
+        <div class="companies-list">
+            <div class="company-item active" data-company="fundicion-laguna" onclick="selectCompany('fundicion-laguna')">
+                <div class="company-item-icon">🔥</div>
+                <div class="company-item-info">
+                    <div class="company-item-name">Fundición Laguna</div>
+                    <div class="company-item-stats">Flujo: S/. 24,500</div>
+                </div>
+                <div class="company-item-status">🟢</div>
+            </div>
+            
+            <div class="company-item" data-company="fundicion-joel" onclick="selectCompany('fundicion-joel')">
+                <div class="company-item-icon">🔥</div>
+                <div class="company-item-info">
+                    <div class="company-item-name">Fundición Joel</div>
+                    <div class="company-item-stats">Flujo: S/. 18,300</div>
+                </div>
+                <div class="company-item-status">🟢</div>
+            </div>
+            
+            <div class="company-item" data-company="avicola-san-juan" onclick="selectCompany('avicola-san-juan')">
+                <div class="company-item-icon">🐔</div>
+                <div class="company-item-info">
+                    <div class="company-item-name">Avícola San Juan</div>
+                    <div class="company-item-stats">Flujo: S/. 32,100</div>
+                </div>
+                <div class="company-item-status">🟢</div>
+            </div>
+            
+            <div class="company-item" data-company="bodega-central" onclick="selectCompany('bodega-central')">
+                <div class="company-item-icon">🏪</div>
+                <div class="company-item-info">
+                    <div class="company-item-name">Bodega Central</div>
+                    <div class="company-item-stats">Flujo: S/. 15,800</div>
+                </div>
+                <div class="company-item-status">🟡</div>
+            </div>
+            
+            <div class="company-item" data-company="importaciones-gz" onclick="selectCompany('importaciones-gz')">
+                <div class="company-item-icon">📦</div>
+                <div class="company-item-info">
+                    <div class="company-item-name">Importaciones GZ</div>
+                    <div class="company-item-stats">Flujo: S/. 45,200</div>
+                </div>
+                <div class="company-item-status">🟢</div>
+            </div>
+        </div>
+        
+        <div class="dropdown-footer">
+            <div class="total-companies">
+                <strong>📊 Total Holding: S/. 135,900</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ESTILOS CSS PARA EL SELECTOR -->
+<style>
+.company-selector {
+    position: relative;
+    min-width: 280px;
+}
+
+.selected-company {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(184, 115, 51, 0.1) 100%);
+    border: 2px solid rgba(212, 175, 55, 0.3);
+    border-radius: 16px;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.selected-company:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(212, 175, 55, 0.2);
+    border-color: rgba(212, 175, 55, 0.5);
+}
+
+.company-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.company-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+.company-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.company-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gray-800);
+    margin-bottom: 0.25rem;
+}
+
+.company-status {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--gray-600);
+}
+
+.dropdown-arrow {
+    color: var(--gray-600);
+    transition: transform 0.3s ease;
+}
+
+.dropdown-arrow.rotate {
+    transform: rotate(180deg);
+}
+
+.company-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 350px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--gray-200);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(20px);
+}
+
+.company-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--gray-200);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dropdown-header h4 {
+    margin: 0;
+    color: var(--gray-800);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.btn-add-company {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-add-company:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.companies-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+
+.company-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 0.25rem;
+}
+
+.company-item:hover {
+    background: var(--gray-50);
+    transform: translateX(4px);
+}
+
+.company-item.active {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(184, 115, 51, 0.1) 100%);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.company-item-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--gray-100);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.company-item-info {
+    flex: 1;
+}
+
+.company-item-name {
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 0.25rem;
+}
+
+.company-item-stats {
+    font-size: 0.8rem;
+    color: var(--gray-600);
+}
+
+.company-item-status {
+    font-size: 1rem;
+}
+
+.dropdown-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--gray-200);
+    background: var(--gray-50);
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    text-align: center;
+}
+
+.dropdown-footer strong {
+    color: var(--gray-800);
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .company-selector {
+        min-width: 250px;
+    }
+    
+    .company-dropdown {
+        width: 300px;
+        right: -50px;
+    }
+}
+</style>
+
+<!-- JAVASCRIPT PARA FUNCIONALIDAD -->
+<script>
+// FUNCIONES DEL SELECTOR DE EMPRESAS
+function toggleCompanyDropdown() {
+    const dropdown = document.getElementById('companyDropdown');
+    const arrow = document.getElementById('dropdownArrow');
+    
+    dropdown.classList.toggle('show');
+    arrow.classList.toggle('rotate');
+}
+
+function selectCompany(companyId) {
+    // Actualizar empresa seleccionada
+    updateSelectedCompany(companyId);
+    
+    // Actualizar datos de la empresa
+    updateCompanyData(companyId);
+    
+    // Cerrar dropdown
+    toggleCompanyDropdown();
+    
+    // Mostrar mensaje de cambio
+    showNotification(`🏢 Cambiado a ${getCompanyName(companyId)}`, 'success');
+}
+
+function updateSelectedCompany(companyId) {
+    const companies = getCompaniesData();
+    const company = companies[companyId];
+    
+    if (company) {
+        document.getElementById('currentCompanyIcon').textContent = company.icon;
+        document.getElementById('currentCompanyName').textContent = company.name;
+        document.getElementById('currentCompanyStatus').textContent = `🟢 ${company.status}`;
+        
+        // Actualizar clase activa
+        document.querySelectorAll('.company-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        document.querySelector(`[data-company="${companyId}"]`).classList.add('active');
+    }
+}
+
+function updateCompanyData(companyId) {
+    const companies = getCompaniesData();
+    const company = companies[companyId];
+    
+    if (company) {
+        // Actualizar KPIs del dashboard
+        updateKPIs(company.data);
+        
+        // Actualizar sidebar
+        updateSidebar(company.data);
+        
+        // Actualizar tema de colores
+        updateCompanyTheme(company.theme);
+        
+        console.log(`📊 Datos actualizados para: ${company.name}`);
+    }
+}
+
+function getCompaniesData() {
+    return {
+        'fundicion-laguna': {
+            name: 'Fundición Laguna',
+            icon: '🔥',
+            status: 'Operativo',
+            theme: { primary: '#dc2626', secondary: '#ea580c' },
+            data: {
+                cashFlow: 24500,
+                revenue: 45200,
+                expenses: 28700,
+                profit: 16500
+            }
+        },
+        'fundicion-joel': {
+            name: 'Fundición Joel',
+            icon: '🔥',
+            status: 'Operativo',
+            theme: { primary: '#ea580c', secondary: '#f97316' },
+            data: {
+                cashFlow: 18300,
+                revenue: 32100,
+                expenses: 21800,
+                profit: 10300
+            }
+        },
+        'avicola-san-juan': {
+            name: 'Avícola San Juan',
+            icon: '🐔',
+            status: 'Operativo',
+            theme: { primary: '#059669', secondary: '#10b981' },
+            data: {
+                cashFlow: 32100,
+                revenue: 58300,
+                expenses: 41200,
+                profit: 17100
+            }
+        },
+        'bodega-central': {
+            name: 'Bodega Central',
+            icon: '🏪',
+            status: 'Regular',
+            theme: { primary: '#3b82f6', secondary: '#60a5fa' },
+            data: {
+                cashFlow: 15800,
+                revenue: 28500,
+                expenses: 19700,
+                profit: 8800
+            }
+        },
+        'importaciones-gz': {
+            name: 'Importaciones GZ',
+            icon: '📦',
+            status: 'Operativo',
+            theme: { primary: '#8b5cf6', secondary: '#a78bfa' },
+            data: {
+                cashFlow: 45200,
+                revenue: 72800,
+                expenses: 48600,
+                profit: 24200
+            }
+        }
+    };
+}
+
+function updateKPIs(data) {
+    // Actualizar valores en las tarjetas KPI
+    const kpiValues = document.querySelectorAll('.kpi-value-animation');
+    if (kpiValues.length >= 4) {
+        kpiValues[0].textContent = `S/. ${data.cashFlow.toLocaleString()}`;
+        kpiValues[1].textContent = `S/. ${data.revenue.toLocaleString()}`;
+        kpiValues[2].textContent = `S/. ${data.expenses.toLocaleString()}`;
+        kpiValues[3].textContent = `S/. ${data.profit.toLocaleString()}`;
+    }
+}
+
+function updateSidebar(data) {
+    // Actualizar valores en el sidebar
+    const elements = {
+        'sidebarCashFlow': data.cashFlow,
+        'sidebarRevenue': data.revenue,
+        'sidebarExpenses': data.expenses,
+        'sidebarProfit': data.profit
+    };
+    
+    Object.entries(elements).forEach(([id, value]) => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = `S/. ${value.toLocaleString()}`;
+        }
+    });
+}
+
+function updateCompanyTheme(theme) {
+    // Cambiar colores del tema según la empresa
+    document.documentElement.style.setProperty('--company-primary', theme.primary);
+    document.documentElement.style.setProperty('--company-secondary', theme.secondary);
+}
+
+function getCompanyName(companyId) {
+    const companies = getCompaniesData();
+    return companies[companyId]?.name || 'Empresa';
+}
+
+function showAddCompanyWizard() {
+    alert('🚀 Wizard para agregar empresa próximamente...');
+    toggleCompanyDropdown();
+}
+
+// Cerrar dropdown al hacer clic fuera
+document.addEventListener('click', function(event) {
+    const selector = document.getElementById('companySelector');
+    const dropdown = document.getElementById('companyDropdown');
+    
+    if (selector && !selector.contains(event.target)) {
+        dropdown.classList.remove('show');
+        document.getElementById('dropdownArrow').classList.remove('rotate');
+    }
+});
+
+console.log('🏢 Selector de empresas GRIZALUM cargado');
+</script>
                 </div>
             </header>
 
