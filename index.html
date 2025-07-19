@@ -3649,6 +3649,31 @@ setTimeout(() => {
 }, 5000);
 
 console.log('🤖 IA Conversacional GRIZALUM completamente cargada');
+// FUNCIÓN TOGGLE IA - ARREGLO DEFINITIVO
+function toggleAIAssistant() {
+    console.log('🤖 toggleAIAssistant llamada');
+    
+    const panel = document.getElementById('aiAssistantPanel');
+    
+    if (!panel) {
+        console.error('❌ Panel IA no encontrado');
+        alert('Error: Panel IA no encontrado. Recarga la página.');
+        return;
+    }
+    
+    const isOpen = panel.classList.contains('show');
+    
+    if (isOpen) {
+        panel.classList.remove('show');
+        console.log('🤖 Panel IA cerrado');
+    } else {
+        panel.classList.add('show');
+        console.log('🤖 Panel IA abierto');
+    }
+}
+
+// FORZAR CARGA DE LA FUNCIÓN
+window.toggleAIAssistant = toggleAIAssistant;    
 console.log('🎯 Características activas:');
 console.log('  • Chat inteligente con contexto empresarial');
 console.log('  • Análisis automático por empresa');
