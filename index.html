@@ -719,6 +719,20 @@ document.addEventListener('click', function(event) {
 });
 
 console.log('🏢 Selector de empresas GRIZALUM cargado');
+    // TOGGLE DROPDOWN DE EMPRESAS
+function toggleCompanyDropdown() {
+    const dropdown = document.getElementById('companyDropdown');
+    const arrow = document.getElementById('dropdownArrow');
+    
+    if (dropdown) {
+        dropdown.classList.toggle('show');
+        console.log('🔽 Dropdown toggled');
+    }
+    
+    if (arrow) {
+        arrow.classList.toggle('rotate');
+    }
+}
 </script>
 <!-- AGREGAR DESPUÉS DEL SCRIPT ANTERIOR -->
 
@@ -3123,7 +3137,8 @@ function analyzeCompanyData(company) {
 
 // MANEJAR ENTRADA DE CHAT
 function handleAIChatKeypress(event) {
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
         sendAIMessage();
     }
 }
@@ -3146,11 +3161,10 @@ function sendAIMessage() {
     
     // Simular respuesta IA
     setTimeout(() => {
-        const response = generateAIResponse(message);
-        hideAITyping();
-        addChatMessage(response, 'ai');
-    }, 1500 + Math.random() * 1000);
-}
+    hideAITyping();
+    const response = generateAIResponse(message);
+    addChatMessage(response, 'ai');
+}, 800 + Math.random() * 500);
 
 // PREGUNTAR A IA (BOTONES RÁPIDOS)
 function askAI(question) {
@@ -3221,34 +3235,34 @@ function generateAIResponse(userMessage) {
     
     // Respuestas específicas
     if (message.includes('ventas') || message.includes('ingresos')) {
-        if (company) {
-            const growth = Math.random() > 0.5 ? '+' : '';
-            const percentage = (Math.random() * 20 - 10).toFixed(1);
-            return `📈 Las ventas de ${company.name} van ${growth}${percentage}% vs mes anterior. Revenue actual: S/. ${company.data.revenue.toLocaleString()}. ${percentage > 0 ? '¡Excelente tendencia!' : 'Recomiendo revisar estrategias de marketing.'}`;
-        }
-        return '📊 Para analizar ventas, necesito que selecciones una empresa específica.';
+    if (company) {
+        const growth = Math.random() > 0.5 ? '+' : '';
+        const percentage = (Math.random() * 20 - 10).toFixed(1);
+        return `📈 ¡Oye! Las ventas de ${company.name} van ${growth}${percentage}% comparado con el mes pasado. Tienes S/. ${company.data.revenue.toLocaleString()} en ingresos. ${percentage > 0 ? '¡Está jalazo! 🚀' : 'Hay que meterle más ganas al marketing, pata 💪'}`;
     }
+    return '📊 Hermano, para analizar las ventas necesito que elijas una empresa específica primero.';
+}
     
-    if (message.includes('flujo') || message.includes('caja')) {
-        if (company) {
-            const status = company.data.cashFlow > 20000 ? 'saludable' : 'necesita atención';
-            const advice = company.data.cashFlow > 20000 ? 
-                'Es un buen momento para considerar inversiones.' : 
-                'Recomiendo acelerar cobranzas y revisar gastos.';
-            return `💧 El flujo de caja de ${company.name} está ${status}: S/. ${company.data.cashFlow.toLocaleString()}. ${advice}`;
-        }
-        return '💰 Selecciona una empresa para analizar su flujo de caja.';
+  if (message.includes('flujo') || message.includes('caja')) {
+    if (company) {
+        const status = company.data.cashFlow > 20000 ? 'bacán' : 'medio ajustado';
+        const advice = company.data.cashFlow > 20000 ? 
+            'Ahora sí puedes pensar en invertir en algo más, pues.' : 
+            'Te recomiendo apurar las cobranzas y revisar bien los gastos, causa.';
+        return `💧 El flujo de caja de ${company.name} está ${status}: S/. ${company.data.cashFlow.toLocaleString()}. ${advice}`;
     }
+    return '💰 Elige una empresa para ver cómo anda su flujo de caja, pues.';
+}
     
-    if (message.includes('invertir') || message.includes('inversión')) {
-        if (company) {
-            const canInvest = company.data.cashFlow > 25000;
-            return canInvest ? 
-                `✅ ${company.name} tiene capacidad de inversión. Con S/. ${company.data.cashFlow.toLocaleString()} en caja, puedes considerar: expansión de inventario, marketing digital, o nuevos equipos.` :
-                `⚠️ ${company.name} necesita mejorar su flujo antes de grandes inversiones. Actual: S/. ${company.data.cashFlow.toLocaleString()}. Recomiendo enfocarse en aumentar ingresos primero.`;
-        }
-        return '💡 Para evaluar capacidad de inversión, selecciona una empresa.';
+   if (message.includes('invertir') || message.includes('inversión')) {
+    if (company) {
+        const canInvest = company.data.cashFlow > 25000;
+        return canInvest ? 
+            `✅ ¡Dale que sí! ${company.name} tiene buena plata para invertir. Con S/. ${company.data.cashFlow.toLocaleString()} en caja, podrías meter más en inventario, marketing digital, o equipos nuevos. ¡A darle!` :
+            `⚠️ Mejor esperamos un toque, pata. ${company.name} necesita mejorar su flujo antes de meterse en inversiones grandes. Tienes S/. ${company.data.cashFlow.toLocaleString()}. Primero enfócate en generar más plata.`;
     }
+    return '💡 Para saber si puedes invertir, elige una empresa primero, compadre.';
+}
     
     if (message.includes('predicción') || message.includes('futuro') || message.includes('pronóstico')) {
         if (company) {
@@ -3289,14 +3303,14 @@ function generateAIResponse(userMessage) {
         return '😊 ¡De nada! Estoy aquí 24/7 para ayudarte a hacer crecer tu negocio. ¿Hay algo más que pueda analizar?';
     }
     
-    if (message.includes('hola') || message.includes('hello')) {
-        const greetings = [
-            '¡Hola! 👋 Listo para analizar tus finanzas.',
-            '¡Qué tal! 🚀 ¿En qué empresa te ayudo hoy?',
-            '¡Saludos! 📊 ¿Quieres revisar algún KPI específico?'
-        ];
-        return greetings[Math.floor(Math.random() * greetings.length)];
-    }
+   if (message.includes('hola') || message.includes('hello')) {
+    const greetings = [
+        '¡Ey, qué tal! 👋 Listo para revisar tus números.',
+        '¡Hola, causa! 🚀 ¿En qué empresa le metemos ganas hoy?',
+        '¡Saludos, pata! 📊 ¿Qué KPI quieres que revisemos?'
+    ];
+    return greetings[Math.floor(Math.random() * greetings.length)];
+}
     
     // Respuesta por defecto inteligente
     const responses = [
