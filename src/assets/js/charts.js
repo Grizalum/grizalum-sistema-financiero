@@ -1,247 +1,241 @@
-// ===================================================================
-// GRIZALUM - Charts Module
-// Funciones específicas para gráficos y visualizaciones
-// ===================================================================
+// GRIZALUM - Gráficos Chart.js
+// Sistema Financiero Empresarial
 
-// Configuración global de Chart.js
-Chart.defaults.font.family = 'Inter, sans-serif';
-Chart.defaults.font.size = 12;
-Chart.defaults.color = '#334155';
+// Esperar a que Chart.js esté disponible
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof Chart === 'undefined') {
+        console.warn('Chart.js no está disponible');
+        return;
+    }
+    
+    initializeCharts();
+});
 
-// ===================================================================
-// CONFIGURACIONES DE GRÁFICOS AVANZADOS
-// ===================================================================
+function initializeCharts() {
+    console.log('📊 Inicializando gráficos GRIZALUM');
+    
+    // Configuración global de Chart.js
+    Chart.defaults.font.family = 'Inter, sans-serif';
+    Chart.defaults.color = '#64748b';
+    
+    // Inicializar cada gráfico
+    initRevenueChart();
+    initExpensesChart();
+    initCashFlowChart();
+    initAgingChart();
+    initCashFlowDetailChart();
+}
 
-const chartConfigurations = {
-    // Configuración para gráfico de líneas avanzado
-    advancedLineChart: {
+function initRevenueChart() {
+    const ctx = document.getElementById('revenueChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
         type: 'line',
+        data: {
+            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul'],
+            datasets: [{
+                label: 'Ingresos',
+                data: [35000, 38000, 42000, 39000, 44000, 40300, 45200],
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4
+            }, {
+                label: 'Gastos',
+                data: [28000, 29500, 31000, 30200, 32500, 30200, 28700],
+                borderColor: '#dc2626',
+                backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4
+            }]
+        },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            interaction: {
-                intersect: false,
-                mode: 'index'
-            },
             plugins: {
                 legend: {
                     position: 'top',
                     labels: {
                         usePointStyle: true,
-                        padding: 20,
                         font: { weight: 'bold' }
                     }
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                    titleColor: '#d4af37',
-                    bodyColor: 'white',
-                    borderColor: '#d4af37',
-                    borderWidth: 1,
-                    cornerRadius: 8,
-                    displayColors: false,
-                    callbacks: {
-                        title: function(context) {
-                            return `Período: ${context[0].label}`;
-                        },
-                        label: function(context) {
-                            return `${context.dataset.label}: S/. ${context.parsed.y.toLocaleString()}`;
-                        }
-                    }
                 }
             },
             scales: {
-                x: {
-                    grid: {
-                        color: 'rgba(203, 213, 225, 0.3)'
-                    },
-                    ticks: {
-                        font: { weight: '600' }
-                    }
-                },
                 y: {
                     beginAtZero: true,
-                    grid: {
-                        color: 'rgba(203, 213, 225, 0.3)'
-                    },
-                    ticks: {
-                        callback: function(value) {
-                            return 'S/. ' + value.toLocaleString();
-                        },
-                        font: { weight: '600' }
-                    }
-                }
-            },
-            animation: {
-                duration: 2000,
-                easing: 'easeInOutCubic'
-            }
-        }
-    },
-
-    // Configuración para gráfico de barras
-    barChart: {
-        type: 'bar',
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                    titleColor: '#d4af37',
-                    bodyColor: 'white',
-                    borderColor: '#d4af37',
-                    borderWidth: 1,
-                    cornerRadius: 8,
-                    callbacks: {
-                        label: function(context) {
-                            return `Monto: S/. ${context.parsed.y.toLocaleString()}`;
-                        }
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        font: { weight: '600' }
-                    }
-                },
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: 'rgba(203, 213, 225, 0.3)'
-                    },
                     ticks: {
                         callback: function(value) {
                             return 'S/. ' + value.toLocaleString();
                         }
                     }
                 }
-            },
-            animation: {
-                duration: 1500,
-                easing: 'easeOutBounce'
             }
         }
-    },
+    });
+}
 
-    // Configuración para gráfico de dona
-    doughnutChart: {
+function initExpensesChart() {
+    const ctx = document.getElementById('expensesChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
         type: 'doughnut',
+        data: {
+            labels: ['Operativos', 'Administrativos', 'Ventas', 'Financieros'],
+            datasets: [{
+                data: [12500, 8200, 5500, 2500],
+                backgroundColor: [
+                    '#059669',
+                    '#3b82f6',
+                    '#d4af37',
+                    '#dc2626'
+                ],
+                borderWidth: 0,
+                hoverOffset: 10
+            }]
+        },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            cutout: '60%',
             plugins: {
                 legend: {
                     position: 'bottom',
                     labels: {
                         usePointStyle: true,
-                        padding: 20,
-                        font: { weight: 'bold' }
+                        font: { weight: 'bold' },
+                        padding: 20
                     }
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                    titleColor: '#d4af37',
-                    bodyColor: 'white',
-                    borderColor: '#d4af37',
-                    borderWidth: 1,
-                    cornerRadius: 8,
-                    callbacks: {
-                        label: function(context) {
-                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                            const percentage = ((context.parsed / total) * 100).toFixed(1);
-                            return `${context.label}: S/. ${context.parsed.toLocaleString()} (${percentage}%)`;
-                        }
+                }
+            }
+        }
+    });
+}
+
+function initCashFlowChart() {
+    const ctx = document.getElementById('cashFlowChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+            datasets: [{
+                label: 'Proyección IA',
+                data: [28000, 32000, 35000, 38000, 42000],
+                backgroundColor: 'rgba(99, 102, 241, 0.8)',
+                borderColor: '#6366f1',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        usePointStyle: true,
+                        font: { weight: 'bold' }
                     }
                 }
             },
-            animation: {
-                duration: 2000,
-                easing: 'easeInOutQuart'
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'S/. ' + value.toLocaleString();
+                        }
+                    }
+                }
             }
         }
-    }
-};
+    });
+}
 
-// ===================================================================
-// FUNCIONES DE GRÁFICOS ESPECÍFICOS
-// ===================================================================
+function initAgingChart() {
+    const ctx = document.getElementById('agingChart');
+    if (!ctx) return;
 
-// Gráfico de flujo de caja detallado
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['0-30 días', '31-60 días', '61-90 días', '+90 días'],
+            datasets: [{
+                label: 'Monto (S/.)',
+                data: [18200, 9800, 3200, 1600],
+                backgroundColor: [
+                    '#059669',
+                    '#f59e0b',
+                    '#d97706',
+                    '#dc2626'
+                ],
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'S/. ' + value.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
 function initCashFlowDetailChart() {
     const ctx = document.getElementById('cashFlowDetailChart');
     if (!ctx) return;
 
-    const data = {
-        labels: ['1 Jul', '5 Jul', '10 Jul', '15 Jul', '20 Jul', '25 Jul', '30 Jul'],
-        datasets: [{
-            label: 'Saldo Diario',
-            data: [15000, 18500, 22000, 17800, 21500, 19800, 24500],
-            borderColor: '#059669',
-            backgroundColor: 'rgba(5, 150, 105, 0.1)',
-            borderWidth: 3,
-            fill: true,
-            tension: 0.4,
-            pointBackgroundColor: '#059669',
-            pointBorderColor: '#ffffff',
-            pointBorderWidth: 3,
-            pointRadius: 6,
-            pointHoverRadius: 8
-        }]
-    };
-
-    charts.cashFlowDetail = new Chart(ctx, {
-        ...chartConfigurations.advancedLineChart,
-        data: data
-    });
-}
-
-// Gráfico de tendencias de rentabilidad
-function initProfitabilityChart() {
-    const ctx = document.getElementById('profitabilityChart');
-    if (!ctx) return;
-
-    const data = {
-        labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul'],
-        datasets: [{
-            label: 'Margen Bruto %',
-            data: [32, 35, 38, 34, 40, 37, 42],
-            borderColor: '#d4af37',
-            backgroundColor: 'rgba(212, 175, 55, 0.1)',
-            borderWidth: 3,
-            fill: true,
-            tension: 0.4
-        }, {
-            label: 'Margen Neto %',
-            data: [18, 21, 24, 20, 26, 23, 28],
-            borderColor: '#3b82f6',
-            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-            borderWidth: 3,
-            fill: true,
-            tension: 0.4
-        }]
-    };
-
-    charts.profitability = new Chart(ctx, {
-        ...chartConfigurations.advancedLineChart,
-        data: data,
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['1 Jul', '5 Jul', '10 Jul', '15 Jul', '20 Jul', '25 Jul', '30 Jul'],
+            datasets: [{
+                label: 'Saldo Diario',
+                data: [15000, 18500, 22000, 17800, 21500, 19800, 24500],
+                borderColor: '#059669',
+                backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#059669',
+                pointBorderWidth: 3,
+                pointRadius: 6
+            }]
+        },
         options: {
-            ...chartConfigurations.advancedLineChart.options,
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        usePointStyle: true,
+                        font: { weight: 'bold' }
+                    }
+                }
+            },
             scales: {
-                ...chartConfigurations.advancedLineChart.options.scales,
                 y: {
-                    ...chartConfigurations.advancedLineChart.options.scales.y,
+                    beginAtZero: true,
                     ticks: {
                         callback: function(value) {
-                            return value + '%';
+                            return 'S/. ' + value.toLocaleString();
                         }
                     }
                 }
@@ -250,294 +244,4 @@ function initProfitabilityChart() {
     });
 }
 
-// Gráfico de inventario por categorías
-function initInventoryChart() {
-    const ctx = document.getElementById('inventoryChart');
-    if (!ctx) return;
-
-    const data = {
-        labels: ['Materia Prima', 'Productos Terminados', 'En Proceso', 'Suministros'],
-        datasets: [{
-            data: [32000, 18500, 8200, 8600],
-            backgroundColor: [
-                '#059669',
-                '#3b82f6',
-                '#f59e0b',
-                '#dc2626'
-            ],
-            borderWidth: 0,
-            hoverOffset: 15
-        }]
-    };
-
-    charts.inventory = new Chart(ctx, {
-        ...chartConfigurations.doughnutChart,
-        data: data
-    });
-}
-
-// Gráfico de análisis de clientes
-function initCustomerAnalysisChart() {
-    const ctx = document.getElementById('customerAnalysisChart');
-    if (!ctx) return;
-
-    const data = {
-        labels: ['Clientes A', 'Clientes B', 'Clientes C', 'Nuevos'],
-        datasets: [{
-            label: 'Ventas por Segmento',
-            data: [28500, 15200, 8900, 12400],
-            backgroundColor: [
-                'rgba(5, 150, 105, 0.8)',
-                'rgba(59, 130, 246, 0.8)',
-                'rgba(245, 158, 11, 0.8)',
-                'rgba(212, 175, 55, 0.8)'
-            ],
-            borderColor: [
-                '#059669',
-                '#3b82f6',
-                '#f59e0b',
-                '#d4af37'
-            ],
-            borderWidth: 2,
-            borderRadius: 8
-        }]
-    };
-
-    charts.customerAnalysis = new Chart(ctx, {
-        ...chartConfigurations.barChart,
-        data: data,
-        options: {
-            ...chartConfigurations.barChart.options,
-            plugins: {
-                ...chartConfigurations.barChart.options.plugins,
-                legend: {
-                    display: true,
-                    position: 'top'
-                }
-            }
-        }
-    });
-}
-
-// ===================================================================
-// FUNCIONES DE ACTUALIZACIÓN DE DATOS
-// ===================================================================
-
-// Actualizar datos de gráficos con animación
-function updateChartData(chartInstance, newData, animationDuration = 1000) {
-    if (!chartInstance) return;
-
-    chartInstance.data.datasets.forEach((dataset, index) => {
-        if (newData[index]) {
-            dataset.data = newData[index];
-        }
-    });
-
-    chartInstance.options.animation.duration = animationDuration;
-    chartInstance.update('active');
-}
-
-// Simular datos en tiempo real
-function simulateRealTimeData() {
-    const charts = ['revenue', 'expenses', 'cashFlow', 'aging'];
-    
-    charts.forEach(chartName => {
-        const chart = window.charts[chartName];
-        if (chart) {
-            chart.data.datasets.forEach(dataset => {
-                dataset.data = dataset.data.map(value => {
-                    const variation = (Math.random() - 0.5) * 0.1; // ±5% variation
-                    return Math.round(value * (1 + variation));
-                });
-            });
-            chart.update('none');
-        }
-    });
-}
-
-// ===================================================================
-// FUNCIONES DE EXPORTACIÓN
-// ===================================================================
-
-// Exportar gráfico como imagen
-function exportChartAsImage(chartInstance, filename = 'chart.png') {
-    if (!chartInstance) return;
-
-    const url = chartInstance.toBase64Image();
-    const link = document.createElement('a');
-    link.download = filename;
-    link.href = url;
-    link.click();
-}
-
-// Exportar todos los gráficos
-function exportAllCharts() {
-    Object.keys(charts).forEach(chartName => {
-        if (charts[chartName]) {
-            exportChartAsImage(charts[chartName], `grizalum_${chartName}_${new Date().toISOString().split('T')[0]}.png`);
-        }
-    });
-    
-    showSuccessMessage('📊 Todos los gráficos exportados exitosamente');
-}
-
-// ===================================================================
-// FUNCIONES DE ANÁLISIS AVANZADO
-// ===================================================================
-
-// Calcular tendencias
-function calculateTrend(data) {
-    if (data.length < 2) return 0;
-    
-    const firstValue = data[0];
-    const lastValue = data[data.length - 1];
-    
-    return ((lastValue - firstValue) / firstValue) * 100;
-}
-
-// Detectar anomalías en los datos
-function detectAnomalies(data, threshold = 2) {
-    const mean = data.reduce((a, b) => a + b, 0) / data.length;
-    const variance = data.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / data.length;
-    const standardDeviation = Math.sqrt(variance);
-    
-    return data.map((value, index) => {
-        const zScore = Math.abs((value - mean) / standardDeviation);
-        return {
-            index,
-            value,
-            isAnomaly: zScore > threshold,
-            zScore
-        };
-    });
-}
-
-// Generar insights automáticos
-function generateChartInsights() {
-    const insights = [];
-    
-    // Analizar tendencia de ingresos
-    if (charts.revenue && charts.revenue.data.datasets[0]) {
-        const revenueData = charts.revenue.data.datasets[0].data;
-        const revenueTrend = calculateTrend(revenueData);
-        
-        if (revenueTrend > 10) {
-            insights.push({
-                type: 'positive',
-                message: `📈 Excelente: Ingresos creciendo ${revenueTrend.toFixed(1)}%`,
-                priority: 'high'
-            });
-        } else if (revenueTrend < -5) {
-            insights.push({
-                type: 'warning',
-                message: `⚠️ Alerta: Ingresos decreciendo ${Math.abs(revenueTrend).toFixed(1)}%`,
-                priority: 'high'
-            });
-        }
-    }
-    
-    // Analizar flujo de caja
-    if (charts.cashFlowDetail && charts.cashFlowDetail.data.datasets[0]) {
-        const cashFlowData = charts.cashFlowDetail.data.datasets[0].data;
-        const anomalies = detectAnomalies(cashFlowData);
-        const anomalyCount = anomalies.filter(a => a.isAnomaly).length;
-        
-        if (anomalyCount > 0) {
-            insights.push({
-                type: 'info',
-                message: `🔍 Detectadas ${anomalyCount} fluctuaciones inusuales en flujo de caja`,
-                priority: 'medium'
-            });
-        }
-    }
-    
-    return insights;
-}
-
-// ===================================================================
-// FUNCIONES DE INTERACTIVIDAD
-// ===================================================================
-
-// Agregar zoom a gráficos
-function enableChartZoom(chartInstance) {
-    if (!chartInstance) return;
-    
-    chartInstance.options.plugins.zoom = {
-        zoom: {
-            wheel: {
-                enabled: true,
-            },
-            pinch: {
-                enabled: true
-            },
-            mode: 'x',
-        },
-        pan: {
-            enabled: true,
-            mode: 'x',
-        }
-    };
-    
-    chartInstance.update();
-}
-
-// Agregar filtros interactivos
-function addChartFilters(chartInstance, filterOptions) {
-    // Implementar filtros personalizados según las opciones
-    console.log('Filtros aplicados:', filterOptions);
-}
-
-// ===================================================================
-// INICIALIZACIÓN DE GRÁFICOS ADICIONALES
-// ===================================================================
-
-// Inicializar todos los gráficos adicionales
-function initializeAdditionalCharts() {
-    initCashFlowDetailChart();
-    initProfitabilityChart();
-    initInventoryChart();
-    initCustomerAnalysisChart();
-    
-    console.log('📊 Gráficos adicionales inicializados');
-}
-
-// ===================================================================
-// EVENTOS Y LISTENERS
-// ===================================================================
-
-// Configurar eventos de gráficos
-function setupChartEvents() {
-    // Auto-refresh cada 5 minutos
-    setInterval(() => {
-        if (document.getElementById('autoRefreshCharts')?.checked) {
-            simulateRealTimeData();
-        }
-    }, 300000);
-    
-    // Generar insights cada 10 minutos
-    setInterval(() => {
-        const insights = generateChartInsights();
-        if (insights.length > 0) {
-            console.log('📊 Insights generados:', insights);
-            // Mostrar insights en la UI si es necesario
-        }
-    }, 600000);
-}
-
-// ===================================================================
-// EXPORTAR FUNCIONES GLOBALES
-// ===================================================================
-
-// Hacer funciones disponibles globalmente
-window.chartFunctions = {
-    updateChartData,
-    simulateRealTimeData,
-    exportChartAsImage,
-    exportAllCharts,
-    generateChartInsights,
-    enableChartZoom,
-    addChartFilters,
-    initializeAdditionalCharts
-};
-
-console.log('📊 Módulo de gráficos cargado completamente');
+console.log('📈 GRIZALUM Charts.js cargado correctamente');
