@@ -1126,9 +1126,6 @@ function saveCompanyChanges() {
         // Actualizar interfaz
         updateCompanySelector();
         loadManagementList();
-    
-    showNotification(`🗑️ Empresa "${company.name}" eliminada correctamente`, 'success');
-}
         
         // Si es la empresa actual, actualizar vista
         const currentCompany = getCurrentSelectedCompany();
@@ -1142,7 +1139,7 @@ function saveCompanyChanges() {
 }
 
 // CERRAR MODAL DE EDICIÓN
-function closeEditModal() {
+function closeEditModal() {    
     document.getElementById('editCompanyModal').style.display = 'none';
     document.getElementById('editCompanyModal').classList.remove('show');
     currentEditingCompany = null;
