@@ -687,10 +687,48 @@ function updateSidebar(data) {
 }
 
 function updateCompanyTheme(theme) {
+    console.log('🎨 Actualizando tema global:', theme);
+    
     // Cambiar colores del tema según la empresa
     document.documentElement.style.setProperty('--company-primary', theme.primary);
     document.documentElement.style.setProperty('--company-secondary', theme.secondary);
- }
+    
+    // Actualizar colores específicos del sistema
+    document.documentElement.style.setProperty('--peru-gold', theme.primary);
+    document.documentElement.style.setProperty('--gradient-gold', `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`);
+    
+    // Actualizar tarjetas KPI con los nuevos colores
+    const kpiCards = document.querySelectorAll('.kpi-card');
+    kpiCards.forEach(card => {
+        if (card.classList.contains('profit') || card.classList.contains('gold-glow')) {
+            card.style.background = `linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, rgba(184, 115, 51, 0.05) 100%)`;
+            card.style.borderColor = theme.primary;
+        }
+    });
+    
+    // Actualizar botones y elementos principales
+    const buttons = document.querySelectorAll('.btn-primary');
+    buttons.forEach(btn => {
+        btn.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
+    });
+    
+    // Actualizar selector de empresa
+    const selectedCompany = document.querySelector('.selected-company');
+    if (selectedCompany) {
+        selectedCompany.style.background = `linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(184, 115, 51, 0.1) 100%)`;
+        selectedCompany.style.borderColor = `rgba(${hexToRgb(theme.primary)}, 0.3)`;
+    }
+    
+    console.log('✅ Tema actualizado correctamente');
+}
+
+// FUNCIÓN AUXILIAR PARA CONVERTIR HEX A RGB
+function hexToRgb(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? 
+        `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : 
+        '212, 175, 55';
+}
     
 function updateAITheme(theme) {
     const aiButton = document.getElementById('aiAssistantButton');
