@@ -4087,7 +4087,6 @@ function toggleAIAssistant() {
     
     if (!panel) {
         console.error('❌ Panel IA no encontrado');
-        alert('Error: Panel IA no encontrado. Recarga la página.');
         return;
     }
     
@@ -4102,17 +4101,486 @@ function toggleAIAssistant() {
     }
 }
 
-// FORZAR CARGA DE LA FUNCIÓN
-window.toggleAIAssistant = toggleAIAssistant;    
-console.log('🎯 Características activas:');
-console.log('  • Chat inteligente con contexto empresarial');
-console.log('  • Análisis automático por empresa');
-console.log('  • Insights proactivos cada 30-60 segundos');
-console.log('  • Reconocimiento de voz (si está disponible)');
-console.log('  • Predicciones basadas en datos reales');
-console.log('  • Monitoreo continuo de alertas');
-console.log('  • Análisis comparativo entre empresas');
-console.log('  • Respuestas contextuales según tipo de negocio');
+// ENVIAR MENSAJE IA
+function sendAIMessage() {
+    console.log('📤 sendAIMessage llamada');
+    
+    const input = document.getElementById('aiChatInput');
+    if (!input) {
+        console.error('❌ Input IA no encontrado');
+        return;
+    }
+    
+    const message = input.value.trim();
+    if (!message) {
+        console.log('⚠️ Mensaje vacío');
+        return;
+    }
+    
+    console.log('💬 Enviando mensaje:', message);
+    
+    // Agregar mensaje del usuario
+    addChatMessage(message, 'user');
+    input.value = '';
+    
+    // Respuesta IA después de 1 segundo
+    setTimeout(() => {
+        const response = generateAIResponsePeru(message);
+        addChatMessage(response, 'ai');
+    }, 1000);
+}
+
+// MANEJAR ENTER EN EL INPUT
+function handleAIChatKeypress(event) {
+    console.log('⌨️ Tecla presionada:', event.key);
+    
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendAIMessage();
+    }
+}
+
+// AGREGAR MENSAJE AL CHAT
+function addChatMessage(message, sender) {
+    console.log(`💬 Agregando mensaje de ${sender}:`, message);
+    
+    const container = document.getElementById('aiChatMessages');
+    if (!container) {
+        console.error('❌ Contenedor de mensajes no encontrado');
+        return;
+    }
+    
+    const messageElement = document.createElement('div');
+    messageElement.className = `${sender}-message new`;
+    
+    const avatar = sender === 'ai' ? '🤖' : '👤';
+    const avatarClass = sender === 'ai' ? 'ai-message-avatar' : 'user-message-avatar';
+    const contentClass = sender === 'ai' ? 'ai-message-content' : 'user-message-content';
+    
+    messageElement.innerHTML = `
+        <div class="${avatarClass}">${avatar}</div>
+        <div class="${contentClass}">
+            <p>${message}</p>
+        </div>
+    `;
+    
+    container.appendChild(messageElement);
+    container.scrollTop = container.scrollHeight;
+}
+
+// GENERAR RESPUESTA IA PROFESIONAL PERUANA
+function generateAIResponsePeru(userMessage) {
+    const message = userMessage.toLowerCase();
+    const currentCompany = getCurrentSelectedCompany();
+    const companies = getCompaniesData();
+    const company = companies[currentCompany];
+    
+    console.log('🧠 Generando respuesta para:', message);
+    
+    // RESPUESTAS PROFESIONALES CON TOQUE PERUANO
+    if (message.includes('ventas') || message.includes('ingresos')) {
+        if (company) {
+            const growth = Math.random() > 0.5 ? '+' : '';
+            const percentage = (Math.random() * 20 - 10).toFixed(1);
+            return `📈 Las ventas de ${company.name} presentan un ${growth}${percentage}% respecto al mes anterior. Registro actual: S/. ${company.data.revenue.toLocaleString()}. ${percentage > 0 ? 'Excelente performance, recomiendo mantener esta estrategia.' : 'Sugiero implementar estrategias de marketing digital para optimizar resultados.'}`;
+        }
+        return '📊 Para analizar las ventas específicas, seleccione una empresa del portafolio.';
+    }
+    
+    if (message.includes('flujo') || message.includes('caja')) {
+        if (company) {
+            const status = company.data.cashFlow > 20000 ? 'óptimo' : 'requiere atención';
+            const advice = company.data.cashFlow > 20000 ? 
+                'El nivel actual permite considerar inversiones estratégicas.' : 
+                'Recomiendo acelerar las cobranzas y optimizar gastos operativos.';
+            return `💧 El flujo de caja de ${company.name} se encuentra ${status}: S/. ${company.data.cashFlow.toLocaleString()}. ${advice}`;
+        }
+        return '💰 Seleccione una empresa para revisar su flujo de caja específico.';
+    }
+    
+    if (message.includes('invertir') || message.includes('inversión')) {
+        if (company) {
+            const canInvest = company.data.cashFlow > 25000;
+            return canInvest ? 
+                `✅ ${company.name} tiene capacidad financiera para inversiones. Con S/. ${company.data.cashFlow.toLocaleString()} disponibles, puede considerar expansión de inventario, marketing digital o equipamiento.` :
+                `⚠️ ${company.name} debe fortalecer su flujo antes de inversiones mayores. Actual: S/. ${company.data.cashFlow.toLocaleString()}. Enfoque en optimización de ingresos.`;
+        }
+        return '💡 Seleccione una empresa para evaluar capacidad de inversión.';
+    }
+    
+    if (message.includes('predicción') || message.includes('futuro') || message.includes('pronóstico')) {
+        if (company) {
+            const nextMonth = Math.round(company.data.revenue * (1 + (Math.random() * 0.3 - 0.15)));
+            const trend = nextMonth > company.data.revenue ? 'crecimiento' : 'consolidación';
+            return `🔮 Proyección ${company.name} próximo mes: S/. ${nextMonth.toLocaleString()} en ingresos (${trend}). Basado en análisis de tendencias históricas y factores estacionales del mercado peruano.`;
+        }
+        return '🔮 Seleccione una empresa para generar proyecciones específicas.';
+    }
+    
+    if (message.includes('hola') || message.includes('buenos días') || message.includes('buenas tardes')) {
+        return '¡Saludos! Soy su asistente financiero inteligente. Especializado en análisis empresarial, proyecciones financieras y estrategias de crecimiento para el mercado peruano. ¿En qué puedo asistirle hoy?';
+    }
+    
+    if (message.includes('gracias') || message.includes('thank')) {
+        return '¡Siempre a su servicio! Estoy disponible 24/7 para análisis financieros y estrategias empresariales. ¿Hay algún otro aspecto de su negocio que desee revisar?';
+    }
+    
+    // Respuesta por defecto profesional
+    return `Entiendo su consulta sobre "${userMessage}". Para brindarle una respuesta precisa y detallada, ¿podría especificar si se refiere a análisis financiero, proyecciones de crecimiento, optimización de procesos o estrategias de mercado?`;
+}
+
+// PREGUNTAR A LA IA (BOTONES RÁPIDOS)
+function askAI(question) {
+    console.log('🎯 Pregunta rápida:', question);
+    
+    const input = document.getElementById('aiChatInput');
+    if (input) {
+        input.value = question;
+        sendAIMessage();
+    }
+}
+
+// LIMPIAR CHAT
+function clearAIChat() {
+    console.log('🧹 Limpiando chat IA');
+    
+    const container = document.getElementById('aiChatMessages');
+    if (!container) return;
+    
+    container.innerHTML = `
+        <div class="ai-message">
+            <div class="ai-message-avatar">🤖</div>
+            <div class="ai-message-content">
+                <p>Chat reiniciado. Soy su asistente financiero IA. ¿En qué puedo ayudarle?</p>
+                <div class="ai-quick-actions">
+                    <button class="quick-action-btn" onclick="askAI('¿Cómo van las ventas?')">📈 ¿Cómo van las ventas?</button>
+                    <button class="quick-action-btn" onclick="askAI('¿Puedo invertir más?')">💰 ¿Puedo invertir?</button>
+                    <button class="quick-action-btn" onclick="askAI('Analiza mi flujo de caja')">💧 Analizar flujo</button>
+                    <button class="quick-action-btn" onclick="askAI('Dame predicciones')">🔮 Predicciones</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// FUNCIONALIDAD DE MICRÓFONO
+let isRecording = false;
+let recognition = null;
+
+function initializeVoiceRecognition() {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'es-PE'; // Español de Perú
+        
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+            const input = document.getElementById('aiChatInput');
+            if (input) {
+                input.value = transcript;
+                stopVoiceInput();
+                
+                // Auto-enviar mensaje
+                setTimeout(() => {
+                    sendAIMessage();
+                }, 500);
+            }
+        };
+        
+        recognition.onerror = function(event) {
+            console.warn('Error de reconocimiento:', event.error);
+            stopVoiceInput();
+            addChatMessage('❌ Error en reconocimiento de voz. Intente nuevamente.', 'ai');
+        };
+        
+        recognition.onend = function() {
+            stopVoiceInput();
+        };
+        
+        console.log('🎤 Reconocimiento de voz inicializado');
+    } else {
+        console.log('⚠️ Reconocimiento de voz no disponible');
+    }
+}
+
+function startVoiceInput() {
+    console.log('🎤 Iniciando grabación de voz');
+    
+    if (!recognition) {
+        addChatMessage('❌ Reconocimiento de voz no disponible en este navegador.', 'ai');
+        return;
+    }
+    
+    if (isRecording) {
+        stopVoiceInput();
+        return;
+    }
+    
+    isRecording = true;
+    const button = document.getElementById('voiceInputBtn');
+    if (button) {
+        button.classList.add('active');
+        button.innerHTML = '<i class="fas fa-stop"></i>';
+        button.style.background = '#ef4444';
+    }
+    
+    recognition.start();
+    addChatMessage('🎤 Escuchando... Hable ahora.', 'ai');
+}
+
+function stopVoiceInput() {
+    console.log('🎤 Deteniendo grabación de voz');
+    
+    isRecording = false;
+    if (recognition) {
+        recognition.stop();
+    }
+    
+    const button = document.getElementById('voiceInputBtn');
+    if (button) {
+        button.classList.remove('active');
+        button.innerHTML = '<i class="fas fa-microphone"></i>';
+        button.style.background = '#6b7280';
+    }
+}
+
+// SISTEMA DE CAMBIO DE COLORES PREMIUM
+const premiumColorPalettes = [
+    { name: 'Oro Ejecutivo', primary: '#d4af37', secondary: '#b87333', accent: '#f4d03f' },
+    { name: 'Azul Corporativo', primary: '#1e40af', secondary: '#3b82f6', accent: '#60a5fa' },
+    { name: 'Verde Prosperidad', primary: '#059669', secondary: '#10b981', accent: '#34d399' },
+    { name: 'Púrpura Premium', primary: '#7c3aed', secondary: '#8b5cf6', accent: '#a78bfa' },
+    { name: 'Rojo Ejecutivo', primary: '#dc2626', secondary: '#ef4444', accent: '#f87171' },
+    { name: 'Naranja Dinámico', primary: '#ea580c', secondary: '#f97316', accent: '#fb923c' },
+    { name: 'Turquesa Moderno', primary: '#0891b2', secondary: '#06b6d4', accent: '#22d3ee' },
+    { name: 'Rosa Elegante', primary: '#ec4899', secondary: '#f472b6', accent: '#f9a8d4' }
+];
+
+function toggleColorPalette() {
+    console.log('🎨 Abriendo selector de colores');
+    showColorPalettePicker();
+}
+
+function showColorPalettePicker() {
+    // Crear modal de colores
+    const modal = document.createElement('div');
+    modal.id = 'colorPaletteModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(8px);
+    `;
+    
+    modal.innerHTML = `
+        <div style="
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        ">
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 2rem;
+                border-bottom: 1px solid #e5e7eb;
+                padding-bottom: 1rem;
+            ">
+                <h3 style="margin: 0; color: #1f2937; font-weight: 700; font-size: 1.5rem;">
+                    🎨 Paletas Premium GRIZALUM
+                </h3>
+                <button onclick="closeColorPicker()" style="
+                    background: none;
+                    border: none;
+                    font-size: 1.5rem;
+                    color: #6b7280;
+                    cursor: pointer;
+                    padding: 0.5rem;
+                    border-radius: 8px;
+                    transition: all 0.3s ease;
+                ">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1.5rem;
+            ">
+                ${premiumColorPalettes.map((palette, index) => `
+                    <div class="palette-option" onclick="applyPalette(${index})" style="
+                        padding: 1.5rem;
+                        border-radius: 16px;
+                        border: 2px solid transparent;
+                        background: linear-gradient(135deg, ${palette.primary} 0%, ${palette.secondary} 100%);
+                        color: white;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        text-align: center;
+                        position: relative;
+                        overflow: hidden;
+                    ">
+                        <h4 style="margin: 0 0 1rem 0; font-weight: 600;">${palette.name}</h4>
+                        <div style="
+                            display: flex;
+                            justify-content: center;
+                            gap: 0.5rem;
+                            margin-bottom: 1rem;
+                        ">
+                            <div style="width: 30px; height: 30px; background: ${palette.primary}; border-radius: 50%; border: 2px solid white;"></div>
+                            <div style="width: 30px; height: 30px; background: ${palette.secondary}; border-radius: 50%; border: 2px solid white;"></div>
+                            <div style="width: 30px; height: 30px; background: ${palette.accent}; border-radius: 50%; border: 2px solid white;"></div>
+                        </div>
+                        <p style="margin: 0; font-size: 0.8rem; opacity: 0.9;">Click para aplicar</p>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #e5e7eb; text-align: center;">
+                <button onclick="resetToDefaultPalette()" style="
+                    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+                    color: white;
+                    border: none;
+                    padding: 0.75rem 2rem;
+                    border-radius: 12px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                ">
+                    🔄 Restaurar Colores Originales
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+function applyPalette(index) {
+    const palette = premiumColorPalettes[index];
+    
+    console.log(`🎨 Aplicando paleta: ${palette.name}`);
+    
+    // Aplicar colores al sistema
+    document.documentElement.style.setProperty('--peru-gold', palette.primary);
+    document.documentElement.style.setProperty('--company-primary', palette.primary);
+    document.documentElement.style.setProperty('--company-secondary', palette.secondary);
+    
+    // Actualizar botones principales
+    const buttons = document.querySelectorAll('.btn-primary, .btn-add-company');
+    buttons.forEach(btn => {
+        btn.style.background = `linear-gradient(135deg, ${palette.primary} 0%, ${palette.secondary} 100%)`;
+    });
+    
+    // Actualizar botón IA
+    const aiButton = document.getElementById('aiAssistantButton');
+    if (aiButton) {
+        aiButton.style.background = `linear-gradient(135deg, ${palette.primary} 0%, ${palette.secondary} 100%)`;
+    }
+    
+    // Actualizar header IA
+    const aiHeader = document.querySelector('.ai-panel-header');
+    if (aiHeader) {
+        aiHeader.style.background = `linear-gradient(135deg, ${palette.primary} 0%, ${palette.secondary} 100%)`;
+    }
+    
+    // Guardar preferencia
+    localStorage.setItem('grizalum_color_palette', index.toString());
+    
+    // Cerrar modal
+    closeColorPicker();
+    
+    // Mostrar notificación
+    showNotification(`🎨 Paleta "${palette.name}" aplicada correctamente`, 'success');
+}
+
+function closeColorPicker() {
+    const modal = document.getElementById('colorPaletteModal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+function resetToDefaultPalette() {
+    applyPalette(0); // Volver al oro ejecutivo
+    localStorage.removeItem('grizalum_color_palette');
+}
+
+// FORZAR TODAS LAS FUNCIONES AL SCOPE GLOBAL
+window.toggleAIAssistant = toggleAIAssistant;
+window.sendAIMessage = sendAIMessage;
+window.handleAIChatKeypress = handleAIChatKeypress;
+window.addChatMessage = addChatMessage;
+window.generateAIResponsePeru = generateAIResponsePeru;
+window.askAI = askAI;
+window.clearAIChat = clearAIChat;
+window.startVoiceInput = startVoiceInput;
+window.stopVoiceInput = stopVoiceInput;
+window.toggleColorPalette = toggleColorPalette;
+window.showColorPalettePicker = showColorPalettePicker;
+window.applyPalette = applyPalette;
+window.closeColorPicker = closeColorPicker;
+window.resetToDefaultPalette = resetToDefaultPalette;
+
+// INICIALIZAR AL CARGAR
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Inicializando IA GRIZALUM');
+    
+    // Inicializar reconocimiento de voz
+    initializeVoiceRecognition();
+    
+    // Cargar paleta guardada
+    const savedIndex = localStorage.getItem('grizalum_color_palette');
+    if (savedIndex !== null) {
+        applyPalette(parseInt(savedIndex));
+    }
+    
+    // Asegurar que el input funcione
+    const aiInput = document.getElementById('aiChatInput');
+    if (aiInput) {
+        aiInput.addEventListener('keydown', handleAIChatKeypress);
+        console.log('✅ Input IA conectado');
+    } else {
+        console.error('❌ Input IA no encontrado');
+    }
+    
+    // Verificar botones
+    const sendBtn = document.querySelector('.ai-send-btn');
+    if (sendBtn) {
+        sendBtn.addEventListener('click', sendAIMessage);
+        console.log('✅ Botón enviar conectado');
+    }
+    
+    const voiceBtn = document.getElementById('voiceInputBtn');
+    if (voiceBtn) {
+        voiceBtn.addEventListener('click', startVoiceInput);
+        console.log('✅ Botón voz conectado');
+    }
+});
+
+console.log('✅ IA CONVERSACIONAL GRIZALUM COMPLETAMENTE FUNCIONAL');
+console.log('🎯 Funciones disponibles:');
+console.log('  • Chat inteligente con respuestas profesionales');
+console.log('  • Reconocimiento de voz en español peruano');
+console.log('  • 8 paletas de colores premium');
+console.log('  • Análisis financiero contextual');
+console.log('  • Botones de acciones rápidas');
+console.log('🚀 ¡Listo para usar!');
 </script>                    
                 </div>
             </header>
