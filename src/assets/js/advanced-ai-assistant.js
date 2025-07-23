@@ -169,7 +169,7 @@ class AdvancedAIAssistant {
                             <div class="ai-message-content">
                                 <div class="ai-message-header">
                                     <strong>GRIZALUM AI Expert</strong>
-                                    <span class="ai-timestamp">${this.formatTime(new Date())}</span>
+                                    <span class="ai-timestamp">${new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })}</span>
                                 </div>
                                 <div class="ai-message-text">
                                     ¡Hola! Soy tu asistente de IA especializado en <strong>gestión empresarial peruana</strong>. 
