@@ -769,7 +769,6 @@ addAIStyles() {
     document.head.insertAdjacentHTML('beforeend', css);
 }
     
-
 // ======= MOTOR DE IA INTELIGENTE =======
 async generateIntelligentResponse(userMessage) {
     const message = userMessage.toLowerCase().trim();
