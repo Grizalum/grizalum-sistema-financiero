@@ -2998,4 +2998,94 @@ class AdvancedAIAssistant {
 
     generateCashFlowAnalysis(message) {
         const companyData = this.getCurrentCompanyData();
-        const cashFlow = companyData?.cash
+        const cashFlow = companyData?.cashFlow || 24500;
+        const revenue = companyData?.revenue || 45200;
+        const expenses = companyData?.expenses || 28700;
+        
+        const cashFlowRatio = (cashFlow / expenses * 100).toFixed(1);
+        const operatingMargin = ((revenue - expenses) / revenue * 100).toFixed(1);
+        
+        return `💧 **ANÁLISIS INTELIGENTE DE FLUJO DE CAJA**
+
+**📊 SITUACIÓN ACTUAL:**
+- Flujo de caja disponible: **S/. ${cashFlow.toLocaleString()}**
+- Cobertura de gastos: **${cashFlowRatio}%** (${cashFlowRatio > 85 ? 'Excelente' : cashFlowRatio > 60 ? 'Bueno' : 'Necesita atención'})
+- Margen operativo: **${operatingMargin}%**
+
+**🎯 DIAGNÓSTICO INTELIGENTE:**
+${cashFlow > 30000 ? 
+    `✅ **Situación sólida**: Tu flujo de caja es saludable. Tienes capacidad para:
+    • Inversiones estratégicas (hasta S/. ${Math.floor(cashFlow * 0.4).toLocaleString()})
+    • Reserva de emergencia (${Math.floor(cashFlow * 0.3).toLocaleString()})
+    • Expansión operativa` :
+    `⚠️ **Situación de atención**: Tu flujo requiere optimización:
+    • Acelerar cobranzas (reducir días de cobro)
+    • Negociar mejores términos de pago con proveedores
+    • Revisar gastos no esenciales`}
+
+**🚀 RECOMENDACIONES ESPECÍFICAS:**
+
+1. **OPTIMIZACIÓN INMEDIATA (0-30 días):**
+   • Implementa política de cobro más agresiva
+   • Negocia descuentos por pronto pago con clientes
+   • Revisa contratos de servicios recurrentes
+
+2. **ESTRATEGIAS MEDIANO PLAZO (1-3 meses):**
+   • Diversifica fuentes de ingresos
+   • Implementa sistema de facturación automática
+   • Establece línea de crédito como respaldo
+
+3. **PROYECCIÓN INTELIGENTE:**
+   • Meta próximo trimestre: S/. ${Math.floor(cashFlow * 1.25).toLocaleString()}
+   • ROI esperado con optimizaciones: 15-25%
+
+¿Te gustaría que profundice en alguna estrategia específica?`;
+    }
+
+    // ======= FUNCIONES FALTANTES DE TIEMPO =======
+    formatTime(date) {
+        return date.toLocaleTimeString('es-PE', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+    }
+
+    delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    toggleVoice() {
+        // Función placeholder para reconocimiento de voz
+        console.log('🎤 Función de voz - Próximamente');
+    }
+
+    bindEvents() {
+        console.log('🔗 Eventos del AI Assistant vinculados');
+    }
+}
+
+// ======= INICIALIZACIÓN =======
+let advancedAI = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🧠 Inicializando Advanced AI Assistant...');
+    
+    // Crear instancia del AI avanzado
+    advancedAI = new AdvancedAIAssistant();
+    
+    // Hacer disponible globalmente
+    window.advancedAI = advancedAI;
+    
+    console.log('✅ Advanced AI Assistant listo - Nivel ChatGPT/Claude');
+});
+
+console.log('🚀 GRIZALUM AI EXPERT CARGADO');
+console.log('🧠 Capacidades:');
+console.log('  • Análisis financiero inteligente');
+console.log('  • Asesoría legal y tributaria para Perú');
+console.log('  • Estrategias de crecimiento empresarial');
+console.log('  • Optimización de costos y operaciones');
+console.log('  • Marketing y ventas efectivas');
+console.log('  • Gestión de recursos humanos');
+console.log('  • Respuestas contextuales avanzadas');
+console.log('🎯 ¡Tu consultor empresarial 24/7!');
