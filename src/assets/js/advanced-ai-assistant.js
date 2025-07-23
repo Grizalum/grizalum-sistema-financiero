@@ -768,6 +768,7 @@ addAIStyles() {
 
     document.head.insertAdjacentHTML('beforeend', css);
 }
+    
 
 // ======= MOTOR DE IA INTELIGENTE =======
 async generateIntelligentResponse(userMessage) {
@@ -1593,7 +1594,3 @@ console.log('  • Respuestas contextuales avanzadas');
 console.log('🎯 ¡Tu consultor empresarial 24/7!');
 </artifacts:parameter>
 </artifacts:invoke>
-
-## 🎯 **INSTRUCCIONES FINALES:**
-
-1. **COPIA
