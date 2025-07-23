@@ -5,282 +5,727 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GRIZALUM - Sistema Financiero Empresarial Premium</title>
     
-    <!-- MAIN CONTENT -->
-<main class="main-content">
-    <!-- HERO SECTION -->
-    <section class="hero-section">
-        <h1 class="hero-title">Sistema Financiero Empresarial</h1>
-        <p class="hero-subtitle">
-            Gestiona las finanzas de tu empresa con inteligencia artificial integrada. 
-            Dashboard ejecutivo, análisis predictivo y reportes automatizados.
-        </p>
-        <div class="hero-actions">
-            <a href="#demo" class="btn btn-primary btn-hero">
-                <i class="fas fa-play"></i>
-                Ver Demo
-            </a>
-            <a href="#features" class="btn btn-outline btn-hero">
-                <i class="fas fa-rocket"></i>
-                Comenzar Ahora
-            </a>
-        </div>
-    </section>
+   <!-- Meta Tags SEO -->
+<meta name="description" content="Sistema financiero empresarial premium con IA integrada para empresas peruanas. Dashboard ejecutivo, flujo de caja, análisis predictivo.">
+<meta name="keywords" content="sistema financiero, empresas peru, contabilidad, flujo de caja, dashboard, IA">
+<meta name="author" content="GRIZALUM">
 
-    <!-- FEATURES SECTION -->
-    <section id="features" class="features-grid">
-        <div class="feature-card">
-            <div class="feature-icon">
-                <i class="fas fa-chart-pie"></i>
-            </div>
-            <h3 class="feature-title">Dashboard Inteligente</h3>
-            <p class="feature-description">
-                Visualiza todas tus métricas financieras en tiempo real con gráficos interactivos 
-                y análisis automático de tendencias.
-            </p>
-        </div>
+<!-- Favicon -->
+<link rel="icon" type="image/x-icon" href="src/assets/images/favicon.ico">
 
-        <div class="feature-card">
-            <div class="feature-icon">
-                <i class="fas fa-robot"></i>
-            </div>
-            <h3 class="feature-title">IA Empresarial</h3>
-            <p class="feature-description">
-                Asistente de IA especializado en finanzas peruanas que te ayuda con análisis, 
-                estrategias y optimización de costos.
-            </p>
-        </div>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-        <div class="feature-card">
-            <div class="feature-icon">
-                <i class="fas fa-mobile-alt"></i>
-            </div>
-            <h3 class="feature-title">Acceso Móvil</h3>
-            <p class="feature-description">
-                Aplicación web progresiva que funciona perfectamente en todos tus dispositivos, 
-                incluso sin conexión a internet.
-            </p>
-        </div>
+<!-- FontAwesome -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 
-        <div class="feature-card">
-            <div class="feature-icon">
-                <i class="fas fa-shield-alt"></i>
-            </div>
-            <h3 class="feature-title">Seguridad Avanzada</h3>
-            <p class="feature-description">
-                Protección de datos bancaria con encriptación de extremo a extremo y 
-                respaldos automáticos en la nube.
-            </p>
-        </div>
+<!-- Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
 
-        <div class="feature-card">
-            <div class="feature-icon">
-                <i class="fas fa-file-invoice-dollar"></i>
-            </div>
-            <h3 class="feature-title">Reportes Automáticos</h3>
-            <p class="feature-description">
-                Genera reportes financieros profesionales automáticamente con cumplimiento 
-                de las normas contables peruanas.
-            </p>
-        </div>
+<!-- PWA MANIFEST -->
+<link rel="manifest" href="manifest.json">
 
-        <div class="feature-card">
-            <div class="feature-icon">
-                <i class="fas fa-users"></i>
-            </div>
-            <h3 class="feature-title">Gestión de Equipos</h3>
-            <p class="feature-description">
-                Administra múltiples empresas y usuarios con diferentes niveles de acceso 
-                y permisos personalizados.
-            </p>
-        </div>
-    </section>
+<!-- META TAGS PARA PWA -->
+<meta name="application-name" content="GRIZALUM">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GRIZALUM">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="msapplication-TileColor" content="#d4af37">
+<meta name="theme-color" content="#d4af37">
+<meta name="msapplication-tap-highlight" content="no">
 
-    <!-- STATS SECTION -->
-    <section class="stats-section">
-        <h2 class="stats-title">Resultados que Hablan por Sí Mismos</h2>
-        <div class="stats-grid">
-            <div class="stat-item">
-                <span class="stat-number">500+</span>
-                <span class="stat-label">Empresas Activas</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-number">99.9%</span>
-                <span class="stat-label">Tiempo de Actividad</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-number">35%</span>
-                <span class="stat-label">Ahorro Promedio</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-number">24/7</span>
-                <span class="stat-label">Soporte Premium</span>
-            </div>
-        </div>
-    </section>
+<!-- ICONOS ADICIONALES -->
+<link rel="icon" type="image/png" sizes="32x32" href="src/assets/images/icon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="src/assets/images/icon-16x16.png">
+<link rel="apple-touch-icon" href="src/assets/images/icon-192x192.png">
+<link rel="apple-touch-icon" sizes="152x152" href="src/assets/images/icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="src/assets/images/icon-180x180.png">
 
-    <!-- DASHBOARD PREVIEW -->
-    <section id="dashboard" class="dashboard-preview">
-        <h2 class="preview-title">Dashboard Ejecutivo en Acción</h2>
-        <p class="preview-subtitle">
-            Experimenta la potencia de nuestro sistema con datos reales de empresas peruanas
-        </p>
-        <div class="preview-image">
-            <div style="text-align: center;">
-                <i class="fas fa-chart-line" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
-                <p>Dashboard Interactivo</p>
-                <p style="font-size: 1rem; opacity: 0.8;">Haz clic en el botón AI para ver la funcionalidad</p>
-            </div>
-        </div>
-        <a href="#demo" class="btn btn-primary btn-hero">
-            <i class="fas fa-external-link-alt"></i>
-            Abrir Dashboard Completo
-        </a>
-    </section>
+<!-- Microsoft tiles -->
+<meta name="msapplication-TileImage" content="src/assets/images/icon-144x144.png">
+<meta name="msapplication-config" content="browserconfig.xml">
 
-    <!-- CTA SECTION -->
-    <section class="cta-section">
-        <h2 class="cta-title">¿Listo para Transformar tu Empresa?</h2>
-        <p class="cta-subtitle">
-            Únete a cientos de empresas peruanas que ya están optimizando sus finanzas con GRIZALUM
-        </p>
-        <div class="hero-actions">
-            <a href="#registro" class="btn btn-primary btn-hero">
-                <i class="fas fa-rocket"></i>
-                Comenzar Gratis
-            </a>
-            <a href="#contacto" class="btn btn-outline btn-hero">
-                <i class="fas fa-phone"></i>
-                Hablar con Ventas
-            </a>
-        </div>
-    </section>
-</main>
+<!-- ESTILOS PRINCIPALES -->
+<link rel="stylesheet" href="src/assets/css/variables.css">
+<link rel="stylesheet" href="src/assets/css/styles.css">
+<link rel="stylesheet" href="src/assets/css/responsive.css">
 
-<!-- FOOTER -->
-<footer class="footer">
-    <div class="footer-content">
-        <div class="footer-section">
-            <h3>GRIZALUM</h3>
-            <p>Sistema financiero empresarial líder en Perú. Transformamos la gestión financiera con tecnología de vanguardia.</p>
-        </div>
-        <div class="footer-section">
-            <h3>Producto</h3>
-            <a href="#features">Características</a>
-            <a href="#pricing">Precios</a>
-            <a href="#integrations">Integraciones</a>
-            <a href="#api">API</a>
-        </div>
-        <div class="footer-section">
-            <h3>Empresa</h3>
-            <a href="#about">Nosotros</a>
-            <a href="#careers">Careers</a>
-            <a href="#blog">Blog</a>
-            <a href="#press">Prensa</a>
-        </div>
-        <div class="footer-section">
-            <h3>Soporte</h3>
-            <a href="#help">Centro de Ayuda</a>
-            <a href="#contact">Contacto</a>
-            <a href="#status">Estado del Sistema</a>
-            <a href="#security">Seguridad</a>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        <p>&copy; 2025 GRIZALUM. Todos los derechos reservados. Hecho con ❤️ en Perú.</p>
-    </div>
-</footer>
+<!-- ESTILOS ADICIONALES INTEGRADOS -->
+<style>
+/* ================================================
+   ESTILOS DASHBOARD GRIZALUM
+   ================================================ */
 
-<!-- SCRIPTS MODULARES - ORDEN ESPECÍFICO -->
+:root {
+    --primary-color: #d4af37;
+    --primary-dark: #b8941f;
+    --secondary-color: #2c3e50;
+    --accent-color: #3498db;
+    --success-color: #27ae60;
+    --warning-color: #f39c12;
+    --danger-color: #e74c3c;
+    --dark-bg: #1a1d23;
+    --card-bg: #ffffff;
+    --text-primary: #2c3e50;
+    --text-secondary: #7f8c8d;
+    --border-color: #ecf0f1;
+    --shadow: 0 2px 10px rgba(0,0,0,0.1);
+    --border-radius: 12px;
+}
 
-<!-- 1. Utilidades primero -->
-<script src="src/assets/js/utils.js"></script>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-<!-- 2. Gestión de empresas -->
-<script src="src/assets/js/company-manager.js"></script>
+body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+}
 
-<!-- 3. IA Assistant -->
-<script src="src/assets/js/advanced-ai-assistant.js"></script>
+/* HEADER */
+.header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 2rem;
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
 
-<!-- 4. Coordinador principal -->
-<script src="src/assets/js/main.js"></script>
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+}
 
-<!-- SCRIPTS DE INICIALIZACIÓN -->
-<script>
-    console.log('🚀 GRIZALUM Sistema Financiero Empresarial cargado');
-    
-    // Smooth scrolling para enlaces internos
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
-    });
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--primary-color);
+}
 
-    // Animaciones al hacer scroll
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
+.logo i {
+    font-size: 2rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, observerOptions);
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
 
-    // Observar elementos para animaciones
-    document.querySelectorAll('.feature-card, .stat-item').forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'all 0.6s ease';
-        observer.observe(el);
-    });
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
 
-    // Contador animado para estadísticas
-    function animateCounters() {
-        const counters = document.querySelectorAll('.stat-number');
-        counters.forEach(counter => {
-            const target = parseInt(counter.textContent.replace(/[^\d]/g, ''));
-            const suffix = counter.textContent.replace(/[\d]/g, '');
-            let current = 0;
-            const increment = target / 100;
-            const timer = setInterval(() => {
-                current += increment;
-                if (current >= target) {
-                    counter.textContent = target + suffix;
-                    clearInterval(timer);
-                } else {
-                    counter.textContent = Math.floor(current) + suffix;
-                }
-            }, 20);
-        });
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: white;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* MAIN CONTENT */
+.main-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    min-height: calc(100vh - 100px);
+}
+
+/* HERO SECTION */
+.hero-section {
+    text-align: center;
+    padding: 4rem 0;
+    color: white;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+}
+
+.btn-hero {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    border-radius: 12px;
+}
+
+/* FEATURES GRID */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 4rem;
+}
+
+.feature-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.feature-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.feature-description {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+/* STATS SECTION */
+.stats-section {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    padding: 3rem 2rem;
+    margin: 4rem 0;
+    box-shadow: var(--shadow);
+}
+
+.stats-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 3rem;
+    color: var(--text-primary);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border: 1px solid var(--border-color);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* DASHBOARD PREVIEW */
+.dashboard-preview {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    padding: 3rem 2rem;
+    margin: 4rem 0;
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+.preview-title {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.preview-subtitle {
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.preview-image {
+    width: 100%;
+    max-width: 800px;
+    height: 400px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 2rem auto;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* CTA SECTION */
+.cta-section {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    padding: 4rem 2rem;
+    text-align: center;
+    box-shadow: var(--shadow);
+    margin: 4rem 0;
+}
+
+.cta-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.cta-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* FOOTER */
+.footer {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--border-color);
+    padding: 3rem 2rem 2rem;
+    margin-top: 4rem;
+}
+
+.footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.footer-section h3 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.footer-section p,
+.footer-section a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.footer-section a:hover {
+    color: var(--primary-color);
+}
+
+.footer-bottom {
+    border-top: 1px solid var(--border-color);
+    margin-top: 2rem;
+    padding-top: 2rem;
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .header {
+        padding: 1rem;
     }
+    
+    .main-content {
+        padding: 1rem;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn-hero {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
 
-    // Ejecutar animación de contadores cuando sea visible
-    const statsSection = document.querySelector('.stats-section');
-    if (statsSection) {
-        const statsObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    setTimeout(animateCounters, 500);
-                    statsObserver.unobserve(entry.target);
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+    }
+}
+
+/* ANIMATIONS */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.feature-card,
+.stat-item {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.feature-card:nth-child(2) { animation-delay: 0.1s; }
+.feature-card:nth-child(3) { animation-delay: 0.2s; }
+.feature-card:nth-child(4) { animation-delay: 0.3s; }
+</style>
+  </head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+                <span>GRIZALUM</span>
+            </div>
+            <div class="header-actions">
+                <a href="#features" class="btn btn-outline">
+                    <i class="fas fa-info-circle"></i>
+                    Características
+                </a>
+                <a href="#dashboard" class="btn btn-primary">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Ver Dashboard
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- HERO SECTION -->
+        <section class="hero-section">
+            <h1 class="hero-title">Sistema Financiero Empresarial</h1>
+            <p class="hero-subtitle">
+                Gestiona las finanzas de tu empresa con inteligencia artificial integrada. 
+                Dashboard ejecutivo, análisis predictivo y reportes automatizados.
+            </p>
+            <div class="hero-actions">
+                <a href="#demo" class="btn btn-primary btn-hero">
+                    <i class="fas fa-play"></i>
+                    Ver Demo
+                </a>
+                <a href="#features" class="btn btn-outline btn-hero">
+                    <i class="fas fa-rocket"></i>
+                    Comenzar Ahora
+                </a>
+            </div>
+        </section>
+
+        <!-- FEATURES SECTION -->
+        <section id="features" class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <h3 class="feature-title">Dashboard Inteligente</h3>
+                <p class="feature-description">
+                    Visualiza todas tus métricas financieras en tiempo real con gráficos interactivos 
+                    y análisis automático de tendencias.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h3 class="feature-title">IA Empresarial</h3>
+                <p class="feature-description">
+                    Asistente de IA especializado en finanzas peruanas que te ayuda con análisis, 
+                    estrategias y optimización de costos.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3 class="feature-title">Acceso Móvil</h3>
+                <p class="feature-description">
+                    Aplicación web progresiva que funciona perfectamente en todos tus dispositivos, 
+                    incluso sin conexión a internet.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="feature-title">Seguridad Avanzada</h3>
+                <p class="feature-description">
+                    Protección de datos bancaria con encriptación de extremo a extremo y 
+                    respaldos automáticos en la nube.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </div>
+                <h3 class="feature-title">Reportes Automáticos</h3>
+                <p class="feature-description">
+                    Genera reportes financieros profesionales automáticamente con cumplimiento 
+                    de las normas contables peruanas.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3 class="feature-title">Gestión de Equipos</h3>
+                <p class="feature-description">
+                    Administra múltiples empresas y usuarios con diferentes niveles de acceso 
+                    y permisos personalizados.
+                </p>
+            </div>
+        </section>
+
+        <!-- STATS SECTION -->
+        <section class="stats-section">
+            <h2 class="stats-title">Resultados que Hablan por Sí Mismos</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number">500+</span>
+                    <span class="stat-label">Empresas Activas</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">99.9%</span>
+                    <span class="stat-label">Tiempo de Actividad</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">35%</span>
+                    <span class="stat-label">Ahorro Promedio</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">24/7</span>
+                    <span class="stat-label">Soporte Premium</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- DASHBOARD PREVIEW -->
+        <section id="dashboard" class="dashboard-preview">
+            <h2 class="preview-title">Dashboard Ejecutivo en Acción</h2>
+            <p class="preview-subtitle">
+                Experimenta la potencia de nuestro sistema con datos reales de empresas peruanas
+            </p>
+            <div class="preview-image">
+                <div style="text-align: center;">
+                    <i class="fas fa-chart-line" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                    <p>Dashboard Interactivo</p>
+                    <p style="font-size: 1rem; opacity: 0.8;">Haz clic en el botón AI para ver la funcionalidad</p>
+                </div>
+            </div>
+            <a href="#demo" class="btn btn-primary btn-hero">
+                <i class="fas fa-external-link-alt"></i>
+                Abrir Dashboard Completo
+            </a>
+        </section>
+
+        <!-- CTA SECTION -->
+        <section class="cta-section">
+            <h2 class="cta-title">¿Listo para Transformar tu Empresa?</h2>
+            <p class="cta-subtitle">
+                Únete a cientos de empresas peruanas que ya están optimizando sus finanzas con GRIZALUM
+            </p>
+            <div class="hero-actions">
+                <a href="#registro" class="btn btn-primary btn-hero">
+                    <i class="fas fa-rocket"></i>
+                    Comenzar Gratis
+                </a>
+                <a href="#contacto" class="btn btn-outline btn-hero">
+                    <i class="fas fa-phone"></i>
+                    Hablar con Ventas
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>GRIZALUM</h3>
+                <p>Sistema financiero empresarial líder en Perú. Transformamos la gestión financiera con tecnología de vanguardia.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Producto</h3>
+                <a href="#features">Características</a>
+                <a href="#pricing">Precios</a>
+                <a href="#integrations">Integraciones</a>
+                <a href="#api">API</a>
+            </div>
+            <div class="footer-section">
+                <h3>Empresa</h3>
+                <a href="#about">Nosotros</a>
+                <a href="#careers">Careers</a>
+                <a href="#blog">Blog</a>
+                <a href="#press">Prensa</a>
+            </div>
+            <div class="footer-section">
+                <h3>Soporte</h3>
+                <a href="#help">Centro de Ayuda</a>
+                <a href="#contact">Contacto</a>
+                <a href="#status">Estado del Sistema</a>
+                <a href="#security">Seguridad</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 GRIZALUM. Todos los derechos reservados. Hecho con ❤️ en Perú.</p>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="src/assets/js/utils.js"></script>
+    <script src="src/assets/js/company-manager.js"></script>
+    <script src="src/assets/js/advanced-ai-assistant.js"></script>
+    <script src="src/assets/js/main.js"></script>
+
+    <script>
+        console.log('🚀 GRIZALUM Sistema Financiero Empresarial cargado');
+        
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
                 }
             });
-        }, { threshold: 0.5 });
-        
-        statsObserver.observe(statsSection);
-    }
+        });
 
-    console.log('✅ GRIZALUM Dashboard inicializado correctamente');
-</script>
+        // Animaciones
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.feature-card, .stat-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
+        });
+
+        console.log('✅ GRIZALUM Dashboard inicializado correctamente');
+    </script>
 </body>
-</html>
+</html>  
