@@ -1,634 +1,762 @@
-// ===================================================================
-// GRIZALUM - Sistema Financiero Empresarial Premium
-// JavaScript Principal - Versión 2.0
-// ===================================================================
+/**
+ * ================================================
+ * GRIZALUM - MAIN MODULE
+ * Coordinador principal y funciones generales
+ * ================================================
+ */
 
-// GLOBAL VARIABLES
-let charts = {};
-let realTimeData = {
-    cashFlow: 24500,
-    revenue: 45200,
-    expenses: 28700,
-    profit: 16500
+// ======= CONFIGURACIÓN GLOBAL =======
+const GRIZALUM_CONFIG = {
+    version: '1.0.0',
+    appName: 'GRIZALUM',
+    debug: true,
+    loadingDuration: 2000,
+    features: {
+        aiAssistant: true,
+        companyManager: true,
+        charts: true,
+        notifications: true,
+        responsiveDesign: true
+    }
 };
 
-// INITIALIZATION
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 GRIZALUM Sistema Financiero - Inicializando...');
-    
-    initializeCharts();
-    startRealTimeUpdates();
-    setupEventListeners();
-    animateKPIValues();
-    hideLoadingScreen();
-    
-    console.log('✅ Sistema completamente inicializado');
-});
+// ======= CLASE PRINCIPAL GRIZALUM APP =======
+class GrizalumApp {
+    constructor() {
+        this.isInitialized = false;
+        this.currentSection = 'dashboard';
+        this.modules = {};
+        this.init();
+    }
 
-// ===================================================================
-// LOADING SCREEN
-// ===================================================================
-function hideLoadingScreen() {
-    setTimeout(() => {
+    // Inicializar aplicación
+    async init() {
+        console.log(`🚀 Inicializando ${GRIZALUM_CONFIG.appName} v${GRIZALUM_CONFIG.version}`);
+        
+        try {
+            // Mostrar loading screen
+            this.showLoadingScreen();
+            
+            // Inicializar módulos base
+            await this.initializeModules();
+            
+            // Configurar eventos globales
+            this.bindGlobalEvents();
+            
+            // Inicializar interfaz
+            this.initializeInterface();
+            
+            // Cargar configuración guardada
+            this.loadUserPreferences();
+            
+            // Ocultar loading después del tiempo configurado
+            setTimeout(() => {
+                this.hideLoadingScreen();
+                this.isInitialized = true;
+                this.onAppReady();
+            }, GRIZALUM_CONFIG.loadingDuration);
+            
+        } catch (error) {
+            console.error('❌ Error inicializando GRIZALUM:', error);
+            this.showErrorState(error);
+        }
+    }
+
+    // Inicializar módulos
+    async initializeModules() {
+        console.log('📦 Inicializando módulos...');
+        
+        // Los módulos se inicializan automáticamente con sus propios DOMContentLoaded
+        // Aquí solo registramos las referencias cuando estén disponibles
+        
+        this.waitForModule('companyManager', 5000);
+        this.waitForModule('aiAssistant', 5000);
+        
+        console.log('✅ Módulos registrados');
+    }
+
+    // Esperar a que un módulo esté disponible
+    waitForModule(moduleName, timeout = 5000) {
+        let attempts = 0;
+        const maxAttempts = timeout / 100;
+        
+        const checkModule = () => {
+            if (window[moduleName]) {
+                this.modules[moduleName] = window[moduleName];
+                console.log(`✅ Módulo ${moduleName} disponible`);
+                return;
+            }
+            
+            attempts++;
+            if (attempts < maxAttempts) {
+                setTimeout(checkModule, 100);
+            } else {
+                console.warn(`⚠️ Módulo ${moduleName} no se cargó en ${timeout}ms`);
+            }
+        };
+        
+        checkModule();
+    }
+
+    // ======= GESTIÓN DE LOADING =======
+
+    showLoadingScreen() {
         const loadingScreen = document.getElementById('loadingScreen');
         if (loadingScreen) {
-            loadingScreen.style.animation = 'fadeOut 1s ease-in-out forwards';
+            loadingScreen.style.display = 'flex';
+            
+            // Animar barra de progreso
+            const progressBar = loadingScreen.querySelector('.loading-progress');
+            if (progressBar) {
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += Math.random() * 15;
+                    if (progress > 100) progress = 100;
+                    
+                    progressBar.style.width = `${progress}%`;
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                    }
+                }, 200);
+            }
+        }
+    }
+
+    hideLoadingScreen() {
+        const loadingScreen = document.getElementById('loadingScreen');
+        if (loadingScreen) {
+            loadingScreen.style.opacity = '0';
             setTimeout(() => {
-                loadingScreen.remove();
-            }, 1000);
+                loadingScreen.style.display = 'none';
+            }, 500);
         }
-    }, 2000);
-}
+    }
 
-// ===================================================================
-// CHART INITIALIZATION
-// ===================================================================
-function initializeCharts() {
-    initRevenueChart();
-    initExpensesChart();
-    initCashFlowChart();
-    initAgingChart();
-    console.log('📊 Gráficos inicializados');
-}
+    // ======= GESTIÓN DE SECCIONES =======
 
-function initRevenueChart() {
-    const ctx = document.getElementById('revenueChart');
-    if (!ctx) return;
-
-    charts.revenue = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul'],
-            datasets: [{
-                label: 'Ingresos',
-                data: [35000, 38000, 42000, 39000, 44000, 40300, 45200],
-                borderColor: '#3b82f6',
-                backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                borderWidth: 3,
-                fill: true,
-                tension: 0.4
-            }, {
-                label: 'Gastos',
-                data: [28000, 29500, 31000, 30200, 32500, 30200, 28700],
-                borderColor: '#dc2626',
-                backgroundColor: 'rgba(220, 38, 38, 0.1)',
-                borderWidth: 3,
-                fill: true,
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'top',
-                    labels: {
-                        usePointStyle: true,
-                        font: { weight: 'bold' }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return 'S/. ' + value.toLocaleString();
-                        }
-                    }
-                }
-            }
-        }
-    });
-}
-
-function initExpensesChart() {
-    const ctx = document.getElementById('expensesChart');
-    if (!ctx) return;
-
-    charts.expenses = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Operativos', 'Administrativos', 'Ventas', 'Financieros'],
-            datasets: [{
-                data: [12500, 8200, 5500, 2500],
-                backgroundColor: [
-                    '#059669',
-                    '#3b82f6',
-                    '#d4af37',
-                    '#dc2626'
-                ],
-                borderWidth: 0,
-                hoverOffset: 10
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        usePointStyle: true,
-                        font: { weight: 'bold' },
-                        padding: 20
-                    }
-                }
-            }
-        }
-    });
-}
-
-function initCashFlowChart() {
-    const ctx = document.getElementById('cashFlowChart');
-    if (!ctx) return;
-
-    charts.cashFlow = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-            datasets: [{
-                label: 'Proyección IA',
-                data: [28000, 32000, 35000, 38000, 42000],
-                backgroundColor: 'rgba(99, 102, 241, 0.8)',
-                borderColor: '#6366f1',
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: true,
-                    labels: {
-                        usePointStyle: true,
-                        font: { weight: 'bold' }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return 'S/. ' + value.toLocaleString();
-                        }
-                    }
-                }
-            }
-        }
-    });
-}
-
-function initAgingChart() {
-    const ctx = document.getElementById('agingChart');
-    if (!ctx) return;
-
-    charts.aging = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['0-30 días', '31-60 días', '61-90 días', '+90 días'],
-            datasets: [{
-                label: 'Monto (S/.)',
-                data: [18200, 9800, 3200, 1600],
-                backgroundColor: [
-                    '#059669',
-                    '#f59e0b',
-                    '#d97706',
-                    '#dc2626'
-                ],
-                borderRadius: 8
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return 'S/. ' + value.toLocaleString();
-                        }
-                    }
-                }
-            }
-        }
-    });
-}
-
-// ===================================================================
-// REAL-TIME UPDATES
-// ===================================================================
-function startRealTimeUpdates() {
-    setInterval(() => {
-        updateRealTimeData();
-        updateSidebarSummary();
-    }, 60000); // Update every minute
-}
-
-function updateRealTimeData() {
-    // Simulate real-time data changes
-    const variance = 0.02; // 2% variance
-    
-    Object.keys(realTimeData).forEach(key => {
-        const change = (Math.random() - 0.5) * variance;
-        realTimeData[key] = Math.round(realTimeData[key] * (1 + change));
-    });
-}
-
-function updateSidebarSummary() {
-    const elements = {
-        'sidebarCashFlow': realTimeData.cashFlow,
-        'sidebarRevenue': realTimeData.revenue,
-        'sidebarExpenses': realTimeData.expenses,
-        'sidebarProfit': realTimeData.profit
-    };
-
-    Object.entries(elements).forEach(([id, value]) => {
-        const element = document.getElementById(id);
-        if (element) {
-            element.textContent = `S/. ${value.toLocaleString()}`;
-        }
-    });
-}
-
-// ===================================================================
-// ANIMATIONS
-// ===================================================================
-function animateKPIValues() {
-    const values = document.querySelectorAll('.kpi-value-animation');
-    values.forEach(value => {
-        const finalValue = value.textContent;
-        const numericValue = parseFloat(finalValue.replace(/[^0-9.]/g, ''));
+    showSection(sectionId) {
+        console.log(`📄 Cambiando a sección: ${sectionId}`);
         
-        let current = 0;
-        const increment = numericValue / 50;
-        const timer = setInterval(() => {
-            current += increment;
-            if (current >= numericValue) {
-                current = numericValue;
-                clearInterval(timer);
-            }
-            value.textContent = `S/. ${Math.round(current).toLocaleString()}`;
-        }, 40);
-    });
-}
-
-// ===================================================================
-// NAVIGATION
-// ===================================================================
-function showSection(sectionId) {
-    // Hide all sections
-    const sections = document.querySelectorAll('.page-section');
-    sections.forEach(section => section.classList.remove('active'));
-    
-    // Show target section
-    const targetSection = document.getElementById(sectionId);
-    if (targetSection) {
-        targetSection.classList.add('active');
-    }
-    
-    // Update navigation
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach(link => link.classList.remove('active'));
-    
-    // Find the clicked link and make it active
-    const clickedLink = event.target.closest('.nav-link');
-    if (clickedLink) {
-        clickedLink.classList.add('active');
-    }
-    
-    updatePageTitle(sectionId);
-}
-
-function updatePageTitle(sectionId) {
-    const titles = {
-        'dashboard': 'Dashboard Ejecutivo',
-        'cash-flow': 'Flujo de Caja',
-        'income-statement': 'Estado de Resultados',
-        'balance-sheet': 'Balance General',
-        'accounts-receivable': 'Cuentas por Cobrar',
-        'accounts-payable': 'Cuentas por Pagar',
-        'inventory': 'Inventario',
-        'sales': 'Ventas',
-        'purchases': 'Compras',
-        'financial-analysis': 'Análisis Financiero',
-        'reports': 'Reportes'
-    };
-    
-    const subtitles = {
-        'dashboard': 'Resumen financiero en tiempo real',
-        'cash-flow': 'Gestión de entradas y salidas de efectivo',
-        'income-statement': 'Análisis de ingresos y gastos',
-        'balance-sheet': 'Estado de situación financiera',
-        'accounts-receivable': 'Gestión de cobranzas',
-        'accounts-payable': 'Gestión de pagos a proveedores',
-        'inventory': 'Control de stock y rotación',
-        'sales': 'Gestión de ventas y facturación',
-        'purchases': 'Gestión de compras y proveedores',
-        'financial-analysis': 'Indicadores y ratios financieros',
-        'reports': 'Reportes ejecutivos y regulatorios'
-    };
-    
-    const titleElement = document.getElementById('pageTitle');
-    const subtitleElement = document.getElementById('pageSubtitle');
-    
-    if (titleElement) titleElement.textContent = titles[sectionId] || 'GRIZALUM';
-    if (subtitleElement) subtitleElement.textContent = subtitles[sectionId] || 'Sistema financiero';
-}
-
-// ===================================================================
-// PERIOD MANAGEMENT
-// ===================================================================
-function changePeriod(period, button) {
-    const buttons = document.querySelectorAll('.period-btn');
-    buttons.forEach(btn => btn.classList.remove('active'));
-    button.classList.add('active');
-    
-    // Show loading state
-    const originalText = button.textContent;
-    button.innerHTML = '<span class="loading"></span>';
-    
-    // Simulate data loading
-    setTimeout(() => {
-        button.textContent = originalText;
-        updateChartsForPeriod(period);
-        showSuccessMessage(`Datos actualizados para: ${period}`);
-    }, 1500);
-}
-
-function updateChartsForPeriod(period) {
-    const multipliers = {
-        'hoy': 0.033,
-        'semana': 0.23,
-        'mes': 1,
-        'trimestre': 3,
-        'año': 12
-    };
-    
-    const multiplier = multipliers[period] || 1;
-    
-    // Update all charts with new data
-    Object.keys(charts).forEach(chartKey => {
-        if (charts[chartKey]) {
-            charts[chartKey].update('active');
+        // Ocultar todas las secciones
+        document.querySelectorAll('.page-section').forEach(section => {
+            section.classList.remove('active');
+        });
+        
+        // Mostrar sección solicitada
+        const targetSection = document.getElementById(sectionId);
+        if (targetSection) {
+            targetSection.classList.add('active');
+            this.currentSection = sectionId;
+            
+            // Actualizar navegación
+            this.updateNavigation(sectionId);
+            
+            // Actualizar título de página
+            this.updatePageTitle(sectionId);
+            
+            // Trigger evento personalizado
+            this.triggerSectionChange(sectionId);
+        } else {
+            console.warn(`⚠️ Sección no encontrada: ${sectionId}`);
         }
-    });
-}
+    }
 
-// ===================================================================
-// AI FUNCTIONALITY
-// ===================================================================
-function generateAIReport() {
-    const button = event.target;
-    const originalText = button.innerHTML;
-    
-    button.innerHTML = '<span class="loading"></span> Analizando...';
-    button.disabled = true;
-    
-    setTimeout(() => {
-        button.innerHTML = originalText;
-        button.disabled = false;
-        showAIInsights();
-    }, 3000);
-}
+    updateNavigation(sectionId) {
+        // Actualizar enlaces activos en navegación
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+        
+        const activeLink = document.querySelector(`[onclick*="${sectionId}"]`);
+        if (activeLink) {
+            activeLink.classList.add('active');
+        }
+    }
 
-function showAIInsights() {
-    const insights = [
-        "📈 Tendencia positiva: Ingresos creciendo 12% mensual",
-        "🎯 Oportunidad: Optimizar gastos administrativos (-15%)",
-        "⚠️ Alerta: Stock crítico en 3 productos principales",
-        "💡 Recomendación: Ampliar línea de crédito para crecimiento"
-    ];
-    
-    let message = "🤖 ANÁLISIS DE IA COMPLETADO:\n\n";
-    insights.forEach(insight => {
-        message += insight + "\n";
-    });
-    
-    showSuccessMessage(message);
-}
+    updatePageTitle(sectionId) {
+        const titles = {
+            'dashboard': 'Dashboard Ejecutivo',
+            'cash-flow': 'Gestión de Flujo de Caja',
+            'income-statement': 'Estado de Resultados',
+            'balance-sheet': 'Balance General',
+            'accounts-receivable': 'Cuentas por Cobrar',
+            'accounts-payable': 'Cuentas por Pagar',
+            'inventory': 'Gestión de Inventario',
+            'sales': 'Gestión de Ventas',
+            'purchases': 'Gestión de Compras',
+            'financial-analysis': 'Análisis Financiero',
+            'reports': 'Reportes Gerenciales'
+        };
 
-// ===================================================================
-// UTILITY FUNCTIONS
-// ===================================================================
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    if (sidebar) {
-        sidebar.classList.toggle('mobile-open');
+        const subtitles = {
+            'dashboard': 'Resumen financiero en tiempo real',
+            'cash-flow': 'Control y proyección de flujo de caja',
+            'income-statement': 'Análisis de ingresos y gastos',
+            'balance-sheet': 'Situación patrimonial de la empresa',
+            'accounts-receivable': 'Gestión de cobranzas y clientes',
+            'accounts-payable': 'Control de pagos a proveedores',
+            'inventory': 'Control de stock y valorización',
+            'sales': 'Gestión comercial y facturación',
+            'purchases': 'Gestión de compras y proveedores',
+            'financial-analysis': 'Indicadores y ratios financieros',
+            'reports': 'Informes ejecutivos y operativos'
+        };
+
+        const titleElement = document.getElementById('pageTitle');
+        const subtitleElement = document.getElementById('pageSubtitle');
+        
+        if (titleElement) titleElement.textContent = titles[sectionId] || 'GRIZALUM';
+        if (subtitleElement) subtitleElement.textContent = subtitles[sectionId] || '';
+    }
+
+    triggerSectionChange(sectionId) {
+        const event = new CustomEvent('sectionChanged', {
+            detail: { 
+                from: this.currentSection, 
+                to: sectionId,
+                timestamp: Date.now()
+            }
+        });
+        
+        document.dispatchEvent(event);
+    }
+
+    // ======= GESTIÓN DE PERÍODOS =======
+
+    changePeriod(period, buttonElement) {
+        console.log(`📅 Cambiando período a: ${period}`);
+        
+        // Actualizar botones activos
+        document.querySelectorAll('.period-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        if (buttonElement) {
+            buttonElement.classList.add('active');
+        }
+        
+        // Aquí se actualizarían los datos según el período
+        this.updateDataForPeriod(period);
+        
+        // Mostrar notificación
+        if (window.GrizalumUtils) {
+            window.GrizalumUtils.showInfoNotification(
+                `📅 Período cambiado a: ${this.capitalizeFirst(period)}`,
+                2000
+            );
+        }
+    }
+
+    updateDataForPeriod(period) {
+        // Simular actualización de datos
+        const loadingOverlay = window.GrizalumUtils ? 
+            window.GrizalumUtils.showLoading(
+                document.querySelector('.content-area'),
+                `Cargando datos de ${period}...`
+            ) : null;
+        
+        // Simular carga de datos
+        setTimeout(() => {
+            if (loadingOverlay && window.GrizalumUtils) {
+                window.GrizalumUtils.hideLoading(document.querySelector('.content-area'));
+            }
+            
+            console.log(`📊 Datos actualizados para período: ${period}`);
+        }, 1000);
+    }
+
+    // ======= RESPONSIVE Y SIDEBAR =======
+
+    toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.querySelector('.main-content');
+        
+        if (sidebar) {
+            sidebar.classList.toggle('collapsed');
+            
+            if (mainContent) {
+                mainContent.classList.toggle('sidebar-collapsed');
+            }
+        }
+    }
+
+    // Auto-colapsar sidebar en móviles
+    handleResponsiveDesign() {
+        const sidebar = document.getElementById('sidebar');
+        const isMobile = window.innerWidth <= 768;
+        
+        if (sidebar) {
+            if (isMobile) {
+                sidebar.classList.add('mobile-hidden');
+            } else {
+                sidebar.classList.remove('mobile-hidden');
+            }
+        }
+    }
+
+    // ======= NOTIFICACIONES =======
+
+    showNotifications() {
+        console.log('🔔 Mostrando centro de notificaciones');
+        
+        // Simular notificaciones
+        const notifications = [
+            { type: 'info', message: 'Nuevo reporte mensual disponible', time: '5 min' },
+            { type: 'warning', message: 'Factura #001 próxima a vencer', time: '1 hora' },
+            { type: 'success', message: 'Pago de cliente procesado exitosamente', time: '2 horas' }
+        ];
+        
+        if (window.GrizalumUtils) {
+            notifications.forEach((notif, index) => {
+                setTimeout(() => {
+                    window.GrizalumUtils.showNotification(
+                        `${notif.message} (${notif.time})`,
+                        notif.type,
+                        4000
+                    );
+                }, index * 500);
+            });
+        }
+    }
+
+    // ======= EVENTOS GLOBALES =======
+
+    bindGlobalEvents() {
+        console.log('🔗 Vinculando eventos globales...');
+        
+        // Responsive design
+        window.addEventListener('resize', window.GrizalumUtils ? 
+            window.GrizalumUtils.debounce(() => this.handleResponsiveDesign(), 250) :
+            () => this.handleResponsiveDesign()
+        );
+        
+        // Escape key para cerrar modales
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.closeAllModals();
+            }
+        });
+        
+        // Eventos de sección personalizada
+        document.addEventListener('sectionChanged', (e) => {
+            console.log(`📄 Sección cambiada: ${e.detail.from} → ${e.detail.to}`);
+        });
+        
+        // Click fuera de elementos para cerrar dropdowns
+        document.addEventListener('click', (e) => {
+            this.handleOutsideClick(e);
+        });
+        
+        // Prevenir zoom en iOS
+        document.addEventListener('gesturestart', (e) => {
+            e.preventDefault();
+        });
+        
+        console.log('✅ Eventos globales vinculados');
+    }
+
+    closeAllModals() {
+        const modals = document.querySelectorAll('.modal, .management-modal');
+        modals.forEach(modal => {
+            modal.style.display = 'none';
+            modal.classList.remove('show');
+        });
+    }
+
+    handleOutsideClick(event) {
+        // Cerrar dropdowns si se hace click fuera
+        const dropdowns = document.querySelectorAll('.dropdown.show, .company-dropdown.show');
+        dropdowns.forEach(dropdown => {
+            const container = dropdown.closest('.dropdown-container, .company-selector');
+            if (container && !container.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+    }
+
+    // ======= INICIALIZACIÓN DE INTERFAZ =======
+
+    initializeInterface() {
+        console.log('🎨 Inicializando interfaz...');
+        
+        // Aplicar responsive design inicial
+        this.handleResponsiveDesign();
+        
+        // Configurar tooltips si están disponibles
+        this.initializeTooltips();
+        
+        // Configurar animaciones de entrada
+        this.initializeAnimations();
+        
+        console.log('✅ Interfaz inicializada');
+    }
+
+    initializeTooltips() {
+        const elementsWithTooltips = document.querySelectorAll('[title]');
+        elementsWithTooltips.forEach(element => {
+            // Aquí se podrían inicializar tooltips más avanzados
+            element.addEventListener('mouseenter', function() {
+                // Mostrar tooltip personalizado
+            });
+        });
+    }
+
+    initializeAnimations() {
+        // Observador de intersección para animaciones on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        // Observar elementos animables
+        document.querySelectorAll('.kpi-card, .chart-card, .executive-card').forEach(el => {
+            observer.observe(el);
+        });
+    }
+
+    // ======= PREFERENCIAS DE USUARIO =======
+
+    loadUserPreferences() {
+        console.log('👤 Cargando preferencias de usuario...');
+        
+        if (!window.GrizalumUtils) return;
+        
+        const preferences = window.GrizalumUtils.loadFromStorage('grizalum_preferences', {
+            theme: 'light',
+            sidebarCollapsed: false,
+            defaultPeriod: 'mes',
+            language: 'es'
+        });
+        
+        this.applyPreferences(preferences);
+        
+        console.log('✅ Preferencias cargadas:', preferences);
+    }
+
+    saveUserPreferences(preferences) {
+        if (window.GrizalumUtils) {
+            window.GrizalumUtils.saveToStorage('grizalum_preferences', preferences);
+        }
+    }
+
+    applyPreferences(preferences) {
+        // Aplicar tema
+        if (preferences.theme === 'dark') {
+            document.body.classList.add('dark-theme');
+        }
+        
+        // Aplicar estado del sidebar
+        if (preferences.sidebarCollapsed) {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar) sidebar.classList.add('collapsed');
+        }
+        
+        // Aplicar período por defecto
+        const defaultPeriodBtn = document.querySelector(`[onclick*="${preferences.defaultPeriod}"]`);
+        if (defaultPeriodBtn) {
+            this.changePeriod(preferences.defaultPeriod, defaultPeriodBtn);
+        }
+    }
+
+    // ======= UTILIDADES =======
+
+    capitalizeFirst(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    showErrorState(error) {
+        const errorHTML = `
+            <div class="error-state" style="
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                gap: 1rem;
+                z-index: 10000;
+            ">
+                <div style="color: #ef4444; font-size: 3rem;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h2 style="color: #374151; margin: 0;">Error al cargar GRIZALUM</h2>
+                <p style="color: #6b7280; margin: 0; text-align: center; max-width: 400px;">
+                    ${error.message || 'Ha ocurrido un error inesperado. Por favor, recarga la página.'}
+                </p>
+                <button onclick="location.reload()" style="
+                    background: #3b82f6;
+                    color: white;
+                    border: none;
+                    padding: 0.75rem 1.5rem;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-weight: 600;
+                ">
+                    Recargar Página
+                </button>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', errorHTML);
+    }
+
+    onAppReady() {
+        console.log('🎉 GRIZALUM está listo para usar!');
+        
+        // Mostrar mensaje de bienvenida
+        if (window.GrizalumUtils) {
+            window.GrizalumUtils.showSuccessNotification(
+                `¡Bienvenido a ${GRIZALUM_CONFIG.appName}! Sistema cargado exitosamente.`,
+                3000
+            );
+        }
+        
+        // Trigger evento de app lista
+        const readyEvent = new CustomEvent('grizalumReady', {
+            detail: { 
+                version: GRIZALUM_CONFIG.version,
+                loadTime: Date.now(),
+                modules: Object.keys(this.modules)
+            }
+        });
+        
+        document.dispatchEvent(readyEvent);
+        
+        // Log de estado final
+        console.log('📊 Estado de la aplicación:');
+        console.log('  ✅ Aplicación iniciada');
+        console.log('  ✅ Módulos cargados:', Object.keys(this.modules));
+        console.log('  ✅ Sección actual:', this.currentSection);
+        console.log('🚀 ¡Sistema listo para operar!');
     }
 }
 
-function showNotifications() {
-    const notifications = [
-        "💰 3 facturas próximas a vencer",
-        "📈 Flujo de caja positivo este mes",
-        "📊 Nuevo reporte de IA disponible",
-        "⚡ Sistema actualizado exitosamente"
-    ];
-    
-    let message = "🔔 NOTIFICACIONES:\n\n";
-    notifications.forEach(notification => {
-        message += notification + "\n";
-    });
-    
-    alert(message);
-}
+// ======= FUNCIONES PLACEHOLDER =======
 
-function showSuccessMessage(message) {
-    // Create success toast
-    const toast = document.createElement('div');
-    toast.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: var(--gradient-profit);
-        color: white;
-        padding: 1rem 2rem;
-        border-radius: 12px;
-        box-shadow: var(--shadow-lg);
-        z-index: 10000;
-        transform: translateX(100%);
-        transition: transform 0.3s ease;
-        max-width: 400px;
-        word-wrap: break-word;
-        font-family: 'Inter', sans-serif;
-    `;
-    
-    toast.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <div class="success-checkmark">
-                <i class="fas fa-check"></i>
-            </div>
-            <span style="font-weight: 600;">${message}</span>
-        </div>
-    `;
-    
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.style.transform = 'translateX(0)';
-    }, 100);
-    
-    setTimeout(() => {
-        toast.style.transform = 'translateX(100%)';
-        setTimeout(() => {
-            if (document.body.contains(toast)) {
-                document.body.removeChild(toast);
-            }
-        }, 300);
-    }, 4000);
+// Funciones que se implementarán en futuras versiones
+function generateAIReport() {
+    console.log('🤖 Generando reporte con IA...');
+    if (window.GrizalumUtils) {
+        window.GrizalumUtils.showInfoNotification(
+            '🤖 Generando análisis con IA... Próximamente funcionalidad completa',
+            3000
+        );
+    }
 }
 
 function exportCashFlow() {
-    const button = event.target;
-    const originalText = button.innerHTML;
-    
-    button.innerHTML = '<span class="loading"></span> Exportando...';
-    button.disabled = true;
-    
-    setTimeout(() => {
-        button.innerHTML = originalText;
-        button.disabled = false;
-        showSuccessMessage('📄 Reporte exportado: flujo_caja_julio_2025.pdf');
-    }, 2000);
+    console.log('📁 Exportando flujo de caja...');
+    if (window.GrizalumUtils) {
+        window.GrizalumUtils.showInfoNotification(
+            '📁 Exportación de datos próximamente',
+            3000
+        );
+    }
+}
+
+function showCashFlowForm() {
+    console.log('📝 Mostrando formulario de flujo de caja...');
+    if (window.GrizalumUtils) {
+        window.GrizalumUtils.showInfoNotification(
+            '📝 Formulario de transacciones próximamente',
+            3000
+        );
+    }
 }
 
 function editTransaction(id) {
-    showSuccessMessage(`✏️ Editando transacción #${id}...`);
+    console.log(`✏️ Editando transacción ${id}...`);
+    if (window.GrizalumUtils) {
+        window.GrizalumUtils.showInfoNotification(
+            `✏️ Editor de transacciones próximamente`,
+            3000
+        );
+    }
 }
 
-// ===================================================================
-// EVENT LISTENERS
-// ===================================================================
-function setupEventListeners() {
-    // Keyboard shortcuts
-    document.addEventListener('keydown', function(event) {
-        if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
-            return;
+// ======= FUNCIONES GLOBALES EXPORTADAS =======
+
+// Función principal para mostrar secciones (usada en HTML)
+function showSection(sectionId) {
+    if (window.grizalumApp) {
+        window.grizalumApp.showSection(sectionId);
+    } else {
+        console.warn('⚠️ GRIZALUM App no está inicializada');
+    }
+}
+
+// Función para cambiar período (usada en HTML)
+function changePeriod(period, buttonElement) {
+    if (window.grizalumApp) {
+        window.grizalumApp.changePeriod(period, buttonElement);
+    }
+}
+
+// Función para toggle sidebar (usada en HTML)
+function toggleSidebar() {
+    if (window.grizalumApp) {
+        window.grizalumApp.toggleSidebar();
+    }
+}
+
+// Función para mostrar notificaciones (usada en HTML)
+function showNotifications() {
+    if (window.grizalumApp) {
+        window.grizalumApp.showNotifications();
+    }
+}
+
+// ======= PWA Y SERVICE WORKER =======
+
+// Registro del Service Worker
+async function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        try {
+            const registration = await navigator.serviceWorker.register('/sw.js', {
+                scope: '/'
+            });
+            console.log('✅ Service Worker registrado:', registration.scope);
+            
+            // Escuchar actualizaciones
+            registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+                newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'installed') {
+                        if (navigator.serviceWorker.controller) {
+                            // Nueva versión disponible
+                            if (window.GrizalumUtils) {
+                                window.GrizalumUtils.showNotification(
+                                    'Nueva versión disponible',
+                                    'info',
+                                    0,
+                                    [{
+                                        label: 'Actualizar',
+                                        handler: () => location.reload()
+                                    }]
+                                );
+                            }
+                        }
+                    }
+                });
+            });
+        } catch (error) {
+            console.error('❌ Error registrando Service Worker:', error);
         }
+    }
+}
+
+// ======= INICIALIZACIÓN =======
+
+// Instancia global de la aplicación
+let grizalumApp = null;
+
+// Event listener principal
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('🚀 DOM cargado, iniciando GRIZALUM...');
+    
+    try {
+        // Crear instancia principal de la aplicación
+        grizalumApp = new GrizalumApp();
         
-        if (event.ctrlKey || event.metaKey) {
-            switch(event.key) {
-                case '1':
-                    event.preventDefault();
-                    showSection('dashboard');
-                    break;
-                case '2':
-                    event.preventDefault();
-                    showSection('cash-flow');
-                    break;
-                case 'n':
-                    event.preventDefault();
-                    showCashFlowForm();
-                    break;
-                case 'e':
-                    event.preventDefault();
-                    exportCashFlow();
-                    break;
-            }
-        }
+        // Hacer disponible globalmente
+        window.grizalumApp = grizalumApp;
         
-        if (event.key === 'Escape') {
-            hideCashFlowForm();
-        }
-    });
-    
-    // Responsive handlers
-    window.addEventListener('resize', handleResize);
-    
-    console.log('🎮 Event listeners configurados');
-}
-
-function handleResize() {
-    const sidebar = document.getElementById('sidebar');
-    if (sidebar && window.innerWidth <= 1200) {
-        sidebar.classList.remove('mobile-open');
+        // Registrar Service Worker
+        await registerServiceWorker();
+        
+        // Event listener para cuando la app esté lista
+        document.addEventListener('grizalumReady', (e) => {
+            console.log('🎉 GRIZALUM completamente inicializado:', e.detail);
+        });
+        
+    } catch (error) {
+        console.error('❌ Error crítico iniciando GRIZALUM:', error);
     }
-    
-    // Refresh charts on resize
-    Object.keys(charts).forEach(chartKey => {
-        if (charts[chartKey]) {
-            charts[chartKey].resize();
-        }
-    });
-}
+});
 
-// ===================================================================
-// CASH FLOW MANAGEMENT
-// ===================================================================
-function showCashFlowForm() {
-    const form = document.getElementById('cashFlowForm');
-    if (form) {
-        form.style.display = 'block';
-        const dateInput = document.getElementById('transactionDate');
-        if (dateInput) {
-            dateInput.value = new Date().toISOString().split('T')[0];
-        }
-        form.scrollIntoView({ behavior: 'smooth' });
+// ======= DETECCIÓN DE CAMBIOS DE CONEXIÓN =======
+
+// Manejar cambios en la conectividad
+window.addEventListener('online', () => {
+    console.log('🌐 Conexión restaurada');
+    if (window.GrizalumUtils) {
+        window.GrizalumUtils.showSuccessNotification(
+            '🌐 Conexión a internet restaurada',
+            3000
+        );
     }
-}
+});
 
-function hideCashFlowForm() {
-    const form = document.getElementById('cashFlowForm');
-    if (form) {
-        form.style.display = 'none';
+window.addEventListener('offline', () => {
+    console.log('📡 Sin conexión a internet');
+    if (window.GrizalumUtils) {
+        window.GrizalumUtils.showWarningNotification(
+            '📡 Sin conexión a internet. Trabajando en modo offline.',
+            5000
+        );
     }
-}
+});
 
-// ===================================================================
-// PERFORMANCE MONITORING
-// ===================================================================
-function trackPerformance() {
-    if ('performance' in window) {
-        const navigation = performance.getEntriesByType('navigation')[0];
-        if (navigation) {
-            console.log('⚡ Tiempo de carga:', Math.round(navigation.loadEventEnd - navigation.loadEventStart), 'ms');
-            console.log('📊 Sistema optimizado para máximo rendimiento');
-        }
+// ======= MANEJO DE ERRORES GLOBALES =======
+
+// Capturar errores JavaScript no manejados
+window.addEventListener('error', (e) => {
+    console.error('❌ Error JavaScript:', e.error);
+    
+    if (GRIZALUM_CONFIG.debug && window.GrizalumUtils) {
+        window.GrizalumUtils.showErrorNotification(
+            `Error: ${e.error?.message || 'Error desconocido'}`,
+            5000
+        );
     }
-}
+});
 
-// ===================================================================
-// ACCESSIBILITY FEATURES
-// ===================================================================
-function setupAccessibility() {
-    // Add keyboard navigation indicators
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Tab') {
-            document.body.classList.add('keyboard-navigation');
-        }
-    });
+// Capturar promesas rechazadas no manejadas
+window.addEventListener('unhandledrejection', (e) => {
+    console.error('❌ Promesa rechazada:', e.reason);
     
-    document.addEventListener('mousedown', function() {
-        document.body.classList.remove('keyboard-navigation');
-    });
-}
+    if (GRIZALUM_CONFIG.debug && window.GrizalumUtils) {
+        window.GrizalumUtils.showErrorNotification(
+            `Error de promesa: ${e.reason?.message || 'Error desconocido'}`,
+            5000
+        );
+    }
+});
 
-// ===================================================================
-// FINAL INITIALIZATION
-// ===================================================================
-setTimeout(() => {
-    setupAccessibility();
-    trackPerformance();
-    
-    // Show welcome message
-    showSuccessMessage('🚀 GRIZALUM Sistema Premium - ¡Listo para usar!');
-    
-    console.log('🎯 Características activadas:');
-    console.log('  📊 Gráficos interactivos con Chart.js');
-    console.log('  🤖 Inteligencia Artificial predictiva');
-    console.log('  ⚡ Micro-interacciones premium');
-    console.log('  📱 Responsive design completo');
-    console.log('  🔒 Validación y seguridad avanzada');
-    console.log('  ♿ Accesibilidad total');
-    console.log('  💰 Moneda: Soles peruanos (S/.)');
-    console.log('  🎨 Diseño: Profesional y premium');
-    console.log('  🚀 Rendimiento: Optimizado al máximo');
-}, 1000);
+// ======= EXPORTAR CONFIGURACIÓN =======
+
+// Hacer configuración disponible globalmente
+window.GRIZALUM_CONFIG = GRIZALUM_CONFIG;
+
+// Función para obtener información del sistema
+window.getGrizalumInfo = function() {
+    return {
+        version: GRIZALUM_CONFIG.version,
+        appName: GRIZALUM_CONFIG.appName,
+        isInitialized: grizalumApp?.isInitialized || false,
+        currentSection: grizalumApp?.currentSection || null,
+        modules: grizalumApp?.modules || {},
+        features: GRIZALUM_CONFIG.features,
+        userAgent: navigator.userAgent,
+        timestamp: new Date().toISOString()
+    };
+};
+
+console.log('🎯 Main Module cargado');
+console.log('✨ Funcionalidades principales:');
+console.log('  • Coordinación de módulos');
+console.log('  • Gestión de secciones y navegación');
+console.log('  • Sistema de notificaciones');
+console.log('  • Manejo de responsive design');
+console.log('  • PWA y Service Worker');
+console.log('  • Preferencias de usuario');
+console.log('  • Manejo de errores globales');
+console.log('🚀 ¡Coordinador principal listo!');
