@@ -296,7 +296,52 @@
     <script src="src/assets/js/main.js"></script>
 
     <script>
+        
     console.log('🚀 GRIZALUM cargado con CSS existentes');
+    </script>
+    <!-- Scripts existentes -->
+    <script src="src/assets/js/utils.js"></script>
+    <script src="src/assets/js/company-manager.js"></script>
+    <script src="src/assets/js/advanced-ai-assistant.js"></script>
+    <script src="src/assets/js/charts.js"></script>
+    <script src="src/assets/js/main.js"></script>
+
+    <script>
+    console.log('🚀 GRIZALUM cargado con CSS existentes');
+    </script>
+
+    <!-- 👇 AQUÍ VA EL CÓDIGO DEL PASO 4 👇 -->
+    <script>
+    // Test simple para verificar que funciona
+    document.addEventListener('DOMContentLoaded', function() {
+        // Crear botón de prueba
+        const testButton = document.createElement('div');
+        testButton.innerHTML = '🤖 AI TEST';
+        testButton.style.cssText = `
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            font-size: 1.5rem;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        `;
+        
+        testButton.onclick = function() {
+            alert('🎉 ¡AI Button funciona! Ahora necesitamos arreglar los archivos.');
+        };
+        
+        document.body.appendChild(testButton);
+        console.log('✅ Botón AI de prueba creado');
+    });
     </script>
 </body>
 </html>
