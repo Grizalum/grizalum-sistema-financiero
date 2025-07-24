@@ -186,15 +186,14 @@ class GrizalumThemeManager {
             return JSON.parse(saved);
         }
 
-        // Temas por defecto para cada empresa
-        const defaultThemes = {
-            'fundicion-laguna': 'crimson-corporate',
-            'fundicion-joel': 'sunset-orange', 
-            'avicola-san-juan': 'emerald-corporate',
-            'import-lm': 'royal-purple',
-            'bodega-central': 'cyber-blue'
-        };
-
+       // Temas por defecto para cada empresa
+const defaultThemes = {
+    'fundicion-laguna': 'tesla-futuristic',     
+    'fundicion-joel': 'goldman-elite',          
+    'avicola-san-juan': 'apple-premium',         
+    'import-lm': 'blackrock-corporate',         
+    'bodega-central': 'netflix-original'         
+};
         this.saveCompanyThemes(defaultThemes);
         return defaultThemes;
     }
