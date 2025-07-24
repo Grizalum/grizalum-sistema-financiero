@@ -405,7 +405,26 @@ body {
     border-color: var(--peru-gold);
     color: var(--peru-gold);
 }
+/* BOTÓN IA EN HEADER */
+.ai-header-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
 
+.ai-header-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
 .notification-badge {
     position: absolute;
     top: -8px;
@@ -1126,6 +1145,11 @@ body {
                        <i class="fas fa-bell"></i>
                        <span class="notification-badge">3</span>
                    </button>
+                   <!-- BOTÓN IA EN HEADER -->
+                  <button class="ai-header-button" onclick="toggleAIAssistant()">
+                  <i class="fas fa-brain"></i>
+                 <span>IA Assistant</span>
+                 </button>
 
                    <!-- SELECTOR DE EMPRESAS -->
                    <div class="company-selector" id="companySelector">
