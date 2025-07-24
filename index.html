@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GRIZALUM - Sistema Financiero Empresarial Premium</title>
-    
-<!-- Meta Tags SEO -->
+    <!-- Meta Tags SEO -->
 <meta name="description" content="Sistema financiero empresarial premium con IA integrada para empresas peruanas. Dashboard ejecutivo, flujo de caja, análisis predictivo.">
 <meta name="keywords" content="sistema financiero, empresas peru, contabilidad, flujo de caja, dashboard, IA">
 <meta name="author" content="GRIZALUM">
@@ -22,7 +21,36 @@
 <!-- Chart.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
 
-<!-- ESTILOS PROFESIONALES -->
+<!-- PWA MANIFEST -->
+<link rel="manifest" href="manifest.json">
+
+<!-- META TAGS PARA PWA -->
+<meta name="application-name" content="GRIZALUM">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GRIZALUM">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="msapplication-TileColor" content="#d4af37">
+<meta name="theme-color" content="#d4af37">
+<meta name="msapplication-tap-highlight" content="no">
+
+<!-- ICONOS ADICIONALES -->
+<link rel="icon" type="image/png" sizes="32x32" href="src/assets/images/icon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="src/assets/images/icon-16x16.png">
+<link rel="apple-touch-icon" href="src/assets/images/icon-192x192.png">
+<link rel="apple-touch-icon" sizes="152x152" href="src/assets/images/icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="src/assets/images/icon-180x180.png">
+
+<!-- Microsoft tiles -->
+<meta name="msapplication-TileImage" content="src/assets/images/icon-144x144.png">
+<meta name="msapplication-config" content="browserconfig.xml">
+
+<!-- ESTILOS PRINCIPALES -->
+<link rel="stylesheet" href="src/assets/css/variables.css">
+<link rel="stylesheet" href="src/assets/css/styles.css">
+<link rel="stylesheet" href="src/assets/css/responsive.css">
+
+<!-- ESTILOS INTEGRADOS COMPLETOS -->
 <style>
 :root {
     --primary: #667eea;
@@ -41,6 +69,9 @@
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
     --gradient-accent: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+    --peru-gold: #d4af37;
+    --peru-gold-dark: #b87333;
+    --gradient-gold: linear-gradient(135deg, var(--peru-gold) 0%, var(--peru-gold-dark) 100%);
 }
 
 * {
@@ -57,442 +88,615 @@ body {
     overflow-x: hidden;
 }
 
-/* HEADER PROFESIONAL */
-.header {
+/* LOADING SCREEN */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    transition: opacity 0.5s ease;
+}
+
+.loading-content {
+    text-align: center;
+    animation: fadeInUp 0.8s ease;
+}
+
+.loading-logo {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin: 0 auto 1rem;
+    animation: pulse 2s infinite;
+}
+
+.loading-bar {
+    width: 200px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    margin: 1rem auto;
+    overflow: hidden;
+}
+
+.loading-progress {
+    height: 100%;
+    background: white;
+    border-radius: 2px;
+    animation: loadingProgress 3s ease-in-out;
+}
+
+@keyframes loadingProgress {
+    0% { width: 0%; }
+    100% { width: 100%; }
+}
+
+/* APP CONTAINER */
+.app-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 280px;
     background: white;
     box-shadow: var(--shadow);
-    position: sticky;
-    top: 0;
+    border-right: 1px solid var(--border);
+    transition: all 0.3s ease;
+    position: fixed;
+    height: 100vh;
     z-index: 100;
+    overflow-y: auto;
+}
+
+.sidebar-header {
+    padding: 2rem;
     border-bottom: 1px solid var(--border);
 }
 
-.header-content {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-weight: 800;
-    font-size: 1.5rem;
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.logo i {
-    font-size: 2rem;
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.header-nav {
-    display: flex;
-    gap: 2rem;
-    align-items: center;
-}
-
-.nav-link {
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.3s ease;
-}
-
-.nav-link:hover {
-    color: var(--primary);
-}
-
-.user-menu {
+.company-brand {
     display: flex;
     align-items: center;
     gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
-.notification-btn {
-    position: relative;
-    background: none;
-    border: none;
+.brand-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--gradient-primary);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.brand-text h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.25rem;
+}
+
+.brand-text p {
+    font-size: 0.9rem;
     color: var(--text-secondary);
-    font-size: 1.2rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 8px;
-    transition: all 0.3s ease;
 }
 
-.notification-btn:hover {
+.financial-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: var(--bg-light);
+    border-radius: 8px;
+}
+
+.summary-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.summary-value {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* NAVEGACIÓN */
+.nav-menu {
+    padding: 1rem;
+}
+
+.nav-section {
+    margin-bottom: 2rem;
+}
+
+.nav-section-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-item {
+    margin-bottom: 0.25rem;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.nav-link:hover {
     background: var(--bg-light);
     color: var(--primary);
 }
 
-.notification-badge {
-    position: absolute;
-    top: 0.25rem;
-    right: 0.25rem;
-    background: var(--danger);
-    color: white;
-    border-radius: 50%;
-    width: 8px;
-    height: 8px;
-}
-
-/* DASHBOARD CONTAINER */
-.dashboard {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 2rem;
-    display: grid;
-    gap: 2rem;
-}
-
-/* WELCOME SECTION */
-.welcome-section {
+.nav-link.active {
     background: var(--gradient-primary);
     color: white;
-    padding: 2rem;
-    border-radius: 16px;
-    position: relative;
-    overflow: hidden;
 }
 
-.welcome-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 200px;
-    height: 200px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    transform: translate(50%, -50%);
-}
-
-.welcome-content {
-    position: relative;
-    z-index: 2;
-}
-
-.welcome-title {
-    font-size: 2.5rem;
-    font-weight: 900;
-    margin-bottom: 0.5rem;
-}
-
-.welcome-subtitle {
-    font-size: 1.1rem;
-    opacity: 0.9;
-    margin-bottom: 1.5rem;
-}
-
-.quick-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-top: 1.5rem;
-}
-
-.quick-stat {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    padding: 1rem;
-    border-radius: 12px;
+.nav-icon {
+    width: 20px;
     text-align: center;
 }
 
-.quick-stat-number {
-    font-size: 1.8rem;
-    font-weight: 800;
-    display: block;
-}
-
-.quick-stat-label {
-    font-size: 0.9rem;
-    opacity: 0.9;
-}
-
-/* METRICS GRID */
-.metrics-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-.metric-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 16px;
-    box-shadow: var(--shadow);
+/* MAIN CONTENT */
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    background: var(--bg-light);
+    min-height: 100vh;
     transition: all 0.3s ease;
-    border: 1px solid var(--border);
 }
 
-.metric-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
-}
-
-.metric-header {
+.executive-header {
+    background: white;
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    border-bottom: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.mobile-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+    color: var(--text-secondary);
     margin-bottom: 1rem;
 }
 
-.metric-title {
+.ai-insights {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+    border-radius: 20px;
     font-size: 0.9rem;
-    color: var(--text-secondary);
+    color: var(--primary);
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
 }
 
-.metric-icon {
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.time-period-selector {
+    display: flex;
+    gap: 0.25rem;
+    background: var(--bg-light);
+    padding: 0.25rem;
+    border-radius: 8px;
+}
+
+.period-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+}
+
+.period-btn.active {
+    background: white;
+    color: var(--primary);
+    box-shadow: var(--shadow);
+}
+
+.notification-center {
+    position: relative;
+    background: white;
+    border: 1px solid var(--border);
+    padding: 0.75rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.notification-center:hover {
+    background: var(--bg-light);
+}
+
+.notification-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--danger);
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+/* SELECTOR DE EMPRESAS */
+.company-selector {
+    position: relative;
+    min-width: 280px;
+}
+
+.selected-company {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(184, 115, 51, 0.1) 100%);
+    border: 2px solid rgba(212, 175, 55, 0.3);
+    border-radius: 16px;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.selected-company:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(212, 175, 55, 0.2);
+    border-color: rgba(212, 175, 55, 0.5);
+}
+
+.company-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.company-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--gradient-gold);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+.company-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.company-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.company-status {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.dropdown-arrow {
+    color: var(--text-secondary);
+    transition: transform 0.3s ease;
+}
+
+.dropdown-arrow.rotate {
+    transform: rotate(180deg);
+}
+
+.company-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 350px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--border);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(20px);
+}
+
+.company-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dropdown-header h4 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.btn-add-company {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-add-company:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.companies-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+
+.company-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 0.25rem;
+}
+
+.company-item:hover {
+    background: var(--bg-light);
+    transform: translateX(4px);
+}
+
+.company-item.active {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(184, 115, 51, 0.1) 100%);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.company-item-icon {
     width: 40px;
     height: 40px;
+    background: var(--bg-light);
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.2rem;
-    color: white;
 }
 
-.metric-icon.revenue { background: var(--gradient-primary); }
-.metric-icon.expenses { background: linear-gradient(135deg, var(--warning), #f6ad55); }
-.metric-icon.profit { background: linear-gradient(135deg, var(--success), #68d391); }
-.metric-icon.growth { background: var(--gradient-accent); }
-
-.metric-value {
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: var(--text-primary);
-    margin-bottom: 0.5rem;
-}
-
-.metric-change {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-
-.metric-change.positive { color: var(--success); }
-.metric-change.negative { color: var(--danger); }
-
-/* CHARTS SECTION */
-.charts-section {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 2rem;
-    margin-bottom: 2rem;
-}
-
-.chart-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 16px;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border);
-}
-
-.chart-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border);
-}
-
-.chart-title {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--text-primary);
-}
-
-.chart-filters {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.filter-btn {
-    padding: 0.5rem 1rem;
-    border: 1px solid var(--border);
-    background: white;
-    border-radius: 8px;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.filter-btn.active {
-    background: var(--primary);
-    color: white;
-    border-color: var(--primary);
-}
-
-.chart-container {
-    position: relative;
-    height: 350px;
-    width: 100%;
-}
-
-/* RECENT ACTIVITY */
-.activity-section {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-}
-
-.activity-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 16px;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border);
-}
-
-.activity-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-}
-
-.activity-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--text-primary);
-}
-
-.view-all-btn {
-    color: var(--primary);
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-
-.activity-list {
-    list-style: none;
-}
-
-.activity-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--border);
-}
-
-.activity-item:last-child {
-    border-bottom: none;
-}
-
-.activity-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    color: white;
-}
-
-.activity-content {
+.company-item-info {
     flex: 1;
 }
 
-.activity-description {
+.company-item-name {
     font-weight: 600;
     color: var(--text-primary);
     margin-bottom: 0.25rem;
 }
 
-.activity-time {
+.company-item-stats {
     font-size: 0.8rem;
     color: var(--text-secondary);
 }
 
-.activity-amount {
-    font-weight: 700;
-    color: var(--text-primary);
+.company-item-status {
+    font-size: 1rem;
 }
 
-/* FLOATING ACTION BUTTON */
-.fab {
+.dropdown-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border);
+    background: var(--bg-light);
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    text-align: center;
+}
+
+.dropdown-footer strong {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+/* AI ASSISTANT STYLES */
+.ai-assistant-button {
     position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    width: 60px;
-    height: 60px;
+    bottom: 30px;
+    right: 30px;
+    width: 70px;
+    height: 70px;
     background: var(--gradient-primary);
     border: none;
     border-radius: 50%;
     color: white;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     cursor: pointer;
     box-shadow: var(--shadow-lg);
     transition: all 0.3s ease;
     z-index: 1000;
+    position: relative;
+    overflow: visible;
 }
 
-.fab:hover {
+.ai-assistant-button:hover {
     transform: scale(1.1);
     box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.2);
 }
 
-/* RESPONSIVE DESIGN */
-@media (max-width: 1200px) {
-    .charts-section {
-        grid-template-columns: 1fr;
-    }
+.ai-pulse {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    opacity: 0.7;
+    animation: aiPulse 2s infinite;
 }
 
+@keyframes aiPulse {
+    0% { transform: scale(1); opacity: 0.7; }
+    50% { transform: scale(1.2); opacity: 0.3; }
+    100% { transform: scale(1.4); opacity: 0; }
+}
+
+.ai-notifications {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--danger);
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s ease;
+}
+
+.ai-notifications.show {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* RESPONSIVE */
 @media (max-width: 768px) {
-    .dashboard {
-        padding: 1rem;
+    .sidebar {
+        transform: translateX(-100%);
     }
     
-    .header-content {
-        padding: 1rem;
+    .sidebar.open {
+        transform: translateX(0);
     }
     
-    .header-nav {
-        display: none;
+    .main-content {
+        margin-left: 0;
     }
     
-    .welcome-title {
-        font-size: 2rem;
+    .mobile-menu-toggle {
+        display: block;
     }
     
-    .metrics-grid {
-        grid-template-columns: 1fr;
+    .company-selector {
+        min-width: 250px;
     }
     
-    .activity-section {
-        grid-template-columns: 1fr;
+    .company-dropdown {
+        width: 300px;
+        right: -50px;
     }
     
-    .quick-stats {
-        grid-template-columns: repeat(2, 1fr);
+    .executive-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .header-controls {
+        width: 100%;
+        justify-content: space-between;
     }
 }
 
-/* LOADING ANIMATIONS */
+/* ANIMATIONS */
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -504,353 +708,622 @@ body {
     }
 }
 
-.metric-card,
-.chart-card,
-.activity-card {
-    animation: fadeInUp 0.6s ease forwards;
-}
-
-.metric-card:nth-child(1) { animation-delay: 0.1s; }
-.metric-card:nth-child(2) { animation-delay: 0.2s; }
-.metric-card:nth-child(3) { animation-delay: 0.3s; }
-.metric-card:nth-child(4) { animation-delay: 0.4s; }
-
-/* PULSE ANIMATIONS */
 @keyframes pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.7; }
 }
 
-.metric-value {
-    animation: pulse 2s infinite;
+/* UTILITIES */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    color: white;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--success) 0%, #38a169 100%);
+    color: white;
+}
+
+.btn-neutral {
+    background: var(--bg-light);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* HIDE LOADING SCREEN */
+.loading-screen.hide {
+    opacity: 0;
+    pointer-events: none;
 }
 </style>
-<nav class="header-nav">
-            <a href="#dashboard" class="nav-link">Dashboard</a>
-            <a href="#analytics" class="nav-link">Análisis</a>
-            <a href="#reports" class="nav-link">Reportes</a>
-            <a href="#settings" class="nav-link">Configuración</a>
-        </nav>
-        
-        <div class="user-menu">
-            <button class="notification-btn">
-                <i class="fas fa-bell"></i>
-                <div class="notification-badge"></div>
-            </button>
-            <button class="notification-btn">
-                <i class="fas fa-user-circle"></i>
-            </button>
-        </div>
-    </div>
-</header>
-
-<!-- DASHBOARD -->
-<main class="dashboard">
-    <!-- WELCOME SECTION -->
-    <section class="welcome-section">
-        <div class="welcome-content">
-            <h1 class="welcome-title">¡Bienvenido a GRIZALUM!</h1>
-            <p class="welcome-subtitle">Dashboard ejecutivo - Sistema financiero empresarial premium</p>
+<div class="app-container">
+    <!-- BARRA LATERAL -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="company-brand">
+                <div class="brand-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>GRIZALUM</h1>
+                    <p>Control Financiero</p>
+                </div>
+            </div>
             
-            <div class="quick-stats">
-                <div class="quick-stat">
-                    <span class="quick-stat-number" id="totalRevenue">S/. 145,230</span>
-                    <span class="quick-stat-label">Ingresos del Mes</span>
+            <div class="financial-summary">
+                <div class="summary-item">
+                    <span class="summary-label">Flujo de Caja</span>
+                    <span class="summary-value" id="sidebarCashFlow">S/. 24,500</span>
                 </div>
-                <div class="quick-stat">
-                    <span class="quick-stat-number" id="activeClients">324</span>
-                    <span class="quick-stat-label">Clientes Activos</span>
-                </div>
-                <div class="quick-stat">
-                    <span class="quick-stat-number" id="profitMargin">23.5%</span>
-                    <span class="quick-stat-label">Margen de Ganancia</span>
+                <div class="summary-item">
+                    <span class="summary-label">Utilidad Neta</span>
+                    <span class="summary-value" id="sidebarProfit">S/. 16,500</span>
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- METRICS GRID -->
-    <section class="metrics-grid">
-        <div class="metric-card">
-            <div class="metric-header">
-                <span class="metric-title">Ingresos Totales</span>
-                <div class="metric-icon revenue">
-                    <i class="fas fa-arrow-trend-up"></i>
+        <div class="nav-menu">
+            <div class="nav-section">
+                <div class="nav-section-title">
+                    <i class="fas fa-chart-bar"></i>
+                    Panel Principal
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link active" onclick="showSection('dashboard')">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <span>Panel de Control</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('cash-flow')">
+                        <i class="nav-icon fas fa-water"></i>
+                        <span>Flujo de Caja</span>
+                    </a>
                 </div>
             </div>
-            <div class="metric-value" id="revenueValue">S/. 2,847,293</div>
-            <div class="metric-change positive">
-                <i class="fas fa-arrow-up"></i>
-                <span>+12.5% vs mes anterior</span>
-            </div>
-        </div>
 
-        <div class="metric-card">
-            <div class="metric-header">
-                <span class="metric-title">Gastos Operativos</span>
-                <div class="metric-icon expenses">
-                    <i class="fas fa-receipt"></i>
+            <div class="nav-section">
+                <div class="nav-section-title">
+                    <i class="fas fa-calculator"></i>
+                    Contabilidad
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('income-statement')">
+                        <i class="nav-icon fas fa-chart-pie"></i>
+                        <span>Estado de Resultados</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('balance-sheet')">
+                        <i class="nav-icon fas fa-balance-scale"></i>
+                        <span>Balance General</span>
+                    </a>
                 </div>
             </div>
-            <div class="metric-value" id="expensesValue">S/. 1,892,847</div>
-            <div class="metric-change negative">
-                <i class="fas fa-arrow-down"></i>
-                <span>+3.2% vs mes anterior</span>
-            </div>
-        </div>
 
-        <div class="metric-card">
-            <div class="metric-header">
-                <span class="metric-title">Utilidad Neta</span>
-                <div class="metric-icon profit">
-                    <i class="fas fa-coins"></i>
+            <div class="nav-section">
+                <div class="nav-section-title">
+                    <i class="fas fa-warehouse"></i>
+                    Operaciones
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('inventory')">
+                        <i class="nav-icon fas fa-boxes"></i>
+                        <span>Inventario</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('sales')">
+                        <i class="nav-icon fas fa-shopping-cart"></i>
+                        <span>Ventas</span>
+                    </a>
                 </div>
             </div>
-            <div class="metric-value" id="profitValue">S/. 954,446</div>
-            <div class="metric-change positive">
-                <i class="fas fa-arrow-up"></i>
-                <span>+18.7% vs mes anterior</span>
-            </div>
         </div>
+    </nav>
 
-        <div class="metric-card">
-            <div class="metric-header">
-                <span class="metric-title">Crecimiento</span>
-                <div class="metric-icon growth">
-                    <i class="fas fa-chart-area"></i>
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content">
+        <header class="executive-header">
+            <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title" id="pageTitle">Panel de Control Ejecutivo</h1>
+                    <p class="page-subtitle" id="pageSubtitle">Resumen financiero en tiempo real</p>
+                    <div class="ai-insights">
+                        <i class="fas fa-brain"></i>
+                        <span>IA predice un crecimiento del 15% este trimestre</span>
+                    </div>
                 </div>
             </div>
-            <div class="metric-value" id="growthValue">+24.8%</div>
-            <div class="metric-change positive">
-                <i class="fas fa-arrow-up"></i>
-                <span>Meta anual: 20%</span>
-            </div>
-        </div>
-    </section>
 
-    <!-- CHARTS SECTION -->
-    <section class="charts-section">
-        <div class="chart-card">
-            <div class="chart-header">
-                <h3 class="chart-title">Flujo de Caja - Últimos 6 Meses</h3>
-                <div class="chart-filters">
-                    <button class="filter-btn active">6M</button>
-                    <button class="filter-btn">1A</button>
-                    <button class="filter-btn">2A</button>
+            <div class="header-controls">
+                <div class="time-period-selector">
+                    <button class="period-btn active" onclick="changePeriod('hoy', this)">Hoy</button>
+                    <button class="period-btn" onclick="changePeriod('semana', this)">Semana</button>
+                    <button class="period-btn" onclick="changePeriod('mes', this)">Mes</button>
+                    <button class="period-btn" onclick="changePeriod('trimestre', this)">Trimestre</button>
+                    <button class="period-btn" onclick="changePeriod('año', this)">Año</button>
                 </div>
-            </div>
-            <div class="chart-container">
-                <canvas id="cashFlowChart"></canvas>
-            </div>
-        </div>
+                
+                <button class="notification-center" onclick="showNotifications()">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
 
-        <div class="chart-card">
-            <div class="chart-header">
-                <h3 class="chart-title">Distribución de Gastos</h3>
-            </div>
-            <div class="chart-container">
-                <canvas id="expensesChart"></canvas>
-            </div>
-        </div>
-    </section>
+                <!-- SELECTOR DE EMPRESAS -->
+                <div class="company-selector" id="companySelector">
+                    <div class="selected-company" onclick="toggleCompanyDropdown()">
+                        <div class="company-info">
+                            <div class="company-icon" id="currentCompany
+                                Icon">🔥</div>
+                               <div class="company-details">
+                                   <div class="company-name" id="currentCompanyName">Fundición Laguna</div>
+                                   <div class="company-status" id="currentCompanyStatus">🟢 Operativo</div>
+                               </div>
+                           </div>
+                           <div class="dropdown-arrow">
+                               <i class="fas fa-chevron-down" id="dropdownArrow"></i>
+                           </div>
+                       </div>
 
-    <!-- ACTIVITY SECTION -->
-    <section class="activity-section">
-        <div class="activity-card">
-            <div class="activity-header">
-                <h3 class="activity-title">Transacciones Recientes</h3>
-                <a href="#" class="view-all-btn">Ver todas</a>
-            </div>
-            <ul class="activity-list">
-                <li class="activity-item">
-                    <div class="activity-icon revenue">
-                        <i class="fas fa-plus"></i>
-                    </div>
-                    <div class="activity-content">
-                        <div class="activity-description">Pago recibido - Cliente ABC SAC</div>
-                        <div class="activity-time">Hace 2 horas</div>
-                    </div>
-                    <div class="activity-amount">+S/. 15,480</div>
-                </li>
-                <li class="activity-item">
-                    <div class="activity-icon expenses">
-                        <i class="fas fa-minus"></i>
-                    </div>
-                    <div class="activity-content">
-                        <div class="activity-description">Pago de nómina - Enero 2025</div>
-                        <div class="activity-time">Hace 4 horas</div>
-                    </div>
-                    <div class="activity-amount">-S/. 28,750</div>
-                </li>
-                <li class="activity-item">
-                    <div class="activity-icon profit">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="activity-content">
-                        <div class="activity-description">Inversión en marketing digital</div>
-                        <div class="activity-time">Hace 1 día</div>
-                    </div>
-                    <div class="activity-amount">-S/. 5,200</div>
-                </li>
-            </ul>
-        </div>
+                       <div class="company-dropdown" id="companyDropdown">
+                           <div class="dropdown-header">
+                               <h4>🏢 Empresas GRIZALUM</h4>
+                               <button class="btn-add-company" onclick="showAddCompanyWizard()">
+                                   <i class="fas fa-plus"></i>
+                                   Agregar Nueva
+                               </button>
+                           </div>
+                           
+                           <div class="companies-list" id="companiesList">
+                               <!-- Se llena dinámicamente -->
+                           </div>
+                           
+                           <div class="dropdown-footer">
+                               <button id="manageCompaniesBtn" class="btn btn-neutral" onclick="openCompanyManagement()" style="margin-bottom: 0.5rem; width: 100%;">
+                                   <i class="fas fa-cog"></i>
+                                   Gestionar Empresas
+                               </button>
+                               <div class="total-companies">
+                                   <strong>📊 Total Holding: S/. 135,900</strong>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </header>
 
-        <div class="activity-card">
-            <div class="activity-header">
-                <h3 class="activity-title">Alertas y Notificaciones</h3>
-                <a href="#" class="view-all-btn">Ver todas</a>
-            </div>
-            <ul class="activity-list">
-                <li class="activity-item">
-                    <div class="activity-icon warning" style="background: linear-gradient(135deg, #ed8936, #f6ad55);">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                    <div class="activity-content">
-                        <div class="activity-description">Vencimiento de factura pendiente</div>
-                        <div class="activity-time">Vence en 3 días</div>
-                    </div>
-                </li>
-                <li class="activity-item">
-                    <div class="activity-icon" style="background: linear-gradient(135deg, #48bb78, #68d391);">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="activity-content">
-                        <div class="activity-description">Meta mensual alcanzada</div>
-                        <div class="activity-time">Hace 2 días</div>
-                    </div>
-                </li>
-                <li class="activity-item">
-                    <div class="activity-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
-                        <i class="fas fa-robot"></i>
-                    </div>
-                    <div class="activity-content">
-                        <div class="activity-description">IA detectó oportunidad de ahorro</div>
-                        <div class="activity-time">Hace 3 días</div>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </section>
-</main>
+           <!-- DASHBOARD CONTENT -->
+           <div id="dashboardContent" class="dashboard-content">
+               <!-- METRICS GRID -->
+               <section class="metrics-grid">
+                   <div class="metric-card">
+                       <div class="metric-header">
+                           <span class="metric-title">Ingresos Totales</span>
+                           <div class="metric-icon revenue">
+                               <i class="fas fa-arrow-trend-up"></i>
+                           </div>
+                       </div>
+                       <div class="metric-value" id="revenueValue">S/. 2,847,293</div>
+                       <div class="metric-change positive">
+                           <i class="fas fa-arrow-up"></i>
+                           <span>+12.5% vs mes anterior</span>
+                       </div>
+                   </div>
 
-<!-- FLOATING ACTION BUTTON -->
-<button class="fab" onclick="toggleAI()">
-    <i class="fas fa-robot"></i>
-</button>
+                   <div class="metric-card">
+                       <div class="metric-header">
+                           <span class="metric-title">Gastos Operativos</span>
+                           <div class="metric-icon expenses">
+                               <i class="fas fa-receipt"></i>
+                           </div>
+                       </div>
+                       <div class="metric-value" id="expensesValue">S/. 1,892,847</div>
+                       <div class="metric-change negative">
+                           <i class="fas fa-arrow-down"></i>
+                           <span>+3.2% vs mes anterior</span>
+                       </div>
+                   </div>
 
-<!-- SCRIPTS -->
-<script src="src/assets/js/utils.js"></script>
-<script src="src/assets/js/company-manager.js"></script>
-<script src="src/assets/js/advanced-ai-assistant.js"></script>
-<script src="src/assets/js/main.js"></script>
+                   <div class="metric-card">
+                       <div class="metric-header">
+                           <span class="metric-title">Utilidad Neta</span>
+                           <div class="metric-icon profit">
+                               <i class="fas fa-coins"></i>
+                           </div>
+                       </div>
+                       <div class="metric-value" id="profitValue">S/. 954,446</div>
+                       <div class="metric-change positive">
+                           <i class="fas fa-arrow-up"></i>
+                           <span>+18.7% vs mes anterior</span>
+                       </div>
+                   </div>
 
-<script>
-    // Initialize Charts
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('🚀 Inicializando GRIZALUM Dashboard Profesional...');
-        
-        initializeCashFlowChart();
-        initializeExpensesChart();
-        animateMetrics();
-        startRealTimeUpdates();
-        
-        console.log('✅ Dashboard completamente cargado');
-    });
+                   <div class="metric-card">
+                       <div class="metric-header">
+                           <span class="metric-title">Crecimiento</span>
+                           <div class="metric-icon growth">
+                               <i class="fas fa-chart-area"></i>
+                           </div>
+                       </div>
+                       <div class="metric-value" id="growthValue">+24.8%</div>
+                       <div class="metric-change positive">
+                           <i class="fas fa-arrow-up"></i>
+                           <span>Meta anual: 20%</span>
+                       </div>
+                   </div>
+               </section>
 
-    // Cash Flow Chart
-    function initializeCashFlowChart() {
-        const ctx = document.getElementById('cashFlowChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre', 'Enero'],
-                datasets: [{
-                    label: 'Ingresos',
-                    data: [2200000, 2350000, 2180000, 2420000, 2650000, 2847293],
-                    borderColor: '#667eea',
-                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }, {
-                    label: 'Gastos',
-                    data: [1800000, 1850000, 1780000, 1920000, 1850000, 1892847],
-                    borderColor: '#ed8936',
-                    backgroundColor: 'rgba(237, 137, 54, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return 'S/. ' + (value / 1000000).toFixed(1) + 'M';
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
+               <!-- CHARTS SECTION -->
+               <section class="charts-section">
+                   <div class="chart-card">
+                       <div class="chart-header">
+                           <h3 class="chart-title">Flujo de Caja - Últimos 6 Meses</h3>
+                           <div class="chart-filters">
+                               <button class="filter-btn active">6M</button>
+                               <button class="filter-btn">1A</button>
+                               <button class="filter-btn">2A</button>
+                           </div>
+                       </div>
+                       <div class="chart-container">
+                           <canvas id="cashFlowChart"></canvas>
+                       </div>
+                   </div>
 
-    // Expenses Pie Chart
-    function initializeExpensesChart() {
-        const ctx = document.getElementById('expensesChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Nómina', 'Marketing', 'Operaciones', 'Tecnología', 'Otros'],
-                datasets: [{
-                    data: [45, 20, 15, 12, 8],
-                    backgroundColor: [
-                        '#667eea',
-                        '#ed8936',
-                        '#48bb78',
-                        '#f093fb',
-                        '#a0aec0'
-                    ],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
-            }
-        });
-    }
+                   <div class="chart-card">
+                       <div class="chart-header">
+                           <h3 class="chart-title">Distribución de Gastos</h3>
+                       </div>
+                       <div class="chart-container">
+                           <canvas id="expensesChart"></canvas>
+                       </div>
+                   </div>
+               </section>
+           </div>
+       </main>
+   </div>
 
-    // Animate Metrics
-    function animateMetrics() {
-        const counters = [
-            { id: 'totalRevenue', target: 145230, prefix: 'S/. ', format: true },
-            { id: 'activeClients', target: 324, prefix: '', format: false },
-            { id: 'profitMargin', target: 23.5, prefix: '', suffix: '%', format: false },
-            { id: 'revenueValue', target: 2847293, prefix: 'S/. ', format: true },
-            { id: 'expensesValue', target: 1892847, prefix: 'S/. ', format: true },
-            { id: 'profitValue', target: 954446, prefix: 'S/. ', format: true }
-        ];
+   <!-- AI ASSISTANT BUTTON -->
+   <div id="aiAssistantButton" class="ai-assistant-button" onclick="toggleAIAssistant()">
+       <div class="ai-pulse"></div>
+       <i class="fas fa-brain"></i>
+       <div class="ai-notifications" id="aiNotifications">0</div>
+   </div>
 
-        counters.forEach(counter => {
-            const element = document.getElementById(counter.id);
-            if (!element) return;
+   <!-- SCRIPTS -->
+   <script src="src/assets/js/utils.js"></script>
+   <script src="src/assets/js/company-manager.js"></script>
+   <script src="src/assets/js/advanced-ai-assistant.js"></script>
+   <script src="src/assets/js/main.js"></script>
 
-            let current = 0;
-            const increment = counter
-            .target / 100;
+   <!-- JAVASCRIPT INTEGRADO -->
+   <script>
+       // VARIABLES GLOBALES
+       let currentWizardStep = 1;
+       let wizardData = {};
+       let currentEditingCompany = null;
+
+       // INICIALIZACIÓN
+       document.addEventListener('DOMContentLoaded', function() {
+           console.log('🚀 Inicializando GRIZALUM Sistema Completo...');
+           
+           // Ocultar pantalla de carga después de 3 segundos
+           setTimeout(() => {
+               document.getElementById('loadingScreen').classList.add('hide');
+           }, 3000);
+           
+           // Inicializar componentes
+           initializeCompanySelector();
+           initializeDashboard();
+           setupEventListeners();
+           
+           console.log('✅ Sistema GRIZALUM completamente cargado');
+       });
+
+       // FUNCIONES DEL SELECTOR DE EMPRESAS
+       function toggleCompanyDropdown() {
+           const dropdown = document.getElementById('companyDropdown');
+           const arrow = document.getElementById('dropdownArrow');
+           
+           dropdown.classList.toggle('show');
+           arrow.classList.toggle('rotate');
+       }
+
+       function selectCompany(companyId) {
+           updateSelectedCompany(companyId);
+           updateCompanyData(companyId);
+           toggleCompanyDropdown();
+           
+           const companies = getCompaniesData();
+           const company = companies[companyId];
+           if (company && company.theme) {
+               updateAITheme(company.theme);
+           }
+           
+           showNotification(`🏢 Cambiado a ${getCompanyName(companyId)}`, 'success');
+       }
+
+       function updateSelectedCompany(companyId) {
+           const companies = getCompaniesData();
+           const company = companies[companyId];
+           
+           if (company) {
+               document.getElementById('currentCompanyIcon').textContent = company.icon;
+               document.getElementById('currentCompanyName').textContent = company.name;
+               document.getElementById('currentCompanyStatus').textContent = `🟢 ${company.status}`;
+               
+               // Actualizar clase activa
+               document.querySelectorAll('.company-item').forEach(item => {
+                   item.classList.remove('active');
+               });
+               const activeItem = document.querySelector(`[data-company="${companyId}"]`);
+               if (activeItem) {
+                   activeItem.classList.add('active');
+               }
+           }
+       }
+
+       function updateCompanyData(companyId) {
+           const companies = getCompaniesData();
+           const company = companies[companyId];
+           
+           if (company) {
+               updateKPIs(company.data);
+               updateSidebar(company.data);
+               updateCompanyTheme(company.theme);
+               console.log(`📊 Datos actualizados para: ${company.name}`);
+           }
+       }
+
+       function getCompaniesData() {
+           const saved = localStorage.getItem('grizalum_companies');
+           if (saved) {
+               return JSON.parse(saved);
+           }
+           
+           // Datos por defecto
+           const defaultCompanies = {
+               'fundicion-laguna': {
+                   name: 'Fundición Laguna',
+                   icon: '🔥',
+                   status: 'Operativo',
+                   theme: { primary: '#dc2626', secondary: '#ea580c' },
+                   data: { cashFlow: 24500, revenue: 45200, expenses: 28700, profit: 16500 }
+               },
+               'fundicion-joel': {
+                   name: 'Fundición Joel',
+                   icon: '🔥',
+                   status: 'Operativo',
+                   theme: { primary: '#ea580c', secondary: '#f97316' },
+                   data: { cashFlow: 18300, revenue: 32100, expenses: 21800, profit: 10300 }
+               },
+               'avicola-san-juan': {
+                   name: 'Avícola San Juan',
+                   icon: '🐔',
+                   status: 'Operativo',
+                   theme: { primary: '#059669', secondary: '#10b981' },
+                   data: { cashFlow: 32100, revenue: 58300, expenses: 41200, profit: 17100 }
+               },
+               'import-lm': {
+                   name: 'Import LM',
+                   icon: '📦',
+                   status: 'Operativo',
+                   theme: { primary: '#8b5cf6', secondary: '#a78bfa' },
+                   data: { cashFlow: 45200, revenue: 72800, expenses: 48600, profit: 24200 }
+               },
+               'bodega-central': {
+                   name: 'Bodega Central',
+                   icon: '🏪',
+                   status: 'Regular',
+                   theme: { primary: '#3b82f6', secondary: '#60a5fa' },
+                   data: { cashFlow: 15800, revenue: 28500, expenses: 19700, profit: 8800 }
+               }
+           };
+           
+           saveCompaniesData(defaultCompanies);
+           return defaultCompanies;
+       }
+
+       function updateKPIs(data) {
+           const elements = {
+               'revenueValue': data.revenue,
+               'expensesValue': data.expenses,
+               'profitValue': data.profit
+           };
+           
+           Object.entries(elements).forEach(([id, value]) => {
+               const element = document.getElementById(id);
+               if (element) {
+                   element.textContent = `S/. ${value.toLocaleString()}`;
+               }
+           });
+       }
+
+       function updateSidebar(data) {
+           const elements = {
+               'sidebarCashFlow': data.cashFlow,
+               'sidebarProfit': data.profit
+           };
+           
+           Object.entries(elements).forEach(([id, value]) => {
+               const element = document.getElementById(id);
+               if (element) {
+                   element.textContent = `S/. ${value.toLocaleString()}`;
+               }
+           });
+       }
+
+       function updateCompanyTheme(theme) {
+           if (!theme) return;
+           
+           console.log('🎨 Actualizando tema:', theme);
+           
+           // Actualizar propiedades CSS
+           document.documentElement.style.setProperty('--company-primary', theme.primary);
+           document.documentElement.style.setProperty('--company-secondary', theme.secondary);
+           document.documentElement.style.setProperty('--peru-gold', theme.primary);
+           document.documentElement.style.setProperty('--gradient-gold', `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`);
+           
+           console.log('✅ Tema actualizado correctamente');
+       }
+
+       function updateAITheme(theme) {
+           const aiButton = document.getElementById('aiAssistantButton');
+           if (aiButton && theme) {
+               aiButton.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
+           }
+       }
+
+       function initializeCompanySelector() {
+           const companies = getCompaniesData();
+           const companiesList = document.getElementById('companiesList');
+           companiesList.innerHTML = '';
+           
+           Object.entries(companies).forEach(([id, company]) => {
+               const item = document.createElement('div');
+               item.className = 'company-item';
+               item.dataset.company = id;
+               item.onclick = () => selectCompany(id);
+               
+               item.innerHTML = `
+                   <div class="company-item-icon">${company.icon}</div>
+                   <div class="company-item-info">
+                       <div class="company-item-name">${company.name}</div>
+                       <div class="company-item-stats">Flujo: S/. ${company.data.cashFlow.toLocaleString()}</div>
+                   </div>
+                   <div class="company-item-status">${company.status === 'Operativo' ? '🟢' : company.status === 'Regular' ? '🟡' : '🔴'}</div>
+               `;
+               
+               companiesList.appendChild(item);
+           });
+           
+           // Seleccionar primera empresa por defecto
+           const firstCompany = Object.keys(companies)[0];
+           if (firstCompany) {
+               selectCompany(firstCompany);
+           }
+       }
+
+       function saveCompaniesData(companies) {
+           localStorage.setItem('grizalum_companies', JSON.stringify(companies));
+       }
+
+       function getCompanyName(companyId) {
+           const companies = getCompaniesData();
+           return companies[companyId]?.name || 'Empresa';
+       }
+
+       // FUNCIONES DEL DASHBOARD
+       function initializeDashboard() {
+           initializeCashFlowChart();
+           initializeExpensesChart();
+           animateMetrics();
+       }
+
+       function initializeCashFlowChart() {
+           const ctx = document.getElementById('cashFlowChart');
+           if (!ctx) return;
+           
+           new Chart(ctx.getContext('2d'), {
+               type: 'line',
+               data: {
+                   labels: ['Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre', 'Enero'],
+                   datasets: [{
+                       label: 'Ingresos',
+                       data: [2200000, 2350000, 2180000, 2420000, 2650000, 2847293],
+                       borderColor: '#667eea',
+                       backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                       tension: 0.4,
+                       fill: true
+                   }, {
+                       label: 'Gastos',
+                       data: [1800000, 1850000, 1780000, 1920000, 1850000, 1892847],
+                       borderColor: '#ed8936',
+                       backgroundColor: 'rgba(237, 137, 54, 0.1)',
+                       tension: 0.4,
+                       fill: true
+                   }]
+               },
+               options: {
+                   responsive: true,
+                   maintainAspectRatio: false,
+                   plugins: {
+                       legend: { position: 'bottom' }
+                   },
+                   scales: {
+                       y: {
+                           beginAtZero: true,
+                           ticks: {
+                               callback: function(value) {
+                                   return 'S/. ' + (value / 1000000).toFixed(1) + 'M';
+                               }
+                           }
+                       }
+                   }
+               }
+           });
+       }
+
+       function initializeExpensesChart() {
+           const ctx = document.getElementById('expensesChart');
+           if (!ctx) return;
+           
+           new Chart(ctx.getContext('2d'), {
+               type: 'doughnut',
+               data: {
+                   labels: ['Nómina', 'Marketing', 'Operaciones', 'Tecnología', 'Otros'],
+                   datasets: [{
+                       data: [45, 20, 15, 12, 8],
+                       backgroundColor: ['#667eea', '#ed8936', '#48bb78', '#f093fb', '#a0aec0'],
+                       borderWidth: 0
+                   }]
+               },
+               options: {
+                   responsive: true,
+                   maintainAspectRatio: false,
+                   plugins: {
+                       legend: { position: 'bottom' }
+                   }
+               }
+           });
+       }
+
+       function animateMetrics() {
+           const counters = [
+               { id: 'revenueValue', target: 2847293, prefix: 'S/. ' },
+               { id: 'expensesValue', target: 1892847, prefix: 'S/. ' },
+               { id: 'profitValue', target: 954446, prefix: 'S/. ' }
+           ];
+
+           counters.forEach(counter => {
+               const element = document.getElementById(counter.id);
+               if (!element) return;
+
+               let current = 0;
+               const increment = counter.target / 100;
                const timer = setInterval(() => {
                    current += increment;
                    if (current >= counter.target) {
@@ -858,52 +1331,35 @@ body {
                        clearInterval(timer);
                    }
                    
-                   let displayValue = counter.format ? 
-                       Math.floor(current).toLocaleString() : 
-                       current.toFixed(1);
-                   
-                   element.textContent = (counter.prefix || '') + displayValue + (counter.suffix || '');
+                   element.textContent = counter.prefix + Math.floor(current).toLocaleString();
                }, 20);
            });
        }
 
-       // Real-time Updates
-       function startRealTimeUpdates() {
-           setInterval(() => {
-               // Simular actualizaciones en tiempo real
-               updateMetricValues();
-           }, 30000); // Cada 30 segundos
+       // FUNCIONES AUXILIARES
+       function toggleSidebar() {
+           document.getElementById('sidebar').classList.toggle('open');
        }
 
-       function updateMetricValues() {
-           const elements = [
-               { id: 'totalRevenue', variation: 0.02 },
-               { id: 'activeClients', variation: 0.01 },
-               { id: 'revenueValue', variation: 0.015 }
-           ];
-
-           elements.forEach(elem => {
-               const element = document.getElementById(elem.id);
-               if (element) {
-                   const currentValue = parseFloat(element.textContent.replace(/[^\d.]/g, ''));
-                   const newValue = currentValue * (1 + (Math.random() - 0.5) * elem.variation);
-                   
-                   if (elem.id.includes('Revenue') || elem.id.includes('Value')) {
-                       element.textContent = 'S/. ' + Math.floor(newValue).toLocaleString();
-                   } else {
-                       element.textContent = Math.floor(newValue).toString();
-                   }
-               }
-           });
+       function changePeriod(period, button) {
+           document.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('active'));
+           button.classList.add('active');
+           console.log(`📅 Período cambiado a: ${period}`);
        }
 
-       // Toggle AI Assistant
-       function toggleAI() {
+       function showNotifications() {
+           console.log('🔔 Mostrar notificaciones');
+       }
+
+       function showSection(section) {
+           console.log(`📱 Mostrar sección: ${section}`);
+       }
+
+       function toggleAIAssistant() {
            if (window.advancedAI && typeof window.advancedAI.toggle === 'function') {
                window.advancedAI.toggle();
            } else {
-               console.log('🤖 AI Assistant loading...');
-               // Fallback si el AI no está cargado aún
+               console.log('🤖 AI Assistant cargando...');
                setTimeout(() => {
                    if (window.advancedAI) {
                        window.advancedAI.toggle();
@@ -912,132 +1368,197 @@ body {
            }
        }
 
-       // Filter buttons functionality
-       document.querySelectorAll('.filter-btn').forEach(btn => {
-           btn.addEventListener('click', function() {
-               document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-               this.classList.add('active');
-           });
-       });
-
-       // Responsive navigation
-       function toggleMobileMenu() {
-           const nav = document.querySelector('.header-nav');
-           nav.classList.toggle('mobile-open');
+       function showNotification(message, type = 'info') {
+           console.log(`${type === 'success' ? '✅' : '📢'} ${message}`);
+           // Aquí puedes agregar tu sistema de notificaciones
        }
 
-       // Notification click handler
-       document.querySelectorAll('.notification-btn').forEach(btn => {
-           btn.addEventListener('click', function() {
-               this.style.transform = 'scale(0.95)';
-               setTimeout(() => {
-                   this.style.transform = 'scale(1)';
-               }, 150);
-           });
-       });
-
-       // Add loading states
-       function showLoading(elementId) {
-           const element = document.getElementById(elementId);
-           if (element) {
-               element.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-           }
-       }
-
-       function hideLoading(elementId, content) {
-           const element = document.getElementById(elementId);
-           if (element) {
-               element.innerHTML = content;
-           }
-       }
-
-       // Keyboard shortcuts
-       document.addEventListener('keydown', function(e) {
-           // Ctrl + A para abrir AI
-           if (e.ctrlKey && e.key === 'a') {
-               e.preventDefault();
-               toggleAI();
-           }
-           
-           // Esc para cerrar modales
-           if (e.key === 'Escape') {
-               if (window.advancedAI && document.querySelector('.ai-assistant-panel.show')) {
-                   window.advancedAI.toggle();
+       function setupEventListeners() {
+           // Cerrar dropdown al hacer clic fuera
+           document.addEventListener('click', function(event) {
+               const selector = document.getElementById('companySelector');
+               const dropdown = document.getElementById('companyDropdown');
+               
+               if (selector && !selector.contains(event.target)) {
+                   dropdown.classList.remove('show');
+                   document.getElementById('dropdownArrow').classList.remove('rotate');
                }
-           }
-       });
-
-       // Enhanced hover effects
-       document.querySelectorAll('.metric-card').forEach(card => {
-           card.addEventListener('mouseenter', function() {
-               this.style.borderColor = '#667eea';
            });
            
-           card.addEventListener('mouseleave', function() {
-               this.style.borderColor = '#e2e8f0';
-           });
-       });
-
-       // Progressive Web App functionality
-       if ('serviceWorker' in navigator) {
-           window.addEventListener('load', function() {
-               navigator.serviceWorker.register('/sw.js')
-                   .then(registration => console.log('✅ SW registered'))
-                   .catch(error => console.log('❌ SW registration failed'));
+           // Atajos de teclado
+           document.addEventListener('keydown', function(event) {
+               if (event.ctrlKey && event.key === 'a') {
+                   event.preventDefault();
+                   toggleAIAssistant();
+               }
            });
        }
 
-       // Dark mode toggle (bonus feature)
-       function toggleDarkMode() {
-           document.body.classList.toggle('dark-mode');
-           localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+       // PLACEHOLDER FUNCTIONS
+       function showAddCompanyWizard() {
+           console.log('🚀 Abrir wizard para agregar empresa');
+           showNotification('🚀 Wizard para agregar empresa próximamente', 'info');
        }
 
-       // Load saved dark mode preference
-       if (localStorage.getItem('darkMode') === 'true') {
-           document.body.classList.add('dark-mode');
+       function openCompanyManagement() {
+           console.log('⚙️ Abrir gestión de empresas');
+           showNotification('⚙️ Gestión de empresas próximamente', 'info');
        }
 
-       console.log('🎯 GRIZALUM Dashboard Profesional - Totalmente cargado y funcional');
-       console.log('🤖 AI Assistant integrado - Haz clic en el botón flotante');
-       console.log('📊 Gráficos interactivos - Chart.js inicializado');
-       console.log('⚡ Actualizaciones en tiempo real - Activas');
-       console.log('🎨 Animaciones y efectos - Habilitados');
+       console.log('🎯 GRIZALUM Sistema Completo Sincronizado');
+       console.log('🏢 Multi-empresa: ✅');
+       console.log('🤖 IA Assistant: ✅');
+       console.log('📊 Dashboard: ✅');
+       console.log('🎨 Temas dinámicos: ✅');
+       console.log('📱 Responsive: ✅');
    </script>
 
-   <!-- ESTILOS ADICIONALES PARA DARK MODE -->
+   <!-- ESTILOS ADICIONALES PARA DASHBOARD -->
    <style>
-   .dark-mode {
-       --bg-light: #1a202c;
-       --text-primary: #f7fafc;
-       --text-secondary: #a0aec0;
-       --border: #2d3748;
+   .dashboard-content {
+       padding: 2rem;
+       display: grid;
+       gap: 2rem;
    }
 
-   .dark-mode .metric-card,
-   .dark-mode .chart-card,
-   .dark-mode .activity-card,
-   .dark-mode .header {
-       background: #2d3748;
-       border-color: #4a5568;
+   .metrics-grid {
+       display: grid;
+       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+       gap: 1.5rem;
    }
 
-   .dark-mode .welcome-section {
-       background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+   .metric-card {
+       background: white;
+       padding: 1.5rem;
+       border-radius: 16px;
+       box-shadow: var(--shadow);
+       transition: all 0.3s ease;
+       border: 1px solid var(--border);
    }
 
-   /* Responsive fixes */
+   .metric-card:hover {
+       transform: translateY(-4px);
+       box-shadow: var(--shadow-lg);
+   }
+
+   .metric-header {
+       display: flex;
+       justify-content: space-between;
+       align-items: center;
+       margin-bottom: 1rem;
+   }
+
+   .metric-title {
+       font-size: 0.9rem;
+       color: var(--text-secondary);
+       font-weight: 600;
+       text-transform: uppercase;
+       letter-spacing: 0.5px;
+   }
+
+   .metric-icon {
+       width: 40px;
+       height: 40px;
+       border-radius: 10px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       font-size: 1.2rem;
+       color: white;
+   }
+
+   .metric-icon.revenue { background: var(--gradient-primary); }
+   .metric-icon.expenses { background: linear-gradient(135deg, var(--warning), #f6ad55); }
+   .metric-icon.profit { background: linear-gradient(135deg, var(--success), #68d391); }
+   .metric-icon.growth { background: var(--gradient-accent); }
+
+   .metric-value {
+       font-size: 2.2rem;
+       font-weight: 800;
+       color: var(--text-primary);
+       margin-bottom: 0.5rem;
+   }
+
+   .metric-change {
+       display: flex;
+       align-items: center;
+       gap: 0.5rem;
+       font-size: 0.9rem;
+       font-weight: 600;
+   }
+
+   .metric-change.positive { color: var(--success); }
+   .metric-change.negative { color: var(--danger); }
+
+   .charts-section {
+       display: grid;
+       grid-template-columns: 2fr 1fr;
+       gap: 2rem;
+   }
+
+   .chart-card {
+       background: white;
+       padding: 1.5rem;
+       border-radius: 16px;
+       box-shadow: var(--shadow);
+       border: 1px solid var(--border);
+   }
+
+   .chart-header {
+       display: flex;
+       justify-content: space-between;
+       align-items: center;
+       margin-bottom: 1.5rem;
+       padding-bottom: 1rem;
+       border-bottom: 1px solid var(--border);
+   }
+
+   .chart-title {
+       font-size: 1.2rem;
+       font-weight: 700;
+       color: var(--text-primary);
+   }
+
+   .chart-filters {
+       display: flex;
+       gap: 0.5rem;
+   }
+
+   .filter-btn {
+       padding: 0.5rem 1rem;
+       border: 1px solid var(--border);
+       background: white;
+       border-radius: 8px;
+       font-size: 0.8rem;
+       cursor: pointer;
+       transition: all 0.3s ease;
+   }
+
+   .filter-btn.active {
+       background: var(--primary);
+       color: white;
+       border-color: var(--primary);
+   }
+
+   .chart-container {
+       position: relative;
+       height: 350px;
+       width: 100%;
+   }
+
+   @media (max-width: 1200px) {
+       .charts-section {
+           grid-template-columns: 1fr;
+       }
+   }
+
    @media (max-width: 768px) {
-       .header-nav.mobile-open {
-           display: flex;
-           position: absolute;
-           top: 100%;
-           left: 0;
-           right: 0;
-           background: white;
-           flex-direction: column;
+       .dashboard-content {
            padding: 1rem;
-           box-shadow: var(--shadow);
+       }
+       
+       .metrics-grid {
+           grid-template-columns: 1fr;
        }
    }
    </style>
