@@ -1259,32 +1259,165 @@ body {
        <i class="fas fa-brain"></i>
        <div class="ai-notifications" id="aiNotifications">0</div>
    </div>
+    <!-- SCRIPTS INTEGRADOS -->
+<script>
+// CÓDIGO DEL AI ASSISTANT INTEGRADO
+window.advancedAI = {
+    isVisible: false,
+    
+    toggle: function() {
+        const panel = document.getElementById('aiPanel');
+        if (!panel) {
+            this.createAIPanel();
+        } else {
+            panel.classList.toggle('show');
+            this.isVisible = !this.isVisible;
+        }
+    },
+    
+    createAIPanel: function() {
+        const panel = document.createElement('div');
+        panel.id = 'aiPanel';
+        panel.className = 'ai-panel';
+        panel.innerHTML = `
+            <div class="ai-panel-header">
+                <h3>🤖 GRIZALUM IA</h3>
+                <button onclick="window.advancedAI.toggle()">×</button>
+            </div>
+            <div class="ai-panel-content">
+                <p>¡Hola! Soy tu asistente financiero IA.</p>
+                <div class="ai-suggestions">
+                    <button onclick="window.advancedAI.analyze()">📊 Analizar flujo</button>
+                    <button onclick="window.advancedAI.predict()">🔮 Predicciones</button>
+                    <button onclick="window.advancedAI.optimize()">⚡ Optimizar</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(panel);
+        
+        // Agregar estilos
+        const style = document.createElement('style');
+        style.textContent = `
+            .ai-panel {
+                position: fixed;
+                bottom: 120px;
+                right: 30px;
+                width: 350px;
+                background: white;
+                border-radius: 20px;
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+                z-index: 999;
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(20px) scale(0.95);
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            
+            .ai-panel.show {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0) scale(1);
+            }
+            
+            .ai-panel-header {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 1.5rem;
+                border-radius: 20px 20px 0 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .ai-panel-header h3 {
+                margin: 0;
+                font-weight: 700;
+            }
+            
+            .ai-panel-header button {
+                background: none;
+                border: none;
+                color: white;
+                font-size: 1.5rem;
+                cursor: pointer;
+                padding: 0.5rem;
+                border-radius: 50%;
+                transition: all 0.3s ease;
+            }
+            
+            .ai-panel-header button:hover {
+                background: rgba(255, 255, 255, 0.2);
+            }
+            
+            .ai-panel-content {
+                padding: 1.5rem;
+            }
+            
+            .ai-suggestions {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+                margin-top: 1rem;
+            }
+            
+            .ai-suggestions button {
+                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                color: white;
+                border: none;
+                padding: 0.75rem;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            }
+            
+            .ai-suggestions button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(240, 147, 251, 0.4);
+            }
+        `;
+        document.head.appendChild(style);
+        
+        setTimeout(() => panel.classList.add('show'), 100);
+        this.isVisible = true;
+    },
+    
+    analyze: function() {
+        alert('🤖 Analizando tu flujo de caja...\n\n✅ Ingresos estables\n⚠️ Gastos operativos altos\n💡 Recomiendo revisar costos de marketing');
+    },
+    
+    predict: function() {
+        alert('🔮 Predicciones IA:\n\n📈 Crecimiento esperado: 18%\n💰 Utilidad proyectada: S/. 1.2M\n📊 Mejor mes: Marzo 2024');
+    },
+    
+    optimize: function() {
+        alert('⚡ Optimizaciones sugeridas:\n\n🔧 Reducir gastos operativos 8%\n📱 Invertir en marketing digital\n⏰ Automatizar procesos manuales');
+    }
+};
 
-   <!-- SCRIPTS -->
-   <script src="src/assets/js/utils.js"></script>
-   <script src="src/assets/js/company-manager.js"></script>
-   <script src="src/assets/js/advanced-ai-assistant.js"></script>
-   <script src="src/assets/js/main.js"></script>
-
-   <!-- JAVASCRIPT COMPLETO -->
-   <script>
-       // INICIALIZACIÓN
-       document.addEventListener('DOMContentLoaded', function() {
-           console.log('🚀 Inicializando GRIZALUM Sistema Completo...');
-           
-           // Ocultar pantalla de carga después de 3 segundos
-           setTimeout(() => {
-               document.getElementById('loadingScreen').classList.add('hide');
-           }, 3000);
-           
-           // Inicializar componentes
-           initializeCompanySelector();
-           initializeDashboard();
-           setupEventListeners();
-           
-           console.log('✅ Sistema GRIZALUM completamente cargado');
-       });
-
+// RESTO DEL CÓDIGO JAVASCRIPT ORIGINAL
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Inicializando GRIZALUM Sistema Completo...');
+    
+    setTimeout(() => {
+        document.getElementById('loadingScreen').classList.add('hide');
+    }, 3000);
+    
+    initializeCompanySelector();
+    initializeDashboard();
+    setupEventListeners();
+    
+    console.log('✅ Sistema GRIZALUM completamente cargado');
+    
+    // MOSTRAR NOTIFICACIONES IA AL CARGAR
+    setTimeout(() => {
+        const notifications = document.getElementById('aiNotifications');
+        if (notifications) {
+            notifications.textContent = '1';
+            notifications.classList.add('show');
+        }
+    }, 5000);
+});
        // DATOS DE EMPRESAS
        function getCompaniesData() {
            const saved = localStorage.getItem('grizalum_companies');
