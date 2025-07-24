@@ -1266,7 +1266,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('loadingScreen').classList.add('hide');
     }, 3000);
     
-    initializeCompanySelector();
     initializeDashboard();
     setupEventListeners();
     
@@ -1334,49 +1333,7 @@ document.addEventListener('DOMContentLoaded', function() {
            localStorage.setItem('grizalum_companies', JSON.stringify(companies));
        }
 
-       // SELECTOR DE EMPRESAS
-       function toggleCompanyDropdown() {
-           const dropdown = document.getElementById('companyDropdown');
-           const arrow = document.getElementById('dropdownArrow');
-           
-           dropdown.classList.toggle('show');
-           arrow.classList.toggle('rotate');
-       }
-
-       function selectCompany(companyId) {
-           updateSelectedCompany(companyId);
-           updateCompanyData(companyId);
-           applyCompanyThemeIntegration(companyId);
-           toggleCompanyDropdown();
-           
-           const companies = getCompaniesData();
-           const company = companies[companyId];
-           if (company && company.theme) {
-               updateAITheme(company.theme);
-           }
-           
-           showNotification(`🏢 Cambiado a ${getCompanyName(companyId)}`, 'success');
-       }
-
-       function updateSelectedCompany(companyId) {
-           const companies = getCompaniesData();
-           const company = companies[companyId];
-           
-           if (company) {
-               document.getElementById('currentCompanyIcon').textContent = company.icon;
-               document.getElementById('currentCompanyName').textContent = company.name;
-               document.getElementById('currentCompanyStatus').textContent = `🟢 ${company.status}`;
-               
-               document.querySelectorAll('.company-item').forEach(item => {
-                   item.classList.remove('active');
-               });
-               const activeItem = document.querySelector(`[data-company="${companyId}"]`);
-               if (activeItem) {
-                   activeItem.classList.add('active');
-               }
-           }
-       }
-
+       // SELECTOR DE EMPRESAS  
        function updateCompanyData(companyId) {
            const companies = getCompaniesData();
            const company = companies[companyId];
@@ -1441,36 +1398,7 @@ document.addEventListener('DOMContentLoaded', function() {
                aiButton.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
            }
        }
-
-       function initializeCompanySelector() {
-           const companies = getCompaniesData();
-           const companiesList = document.getElementById('companiesList');
-           companiesList.innerHTML = '';
-           
-           Object.entries(companies).forEach(([id, company]) => {
-               const item = document.createElement('div');
-               item.className = 'company-item';
-               item.dataset.company = id;
-               item.onclick = () => selectCompany(id);
-               
-               item.innerHTML = `
-                   <div class="company-item-icon">${company.icon}</div>
-                   <div class="company-item-info">
-                       <div class="company-item-name">${company.name}</div>
-                       <div class="company-item-stats">Flujo: S/. ${company.data.cashFlow.toLocaleString()}</div>
-                   </div>
-                   <div class="company-item-status">${company.status === 'Operativo' ? '🟢' : company.status === 'Regular' ? '🟡' : '🔴'}</div>
-               `;
-               
-               companiesList.appendChild(item);
-           });
-           
-           const firstCompany = Object.keys(companies)[0];
-           if (firstCompany) {
-               selectCompany(firstCompany);
-           }
-       }
-
+    
        function getCompanyName(companyId) {
            const companies = getCompaniesData();
            return companies[companyId]?.name || 'Empresa';
