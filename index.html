@@ -1,1 +1,1718 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRIZALUM - Sistema Financiero Empresarial Premium</title>
+<!-- Meta Tags SEO -->
+<meta name="description" content="Sistema financiero empresarial premium con IA integrada para empresas peruanas. Dashboard ejecutivo, flujo de caja, análisis predictivo.">
+<meta name="keywords" content="sistema financiero, empresas peru, contabilidad, flujo de caja, dashboard, IA">
+<meta name="author" content="GRIZALUM">
 
+<!-- Favicon -->
+<link rel="icon" type="image/x-icon" href="src/assets/images/favicon.ico">
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<!-- FontAwesome -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+
+<!-- Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
+    
+ <!-- ADVANCED AI ASSISTANT PROFESIONAL -->
+<!-- SOLO PARA PRUEBA -->
+<script>
+console.log('🤖 Probando IA básica...');
+</script>
+    
+<!-- PWA MANIFEST -->
+<link rel="manifest" href="manifest.json">
+
+<!-- META TAGS PARA PWA -->
+<meta name="application-name" content="GRIZALUM">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GRIZALUM">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="msapplication-TileColor" content="#d4af37">
+<meta name="theme-color" content="#d4af37">
+
+<!-- ICONOS ADICIONALES -->
+<link rel="icon" type="image/png" sizes="32x32" href="src/assets/images/icon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="src/assets/images/icon-16x16.png">
+<link rel="apple-touch-icon" href="src/assets/images/icon-192x192.png">
+
+<!-- ESTILOS COMPLETOS CON TUS COLORES ORIGINALES -->
+<style>
+:root {
+    /* TUS COLORES ORIGINALES */
+    --peru-gold: #d4af37;
+    --peru-gold-dark: #b87333;
+    --gradient-gold: linear-gradient(135deg, var(--peru-gold) 0%, var(--peru-gold-dark) 100%);
+    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-success: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    --gradient-warning: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+    --gradient-danger: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+    --gradient-blue: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+    --gradient-purple: linear-gradient(135deg, #9f7aea 0%, #805ad5 100%);
+    
+    /* Colores base */
+    --white: #ffffff;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+    
+    /* Efectos */
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --shadow-gold: 0 10px 30px rgba(212, 175, 55, 0.3);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: var(--gray-800);
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* PANTALLA DE CARGA */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    transition: opacity 0.5s ease;
+}
+
+.loading-content {
+    text-align: center;
+    animation: fadeInUp 0.8s ease;
+}
+
+.loading-logo {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin: 0 auto 1rem;
+    animation: pulse 2s infinite;
+}
+
+.loading-bar {
+    width: 200px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    margin: 1rem auto;
+    overflow: hidden;
+}
+
+.loading-progress {
+    height: 100%;
+    background: white;
+    border-radius: 2px;
+    animation: loadingProgress 3s ease-in-out;
+}
+
+.loading-screen.hide {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* CONTAINER PRINCIPAL */
+.app-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 280px;
+    background: white;
+    box-shadow: var(--shadow-xl);
+    border-right: 1px solid var(--gray-200);
+    transition: all 0.3s ease;
+    position: fixed;
+    height: 100vh;
+    z-index: 100;
+    overflow-y: auto;
+}
+
+.sidebar-header {
+    padding: 2rem;
+    border-bottom: 1px solid var(--gray-200);
+    background: var(--gradient-gold);
+    color: white;
+}
+
+.company-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.brand-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.brand-text h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.brand-text p {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.financial-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+}
+
+.summary-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+.summary-value {
+    font-weight: 700;
+}
+
+/* NAVEGACIÓN */
+.nav-menu {
+    padding: 1rem;
+}
+
+.nav-section {
+    margin-bottom: 2rem;
+}
+
+.nav-section-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-item {
+    margin-bottom: 0.25rem;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    color: var(--gray-600);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.nav-link:hover {
+    background: var(--gray-50);
+    color: var(--peru-gold);
+    transform: translateX(4px);
+}
+
+.nav-link.active {
+    background: var(--gradient-gold);
+    color: white;
+    box-shadow: var(--shadow-gold);
+}
+
+.nav-icon {
+    width: 20px;
+    text-align: center;
+}
+
+/* MAIN CONTENT */
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    background: var(--gray-50);
+    min-height: 100vh;
+    transition: all 0.3s ease;
+}
+
+.executive-header {
+    background: white;
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    border-bottom: 1px solid var(--gray-200);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.mobile-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--gray-600);
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.mobile-menu-toggle:hover {
+    background: var(--gray-100);
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+    color: var(--gray-600);
+    margin-bottom: 1rem;
+}
+
+.ai-insights {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 20px;
+    font-size: 0.9rem;
+    color: #6366f1;
+    font-weight: 600;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.time-period-selector {
+    display: flex;
+    gap: 0.25rem;
+    background: var(--gray-100);
+    padding: 0.25rem;
+    border-radius: 8px;
+}
+
+.period-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+    color: var(--gray-600);
+}
+
+.period-btn.active {
+    background: white;
+    color: var(--peru-gold);
+    box-shadow: var(--shadow);
+}
+
+.period-btn:hover {
+    background: white;
+    color: var(--peru-gold);
+}
+
+.notification-center {
+    position: relative;
+    background: white;
+    border: 2px solid var(--gray-200);
+    padding: 0.75rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--gray-600);
+}
+
+.notification-center:hover {
+    background: var(--gray-50);
+    border-color: var(--peru-gold);
+    color: var(--peru-gold);
+}
+/* BOTÓN IA EN HEADER */
+.ai-header-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.ai-header-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+.notification-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--gradient-danger);
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(245, 101, 101, 0.4);
+}
+
+/* SELECTOR DE EMPRESAS */
+.company-selector {
+    position: relative;
+    min-width: 280px;
+}
+
+.selected-company {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(184, 115, 51, 0.1) 100%);
+    border: 2px solid rgba(212, 175, 55, 0.3);
+    border-radius: 16px;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.selected-company:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-gold);
+    border-color: rgba(212, 175, 55, 0.5);
+}
+
+.company-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.company-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--gradient-gold);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: var(--shadow-gold);
+}
+
+.company-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.company-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gray-800);
+    margin-bottom: 0.25rem;
+}
+
+.company-status {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--gray-600);
+}
+
+.dropdown-arrow {
+    color: var(--gray-600);
+    transition: transform 0.3s ease;
+}
+
+.dropdown-arrow.rotate {
+    transform: rotate(180deg);
+}
+
+.company-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 350px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--gray-200);
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(20px);
+}
+
+.company-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--gray-200);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dropdown-header h4 {
+    margin: 0;
+    color: var(--gray-800);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.btn-add-company {
+    background: var(--gradient-success);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-add-company:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.companies-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+
+.company-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 0.25rem;
+}
+
+.company-item:hover {
+    background: var(--gray-50);
+    transform: translateX(4px);
+}
+
+.company-item.active {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(184, 115, 51, 0.1) 100%);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.company-item-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--gray-100);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.company-item-info {
+    flex: 1;
+}
+
+.company-item-name {
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 0.25rem;
+}
+
+.company-item-stats {
+    font-size: 0.8rem;
+    color: var(--gray-600);
+}
+
+.company-item-status {
+    font-size: 1rem;
+}
+
+.dropdown-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--gray-200);
+    background: var(--gray-50);
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    text-align: center;
+}
+
+.dropdown-footer strong {
+    color: var(--gray-800);
+    font-size: 0.9rem;
+}
+
+/* DASHBOARD CONTENT */
+.dashboard-content {
+    padding: 2rem;
+    display: grid;
+    gap: 2rem;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.metric-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    border: 1px solid var(--gray-200);
+    position: relative;
+    overflow: hidden;
+}
+
+.metric-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-gold);
+}
+
+.metric-card.revenue::before {
+    background: var(--gradient-primary);
+}
+
+.metric-card.expenses::before {
+    background: var(--gradient-warning);
+}
+
+.metric-card.profit::before {
+    background: var(--gradient-success);
+}
+
+.metric-card.growth::before {
+    background: var(--gradient-purple);
+}
+
+.metric-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.metric-title {
+    font-size: 0.9rem;
+    color: var(--gray-600);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.metric-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: white;
+}
+
+.metric-icon.revenue { background: var(--gradient-primary); }
+.metric-icon.expenses { background: var(--gradient-warning); }
+.metric-icon.profit { background: var(--gradient-success); }
+.metric-icon.growth { background: var(--gradient-purple); }
+
+.metric-value {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--gray-800);
+    margin-bottom: 0.5rem;
+    animation: countUp 2s ease-out;
+}
+
+.metric-change {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.metric-change.positive { 
+    color: #10b981;
+}
+
+.metric-change.negative { 
+    color: #ef4444;
+}
+
+/* CHARTS SECTION */
+.charts-section {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+
+.chart-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--gray-200);
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.chart-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--gray-800);
+}
+
+.chart-filters {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--gray-300);
+    background: white;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--gray-600);
+}
+
+.filter-btn.active {
+    background: var(--gradient-primary);
+    color: white;
+    border-color: transparent;
+}
+
+.filter-btn:hover {
+    border-color: var(--peru-gold);
+    color: var(--peru-gold);
+}
+
+.chart-container {
+    position: relative;
+    height: 350px;
+    width: 100%;
+}
+
+/* AI ASSISTANT */
+.ai-assistant-button {
+    position: fixed;
+    top: 100px;
+    right: 30px;
+    width: 70px;
+    height: 70px;
+    background: var(--gradient-primary);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 1.8rem;
+    cursor: pointer;
+    box-shadow: var(--shadow-xl);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    position: relative;
+    overflow: visible;
+    display: none;
+}
+
+.ai-assistant-button:hover {
+    transform: scale(1.1) translateY(-5px);
+    box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+}
+
+.ai-pulse {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    opacity: 0.7;
+    animation: aiPulse 2s infinite;
+}
+
+.ai-notifications {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--gradient-danger);
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s ease;
+}
+
+.ai-notifications.show {
+    opacity: 1;
+    transform: scale(1);
+    animation: notificationBounce 0.5s ease;
+}
+
+/* BOTONES */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    color: white;
+}
+
+.btn-success {
+    background: var(--gradient-success);
+    color: white;
+}
+
+.btn-neutral {
+    background: var(--gray-100);
+    color: var(--gray-700);
+    border: 1px solid var(--gray-300);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* ANIMACIONES */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+@keyframes aiPulse {
+    0% { transform: scale(1); opacity: 0.7; }
+    50% { transform: scale(1.2); opacity: 0.3; }
+    100% { transform: scale(1.4); opacity: 0; }
+}
+
+@keyframes loadingProgress {
+    0% { width: 0%; }
+    100% { width: 100%; }
+}
+
+@keyframes countUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes notificationBounce {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.open {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .mobile-menu-toggle {
+        display: block;
+    }
+    
+    .company-selector {
+        min-width:
+            250px;
+       }
+       
+       .company-dropdown {
+           width: 300px;
+           right: -50px;
+       }
+       
+       .executive-header {
+           flex-direction: column;
+           align-items: flex-start;
+       }
+       
+       .header-controls {
+           width: 100%;
+           justify-content: space-between;
+       }
+       
+       .dashboard-content {
+           padding: 1rem;
+       }
+       
+       .metrics-grid {
+           grid-template-columns: 1fr;
+       }
+       
+       .charts-section {
+           grid-template-columns: 1fr;
+       }
+   }
+
+   @media (max-width: 480px) {
+       .time-period-selector {
+           flex-wrap: wrap;
+           gap: 0.5rem;
+       }
+       
+       .period-btn {
+           flex: 1;
+           min-width: 60px;
+       }
+   }
+   </style>
+</head>
+<body>
+   <!-- PANTALLA DE CARGA -->
+   <div id="loadingScreen" class="loading-screen">
+       <div class="loading-content">
+           <div class="brand-icon loading-logo">
+               <i class="fas fa-chart-line"></i>
+           </div>
+           <h1>GRIZALUM</h1>
+           <p>Cargando sistema financiero...</p>
+           <div class="loading-bar">
+               <div class="loading-progress"></div>
+           </div>
+       </div>
+   </div>
+
+   <div class="app-container">
+       <!-- BARRA LATERAL -->
+       <nav class="sidebar" id="sidebar">
+           <div class="sidebar-header">
+               <div class="company-brand">
+                   <div class="brand-icon">
+                       <i class="fas fa-chart-line"></i>
+                   </div>
+                   <div class="brand-text">
+                       <h1>GRIZALUM</h1>
+                       <p>Control Financiero</p>
+                   </div>
+               </div>
+               
+               <div class="financial-summary">
+                   <div class="summary-item">
+                       <span class="summary-label">Flujo de Caja</span>
+                       <span class="summary-value" id="sidebarCashFlow">S/. 24,500</span>
+                   </div>
+                   <div class="summary-item">
+                       <span class="summary-label">Utilidad Neta</span>
+                       <span class="summary-value" id="sidebarProfit">S/. 16,500</span>
+                   </div>
+               </div>
+           </div>
+
+           <div class="nav-menu">
+               <div class="nav-section">
+                   <div class="nav-section-title">
+                       <i class="fas fa-chart-bar"></i>
+                       Panel Principal
+                   </div>
+                   <div class="nav-item">
+                       <a href="#" class="nav-link active" onclick="showSection('dashboard')">
+                           <i class="nav-icon fas fa-tachometer-alt"></i>
+                           <span>Panel de Control</span>
+                       </a>
+                   </div>
+                   <div class="nav-item">
+                       <a href="#" class="nav-link" onclick="showSection('cash-flow')">
+                           <i class="nav-icon fas fa-water"></i>
+                           <span>Flujo de Caja</span>
+                       </a>
+                   </div>
+               </div>
+
+               <div class="nav-section">
+                   <div class="nav-section-title">
+                       <i class="fas fa-calculator"></i>
+                       Contabilidad
+                   </div>
+                   <div class="nav-item">
+                       <a href="#" class="nav-link" onclick="showSection('income-statement')">
+                           <i class="nav-icon fas fa-chart-pie"></i>
+                           <span>Estado de Resultados</span>
+                       </a>
+                   </div>
+                   <div class="nav-item">
+                       <a href="#" class="nav-link" onclick="showSection('balance-sheet')">
+                           <i class="nav-icon fas fa-balance-scale"></i>
+                           <span>Balance General</span>
+                       </a>
+                   </div>
+               </div>
+
+               <div class="nav-section">
+                   <div class="nav-section-title">
+                       <i class="fas fa-warehouse"></i>
+                       Operaciones
+                   </div>
+                   <div class="nav-item">
+                       <a href="#" class="nav-link" onclick="showSection('inventory')">
+                           <i class="nav-icon fas fa-boxes"></i>
+                           <span>Inventario</span>
+                       </a>
+                   </div>
+                   <div class="nav-item">
+                       <a href="#" class="nav-link" onclick="showSection('sales')">
+                           <i class="nav-icon fas fa-shopping-cart"></i>
+                           <span>Ventas</span>
+                       </a>
+                   </div>
+               </div>
+           </div>
+       </nav>
+
+       <!-- CONTENIDO PRINCIPAL -->
+       <main class="main-content">
+           <header class="executive-header">
+               <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+                   <i class="fas fa-bars"></i>
+               </button>
+               
+               <div class="page-header">
+                   <div>
+                       <h1 class="page-title" id="pageTitle">Panel de Control Ejecutivo</h1>
+                       <p class="page-subtitle" id="pageSubtitle">Resumen financiero en tiempo real</p>
+                       <div class="ai-insights">
+                           <i class="fas fa-brain"></i>
+                           <span>IA predice un crecimiento del 15% este trimestre</span>
+                       </div>
+                   </div>
+               </div>
+
+               <div class="header-controls">
+                   <div class="time-period-selector">
+                       <button class="period-btn active" onclick="changePeriod('hoy', this)">Hoy</button>
+                       <button class="period-btn" onclick="changePeriod('semana', this)">Semana</button>
+                       <button class="period-btn" onclick="changePeriod('mes', this)">Mes</button>
+                       <button class="period-btn" onclick="changePeriod('trimestre', this)">Trimestre</button>
+                       <button class="period-btn" onclick="changePeriod('año', this)">Año</button>
+                   </div>
+                   
+                   <button class="notification-center" onclick="showNotifications()">
+                       <i class="fas fa-bell"></i>
+                       <span class="notification-badge">3</span>
+                   </button>
+                   <!-- BOTÓN IA EN HEADER -->
+                  <button class="ai-header-button" onclick="toggleAIAssistant()">
+                  <i class="fas fa-brain"></i>
+                 <span>IA Assistant</span>
+                 </button>
+
+                   <!-- SELECTOR DE EMPRESAS -->
+                   <div class="company-selector" id="companySelector">
+                       <div class="selected-company" onclick="toggleCompanyDropdown()">
+                           <div class="company-info">
+                               <div class="company-icon" id="currentCompanyIcon">🔥</div>
+                               <div class="company-details">
+                                   <div class="company-name" id="currentCompanyName">Fundición Laguna</div>
+                                   <div class="company-status" id="currentCompanyStatus">🟢 Operativo</div>
+                               </div>
+                           </div>
+                           <div class="dropdown-arrow">
+                               <i class="fas fa-chevron-down" id="dropdownArrow"></i>
+                           </div>
+                       </div>
+
+                       <div class="company-dropdown" id="companyDropdown">
+                           <div class="dropdown-header">
+                               <h4>🏢 Empresas GRIZALUM</h4>
+                               <button class="btn-add-company" onclick="showAddCompanyWizard()">
+                                   <i class="fas fa-plus"></i>
+                                   Agregar Nueva
+                               </button>
+                           </div>
+                           
+                           <div class="companies-list" id="companiesList">
+                               <!-- Se llena dinámicamente -->
+                           </div>
+                           
+                           <div class="dropdown-footer">
+                               <button id="manageCompaniesBtn" class="btn btn-neutral" onclick="openCompanyManagement()" style="margin-bottom: 0.5rem; width: 100%;">
+                                   <i class="fas fa-cog"></i>
+                                   Gestionar Empresas
+                               </button>
+                               <div class="total-companies">
+                                   <strong>📊 Total Holding: S/. 135,900</strong>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </header>
+
+           <!-- DASHBOARD CONTENT -->
+           <div id="dashboardContent" class="dashboard-content">
+               <!-- METRICS GRID -->
+               <section class="metrics-grid">
+                   <div class="metric-card revenue">
+                       <div class="metric-header">
+                           <span class="metric-title">Ingresos Totales</span>
+                           <div class="metric-icon revenue">
+                               <i class="fas fa-arrow-trend-up"></i>
+                           </div>
+                       </div>
+                       <div class="metric-value" id="revenueValue">S/. 2,847,293</div>
+                       <div class="metric-change positive">
+                           <i class="fas fa-arrow-up"></i>
+                           <span>+12.5% vs mes anterior</span>
+                       </div>
+                   </div>
+
+                   <div class="metric-card expenses">
+                       <div class="metric-header">
+                           <span class="metric-title">Gastos Operativos</span>
+                           <div class="metric-icon expenses">
+                               <i class="fas fa-receipt"></i>
+                           </div>
+                       </div>
+                       <div class="metric-value" id="expensesValue">S/. 1,892,847</div>
+                       <div class="metric-change negative">
+                           <i class="fas fa-arrow-down"></i>
+                           <span>+3.2% vs mes anterior</span>
+                       </div>
+                   </div>
+
+                   <div class="metric-card profit">
+                       <div class="metric-header">
+                           <span class="metric-title">Utilidad Neta</span>
+                           <div class="metric-icon profit">
+                               <i class="fas fa-coins"></i>
+                           </div>
+                       </div>
+                       <div class="metric-value" id="profitValue">S/. 954,446</div>
+                       <div class="metric-change positive">
+                           <i class="fas fa-arrow-up"></i>
+                           <span>+18.7% vs mes anterior</span>
+                       </div>
+                   </div>
+
+                   <div class="metric-card growth">
+                       <div class="metric-header">
+                           <span class="metric-title">Crecimiento</span>
+                           <div class="metric-icon growth">
+                               <i class="fas fa-chart-area"></i>
+                           </div>
+                       </div>
+                       <div class="metric-value" id="growthValue">+24.8%</div>
+                       <div class="metric-change positive">
+                           <i class="fas fa-arrow-up"></i>
+                           <span>Meta anual: 20%</span>
+                       </div>
+                   </div>
+               </section>
+
+               <!-- CHARTS SECTION -->
+               <section class="charts-section">
+                   <div class="chart-card">
+                       <div class="chart-header">
+                           <h3 class="chart-title">Flujo de Caja - Últimos 6 Meses</h3>
+                           <div class="chart-filters">
+                               <button class="filter-btn active">6M</button>
+                               <button class="filter-btn">1A</button>
+                               <button class="filter-btn">2A</button>
+                           </div>
+                       </div>
+                       <div class="chart-container">
+                           <canvas id="cashFlowChart"></canvas>
+                       </div>
+                   </div>
+
+                   <div class="chart-card">
+                       <div class="chart-header">
+                           <h3 class="chart-title">Distribución de Gastos</h3>
+                       </div>
+                       <div class="chart-container">
+                           <canvas id="expensesChart"></canvas>
+                       </div>
+                   </div>
+               </section>
+           </div>
+       </main>
+   </div>
+    <!-- SCRIPTS INTEGRADOS -->
+    
+<!-- CARGAR ADVANCED AI ASSISTANT EXTERNO -->
+<script src="src/assets/js/advanced-ai-assistant.js"></script>
+    
+<!-- THEME MANAGER DINÁMICO -->
+<script src="src/assets/js/theme-manager.js"></script>
+    
+<!-- SCRIPTS INTEGRADOS PRINCIPALES -->
+<script>
+    
+// INICIALIZAR TODO AL CARGAR
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🤖 AI Assistant ya disponible');
+    
+    setTimeout(() => {
+        document.getElementById('loadingScreen').classList.add('hide');
+    }, 3000);
+    
+    initializeCompanySelector();
+    initializeDashboard();
+    setupEventListeners();
+    
+    console.log('✅ Sistema GRIZALUM completamente cargado');
+    
+    // MOSTRAR NOTIFICACIONES IA AL CARGAR
+    setTimeout(() => {
+        const notifications = document.getElementById('aiNotifications');
+        if (notifications) {
+            notifications.textContent = '1';
+            notifications.classList.add('show');
+        }
+    }, 5000);
+});
+       // DATOS DE EMPRESAS
+       function getCompaniesData() {
+           const saved = localStorage.getItem('grizalum_companies');
+           if (saved) {
+               return JSON.parse(saved);
+           }
+           
+           const defaultCompanies = {
+               'fundicion-laguna': {
+                   name: 'Fundición Laguna',
+                   icon: '🔥',
+                   status: 'Operativo',
+                   theme: { primary: '#dc2626', secondary: '#ea580c' },
+                   data: { cashFlow: 24500, revenue: 2847293, expenses: 1892847, profit: 954446 }
+               },
+               'fundicion-joel': {
+                   name: 'Fundición Joel',
+                   icon: '🔥',
+                   status: 'Operativo',
+                   theme: { primary: '#ea580c', secondary: '#f97316' },
+                   data: { cashFlow: 18300, revenue: 2100000, expenses: 1400000, profit: 700000 }
+               },
+               'avicola-san-juan': {
+                   name: 'Avícola San Juan',
+                   icon: '🐔',
+                   status: 'Operativo',
+                   theme: { primary: '#059669', secondary: '#10b981' },
+                   data: { cashFlow: 32100, revenue: 3200000, expenses: 2100000, profit: 1100000 }
+               },
+               'import-lm': {
+                   name: 'Import LM',
+                   icon: '📦',
+                   status: 'Operativo',
+                   theme: { primary: '#8b5cf6', secondary: '#a78bfa' },
+                   data: { cashFlow: 45200, revenue: 4500000, expenses: 2800000, profit: 1700000 }
+               },
+               'bodega-central': {
+                   name: 'Bodega Central',
+                   icon: '🏪',
+                   status: 'Regular',
+                   theme: { primary: '#3b82f6', secondary: '#60a5fa' },
+                   data: { cashFlow: 15800, revenue: 1800000, expenses: 1200000, profit: 600000 }
+               }
+           };
+           
+           saveCompaniesData(defaultCompanies);
+           return defaultCompanies;
+       }
+
+       function saveCompaniesData(companies) {
+           localStorage.setItem('grizalum_companies', JSON.stringify(companies));
+       }
+
+       // SELECTOR DE EMPRESAS
+       function toggleCompanyDropdown() {
+           const dropdown = document.getElementById('companyDropdown');
+           const arrow = document.getElementById('dropdownArrow');
+           
+           dropdown.classList.toggle('show');
+           arrow.classList.toggle('rotate');
+       }
+
+       function selectCompany(companyId) {
+           updateSelectedCompany(companyId);
+           updateCompanyData(companyId);
+           applyCompanyThemeIntegration(companyId);
+           toggleCompanyDropdown();
+           
+           const companies = getCompaniesData();
+           const company = companies[companyId];
+           if (company && company.theme) {
+               updateAITheme(company.theme);
+           }
+           
+           showNotification(`🏢 Cambiado a ${getCompanyName(companyId)}`, 'success');
+       }
+
+       function updateSelectedCompany(companyId) {
+           const companies = getCompaniesData();
+           const company = companies[companyId];
+           
+           if (company) {
+               document.getElementById('currentCompanyIcon').textContent = company.icon;
+               document.getElementById('currentCompanyName').textContent = company.name;
+               document.getElementById('currentCompanyStatus').textContent = `🟢 ${company.status}`;
+               
+               document.querySelectorAll('.company-item').forEach(item => {
+                   item.classList.remove('active');
+               });
+               const activeItem = document.querySelector(`[data-company="${companyId}"]`);
+               if (activeItem) {
+                   activeItem.classList.add('active');
+               }
+           }
+       }
+
+       function updateCompanyData(companyId) {
+           const companies = getCompaniesData();
+           const company = companies[companyId];
+           
+           if (company) {
+               updateKPIs(company.data);
+               updateSidebar(company.data);
+               updateCompanyTheme(company.theme);
+               console.log(`📊 Datos actualizados para: ${company.name}`);
+           }
+       }
+
+       function updateKPIs(data) {
+           const elements = {
+               'revenueValue': data.revenue,
+               'expensesValue': data.expenses,
+               'profitValue': data.profit
+           };
+           
+           Object.entries(elements).forEach(([id, value]) => {
+               const element = document.getElementById(id);
+               if (element) {
+                   animateValue(element, 0, value, 1500, 'S/. ');
+               }
+           });
+       }
+
+       function updateSidebar(data) {
+           const elements = {
+               'sidebarCashFlow': data.cashFlow,
+               'sidebarProfit': data.profit
+           };
+           
+           Object.entries(elements).forEach(([id, value]) => {
+               const element = document.getElementById(id);
+               if (element) {
+                   element.textContent = `S/. ${value.toLocaleString()}`;
+               }
+           });
+       }
+
+       function updateCompanyTheme(theme) {
+           if (!theme) return;
+           
+           console.log('🎨 Actualizando tema:', theme);
+           
+           document.documentElement.style.setProperty('--company-primary', theme.primary);
+           document.documentElement.style.setProperty('--company-secondary', theme.secondary);
+           
+           // Actualizar colores del AI
+           const aiButton = document.getElementById('aiAssistantButton');
+           if (aiButton) {
+               aiButton.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
+           }
+           
+           console.log('✅ Tema actualizado correctamente');
+       }
+
+       function updateAITheme(theme) {
+           const aiButton = document.getElementById('aiAssistantButton');
+           if (aiButton && theme) {
+               aiButton.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
+           }
+       }
+
+       function initializeCompanySelector() {
+           const companies = getCompaniesData();
+           const companiesList = document.getElementById('companiesList');
+           companiesList.innerHTML = '';
+           
+           Object.entries(companies).forEach(([id, company]) => {
+               const item = document.createElement('div');
+               item.className = 'company-item';
+               item.dataset.company = id;
+               item.onclick = () => selectCompany(id);
+               
+               item.innerHTML = `
+                   <div class="company-item-icon">${company.icon}</div>
+                   <div class="company-item-info">
+                       <div class="company-item-name">${company.name}</div>
+                       <div class="company-item-stats">Flujo: S/. ${company.data.cashFlow.toLocaleString()}</div>
+                   </div>
+                   <div class="company-item-status">${company.status === 'Operativo' ? '🟢' : company.status === 'Regular' ? '🟡' : '🔴'}</div>
+               `;
+               
+               companiesList.appendChild(item);
+           });
+           
+           const firstCompany = Object.keys(companies)[0];
+           if (firstCompany) {
+               selectCompany(firstCompany);
+           }
+       }
+
+       function getCompanyName(companyId) {
+           const companies = getCompaniesData();
+           return companies[companyId]?.name || 'Empresa';
+       }
+
+       // DASHBOARD
+       function initializeDashboard() {
+           initializeCashFlowChart();
+           initializeExpensesChart();
+       }
+
+       function initializeCashFlowChart() {
+           const ctx = document.getElementById('cashFlowChart');
+           if (!ctx) return;
+           
+           new Chart(ctx.getContext('2d'), {
+               type: 'line',
+               data: {
+                   labels: ['Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre', 'Enero'],
+                   datasets: [{
+                       label: 'Ingresos',
+                       data: [2200000, 2350000, 2180000, 2420000, 2650000, 2847293],
+                       borderColor: '#667eea',
+                       backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                       tension: 0.4,
+                       fill: true,
+                       pointBackgroundColor: '#667eea',
+                       pointBorderColor: '#ffffff',
+                       pointBorderWidth: 2,
+                       pointRadius: 6
+                   }, {
+                       label: 'Gastos',
+                       data: [1800000, 1850000, 1780000, 1920000, 1850000, 1892847],
+                       borderColor: '#ed8936',
+                       backgroundColor: 'rgba(237, 137, 54, 0.1)',
+                       tension: 0.4,
+                       fill: true,
+                       pointBackgroundColor: '#ed8936',
+                       pointBorderColor: '#ffffff',
+                       pointBorderWidth: 2,
+                       pointRadius: 6
+                   }]
+               },
+               options: {
+                   responsive: true,
+                   maintainAspectRatio: false,
+                   plugins: {
+                       legend: { 
+                           position: 'bottom',
+                           labels: {
+                               usePointStyle: true,
+                               padding: 20
+                           }
+                       }
+                   },
+                   scales: {
+                       y: {
+                           beginAtZero: true,
+                           grid: {
+                               color: 'rgba(0, 0, 0, 0.05)'
+                           },
+                           ticks: {
+                               callback: function(value) {
+                                   return 'S/. ' + (value / 1000000).toFixed(1) + 'M';
+                               }
+                           }
+                       },
+                       x: {
+                           grid: {
+                               color: 'rgba(0, 0, 0, 0.05)'
+                           }
+                       }
+                   }
+               }
+           });
+       }
+
+       function initializeExpensesChart() {
+           const ctx = document.getElementById('expensesChart');
+           if (!ctx) return;
+           
+           new Chart(ctx.getContext('2d'), {
+               type: 'doughnut',
+               data: {
+                   labels: ['Nómina', 'Marketing', 'Operaciones', 'Tecnología', 'Otros'],
+                   datasets: [{
+                       data: [45, 20, 15, 12, 8],
+                       backgroundColor: [
+                           '#667eea',
+                           '#ed8936', 
+                           '#48bb78',
+                           '#f093fb',
+                           '#a0aec0'
+                       ],
+                       borderWidth: 0,
+                       hoverBorderWidth: 2,
+                       hoverBorderColor: '#ffffff'
+                   }]
+               },
+               options: {
+                   responsive: true,
+                   maintainAspectRatio: false,
+                   plugins: {
+                       legend: { 
+                           position: 'bottom',
+                           labels: {
+                               usePointStyle: true,
+                               padding: 15
+                           }
+                       }
+                   }
+               }
+           });
+       }
+
+       function animateValue(element, start, end, duration, prefix = '') {
+           let current = start;
+           const range = end - start;
+           const increment = end > start ? 1 : -1;
+           const stepTime = Math.abs(Math.floor(duration / range));
+           const timer = setInterval(() => {
+               current += increment * Math.ceil(range / 100);
+               if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                   current = end;
+                   clearInterval(timer);
+               }
+               element.textContent = prefix + Math.floor(current).toLocaleString();
+           }, stepTime);
+       }
+
+       // FUNCIONES AUXILIARES
+       function toggleSidebar() {
+           document.getElementById('sidebar').classList.toggle('open');
+       }
+
+       function changePeriod(period, button) {
+           document.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('active'));
+           button.classList.add('active');
+           console.log(`📅 Período cambiado a: ${period}`);
+       }
+
+       function showNotifications() {
+           console.log('🔔 Mostrar notificaciones');
+       }
+
+       function showSection(section) {
+           console.log(`📱 Mostrar sección: ${section}`);
+       }
+
+      function toggleAIAssistant() {
+    if (window.advancedAI) {
+        window.advancedAI.toggle();
+    } else {
+        console.log('🤖 AI Assistant cargando...');
+    }
+}
+       function showNotification(message, type = 'info') {
+           console.log(`${type === 'success' ? '✅' : '📢'} ${message}`);
+       }
+
+       function setupEventListeners() {
+           // Cerrar dropdown al hacer clic fuera
+           document.addEventListener('click', function(event) {
+               const selector = document.getElementById('companySelector');
+               const dropdown = document.getElementById('companyDropdown');
+               
+               if (selector && !selector.contains(event.target)) {
+                   dropdown.classList.remove('show');
+                   document.getElementById('dropdownArrow').classList.remove('rotate');
+               }
+           });
+           
+           // Atajos de teclado
+           document.addEventListener('keydown', function(event) {
+               if (event.ctrlKey && event.key === 'a') {
+                   event.preventDefault();
+                   toggleAIAssistant();
+               }
+           });
+
+           // Filtros de gráficos
+           document.querySelectorAll('.filter-btn').forEach(btn => {
+               btn.addEventListener('click', function() {
+                   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                   this.classList.add('active');
+               });
+           });
+       }
+
+       // PLACEHOLDER FUNCTIONS
+       function showAddCompanyWizard() {
+           console.log('🚀 Abrir wizard para agregar empresa');
+           showNotification('🚀 Wizard para agregar empresa próximamente', 'info');
+       }
+
+       function openCompanyManagement() {
+           console.log('⚙️ Abrir gestión de empresas');
+           showNotification('⚙️ Gestión de empresas próximamente', 'info');
+       }
+
+       console.log('🎯 GRIZALUM Sistema CORREGIDO Y COMPLETO');
+       console.log('🎨 Colores y gradientes: ✅');
+       console.log('🤖 IA Assistant visible: ✅');
+       console.log('📊 Dashboard profesional: ✅');
+       console.log('🏢 Multi-empresa: ✅');
+       console.log('📱 Responsive: ✅');
+   </script>
+</body>
+</html>
