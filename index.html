@@ -1287,7 +1287,10 @@ body {
     
 <!-- CARGAR ADVANCED AI ASSISTANT EXTERNO -->
 <script src="src/assets/js/advanced-ai-assistant.js"></script>
-
+    
+<!-- THEME MANAGER DINÁMICO -->
+<script src="src/assets/js/theme-manager.js"></script>
+    
 <!-- SCRIPTS INTEGRADOS PRINCIPALES -->
 <script>
     
@@ -1379,6 +1382,7 @@ document.addEventListener('DOMContentLoaded', function() {
        function selectCompany(companyId) {
            updateSelectedCompany(companyId);
            updateCompanyData(companyId);
+           applyCompanyThemeIntegration(companyId);
            toggleCompanyDropdown();
            
            const companies = getCompaniesData();
