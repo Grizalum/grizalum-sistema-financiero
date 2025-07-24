@@ -1395,9 +1395,9 @@ window.advancedAI = {
     }
 };
 
-// RESTO DEL CÓDIGO JAVASCRIPT ORIGINAL
+// INICIALIZAR TODO AL CARGAR
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Inicializando GRIZALUM Sistema Completo...');
+    console.log('🤖 AI Assistant ya disponible');
     
     setTimeout(() => {
         document.getElementById('loadingScreen').classList.add('hide');
@@ -1757,18 +1757,9 @@ document.addEventListener('DOMContentLoaded', function() {
        }
 
        function toggleAIAssistant() {
-           if (window.advancedAI && typeof window.advancedAI.toggle === 'function') {
-               window.advancedAI.toggle();
-           } else {
-               console.log('🤖 AI Assistant cargando...');
-               setTimeout(() => {
-                   if (window.advancedAI) {
-                       window.advancedAI.toggle();
-                   }
-               }, 1000);
-           }
-       }
-
+    console.log('🤖 Botón AI clickeado');
+    window.advancedAI.toggle();
+}
        function showNotification(message, type = 'info') {
            console.log(`${type === 'success' ? '✅' : '📢'} ${message}`);
        }
