@@ -428,7 +428,7 @@ class GrizalumThemeManager {
 
             .ai-header-button:hover {
                 transform: translateY(-3px) !important;
-                box-shadow: 0 15px 35px var(--theme-primary)40 !important;
+               box-shadow: 0 15px 35px rgba(212, 175, 55, 0.4) !important;
             }
 
             /* === TARJETAS MÉTRICAS PREMIUM === */
