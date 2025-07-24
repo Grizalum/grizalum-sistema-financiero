@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GRIZALUM - Sistema Financiero Empresarial Premium</title>
     
-   <!-- Meta Tags SEO -->
+<!-- Meta Tags SEO -->
 <meta name="description" content="Sistema financiero empresarial premium con IA integrada para empresas peruanas. Dashboard ejecutivo, flujo de caja, análisis predictivo.">
 <meta name="keywords" content="sistema financiero, empresas peru, contabilidad, flujo de caja, dashboard, IA">
 <meta name="author" content="GRIZALUM">
@@ -22,56 +22,25 @@
 <!-- Chart.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
 
-<!-- PWA MANIFEST -->
-<link rel="manifest" href="manifest.json">
-
-<!-- META TAGS PARA PWA -->
-<meta name="application-name" content="GRIZALUM">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="GRIZALUM">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="msapplication-TileColor" content="#d4af37">
-<meta name="theme-color" content="#d4af37">
-<meta name="msapplication-tap-highlight" content="no">
-
-<!-- ICONOS ADICIONALES -->
-<link rel="icon" type="image/png" sizes="32x32" href="src/assets/images/icon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="src/assets/images/icon-16x16.png">
-<link rel="apple-touch-icon" href="src/assets/images/icon-192x192.png">
-<link rel="apple-touch-icon" sizes="152x152" href="src/assets/images/icon-152x152.png">
-<link rel="apple-touch-icon" sizes="180x180" href="src/assets/images/icon-180x180.png">
-
-<!-- Microsoft tiles -->
-<meta name="msapplication-TileImage" content="src/assets/images/icon-144x144.png">
-<meta name="msapplication-config" content="browserconfig.xml">
-
-<!-- ESTILOS PRINCIPALES -->
-<link rel="stylesheet" href="src/assets/css/variables.css">
-<link rel="stylesheet" href="src/assets/css/styles.css">
-<link rel="stylesheet" href="src/assets/css/responsive.css">
-
-<!-- ESTILOS ADICIONALES INTEGRADOS -->
+<!-- ESTILOS PROFESIONALES -->
 <style>
-/* ================================================
-   ESTILOS DASHBOARD GRIZALUM
-   ================================================ */
-
 :root {
-    --primary-color: #d4af37;
-    --primary-dark: #b8941f;
-    --secondary-color: #2c3e50;
-    --accent-color: #3498db;
-    --success-color: #27ae60;
-    --warning-color: #f39c12;
-    --danger-color: #e74c3c;
-    --dark-bg: #1a1d23;
-    --card-bg: #ffffff;
-    --text-primary: #2c3e50;
-    --text-secondary: #7f8c8d;
-    --border-color: #ecf0f1;
-    --shadow: 0 2px 10px rgba(0,0,0,0.1);
-    --border-radius: 12px;
+    --primary: #667eea;
+    --primary-dark: #5a67d8;
+    --secondary: #764ba2;
+    --accent: #f093fb;
+    --success: #48bb78;
+    --warning: #ed8936;
+    --danger: #f56565;
+    --dark: #1a202c;
+    --bg-light: #f7fafc;
+    --text-primary: #2d3748;
+    --text-secondary: #718096;
+    --border: #e2e8f0;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    --gradient-accent: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
 }
 
 * {
@@ -82,30 +51,29 @@
 
 body {
     font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--bg-light);
     color: var(--text-primary);
     line-height: 1.6;
-    min-height: 100vh;
+    overflow-x: hidden;
 }
 
-/* HEADER */
+/* HEADER PROFESIONAL */
 .header {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border-color);
-    padding: 1rem 2rem;
+    background: white;
     box-shadow: var(--shadow);
     position: sticky;
     top: 0;
     z-index: 100;
+    border-bottom: 1px solid var(--border);
 }
 
 .header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1400px;
-    margin: 0 auto;
 }
 
 .logo {
@@ -114,350 +82,417 @@ body {
     gap: 0.75rem;
     font-weight: 800;
     font-size: 1.5rem;
-    color: var(--primary-color);
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .logo i {
     font-size: 2rem;
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    background: var(--gradient-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
-.header-actions {
+.header-nav {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.nav-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: var(--primary);
+}
+
+.user-menu {
     display: flex;
     align-items: center;
     gap: 1rem;
 }
 
-.btn {
-    padding: 0.75rem 1.5rem;
+.notification-btn {
+    position: relative;
+    background: none;
     border: none;
-    border-radius: 8px;
-    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 1.2rem;
     cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 8px;
     transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    text-decoration: none;
-    font-size: 0.9rem;
 }
 
-.btn-primary {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+.notification-btn:hover {
+    background: var(--bg-light);
+    color: var(--primary);
+}
+
+.notification-badge {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    background: var(--danger);
     color: white;
+    border-radius: 50%;
+    width: 8px;
+    height: 8px;
 }
 
-.btn-outline {
-    background: transparent;
-    border: 2px solid var(--primary-color);
-    color: var(--primary-color);
-}
-
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* MAIN CONTENT */
-.main-content {
+/* DASHBOARD CONTAINER */
+.dashboard {
     max-width: 1400px;
     margin: 0 auto;
     padding: 2rem;
-    min-height: calc(100vh - 100px);
-}
-
-/* HERO SECTION */
-.hero-section {
-    text-align: center;
-    padding: 4rem 0;
-    color: white;
-}
-
-.hero-title {
-    font-size: 3.5rem;
-    font-weight: 900;
-    margin-bottom: 1rem;
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1.2;
-}
-
-.hero-subtitle {
-    font-size: 1.25rem;
-    margin-bottom: 2rem;
-    opacity: 0.9;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.hero-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-bottom: 3rem;
-}
-
-.btn-hero {
-    padding: 1rem 2rem;
-    font-size: 1.1rem;
-    border-radius: 12px;
-}
-
-/* FEATURES GRID */
-.features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
-    margin-top: 4rem;
 }
 
-.feature-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-radius: var(--border-radius);
-    padding: 2rem;
-    box-shadow: var(--shadow);
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.feature-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-}
-
-.feature-icon {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1.5rem;
-    font-size: 1.5rem;
+/* WELCOME SECTION */
+.welcome-section {
+    background: var(--gradient-primary);
     color: white;
+    padding: 2rem;
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
 }
 
-.feature-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    color: var(--text-primary);
+.welcome-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    transform: translate(50%, -50%);
 }
 
-.feature-description {
-    color: var(--text-secondary);
-    line-height: 1.6;
+.welcome-content {
+    position: relative;
+    z-index: 2;
 }
 
-/* STATS SECTION */
-.stats-section {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-radius: var(--border-radius);
-    padding: 3rem 2rem;
-    margin: 4rem 0;
-    box-shadow: var(--shadow);
+.welcome-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin-bottom: 0.5rem;
 }
 
-.stats-title {
-    text-align: center;
-    font-size: 2rem;
-    font-weight: 800;
-    margin-bottom: 3rem;
-    color: var(--text-primary);
+.welcome-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 1.5rem;
 }
 
-.stats-grid {
+.quick-stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2rem;
+    gap: 1rem;
+    margin-top: 1.5rem;
 }
 
-.stat-item {
-    text-align: center;
-    padding: 1.5rem;
+.quick-stat {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    padding: 1rem;
     border-radius: 12px;
-    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-    border: 1px solid var(--border-color);
+    text-align: center;
 }
 
-.stat-number {
-    font-size: 2.5rem;
-    font-weight: 900;
-    color: var(--primary-color);
-    margin-bottom: 0.5rem;
+.quick-stat-number {
+    font-size: 1.8rem;
+    font-weight: 800;
     display: block;
 }
 
-.stat-label {
+.quick-stat-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+/* METRICS GRID */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.metric-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    border: 1px solid var(--border);
+}
+
+.metric-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.metric-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.metric-title {
+    font-size: 0.9rem;
     color: var(--text-secondary);
     font-weight: 600;
-    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-/* DASHBOARD PREVIEW */
-.dashboard-preview {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-radius: var(--border-radius);
-    padding: 3rem 2rem;
-    margin: 4rem 0;
-    box-shadow: var(--shadow);
-    text-align: center;
-}
-
-.preview-title {
-    font-size: 2rem;
-    font-weight: 800;
-    margin-bottom: 1rem;
-    color: var(--text-primary);
-}
-
-.preview-subtitle {
-    color: var(--text-secondary);
-    margin-bottom: 2rem;
-    font-size: 1.1rem;
-}
-
-.preview-image {
-    width: 100%;
-    max-width: 800px;
-    height: 400px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 12px;
+.metric-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 2rem auto;
+    font-size: 1.2rem;
     color: white;
-    font-size: 1.5rem;
+}
+
+.metric-icon.revenue { background: var(--gradient-primary); }
+.metric-icon.expenses { background: linear-gradient(135deg, var(--warning), #f6ad55); }
+.metric-icon.profit { background: linear-gradient(135deg, var(--success), #68d391); }
+.metric-icon.growth { background: var(--gradient-accent); }
+
+.metric-value {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.metric-change {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
     font-weight: 600;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-/* CTA SECTION */
-.cta-section {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-radius: var(--border-radius);
-    padding: 4rem 2rem;
-    text-align: center;
+.metric-change.positive { color: var(--success); }
+.metric-change.negative { color: var(--danger); }
+
+/* CHARTS SECTION */
+.charts-section {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.chart-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 16px;
     box-shadow: var(--shadow);
-    margin: 4rem 0;
+    border: 1px solid var(--border);
 }
 
-.cta-title {
-    font-size: 2.5rem;
-    font-weight: 900;
-    margin-bottom: 1rem;
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.chart-title {
+    font-size: 1.2rem;
+    font-weight: 700;
     color: var(--text-primary);
 }
 
-.cta-subtitle {
-    font-size: 1.2rem;
-    color: var(--text-secondary);
-    margin-bottom: 2rem;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
+.chart-filters {
+    display: flex;
+    gap: 0.5rem;
 }
 
-/* FOOTER */
-.footer {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-top: 1px solid var(--border-color);
-    padding: 3rem 2rem 2rem;
-    margin-top: 4rem;
+.filter-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border);
+    background: white;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-.footer-content {
-    max-width: 1400px;
-    margin: 0 auto;
+.filter-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.chart-container {
+    position: relative;
+    height: 350px;
+    width: 100%;
+}
+
+/* RECENT ACTIVITY */
+.activity-section {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: 1fr 1fr;
     gap: 2rem;
 }
 
-.footer-section h3 {
-    color: var(--text-primary);
-    margin-bottom: 1rem;
+.activity-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.activity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.activity-title {
+    font-size: 1.1rem;
     font-weight: 700;
+    color: var(--text-primary);
 }
 
-.footer-section p,
-.footer-section a {
-    color: var(--text-secondary);
+.view-all-btn {
+    color: var(--primary);
     text-decoration: none;
-    margin-bottom: 0.5rem;
-    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
 }
 
-.footer-section a:hover {
-    color: var(--primary-color);
+.activity-list {
+    list-style: none;
 }
 
-.footer-bottom {
-    border-top: 1px solid var(--border-color);
-    margin-top: 2rem;
-    padding-top: 2rem;
-    text-align: center;
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: white;
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-description {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.activity-time {
+    font-size: 0.8rem;
     color: var(--text-secondary);
 }
 
-/* RESPONSIVE */
+.activity-amount {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* FLOATING ACTION BUTTON */
+.fab {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    background: var(--gradient-primary);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: var(--shadow-lg);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.2);
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 1200px) {
+    .charts-section {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 768px) {
-    .header {
+    .dashboard {
         padding: 1rem;
     }
     
-    .main-content {
+    .header-content {
         padding: 1rem;
     }
     
-    .hero-title {
-        font-size: 2.5rem;
+    .header-nav {
+        display: none;
     }
     
-    .hero-actions {
-        flex-direction: column;
-        align-items: center;
+    .welcome-title {
+        font-size: 2rem;
     }
     
-    .btn-hero {
-        width: 100%;
-        max-width: 300px;
-    }
-    
-    .features-grid {
+    .metrics-grid {
         grid-template-columns: 1fr;
     }
     
-    .stats-grid {
+    .activity-section {
+        grid-template-columns: 1fr;
+    }
+    
+    .quick-stats {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
-@media (max-width: 480px) {
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .hero-title {
-        font-size: 2rem;
-    }
-}
-
-/* ANIMATIONS */
+/* LOADING ANIMATIONS */
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -469,263 +504,542 @@ body {
     }
 }
 
-.feature-card,
-.stat-item {
+.metric-card,
+.chart-card,
+.activity-card {
     animation: fadeInUp 0.6s ease forwards;
 }
 
-.feature-card:nth-child(2) { animation-delay: 0.1s; }
-.feature-card:nth-child(3) { animation-delay: 0.2s; }
-.feature-card:nth-child(4) { animation-delay: 0.3s; }
+.metric-card:nth-child(1) { animation-delay: 0.1s; }
+.metric-card:nth-child(2) { animation-delay: 0.2s; }
+.metric-card:nth-child(3) { animation-delay: 0.3s; }
+.metric-card:nth-child(4) { animation-delay: 0.4s; }
+
+/* PULSE ANIMATIONS */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.metric-value {
+    animation: pulse 2s infinite;
+}
 </style>
-  </head>
-<body>
-    <!-- HEADER -->
-    <header class="header">
-        <div class="header-content">
-            <div class="logo">
-                <i class="fas fa-chart-line"></i>
-                <span>GRIZALUM</span>
-            </div>
-            <div class="header-actions">
-                <a href="#features" class="btn btn-outline">
-                    <i class="fas fa-info-circle"></i>
-                    Características
-                </a>
-                <a href="#dashboard" class="btn btn-primary">
-                    <i class="fas fa-tachometer-alt"></i>
-                    Ver Dashboard
-                </a>
-            </div>
-        </div>
-    </header>
-
-    <!-- MAIN CONTENT -->
-    <main class="main-content">
-        <!-- HERO SECTION -->
-        <section class="hero-section">
-            <h1 class="hero-title">Sistema Financiero Empresarial</h1>
-            <p class="hero-subtitle">
-                Gestiona las finanzas de tu empresa con inteligencia artificial integrada. 
-                Dashboard ejecutivo, análisis predictivo y reportes automatizados.
-            </p>
-            <div class="hero-actions">
-                <a href="#demo" class="btn btn-primary btn-hero">
-                    <i class="fas fa-play"></i>
-                    Ver Demo
-                </a>
-                <a href="#features" class="btn btn-outline btn-hero">
-                    <i class="fas fa-rocket"></i>
-                    Comenzar Ahora
-                </a>
-            </div>
-        </section>
-
-        <!-- FEATURES SECTION -->
-        <section id="features" class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-chart-pie"></i>
-                </div>
-                <h3 class="feature-title">Dashboard Inteligente</h3>
-                <p class="feature-description">
-                    Visualiza todas tus métricas financieras en tiempo real con gráficos interactivos 
-                    y análisis automático de tendencias.
-                </p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-robot"></i>
-                </div>
-                <h3 class="feature-title">IA Empresarial</h3>
-                <p class="feature-description">
-                    Asistente de IA especializado en finanzas peruanas que te ayuda con análisis, 
-                    estrategias y optimización de costos.
-                </p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-mobile-alt"></i>
-                </div>
-                <h3 class="feature-title">Acceso Móvil</h3>
-                <p class="feature-description">
-                    Aplicación web progresiva que funciona perfectamente en todos tus dispositivos, 
-                    incluso sin conexión a internet.
-                </p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <h3 class="feature-title">Seguridad Avanzada</h3>
-                <p class="feature-description">
-                    Protección de datos bancaria con encriptación de extremo a extremo y 
-                    respaldos automáticos en la nube.
-                </p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-file-invoice-dollar"></i>
-                </div>
-                <h3 class="feature-title">Reportes Automáticos</h3>
-                <p class="feature-description">
-                    Genera reportes financieros profesionales automáticamente con cumplimiento 
-                    de las normas contables peruanas.
-                </p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <h3 class="feature-title">Gestión de Equipos</h3>
-                <p class="feature-description">
-                    Administra múltiples empresas y usuarios con diferentes niveles de acceso 
-                    y permisos personalizados.
-                </p>
-            </div>
-        </section>
-
-        <!-- STATS SECTION -->
-        <section class="stats-section">
-            <h2 class="stats-title">Resultados que Hablan por Sí Mismos</h2>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <span class="stat-number">500+</span>
-                    <span class="stat-label">Empresas Activas</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">99.9%</span>
-                    <span class="stat-label">Tiempo de Actividad</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">35%</span>
-                    <span class="stat-label">Ahorro Promedio</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">24/7</span>
-                    <span class="stat-label">Soporte Premium</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- DASHBOARD PREVIEW -->
-        <section id="dashboard" class="dashboard-preview">
-            <h2 class="preview-title">Dashboard Ejecutivo en Acción</h2>
-            <p class="preview-subtitle">
-                Experimenta la potencia de nuestro sistema con datos reales de empresas peruanas
-            </p>
-            <div class="preview-image">
-                <div style="text-align: center;">
-                    <i class="fas fa-chart-line" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
-                    <p>Dashboard Interactivo</p>
-                    <p style="font-size: 1rem; opacity: 0.8;">Haz clic en el botón AI para ver la funcionalidad</p>
-                </div>
-            </div>
-            <a href="#demo" class="btn btn-primary btn-hero">
-                <i class="fas fa-external-link-alt"></i>
-                Abrir Dashboard Completo
-            </a>
-        </section>
-
-        <!-- CTA SECTION -->
-        <section class="cta-section">
-            <h2 class="cta-title">¿Listo para Transformar tu Empresa?</h2>
-            <p class="cta-subtitle">
-                Únete a cientos de empresas peruanas que ya están optimizando sus finanzas con GRIZALUM
-            </p>
-            <div class="hero-actions">
-                <a href="#registro" class="btn btn-primary btn-hero">
-                    <i class="fas fa-rocket"></i>
-                    Comenzar Gratis
-                </a>
-                <a href="#contacto" class="btn btn-outline btn-hero">
-                    <i class="fas fa-phone"></i>
-                    Hablar con Ventas
-                </a>
-            </div>
-        </section>
-    </main>
-
-    <!-- FOOTER -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>GRIZALUM</h3>
-                <p>Sistema financiero empresarial líder en Perú. Transformamos la gestión financiera con tecnología de vanguardia.</p>
-            </div>
-            <div class="footer-section">
-                <h3>Producto</h3>
-                <a href="#features">Características</a>
-                <a href="#pricing">Precios</a>
-                <a href="#integrations">Integraciones</a>
-                <a href="#api">API</a>
-            </div>
-            <div class="footer-section">
-                <h3>Empresa</h3>
-                <a href="#about">Nosotros</a>
-                <a href="#careers">Careers</a>
-                <a href="#blog">Blog</a>
-                <a href="#press">Prensa</a>
-            </div>
-            <div class="footer-section">
-                <h3>Soporte</h3>
-                <a href="#help">Centro de Ayuda</a>
-                <a href="#contact">Contacto</a>
-                <a href="#status">Estado del Sistema</a>
-                <a href="#security">Seguridad</a>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 GRIZALUM. Todos los derechos reservados. Hecho con ❤️ en Perú.</p>
-        </div>
-    </footer>
-
-    <!-- SCRIPTS -->
-    <script src="src/assets/js/utils.js"></script>
-    <script src="src/assets/js/company-manager.js"></script>
-    <script src="src/assets/js/advanced-ai-assistant.js"></script>
-    <script src="src/assets/js/main.js"></script>
-
-    <script>
-        console.log('🚀 GRIZALUM Sistema Financiero Empresarial cargado');
+<nav class="header-nav">
+            <a href="#dashboard" class="nav-link">Dashboard</a>
+            <a href="#analytics" class="nav-link">Análisis</a>
+            <a href="#reports" class="nav-link">Reportes</a>
+            <a href="#settings" class="nav-link">Configuración</a>
+        </nav>
         
-        // Smooth scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+        <div class="user-menu">
+            <button class="notification-btn">
+                <i class="fas fa-bell"></i>
+                <div class="notification-badge"></div>
+            </button>
+            <button class="notification-btn">
+                <i class="fas fa-user-circle"></i>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- DASHBOARD -->
+<main class="dashboard">
+    <!-- WELCOME SECTION -->
+    <section class="welcome-section">
+        <div class="welcome-content">
+            <h1 class="welcome-title">¡Bienvenido a GRIZALUM!</h1>
+            <p class="welcome-subtitle">Dashboard ejecutivo - Sistema financiero empresarial premium</p>
+            
+            <div class="quick-stats">
+                <div class="quick-stat">
+                    <span class="quick-stat-number" id="totalRevenue">S/. 145,230</span>
+                    <span class="quick-stat-label">Ingresos del Mes</span>
+                </div>
+                <div class="quick-stat">
+                    <span class="quick-stat-number" id="activeClients">324</span>
+                    <span class="quick-stat-label">Clientes Activos</span>
+                </div>
+                <div class="quick-stat">
+                    <span class="quick-stat-number" id="profitMargin">23.5%</span>
+                    <span class="quick-stat-label">Margen de Ganancia</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- METRICS GRID -->
+    <section class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-header">
+                <span class="metric-title">Ingresos Totales</span>
+                <div class="metric-icon revenue">
+                    <i class="fas fa-arrow-trend-up"></i>
+                </div>
+            </div>
+            <div class="metric-value" id="revenueValue">S/. 2,847,293</div>
+            <div class="metric-change positive">
+                <i class="fas fa-arrow-up"></i>
+                <span>+12.5% vs mes anterior</span>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <span class="metric-title">Gastos Operativos</span>
+                <div class="metric-icon expenses">
+                    <i class="fas fa-receipt"></i>
+                </div>
+            </div>
+            <div class="metric-value" id="expensesValue">S/. 1,892,847</div>
+            <div class="metric-change negative">
+                <i class="fas fa-arrow-down"></i>
+                <span>+3.2% vs mes anterior</span>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <span class="metric-title">Utilidad Neta</span>
+                <div class="metric-icon profit">
+                    <i class="fas fa-coins"></i>
+                </div>
+            </div>
+            <div class="metric-value" id="profitValue">S/. 954,446</div>
+            <div class="metric-change positive">
+                <i class="fas fa-arrow-up"></i>
+                <span>+18.7% vs mes anterior</span>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <span class="metric-title">Crecimiento</span>
+                <div class="metric-icon growth">
+                    <i class="fas fa-chart-area"></i>
+                </div>
+            </div>
+            <div class="metric-value" id="growthValue">+24.8%</div>
+            <div class="metric-change positive">
+                <i class="fas fa-arrow-up"></i>
+                <span>Meta anual: 20%</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- CHARTS SECTION -->
+    <section class="charts-section">
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">Flujo de Caja - Últimos 6 Meses</h3>
+                <div class="chart-filters">
+                    <button class="filter-btn active">6M</button>
+                    <button class="filter-btn">1A</button>
+                    <button class="filter-btn">2A</button>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="cashFlowChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">Distribución de Gastos</h3>
+            </div>
+            <div class="chart-container">
+                <canvas id="expensesChart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- ACTIVITY SECTION -->
+    <section class="activity-section">
+        <div class="activity-card">
+            <div class="activity-header">
+                <h3 class="activity-title">Transacciones Recientes</h3>
+                <a href="#" class="view-all-btn">Ver todas</a>
+            </div>
+            <ul class="activity-list">
+                <li class="activity-item">
+                    <div class="activity-icon revenue">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-description">Pago recibido - Cliente ABC SAC</div>
+                        <div class="activity-time">Hace 2 horas</div>
+                    </div>
+                    <div class="activity-amount">+S/. 15,480</div>
+                </li>
+                <li class="activity-item">
+                    <div class="activity-icon expenses">
+                        <i class="fas fa-minus"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-description">Pago de nómina - Enero 2025</div>
+                        <div class="activity-time">Hace 4 horas</div>
+                    </div>
+                    <div class="activity-amount">-S/. 28,750</div>
+                </li>
+                <li class="activity-item">
+                    <div class="activity-icon profit">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-description">Inversión en marketing digital</div>
+                        <div class="activity-time">Hace 1 día</div>
+                    </div>
+                    <div class="activity-amount">-S/. 5,200</div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="activity-card">
+            <div class="activity-header">
+                <h3 class="activity-title">Alertas y Notificaciones</h3>
+                <a href="#" class="view-all-btn">Ver todas</a>
+            </div>
+            <ul class="activity-list">
+                <li class="activity-item">
+                    <div class="activity-icon warning" style="background: linear-gradient(135deg, #ed8936, #f6ad55);">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-description">Vencimiento de factura pendiente</div>
+                        <div class="activity-time">Vence en 3 días</div>
+                    </div>
+                </li>
+                <li class="activity-item">
+                    <div class="activity-icon" style="background: linear-gradient(135deg, #48bb78, #68d391);">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-description">Meta mensual alcanzada</div>
+                        <div class="activity-time">Hace 2 días</div>
+                    </div>
+                </li>
+                <li class="activity-item">
+                    <div class="activity-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-description">IA detectó oportunidad de ahorro</div>
+                        <div class="activity-time">Hace 3 días</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </section>
+</main>
+
+<!-- FLOATING ACTION BUTTON -->
+<button class="fab" onclick="toggleAI()">
+    <i class="fas fa-robot"></i>
+</button>
+
+<!-- SCRIPTS -->
+<script src="src/assets/js/utils.js"></script>
+<script src="src/assets/js/company-manager.js"></script>
+<script src="src/assets/js/advanced-ai-assistant.js"></script>
+<script src="src/assets/js/main.js"></script>
+
+<script>
+    // Initialize Charts
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🚀 Inicializando GRIZALUM Dashboard Profesional...');
+        
+        initializeCashFlowChart();
+        initializeExpensesChart();
+        animateMetrics();
+        startRealTimeUpdates();
+        
+        console.log('✅ Dashboard completamente cargado');
+    });
+
+    // Cash Flow Chart
+    function initializeCashFlowChart() {
+        const ctx = document.getElementById('cashFlowChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre', 'Enero'],
+                datasets: [{
+                    label: 'Ingresos',
+                    data: [2200000, 2350000, 2180000, 2420000, 2650000, 2847293],
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: 'Gastos',
+                    data: [1800000, 1850000, 1780000, 1920000, 1850000, 1892847],
+                    borderColor: '#ed8936',
+                    backgroundColor: 'rgba(237, 137, 54, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return 'S/. ' + (value / 1000000).toFixed(1) + 'M';
+                            }
+                        }
+                    }
                 }
-            });
+            }
         });
+    }
 
-        // Animaciones
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
+    // Expenses Pie Chart
+    function initializeExpensesChart() {
+        const ctx = document.getElementById('expensesChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Nómina', 'Marketing', 'Operaciones', 'Tecnología', 'Otros'],
+                datasets: [{
+                    data: [45, 20, 15, 12, 8],
+                    backgroundColor: [
+                        '#667eea',
+                        '#ed8936',
+                        '#48bb78',
+                        '#f093fb',
+                        '#a0aec0'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
                 }
-            });
-        }, { threshold: 0.1 });
-
-        document.querySelectorAll('.feature-card, .stat-item').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
-            el.style.transition = 'all 0.6s ease';
-            observer.observe(el);
+            }
         });
+    }
 
-        console.log('✅ GRIZALUM Dashboard inicializado correctamente');
-    </script>
+    // Animate Metrics
+    function animateMetrics() {
+        const counters = [
+            { id: 'totalRevenue', target: 145230, prefix: 'S/. ', format: true },
+            { id: 'activeClients', target: 324, prefix: '', format: false },
+            { id: 'profitMargin', target: 23.5, prefix: '', suffix: '%', format: false },
+            { id: 'revenueValue', target: 2847293, prefix: 'S/. ', format: true },
+            { id: 'expensesValue', target: 1892847, prefix: 'S/. ', format: true },
+            { id: 'profitValue', target: 954446, prefix: 'S/. ', format: true }
+        ];
+
+        counters.forEach(counter => {
+            const element = document.getElementById(counter.id);
+            if (!element) return;
+
+            let current = 0;
+            const increment = counter
+            .target / 100;
+               const timer = setInterval(() => {
+                   current += increment;
+                   if (current >= counter.target) {
+                       current = counter.target;
+                       clearInterval(timer);
+                   }
+                   
+                   let displayValue = counter.format ? 
+                       Math.floor(current).toLocaleString() : 
+                       current.toFixed(1);
+                   
+                   element.textContent = (counter.prefix || '') + displayValue + (counter.suffix || '');
+               }, 20);
+           });
+       }
+
+       // Real-time Updates
+       function startRealTimeUpdates() {
+           setInterval(() => {
+               // Simular actualizaciones en tiempo real
+               updateMetricValues();
+           }, 30000); // Cada 30 segundos
+       }
+
+       function updateMetricValues() {
+           const elements = [
+               { id: 'totalRevenue', variation: 0.02 },
+               { id: 'activeClients', variation: 0.01 },
+               { id: 'revenueValue', variation: 0.015 }
+           ];
+
+           elements.forEach(elem => {
+               const element = document.getElementById(elem.id);
+               if (element) {
+                   const currentValue = parseFloat(element.textContent.replace(/[^\d.]/g, ''));
+                   const newValue = currentValue * (1 + (Math.random() - 0.5) * elem.variation);
+                   
+                   if (elem.id.includes('Revenue') || elem.id.includes('Value')) {
+                       element.textContent = 'S/. ' + Math.floor(newValue).toLocaleString();
+                   } else {
+                       element.textContent = Math.floor(newValue).toString();
+                   }
+               }
+           });
+       }
+
+       // Toggle AI Assistant
+       function toggleAI() {
+           if (window.advancedAI && typeof window.advancedAI.toggle === 'function') {
+               window.advancedAI.toggle();
+           } else {
+               console.log('🤖 AI Assistant loading...');
+               // Fallback si el AI no está cargado aún
+               setTimeout(() => {
+                   if (window.advancedAI) {
+                       window.advancedAI.toggle();
+                   }
+               }, 1000);
+           }
+       }
+
+       // Filter buttons functionality
+       document.querySelectorAll('.filter-btn').forEach(btn => {
+           btn.addEventListener('click', function() {
+               document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+               this.classList.add('active');
+           });
+       });
+
+       // Responsive navigation
+       function toggleMobileMenu() {
+           const nav = document.querySelector('.header-nav');
+           nav.classList.toggle('mobile-open');
+       }
+
+       // Notification click handler
+       document.querySelectorAll('.notification-btn').forEach(btn => {
+           btn.addEventListener('click', function() {
+               this.style.transform = 'scale(0.95)';
+               setTimeout(() => {
+                   this.style.transform = 'scale(1)';
+               }, 150);
+           });
+       });
+
+       // Add loading states
+       function showLoading(elementId) {
+           const element = document.getElementById(elementId);
+           if (element) {
+               element.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+           }
+       }
+
+       function hideLoading(elementId, content) {
+           const element = document.getElementById(elementId);
+           if (element) {
+               element.innerHTML = content;
+           }
+       }
+
+       // Keyboard shortcuts
+       document.addEventListener('keydown', function(e) {
+           // Ctrl + A para abrir AI
+           if (e.ctrlKey && e.key === 'a') {
+               e.preventDefault();
+               toggleAI();
+           }
+           
+           // Esc para cerrar modales
+           if (e.key === 'Escape') {
+               if (window.advancedAI && document.querySelector('.ai-assistant-panel.show')) {
+                   window.advancedAI.toggle();
+               }
+           }
+       });
+
+       // Enhanced hover effects
+       document.querySelectorAll('.metric-card').forEach(card => {
+           card.addEventListener('mouseenter', function() {
+               this.style.borderColor = '#667eea';
+           });
+           
+           card.addEventListener('mouseleave', function() {
+               this.style.borderColor = '#e2e8f0';
+           });
+       });
+
+       // Progressive Web App functionality
+       if ('serviceWorker' in navigator) {
+           window.addEventListener('load', function() {
+               navigator.serviceWorker.register('/sw.js')
+                   .then(registration => console.log('✅ SW registered'))
+                   .catch(error => console.log('❌ SW registration failed'));
+           });
+       }
+
+       // Dark mode toggle (bonus feature)
+       function toggleDarkMode() {
+           document.body.classList.toggle('dark-mode');
+           localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+       }
+
+       // Load saved dark mode preference
+       if (localStorage.getItem('darkMode') === 'true') {
+           document.body.classList.add('dark-mode');
+       }
+
+       console.log('🎯 GRIZALUM Dashboard Profesional - Totalmente cargado y funcional');
+       console.log('🤖 AI Assistant integrado - Haz clic en el botón flotante');
+       console.log('📊 Gráficos interactivos - Chart.js inicializado');
+       console.log('⚡ Actualizaciones en tiempo real - Activas');
+       console.log('🎨 Animaciones y efectos - Habilitados');
+   </script>
+
+   <!-- ESTILOS ADICIONALES PARA DARK MODE -->
+   <style>
+   .dark-mode {
+       --bg-light: #1a202c;
+       --text-primary: #f7fafc;
+       --text-secondary: #a0aec0;
+       --border: #2d3748;
+   }
+
+   .dark-mode .metric-card,
+   .dark-mode .chart-card,
+   .dark-mode .activity-card,
+   .dark-mode .header {
+       background: #2d3748;
+       border-color: #4a5568;
+   }
+
+   .dark-mode .welcome-section {
+       background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+   }
+
+   /* Responsive fixes */
+   @media (max-width: 768px) {
+       .header-nav.mobile-open {
+           display: flex;
+           position: absolute;
+           top: 100%;
+           left: 0;
+           right: 0;
+           background: white;
+           flex-direction: column;
+           padding: 1rem;
+           box-shadow: var(--shadow);
+       }
+   }
+   </style>
 </body>
-</html>  
+</html>
