@@ -21,226 +21,164 @@ class GrizalumThemeManager {
 
     // ======= DEFINICIÓN DE TEMAS PREMIUM =======
     initializeThemes() {
-        return {
-            // 🌌 TEMA MIDNIGHT CORPORATE (TU FAVORITO)
-            'midnight-corporate': {
-                name: 'Midnight Corporate',
-                description: 'Diseño Netflix/Tesla - Ultra Premium',
-                colors: {
-                    // Colores principales
-                    primary: '#00d9ff',           // Cian eléctrico
-                    secondary: '#8b5cf6',         // Púrpura neón
-                    accent: '#00ff87',            // Verde éxito
-                    warning: '#ffb800',           // Ámbar premium
-                    danger: '#ff4757',            // Rojo elegante
-                    
-                    // Fondos
-                    background: '#0a0a0b',        // Negro carbón
-                    surface: '#1a1b23',           // Obsidiana
-                    elevated: '#2d2e3f',          // Carbón elevado
-                    
-                    // Texto
-                    textPrimary: '#ffffff',
-                    textSecondary: '#a3a3a3',
-                    textMuted: '#6b6b6b',
-                    
-                    // Gradientes
-                    gradientPrimary: 'linear-gradient(135deg, #00d9ff 0%, #8b5cf6 100%)',
-                    gradientSuccess: 'linear-gradient(135deg, #00ff87 0%, #00b894 100%)',
-                    gradientWarning: 'linear-gradient(135deg, #ffb800 0%, #ff6b35 100%)',
-                    gradientDanger: 'linear-gradient(135deg, #ff4757 0%, #e84118 100%)',
-                    
-                    // Efectos
-                    shadowGlow: '0 0 30px rgba(0, 217, 255, 0.4)',
-                    shadowDark: '0 10px 30px rgba(0, 0, 0, 0.5)',
-                    glassEffect: 'rgba(255, 255, 255, 0.05)'
-                }
-            },
-
-            // 🚀 TEMA CYBER BLUE
-            'cyber-blue': {
-                name: 'Cyber Blue',
-                description: 'Futurista azul neón',
-                colors: {
-                    primary: '#0ea5e9',
-                    secondary: '#3b82f6',
-                    accent: '#06b6d4',
-                    warning: '#f59e0b',
-                    danger: '#ef4444',
-                    background: '#0f172a',
-                    surface: '#1e293b',
-                    elevated: '#334155',
-                    textPrimary: '#f8fafc',
-                    textSecondary: '#cbd5e1',
-                    textMuted: '#64748b',
-                    gradientPrimary: 'linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%)',
-                    gradientSuccess: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                    gradientWarning: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                    gradientDanger: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-                    shadowGlow: '0 0 30px rgba(14, 165, 233, 0.4)',
-                    shadowDark: '0 10px 30px rgba(0, 0, 0, 0.5)',
-                    glassEffect: 'rgba(255, 255, 255, 0.05)'
-                }
-            },
-
-            // 💚 TEMA EMERALD CORPORATE
-            'emerald-corporate': {
-                name: 'Emerald Corporate',
-                description: 'Verde corporativo elegante',
-                colors: {
-                    primary: '#10b981',
-                    secondary: '#059669',
-                    accent: '#34d399',
-                    warning: '#f59e0b',
-                    danger: '#ef4444',
-                    background: '#064e3b',
-                    surface: '#065f46',
-                    elevated: '#047857',
-                    textPrimary: '#ecfdf5',
-                    textSecondary: '#a7f3d0',
-                    textMuted: '#6ee7b7',
-                    gradientPrimary: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                    gradientSuccess: 'linear-gradient(135deg, #34d399 0%, #10b981 100%)',
-                    gradientWarning: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                    gradientDanger: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-                    shadowGlow: '0 0 30px rgba(16, 185, 129, 0.4)',
-                    shadowDark: '0 10px 30px rgba(0, 0, 0, 0.5)',
-                    glassEffect: 'rgba(255, 255, 255, 0.05)'
-                }
-            },
-
-            // 🟣 TEMA ROYAL PURPLE
-            'royal-purple': {
-                name: 'Royal Purple',
-                description: 'Púrpura real premium',
-                colors: {
-                    primary: '#8b5cf6',
-                    secondary: '#a78bfa',
-                    accent: '#c084fc',
-                    warning: '#f59e0b',
-                    danger: '#ef4444',
-                    background: '#1e1b4b',
-                    surface: '#312e81',
-                    elevated: '#3730a3',
-                    textPrimary: '#f3f4f6',
-                    textSecondary: '#d1d5db',
-                    textMuted: '#9ca3af',
-                    gradientPrimary: 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)',
-                    gradientSuccess: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                    gradientWarning: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                    gradientDanger: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-                    shadowGlow: '0 0 30px rgba(139, 92, 246, 0.4)',
-                    shadowDark: '0 10px 30px rgba(0, 0, 0, 0.5)',
-                    glassEffect: 'rgba(255, 255, 255, 0.05)'
-                }
-            },
-
-            // 🔴 TEMA CRIMSON CORPORATE
-            'crimson-corporate': {
-                name: 'Crimson Corporate',
-                description: 'Rojo corporativo potente',
-                colors: {
-                    primary: '#dc2626',
-                    secondary: '#ef4444',
-                    accent: '#f87171',
-                    warning: '#f59e0b',
-                    danger: '#991b1b',
-                    background: '#450a0a',
-                    surface: '#7f1d1d',
-                    elevated: '#991b1b',
-                    textPrimary: '#fef2f2',
-                    textSecondary: '#fca5a5',
-                    textMuted: '#f87171',
-                    gradientPrimary: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)',
-                    gradientSuccess: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                    gradientWarning: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                    gradientDanger: 'linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%)',
-                    shadowGlow: '0 0 30px rgba(220, 38, 38, 0.4)',
-                    shadowDark: '0 10px 30px rgba(0, 0, 0, 0.5)',
-                    glassEffect: 'rgba(255, 255, 255, 0.05)'
-                }
-            },
-
-            // 🌅 TEMA SUNSET ORANGE
-            'sunset-orange': {
-                name: 'Sunset Orange',
-                description: 'Naranja sunset vibrante',
-                colors: {
-                    primary: '#ea580c',
-                    secondary: '#f97316',
-                    accent: '#fb923c',
-                    warning: '#f59e0b',
-                    danger: '#ef4444',
-                    background: '#431407',
-                    surface: '#9a3412',
-                    elevated: '#c2410c',
-                    textPrimary: '#fff7ed',
-                    textSecondary: '#fed7aa',
-                    textMuted: '#fdba74',
-                    gradientPrimary: 'linear-gradient(135deg, #ea580c 0%, #f97316 100%)',
-                    gradientSuccess: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                    gradientWarning: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                    gradientDanger: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-                    shadowGlow: '0 0 30px rgba(234, 88, 12, 0.4)',
-                    shadowDark: '0 10px 30px rgba(0, 0, 0, 0.5)',
-                    glassEffect: 'rgba(255, 255, 255, 0.05)'
-                }
-            },
-
-            // 🌸 TEMA ROSE GOLD
-            'rose-gold': {
-                name: 'Rose Gold',
-                description: 'Rosa dorado elegante',
-                colors: {
-                    primary: '#f43f5e',
-                    secondary: '#ec4899',
-                    accent: '#f472b6',
-                    warning: '#f59e0b',
-                    danger: '#ef4444',
-                    background: '#500724',
-                    surface: '#831843',
-                    elevated: '#be185d',
-                    textPrimary: '#fdf2f8',
-                    textSecondary: '#fbcfe8',
-                    textMuted: '#f8bbd9',
-                    gradientPrimary: 'linear-gradient(135deg, #f43f5e 0%, #ec4899 100%)',
-                    gradientSuccess: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                    gradientWarning: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                    gradientDanger: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-                    shadowGlow: '0 0 30px rgba(244, 63, 94, 0.4)',
-                    shadowDark: '0 10px 30px rgba(0, 0, 0, 0.5)',
-                    glassEffect: 'rgba(255, 255, 255, 0.05)'
-                }
-            },
-
-            // 🖤 TEMA DARK ELEGANCE
-            'dark-elegance': {
-                name: 'Dark Elegance',
-                description: 'Elegancia oscura minimalista',
-                colors: {
-                    primary: '#6b7280',
-                    secondary: '#9ca3af',
-                    accent: '#d1d5db',
-                    warning: '#f59e0b',
-                    danger: '#ef4444',
-                    background: '#111827',
-                    surface: '#1f2937',
-                    elevated: '#374151',
-                    textPrimary: '#f9fafb',
-                    textSecondary: '#e5e7eb',
-                    textMuted: '#d1d5db',
-                    gradientPrimary: 'linear-gradient(135deg, #6b7280 0%, #9ca3af 100%)',
-                    gradientSuccess: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                    gradientWarning: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                    gradientDanger: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-                    shadowGlow: '0 0 30px rgba(107, 114, 128, 0.4)',
-                    shadowDark: '0 10px 30px rgba(0, 0, 0, 0.5)',
-                    glassEffect: 'rgba(255, 255, 255, 0.05)'
-                }
+    return {
+        // 🏦 BLACKROCK CORPORATE - Ultra Premium Financiero
+        'blackrock-corporate': {
+            name: 'BlackRock Corporate',
+            description: 'Diseño financiero de élite mundial',
+            colors: {
+                primary: '#1a1a1a',           // Negro corporativo profundo
+                secondary: '#2d2d30',         // Gris carbón elegante
+                accent: '#00ff9f',            // Verde neón corporativo
+                warning: '#ff6b35',           // Naranja premium
+                danger: '#ff3366',            // Rojo corporativo
+                background: '#0d0d0f',        // Negro absoluto
+                surface: '#161618',           // Negro surface
+                elevated: '#1e1e21',          // Elevado sutil
+                textPrimary: '#ffffff',
+                textSecondary: '#b8b8b8',
+                textMuted: '#707070',
+                gradientPrimary: 'linear-gradient(135deg, #1a1a1a 0%, #00ff9f 100%)',
+                gradientSuccess: 'linear-gradient(135deg, #00ff9f 0%, #00cc7f 100%)',
+                gradientWarning: 'linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%)',
+                gradientDanger: 'linear-gradient(135deg, #ff3366 0%, #e02e5a 100%)',
+                shadowGlow: '0 0 40px rgba(0, 255, 159, 0.3)',
+                shadowDark: '0 15px 35px rgba(0, 0, 0, 0.8)',
+                glassEffect: 'rgba(255, 255, 255, 0.03)'
             }
-        };
-    }
+        },
 
+        // 🚀 TESLA FUTURISTIC - Diseño Elon Musk
+        'tesla-futuristic': {
+            name: 'Tesla Futuristic',
+            description: 'El futuro según Elon Musk',
+            colors: {
+                primary: '#ff0040',           // Rojo Tesla icónico
+                secondary: '#1a1a1a',         // Negro Tesla
+                accent: '#00d4ff',            // Cian futurista
+                warning: '#ffaa00',           // Ámbar premium
+                danger: '#ff1744',            // Rojo alerta
+                background: '#000000',        // Negro absoluto Tesla
+                surface: '#0a0a0a',           // Surface mínimo
+                elevated: '#141414',          // Elevado Tesla
+                textPrimary: '#ffffff',
+                textSecondary: '#cccccc',
+                textMuted: '#888888',
+                gradientPrimary: 'linear-gradient(135deg, #ff0040 0%, #00d4ff 100%)',
+                gradientSuccess: 'linear-gradient(135deg, #00ff87 0%, #00b894 100%)',
+                gradientWarning: 'linear-gradient(135deg, #ffaa00 0%, #ff8800 100%)',
+                gradientDanger: 'linear-gradient(135deg, #ff1744 0%, #d50000 100%)',
+                shadowGlow: '0 0 50px rgba(255, 0, 64, 0.4)',
+                shadowDark: '0 20px 40px rgba(0, 0, 0, 0.9)',
+                glassEffect: 'rgba(255, 255, 255, 0.02)'
+            }
+        },
+
+        // 💎 GOLDMAN SACHS - Oro y Negro Elegante
+        'goldman-elite': {
+            name: 'Goldman Elite',
+            description: 'Elegancia bancaria mundial',
+            colors: {
+                primary: '#d4af37',           // Oro Goldman Sachs
+                secondary: '#1c1c1e',         // Negro premium
+                accent: '#f5d76e',            // Oro claro
+                warning: '#ff9500',           // Naranja ejecutivo
+                danger: '#ff453a',            // Rojo elegante
+                background: '#000000',        // Negro absoluto
+                surface: '#0f0f0f',           // Surface premium
+                elevated: '#1a1a1a',          // Elevado oro
+                textPrimary: '#ffffff',
+                textSecondary: '#d4af37',     // Texto dorado
+                textMuted: '#a0a0a0',
+                gradientPrimary: 'linear-gradient(135deg, #d4af37 0%, #b8941f 100%)',
+                gradientSuccess: 'linear-gradient(135deg, #00c851 0%, #00a142 100%)',
+                gradientWarning: 'linear-gradient(135deg, #ff9500 0%, #e6870e 100%)',
+                gradientDanger: 'linear-gradient(135deg, #ff453a 0%, #e63946 100%)',
+                shadowGlow: '0 0 30px rgba(212, 175, 55, 0.5)',
+                shadowDark: '0 15px 30px rgba(0, 0, 0, 0.8)',
+                glassEffect: 'rgba(212, 175, 55, 0.05)'
+            }
+        },
+
+        // 🍎 APPLE PREMIUM - Diseño Cupertino
+        'apple-premium': {
+            name: 'Apple Premium',
+            description: 'Diseño desde Cupertino',
+            colors: {
+                primary: '#007aff',           // Azul Apple
+                secondary: '#5856d6',         // Púrpura iOS
+                accent: '#30d158',            // Verde Apple
+                warning: '#ff9f0a',           // Naranja iOS
+                danger: '#ff453a',            // Rojo sistema
+                background: '#000000',        // Negro Apple
+                surface: '#1c1c1e',           // Gris sistema
+                elevated: '#2c2c2e',          // Elevado iOS
+                textPrimary: '#ffffff',
+                textSecondary: '#ebebf5',     // Texto secundario iOS
+                textMuted: '#ebebf599',       // Texto terciario
+                gradientPrimary: 'linear-gradient(135deg, #007aff 0%, #5856d6 100%)',
+                gradientSuccess: 'linear-gradient(135deg, #30d158 0%, #00c851 100%)',
+                gradientWarning: 'linear-gradient(135deg, #ff9f0a 0%, #ff8c00 100%)',
+                gradientDanger: 'linear-gradient(135deg, #ff453a 0%, #e63946 100%)',
+                shadowGlow: '0 0 25px rgba(0, 122, 255, 0.4)',
+                shadowDark: '0 10px 25px rgba(0, 0, 0, 0.7)',
+                glassEffect: 'rgba(255, 255, 255, 0.06)'
+            }
+        },
+
+        // 🔴 NETFLIX ORIGINAL - Entretenimiento Premium
+        'netflix-original': {
+            name: 'Netflix Original',
+            description: 'Entretenimiento de clase mundial',
+            colors: {
+                primary: '#e50914',           // Rojo Netflix icónico
+                secondary: '#221f1f',         // Gris oscuro Netflix
+                accent: '#ffffff',            // Blanco puro contraste
+                warning: '#f5c518',           // Amarillo IMDB
+                danger: '#dc1a28',            // Rojo intenso
+                background: '#141414',        // Negro Netflix
+                surface: '#181818',           // Surface Netflix
+                elevated: '#2f2f2f',          // Elevado sutil
+                textPrimary: '#ffffff',
+                textSecondary: '#b3b3b3',     // Gris Netflix
+                textMuted: '#737373',         // Gris apagado
+                gradientPrimary: 'linear-gradient(135deg, #e50914 0%, #b81d24 100%)',
+                gradientSuccess: 'linear-gradient(135deg, #46d369 0%, #1db954 100%)',
+                gradientWarning: 'linear-gradient(135deg, #f5c518 0%, #e6ac00 100%)',
+                gradientDanger: 'linear-gradient(135deg, #dc1a28 0%, #b81d24 100%)',
+                shadowGlow: '0 0 35px rgba(229, 9, 20, 0.4)',
+                shadowDark: '0 12px 28px rgba(0, 0, 0, 0.8)',
+                glassEffect: 'rgba(255, 255, 255, 0.04)'
+            }
+        },
+
+        // 🌌 MIDNIGHT CORPORATE (TU FAVORITO MEJORADO)
+        'midnight-corporate': {
+            name: 'Midnight Corporate',
+            description: 'Ultra Premium Nocturno',
+            colors: {
+                primary: '#00d9ff',           // Cian eléctrico
+                secondary: '#8b5cf6',         // Púrpura neón
+                accent: '#00ff87',            // Verde éxito
+                warning: '#ffb800',           // Ámbar premium
+                danger: '#ff4757',            // Rojo elegante
+                background: '#0a0a0b',        // Negro carbón
+                surface: '#1a1b23',           // Obsidiana
+                elevated: '#2d2e3f',          // Carbón elevado
+                textPrimary: '#ffffff',
+                textSecondary: '#a3a3a3',
+                textMuted: '#6b6b6b',
+                gradientPrimary: 'linear-gradient(135deg, #00d9ff 0%, #8b5cf6 100%)',
+                gradientSuccess: 'linear-gradient(135deg, #00ff87 0%, #00b894 100%)',
+                gradientWarning: 'linear-gradient(135deg, #ffb800 0%, #ff6b35 100%)',
+                gradientDanger: 'linear-gradient(135deg, #ff4757 0%, #e84118 100%)',
+                shadowGlow: '0 0 40px rgba(0, 217, 255, 0.4)',
+                shadowDark: '0 15px 35px rgba(0, 0, 0, 0.7)',
+                glassEffect: 'rgba(255, 255, 255, 0.05)'
+            }
+        }
+    };
+}
     // ======= TEMAS POR EMPRESA =======
     loadCompanyThemes() {
         const saved = localStorage.getItem('grizalum_company_themes');
