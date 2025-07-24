@@ -1152,44 +1152,6 @@ body {
                  <span>IA Assistant</span>
                  </button>
 
-                   <!-- SELECTOR DE EMPRESAS -->
-                   <div class="company-selector" id="companySelector">
-                       <div class="selected-company" onclick="toggleCompanyDropdown()">
-                           <div class="company-info">
-                               <div class="company-icon" id="currentCompanyIcon">🔥</div>
-                               <div class="company-details">
-                                   <div class="company-name" id="currentCompanyName">Fundición Laguna</div>
-                                   <div class="company-status" id="currentCompanyStatus">🟢 Operativo</div>
-                               </div>
-                           </div>
-                           <div class="dropdown-arrow">
-                               <i class="fas fa-chevron-down" id="dropdownArrow"></i>
-                           </div>
-                       </div>
-
-                       <div class="company-dropdown" id="companyDropdown">
-                           <div class="dropdown-header">
-                               <h4>🏢 Empresas GRIZALUM</h4>
-                               <button class="btn-add-company" onclick="showAddCompanyWizard()">
-                                   <i class="fas fa-plus"></i>
-                                   Agregar Nueva
-                               </button>
-                           </div>
-                           
-                           <div class="companies-list" id="companiesList">
-                               <!-- Se llena dinámicamente -->
-                           </div>
-                           
-                           <div class="dropdown-footer">
-                               <button id="manageCompaniesBtn" class="btn btn-neutral" onclick="openCompanyManagement()" style="margin-bottom: 0.5rem; width: 100%;">
-                                   <i class="fas fa-cog"></i>
-                                   Gestionar Empresas
-                               </button>
-                               <div class="total-companies">
-                                   <strong>📊 Total Holding: S/. 135,900</strong>
-                               </div>
-                           </div>
-                       </div>
                    </div>
                </div>
            </header>
@@ -1290,6 +1252,8 @@ body {
     
 <!-- THEME MANAGER DINÁMICO -->
 <script src="src/assets/js/theme-manager.js"></script>
+    <!-- company-selector.js dinamico -->
+<script src="src/assets/js/company-selector.js"></script>
     
 <!-- SCRIPTS INTEGRADOS PRINCIPALES -->
 <script>
