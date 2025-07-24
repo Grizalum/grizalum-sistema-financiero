@@ -1635,9 +1635,12 @@ document.addEventListener('DOMContentLoaded', function() {
            console.log(`📱 Mostrar sección: ${section}`);
        }
 
-       function toggleAIAssistant() {
-    console.log('🤖 Botón AI clickeado');
-    window.advancedAI.toggle();
+      function toggleAIAssistant() {
+    if (window.advancedAI) {
+        window.advancedAI.toggle();
+    } else {
+        console.log('🤖 AI Assistant cargando...');
+    }
 }
        function showNotification(message, type = 'info') {
            console.log(`${type === 'success' ? '✅' : '📢'} ${message}`);
