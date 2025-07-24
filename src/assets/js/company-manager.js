@@ -1,893 +1,685 @@
 /**
- * ================================================
- * GRIZALUM - COMPANY MANAGER MODULE
- * Sistema de gestión de empresas
- * ================================================
+ * ================================================================
+ * GRIZALUM COMPANY SELECTOR - SISTEMA MODULAR
+ * Selector de empresas con dropdown premium y z-index corregido
+ * ================================================================
  */
 
-// ======= CLASE PRINCIPAL COMPANY MANAGER =======
-class CompanyManager {
+class GrizalumCompanySelector {
     constructor() {
         this.companies = this.loadCompaniesData();
-        this.currentSelected = 'fundicion-laguna';
-        this.currentEditingCompany = null;
+        this.selectedCompany = null;
+        this.isInitialized = false;
         this.init();
     }
 
-    // Inicializar Company Manager
     init() {
-        console.log('🏢 Inicializando Company Manager...');
-        this.bindEvents();
-        this.updateInterface();
-        console.log('✅ Company Manager inicializado');
+        try {
+            this.createCompanySelectorStyles();
+            this.renderCompanySelector();
+            this.setupEventListeners();
+            this.selectFirstCompany();
+            this.isInitialized = true;
+            
+            console.log('🏢 GRIZALUM Company Selector inicializado');
+            console.log(`📊 ${Object.keys(this.companies).length} empresas cargadas`);
+        } catch (error) {
+            console.error('❌ Error inicializando Company Selector:', error);
+        }
+    }
+
+    // ======= ESTILOS PREMIUM CON Z-INDEX CORREGIDO =======
+    createCompanySelectorStyles() {
+        const styleId = 'grizalum-company-selector-styles';
+        let existingStyle = document.getElementById(styleId);
+        
+        if (existingStyle) {
+            existingStyle.remove();
+        }
+
+        const style = document.createElement('style');
+        style.id = styleId;
+        style.textContent = `
+            /* =============================================== */
+            /* GRIZALUM COMPANY SELECTOR - ESTILOS PREMIUM   */
+            /* =============================================== */
+            
+            .grizalum-company-selector {
+                position: relative;
+                min-width: 280px;
+                z-index: 1000;
+            }
+
+            .grizalum-selected-company {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(184, 115, 51, 0.1) 100%);
+                border: 2px solid rgba(212, 175, 55, 0.3);
+                border-radius: 16px;
+                padding: 1rem 1.5rem;
+                cursor: pointer;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                backdrop-filter: blur(10px);
+                position: relative;
+                z-index: 1001;
+            }
+
+            .grizalum-selected-company:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+                border-color: rgba(212, 175, 55, 0.5);
+            }
+
+            .grizalum-company-info {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .grizalum-company-icon {
+                width: 48px;
+                height: 48px;
+                background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.5rem;
+                box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+                transition: all 0.3s ease;
+            }
+
+            .grizalum-company-details {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .grizalum-company-name {
+                font-size: 1rem;
+                font-weight: 700;
+                color: var(--gray-800, #1f2937);
+                margin-bottom: 0.25rem;
+            }
+
+            .grizalum-company-status {
+                font-size: 0.8rem;
+                font-weight: 500;
+                color: var(--gray-600, #4b5563);
+            }
+
+            .grizalum-dropdown-arrow {
+                color: var(--gray-600, #4b5563);
+                transition: transform 0.3s ease;
+                font-size: 1.2rem;
+            }
+
+            .grizalum-dropdown-arrow.rotate {
+                transform: rotate(180deg);
+            }
+
+            /* =============== DROPDOWN CON Z-INDEX CORREGIDO =============== */
+            .grizalum-company-dropdown {
+                position: absolute;
+                top: 100%;
+                right: 0;
+                width: 350px;
+                background: white;
+                border-radius: 20px;
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+                border: 1px solid rgba(212, 175, 55, 0.2);
+                z-index: 10000; /* ← Z-INDEX ULTRA ALTO */
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(-15px);
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                backdrop-filter: blur(30px);
+                overflow: hidden;
+            }
+
+            .grizalum-company-dropdown.show {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(5px);
+            }
+
+            .grizalum-dropdown-header {
+                padding: 1.5rem;
+                border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+                background: linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, rgba(184, 115, 51, 0.02) 100%);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .grizalum-dropdown-header h4 {
+                margin: 0;
+                color: var(--gray-800, #1f2937);
+                font-size: 1.1rem;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .grizalum-btn-add-company {
+                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                color: white;
+                border: none;
+                padding: 0.5rem 1rem;
+                border-radius: 10px;
+                font-size: 0.8rem;
+                font-weight: 600;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            }
+
+            .grizalum-btn-add-company:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+            }
+
+            .grizalum-companies-list {
+                max-height: 320px;
+                overflow-y: auto;
+                padding: 0.5rem;
+            }
+
+            .grizalum-company-item {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                padding: 1rem;
+                border-radius: 12px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                margin-bottom: 0.25rem;
+                position: relative;
+            }
+
+            .grizalum-company-item:hover {
+                background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(184, 115, 51, 0.04) 100%);
+                transform: translateX(8px);
+                border-left: 3px solid #d4af37;
+            }
+
+            .grizalum-company-item.active {
+                background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(184, 115, 51, 0.08) 100%);
+                border: 1px solid rgba(212, 175, 55, 0.3);
+                box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+                border-left: 4px solid #d4af37;
+            }
+
+            .grizalum-company-item-icon {
+                width: 42px;
+                height: 42px;
+                background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.3rem;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .grizalum-company-item:hover .grizalum-company-item-icon {
+                background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+                box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+                transform: scale(1.1);
+            }
+
+            .grizalum-company-item-info {
+                flex: 1;
+            }
+
+            .grizalum-company-item-name {
+                font-weight: 600;
+                color: var(--gray-800, #1f2937);
+                margin-bottom: 0.25rem;
+                font-size: 0.95rem;
+            }
+
+            .grizalum-company-item-stats {
+                font-size: 0.8rem;
+                color: var(--gray-600, #4b5563);
+            }
+
+            .grizalum-company-item-status {
+                font-size: 1.2rem;
+                opacity: 0.8;
+                transition: all 0.3s ease;
+            }
+
+            .grizalum-company-item:hover .grizalum-company-item-status {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+
+            .grizalum-dropdown-footer {
+                padding: 1.5rem;
+                border-top: 1px solid rgba(212, 175, 55, 0.1);
+                background: linear-gradient(135deg, rgba(249, 250, 251, 0.8) 0%, rgba(243, 244, 246, 0.6) 100%);
+                text-align: center;
+            }
+
+            .grizalum-manage-companies-btn {
+                background: linear-gradient(135deg, rgba(107, 114, 128, 0.1) 0%, rgba(75, 85, 99, 0.05) 100%);
+                color: var(--gray-700, #374151);
+                border: 1px solid rgba(212, 175, 55, 0.2);
+                padding: 0.75rem 1.5rem;
+                border-radius: 10px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                width: 100%;
+                margin-bottom: 1rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+
+            .grizalum-manage-companies-btn:hover {
+                background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+                color: white;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
+            }
+
+            .grizalum-total-companies {
+                font-weight: 700;
+                color: var(--gray-800, #1f2937);
+                font-size: 0.9rem;
+                background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            /* =============== SCROLLBAR PREMIUM =============== */
+            .grizalum-companies-list::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .grizalum-companies-list::-webkit-scrollbar-track {
+                background: rgba(212, 175, 55, 0.1);
+                border-radius: 10px;
+            }
+
+            .grizalum-companies-list::-webkit-scrollbar-thumb {
+                background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+                border-radius: 10px;
+            }
+
+            .grizalum-companies-list::-webkit-scrollbar-thumb:hover {
+                background: linear-gradient(135deg, #b87333 0%, #a0691f 100%);
+            }
+
+            /* =============== RESPONSIVE =============== */
+            @media (max-width: 768px) {
+                .grizalum-company-selector {
+                    min-width: 250px;
+                }
+                
+                .grizalum-company-dropdown {
+                    width: 300px;
+                    right: -25px;
+                }
+            }
+
+            /* =============== ANIMACIONES PREMIUM =============== */
+            @keyframes companyItemSlide {
+                from {
+                    opacity: 0;
+                    transform: translateX(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+
+            .grizalum-company-item {
+                animation: companyItemSlide 0.3s ease forwards;
+            }
+
+            .grizalum-company-item:nth-child(1) { animation-delay: 0.1s; }
+            .grizalum-company-item:nth-child(2) { animation-delay: 0.2s; }
+            .grizalum-company-item:nth-child(3) { animation-delay: 0.3s; }
+            .grizalum-company-item:nth-child(4) { animation-delay: 0.4s; }
+            .grizalum-company-item:nth-child(5) { animation-delay: 0.5s; }
+        `;
+        
+        document.head.appendChild(style);
+        console.log('🎨 Estilos del Company Selector creados');
     }
 
     // ======= DATOS DE EMPRESAS =======
-
-    // Obtener datos por defecto de empresas
-    getDefaultCompaniesData() {
-        return {
+    loadCompaniesData() {
+        const saved = localStorage.getItem('grizalum_companies');
+        if (saved) {
+            return JSON.parse(saved);
+        }
+        
+        const defaultCompanies = {
             'fundicion-laguna': {
                 name: 'Fundición Laguna',
                 icon: '🔥',
                 status: 'Operativo',
-                theme: { primary: '#dc2626', secondary: '#ea580c', accent: '#f87171' },
-                paletteName: 'Rojo Dinámico',
-                data: {
-                    cashFlow: 24500,
-                    revenue: 45200,
-                    expenses: 28700,
-                    profit: 16500
-                }
+                theme: { primary: '#dc2626', secondary: '#ea580c' },
+                data: { cashFlow: 24500, revenue: 2847293, expenses: 1892847, profit: 954446 }
             },
             'fundicion-joel': {
                 name: 'Fundición Joel',
                 icon: '🔥',
                 status: 'Operativo',
-                theme: { primary: '#ea580c', secondary: '#f97316', accent: '#fb923c' },
-                paletteName: 'Naranja Energético',
-                data: {
-                    cashFlow: 18300,
-                    revenue: 32100,
-                    expenses: 21800,
-                    profit: 10300
-                }
+                theme: { primary: '#ea580c', secondary: '#f97316' },
+                data: { cashFlow: 18300, revenue: 2100000, expenses: 1400000, profit: 700000 }
             },
             'avicola-san-juan': {
                 name: 'Avícola San Juan',
                 icon: '🐔',
                 status: 'Operativo',
-                theme: { primary: '#059669', secondary: '#10b981', accent: '#34d399' },
-                paletteName: 'Verde Prosperidad',
-                data: {
-                    cashFlow: 32100,
-                    revenue: 58300,
-                    expenses: 41200,
-                    profit: 17100
-                }
+                theme: { primary: '#059669', secondary: '#10b981' },
+                data: { cashFlow: 32100, revenue: 3200000, expenses: 2100000, profit: 1100000 }
+            },
+            'import-lm': {
+                name: 'Import LM',
+                icon: '📦',
+                status: 'Operativo',
+                theme: { primary: '#8b5cf6', secondary: '#a78bfa' },
+                data: { cashFlow: 45200, revenue: 4500000, expenses: 2800000, profit: 1700000 }
             },
             'bodega-central': {
                 name: 'Bodega Central',
                 icon: '🏪',
                 status: 'Regular',
-                theme: { primary: '#3b82f6', secondary: '#60a5fa', accent: '#93c5fd' },
-                paletteName: 'Azul Corporativo',
-                data: {
-                    cashFlow: 15800,
-                    revenue: 28500,
-                    expenses: 19700,
-                    profit: 8800
-                }
-            },
-            'importaciones-gz': {
-                name: 'Importaciones GZ',
-                icon: '📦',
-                status: 'Operativo',
-                theme: { primary: '#8b5cf6', secondary: '#a78bfa', accent: '#c4b5fd' },
-                paletteName: 'Púrpura Premium',
-                data: {
-                    cashFlow: 45200,
-                    revenue: 72800,
-                    expenses: 48600,
-                    profit: 24200
-                }
+                theme: { primary: '#3b82f6', secondary: '#60a5fa' },
+                data: { cashFlow: 15800, revenue: 1800000, expenses: 1200000, profit: 600000 }
             }
         };
-    }
-
-    // Cargar datos de empresas
-    loadCompaniesData() {
-        try {
-            const saved = localStorage.getItem('grizalum_companies');
-            if (saved) {
-                return JSON.parse(saved);
-            }
-        } catch (e) {
-            console.warn('Error cargando datos de empresas:', e);
-        }
         
-        // Si no hay datos guardados, usar los por defecto
-        const defaultData = this.getDefaultCompaniesData();
-        this.saveCompaniesData(defaultData);
-        return defaultData;
+        this.saveCompaniesData(defaultCompanies);
+        return defaultCompanies;
     }
 
-    // Guardar datos de empresas
-    saveCompaniesData(companies = null) {
-        const dataToSave = companies || this.companies;
-        try {
-            localStorage.setItem('grizalum_companies', JSON.stringify(dataToSave));
-            console.log('💾 Datos de empresas guardados');
-        } catch (e) {
-            console.error('Error guardando datos de empresas:', e);
-        }
+    saveCompaniesData(companies) {
+        localStorage.setItem('grizalum_companies', JSON.stringify(companies));
     }
 
-    // ======= GESTIÓN DE EMPRESAS =======
-
-    // Obtener empresa actual seleccionada
-    getCurrentSelected() {
-        return this.companies[this.currentSelected] || null;
-    }
-
-    // Obtener todas las empresas
-    getAllCompanies() {
-        return this.companies;
-    }
-
-    // Seleccionar empresa
-    selectCompany(companyId) {
-        if (!this.companies[companyId]) {
-            console.error('Empresa no encontrada:', companyId);
+    // ======= RENDERIZAR SELECTOR =======
+    renderCompanySelector() {
+        const container = document.getElementById('companySelector');
+        if (!container) {
+            console.error('❌ Contenedor #companySelector no encontrado');
             return;
         }
 
-        console.log(`🏢 Seleccionando empresa: ${companyId}`);
-        
-        this.currentSelected = companyId;
-        this.updateSelectedCompany(companyId);
-        this.updateCompanyData(companyId);
-        this.closeDropdown();
-        
-        // Notificación
-        if (window.aiAssistant) {
-            window.aiAssistant.showNotification(
-                `🏢 Cambiado a ${this.companies[companyId].name}`, 
-                'success'
-            );
-        }
+        container.innerHTML = `
+            <div class="grizalum-selected-company" onclick="grizalumCompanySelector.toggleDropdown()">
+                <div class="grizalum-company-info">
+                    <div class="grizalum-company-icon" id="grizalumCurrentCompanyIcon">🔥</div>
+                    <div class="grizalum-company-details">
+                        <div class="grizalum-company-name" id="grizalumCurrentCompanyName">Fundición Laguna</div>
+                        <div class="grizalum-company-status" id="grizalumCurrentCompanyStatus">🟢 Operativo</div>
+                    </div>
+                </div>
+                <div class="grizalum-dropdown-arrow" id="grizalumDropdownArrow">
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+
+            <div class="grizalum-company-dropdown" id="grizalumCompanyDropdown">
+                <div class="grizalum-dropdown-header">
+                    <h4>🏢 Empresas GRIZALUM</h4>
+                    <button class="grizalum-btn-add-company" onclick="grizalumCompanySelector.showAddCompanyWizard()">
+                        <i class="fas fa-plus"></i>
+                        Agregar Nueva
+                    </button>
+                </div>
+                
+                <div class="grizalum-companies-list" id="grizalumCompaniesList">
+                    <!-- Se llena dinámicamente -->
+                </div>
+                
+                <div class="grizalum-dropdown-footer">
+                    <button class="grizalum-manage-companies-btn" onclick="grizalumCompanySelector.openCompanyManagement()">
+                        <i class="fas fa-cog"></i>
+                        Gestionar Empresas
+                    </button>
+                    <div class="grizalum-total-companies">
+                        📊 Total Holding: S/. 135,900
+                    </div>
+                </div>
+            </div>
+        `;
+
+        this.renderCompaniesList();
     }
 
-    // Actualizar empresa seleccionada en la UI
+    renderCompaniesList() {
+        const companiesList = document.getElementById('grizalumCompaniesList');
+        if (!companiesList) return;
+
+        companiesList.innerHTML = '';
+        
+        Object.entries(this.companies).forEach(([id, company]) => {
+            const item = document.createElement('div');
+            item.className = 'grizalum-company-item';
+            item.dataset.company = id;
+            item.onclick = () => this.selectCompany(id);
+            
+            item.innerHTML = `
+                <div class="grizalum-company-item-icon">${company.icon}</div>
+                <div class="grizalum-company-item-info">
+                    <div class="grizalum-company-item-name">${company.name}</div>
+                    <div class="grizalum-company-item-stats">Flujo: S/. ${company.data.cashFlow.toLocaleString()}</div>
+                </div>
+                <div class="grizalum-company-item-status">${company.status === 'Operativo' ? '🟢' : company.status === 'Regular' ? '🟡' : '🔴'}</div>
+            `;
+            
+            companiesList.appendChild(item);
+        });
+    }
+
+    // ======= FUNCIONALIDAD =======
+    toggleDropdown() {
+        const dropdown = document.getElementById('grizalumCompanyDropdown');
+        const arrow = document.getElementById('grizalumDropdownArrow');
+        
+        dropdown.classList.toggle('show');
+        arrow.classList.toggle('rotate');
+    }
+
+    selectCompany(companyId) {
+        this.selectedCompany = companyId;
+        this.updateSelectedCompany(companyId);
+        this.updateCompanyData(companyId);
+        this.toggleDropdown();
+        
+        // Integración con theme manager
+        if (window.applyCompanyThemeIntegration) {
+            window.applyCompanyThemeIntegration(companyId);
+        }
+        
+        this.showNotification(`🏢 Cambiado a ${this.companies[companyId].name}`, 'success');
+        
+        // Disparar evento personalizado
+        this.dispatchCompanyChangeEvent(companyId);
+    }
+
     updateSelectedCompany(companyId) {
         const company = this.companies[companyId];
         if (!company) return;
 
-        // Actualizar selector principal
-        const elements = {
-            currentCompanyIcon: company.icon,
-            currentCompanyName: company.name,
-            currentCompanyStatus: `🟢 ${company.status}`
-        };
-
-        Object.entries(elements).forEach(([id, value]) => {
-            const element = document.getElementById(id);
-            if (element) element.textContent = value;
-        });
-
-        // Actualizar clase activa en la lista
-        document.querySelectorAll('.company-item').forEach(item => {
+        document.getElementById('grizalumCurrentCompanyIcon').textContent = company.icon;
+        document.getElementById('grizalumCurrentCompanyName').textContent = company.name;
+        document.getElementById('grizalumCurrentCompanyStatus').textContent = `🟢 ${company.status}`;
+        
+        // Actualizar estados activos
+        document.querySelectorAll('.grizalum-company-item').forEach(item => {
             item.classList.remove('active');
         });
-        
         const activeItem = document.querySelector(`[data-company="${companyId}"]`);
-        if (activeItem) activeItem.classList.add('active');
-
-        console.log(`✅ UI actualizada para: ${company.name}`);
+        if (activeItem) {
+            activeItem.classList.add('active');
+        }
     }
 
-    // Actualizar datos de la empresa en dashboards
     updateCompanyData(companyId) {
         const company = this.companies[companyId];
         if (!company) return;
 
-        this.updateKPIs(company.data);
-        this.updateSidebar(company.data);
-        this.updateTheme(company.theme);
-
+        // Actualizar KPIs si las funciones existen
+        if (window.updateKPIs) {
+            window.updateKPIs(company.data);
+        }
+        if (window.updateSidebar) {
+            window.updateSidebar(company.data);
+        }
+        
         console.log(`📊 Datos actualizados para: ${company.name}`);
     }
 
-    // Actualizar KPIs del dashboard
-    updateKPIs(data) {
-        const kpiValues = document.querySelectorAll('.kpi-value-animation');
-        if (kpiValues.length >= 4) {
-            kpiValues[0].textContent = `S/. ${data.cashFlow.toLocaleString()}`;
-            kpiValues[1].textContent = `S/. ${data.revenue.toLocaleString()}`;
-            kpiValues[2].textContent = `S/. ${data.expenses.toLocaleString()}`;
-            kpiValues[3].textContent = `S/. ${data.profit.toLocaleString()}`;
+    selectFirstCompany() {
+        const firstCompanyId = Object.keys(this.companies)[0];
+        if (firstCompanyId) {
+            this.selectCompany(firstCompanyId);
         }
     }
 
-    // Actualizar sidebar
-    updateSidebar(data) {
-        const elements = {
-            'sidebarCashFlow': data.cashFlow,
-            'sidebarRevenue': data.revenue,
-            'sidebarExpenses': data.expenses,
-            'sidebarProfit': data.profit
-        };
-        
-        Object.entries(elements).forEach(([id, value]) => {
-            const element = document.getElementById(id);
-            if (element) {
-                element.textContent = `S/. ${value.toLocaleString()}`;
-            }
-        });
-    }
-
-    // Actualizar tema de la empresa
-    updateTheme(theme) {
-        if (!theme) return;
-
-        // Aplicar colores del tema
-        document.documentElement.style.setProperty('--company-primary', theme.primary);
-        document.documentElement.style.setProperty('--company-secondary', theme.secondary);
-        
-        // Actualizar elementos visuales
-        const selectedCompany = document.querySelector('.selected-company');
-        if (selectedCompany) {
-            selectedCompany.style.borderColor = theme.primary + '80';
-        }
-    }
-
-    // ======= DROPDOWN DE EMPRESAS =======
-
-    // Toggle dropdown
-    toggleDropdown() {
-        const dropdown = document.getElementById('companyDropdown');
-        const arrow = document.getElementById('dropdownArrow');
-        
-        if (dropdown) dropdown.classList.toggle('show');
-        if (arrow) arrow.classList.toggle('rotate');
-    }
-
-    // Cerrar dropdown
-    closeDropdown() {
-        const dropdown = document.getElementById('companyDropdown');
-        const arrow = document.getElementById('dropdownArrow');
-        
-        if (dropdown) dropdown.classList.remove('show');
-        if (arrow) arrow.classList.remove('rotate');
-    }
-
-    // ======= CREAR/EDITAR EMPRESAS =======
-
-    // Agregar nueva empresa
-    addCompany(companyData) {
-        const companyId = this.generateCompanyId(companyData.name);
-        
-        const newCompany = {
-            name: companyData.name,
-            icon: companyData.icon || '🏢',
-            status: companyData.status || 'Operativo',
-            theme: companyData.theme || { primary: '#3b82f6', secondary: '#60a5fa', accent: '#93c5fd' },
-            paletteName: companyData.paletteName || 'Azul Corporativo',
-            data: {
-                cashFlow: companyData.cashFlow || 0,
-                revenue: companyData.revenue || 0,
-                expenses: companyData.expenses || 0,
-                profit: companyData.profit || 0
-            }
-        };
-
-        this.companies[companyId] = newCompany;
-        this.saveCompaniesData();
-        this.updateInterface();
-
-        console.log(`✅ Nueva empresa agregada: ${newCompany.name}`);
-        
-        if (window.aiAssistant) {
-            window.aiAssistant.showNotification(
-                `✅ Empresa "${newCompany.name}" agregada exitosamente`, 
-                'success'
-            );
-        }
-
-        return companyId;
-    }
-
-    // Editar empresa existente
-    editCompany(companyId, newData) {
-        if (!this.companies[companyId]) {
-            console.error('Empresa no encontrada para editar:', companyId);
-            return false;
-        }
-
-        const company = this.companies[companyId];
-        
-        // Actualizar datos
-        if (newData.name) company.name = newData.name;
-        if (newData.icon) company.icon = newData.icon;
-        if (newData.status) company.status = newData.status;
-        if (newData.theme) company.theme = newData.theme;
-        if (newData.paletteName) company.paletteName = newData.paletteName;
-
-        this.saveCompaniesData();
-        
-        // Si es la empresa actual, actualizar vista
-        if (this.currentSelected === companyId) {
-            this.updateSelectedCompany(companyId);
-            this.updateTheme(company.theme);
-        }
-
-        this.updateInterface();
-
-        console.log(`✅ Empresa editada: ${company.name}`);
-        
-        if (window.aiAssistant) {
-            window.aiAssistant.showNotification(
-                `✅ Empresa "${company.name}" actualizada exitosamente`, 
-                'success'
-            );
-        }
-
-        return true;
-    }
-
-    // Eliminar empresa
-    deleteCompany(companyId) {
-        if (!this.companies[companyId]) {
-            console.error('Empresa no encontrada para eliminar:', companyId);
-            return false;
-        }
-
-        const companyName = this.companies[companyId].name;
-        
-        // No permitir eliminar si es la única empresa
-        if (Object.keys(this.companies).length <= 1) {
-            if (window.aiAssistant) {
-                window.aiAssistant.showNotification(
-                    '⚠️ No puedes eliminar la última empresa', 
-                    'error'
-                );
-            }
-            return false;
-        }
-
-        // Si es la empresa actual, seleccionar otra
-        if (this.currentSelected === companyId) {
-            const otherCompanies = Object.keys(this.companies).filter(id => id !== companyId);
-            this.selectCompany(otherCompanies[0]);
-        }
-
-        delete this.companies[companyId];
-        this.saveCompaniesData();
-        this.updateInterface();
-
-        console.log(`🗑️ Empresa eliminada: ${companyName}`);
-        
-        if (window.aiAssistant) {
-            window.aiAssistant.showNotification(
-                `🗑️ Empresa "${companyName}" eliminada`, 
-                'success'
-            );
-        }
-
-        return true;
-    }
-
-    // ======= UTILIDADES =======
-
-    // Generar ID único para empresa
-    generateCompanyId(name) {
-        return name.toLowerCase()
-                  .replace(/[^a-z0-9]/g, '-')
-                  .replace(/-+/g, '-')
-                  .replace(/^-|-$/g, '');
-    }
-
-    // Actualizar toda la interfaz
-    updateInterface() {
-        this.updateCompanyList();
-        this.updateDropdownFooter();
-    }
-
-    // Actualizar lista de empresas en dropdown
-    updateCompanyList() {
-        const container = document.querySelector('.companies-list');
-        if (!container) return;
-
-        container.innerHTML = '';
-
-        Object.entries(this.companies).forEach(([companyId, company]) => {
-            const statusIcon = company.status === 'Operativo' ? '🟢' : 
-                             company.status === 'Regular' ? '🟡' : 
-                             company.status === 'Mantenimiento' ? '🔵' : '🔴';
-
-            const companyItem = document.createElement('div');
-            companyItem.className = `company-item ${this.currentSelected === companyId ? 'active' : ''}`;
-            companyItem.dataset.company = companyId;
-            companyItem.onclick = () => this.selectCompany(companyId);
-
-            companyItem.innerHTML = `
-                <div class="company-item-icon">${company.icon}</div>
-                <div class="company-item-info">
-                    <div class="company-item-name">${company.name}</div>
-                    <div class="company-item-stats">Flujo: S/. ${company.data.cashFlow.toLocaleString()}</div>
-                </div>
-                <div class="company-item-status">${statusIcon}</div>
-            `;
-
-            container.appendChild(companyItem);
-        });
-    }
-
-    // Actualizar footer del dropdown
-    updateDropdownFooter() {
-        const footer = document.querySelector('.dropdown-footer .total-companies');
-        if (!footer) return;
-
-        const totalCashFlow = Object.values(this.companies)
-            .reduce((sum, company) => sum + company.data.cashFlow, 0);
-
-        footer.innerHTML = `<strong>📊 Total Holding: S/. ${totalCashFlow.toLocaleString()}</strong>`;
-    }
-
-    // ======= EVENTS =======
-
-    // Vincular eventos
-    bindEvents() {
+    // ======= EVENT LISTENERS =======
+    setupEventListeners() {
         // Cerrar dropdown al hacer clic fuera
         document.addEventListener('click', (event) => {
             const selector = document.getElementById('companySelector');
+            const dropdown = document.getElementById('grizalumCompanyDropdown');
+            
             if (selector && !selector.contains(event.target)) {
-                this.closeDropdown();
+                dropdown.classList.remove('show');
+                document.getElementById('grizalumDropdownArrow').classList.remove('rotate');
             }
         });
-
-        console.log('🔗 Eventos de Company Manager vinculados');
-    }
-}
-
-// ======= MODAL DE EDITAR EMPRESA =======
-
-// Paletas de colores para empresas
-const COMPANY_COLOR_PALETTES = {
-    gold: {
-        name: 'Oro Ejecutivo',
-        primary: '#d4af37',
-        secondary: '#b87333',
-        accent: '#f4d03f'
-    },
-    green: {
-        name: 'Verde Prosperidad',
-        primary: '#059669',
-        secondary: '#10b981',
-        accent: '#34d399'
-    },
-    blue: {
-        name: 'Azul Corporativo',
-        primary: '#1e40af',
-        secondary: '#3b82f6',
-        accent: '#60a5fa'
-    },
-    purple: {
-        name: 'Púrpura Premium',
-        primary: '#7c3aed',
-        secondary: '#8b5cf6',
-        accent: '#a78bfa'
-    },
-    red: {
-        name: 'Rojo Dinámico',
-        primary: '#dc2626',
-        secondary: '#ef4444',
-        accent: '#f87171'
-    },
-    orange: {
-        name: 'Naranja Energético',
-        primary: '#ea580c',
-        secondary: '#f97316',
-        accent: '#fb923c'
-    },
-    teal: {
-        name: 'Turquesa Moderno',
-        primary: '#0891b2',
-        secondary: '#06b6d4',
-        accent: '#22d3ee'
-    },
-    pink: {
-        name: 'Rosa Elegante',
-        primary: '#ec4899',
-        secondary: '#f472b6',
-        accent: '#f9a8d4'
-    }
-};
-
-// ======= FUNCIONES DEL MODAL DE EDITAR =======
-
-// Crear modal de editar empresa
-function createEditCompanyModal() {
-    const existingModal = document.getElementById('editCompanyModal');
-    if (existingModal) return existingModal;
-
-    const modalHTML = `
-        <div id="editCompanyModal" class="management-modal" style="display: none;">
-            <div class="modal-content enhanced-modal">
-                <div class="modal-header">
-                    <h3>✏️ Editar Empresa</h3>
-                    <button class="close-modal" onclick="closeEditModal()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label class="form-label">Nombre de la Empresa</label>
-                        <input type="text" id="editCompanyName" class="form-input" placeholder="Ej: Fundición Laguna">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Icono</label>
-                        <div class="icon-selector">
-                            <div class="icon-option" data-icon="🔥" onclick="selectIcon('🔥')">🔥</div>
-                            <div class="icon-option" data-icon="🐔" onclick="selectIcon('🐔')">🐔</div>
-                            <div class="icon-option" data-icon="🏪" onclick="selectIcon('🏪')">🏪</div>
-                            <div class="icon-option" data-icon="📦" onclick="selectIcon('📦')">📦</div>
-                            <div class="icon-option" data-icon="🏭" onclick="selectIcon('🏭')">🏭</div>
-                            <div class="icon-option" data-icon="🚛" onclick="selectIcon('🚛')">🚛</div>
-                            <div class="icon-option" data-icon="💼" onclick="selectIcon('💼')">💼</div>
-                            <div class="icon-option" data-icon="🏢" onclick="selectIcon('🏢')">🏢</div>
-                        </div>
-                        <input type="hidden" id="editCompanyIcon" value="🔥">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">🎨 Paleta de Colores Corporativa</label>
-                        <p class="form-help">Elige los colores que representen tu empresa</p>
-                        
-                        <div class="color-palette-selector" id="colorPaletteSelector">
-                            <!-- Se genera dinámicamente -->
-                        </div>
-
-                        <div class="selected-palette-preview" id="selectedPalettePreview">
-                            <h4>Vista Previa</h4>
-                            <div class="preview-company-card">
-                                <div class="preview-icon" id="previewIcon">🔥</div>
-                                <div class="preview-info">
-                                    <div class="preview-name" id="previewName">Fundición Laguna</div>
-                                    <div class="preview-status">🟢 Operativo</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <input type="hidden" id="selectedCompanyPalette" value="gold">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Estado</label>
-                        <select id="editCompanyStatus" class="form-input">
-                            <option value="Operativo">🟢 Operativo</option>
-                            <option value="Regular">🟡 Regular</option>
-                            <option value="Mantenimiento">🔵 Mantenimiento</option>
-                            <option value="Cerrado">🔴 Cerrado</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="modal-footer">
-                    <button class="btn btn-success" onclick="saveCompanyChanges()">
-                        <i class="fas fa-save"></i>
-                        Guardar Cambios
-                    </button>
-                    <button class="btn btn-neutral" onclick="closeEditModal()">
-                        Cancelar
-                    </button>
-                </div>
-            </div>
-        </div>
-    `;
-
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-    generateColorPaletteSelector();
-    return document.getElementById('editCompanyModal');
-}
-
-// Generar selector de paletas de colores
-function generateColorPaletteSelector() {
-    const container = document.getElementById('colorPaletteSelector');
-    if (!container) return;
-
-    container.innerHTML = '';
-
-    Object.entries(COMPANY_COLOR_PALETTES).forEach(([paletteId, palette]) => {
-        const paletteCard = document.createElement('div');
-        paletteCard.className = 'palette-card';
-        paletteCard.dataset.palette = paletteId;
-        paletteCard.onclick = () => selectCompanyPalette(paletteId);
-
-        paletteCard.innerHTML = `
-            <div class="palette-preview">
-                <div class="color-circle" style="background: ${palette.primary};"></div>
-                <div class="color-circle" style="background: ${palette.secondary};"></div>
-                <div class="color-circle" style="background: ${palette.accent};"></div>
-            </div>
-            <div class="palette-info">
-                <h4>${palette.name}</h4>
-                <p>${getPaletteDescription(paletteId)}</p>
-            </div>
-            <div class="palette-check">
-                <i class="fas fa-check"></i>
-            </div>
-        `;
-
-        container.appendChild(paletteCard);
-    });
-}
-
-// Obtener descripción de la paleta
-function getPaletteDescription(paletteId) {
-    const descriptions = {
-        gold: 'Elegancia y prestigio',
-        green: 'Crecimiento y éxito',
-        blue: 'Confianza y solidez',
-        purple: 'Innovación y lujo',
-        red: 'Energía y pasión',
-        orange: 'Creatividad y vitalidad',
-        teal: 'Frescura y modernidad',
-        pink: 'Estilo y sofisticación'
-    };
-    return descriptions[paletteId] || 'Diseño profesional';
-}
-
-// ======= FUNCIONES DEL MODAL =======
-
-// Editar empresa
-function editCompany(companyId) {
-    createEditCompanyModal();
-    
-    if (!window.companyManager) {
-        console.error('CompanyManager no está disponible');
-        return;
     }
 
-    const companies = window.companyManager.getAllCompanies();
-    const company = companies[companyId];
-    
-    if (!company) {
-        console.error('Empresa no encontrada:', companyId);
-        return;
+    // ======= UTILIDADES =======
+    showNotification(message, type = 'info') {
+        console.log(`${type === 'success' ? '✅' : '📢'} ${message}`);
+        // Aquí puedes integrar con un sistema de notificaciones
     }
 
-    window.companyManager.currentEditingCompany = companyId;
-    
-    // Llenar formulario
-    document.getElementById('editCompanyName').value = company.name;
-    document.getElementById('editCompanyIcon').value = company.icon;
-    document.getElementById('editCompanyStatus').value = company.status;
-    
-    // Marcar icono seleccionado
-    document.querySelectorAll('.icon-option').forEach(option => {
-        option.classList.remove('selected');
-        if (option.dataset.icon === company.icon) {
-            option.classList.add('selected');
-        }
-    });
-    
-    // Seleccionar paleta actual
-    const currentPalette = findPaletteByColors(company.theme) || 'gold';
-    selectCompanyPalette(currentPalette);
-    
-    // Mostrar modal
-    const modal = document.getElementById('editCompanyModal');
-    modal.style.display = 'block';
-    modal.classList.add('show');
-}
-
-// Seleccionar icono
-function selectIcon(icon) {
-    document.querySelectorAll('.icon-option').forEach(option => {
-        option.classList.remove('selected');
-    });
-    
-    event.target.classList.add('selected');
-    document.getElementById('editCompanyIcon').value = icon;
-    
-    // Actualizar vista previa
-    document.getElementById('previewIcon').textContent = icon;
-}
-
-// Seleccionar paleta de empresa
-function selectCompanyPalette(paletteId) {
-    console.log(`🎨 Seleccionando paleta: ${paletteId}`);
-    
-    // Actualizar clases activas
-    document.querySelectorAll('.palette-card').forEach(card => {
-        card.classList.remove('selected');
-    });
-    document.querySelector(`[data-palette="${paletteId}"]`).classList.add('selected');
-    
-    // Guardar selección
-    document.getElementById('selectedCompanyPalette').value = paletteId;
-    
-    // Actualizar vista previa
-    updatePalettePreview(paletteId);
-}
-
-// Actualizar vista previa de la paleta
-function updatePalettePreview(paletteId) {
-    const palette = COMPANY_COLOR_PALETTES[paletteId];
-    const previewIcon = document.getElementById('previewIcon');
-    const previewName = document.getElementById('previewName');
-    
-    // Actualizar nombre de vista previa
-    const companyName = document.getElementById('editCompanyName').value;
-    if (companyName) {
-        previewName.textContent = companyName;
-    }
-    
-    // Aplicar colores de la paleta
-    previewIcon.style.background = `linear-gradient(135deg, ${palette.primary} 0%, ${palette.secondary} 100%)`;
-    
-    // Actualizar borde de la tarjeta
-    const previewCard = document.querySelector('.preview-company-card');
-    previewCard.style.borderColor = palette.primary;
-    previewCard.style.background = `linear-gradient(135deg, ${palette.primary}08 0%, ${palette.secondary}08 100%)`;
-    
-    console.log(`✅ Vista previa actualizada con paleta: ${palette.name}`);
-}
-
-// Guardar cambios de la empresa
-function saveCompanyChanges() {
-    if (!window.companyManager || !window.companyManager.currentEditingCompany) {
-        console.error('No hay empresa en edición');
-        return;
+    dispatchCompanyChangeEvent(companyId) {
+        const event = new CustomEvent('grizalumCompanyChanged', {
+            detail: { 
+                companyId, 
+                company: this.companies[companyId],
+                timestamp: Date.now()
+            }
+        });
+        document.dispatchEvent(event);
     }
 
-    const companyId = window.companyManager.currentEditingCompany;
-    const newName = document.getElementById('editCompanyName').value.trim();
-    const newIcon = document.getElementById('editCompanyIcon').value;
-    const newStatus = document.getElementById('editCompanyStatus').value;
-    const selectedPalette = document.getElementById('selectedCompanyPalette').value;
-    
-    if (!newName) {
-        alert('❌ El nombre de la empresa es obligatorio');
-        return;
+    // ======= FUNCIONES PLACEHOLDER =======
+    showAddCompanyWizard() {
+        console.log('🚀 Abrir wizard para agregar empresa');
+        this.showNotification('🚀 Wizard para agregar empresa próximamente', 'info');
     }
-    
-    // Obtener datos de la paleta seleccionada
-    const paletteData = COMPANY_COLOR_PALETTES[selectedPalette];
-    
-    const newData = {
-        name: newName,
-        icon: newIcon,
-        status: newStatus,
-        theme: {
-            primary: paletteData.primary,
-            secondary: paletteData.secondary,
-            accent: paletteData.accent
-        },
-        paletteName: paletteData.name
-    };
 
-    // Guardar cambios
-    const success = window.companyManager.editCompany(companyId, newData);
-    
-    if (success) {
-        closeEditModal();
+    openCompanyManagement() {
+        console.log('⚙️ Abrir gestión de empresas');
+        this.showNotification('⚙️ Gestión de empresas próximamente', 'info');
     }
-}
 
-// Cerrar modal de edición
-function closeEditModal() {
-    const modal = document.getElementById('editCompanyModal');
-    if (modal) {
-        modal.style.display = 'none';
-        modal.classList.remove('show');
+    // ======= API PÚBLICA =======
+    getSelectedCompany() {
+        return {
+            id: this.selectedCompany,
+            data: this.companies[this.selectedCompany]
+        };
     }
-    
-    if (window.companyManager) {
-        window.companyManager.currentEditingCompany = null;
-    }
-}
 
-// Encontrar paleta por colores
-function findPaletteByColors(theme) {
-    if (!theme) return null;
-    
-    for (const [id, palette] of Object.entries(COMPANY_COLOR_PALETTES)) {
-        if (palette.primary === theme.primary) {
-            return id;
+    getAllCompanies() {
+        return this.companies;
+    }
+
+    addCompany(id, companyData) {
+        this.companies[id] = companyData;
+        this.saveCompaniesData(this.companies);
+        this.renderCompaniesList();
+        console.log(`✅ Empresa agregada: ${companyData.name}`);
+    }
+
+    removeCompany(id) {
+        if (this.companies[id]) {
+            delete this.companies[id];
+            this.saveCompaniesData(this.companies);
+            this.renderCompaniesList();
+            console.log(`❌ Empresa eliminada: ${id}`);
         }
     }
-    return null;
 }
 
-// ======= INICIALIZACIÓN Y COMPATIBILIDAD =======
+// ======= INICIALIZACIÓN GLOBAL =======
+let grizalumCompanySelector = null;
 
-// Instancia global del Company Manager
-let companyManager = null;
-
-// Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Inicializando módulo Company Manager...');
+    console.log('🏢 Inicializando GRIZALUM Company Selector...');
     
-    // Crear instancia global
-    companyManager = new CompanyManager();
-    
-    // Hacer disponible globalmente
-    window.companyManager = companyManager;
-    
-    // Vincular eventos del input de nombre para vista previa
-    const nameInput = document.getElementById('editCompanyName');
-    if (nameInput) {
-        nameInput.addEventListener('input', function() {
-            const previewName = document.getElementById('previewName');
-            if (previewName) {
-                previewName.textContent = this.value || 'Nombre de Empresa';
-            }
+    try {
+        grizalumCompanySelector = new GrizalumCompanySelector();
+        window.grizalumCompanySelector = grizalumCompanySelector;
+        
+        // Listener para eventos de cambio de empresa
+        document.addEventListener('grizalumCompanyChanged', function(event) {
+            console.log('🏢 Empresa cambiada:', event.detail);
         });
+        
+        console.log('✅ GRIZALUM Company Selector cargado exitosamente');
+        
+    } catch (error) {
+        console.error('❌ Error inicializando Company Selector:', error);
     }
-    
-    console.log('✅ Company Manager listo para usar');
 });
 
 // ======= FUNCIONES GLOBALES PARA COMPATIBILIDAD =======
-
-// Funciones que se pueden llamar desde HTML directamente
 function toggleCompanyDropdown() {
-    if (companyManager) companyManager.toggleDropdown();
-}
-
-function selectCompany(companyId) {
-    if (companyManager) companyManager.selectCompany(companyId);
-}
-
-function updateSelectedCompany(companyId) {
-    if (companyManager) companyManager.updateSelectedCompany(companyId);
-}
-
-function updateCompanyData(companyId) {
-    if (companyManager) companyManager.updateCompanyData(companyId);
-}
-
-function getCurrentSelectedCompany() {
-    return companyManager ? companyManager.currentSelected : null;
-}
-
-function getCompaniesData() {
-    return companyManager ? companyManager.getAllCompanies() : {};
-}
-
-function updateKPIs(data) {
-    if (companyManager) companyManager.updateKPIs(data);
-}
-
-function updateSidebar(data) {
-    if (companyManager) companyManager.updateSidebar(data);
-}
-
-function getCompanyName(companyId) {
-    if (!companyManager) return 'Empresa';
-    const companies = companyManager.getAllCompanies();
-    return companies[companyId]?.name || 'Empresa';
-}
-
-function showAddCompanyWizard() {
-    console.log('🏗️ Wizard de nueva empresa - Próximamente');
-    if (window.aiAssistant) {
-        window.aiAssistant.showNotification(
-            '🏗️ Wizard de nueva empresa próximamente', 
-            'info'
-        );
+    if (window.grizalumCompanySelector) {
+        window.grizalumCompanySelector.toggleDropdown();
     }
 }
 
-console.log('🏢 Company Manager Module cargado');
-console.log('✨ Funciones disponibles:');
-console.log('  • Gestión completa de empresas');
-console.log('  • Selector de empresas dinámico');
-console.log('  • Editor de empresas con paletas de colores');
-console.log('  • Persistencia de datos en localStorage');
-console.log('  • Integración con AI Assistant');
-console.log('🚀 ¡Listo para gestionar empresas!');
+function selectCompany(companyId) {
+    if (window.grizalumCompanySelector) {
+        window.grizalumCompanySelector.selectCompany(companyId);
+    }
+}
+
+// ======= EXPORTAR PARA USO AVANZADO =======
+window.GrizalumCompanySelector = GrizalumCompanySelector;
+
+console.log(`
+🏢 ===================================================
+   GRIZALUM COMPANY SELECTOR - SISTEMA MODULAR
+🏢 ===================================================
+
+✨ CARACTERÍSTICAS:
+   • Z-Index corregido (10000) - siempre visible
+   • Estilos premium con gradientes dorados
+   • Animaciones suaves y profesionales
+   • Sistema modular independiente
+   • API completa para gestión de empresas
+   • Integración automática con Theme Manager
+   • Responsive y optimizado
+
+🛠️ USO:
+   • Cambio: grizalumCompanySelector.selectCompany('id')
+   • Agregar: grizalumCompanySelector.addCompany(id, data)
+   • Obtener: grizalumCompanySelector.getSelectedCompany()
+
+🏢 ===================================================
+`);
