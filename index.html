@@ -1221,31 +1221,63 @@ body {
                    </div>
                </section>
 
-               <!-- CHARTS SECTION -->
-               <section class="charts-section">
-                   <div class="chart-card">
-                       <div class="chart-header">
-                           <h3 class="chart-title">Flujo de Caja - Últimos 6 Meses</h3>
-                           <div class="chart-filters">
-                               <button class="filter-btn active">6M</button>
-                               <button class="filter-btn">1A</button>
-                               <button class="filter-btn">2A</button>
-                           </div>
-                       </div>
-                       <div class="chart-container">
-                           <canvas id="cashFlowChart"></canvas>
-                       </div>
-                   </div>
+              <!-- CHARTS SECTION COMPLETA -->
+<section class="charts-section">
+    <!-- Gráfico Principal de Flujo de Caja -->
+    <div class="chart-card main-chart">
+        <div class="chart-header">
+            <h3 class="chart-title">Flujo de Caja - Últimos 6 Meses</h3>
+            <div class="chart-filters">
+                <button class="filter-btn active">6M</button>
+                <button class="filter-btn">1A</button>
+                <button class="filter-btn">2A</button>
+            </div>
+        </div>
+        <div class="chart-container">
+            <canvas id="cashFlowChart"></canvas>
+        </div>
+    </div>
 
-                   <div class="chart-card">
-                       <div class="chart-header">
-                           <h3 class="chart-title">Distribución de Gastos</h3>
-                       </div>
-                       <div class="chart-container">
-                           <canvas id="expensesChart"></canvas>
-                       </div>
-                   </div>
-               </section>
+    <!-- Gráfico de Distribución de Gastos -->
+    <div class="chart-card">
+        <div class="chart-header">
+            <h3 class="chart-title">Distribución de Gastos</h3>
+        </div>
+        <div class="chart-container">
+            <canvas id="expensesChart"></canvas>
+        </div>
+    </div>
+    
+    <!-- Gráfico de Ingresos vs Gastos -->
+    <div class="chart-card">
+        <div class="chart-header">
+            <h3 class="chart-title">Ingresos vs Gastos</h3>
+        </div>
+        <div class="chart-container">
+            <canvas id="revenueChart"></canvas>
+        </div>
+    </div>
+    
+    <!-- Gráfico de Antigüedad de Cuentas -->
+    <div class="chart-card">
+        <div class="chart-header">
+            <h3 class="chart-title">Antigüedad de Cuentas</h3>
+        </div>
+        <div class="chart-container">
+            <canvas id="agingChart"></canvas>
+        </div>
+    </div>
+    
+    <!-- Gráfico Detallado de Flujo de Caja -->
+    <div class="chart-card">
+        <div class="chart-header">
+            <h3 class="chart-title">Flujo de Caja Diario</h3>
+        </div>
+        <div class="chart-container">
+            <canvas id="cashFlowDetailChart"></canvas>
+                 </div>
+              </div>
+          </section>
            </div>
        </main>
    </div>
