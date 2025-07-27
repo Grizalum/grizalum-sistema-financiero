@@ -447,7 +447,12 @@ body {
     max-width: 100%;
     overflow-x: hidden;
 }
-
+/* 🔧 FIX PARA MOSTRAR DASHBOARD */
+#dashboardContent {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}   
 /* ================================================================
    METRICS GRID - TARJETAS KPI GRANDES Y PROFESIONALES
    ================================================================ */
