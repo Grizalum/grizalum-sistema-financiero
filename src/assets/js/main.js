@@ -586,10 +586,19 @@ function editTransaction(id) {
 
 // Función principal para mostrar secciones (usada en HTML)
 function showSection(sectionId) {
-    if (window.grizalumApp) {
-        window.grizalumApp.showSection(sectionId);
+    // Ocultar todas las secciones
+    const allSections = document.querySelectorAll('[id$="Content"]');
+    allSections.forEach(section => {
+        section.style.display = 'none';
+    });
+    
+    // Mostrar la sección solicitada
+    const targetSection = document.getElementById(sectionId + 'Content');
+    if (targetSection) {
+        targetSection.style.display = 'block';
+        console.log(`✅ Mostrando sección: ${sectionId}`);
     } else {
-        console.warn('⚠️ GRIZALUM App no está inicializada');
+        console.warn(`⚠️ Sección no encontrada: ${sectionId}Content`);
     }
 }
 
