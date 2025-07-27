@@ -332,9 +332,11 @@ function initializeCharts() {
     return grizalumChartsManager.initialize();
 }
 
-// Auto-inicializar
+// Auto-inicializar CON DELAY
 document.addEventListener('DOMContentLoaded', () => {
-    grizalumChartsManager.initialize();
+    setTimeout(() => {
+        grizalumChartsManager.initialize();
+    }, 500);
 });
 
 // Exportar globalmente
