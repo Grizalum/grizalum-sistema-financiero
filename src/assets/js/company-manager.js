@@ -128,7 +128,7 @@ class GrizalumCompanySelector {
                 border-radius: 20px;
                 box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
                 border: 1px solid rgba(212, 175, 55, 0.2);
-                z-index: 10000; /* ← Z-INDEX ULTRA ALTO */
+                z-index: 9999
                 opacity: 0;
                 visibility: hidden;
                 transform: translateY(-15px);
