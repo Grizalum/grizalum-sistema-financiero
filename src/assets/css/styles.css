@@ -451,6 +451,11 @@ body {
 /* ================================================================
    METRICS GRID - TARJETAS KPI GRANDES Y PROFESIONALES
    ================================================================ */
+.dashboard-content .metrics-grid {
+    display: grid !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
 .metrics-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -461,6 +466,8 @@ body {
 .metric-card {
     background: white;
     padding: var(--spacing-2xl);
+    display: flex !important;
+    visibility: visible !important;
     border-radius: 24px;
     box-shadow: var(--shadow-lg);
     transition: all 0.3s ease;
