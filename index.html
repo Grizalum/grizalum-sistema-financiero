@@ -338,11 +338,19 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('loadingScreen').classList.add('hide');
     }, 3000);
     
-    if (typeof initializeCharts === 'function') {
-    initializeCharts();
-} else {
-    console.warn('⚠️ charts.js no está cargado');
-}
+   // Esperar a que Chart.js esté completamente cargado
+setTimeout(() => {
+    if (typeof Chart !== 'undefined' && typeof initializeCharts === 'function') {
+        try {
+            initializeCharts();
+            console.log('📊 Gráficos inicializados correctamente');
+        } catch (error) {
+            console.error('❌ Error inicializando gráficos:', error);
+        }
+    } else {
+        console.warn('⚠️ Chart.js o charts.js no está cargado');
+    }
+}, 1000);
     setupEventListeners();
     
     console.log('✅ Sistema GRIZALUM completamente cargado');
