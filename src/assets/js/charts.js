@@ -53,6 +53,8 @@ class GrizalumChartsManager {
     }
 
     async initializeAllCharts() {
+        // 🔧 DESTRUIR GRÁFICOS EXISTENTES PRIMERO
+        this.destroyAll();
         const promises = this.config.enabled.map(async (chartType) => {
             try {
                 await this.createChart(chartType);
