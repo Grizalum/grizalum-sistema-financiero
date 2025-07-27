@@ -1260,6 +1260,8 @@ body {
 <script src="src/assets/js/company-manager.js"></script>
     <!-- MAIN JS - FUNCIONES PRINCIPALES -->
 <script src="src/assets/js/main.js"></script>
+    <!-- CHARTS - GRÁFICOS CHART.JS -->
+<script src="src/assets/js/charts.js"></script>
 <!-- SCRIPTS INTEGRADOS PRINCIPALES -->
 <script>
     
@@ -1271,7 +1273,11 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('loadingScreen').classList.add('hide');
     }, 3000);
     
-    initializeDashboard();
+    if (typeof initializeCharts === 'function') {
+    initializeCharts();
+} else {
+    console.warn('⚠️ charts.js no está cargado');
+}
     setupEventListeners();
     
     console.log('✅ Sistema GRIZALUM completamente cargado');
@@ -1407,116 +1413,6 @@ document.addEventListener('DOMContentLoaded', function() {
        function getCompanyName(companyId) {
            const companies = getCompaniesData();
            return companies[companyId]?.name || 'Empresa';
-       }
-
-       // DASHBOARD
-       function initializeDashboard() {
-           initializeCashFlowChart();
-           initializeExpensesChart();
-       }
-
-       function initializeCashFlowChart() {
-           const ctx = document.getElementById('cashFlowChart');
-           if (!ctx) return;
-           
-           new Chart(ctx.getContext('2d'), {
-               type: 'line',
-               data: {
-                   labels: ['Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre', 'Enero'],
-                   datasets: [{
-                       label: 'Ingresos',
-                       data: [2200000, 2350000, 2180000, 2420000, 2650000, 2847293],
-                       borderColor: '#667eea',
-                       backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                       tension: 0.4,
-                       fill: true,
-                       pointBackgroundColor: '#667eea',
-                       pointBorderColor: '#ffffff',
-                       pointBorderWidth: 2,
-                       pointRadius: 6
-                   }, {
-                       label: 'Gastos',
-                       data: [1800000, 1850000, 1780000, 1920000, 1850000, 1892847],
-                       borderColor: '#ed8936',
-                       backgroundColor: 'rgba(237, 137, 54, 0.1)',
-                       tension: 0.4,
-                       fill: true,
-                       pointBackgroundColor: '#ed8936',
-                       pointBorderColor: '#ffffff',
-                       pointBorderWidth: 2,
-                       pointRadius: 6
-                   }]
-               },
-               options: {
-                   responsive: true,
-                   maintainAspectRatio: false,
-                   plugins: {
-                       legend: { 
-                           position: 'bottom',
-                           labels: {
-                               usePointStyle: true,
-                               padding: 20
-                           }
-                       }
-                   },
-                   scales: {
-                       y: {
-                           beginAtZero: true,
-                           grid: {
-                               color: 'rgba(0, 0, 0, 0.05)'
-                           },
-                           ticks: {
-                               callback: function(value) {
-                                   return 'S/. ' + (value / 1000000).toFixed(1) + 'M';
-                               }
-                           }
-                       },
-                       x: {
-                           grid: {
-                               color: 'rgba(0, 0, 0, 0.05)'
-                           }
-                       }
-                   }
-               }
-           });
-       }
-
-       function initializeExpensesChart() {
-           const ctx = document.getElementById('expensesChart');
-           if (!ctx) return;
-           
-           new Chart(ctx.getContext('2d'), {
-               type: 'doughnut',
-               data: {
-                   labels: ['Nómina', 'Marketing', 'Operaciones', 'Tecnología', 'Otros'],
-                   datasets: [{
-                       data: [45, 20, 15, 12, 8],
-                       backgroundColor: [
-                           '#667eea',
-                           '#ed8936', 
-                           '#48bb78',
-                           '#f093fb',
-                           '#a0aec0'
-                       ],
-                       borderWidth: 0,
-                       hoverBorderWidth: 2,
-                       hoverBorderColor: '#ffffff'
-                   }]
-               },
-               options: {
-                   responsive: true,
-                   maintainAspectRatio: false,
-                   plugins: {
-                       legend: { 
-                           position: 'bottom',
-                           labels: {
-                               usePointStyle: true,
-                               padding: 15
-                           }
-                       }
-                   }
-               }
-           });
        }
 
        function animateValue(element, start, end, duration, prefix = '') {
