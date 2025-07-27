@@ -462,8 +462,10 @@ body {
     opacity: 1 !important;
 }
 .metrics-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    display: grid !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)) !important;
     gap: var(--spacing-xl);
     margin-bottom: var(--spacing-2xl);
 }
