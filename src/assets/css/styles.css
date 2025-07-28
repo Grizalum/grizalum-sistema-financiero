@@ -336,6 +336,9 @@ body {
 .main-content {
     flex: 1;
     margin-left: var(--sidebar-width);
+    margin-top: 0 !important;
+    padding-top: 0 !important;          ← AGREGA ESTA
+    overflow-y: auto;                   ← Y ESTA
     background: transparent;
     min-height: 100vh;
     display: flex;
