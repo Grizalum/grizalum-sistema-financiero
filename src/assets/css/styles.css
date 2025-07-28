@@ -503,9 +503,10 @@ body {
    ================================================================ */
 .metrics-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: var(--cards-gap);                 /* Variable específica */
-    margin-bottom: var(--cards-bottom-margin); /* Variable específica */
+    grid-template-columns: repeat(4, 1fr);           /* ← CAMBIO: 4 columnas fijas */
+    gap: var(--cards-gap);
+    margin-bottom: var(--cards-bottom-margin);
+    align-items: start;                              /* ← NUEVO: alinear arriba */
 }
 
 .metric-card {
