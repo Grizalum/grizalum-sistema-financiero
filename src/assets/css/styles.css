@@ -765,8 +765,7 @@ body {
         padding: var(--dashboard-padding-mobile);
         gap: var(--cards-gap-mobile);
     }
-}
-    
+   
     .metrics-grid {
         grid-template-columns: 1fr;
         gap: var(--spacing-md);
