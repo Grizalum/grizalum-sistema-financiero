@@ -317,21 +317,11 @@ console.log('🤖 Probando IA básica...');
        </main>
    </div>
     <!-- SCRIPTS INTEGRADOS --> 
-<script src="./src/assets/js/charts.js"></script>
 <script src="./src/assets/js/company-manager.js"></script>
+<script src="./src/assets/js/charts.js"></script>
 <script src="./src/assets/js/main.js"></script>
 <!-- SCRIPTS INTEGRADOS PRINCIPALES -->
 <script>
-// FORZAR INICIALIZACIÓN DEL SELECTOR
-setTimeout(() => {
-    if (window.grizalumCompanySelector) {
-        console.log('✅ Company Selector ya inicializado');
-    } else {
-        console.log('⚠️ Reinicializando Company Selector...');
-        const selector = new GrizalumCompanySelector();
-        window.grizalumCompanySelector = selector;
-    }
-}, 2000);
     
 // INICIALIZAR TODO AL CARGAR
 document.addEventListener('DOMContentLoaded', function() {
