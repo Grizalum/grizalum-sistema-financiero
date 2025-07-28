@@ -355,6 +355,88 @@ class GrizalumCompanySelector {
             .grizalum-company-item:nth-child(3) { animation-delay: 0.3s; }
             .grizalum-company-item:nth-child(4) { animation-delay: 0.4s; }
             .grizalum-company-item:nth-child(5) { animation-delay: 0.5s; }
+            /* =============== MODAL PROFESIONAL =============== */
+.advanced-management-modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 50000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.management-modal-content {
+    background: white;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 900px;
+    max-height: 80vh;
+    overflow: hidden;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from { opacity: 0; transform: scale(0.9) translateY(-20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.management-header {
+    background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+    color: white;
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close-modal {
+    background: none; border: none;
+    color: white; font-size: 2rem;
+    cursor: pointer; padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.close-modal:hover {
+    background: rgba(255,255,255,0.2);
+    transform: rotate(90deg);
+}
+
+.management-tabs {
+    display: flex;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.tab-btn {
+    flex: 1; padding: 1.5rem;
+    border: none; background: none;
+    cursor: pointer; font-weight: 600;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.tab-btn.active {
+    background: white;
+    border-bottom: 4px solid #d4af37;
+    color: #d4af37;
+}
+
+.management-content {
+    padding: 2rem;
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
         `;
         
         document.head.appendChild(style);
