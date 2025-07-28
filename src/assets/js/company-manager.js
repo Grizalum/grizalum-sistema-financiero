@@ -710,7 +710,6 @@ createAdvancedManagementModal() {
     `;
     
     document.body.appendChild(modal);
-    this.addModalStyles();
 }
     generateEditTab() {
     const companies = this.getAllCompanies();
