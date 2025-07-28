@@ -1047,6 +1047,7 @@ downloadBackup() {
 let grizalumCompanySelector = null;
 
 document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {      
     console.log('🏢 Inicializando GRIZALUM Company Selector...');
     
     try {
@@ -1063,6 +1064,7 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch (error) {
         console.error('❌ Error inicializando Company Selector:', error);
     }
+    }, 100);  // ← CAMBIA ESTA LÍNEA
 });
 
 // ======= FUNCIONES GLOBALES PARA COMPATIBILIDAD =======
