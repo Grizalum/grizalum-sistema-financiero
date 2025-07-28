@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GRIZALUM - Trabajando Offline</title>
+    <title>GRIZALUM - Modo Offline</title>
     <style>
         * {
             margin: 0;
@@ -37,11 +37,14 @@
             width: 120px;
             height: 120px;
             margin: 0 auto 2rem;
-            background-image: url('src/assets/imagen/grizalum-logo.png.png');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
+            background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
             animation: pulse 2s infinite;
+            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.3);
         }
         
         @keyframes pulse {
@@ -153,60 +156,65 @@
 </head>
 <body>
     <div class="offline-container">
-        <div class="brand-logo"></div>
+        <!-- Logo usando emoji en lugar de imagen faltante -->
+        <div class="brand-logo">📊</div>
         
-        <div class="offline-icon">
-            <i class="fas fa-wifi-slash"></i>
-        </div>
+        <div class="offline-icon">⚠️</div>
         
         <h1>GRIZALUM</h1>
         
         <div class="offline-message">
-            <strong>Trabajando en modo offline</strong><br>
-            No hay conexión a internet, pero puedes seguir usando las funciones básicas de GRIZALUM.
+            <strong>Reconectando al sistema...</strong><br>
+            Verificando conexión con el servidor financiero.
         </div>
         
         <div class="status-indicator">
             <div class="status-dot"></div>
-            <span>Modo Offline Activo</span>
+            <span>Reintentando conexión</span>
         </div>
         
         <div class="features-list">
-            <h3>Disponible sin conexión:</h3>
+            <h3>Sistema GRIZALUM:</h3>
             <ul>
-                <li>Ver dashboard y KPIs guardados</li>
-                <li>Consultar transacciones recientes</li>
-                <li>Crear nuevas transacciones (se sincronizarán)</li>
-                <li>Generar reportes básicos</li>
-                <li>Consultar datos en caché</li>
+                <li>Dashboard financiero profesional</li>
+                <li>Análisis de flujo de caja en tiempo real</li>
+                <li>Métricas empresariales avanzadas</li>
+                <li>Inteligencia artificial integrada</li>
+                <li>Reportes ejecutivos automáticos</li>
             </ul>
         </div>
         
         <button class="retry-btn" onclick="location.reload()">
-            <i class="fas fa-sync-alt"></i>
-            Reintentar Conexión
+            🔄 Reintentar Conexión
         </button>
     </div>
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-    
     <script>
-        // Verificar conexión automáticamente
+        // Verificar conexión automáticamente cada 3 segundos
         function checkConnection() {
             if (navigator.onLine) {
+                console.log('✅ Conexión restaurada, redirigiendo...');
                 window.location.href = '/';
             } else {
-                setTimeout(checkConnection, 5000);
+                setTimeout(checkConnection, 3000);
             }
         }
         
+        // Iniciar verificación
         checkConnection();
         
+        // Listener para detectar cuando vuelve la conexión
         window.addEventListener('online', () => {
+            console.log('🌐 Conexión detectada, redirigiendo...');
             window.location.href = '/';
         });
         
-        console.log('📱 GRIZALUM - Página offline cargada');
+        // Auto-reload cada 10 segundos como backup
+        setTimeout(() => {
+            window.location.reload();
+        }, 10000);
+        
+        console.log('📱 GRIZALUM - Página offline profesional cargada');
     </script>
 </body>
 </html>
