@@ -2,11 +2,11 @@
   "name": "GRIZALUM - Sistema Financiero Empresarial Premium",
   "short_name": "GRIZALUM",
   "description": "Sistema financiero empresarial con IA integrada para empresas peruanas. Dashboard ejecutivo, flujo de caja, análisis predictivo y contabilidad completa.",
-  "version": "1.2.0",
+  "version": "3.0.0",
   "start_url": "/",
   "scope": "/",
-  "display": "standalone",
-  "orientation": "portrait-primary",
+  "display": "minimal-ui",
+  "orientation": "any",
   "theme_color": "#d4af37",
   "background_color": "#0f172a",
   "lang": "es-PE",
@@ -14,69 +14,40 @@
   
   "icons": [
     {
-      "src": "src/assets/images/icon-72x72.png",
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>",
       "sizes": "72x72",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/svg+xml",
+      "purpose": "any"
     },
     {
-      "src": "src/assets/images/icon-96x96.png",
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>",
       "sizes": "96x96",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/svg+xml",
+      "purpose": "any"
     },
     {
-      "src": "src/assets/images/icon-128x128.png",
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>",
       "sizes": "128x128",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/svg+xml",
+      "purpose": "any"
     },
     {
-      "src": "src/assets/images/icon-144x144.png",
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>",
       "sizes": "144x144",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/svg+xml",
+      "purpose": "any"
     },
     {
-      "src": "src/assets/images/icon-152x152.png",
-      "sizes": "152x152",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "src/assets/images/icon-192x192.png",
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/svg+xml",
+      "purpose": "any"
     },
     {
-      "src": "src/assets/images/icon-384x384.png",
-      "sizes": "384x384",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "src/assets/images/icon-512x512.png",
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ],
-  
-  "screenshots": [
-    {
-      "src": "src/assets/images/screenshot-desktop-1.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Dashboard Ejecutivo GRIZALUM"
-    },
-    {
-      "src": "src/assets/images/screenshot-mobile-1.png",
-      "sizes": "375x812",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Vista móvil del flujo de caja"
+      "type": "image/svg+xml",
+      "purpose": "any"
     }
   ],
   
@@ -89,50 +60,15 @@
   
   "shortcuts": [
     {
-      "name": "Dashboard",
+      "name": "Dashboard Principal",
       "short_name": "Dashboard",
-      "description": "Ver dashboard ejecutivo",
-      "url": "/#dashboard",
+      "description": "Acceso directo al panel de control",
+      "url": "/",
       "icons": [
         {
-          "src": "src/assets/images/shortcut-dashboard.png",
-          "sizes": "96x96"
-        }
-      ]
-    },
-    {
-      "name": "Flujo de Caja",
-      "short_name": "Cash Flow",
-      "description": "Gestionar flujo de caja",
-      "url": "/#cash-flow",
-      "icons": [
-        {
-          "src": "src/assets/images/shortcut-cashflow.png",
-          "sizes": "96x96"
-        }
-      ]
-    },
-    {
-      "name": "Nueva Transacción",
-      "short_name": "Nueva",
-      "description": "Agregar transacción rápida",
-      "url": "/#cash-flow?action=new",
-      "icons": [
-        {
-          "src": "src/assets/images/shortcut-new.png",
-          "sizes": "96x96"
-        }
-      ]
-    },
-    {
-      "name": "Reportes IA",
-      "short_name": "IA",
-      "description": "Análisis con inteligencia artificial",
-      "url": "/#reports?ai=true",
-      "icons": [
-        {
-          "src": "src/assets/images/shortcut-ai.png",
-          "sizes": "96x96"
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
         }
       ]
     }
@@ -141,40 +77,12 @@
   "related_applications": [],
   "prefer_related_applications": false,
   
-  "edge_side_panel": {
-    "preferred_width": 400
-  },
-  
   "display_override": [
-    "window-controls-overlay",
-    "standalone",
     "minimal-ui",
     "browser"
   ],
   
-  "protocol_handlers": [
-    {
-      "protocol": "web+grizalum",
-      "url": "/?action=%s"
-    }
-  ],
-  
-  "file_handlers": [
-    {
-      "action": "/import",
-      "accept": {
-        "text/csv": [".csv"],
-        "application/vnd.ms-excel": [".xls"],
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
-        "application/json": [".json"]
-      }
-    }
-  ],
-  
   "launch_handler": {
-    "client_mode": "auto"
-  },
-  
-  "handle_links": "preferred",
-  "capture_links": "new-client"
+    "client_mode": "navigate-existing"
+  }
 }
