@@ -64,7 +64,18 @@
     --spacing-xl: 1.5rem;     /* 24px */
     --spacing-2xl: 2rem;      /* 32px */
     --spacing-3xl: 3rem;      /* 48px */
-    
+   
+   /* ESPACIADOS ESPECÍFICOS PARA CONTROL FINO */
+    --dashboard-padding: 14px;        /* Padding del dashboard */
+    --dashboard-gap: 16px;            /* Espacio entre secciones */
+    --cards-gap: 12px;                /* Espacio entre tarjetas */
+    --cards-bottom-margin: 18px;      /* Margen inferior de las métricas */
+    --header-to-content: 8px;         /* Espacio header a contenido */
+
+    /* ESPACIADOS MÓVIL */
+    --dashboard-padding-mobile: 8px;
+    --cards-gap-mobile: 8px;
+   
     /* TIPOGRAFÍA CONTROLADA */
     --text-xs: 0.75rem;       /* 12px */
     --text-sm: 0.875rem;      /* 14px */
@@ -478,10 +489,11 @@ body {
    ================================================================ */
 .dashboard-content {
     flex: 1;
-    padding: var(--spacing-2xl);
+    padding: var(--dashboard-padding);     /* Variable específica */
+    padding-top: var(--header-to-content); /* Control fino del top */
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-2xl);
+    gap: var(--dashboard-gap);             /* Variable específica */
     max-width: 100%;
     overflow-x: hidden;
 }
@@ -492,8 +504,8 @@ body {
 .metrics-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: var(--spacing-xl);
-    margin-bottom: var(--spacing-2xl);
+    gap: var(--cards-gap);                 /* Variable específica */
+    margin-bottom: var(--cards-bottom-margin); /* Variable específica */
 }
 
 .metric-card {
@@ -750,9 +762,10 @@ body {
 /* MÓVIL */
 @media (max-width: 575px) {
     .dashboard-content {
-        padding: var(--spacing-md);
-        gap: var(--spacing-lg);
+        padding: var(--dashboard-padding-mobile);
+        gap: var(--cards-gap-mobile);
     }
+}
     
     .metrics-grid {
         grid-template-columns: 1fr;
