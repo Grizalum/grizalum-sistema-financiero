@@ -1341,6 +1341,26 @@ button:focus,
     padding: 20px !important;
     overflow-y: auto !important;
 }
+/* SOLUCIÓN DE EMERGENCIA PARA SELECTOR */
+#companySelector {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    z-index: 1000 !important;
+    min-width: 200px !important;
+    background: white !important;
+    border: 2px solid #d4af37 !important;
+    border-radius: 8px !important;
+    padding: 10px !important;
+    margin-left: 10px !important;
+}
+
+.grizalum-selected-company {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+}
 /* ================================================================
    GRIZALUM CSS ULTRA PROFESIONAL v4.0 - COMPLETO Y CORREGIDO
    Responsive perfecto para TODOS los dispositivos ✅
