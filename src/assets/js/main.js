@@ -586,22 +586,20 @@ function editTransaction(id) {
 
 // Función principal para mostrar secciones (usada en HTML)
 function showSection(sectionId) {
-    // Ocultar todas las secciones
+    // Ocultar todas las secciones usando clases en lugar de display
     const allSections = document.querySelectorAll('[id$="Content"]');
     allSections.forEach(section => {
-        section.style.display = 'none';
+        section.classList.remove('active');
+        section.style.display = '';  // Limpiar estilos inline
     });
     
     // Mostrar la sección solicitada
     const targetSection = document.getElementById(sectionId + 'Content');
     if (targetSection) {
-        targetSection.style.display = 'block';
+        targetSection.classList.add('active');
         console.log(`✅ Mostrando sección: ${sectionId}`);
-    } else {
-        console.warn(`⚠️ Sección no encontrada: ${sectionId}Content`);
     }
 }
-
 // Función para cambiar período (usada en HTML)
 function changePeriod(period, buttonElement) {
     if (window.grizalumApp) {
