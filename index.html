@@ -334,6 +334,7 @@ setTimeout(() => {
 }, 2000);
 </script>
     
+<script>          
 // INICIALIZAR TODO AL CARGAR
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🤖 AI Assistant ya disponible');
@@ -368,7 +369,8 @@ setTimeout(() => {
         }
     }, 5000);
 });
-       // DATOS DE EMPRESAS
+ 
+    // DATOS DE EMPRESAS
        function getCompaniesData() {
            const saved = localStorage.getItem('grizalum_companies');
            if (saved) {
