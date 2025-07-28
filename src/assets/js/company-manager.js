@@ -355,38 +355,82 @@ class GrizalumCompanySelector {
             .grizalum-company-item:nth-child(4) { animation-delay: 0.4s; }
             .grizalum-company-item:nth-child(5) { animation-delay: 0.5s; }
         `;
-        /* ESTILOS PARA GESTIÓN AVANZADA */
-        .advanced-management-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 20000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+/* ESTILOS PARA GESTIÓN AVANZADA */
+.advanced-management-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 20000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-        .management-modal-content {
-            background: white;
-            border-radius: 16px;
-            width: 90%;
-            max-width: 800px;
-            max-height: 90vh;
-            overflow: hidden;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-        }
+.management-modal-content {
+    background: white;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow: hidden;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+}
 
-        .management-header {
-            background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
-            color: white;
-            padding: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+.management-header {
+    background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+    color: white;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.management-tabs {
+    display: flex;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 1rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+    background: white;
+    border-bottom: 3px solid #d4af37;
+    color: #d4af37;
+}
+
+.management-content {
+    padding: 2rem;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
         document.head.appendChild(style);
         console.log('🎨 Estilos del Company Selector creados');
     }
