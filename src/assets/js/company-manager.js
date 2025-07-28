@@ -7,11 +7,12 @@
 
 class GrizalumCompanySelector {
     constructor() {
-        this.companies = this.loadCompaniesData();
-        this.selectedCompany = null;
-        this.isInitialized = false;
-        this.init();
-    }
+    this.companies = this.loadCompaniesData();
+    this.selectedCompany = null;
+    this.isInitialized = false;
+    this.companyThemes = {}; // ← AGREGA ESTA LÍNEA
+    this.init();
+}
 
     init() {
         try {
@@ -725,7 +726,7 @@ generateMetricsTab() {
     Object.entries(companies).forEach(([id, company]) => {
         let themeOptions = '';
         availableThemes.forEach(theme => {
-            const isSelected = this.companyThemes[id] === theme.key ? 'selected' : '';
+            const isSelected = '';
             themeOptions += `<option value="${theme.key}" ${isSelected}>${theme.name}</option>`;
         });
         
