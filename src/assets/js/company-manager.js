@@ -1379,6 +1379,646 @@ class GrizalumCompanySelector {
         justify-content: center;
     }
 }
+/* =============== TEMAS PREMIUM FUTURISTAS =============== */
+.themes-container-premium {
+    padding: 0;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.themes-header-premium {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(236, 72, 153, 0.05) 100%);
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.themes-title {
+    font-size: 1.75rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+}
+
+.themes-subtitle {
+    color: #64748b;
+    margin: 0.5rem 0 0 0;
+    font-size: 1rem;
+}
+
+.themes-tools {
+    display: flex;
+    gap: 1rem;
+}
+
+.themes-tool-btn {
+    padding: 0.75rem 1.5rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    background: white;
+    color: #374151;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.themes-tool-btn:hover {
+    border-color: #8b5cf6;
+    color: #8b5cf6;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.2);
+}
+
+.themes-gallery {
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.gallery-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.gallery-header h4 {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #1f2937;
+    margin: 0;
+}
+
+.gallery-filters {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.filter-chip {
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 20px;
+    background: white;
+    color: #6b7280;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-chip.active,
+.filter-chip:hover {
+    background: #8b5cf6;
+    color: white;
+    border-color: #8b5cf6;
+    transform: translateY(-1px);
+}
+
+.themes-showcase {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.showcase-theme {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e5e7eb;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.showcase-theme:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    border-color: #8b5cf6;
+}
+
+.showcase-preview {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.showcase-preview::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+    animation: showcaseShine 3s infinite;
+}
+
+@keyframes showcaseShine {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) rotate(45deg); }
+}
+
+.showcase-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 2;
+}
+
+.showcase-icon {
+    font-size: 2rem;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.showcase-text {
+    color: white;
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.showcase-info {
+    padding: 1rem;
+}
+
+.showcase-name {
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+}
+
+.showcase-desc {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+.showcase-category {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+    background: rgba(139, 92, 246, 0.1);
+    color: #8b5cf6;
+    border-radius: 10px;
+    display: inline-block;
+    font-weight: 600;
+}
+
+.companies-themes {
+    padding: 1.5rem 2rem 2rem 2rem;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.section-header h4 {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #1f2937;
+    margin: 0;
+}
+
+.bulk-theme-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.bulk-btn {
+    padding: 0.75rem 1.25rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: white;
+    color: #374151;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    font-size: 0.875rem;
+}
+
+.bulk-btn:hover {
+    border-color: #8b5cf6;
+    color: #8b5cf6;
+    transform: translateY(-1px);
+}
+
+.themes-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.theme-card-premium {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(139, 92, 246, 0.1);
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.theme-card-premium::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #8b5cf6 0%, #ec4899 50%, #f59e0b 100%);
+    background-size: 300% 100%;
+    animation: rainbowFlow 5s infinite;
+}
+
+@keyframes rainbowFlow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.theme-card-premium:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px rgba(139, 92, 246, 0.2);
+    border-color: rgba(139, 92, 246, 0.3);
+}
+
+.theme-card-header {
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.02) 0%, rgba(236, 72, 153, 0.02) 100%);
+}
+
+.company-preview {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.company-avatar-theme {
+    width: 70px;
+    height: 70px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.company-avatar-theme::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.4) 50%, transparent 70%);
+    animation: avatarThemeGlow 4s infinite;
+}
+
+@keyframes avatarThemeGlow {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) rotate(45deg); }
+}
+
+.company-name-theme h4 {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #1f2937;
+    margin: 0 0 0.25rem 0;
+}
+
+.theme-status {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.theme-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.theme-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    font-size: 0.875rem;
+}
+
+.theme-btn.preview {
+    background: white;
+    color: #6b7280;
+    border: 2px solid #e5e7eb;
+}
+
+.theme-btn.preview:hover {
+    border-color: #8b5cf6;
+    color: #8b5cf6;
+    transform: translateY(-2px);
+}
+
+.theme-btn.apply {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+}
+
+.theme-btn.apply:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+}
+
+.theme-selector-container {
+    padding: 0 2rem 1.5rem 2rem;
+}
+
+.theme-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #374151;
+    margin-bottom: 0.75rem;
+}
+
+.custom-theme-select {
+    position: relative;
+}
+
+.theme-selector-premium {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    background: white;
+    cursor: pointer;
+    appearance: none;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.theme-selector-premium:focus {
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+}
+
+.select-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8b5cf6;
+    font-size: 1.125rem;
+}
+
+.theme-preview-area {
+    padding: 0 2rem 1.5rem 2rem;
+}
+
+.preview-label {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #374151;
+    margin-bottom: 0.75rem;
+}
+
+.theme-preview-card {
+    border-radius: 16px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.preview-content {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    color: white;
+    z-index: 2;
+    width: 100%;
+}
+
+.preview-icon {
+    font-size: 2.5rem;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.preview-text {
+    flex: 1;
+}
+
+.preview-title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    margin-bottom: 0.25rem;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.preview-subtitle {
+    font-size: 1rem;
+    opacity: 0.9;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.preview-metrics {
+    display: flex;
+    gap: 2rem;
+}
+
+.preview-metric {
+    text-align: right;
+}
+
+.metric-value {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 900;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.metric-label {
+    display: block;
+    font-size: 0.75rem;
+    opacity: 0.8;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.preview-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+    animation: previewShine 4s infinite;
+    pointer-events: none;
+}
+
+@keyframes previewShine {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) rotate(45deg); }
+}
+
+.theme-customization {
+    padding: 1.5rem 2rem 2rem 2rem;
+    background: rgba(248, 250, 252, 0.8);
+    border-top: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.customization-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    color: #374151;
+    font-weight: 700;
+    font-size: 0.875rem;
+}
+
+.custom-colors {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.color-input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.color-input-group label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.75rem;
+}
+
+.color-picker-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.color-picker-container:focus-within {
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+}
+
+.color-picker {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.color-picker:hover {
+    transform: scale(1.1);
+}
+
+.color-code {
+    font-family: 'Monaco', monospace;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    background: #f3f4f6;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    flex: 1;
+}
+
+/* RESPONSIVE PARA TEMAS */
+@media (max-width: 1024px) {
+    .themes-showcase {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+    
+    .custom-colors {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .themes-header-premium {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .themes-tools {
+        justify-content: center;
+    }
+    
+    .gallery-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .gallery-filters {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .theme-card-header {
+        flex-direction: column;
+        gap: 1.5rem;
+        align-items: stretch;
+    }
+    
+    .theme-actions {
+        justify-content: center;
+    }
+    
+    .preview-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .preview-metrics {
+        justify-content: center;
+    }
+}
         `;
         
         document.head.appendChild(style);
@@ -2006,12 +2646,70 @@ generateMetricsTab() {
     generateThemesTab() {
     const companies = this.companies;
     const availableThemes = [
-        { key: 'goldman-platinum', name: '🏦 Goldman Platinum', color: '#d4af37' },
-        { key: 'tesla-futuristic', name: '🚀 Tesla Futuristic', color: '#ff0040' },
-        { key: 'cupertino-elite', name: '🍎 Cupertino Elite', color: '#007aff' },
-        { key: 'netflix-premium', name: '🔴 Netflix Premium', color: '#e50914' },
-        { key: 'midnight-corporate', name: '💎 Midnight Corporate', color: '#00d9ff' },
-        { key: 'executive-dark', name: '🖤 Executive Dark', color: '#6b7280' }
+        { 
+            key: 'goldman-platinum', 
+            name: '🏦 Goldman Platinum', 
+            primary: '#d4af37', 
+            secondary: '#b87333',
+            description: 'Elegancia dorada premium',
+            category: 'Clásico'
+        },
+        { 
+            key: 'tesla-futuristic', 
+            name: '🚀 Tesla Futuristic', 
+            primary: '#ff0040', 
+            secondary: '#ff6b9d',
+            description: 'Innovación y tecnología',
+            category: 'Futurista'
+        },
+        { 
+            key: 'cupertino-elite', 
+            name: '🍎 Cupertino Elite', 
+            primary: '#007aff', 
+            secondary: '#5ac8fa',
+            description: 'Minimalismo sofisticado',
+            category: 'Moderno'
+        },
+        { 
+            key: 'netflix-premium', 
+            name: '🔴 Netflix Premium', 
+            primary: '#e50914', 
+            secondary: '#f40612',
+            description: 'Entretenimiento premium',
+            category: 'Entretenimiento'
+        },
+        { 
+            key: 'midnight-corporate', 
+            name: '💎 Midnight Corporate', 
+            primary: '#00d9ff', 
+            secondary: '#0099cc',
+            description: 'Corporativo nocturno',
+            category: 'Corporativo'
+        },
+        { 
+            key: 'emerald-nature', 
+            name: '🍃 Emerald Nature', 
+            primary: '#10b981', 
+            secondary: '#059669',
+            description: 'Sostenibilidad natural',
+            category: 'Ecológico'
+        },
+        { 
+            key: 'royal-purple', 
+            name: '👑 Royal Purple', 
+            primary: '#8b5cf6', 
+            secondary: '#7c3aed',
+            description: 'Realeza y lujo',
+            category: 'Lujo'
+        },
+        { 
+            key: 'cyber-neon', 
+            name: '⚡ Cyber Neon', 
+            primary: '#00ff88', 
+            secondary: '#00cc6a',
+            description: 'Cyberpunk futurista',
+            category: 'Gaming'
+        }
     ];
     
     let themesHTML = '';
@@ -2019,34 +2717,167 @@ generateMetricsTab() {
     Object.entries(companies).forEach(([id, company]) => {
         let themeOptions = '';
         availableThemes.forEach(theme => {
-            const isSelected = '';
+            const isSelected = company.theme?.primary === theme.primary ? 'selected' : '';
             themeOptions += `<option value="${theme.key}" ${isSelected}>${theme.name}</option>`;
         });
         
         themesHTML += `
-            <div class="theme-edit-card">
-                <div class="theme-preview" style="background: linear-gradient(135deg, ${company.theme?.primary || '#d4af37'} 0%, ${company.theme?.secondary || '#b87333'} 100%);">
-                    <span class="company-icon-large">${company.icon}</span>
+            <div class="theme-card-premium" data-company="${id}">
+                <div class="theme-card-header">
+                    <div class="company-preview">
+                        <div class="company-avatar-theme" style="background: linear-gradient(135deg, ${company.theme?.primary || '#d4af37'} 0%, ${company.theme?.secondary || '#b87333'} 100%);">
+                            ${company.icon}
+                        </div>
+                        <div class="company-name-theme">
+                            <h4>${company.name}</h4>
+                            <span class="theme-status">Tema activo</span>
+                        </div>
+                    </div>
+                    
+                    <div class="theme-actions">
+                        <button class="theme-btn preview" onclick="grizalumCompanySelector.previewTheme('${id}', document.getElementById('theme_${id}').value)">
+                            <i class="fas fa-eye"></i>
+                            Vista Previa
+                        </button>
+                        <button class="theme-btn apply" onclick="grizalumCompanySelector.applyTheme('${id}')">
+                            <i class="fas fa-paint-brush"></i>
+                            Aplicar Tema
+                        </button>
+                    </div>
                 </div>
-                <div class="theme-controls">
-                    <h4>${company.name}</h4>
-                    <select id="theme_${id}" class="theme-selector" onchange="grizalumCompanySelector.previewTheme('${id}', this.value)">
-                        ${themeOptions}
-                    </select>
-                    <button class="apply-theme-btn" onclick="grizalumCompanySelector.applyTheme('${id}')">
-                        🎨 Aplicar Tema
-                    </button>
+                
+                <div class="theme-selector-container">
+                    <label class="theme-label">Seleccionar Tema Visual</label>
+                    <div class="custom-theme-select">
+                        <select id="theme_${id}" class="theme-selector-premium" onchange="grizalumCompanySelector.previewTheme('${id}', this.value)">
+                            ${themeOptions}
+                        </select>
+                        <i class="fas fa-palette select-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="theme-preview-area">
+                    <div class="preview-label">Vista Previa del Tema</div>
+                    <div class="theme-preview-card" id="preview_${id}" style="background: linear-gradient(135deg, ${company.theme?.primary || '#d4af37'} 0%, ${company.theme?.secondary || '#b87333'} 100%);">
+                        <div class="preview-content">
+                            <div class="preview-icon">${company.icon}</div>
+                            <div class="preview-text">
+                                <div class="preview-title">${company.name}</div>
+                                <div class="preview-subtitle">Dashboard Corporativo</div>
+                            </div>
+                            <div class="preview-metrics">
+                                <div class="preview-metric">
+                                    <span class="metric-value">S/. ${(company.data.revenue/1000000).toFixed(1)}M</span>
+                                    <span class="metric-label">Ingresos</span>
+                                </div>
+                                <div class="preview-metric">
+                                    <span class="metric-value">+24.8%</span>
+                                    <span class="metric-label">Crecimiento</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="preview-overlay"></div>
+                    </div>
+                </div>
+                
+                <div class="theme-customization">
+                    <div class="customization-header">
+                        <i class="fas fa-sliders-h"></i>
+                        <span>Personalización Avanzada</span>
+                    </div>
+                    <div class="custom-colors">
+                        <div class="color-input-group">
+                            <label>Color Primario</label>
+                            <div class="color-picker-container">
+                                <input type="color" value="${company.theme?.primary || '#d4af37'}" id="primary_${id}" class="color-picker" onchange="grizalumCompanySelector.updateCustomColors('${id}')">
+                                <span class="color-code">${company.theme?.primary || '#d4af37'}</span>
+                            </div>
+                        </div>
+                        <div class="color-input-group">
+                            <label>Color Secundario</label>
+                            <div class="color-picker-container">
+                                <input type="color" value="${company.theme?.secondary || '#b87333'}" id="secondary_${id}" class="color-picker" onchange="grizalumCompanySelector.updateCustomColors('${id}')">
+                                <span class="color-code">${company.theme?.secondary || '#b87333'}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
     });
     
     return `
-        <div class="themes-companies-container">
-            <h3>🎨 Gestión de Temas Visuales</h3>
-            <p class="themes-description">Personaliza la apariencia visual de cada empresa</p>
-            <div class="themes-grid">
-                ${themesHTML}
+        <div class="themes-container-premium">
+            <div class="themes-header-premium">
+                <div class="header-content">
+                    <h3 class="themes-title">🎨 Centro de Temas Visuales</h3>
+                    <p class="themes-subtitle">Personaliza la identidad visual de cada empresa con temas profesionales</p>
+                </div>
+                <div class="themes-tools">
+                    <button class="themes-tool-btn" onclick="grizalumCompanySelector.createCustomTheme()">
+                        <i class="fas fa-plus"></i>
+                        Crear Tema Custom
+                    </button>
+                    <button class="themes-tool-btn" onclick="grizalumCompanySelector.importTheme()">
+                        <i class="fas fa-upload"></i>
+                        Importar Tema
+                    </button>
+                    <button class="themes-tool-btn" onclick="grizalumCompanySelector.exportThemes()">
+                        <i class="fas fa-download"></i>
+                        Exportar Temas
+                    </button>
+                </div>
+            </div>
+            
+            <div class="themes-gallery">
+                <div class="gallery-header">
+                    <h4>🌈 Galería de Temas Disponibles</h4>
+                    <div class="gallery-filters">
+                        <button class="filter-chip active" onclick="grizalumCompanySelector.filterThemes('todos')">Todos</button>
+                        <button class="filter-chip" onclick="grizalumCompanySelector.filterThemes('clasico')">Clásico</button>
+                        <button class="filter-chip" onclick="grizalumCompanySelector.filterThemes('futurista')">Futurista</button>
+                        <button class="filter-chip" onclick="grizalumCompanySelector.filterThemes('moderno')">Moderno</button>
+                        <button class="filter-chip" onclick="grizalumCompanySelector.filterThemes('corporativo')">Corporativo</button>
+                    </div>
+                </div>
+                
+                <div class="themes-showcase">
+                    ${availableThemes.map(theme => `
+                        <div class="showcase-theme" data-category="${theme.category.toLowerCase()}">
+                            <div class="showcase-preview" style="background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%);">
+                                <div class="showcase-content">
+                                    <div class="showcase-icon">🏢</div>
+                                    <div class="showcase-text">${theme.name}</div>
+                                </div>
+                            </div>
+                            <div class="showcase-info">
+                                <div class="showcase-name">${theme.name}</div>
+                                <div class="showcase-desc">${theme.description}</div>
+                                <div class="showcase-category">${theme.category}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            
+            <div class="companies-themes">
+                <div class="section-header">
+                    <h4>🏢 Configuración por Empresa</h4>
+                    <div class="bulk-theme-actions">
+                        <button class="bulk-btn" onclick="grizalumCompanySelector.applyThemeToAll()">
+                            <i class="fas fa-magic"></i>
+                            Aplicar a Todas
+                        </button>
+                        <button class="bulk-btn" onclick="grizalumCompanySelector.resetAllThemes()">
+                            <i class="fas fa-undo"></i>
+                            Restaurar Defaults
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="themes-grid">
+                    ${themesHTML}
+                </div>
             </div>
         </div>
     `;
