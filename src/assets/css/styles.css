@@ -1276,7 +1276,19 @@ button:focus,
     outline: 2px solid var(--peru-gold);
     outline-offset: 2px;
 }
+/* Agregar al final de tu styles.css */
+.dashboard-content:not(.active) {
+    display: none;
+}
 
+.dashboard-content.active {
+    display: flex; /* Mantiene el layout original */
+}
+
+/* Para que dashboard sea visible por defecto */
+#dashboardContent {
+    display: flex !important;
+}
 /* ================================================================
    GRIZALUM CSS ULTRA PROFESIONAL v4.0 - COMPLETO Y CORREGIDO
    Responsive perfecto para TODOS los dispositivos ✅
