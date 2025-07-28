@@ -437,7 +437,7 @@ class GrizalumCompanySelector {
             <div class="grizalum-company-dropdown" id="grizalumCompanyDropdown">
                 <div class="grizalum-dropdown-header">
                     <h4>🏢 Empresas GRIZALUM</h4>
-                    <button class="grizalum-btn-add-company" onclick="grizalumCompanySelector.showAddCompanyWizard()">
+                    <button class="grizalum-btn-add-company" onclick="window.grizalumCompanySelector.showAddCompanyWizard()">
                         <i class="fas fa-plus"></i>
                         Agregar Nueva
                     </button>
@@ -448,7 +448,7 @@ class GrizalumCompanySelector {
                 </div>
                 
                 <div class="grizalum-dropdown-footer">
-                    <button class="grizalum-manage-companies-btn" onclick="grizalumCompanySelector.openCompanyManagement()">
+                    <button class="grizalum-manage-companies-btn" onclick="window.grizalumCompanySelector.openCompanyManagement()">
                         <i class="fas fa-cog"></i>
                         Gestionar Empresas
                     </button>
