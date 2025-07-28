@@ -813,6 +813,572 @@ class GrizalumCompanySelector {
     color: #d4af37;
     transform: translateY(-1px);
 }
+/* =============== MÉTRICAS PREMIUM FUTURISTAS =============== */
+.metrics-container-premium {
+    padding: 0;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.metrics-header-premium {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.05) 100%);
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.metrics-title {
+    font-size: 1.75rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+}
+
+.metrics-subtitle {
+    color: #64748b;
+    margin: 0.5rem 0 0 0;
+    font-size: 1rem;
+}
+
+.metrics-tools {
+    display: flex;
+    gap: 1rem;
+}
+
+.tool-btn {
+    padding: 0.75rem 1.5rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    background: white;
+    color: #374151;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.tool-btn:hover {
+    border-color: #3b82f6;
+    color: #3b82f6;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+}
+
+.metrics-overview {
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.overview-stat {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.overview-stat::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+}
+
+.overview-stat:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(59, 130, 246, 0.15);
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: white;
+    position: relative;
+}
+
+.stat-icon.total-revenue {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.stat-icon.total-profit {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.stat-icon.avg-margin {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+.stat-icon.companies-count {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.stat-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #1f2937;
+    line-height: 1;
+}
+
+.stat-desc {
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.metrics-companies {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.metrics-card-premium {
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.metrics-card-premium::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 50%, #10b981 100%);
+    background-size: 300% 100%;
+    animation: gradientFlow 4s infinite;
+}
+
+@keyframes gradientFlow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.metrics-card-premium:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 25px 60px rgba(59, 130, 246, 0.15);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.metrics-card-header {
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.02) 0%, rgba(139, 92, 246, 0.02) 100%);
+}
+
+.company-identity {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.company-avatar-metrics {
+    width: 70px;
+    height: 70px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.company-avatar-metrics::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.4) 50%, transparent 70%);
+    animation: avatarGlow 3s infinite;
+}
+
+@keyframes avatarGlow {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) rotate(45deg); }
+}
+
+.company-name-metrics {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1f2937;
+    margin: 0 0 0.5rem 0;
+}
+
+.company-status-badge {
+    padding: 0.375rem 0.875rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-operativo {
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-regular {
+    background: rgba(245, 158, 11, 0.1);
+    color: #d97706;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.status-crítico {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.metrics-summary {
+    display: flex;
+    gap: 2rem;
+}
+
+.summary-stat {
+    text-align: right;
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: #1f2937;
+    line-height: 1;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.75rem;
+    color: #6b7280;
+    font-weight: 500;
+    margin-top: 0.25rem;
+}
+
+.metrics-grid {
+    padding: 0 2rem;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+}
+
+.metric-input-group-premium {
+    background: rgba(248, 250, 252, 0.8);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.metric-input-group-premium::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, #3b82f6 50%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.metric-input-group-premium:hover::before {
+    opacity: 1;
+}
+
+.metric-input-group-premium:hover {
+    background: white;
+    border-color: rgba(59, 130, 246, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.1);
+}
+
+.metric-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.metric-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: white;
+}
+
+.revenue-icon {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.expenses-icon {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.profit-icon {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.cashflow-icon {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+.metric-info {
+    flex: 1;
+}
+
+.metric-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #374151;
+    margin-bottom: 0.25rem;
+}
+
+.metric-description {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.metric-input-container {
+    position: relative;
+    margin-bottom: 0.75rem;
+}
+
+.currency-symbol {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: 700;
+    color: #6b7280;
+    z-index: 2;
+}
+
+.metric-input-premium {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 1.125rem;
+    font-weight: 700;
+    background: white;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.metric-input-premium:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    transform: translateY(-1px);
+}
+
+.input-decoration {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.metric-input-premium:focus + .input-decoration {
+    width: 100%;
+}
+
+.metric-trend {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.trend-positive {
+    color: #10b981;
+}
+
+.trend-negative {
+    color: #ef4444;
+}
+
+.trend-text {
+    color: #6b7280;
+}
+
+.metrics-actions {
+    padding: 2rem;
+    background: rgba(248, 250, 252, 0.5);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.validation-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #10b981;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.metrics-btn {
+    padding: 0.875rem 1.75rem;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.metrics-btn.secondary {
+    background: white;
+    color: #6b7280;
+    border: 2px solid #e5e7eb;
+}
+
+.metrics-btn.secondary:hover {
+    border-color: #d1d5db;
+    color: #374151;
+    transform: translateY(-2px);
+}
+
+.metrics-btn.primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.metrics-btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+}
+
+.btn-glow {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+    animation: btnGlow 2.5s infinite;
+}
+
+@keyframes btnGlow {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.metrics-insights {
+    padding: 1.5rem 2rem 2rem 2rem;
+}
+
+.insight-card {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 12px;
+    padding: 1.25rem;
+}
+
+.insight-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    color: #8b5cf6;
+    font-weight: 700;
+    font-size: 0.875rem;
+}
+
+.insight-text {
+    color: #4b5563;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* RESPONSIVE PARA MÉTRICAS */
+@media (max-width: 1024px) {
+    .metrics-overview {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .metrics-overview {
+        grid-template-columns: 1fr;
+    }
+    
+    .metrics-header-premium {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .metrics-tools {
+        justify-content: center;
+    }
+}
         `;
         
         document.head.appendChild(style);
@@ -1223,39 +1789,217 @@ generateMetricsTab() {
     
     Object.entries(companies).forEach(([id, company]) => {
         const data = company.data;
+        const profitMargin = ((data.profit / data.revenue) * 100).toFixed(1);
+        const expenseRatio = ((data.expenses / data.revenue) * 100).toFixed(1);
+        
         metricsHTML += `
-            <div class="metrics-edit-card">
-                <h4>${company.icon} ${company.name}</h4>
-                <div class="metrics-grid-edit">
-                    <div class="metric-input-group">
-                        <label>💰 Flujo de Caja</label>
-                        <input type="number" value="${data.cashFlow}" id="cashFlow_${id}" class="metric-input">
+            <div class="metrics-card-premium" data-company="${id}">
+                <div class="metrics-card-header">
+                    <div class="company-identity">
+                        <div class="company-avatar-metrics" style="background: linear-gradient(135deg, ${company.theme?.primary || '#d4af37'} 0%, ${company.theme?.secondary || '#b87333'} 100%);">
+                            ${company.icon}
+                        </div>
+                        <div class="company-name-info">
+                            <h4 class="company-name-metrics">${company.name}</h4>
+                            <span class="company-status-badge status-${company.status.toLowerCase()}">${company.status}</span>
+                        </div>
                     </div>
-                    <div class="metric-input-group">
-                        <label>📈 Ingresos</label>
-                        <input type="number" value="${data.revenue}" id="revenue_${id}" class="metric-input">
-                    </div>
-                    <div class="metric-input-group">
-                        <label>📉 Gastos</label>
-                        <input type="number" value="${data.expenses}" id="expenses_${id}" class="metric-input">
-                    </div>
-                    <div class="metric-input-group">
-                        <label>💎 Utilidad</label>
-                        <input type="number" value="${data.profit}" id="profit_${id}" class="metric-input">
+                    
+                    <div class="metrics-summary">
+                        <div class="summary-stat">
+                            <span class="stat-value">S/. ${(data.revenue/1000000).toFixed(1)}M</span>
+                            <span class="stat-label">Ingresos</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="stat-value">${profitMargin}%</span>
+                            <span class="stat-label">Margen</span>
+                        </div>
                     </div>
                 </div>
-                <button class="save-metrics-btn" onclick="grizalumCompanySelector.saveMetrics('${id}')">
-                    📊 Actualizar Métricas
-                </button>
+                
+                <div class="metrics-grid">
+                    <div class="metric-input-group-premium">
+                        <div class="metric-header">
+                            <div class="metric-icon revenue-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="metric-info">
+                                <label class="metric-label">Ingresos Totales</label>
+                                <span class="metric-description">Facturación bruta del período</span>
+                            </div>
+                        </div>
+                        <div class="metric-input-container">
+                            <span class="currency-symbol">S/.</span>
+                            <input type="number" value="${data.revenue}" id="revenue_${id}" class="metric-input-premium" step="1000" min="0">
+                            <div class="input-decoration"></div>
+                        </div>
+                        <div class="metric-trend">
+                            <i class="fas fa-arrow-up trend-positive"></i>
+                            <span class="trend-text">+12.5% vs anterior</span>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-input-group-premium">
+                        <div class="metric-header">
+                            <div class="metric-icon expenses-icon">
+                                <i class="fas fa-receipt"></i>
+                            </div>
+                            <div class="metric-info">
+                                <label class="metric-label">Gastos Operativos</label>
+                                <span class="metric-description">Costos y gastos del período</span>
+                            </div>
+                        </div>
+                        <div class="metric-input-container">
+                            <span class="currency-symbol">S/.</span>
+                            <input type="number" value="${data.expenses}" id="expenses_${id}" class="metric-input-premium" step="1000" min="0">
+                            <div class="input-decoration"></div>
+                        </div>
+                        <div class="metric-trend">
+                            <i class="fas fa-arrow-up trend-negative"></i>
+                            <span class="trend-text">+3.2% vs anterior</span>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-input-group-premium">
+                        <div class="metric-header">
+                            <div class="metric-icon profit-icon">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                            <div class="metric-info">
+                                <label class="metric-label">Utilidad Neta</label>
+                                <span class="metric-description">Beneficio después de gastos</span>
+                            </div>
+                        </div>
+                        <div class="metric-input-container">
+                            <span class="currency-symbol">S/.</span>
+                            <input type="number" value="${data.profit}" id="profit_${id}" class="metric-input-premium" step="1000" min="0">
+                            <div class="input-decoration"></div>
+                        </div>
+                        <div class="metric-trend">
+                            <i class="fas fa-arrow-up trend-positive"></i>
+                            <span class="trend-text">+18.7% vs anterior</span>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-input-group-premium">
+                        <div class="metric-header">
+                            <div class="metric-icon cashflow-icon">
+                                <i class="fas fa-water"></i>
+                            </div>
+                            <div class="metric-info">
+                                <label class="metric-label">Flujo de Caja</label>
+                                <span class="metric-description">Liquidez disponible</span>
+                            </div>
+                        </div>
+                        <div class="metric-input-container">
+                            <span class="currency-symbol">S/.</span>
+                            <input type="number" value="${data.cashFlow}" id="cashFlow_${id}" class="metric-input-premium" step="100" min="0">
+                            <div class="input-decoration"></div>
+                        </div>
+                        <div class="metric-trend">
+                            <i class="fas fa-arrow-up trend-positive"></i>
+                            <span class="trend-text">+24.8% vs anterior</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="metrics-actions">
+                    <div class="validation-info">
+                        <i class="fas fa-shield-check"></i>
+                        <span>Datos validados automáticamente</span>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="metrics-btn secondary" onclick="grizalumCompanySelector.resetMetrics('${id}')">
+                            <i class="fas fa-undo"></i>
+                            Restaurar
+                        </button>
+                        <button class="metrics-btn primary" onclick="grizalumCompanySelector.saveMetrics('${id}')">
+                            <i class="fas fa-save"></i>
+                            Actualizar Métricas
+                            <div class="btn-glow"></div>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="metrics-insights">
+                    <div class="insight-card">
+                        <div class="insight-header">
+                            <i class="fas fa-lightbulb"></i>
+                            <span>Análisis IA</span>
+                        </div>
+                        <p class="insight-text">Rendimiento ${profitMargin > 15 ? 'excelente' : profitMargin > 10 ? 'bueno' : 'mejorable'}. ${expenseRatio < 70 ? 'Gastos controlados.' : 'Revisar estructura de costos.'}</p>
+                    </div>
+                </div>
             </div>
         `;
     });
     
     return `
-        <div class="metrics-companies-container">
-            <h3>📊 Gestión de Métricas Financieras</h3>
-            <p class="metrics-description">Actualiza los datos financieros de cada empresa</p>
-            ${metricsHTML}
+        <div class="metrics-container-premium">
+            <div class="metrics-header-premium">
+                <div class="header-content">
+                    <h3 class="metrics-title">📊 Centro de Métricas Financieras</h3>
+                    <p class="metrics-subtitle">Gestiona y monitorea el rendimiento financiero de todas tus empresas</p>
+                </div>
+                <div class="metrics-tools">
+                    <button class="tool-btn" onclick="grizalumCompanySelector.generateReport()">
+                        <i class="fas fa-chart-bar"></i>
+                        Generar Reporte
+                    </button>
+                    <button class="tool-btn" onclick="grizalumCompanySelector.exportMetrics()">
+                        <i class="fas fa-file-excel"></i>
+                        Exportar Excel
+                    </button>
+                    <button class="tool-btn" onclick="grizalumCompanySelector.compareMetrics()">
+                        <i class="fas fa-balance-scale"></i>
+                        Comparar
+                    </button>
+                </div>
+            </div>
+            
+            <div class="metrics-overview">
+                <div class="overview-stat">
+                    <div class="stat-icon total-revenue">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-number">S/. ${(Object.values(companies).reduce((sum, c) => sum + c.data.revenue, 0)/1000000).toFixed(1)}M</span>
+                        <span class="stat-desc">Ingresos Totales</span>
+                    </div>
+                </div>
+                <div class="overview-stat">
+                    <div class="stat-icon total-profit">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-number">S/. ${(Object.values(companies).reduce((sum, c) => sum + c.data.profit, 0)/1000000).toFixed(1)}M</span>
+                        <span class="stat-desc">Utilidad Total</span>
+                    </div>
+                </div>
+                <div class="overview-stat">
+                    <div class="stat-icon avg-margin">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-number">${(Object.values(companies).reduce((sum, c) => sum + (c.data.profit/c.data.revenue)*100, 0)/Object.keys(companies).length).toFixed(1)}%</span>
+                        <span class="stat-desc">Margen Promedio</span>
+                    </div>
+                </div>
+                <div class="overview-stat">
+                    <div class="stat-icon companies-count">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-number">${Object.keys(companies).length}</span>
+                        <span class="stat-desc">Empresas Activas</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="metrics-companies">
+                ${metricsHTML}
+            </div>
         </div>
     `;
 }
