@@ -834,31 +834,122 @@ createAdvancedManagementModal() {
     let companiesHTML = '';
     
     Object.entries(companies).forEach(([id, company]) => {
+        const statusColor = {
+            'Operativo': '#10b981',
+            'Regular': '#f59e0b', 
+            'Crítico': '#ef4444'
+        }[company.status] || '#6b7280';
+        
         companiesHTML += `
-            <div class="company-edit-card">
-                <div class="company-edit-header">
-                    <span class="company-icon">${company.icon}</span>
-                    <div class="company-info">
-                        <input type="text" value="${company.name}" id="name_${id}" class="company-name-input">
-                        <select id="status_${id}" class="company-status-select">
-                            <option value="Operativo" ${company.status === 'Operativo' ? 'selected' : ''}>🟢 Operativo</option>
-                            <option value="Regular" ${company.status === 'Regular' ? 'selected' : ''}>🟡 Regular</option>
-                            <option value="Crítico" ${company.status === 'Crítico' ? 'selected' : ''}>🔴 Crítico</option>
-                        </select>
+            <div class="company-edit-card-premium" data-company="${id}">
+                <div class="company-card-header">
+                    <div class="company-avatar-container">
+                        <div class="company-avatar" style="background: linear-gradient(135deg, ${company.theme?.primary || '#d4af37'} 0%, ${company.theme?.secondary || '#b87333'} 100%);">
+                            ${company.icon}
+                        </div>
+                        <div class="company-status-indicator" style="background: ${statusColor};"></div>
                     </div>
-                    <button class="save-company-btn" onclick="grizalumCompanySelector.saveCompanyEdit('${id}')">
-                        💾 Guardar
-                    </button>
+                    
+                    <div class="company-main-info">
+                        <div class="company-name-group">
+                            <label class="input-label">Nombre de la Empresa</label>
+                            <input type="text" value="${company.name}" id="name_${id}" class="company-input-premium" placeholder="Ingresa el nombre...">
+                        </div>
+                        
+                        <div class="company-status-group">
+                            <label class="input-label">Estado Operativo</label>
+                            <div class="custom-select-wrapper">
+                                <select id="status_${id}" class="company-select-premium">
+                                    <option value="Operativo" ${company.status === 'Operativo' ? 'selected' : ''}>🟢 Totalmente Operativo</option>
+                                    <option value="Regular" ${company.status === 'Regular' ? 'selected' : ''}>🟡 Funcionamiento Regular</option>
+                                    <option value="Crítico" ${company.status === 'Crítico' ? 'selected' : ''}>🔴 Estado Crítico</option>
+                                    <option value="Mantenimiento">🔧 En Mantenimiento</option>
+                                    <option value="Expansión">🚀 En Expansión</option>
+                                </select>
+                                <i class="fas fa-chevron-down select-arrow"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="company-actions">
+                        <div class="company-metrics-preview">
+                            <div class="metric-mini">
+                                <span class="metric-mini-label">Flujo</span>
+                                <span class="metric-mini-value">S/. ${company.data.cashFlow.toLocaleString()}</span>
+                            </div>
+                            <div class="metric-mini">
+                                <span class="metric-mini-label">Ingresos</span>
+                                <span class="metric-mini-value">S/. ${(company.data.revenue/1000000).toFixed(1)}M</span>
+                            </div>
+                        </div>
+                        
+                        <button class="save-company-btn-premium" onclick="grizalumCompanySelector.saveCompanyEdit('${id}')">
+                            <i class="fas fa-save"></i>
+                            <span>Guardar Cambios</span>
+                            <div class="btn-shine"></div>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="company-card-footer">
+                    <div class="last-updated">
+                        <i class="fas fa-clock"></i>
+                        <span>Última actualización: Hace 2 horas</span>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="quick-btn" onclick="grizalumCompanySelector.duplicateCompany('${id}')" title="Duplicar empresa">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <button class="quick-btn" onclick="grizalumCompanySelector.exportCompanyData('${id}')" title="Exportar datos">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="quick-btn danger" onclick="grizalumCompanySelector.archiveCompany('${id}')" title="Archivar">
+                            <i class="fas fa-archive"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         `;
     });
     
     return `
-        <div class="edit-companies-container">
-            <h3>📝 Editar Información de Empresas</h3>
-            <p class="edit-description">Modifica los nombres y estados de tus empresas</p>
-            ${companiesHTML}
+        <div class="edit-companies-container-premium">
+            <div class="section-header-premium">
+                <div class="section-title-group">
+                    <h3 class="section-title">✏️ Gestión de Empresas</h3>
+                    <p class="section-subtitle">Administra la información y configuración de tus empresas</p>
+                </div>
+                <div class="section-actions">
+                    <button class="action-btn secondary" onclick="grizalumCompanySelector.bulkEdit()">
+                        <i class="fas fa-edit"></i>
+                        Edición Masiva
+                    </button>
+                    <button class="action-btn primary" onclick="grizalumCompanySelector.addNewCompany()">
+                        <i class="fas fa-plus"></i>
+                        Nueva Empresa
+                    </button>
+                </div>
+            </div>
+            
+            <div class="companies-grid-premium">
+                ${companiesHTML}
+            </div>
+            
+            <div class="bulk-actions-bar">
+                <div class="bulk-info">
+                    <span>${Object.keys(companies).length} empresas registradas</span>
+                </div>
+                <div class="bulk-controls">
+                    <button class="bulk-btn" onclick="grizalumCompanySelector.exportAllData()">
+                        <i class="fas fa-file-export"></i>
+                        Exportar Todo
+                    </button>
+                    <button class="bulk-btn" onclick="grizalumCompanySelector.backupAll()">
+                        <i class="fas fa-shield-alt"></i>
+                        Crear Backup
+                    </button>
+                </div>
+            </div>
         </div>
     `;
 }
