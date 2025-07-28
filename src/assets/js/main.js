@@ -132,36 +132,7 @@ class GrizalumApp {
             }, 500);
         }
     }
-
-    // ======= GESTIÓN DE SECCIONES =======
-
-    showSection(sectionId) {
-        console.log(`📄 Cambiando a sección: ${sectionId}`);
-        
-        // Ocultar todas las secciones
-        document.querySelectorAll('.page-section').forEach(section => {
-            section.classList.remove('active');
-        });
-        
-        // Mostrar sección solicitada
-        const targetSection = document.getElementById(sectionId);
-        if (targetSection) {
-            targetSection.classList.add('active');
-            this.currentSection = sectionId;
-            
-            // Actualizar navegación
-            this.updateNavigation(sectionId);
-            
-            // Actualizar título de página
-            this.updatePageTitle(sectionId);
-            
-            // Trigger evento personalizado
-            this.triggerSectionChange(sectionId);
-        } else {
-            console.warn(`⚠️ Sección no encontrada: ${sectionId}`);
-        }
-    }
-
+    
     updateNavigation(sectionId) {
         // Actualizar enlaces activos en navegación
         document.querySelectorAll('.nav-link').forEach(link => {
