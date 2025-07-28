@@ -128,11 +128,12 @@ class GrizalumCompanySelector {
                 border-radius: 20px;
                 box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
                 border: 1px solid rgba(212, 175, 55, 0.2);
-                z-index: 9999
+                z-index: 10000;
+                will-change: transform, opacity;
                 opacity: 0;
                 visibility: hidden;
                 transform: translateY(-15px);
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all 0.15s ease-in-out;
                 backdrop-filter: blur(30px);
                 overflow: hidden;
             }
