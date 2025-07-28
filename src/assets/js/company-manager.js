@@ -4082,6 +4082,101 @@ downloadBackup() {
             console.log(`❌ Empresa eliminada: ${id}`);
         }
     }
+    // ======= FUNCIONES FALTANTES PARA BOTONES =======
+bulkEdit() {
+    alert('🔧 Edición Masiva\n\nEsta función permite editar múltiples empresas simultáneamente.\n\n⚙️ Próximamente disponible...');
+}
+
+addNewCompany() {
+    const name = prompt('📝 Nombre de la nueva empresa:', '');
+    if (!name) return;
+    
+    const icon = prompt('🎨 Emoji para la empresa (ej: 🏭, 🏪, 🏢):', '🏢');
+    if (!icon) return;
+    
+    const newId = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    
+    this.companies[newId] = {
+        name: name,
+        icon: icon,
+        status: 'Operativo',
+        theme: { primary: '#d4af37', secondary: '#b87333' },
+        data: { cashFlow: 10000, revenue: 500000, expenses: 300000, profit: 200000 }
+    };
+    
+    this.saveCompaniesData(this.companies);
+    this.renderCompaniesList();
+    this.showNotification(`✅ ${name} agregada exitosamente`, 'success');
+}
+
+duplicateCompany(companyId) {
+    const company = this.companies[companyId];
+    if (!company) return;
+    
+    const newName = prompt('📋 Nombre para la empresa duplicada:', company.name + ' (Copia)');
+    if (!newName) return;
+    
+    const newId = newName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') + '-' + Date.now();
+    
+    this.companies[newId] = {
+        ...company,
+        name: newName
+    };
+    
+    this.saveCompaniesData(this.companies);
+    this.renderCompaniesList();
+    this.showNotification(`📋 ${newName} duplicada exitosamente`, 'success');
+}
+
+exportCompanyData(companyId) {
+    const company = this.companies[companyId];
+    if (!company) return;
+    
+    const data = JSON.stringify(company, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${company.name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    this.showNotification(`📤 Datos de ${company.name} exportados`, 'success');
+}
+
+archiveCompany(companyId) {
+    const company = this.companies[companyId];
+    if (!company) return;
+    
+    if (confirm(`📦 ¿Archivar ${company.name}?\n\nLa empresa se marcará como archivada pero no se eliminará.`)) {
+        this.companies[companyId].status = 'Archivado';
+        this.saveCompaniesData(this.companies);
+        this.renderCompaniesList();
+        this.showNotification(`📦 ${company.name} archivada`, 'success');
+    }
+}
+
+exportAllData() {
+    const data = {
+        companies: this.companies,
+        exportDate: new Date().toISOString(),
+        totalCompanies: Object.keys(this.companies).length
+    };
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `grizalum_todas_empresas_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    this.showNotification('📦 Todas las empresas exportadas exitosamente', 'success');
+}
+
+backupAll() {
+    this.downloadBackup();
+}
 }
 
 // ======= INICIALIZACIÓN GLOBAL =======
