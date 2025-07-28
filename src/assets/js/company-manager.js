@@ -4082,19 +4082,67 @@ downloadBackup() {
             console.log(`❌ Empresa eliminada: ${id}`);
         }
     }
-    // ======= FUNCIONES FALTANTES PARA BOTONES =======
+    // ======= FUNCIONES MODERNAS Y PROFESIONALES =======
 bulkEdit() {
-    alert('🔧 Edición Masiva\n\nEsta función permite editar múltiples empresas simultáneamente.\n\n⚙️ Próximamente disponible...');
+    this.showModernDialog('🔧 Edición Masiva', 
+        'Esta función permite editar múltiples empresas simultáneamente.', 
+        '⚙️ Próximamente disponible en la próxima actualización.');
 }
 
 addNewCompany() {
-    const name = prompt('📝 Nombre de la nueva empresa:', '');
-    if (!name) return;
+    this.showAddCompanyModal();
+}
+
+showAddCompanyModal() {
+    const modal = document.createElement('div');
+    modal.className = 'modern-modal-overlay';
+    modal.innerHTML = `
+        <div class="modern-modal-content">
+            <div class="modal-header">
+                <h3>🏢 Agregar Nueva Empresa</h3>
+                <button class="modal-close" onclick="this.parentElement.parentElement.parentElement.remove()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group-modern">
+                    <label>Nombre de la Empresa</label>
+                    <input type="text" id="newCompanyName" placeholder="Ej: Empresa Innovadora S.A." class="input-modern">
+                </div>
+                <div class="input-group-modern">
+                    <label>Icono de la Empresa</label>
+                    <div class="icon-selector">
+                        <button class="icon-option" onclick="document.getElementById('selectedIcon').textContent = '🏭'; document.getElementById('selectedIcon').dataset.value = '🏭'">🏭</button>
+                        <button class="icon-option" onclick="document.getElementById('selectedIcon').textContent = '🏪'; document.getElementById('selectedIcon').dataset.value = '🏪'">🏪</button>
+                        <button class="icon-option" onclick="document.getElementById('selectedIcon').textContent = '🏢'; document.getElementById('selectedIcon').dataset.value = '🏢'">🏢</button>
+                        <button class="icon-option" onclick="document.getElementById('selectedIcon').textContent = '🏦'; document.getElementById('selectedIcon').dataset.value = '🏦'">🏦</button>
+                        <button class="icon-option" onclick="document.getElementById('selectedIcon').textContent = '🏬'; document.getElementById('selectedIcon').dataset.value = '🏬'">🏬</button>
+                        <button class="icon-option" onclick="document.getElementById('selectedIcon').textContent = '🏪'; document.getElementById('selectedIcon').dataset.value = '🏪'">🏪</button>
+                    </div>
+                    <div class="selected-icon">
+                        Seleccionado: <span id="selectedIcon" data-value="🏢">🏢</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="this.parentElement.parentElement.parentElement.remove()">Cancelar</button>
+                <button class="btn-create" onclick="grizalumCompanySelector.createNewCompany()">✨ Crear Empresa</button>
+            </div>
+        </div>
+    `;
     
-    const icon = prompt('🎨 Emoji para la empresa (ej: 🏭, 🏪, 🏢):', '🏢');
-    if (!icon) return;
+    document.body.appendChild(modal);
+    document.getElementById('newCompanyName').focus();
+}
+
+createNewCompany() {
+    const name = document.getElementById('newCompanyName').value.trim();
+    const icon = document.getElementById('selectedIcon').dataset.value;
     
-    const newId = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    if (!name) {
+        this.showModernDialog('⚠️ Error', 'El nombre de la empresa es obligatorio', 'Por favor ingresa un nombre válido.');
+        return;
+    }
+    
+    const newId = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') + '-' + Date.now();
     
     this.companies[newId] = {
         name: name,
@@ -4106,16 +4154,18 @@ addNewCompany() {
     
     this.saveCompaniesData(this.companies);
     this.renderCompaniesList();
-    this.showNotification(`✅ ${name} agregada exitosamente`, 'success');
+    
+    // Cerrar modal
+    document.querySelector('.modern-modal-overlay').remove();
+    
+    this.showModernDialog('✅ Éxito', `${name} creada exitosamente`, 'La empresa ha sido agregada al sistema.');
 }
 
 duplicateCompany(companyId) {
     const company = this.companies[companyId];
     if (!company) return;
     
-    const newName = prompt('📋 Nombre para la empresa duplicada:', company.name + ' (Copia)');
-    if (!newName) return;
-    
+    const newName = company.name + ' (Copia)';
     const newId = newName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') + '-' + Date.now();
     
     this.companies[newId] = {
@@ -4125,7 +4175,7 @@ duplicateCompany(companyId) {
     
     this.saveCompaniesData(this.companies);
     this.renderCompaniesList();
-    this.showNotification(`📋 ${newName} duplicada exitosamente`, 'success');
+    this.showModernDialog('📋 Duplicado', `${newName} creada exitosamente`, 'La empresa ha sido duplicada con todos sus datos.');
 }
 
 exportCompanyData(companyId) {
@@ -4141,19 +4191,21 @@ exportCompanyData(companyId) {
     a.click();
     URL.revokeObjectURL(url);
     
-    this.showNotification(`📤 Datos de ${company.name} exportados`, 'success');
+    this.showModernDialog('📤 Exportado', `Datos de ${company.name} exportados`, 'El archivo se ha descargado exitosamente.');
 }
 
 archiveCompany(companyId) {
     const company = this.companies[companyId];
     if (!company) return;
     
-    if (confirm(`📦 ¿Archivar ${company.name}?\n\nLa empresa se marcará como archivada pero no se eliminará.`)) {
-        this.companies[companyId].status = 'Archivado';
-        this.saveCompaniesData(this.companies);
-        this.renderCompaniesList();
-        this.showNotification(`📦 ${company.name} archivada`, 'success');
-    }
+    this.showConfirmDialog(`📦 ¿Archivar ${company.name}?`, 
+        'La empresa se marcará como archivada pero no se eliminará.', 
+        () => {
+            this.companies[companyId].status = 'Archivado';
+            this.saveCompaniesData(this.companies);
+            this.renderCompaniesList();
+            this.showModernDialog('📦 Archivado', `${company.name} ha sido archivada`, 'La empresa se encuentra ahora en estado archivado.');
+        });
 }
 
 exportAllData() {
@@ -4171,14 +4223,47 @@ exportAllData() {
     a.click();
     URL.revokeObjectURL(url);
     
-    this.showNotification('📦 Todas las empresas exportadas exitosamente', 'success');
+    this.showModernDialog('📦 Exportación Completa', 'Todas las empresas exportadas', `Se han exportado ${Object.keys(this.companies).length} empresas exitosamente.`);
 }
 
 backupAll() {
     this.downloadBackup();
 }
+
+showModernDialog(title, message, description) {
+    const modal = document.createElement('div');
+    modal.className = 'modern-dialog-overlay';
+    modal.innerHTML = `
+        <div class="modern-dialog-content">
+            <div class="dialog-icon">ℹ️</div>
+            <h3 class="dialog-title">${title}</h3>
+            <p class="dialog-message">${message}</p>
+            <p class="dialog-description">${description}</p>
+            <button class="dialog-btn" onclick="this.parentElement.parentElement.remove()">Entendido</button>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    setTimeout(() => modal.remove(), 5000); // Auto-cerrar en 5 segundos
 }
 
+showConfirmDialog(title, message, onConfirm) {
+    const modal = document.createElement('div');
+    modal.className = 'modern-dialog-overlay';
+    modal.innerHTML = `
+        <div class="modern-dialog-content">
+            <div class="dialog-icon">❓</div>
+            <h3 class="dialog-title">${title}</h3>
+            <p class="dialog-message">${message}</p>
+            <div class="dialog-actions">
+                <button class="dialog-btn-cancel" onclick="this.parentElement.parentElement.parentElement.remove()">Cancelar</button>
+                <button class="dialog-btn-confirm" onclick="this.parentElement.parentElement.parentElement.remove(); (${onConfirm.toString()})()">Confirmar</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
 // ======= INICIALIZACIÓN GLOBAL =======
 let grizalumCompanySelector = null;
 
