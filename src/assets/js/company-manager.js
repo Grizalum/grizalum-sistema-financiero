@@ -369,9 +369,9 @@ class GrizalumCompanySelector {
 .management-modal-content {
     background: white;
     border-radius: 20px;
-    width: 90%;
-    max-width: 900px;
-    max-height: 80vh;
+    width: 95%;
+    max-width: 1400px;
+    max-height: 90vh;
     overflow: hidden;
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
     animation: modalSlideIn 0.3s ease;
