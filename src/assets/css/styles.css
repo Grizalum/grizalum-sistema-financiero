@@ -1361,6 +1361,27 @@ button:focus,
     align-items: center !important;
     gap: 10px !important;
 }
+/* HACER VISIBLE EL CONTENIDO DEL SELECTOR */
+.grizalum-company-icon {
+    color: #d4af37 !important;
+    font-size: 24px !important;
+}
+
+.grizalum-company-name {
+    color: #333 !important;
+    font-weight: bold !important;
+    font-size: 14px !important;
+}
+
+.grizalum-company-status {
+    color: #666 !important;
+    font-size: 12px !important;
+}
+
+.grizalum-dropdown-arrow {
+    color: #333 !important;
+    font-size: 16px !important;
+}
 /* ================================================================
    GRIZALUM CSS ULTRA PROFESIONAL v4.0 - COMPLETO Y CORREGIDO
    Responsive perfecto para TODOS los dispositivos ✅
