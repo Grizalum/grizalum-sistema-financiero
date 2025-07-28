@@ -12,7 +12,7 @@
 <meta name="author" content="GRIZALUM">
 
 <!-- Favicon -->
-<link rel="icon" type="image/x-icon" href="src/assets/images/favicon.ico">
+<link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
 
 <!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -516,9 +516,17 @@ setTimeout(() => {
            console.log('🔔 Mostrar notificaciones');
        }
 
-       function showSection(section) {
-           console.log(`📱 Mostrar sección: ${section}`);
-       }
+      function showSection(section) {
+    // Verificar que el elemento existe
+    const targetSection = document.getElementById(section + 'Content');
+    if (!targetSection) {
+        console.warn(`⚠️ Sección no encontrada: ${section}Content`);
+        return;
+    }
+    
+    // El resto del código...
+    console.log(`📱 Mostrar sección: ${section}`);
+}
 
       function toggleAIAssistant() {
     if (window.advancedAI) {
