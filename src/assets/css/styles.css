@@ -1330,6 +1330,17 @@ button:focus,
 .metrics-grid {
     margin-top: 0 !important;
 }
+
+/* SOLUCIÓN DE EMERGENCIA - FORZAR POSICIÓN */
+.dashboard-content {
+    position: absolute !important;
+    top: 140px !important;
+    left: 280px !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    padding: 20px !important;
+    overflow-y: auto !important;
+}
 /* ================================================================
    GRIZALUM CSS ULTRA PROFESIONAL v4.0 - COMPLETO Y CORREGIDO
    Responsive perfecto para TODOS los dispositivos ✅
