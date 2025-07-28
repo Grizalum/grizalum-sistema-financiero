@@ -489,8 +489,8 @@ body {
    ================================================================ */
 .dashboard-content {
     flex: 1;
-    padding: 16px 14px;                    /* ← NUEVO: padding uniforme */
-    padding-top: 8px;                      /* ← Pegar más al header */
+   padding: 4px 14px;                    
+    padding-top: 2px;                   
     display: flex;
     flex-direction: column;
     gap: 16px;                             /* ← Espaciado balanceado */
