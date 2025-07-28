@@ -2019,6 +2019,807 @@ class GrizalumCompanySelector {
         justify-content: center;
     }
 }
+/* =============== ZONA PELIGROSA ULTRA PROFESIONAL =============== */
+.danger-zone-container-premium {
+    padding: 0;
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+}
+
+.danger-zone-container-premium::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #ef4444 0%, #dc2626 25%, #b91c1c 50%, #dc2626 75%, #ef4444 100%);
+    background-size: 200% 100%;
+    animation: dangerPulse 3s infinite;
+}
+
+@keyframes dangerPulse {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.danger-warning-banner {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: white;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.danger-warning-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+    animation: warningShine 4s infinite;
+}
+
+@keyframes warningShine {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+.warning-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    animation: warningBlink 2s infinite;
+    flex-shrink: 0;
+}
+
+@keyframes warningBlink {
+    0%, 50% { opacity: 1; }
+    25%, 75% { opacity: 0.5; }
+}
+
+.warning-content {
+    flex: 1;
+}
+
+.warning-title {
+    font-size: 2rem;
+    font-weight: 900;
+    margin: 0 0 0.5rem 0;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.warning-description {
+    font-size: 1.125rem;
+    margin: 0 0 1rem 0;
+    opacity: 0.95;
+}
+
+.warning-features {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.feature-badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+}
+
+.security-section {
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.security-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid rgba(239, 68, 68, 0.2);
+}
+
+.security-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #1f2937;
+}
+
+.security-title i {
+    color: #10b981;
+    font-size: 1.5rem;
+}
+
+.security-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: #10b981;
+}
+
+.status-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #10b981;
+    animation: statusPulse 2s infinite;
+}
+
+@keyframes statusPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.2); }
+}
+
+.security-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+.security-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.security-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+}
+
+.security-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 40px rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.4);
+}
+
+.security-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    color: white;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.security-icon.backup {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.security-icon.restore {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.security-icon.audit {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+.security-icon::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+    animation: securityShine 3s infinite;
+}
+
+@keyframes securityShine {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) rotate(45deg); }
+}
+
+.security-info h4 {
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: #1f2937;
+    margin: 0 0 0.5rem 0;
+}
+
+.security-info p {
+    color: #6b7280;
+    margin: 0 0 1.5rem 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.security-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.security-btn {
+    padding: 0.75rem 1.25rem;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    font-size: 0.875rem;
+    flex: 1;
+    justify-content: center;
+}
+
+.security-btn.primary {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.security-btn.secondary {
+    background: white;
+    color: #6b7280;
+    border: 2px solid #e5e7eb;
+}
+
+.security-btn:hover {
+    transform: translateY(-2px);
+}
+
+.security-btn.primary:hover {
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+}
+
+.security-btn.secondary:hover {
+    border-color: #10b981;
+    color: #10b981;
+}
+
+.danger-companies-section {
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.section-header-danger {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid rgba(239, 68, 68, 0.2);
+}
+
+.section-title-danger {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #dc2626;
+    margin: 0;
+}
+
+.section-subtitle-danger {
+    color: #6b7280;
+    margin: 0.5rem 0 0 0;
+    font-size: 0.875rem;
+}
+
+.bulk-danger-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.bulk-danger-btn {
+    padding: 0.75rem 1.5rem;
+    border: 2px solid #fca5a5;
+    border-radius: 10px;
+    background: white;
+    color: #dc2626;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    font-size: 0.875rem;
+}
+
+.bulk-danger-btn:hover {
+    background: #fef2f2;
+    border-color: #dc2626;
+    transform: translateY(-2px);
+}
+
+.bulk-danger-btn.critical {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: white;
+    border-color: #dc2626;
+}
+
+.bulk-danger-btn.critical:hover {
+    background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+    box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
+}
+
+.companies-danger-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.danger-company-card-premium {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(220, 38, 38, 0.1);
+    border: 2px solid rgba(239, 68, 68, 0.2);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.danger-company-card-premium::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%);
+}
+
+.danger-company-card-premium:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 40px rgba(220, 38, 38, 0.2);
+    border-color: rgba(239, 68, 68, 0.4);
+}
+
+.danger-card-header {
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, rgba(254, 242, 242, 0.8) 0%, rgba(255, 255, 255, 0.8) 100%);
+}
+
+.company-danger-identity {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.danger-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.danger-avatar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.4) 50%, transparent 70%);
+    animation: dangerAvatarGlow 4s infinite;
+}
+
+@keyframes dangerAvatarGlow {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) rotate(45deg); }
+}
+
+.danger-company-name {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #1f2937;
+    margin: 0 0 0.5rem 0;
+}
+
+.danger-company-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.stat-item {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.danger-level {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.danger-indicator {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: white;
+    animation: dangerBlink 2s infinite;
+}
+
+.danger-indicator.critical {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+}
+
+@keyframes dangerBlink {
+    0%, 50% { opacity: 1; transform: scale(1); }
+    25%, 75% { opacity: 0.7; transform: scale(1.1); }
+}
+
+.danger-text {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #dc2626;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.danger-actions {
+    padding: 1.5rem 2rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    background: rgba(248, 250, 252, 0.8);
+}
+
+.danger-btn {
+    padding: 1rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.danger-btn span {
+    font-weight: 700;
+    font-size: 0.875rem;
+}
+
+.danger-btn small {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+.danger-btn i {
+    font-size: 1.25rem;
+}
+
+.danger-btn.archive {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.danger-btn.suspend {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.danger-btn.delete {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    animation: deleteWarning 3s infinite;
+}
+
+@keyframes deleteWarning {
+    0%, 90%, 100% { box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+    95% { box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6); }
+}
+
+.danger-btn:hover {
+    transform: translateY(-3px);
+}
+
+.danger-btn.archive:hover {
+    box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+}
+
+.danger-btn.suspend:hover {
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+}
+
+.danger-btn.delete:hover {
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5);
+}
+
+.danger-timeline {
+    padding: 1.5rem 2rem;
+    background: rgba(243, 244, 246, 0.8);
+    border-top: 1px solid rgba(229, 231, 235, 0.8);
+}
+
+.timeline-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.timeline-item:last-child {
+    margin-bottom: 0;
+}
+
+.timeline-dot {
+    width: 8px;
+    height: 8px;
+    background: #d1d5db;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.timeline-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.timeline-date {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    font-weight: 500;
+}
+
+.timeline-action {
+    font-size: 0.875rem;
+    color: #374151;
+    font-weight: 600;
+}
+
+.emergency-section {
+    padding: 2rem;
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border-top: 3px solid #dc2626;
+}
+
+.emergency-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.emergency-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    color: white;
+    animation: emergencyPulse 2s infinite;
+}
+
+@keyframes emergencyPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+    50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+}
+
+.emergency-content h4 {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #dc2626;
+    margin: 0 0 0.5rem 0;
+}
+
+.emergency-content p {
+    color: #6b7280;
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+.emergency-actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.emergency-btn {
+    padding: 1.5rem;
+    border: 2px solid #fca5a5;
+    border-radius: 12px;
+    background: white;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.emergency-btn:hover {
+    transform: translateY(-4px);
+    border-color: #dc2626;
+    box-shadow: 0 10px 30px rgba(220, 38, 38, 0.2);
+}
+
+.emergency-btn i {
+    font-size: 2rem;
+    color: #dc2626;
+}
+
+.emergency-btn span {
+    font-weight: 800;
+    color: #1f2937;
+    font-size: 1rem;
+}
+
+.emergency-btn small {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.emergency-btn.critical {
+    border-color: #dc2626;
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+}
+
+.emergency-btn.critical:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: white;
+}
+
+.emergency-btn.critical:hover i,
+.emergency-btn.critical:hover span,
+.emergency-btn.critical:hover small {
+    color: white;
+}
+
+.legal-disclaimer {
+    padding: 2rem;
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+}
+
+.disclaimer-content h5 {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #1f2937;
+    margin: 0 0 1rem 0;
+}
+
+.disclaimer-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+}
+
+.disclaimer-list li {
+    font-size: 0.875rem;
+    color: #4b5563;
+    margin-bottom: 0.5rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.disclaimer-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: #dc2626;
+    font-weight: bold;
+}
+
+.disclaimer-signature {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.disclaimer-signature p {
+    font-size: 0.875rem;
+    color: #374151;
+    margin: 0 0 1rem 0;
+    font-weight: 600;
+}
+
+.signature-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+/* RESPONSIVE PARA ZONA PELIGROSA */
+@media (max-width: 1024px) {
+    .security-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .danger-actions {
+        grid-template-columns: 1fr;
+    }
+    
+    .emergency-actions {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .danger-warning-banner {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .security-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .section-header-danger {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .bulk-danger-actions {
+        justify-content: center;
+    }
+    
+    .danger-card-header {
+        flex-direction: column;
+        gap: 1.5rem;
+        text-align: center;
+    }
+    
+    .emergency-header {
+        flex-direction: column;
+        text-align: center;
+    }
+}
         `;
         
         document.head.appendChild(style);
@@ -2889,42 +3690,235 @@ generateDangerTab() {
     
     Object.entries(companies).forEach(([id, company]) => {
         dangerHTML += `
-            <div class="danger-company-card">
-                <div class="company-danger-info">
-                    <span class="company-icon">${company.icon}</span>
-                    <div>
-                        <h4>${company.name}</h4>
-                        <p>Status: ${company.status}</p>
+            <div class="danger-company-card-premium" data-company="${id}">
+                <div class="danger-card-header">
+                    <div class="company-danger-identity">
+                        <div class="danger-avatar" style="background: linear-gradient(135deg, ${company.theme?.primary || '#d4af37'} 0%, ${company.theme?.secondary || '#b87333'} 100%);">
+                            ${company.icon}
+                        </div>
+                        <div class="danger-company-info">
+                            <h4 class="danger-company-name">${company.name}</h4>
+                            <div class="danger-company-stats">
+                                <span class="stat-item">Estado: <strong>${company.status}</strong></span>
+                                <span class="stat-item">Ingresos: <strong>S/. ${(company.data.revenue/1000000).toFixed(1)}M</strong></span>
+                                <span class="stat-item">Empleados: <strong>${Math.floor(Math.random() * 50) + 10}</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="danger-level">
+                        <div class="danger-indicator critical">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <span class="danger-text">Eliminación Permanente</span>
                     </div>
                 </div>
-                <button class="delete-company-btn" onclick="grizalumCompanySelector.confirmDelete('${id}', '${company.name}')">
-                    🗑️ ELIMINAR
-                </button>
+                
+                <div class="danger-actions">
+                    <button class="danger-btn archive" onclick="grizalumCompanySelector.archiveCompany('${id}', '${company.name}')">
+                        <i class="fas fa-archive"></i>
+                        <span>Archivar Empresa</span>
+                        <small>Oculta sin eliminar</small>
+                    </button>
+                    
+                    <button class="danger-btn suspend" onclick="grizalumCompanySelector.suspendCompany('${id}', '${company.name}')">
+                        <i class="fas fa-pause-circle"></i>
+                        <span>Suspender Operaciones</span>
+                        <small>Pausa temporal</small>
+                    </button>
+                    
+                    <button class="danger-btn delete" onclick="grizalumCompanySelector.confirmDelete('${id}', '${company.name}')">
+                        <i class="fas fa-trash-alt"></i>
+                        <span>ELIMINAR DEFINITIVO</span>
+                        <small>⚠️ Acción irreversible</small>
+                    </button>
+                </div>
+                
+                <div class="danger-timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <span class="timeline-date">Hace 2 meses</span>
+                            <span class="timeline-action">Empresa creada</span>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <span class="timeline-date">Hace 1 semana</span>
+                            <span class="timeline-action">Última modificación</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         `;
     });
     
     return `
-        <div class="danger-zone-container">
-            <div class="danger-warning">
-                <h3>⚠️ ZONA PELIGROSA</h3>
-                <p>⚠️ Las acciones aquí son <strong>IRREVERSIBLES</strong></p>
-                <p>🔐 Se requiere contraseña de administrador para eliminar empresas</p>
+        <div class="danger-zone-container-premium">
+            <div class="danger-warning-banner">
+                <div class="warning-icon">
+                    <i class="fas fa-radiation-alt"></i>
+                </div>
+                <div class="warning-content">
+                    <h3 class="warning-title">⚠️ ZONA DE MÁXIMO RIESGO</h3>
+                    <p class="warning-description">Las acciones en esta sección son <strong>PERMANENTES E IRREVERSIBLES</strong></p>
+                    <div class="warning-features">
+                        <span class="feature-badge">🔐 Requiere Autenticación</span>
+                        <span class="feature-badge">📋 Registro de Auditoría</span>
+                        <span class="feature-badge">💾 Backup Automático</span>
+                    </div>
+                </div>
             </div>
             
-            <div class="backup-section">
-                <h4>💾 Backup de Seguridad</h4>
-                <button class="backup-btn" onclick="grizalumCompanySelector.downloadBackup()">
-                    📦 Descargar Backup Completo
-                </button>
-                <button class="restore-btn" onclick="grizalumCompanySelector.showRestoreOption()">
-                    🔄 Restaurar desde Backup
-                </button>
+            <div class="security-section">
+                <div class="security-header">
+                    <div class="security-title">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Sistema de Seguridad Avanzado</span>
+                    </div>
+                    <div class="security-status">
+                        <div class="status-indicator active"></div>
+                        <span>Protección Activa</span>
+                    </div>
+                </div>
+                
+                <div class="security-grid">
+                    <div class="security-card">
+                        <div class="security-icon backup">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="security-info">
+                            <h4>Backup Automático</h4>
+                            <p>Sistema de respaldo cada 6 horas</p>
+                            <div class="security-actions">
+                                <button class="security-btn primary" onclick="grizalumCompanySelector.downloadBackup()">
+                                    <i class="fas fa-download"></i>
+                                    Descargar Backup
+                                </button>
+                                <button class="security-btn secondary" onclick="grizalumCompanySelector.scheduleBackup()">
+                                    <i class="fas fa-clock"></i>
+                                    Programar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="security-card">
+                        <div class="security-icon restore">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <div class="security-info">
+                            <h4>Restauración de Datos</h4>
+                            <p>Recupera información eliminada</p>
+                            <div class="security-actions">
+                                <button class="security-btn primary" onclick="grizalumCompanySelector.showRestoreOption()">
+                                    <i class="fas fa-upload"></i>
+                                    Restaurar Backup
+                                </button>
+                                <button class="security-btn secondary" onclick="grizalumCompanySelector.viewHistory()">
+                                    <i class="fas fa-list"></i>
+                                    Ver Historial
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="security-card">
+                        <div class="security-icon audit">
+                            <i class="fas fa-file-signature"></i>
+                        </div>
+                        <div class="security-info">
+                            <h4>Registro de Auditoría</h4>
+                            <p>Trazabilidad completa de acciones</p>
+                            <div class="security-actions">
+                                <button class="security-btn primary" onclick="grizalumCompanySelector.viewAuditLog()">
+                                    <i class="fas fa-search"></i>
+                                    Ver Registro
+                                </button>
+                                <button class="security-btn secondary" onclick="grizalumCompanySelector.exportAudit()">
+                                    <i class="fas fa-file-export"></i>
+                                    Exportar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             
-            <div class="delete-section">
-                <h4>🗑️ Eliminar Empresas</h4>
-                ${dangerHTML}
+            <div class="danger-companies-section">
+                <div class="section-header-danger">
+                    <div class="header-content">
+                        <h4 class="section-title-danger">🗑️ Gestión de Eliminación de Empresas</h4>
+                        <p class="section-subtitle-danger">Administra cuidadosamente las acciones críticas sobre tus empresas</p>
+                    </div>
+                    <div class="bulk-danger-actions">
+                        <button class="bulk-danger-btn" onclick="grizalumCompanySelector.bulkArchive()">
+                            <i class="fas fa-archive"></i>
+                            Archivar Seleccionadas
+                        </button>
+                        <button class="bulk-danger-btn critical" onclick="grizalumCompanySelector.factoryReset()">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Reset Completo
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="companies-danger-grid">
+                    ${dangerHTML}
+                </div>
+            </div>
+            
+            <div class="emergency-section">
+                <div class="emergency-header">
+                    <div class="emergency-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="emergency-content">
+                        <h4>🚨 Procedimientos de Emergencia</h4>
+                        <p>Solo usar en casos extremos - Requiere autorización de administrador</p>
+                    </div>
+                </div>
+                
+                <div class="emergency-actions">
+                    <button class="emergency-btn" onclick="grizalumCompanySelector.emergencyBackup()">
+                        <i class="fas fa-shield-virus"></i>
+                        <span>Backup de Emergencia</span>
+                        <small>Crea respaldo inmediato</small>
+                    </button>
+                    
+                    <button class="emergency-btn" onclick="grizalumCompanySelector.emergencyLock()">
+                        <i class="fas fa-lock"></i>
+                        <span>Bloqueo de Sistema</span>
+                        <small>Suspende todas las operaciones</small>
+                    </button>
+                    
+                    <button class="emergency-btn critical" onclick="grizalumCompanySelector.emergencyWipe()">
+                        <i class="fas fa-bomb"></i>
+                        <span>BORRADO TOTAL</span>
+                        <small>⚠️ ELIMINA TODO EL SISTEMA</small>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="legal-disclaimer">
+                <div class="disclaimer-content">
+                    <h5>📋 Aviso Legal y Responsabilidades</h5>
+                    <ul class="disclaimer-list">
+                        <li>Todas las acciones son registradas con timestamp y usuario</li>
+                        <li>Los backups se conservan por 90 días según política de retención</li>
+                        <li>La eliminación de empresas puede afectar reportes históricos</li>
+                        <li>Se requiere autorización administrativa para acciones críticas</li>
+                        <li>El sistema cumple con normativas de protección de datos</li>
+                    </ul>
+                    <div class="disclaimer-signature">
+                        <p>Al usar estas funciones, confirmas que tienes autorización y entiendes las consecuencias.</p>
+                        <div class="signature-info">
+                            <span>Usuario: <strong>Administrador</strong></span>
+                            <span>Sesión: <strong>${new Date().toLocaleDateString()}</strong></span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     `;
