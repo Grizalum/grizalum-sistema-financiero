@@ -67,10 +67,10 @@
    
    /* ESPACIADOS ESPECÍFICOS PARA CONTROL FINO */
     --dashboard-padding: 14px;        /* Padding del dashboard */
-    --dashboard-gap: 16px;            /* Espacio entre secciones */
+    --dashboard-gap: 10px;            /* Espacio entre secciones */
     --cards-gap: 12px;                /* Espacio entre tarjetas */
     --cards-bottom-margin: 18px;      /* Margen inferior de las métricas */
-    --header-to-content: 8px;         /* Espacio header a contenido */
+    --header-to-content: 2px;         /* Espacio header a contenido */
 
     /* ESPACIADOS MÓVIL */
     --dashboard-padding-mobile: 8px;
@@ -489,11 +489,11 @@ body {
    ================================================================ */
 .dashboard-content {
     flex: 1;
-    padding: var(--dashboard-padding);     /* Variable específica */
-    padding-top: var(--header-to-content); /* Control fino del top */
+    padding: var(--dashboard-padding);
+    padding-top: 4px;                      /* ← CAMBIO: de 8px a 4px */
     display: flex;
     flex-direction: column;
-    gap: var(--dashboard-gap);             /* Variable específica */
+    gap: 12px;                             /* ← CAMBIO: de 16px a 12px */
     max-width: 100%;
     overflow-x: hidden;
 }
