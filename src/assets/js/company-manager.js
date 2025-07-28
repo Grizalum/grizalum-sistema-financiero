@@ -437,6 +437,119 @@ class GrizalumCompanySelector {
 .tab-content.active {
     display: block;
 }
+/* =============== CONTENIDO FUTURISTA =============== */
+.edit-companies-container {
+    padding: 0;
+}
+
+.edit-companies-container h3 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+}
+
+.edit-description {
+    color: #64748b;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+}
+
+.company-edit-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.company-edit-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(212, 175, 55, 0.3);
+    border-color: rgba(212, 175, 55, 0.4);
+}
+
+.company-edit-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.company-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+}
+
+.company-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.company-name-input {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    background: white;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.company-name-input:focus {
+    border-color: #d4af37;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+.company-status-select {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    background: white;
+    transition: all 0.3s ease;
+    outline: none;
+    cursor: pointer;
+}
+
+.company-status-select:focus {
+    border-color: #d4af37;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+.save-company-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.save-company-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+}
         `;
         
         document.head.appendChild(style);
