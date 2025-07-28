@@ -437,72 +437,187 @@ class GrizalumCompanySelector {
 .tab-content.active {
     display: block;
 }
-/* =============== CONTENIDO FUTURISTA =============== */
-.edit-companies-container {
+/* =============== ESTILOS PREMIUM FUTURISTAS =============== */
+.edit-companies-container-premium {
     padding: 0;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 12px;
+    overflow: hidden;
 }
 
-.edit-companies-container h3 {
-    font-size: 1.5rem;
-    font-weight: 800;
+.section-header-premium {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(184, 115, 51, 0.05) 100%);
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.section-title {
+    font-size: 1.75rem;
+    font-weight: 900;
     background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin-bottom: 0.5rem;
+    margin: 0;
 }
 
-.edit-description {
+.section-subtitle {
     color: #64748b;
-    margin-bottom: 2rem;
+    margin: 0.5rem 0 0 0;
     font-size: 1rem;
 }
 
-.company-edit-card {
-    background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
-    border: 1px solid rgba(212, 175, 55, 0.2);
-    border-radius: 16px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-.company-edit-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(212, 175, 55, 0.3);
-    border-color: rgba(212, 175, 55, 0.4);
-}
-
-.company-edit-header {
+.section-actions {
     display: flex;
-    align-items: center;
-    gap: 1.5rem;
-}
-
-.company-icon {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
-}
-
-.company-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
     gap: 1rem;
 }
 
-.company-name-input {
-    border: 2px solid #e2e8f0;
+.action-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
     border-radius: 12px;
-    padding: 0.75rem 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.action-btn.primary {
+    background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+}
+
+.action-btn.secondary {
+    background: white;
+    color: #64748b;
+    border: 2px solid #e2e8f0;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
+}
+
+.companies-grid-premium {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.company-edit-card-premium {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.company-edit-card-premium::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #d4af37 0%, #b87333 50%, #d4af37 100%);
+    background-size: 200% 100%;
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.company-edit-card-premium:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 50px rgba(212, 175, 55, 0.2);
+    border-color: rgba(212, 175, 55, 0.3);
+}
+
+.company-card-header {
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.company-avatar-container {
+    position: relative;
+}
+
+.company-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    box-shadow: 0 12px 30px rgba(212, 175, 55, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.company-avatar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+    animation: avatarShine 2s infinite;
+}
+
+@keyframes avatarShine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.company-status-indicator {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.company-main-info {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.company-name-group, .company-status-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-label {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.company-input-premium {
+    padding: 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
     font-size: 1.1rem;
     font-weight: 600;
     background: white;
@@ -510,45 +625,193 @@ class GrizalumCompanySelector {
     outline: none;
 }
 
-.company-name-input:focus {
+.company-input-premium:focus {
     border-color: #d4af37;
-    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+    box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+    transform: translateY(-1px);
 }
 
-.company-status-select {
-    border: 2px solid #e2e8f0;
+.custom-select-wrapper {
+    position: relative;
+}
+
+.company-select-premium {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #e5e7eb;
     border-radius: 12px;
-    padding: 0.75rem 1rem;
     font-size: 1rem;
+    font-weight: 500;
     background: white;
+    cursor: pointer;
+    appearance: none;
     transition: all 0.3s ease;
     outline: none;
-    cursor: pointer;
 }
 
-.company-status-select:focus {
+.company-select-premium:focus {
     border-color: #d4af37;
-    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+    box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
 }
 
-.save-company-btn {
+.select-arrow {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    pointer-events: none;
+}
+
+.company-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1rem;
+}
+
+.company-metrics-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.metric-mini {
+    text-align: right;
+}
+
+.metric-mini-label {
+    display: block;
+    font-size: 0.75rem;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.metric-mini-value {
+    display: block;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.save-company-btn-premium {
     background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: white;
     border: none;
     border-radius: 12px;
-    padding: 0.75rem 1.5rem;
-    font-weight: 600;
+    padding: 0.875rem 1.75rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
 }
 
-.save-company-btn:hover {
+.save-company-btn-premium:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+}
+
+.btn-shine {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+    animation: btnShine 2s infinite;
+}
+
+@keyframes btnShine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.company-card-footer {
+    padding: 1.5rem 2rem;
+    background: rgba(248, 250, 252, 0.8);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.last-updated {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.quick-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.quick-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 8px;
+    background: white;
+    color: #6b7280;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.quick-btn:hover {
+    background: #f3f4f6;
+    color: #374151;
+    transform: scale(1.1);
+}
+
+.quick-btn.danger:hover {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.bulk-actions-bar {
+    background: rgba(212, 175, 55, 0.05);
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.bulk-info {
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.bulk-controls {
+    display: flex;
+    gap: 1rem;
+}
+
+.bulk-btn {
+    padding: 0.75rem 1.25rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: white;
+    color: #374151;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.bulk-btn:hover {
+    border-color: #d4af37;
+    color: #d4af37;
+    transform: translateY(-1px);
 }
         `;
         
