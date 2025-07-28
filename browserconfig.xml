@@ -2,16 +2,19 @@
 <browserconfig>
     <msapplication>
         <tile>
-            <square70x70logo src="src/assets/images/icon-72x72.png"/>
-            <square150x150logo src="src/assets/images/icon-152x152.png"/>
-            <wide310x150logo src="src/assets/images/icon-384x384.png"/>
-            <square310x310logo src="src/assets/images/icon-512x512.png"/>
+            <square70x70logo src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23d4af37'/><text x='50' y='65' text-anchor='middle' font-size='50' fill='white'>📊</text></svg>"/>
+            <square150x150logo src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23d4af37'/><text x='50' y='65' text-anchor='middle' font-size='50' fill='white'>📊</text></svg>"/>
+            <wide310x150logo src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100'><rect width='200' height='100' fill='%23d4af37'/><text x='100' y='65' text-anchor='middle' font-size='40' fill='white'>📊 GRIZALUM</text></svg>"/>
+            <square310x310logo src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23d4af37'/><text x='50' y='65' text-anchor='middle' font-size='50' fill='white'>📊</text></svg>"/>
             <TileColor>#d4af37</TileColor>
         </tile>
+        <!-- Notificaciones deshabilitadas para evitar errores -->
+        <!--
         <notification>
             <polling-uri src="/api/notifications/polling"/>
             <frequency>30</frequency>
             <cycle>1</cycle>
         </notification>
+        -->
     </msapplication>
 </browserconfig>
