@@ -1334,7 +1334,7 @@ button:focus,
 /* SOLUCIÓN DE EMERGENCIA - FORZAR POSICIÓN */
 .dashboard-content {
     position: absolute !important;
-    top: 140px !important;
+    top: 60px !important;
     left: 280px !important;
     right: 0 !important;
     bottom: 0 !important;
