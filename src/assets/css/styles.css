@@ -489,11 +489,11 @@ body {
    ================================================================ */
 .dashboard-content {
     flex: 1;
-    padding: var(--dashboard-padding);
-    padding-top: 4px;                      /* ← CAMBIO: de 8px a 4px */
+    padding: 16px 14px;                    /* ← NUEVO: padding uniforme */
+    padding-top: 8px;                      /* ← Pegar más al header */
     display: flex;
     flex-direction: column;
-    gap: 12px;                             /* ← CAMBIO: de 16px a 12px */
+    gap: 16px;                             /* ← Espaciado balanceado */
     max-width: 100%;
     overflow-x: hidden;
 }
@@ -503,10 +503,12 @@ body {
    ================================================================ */
 .metrics-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);           /* ← CAMBIO: 4 columnas fijas */
-    gap: var(--cards-gap);
-    margin-bottom: var(--cards-bottom-margin);
-    align-items: start;                              /* ← NUEVO: alinear arriba */
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;                             /* ← Gap fijo y balanceado */
+    margin-bottom: 20px;                   /* ← Margen consistente */
+    align-items: stretch;                  /* ← Todas las cards igual altura */
+    grid-auto-rows: 1fr;                   /* ← Forzar misma altura */
+}tems: start;                              /* ← NUEVO: alinear arriba */
 }
 
 .metric-card {
