@@ -430,7 +430,8 @@ class GrizalumCompanySelector {
 
 .tab-content.active {
     display: block;
-}
+}  
+   `;
         document.head.appendChild(style);
         console.log('🎨 Estilos del Company Selector creados');
     }
