@@ -634,7 +634,7 @@ createAdvancedManagementModal() {
     document.body.appendChild(modal);
 }
     generateEditTab() {
-    const companies = this.getAllCompanies();
+    const companies = this.companies;
     let companiesHTML = '';
     
     Object.entries(companies).forEach(([id, company]) => {
@@ -668,7 +668,7 @@ createAdvancedManagementModal() {
 }
 
 generateMetricsTab() {
-    const companies = this.getAllCompanies();
+    const companies = this.companies;
     let metricsHTML = '';
     
     Object.entries(companies).forEach(([id, company]) => {
@@ -710,7 +710,7 @@ generateMetricsTab() {
     `;
 }
     generateThemesTab() {
-    const companies = this.getAllCompanies();
+    const companies = this.companies;
     const availableThemes = [
         { key: 'goldman-platinum', name: '🏦 Goldman Platinum', color: '#d4af37' },
         { key: 'tesla-futuristic', name: '🚀 Tesla Futuristic', color: '#ff0040' },
@@ -759,7 +759,7 @@ generateMetricsTab() {
 }
 
 generateDangerTab() {
-    const companies = this.getAllCompanies();
+    const companies = this.companies;
     let dangerHTML = '';
     
     Object.entries(companies).forEach(([id, company]) => {
