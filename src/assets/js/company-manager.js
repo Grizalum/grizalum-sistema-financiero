@@ -426,7 +426,7 @@ class GrizalumCompanySelector {
 
 .management-content {
     padding: 2rem;
-    max-height: 50vh;
+    max-height: 75vh;
     overflow-y: auto;
 }
 
