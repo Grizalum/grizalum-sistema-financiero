@@ -2941,7 +2941,7 @@ class GrizalumCompanySelector {
             item.onclick = () => this.selectCompany(id);
             
             item.innerHTML = `
-                <div class="grizalum-company-item-icon">${company.icon}</div>
+                <div class="grizalum-company-item-icon" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif; white-space: nowrap;">${company.icon}</div>
                 <div class="grizalum-company-item-info">
                     <div class="grizalum-company-item-name">${company.name}</div>
                     <div class="grizalum-company-item-stats">Flujo: S/. ${company.data.cashFlow.toLocaleString()}</div>
