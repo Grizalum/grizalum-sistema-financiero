@@ -634,9 +634,70 @@ setTimeout(() => {
        function showAddCompanyWizard() {
     const modal = document.getElementById('addCompanyModal');
     modal.classList.add('show');
+    // Limpiar formulario
+    document.getElementById('newCompanyName').value = '';
+    document.getElementById('newCompanyType').value = '';
+    // Resetear status selector
+    document.querySelectorAll('.status-option').forEach(opt => opt.classList.remove('active'));
+    document.querySelector('.status-option[data-status="operativo"]').classList.add('active');
     console.log('🚀 Wizard para agregar empresa abierto');
 }
+function closeAddCompanyModal() {
+    const modal = document.getElementById('addCompanyModal');
+    modal.classList.remove('show');
+}
 
+function createNewCompany() {
+    const name = document.getElementById('newCompanyName').value;
+    const type = document.getElementById('newCompanyType').value;
+    const status = document.querySelector('.status-option.active').dataset.status;
+    
+    if (!name || !type) {
+        showNotification('❌ Por favor completa todos los campos', 'error');
+        return;
+    }
+    
+    const companyId = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    
+    const companies = getCompaniesData();
+    companies[companyId] = {
+        name: name,
+        icon: getIconForType(type),
+        status: status === 'operativo' ? 'Operativo' : 'En Preparación',
+        theme: getThemeForType(type),
+        data: { cashFlow: 0, revenue: 0, expenses: 0, profit: 0 }
+    };
+    
+    saveCompaniesData(companies);
+    updateCompanySelector();
+    closeAddCompanyModal();
+    
+    showNotification(`✅ Empresa "${name}" creada exitosamente`, 'success');
+}
+
+function getIconForType(type) {
+    const icons = {
+        'industria': '🏭',
+        'comercio': '🏪',
+        'servicios': '⚙️',
+        'agropecuario': '🐔',
+        'tecnologia': '💻',
+        'construccion': '🏗️'
+    };
+    return icons[type] || '🏢';
+}
+
+function getThemeForType(type) {
+    const themes = {
+        'industria': { primary: '#dc2626', secondary: '#ea580c' },
+        'comercio': { primary: '#3b82f6', secondary: '#60a5fa' },
+        'servicios': { primary: '#8b5cf6', secondary: '#a78bfa' },
+        'agropecuario': { primary: '#059669', secondary: '#10b981' },
+        'tecnologia': { primary: '#6366f1', secondary: '#818cf8' },
+        'construccion': { primary: '#f59e0b', secondary: '#fbbf24' }
+    };
+    return themes[type] || { primary: '#d4af37', secondary: '#b87333' };
+}
        // GESTIÓN DE EMPRESAS - FUNCIONES MEJORADAS
 function openCompanyManagement() {
     const modal = document.getElementById('companyManagementModal');
@@ -708,6 +769,13 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.icon-option').forEach(icon => {
         icon.addEventListener('click', function() {
             document.querySelectorAll('.icon-option').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+    // Status selector para modal agregar empresa
+    document.querySelectorAll('.status-option').forEach(option => {
+        option.addEventListener('click', function() {
+            document.querySelectorAll('.status-option').forEach(opt => opt.classList.remove('active'));
             this.classList.add('active');
         });
     });
