@@ -2131,6 +2131,31 @@ button:focus,
     }
 }
 /* ================================================================
+   ARREGLO EMOJIS EN LISTA DE EMPRESAS
+   ================================================================ */
+.grizalum-company-item-icon,
+.company-avatar,
+.company-icon {
+    width: 42px !important;
+    height: 42px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 24px !important;
+    line-height: 1 !important;
+    overflow: hidden !important;
+    text-align: center !important;
+    border-radius: 12px !important;
+    flex-shrink: 0 !important;
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif !important;
+}
+
+/* Eliminar pseudoelementos que interfieren */
+.grizalum-company-item-icon:before,
+.grizalum-company-item-icon:after {
+    display: none !important;
+}
+/* ================================================================
    GRIZALUM CSS ULTRA PROFESIONAL v4.0 - COMPLETO Y CORREGIDO
    Responsive perfecto para TODOS los dispositivos ✅
    Nivel Fortune 500 Internacional garantizado ✅
