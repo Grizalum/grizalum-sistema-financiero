@@ -415,7 +415,46 @@ console.log('🤖 Probando IA básica...');
                         <label>Nombre de la empresa</label>
                         <input type="text" id="newCompanyName" placeholder="Ej: Mi Nueva Empresa S.A.C." class="grizalum-input">
                     </div>
-                    
+                    <div class="form-field">
+    <label>Icono de la empresa</label>
+    <div class="emoji-selector-container">
+        <div class="selected-emoji" id="selectedEmoji" onclick="toggleEmojiPicker()">
+            <span class="emoji-display">🏢</span>
+            <span class="emoji-label">Seleccionar icono</span>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+        
+        <!-- EMOJI PICKER ÉPICO -->
+        <div id="emojiPicker" class="emoji-picker">
+            <div class="emoji-search">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Buscar emoji..." id="emojiSearch">
+            </div>
+            
+            <div class="emoji-categories">
+                <button class="emoji-cat active" data-category="business" title="Negocios">💼</button>
+                <button class="emoji-cat" data-category="industry" title="Industria">🏭</button>
+                <button class="emoji-cat" data-category="commerce" title="Comercio">🏪</button>
+                <button class="emoji-cat" data-category="food" title="Alimentación">🍕</button>
+                <button class="emoji-cat" data-category="transport" title="Transporte">🚚</button>
+                <button class="emoji-cat" data-category="tech" title="Tecnología">💻</button>
+                <button class="emoji-cat" data-category="medical" title="Salud">🏥</button>
+                <button class="emoji-cat" data-category="education" title="Educación">🎓</button>
+            </div>
+            
+            <div class="emoji-grid" id="emojiGrid">
+                <!-- Se llena dinámicamente -->
+            </div>
+            
+            <div class="emoji-recents">
+                <h4>🕒 Recientes</h4>
+                <div class="emoji-recent-list" id="recentEmojis">
+                    <!-- Emojis recientes -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
                     <div class="form-field">
                         <label>Tipo de negocio</label>
                         <select id="newCompanyType" class="grizalum-select">
