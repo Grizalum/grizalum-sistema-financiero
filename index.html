@@ -590,6 +590,22 @@ function showProfessionalAlert(message) {
     showNotification(message, 'info');
 }
     
+ // EMOJI SELECTOR ÉPICO - FUNCIONALIDAD AVANZADA
+// ================================================================
+const EMOJI_CATEGORIES = {
+    business: ['🏢', '🏬', '🏪', '🏫', '🏦', '🏛️', '🏤', '🏣', '🏗️', '💼', '📊', '📈', '📉', '💹', '💰', '💳'],
+    industry: ['🏭', '⚙️', '🔧', '🔨', '⛏️', '🛠️', '⚡', '🔥', '💡', '🚧', '⚒️', '🧰', '🔩', '🏗️', '⛽', '🛢️'],
+    commerce: ['🏪', '🛒', '🛍️', '💳', '💰', '💵', '💴', '💶', '💷', '🏬', '📦', '📮', '🎁', '🛎️', '🏷️', '💎'],
+    food: ['🍕', '🍔', '🍟', '🌭', '🥪', '🌮', '🌯', '🥗', '🍝', '🍜', '🍲', '🍱', '🍘', '🍙', '🍚', '🥘'],
+    transport: ['🚚', '🚛', '🚐', '🚌', '🚍', '🚘', '🚖', '🚗', '🚙', '🛻', '🚓', '🚑', '🚒', '🚜', '🏍️', '🚲'],
+    tech: ['💻', '🖥️', '🖨️', '⌨️', '🖱️', '💾', '💿', '📀', '📱', '☎️', '📞', '📟', '📠', '📺', '📻', '🎮'],
+    medical: ['🏥', '⚕️', '💊', '💉', '🩺', '🦷', '🧬', '🔬', '🧪', '🧫', '🩹', '🩼', '🩻', '🚑', '👨‍⚕️', '👩‍⚕️'],
+    education: ['🎓', '📚', '📖', '📝', '✏️', '📏', '📐', '📊', '🎒', '🏫', '📋', '📌', '📍', '🖇️', '📎', '✂️']
+};
+
+let selectedEmojiValue = '🏢';
+let recentEmojis = JSON.parse(localStorage.getItem('grizalum_recent_emojis') || '["🏢", "🏭", "🏪", "💼", "🚚", "💻", "🏥", "🎓"]');
+    
 // INICIALIZAR TODO AL CARGAR
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🤖 AI Assistant ya disponible');
@@ -868,7 +884,100 @@ setTimeout(() => {
                });
            });
        }
+function toggleEmojiPicker() {
+    const picker = document.getElementById('emojiPicker');
+    const isVisible = picker.classList.contains('show');
+    
+    if (isVisible) {
+        picker.classList.remove('show');
+    } else {
+        picker.classList.add('show');
+        loadEmojiCategory('business');
+        updateRecentEmojis();
+        setTimeout(() => {
+            document.getElementById('emojiSearch').focus();
+        }, 100);
+    }
+}
 
+function loadEmojiCategory(category) {
+    const grid = document.getElementById('emojiGrid');
+    const emojis = EMOJI_CATEGORIES[category] || EMOJI_CATEGORIES.business;
+    
+    grid.innerHTML = emojis.map(emoji => 
+        `<div class="emoji-item" onclick="selectEmoji('${emoji}')" title="${emoji}">${emoji}</div>`
+    ).join('');
+    
+    document.querySelectorAll('.emoji-cat').forEach(cat => {
+        cat.classList.remove('active');
+        if (cat.dataset.category === category) {
+            cat.classList.add('active');
+        }
+    });
+}
+
+function selectEmoji(emoji) {
+    selectedEmojiValue = emoji;
+    
+    const display = document.querySelector('.emoji-display');
+    const label = document.querySelector('.emoji-label');
+    
+    display.style.transform = 'scale(0.8) rotate(-10deg)';
+    
+    setTimeout(() => {
+        display.textContent = emoji;
+        label.textContent = 'Icono seleccionado';
+        display.style.transform = 'scale(1.1) rotate(5deg)';
+        
+        setTimeout(() => {
+            display.style.transform = 'scale(1) rotate(0deg)';
+        }, 200);
+    }, 150);
+    
+    addToRecentEmojis(emoji);
+    
+    setTimeout(() => {
+        document.getElementById('emojiPicker').classList.remove('show');
+    }, 300);
+    
+    showNotification(`Icono ${emoji} seleccionado`, 'success');
+}
+
+function addToRecentEmojis(emoji) {
+    recentEmojis = recentEmojis.filter(e => e !== emoji);
+    recentEmojis.unshift(emoji);
+    recentEmojis = recentEmojis.slice(0, 8);
+    
+    localStorage.setItem('grizalum_recent_emojis', JSON.stringify(recentEmojis));
+    updateRecentEmojis();
+}
+
+function updateRecentEmojis() {
+    const container = document.getElementById('recentEmojis');
+    if (container) {
+        container.innerHTML = recentEmojis.map(emoji => 
+            `<div class="emoji-item" onclick="selectEmoji('${emoji}')" title="Reciente: ${emoji}">${emoji}</div>`
+        ).join('');
+    }
+}
+
+function searchEmojis(query) {
+    if (!query) {
+        loadEmojiCategory('business');
+        return;
+    }
+    
+    const allEmojis = Object.values(EMOJI_CATEGORIES).flat();
+    const uniqueEmojis = [...new Set(allEmojis)];
+    
+    const grid = document.getElementById('emojiGrid');
+    grid.innerHTML = uniqueEmojis.slice(0, 48).map(emoji => 
+        `<div class="emoji-item" onclick="selectEmoji('${emoji}')" title="Buscar: ${emoji}">${emoji}</div>`
+    ).join('');
+    
+    document.querySelectorAll('.emoji-cat').forEach(cat => cat.classList.remove('active'));
+}
+    
        // PLACEHOLDER FUNCTIONS
        function showAddCompanyWizard() {
     const modal = document.getElementById('addCompanyModal');
@@ -901,7 +1010,7 @@ function createNewCompany() {
     const companies = getCompaniesData();
     companies[companyId] = {
         name: name,
-        icon: getIconForType(type),
+        icon: selectedEmojiValue,
         status: status === 'operativo' ? 'Operativo' : 'En Preparación',
         theme: getThemeForType(type),
         data: { cashFlow: 0, revenue: 0, expenses: 0, profit: 0 }
@@ -1013,6 +1122,33 @@ document.addEventListener('DOMContentLoaded', function() {
             this.classList.add('active');
         });
     });
+    // Categorías de emojis
+    document.querySelectorAll('.emoji-cat').forEach(cat => {
+        cat.addEventListener('click', function() {
+            const category = this.dataset.category;
+            loadEmojiCategory(category);
+        });
+    });
+    
+    // Búsqueda de emojis
+    const searchInput = document.getElementById('emojiSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            searchEmojis(query);
+        });
+    }
+    
+    // Cerrar picker al hacer clic fuera
+    document.addEventListener('click', function(e) {
+        const picker = document.getElementById('emojiPicker');
+        const container = document.querySelector('.emoji-selector-container');
+        
+        if (container && !container.contains(e.target)) {
+            picker.classList.remove('show');
+        }
+    });
+    
     // Status selector para modal agregar empresa
     document.querySelectorAll('.status-option').forEach(option => {
         option.addEventListener('click', function() {
