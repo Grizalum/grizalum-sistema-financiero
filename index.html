@@ -509,6 +509,14 @@ window.originalAlert = window.alert;
 
 // REEMPLAZAR PROMPT NATIVO CON MODAL PROFESIONAL
 window.prompt = function(message, defaultValue = '') {
+    // Si es para emoji, mostrar nuestro selector
+    if (message.toLowerCase().includes('emoji')) {
+        showEmojiModal(resolve => {
+            // callback cuando se seleccione emoji
+        });
+        return;
+    }
+    
     return new Promise((resolve) => {
         showProfessionalPrompt(message, defaultValue, resolve);
     });
