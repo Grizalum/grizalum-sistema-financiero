@@ -901,12 +901,14 @@ function getThemeForType(type) {
        // GESTIÓN DE EMPRESAS - FUNCIONES MEJORADAS
 function openCompanyManagement() {
     const modal = document.getElementById('companyManagementModal');
-    modal.classList.add('show');
-    
-    // Cargar datos de la empresa actual
-    loadCurrentCompanyData();
-    
-    console.log('⚙️ Gestión de empresas abierta');
+    if (modal) {
+        modal.classList.add('show');
+        loadCurrentCompanyData();
+        console.log('⚙️ Gestión de empresas abierta');
+    } else {
+        console.error('Modal de gestión no encontrado');
+        showNotification('Error: Modal no encontrado', 'error');
+    }
 }
 
 function closeCompanyManagement() {
