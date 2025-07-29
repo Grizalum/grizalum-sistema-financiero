@@ -388,6 +388,92 @@ console.log('🤖 Probando IA básica...');
 <script src="./src/assets/js/main.js"></script>
 <!-- SCRIPTS INTEGRADOS PRINCIPALES -->
 <script>
+// INTERCEPTAR Y MEJORAR PROMPTS NATIVOS
+window.originalPrompt = window.prompt;
+window.originalAlert = window.alert;
+
+// REEMPLAZAR PROMPT NATIVO CON MODAL PROFESIONAL
+window.prompt = function(message, defaultValue = '') {
+    return new Promise((resolve) => {
+        showProfessionalPrompt(message, defaultValue, resolve);
+    });
+};
+
+// REEMPLAZAR ALERT NATIVO CON NOTIFICACIÓN PROFESIONAL  
+window.alert = function(message) {
+    showProfessionalAlert(message);
+};
+
+function showProfessionalPrompt(message, defaultValue, callback) {
+    // Crear modal profesional dinámico
+    const modal = document.createElement('div');
+    modal.className = 'grizalum-modal show';
+    modal.innerHTML = `
+        <div class="grizalum-modal-content">
+            <div class="grizalum-modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-edit"></i>
+                    <span>Información Requerida</span>
+                </div>
+            </div>
+            
+            <div class="grizalum-modal-body">
+                <div class="form-field">
+                    <label>${message}</label>
+                    <input type="text" id="promptInput" value="${defaultValue}" class="grizalum-input" autofocus>
+                </div>
+            </div>
+            
+            <div class="grizalum-modal-footer">
+                <button class="btn-cancel" onclick="closeProfessionalPrompt(null)">
+                    <i class="fas fa-times"></i>
+                    Cancelar
+                </button>
+                <button class="btn-create" onclick="closeProfessionalPrompt('${callback.name || 'callback'}')">
+                    <i class="fas fa-check"></i>
+                    Aceptar
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Guardar callback globalmente
+    window.currentPromptCallback = callback;
+    
+    // Focus al input
+    setTimeout(() => {
+        document.getElementById('promptInput').focus();
+    }, 100);
+    
+    // Enter para aceptar
+    document.getElementById('promptInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            closeProfessionalPrompt('callback');
+        }
+    });
+}
+
+function closeProfessionalPrompt(action) {
+    const modal = document.querySelector('.grizalum-modal');
+    const input = document.getElementById('promptInput');
+    const callback = window.currentPromptCallback;
+    
+    if (action && callback) {
+        callback(input.value);
+    } else if (callback) {
+        callback(null);
+    }
+    
+    modal.remove();
+    window.currentPromptCallback = null;
+}
+
+function showProfessionalAlert(message) {
+    // Usar tu sistema de notificaciones existente
+    showNotification(message, 'info');
+}
     
 // INICIALIZAR TODO AL CARGAR
 document.addEventListener('DOMContentLoaded', function() {
@@ -598,9 +684,47 @@ setTimeout(() => {
     }
 }
        function showNotification(message, type = 'info') {
-           console.log(`${type === 'success' ? '✅' : '📢'} ${message}`);
-       }
-
+    // Crear notificación profesional
+    const notification = document.createElement('div');
+    notification.className = `grizalum-notification ${type}`;
+    
+    const icons = {
+        'success': 'fas fa-check-circle',
+        'error': 'fas fa-exclamation-circle', 
+        'warning': 'fas fa-exclamation-triangle',
+        'info': 'fas fa-info-circle'
+    };
+    
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="${icons[type] || icons.info}"></i>
+            <span>${message}</span>
+        </div>
+        <button class="notification-close" onclick="this.parentElement.remove()">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    // Agregar al DOM
+    let container = document.getElementById('notificationContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'notificationContainer';
+        container.className = 'notification-container';
+        document.body.appendChild(container);
+    }
+    
+    container.appendChild(notification);
+    
+    // Auto-remove después de 5 segundos
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.remove();
+        }
+    }, 5000);
+    
+    console.log(`${type === 'success' ? '✅' : '📢'} ${message}`);
+}
        function setupEventListeners() {
            // Cerrar dropdown al hacer clic fuera
            document.addEventListener('click', function(event) {
