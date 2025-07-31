@@ -544,6 +544,28 @@ setTimeout(() => {
     setupEventListeners();
     
     console.log('✅ Sistema GRIZALUM completamente cargado');
+    // CONFIGURAR EMOJI PICKER AL CARGAR
+    setTimeout(() => {
+        setupEmojiPicker();
+    }, 500);
+});
+
+function setupEmojiPicker() {
+    // Event listener para abrir emoji picker
+    const selectedEmoji = document.getElementById('selectedEmoji');
+    if (selectedEmoji) {
+        selectedEmoji.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('🔥 Click en emoji selector detectado');
+            toggleEmojiPicker();
+        });
+        console.log('✅ Emoji picker configurado');
+    }
+    
+    // Cargar emojis por defecto
+    loadEmojiCategory('business');
+}
     
     // MOSTRAR NOTIFICACIONES IA AL CARGAR
     setTimeout(() => {
