@@ -2189,6 +2189,18 @@ button:focus,
 .grizalum-company-item-icon:after {
     display: none !important;
 }
+/* FORZAR EMOJI PICKER */
+.emoji-picker.show {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    z-index: 999999 !important;
+    position: absolute !important;
+    background: white !important;
+    border: 2px solid #d4af37 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
+}
 /* ================================================================
    GRIZALUM CSS ULTRA PROFESIONAL v4.0 - COMPLETO Y CORREGIDO
    Responsive perfecto para TODOS los dispositivos ✅
