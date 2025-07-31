@@ -504,6 +504,17 @@ console.log('🤖 Probando IA básica...');
 <!-- SCRIPTS INTEGRADOS PRINCIPALES -->
 <script>
 
+// BLOQUEAR PROMPTS DEL NAVEGADOR
+window.prompt = function(message) {
+    console.log('🚫 Prompt bloqueado:', message);
+    if (message && message.includes('emoji')) {
+        setTimeout(() => {
+            showAddCompanyWizard();
+        }, 100);
+        return '🏢';
+    }
+    return null;
+};
  // EMOJI SELECTOR ÉPICO - FUNCIONALIDAD AVANZADA
 // ================================================================
 const EMOJI_CATEGORIES = {
