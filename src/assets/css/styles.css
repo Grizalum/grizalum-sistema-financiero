@@ -1429,9 +1429,9 @@ button:focus,
         rgba(255, 255, 255, 0.9) 100%);
     backdrop-filter: blur(40px);
     border-radius: 24px;
-    width: 90%;
-    max-width: 600px;
-    max-height: 90vh;
+    width: 95%;
+    max-width: 720px !important;        /* ← MÁS ANCHO */
+    max-height: 85vh !important;        /* ← MÁS ALTO */
     overflow: hidden;
     box-shadow: 
         0 25px 50px -12px rgba(0, 0, 0, 0.25),
@@ -2065,22 +2065,22 @@ button:focus,
 
 .emoji-grid {
     display: grid !important;
-    grid-template-columns: repeat(8, 1fr) !important;
-    gap: 4px !important;
-    padding: 16px !important;
-    max-height: 280px !important;
+    grid-template-columns: repeat(10, 1fr) !important;  /* ← MÁS COLUMNAS */
+    gap: 6px !important;                                /* ← MÁS ESPACIO */
+    padding: 20px !important;                           /* ← MÁS PADDING */
+    max-height: 400px !important;                       /* ← MÁS ALTO */
     overflow-y: auto !important;
     background: white !important;
 }
 .emoji-item {
-    width: 44px !important;
-    height: 44px !important;
+    width: 50px !important;                            /* ← MÁS GRANDE */
+    height: 50px !important;                           /* ← MÁS GRANDE */
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    font-size: 28px !important;
+    font-size: 32px !important;                        /* ← MÁS GRANDE */
     line-height: 1 !important;
-    border-radius: 8px !important;
+    border-radius: 10px !important;                    /* ← MÁS REDONDEADO */
     cursor: pointer !important;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
     position: relative !important;
@@ -2104,10 +2104,10 @@ button:focus,
 }
 
 .emoji-item:hover {
-    background: rgba(212, 175, 55, 0.1) !important;
-    border-color: rgba(212, 175, 55, 0.3) !important;
-    transform: scale(1.2) !important;
-    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3) !important;
+    background: rgba(212, 175, 55, 0.15) !important;
+    border-color: rgba(212, 175, 55, 0.4) !important;
+    transform: scale(1.15) !important;                  /* ← EFECTO MÁS SUAVE */
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3) !important;
     z-index: 10 !important;
 }
 
