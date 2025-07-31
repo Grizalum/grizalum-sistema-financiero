@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GRIZALUM - Sistema Financiero Empresarial Premium</title>
+    <title>GRIZALUM | Centro de Control Financiero</title>
     <!-- ESTILOS EXTERNOS PROFESIONALES -->
 <link rel="stylesheet" href="./src/assets/css/styles.css">
 <!-- Meta Tags SEO -->
@@ -554,11 +554,15 @@ function setupEmojiPicker() {
     // Event listener para abrir emoji picker
     const selectedEmoji = document.getElementById('selectedEmoji');
     if (selectedEmoji) {
-        selectedEmoji.addEventListener('click', function(e) {
+        // Limpiar listeners existentes
+        selectedEmoji.replaceWith(selectedEmoji.cloneNode(true));
+        const newEmoji = document.getElementById('selectedEmoji');
+        
+        newEmoji.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
             console.log('🔥 Click en emoji selector detectado');
-            toggleEmojiPicker();
+            forceToggleEmojiPicker();
         });
         console.log('✅ Emoji picker configurado');
     }
@@ -847,8 +851,6 @@ function toggleEmojiPicker() {
         }, 100);
     }
 }
-}
-
 function loadEmojiCategory(category) {
     const grid = document.getElementById('emojiGrid');
     const emojis = EMOJI_CATEGORIES[category] || EMOJI_CATEGORIES.business;
@@ -1199,6 +1201,34 @@ function forceToggleEmojiPicker() {
             if (searchInput) {
                 searchInput.focus();
             }
+        }, 200);
+    }
+}
+    // AGREGAR AQUÍ LA NUEVA FUNCIÓN
+function forceToggleEmojiPicker() {
+    console.log('🚀 Ejecutando forceToggleEmojiPicker');
+    
+    const picker = document.getElementById('emojiPicker');
+    if (!picker) {
+        console.error('❌ emojiPicker no encontrado');
+        return;
+    }
+    
+    const isVisible = picker.classList.contains('show');
+    console.log('📱 Estado actual del picker:', isVisible ? 'visible' : 'oculto');
+    
+    if (isVisible) {
+        picker.classList.remove('show');
+        console.log('👆 Picker cerrado');
+    } else {
+        picker.classList.add('show');
+        loadEmojiCategory('business');
+        updateRecentEmojis();
+        console.log('👆 Picker abierto');
+        
+        setTimeout(() => {
+            const searchInput = document.getElementById('emojiSearch');
+            if (searchInput) searchInput.focus();
         }, 200);
     }
 }
