@@ -431,16 +431,23 @@ console.log('🤖 Probando IA básica...');
                 <input type="text" placeholder="Buscar emoji..." id="emojiSearch">
             </div>
             
-            <div class="emoji-categories">
-                <button class="emoji-cat active" data-category="business" title="Negocios">💼</button>
-                <button class="emoji-cat" data-category="industry" title="Industria">🏭</button>
-                <button class="emoji-cat" data-category="commerce" title="Comercio">🏪</button>
-                <button class="emoji-cat" data-category="food" title="Alimentación">🍕</button>
-                <button class="emoji-cat" data-category="transport" title="Transporte">🚚</button>
-                <button class="emoji-cat" data-category="tech" title="Tecnología">💻</button>
-                <button class="emoji-cat" data-category="medical" title="Salud">🏥</button>
-                <button class="emoji-cat" data-category="education" title="Educación">🎓</button>
-            </div>
+<div class="emoji-categories">
+    <button class="emoji-cat active" data-category="business" title="Negocios">💼</button>
+    <button class="emoji-cat" data-category="faces" title="Caritas">😀</button>
+    <button class="emoji-cat" data-category="people" title="Personas">👤</button>
+    <button class="emoji-cat" data-category="industry" title="Industria">🏭</button>
+    <button class="emoji-cat" data-category="commerce" title="Comercio">🏪</button>
+    <button class="emoji-cat" data-category="food" title="Comida">🍕</button>
+    <button class="emoji-cat" data-category="transport" title="Transporte">🚚</button>
+    <button class="emoji-cat" data-category="tech" title="Tecnología">💻</button>
+    <button class="emoji-cat" data-category="medical" title="Salud">🏥</button>
+    <button class="emoji-cat" data-category="education" title="Educación">🎓</button>
+    <button class="emoji-cat" data-category="animals" title="Animales">🐶</button>
+    <button class="emoji-cat" data-category="nature" title="Naturaleza">🌱</button>
+    <button class="emoji-cat" data-category="hands" title="Manos">👋</button>
+    <button class="emoji-cat" data-category="objects" title="Objetos">📱</button>
+    <button class="emoji-cat" data-category="symbols" title="Símbolos">❤️</button>
+</div>
             
             <div class="emoji-grid" id="emojiGrid">
                 <!-- Se llena dinámicamente -->
@@ -544,7 +551,7 @@ let recentEmojis = JSON.parse(localStorage.getItem('grizalum_recent_emojis') || 
 // FUNCIONES EMOJI PICKER - ORDEN CORRECTO
 // ================================================================
 function loadEmojiCategory(category) {
-    console.log('📱 Cargando categoría:', category);
+    console.log('📱 Cargando categoría ULTRA:', category);
     
     const grid = document.getElementById('emojiGrid');
     if (!grid) {
@@ -555,18 +562,25 @@ function loadEmojiCategory(category) {
     const emojis = EMOJI_CATEGORIES[category] || EMOJI_CATEGORIES.business;
     console.log('📦 Emojis a cargar:', emojis.length);
     
-    // Usar DocumentFragment para mejor rendimiento
+    // RENDERIZADO ULTRA RÁPIDO
     const fragment = document.createDocumentFragment();
     
-    emojis.forEach(emoji => {
+    // Mostrar MÁS emojis por categoría
+    const maxEmojis = category === 'business' ? emojis.length : Math.min(emojis.length, 120);
+    
+    for (let i = 0; i < maxEmojis; i++) {
+        const emoji = emojis[i];
         const div = document.createElement('div');
         div.className = 'emoji-item';
         div.textContent = emoji;
         div.title = emoji;
         div.onclick = () => selectEmoji(emoji);
+        
+        // OPTIMIZACIÓN: No usar innerHTML
         fragment.appendChild(div);
-    });
+    }
     
+    // Actualización súper rápida
     grid.innerHTML = '';
     grid.appendChild(fragment);
     
@@ -578,9 +592,8 @@ function loadEmojiCategory(category) {
         }
     });
     
-    console.log('✅ Categoría cargada:', emojis.length, 'emojis');
+    console.log('✅ ULTRA categoría cargada:', maxEmojis, 'emojis de calidad premium');
 }
-
 function selectEmoji(emoji) {
     console.log('🎯 Emoji seleccionado:', emoji);
     
