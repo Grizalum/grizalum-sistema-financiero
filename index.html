@@ -821,19 +821,32 @@ function setupEmojiPicker() {
            });
        }
 function toggleEmojiPicker() {
+    console.log('🎯 Ejecutando toggleEmojiPicker');
+    
     const picker = document.getElementById('emojiPicker');
+    if (!picker) {
+        console.error('❌ Emoji picker no encontrado');
+        return;
+    }
+    
     const isVisible = picker.classList.contains('show');
+    console.log('📱 Estado actual:', isVisible ? 'visible' : 'oculto');
     
     if (isVisible) {
         picker.classList.remove('show');
+        console.log('👆 Cerrando picker');
     } else {
         picker.classList.add('show');
         loadEmojiCategory('business');
         updateRecentEmojis();
+        console.log('👆 Abriendo picker');
+        
         setTimeout(() => {
-            document.getElementById('emojiSearch').focus();
+            const searchInput = document.getElementById('emojiSearch');
+            if (searchInput) searchInput.focus();
         }, 100);
     }
+}
 }
 
 function loadEmojiCategory(category) {
