@@ -418,7 +418,7 @@ console.log('🤖 Probando IA básica...');
                     <div class="form-field">
     <label>Icono de la empresa</label>
     <div class="emoji-selector-container">
-        <div class="selected-emoji" id="selectedEmoji" onclick="toggleEmojiPicker()" style="cursor: pointer; background: #f3f4f6; padding: 10px; border-radius: 8px;">
+        <div class="selected-emoji" id="selectedEmoji">
             <span class="emoji-display">🏢</span>
             <span class="emoji-label">Seleccionar icono</span>
             <i class="fas fa-chevron-down"></i>
@@ -1132,5 +1132,76 @@ function getCurrentCompany() {
        console.log('🏢 Multi-empresa: ✅');
        console.log('📱 Responsive: ✅');
    </script>
+    </script>  ← Aquí termina el script grande
+
+<!-- AQUÍ VA EL CÓDIGO NUEVO -->
+<script>
+// SOLUCIÓN DEFINITIVA EMOJI PICKER
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        initializeEmojiPicker();
+    }, 1000);
+});
+
+function initializeEmojiPicker() {
+    console.log('🎯 Inicializando emoji picker...');
+    
+    // Encontrar el elemento
+    const selectedEmoji = document.getElementById('selectedEmoji');
+    if (!selectedEmoji) {
+        console.error('❌ selectedEmoji no encontrado');
+        return;
+    }
+    
+    // Remover listeners existentes
+    selectedEmoji.replaceWith(selectedEmoji.cloneNode(true));
+    const newSelectedEmoji = document.getElementById('selectedEmoji');
+    
+    // Agregar evento definitivo
+    newSelectedEmoji.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('🔥 CLICK DETECTADO EN EMOJI!');
+        forceToggleEmojiPicker();
+    });
+    
+    // Cargar categorías por defecto
+    loadEmojiCategory('business');
+    updateRecentEmojis();
+    
+    console.log('✅ Emoji picker configurado correctamente');
+}
+
+function forceToggleEmojiPicker() {
+    console.log('🚀 Ejecutando forceToggleEmojiPicker');
+    
+    const picker = document.getElementById('emojiPicker');
+    if (!picker) {
+        console.error('❌ emojiPicker no encontrado');
+        return;
+    }
+    
+    const isVisible = picker.classList.contains('show');
+    console.log('📱 Estado actual del picker:', isVisible ? 'visible' : 'oculto');
+    
+    if (isVisible) {
+        picker.classList.remove('show');
+        console.log('👆 Picker cerrado');
+    } else {
+        picker.classList.add('show');
+        loadEmojiCategory('business');
+        updateRecentEmojis();
+        console.log('👆 Picker abierto');
+        
+        // Focus en búsqueda
+        setTimeout(() => {
+            const searchInput = document.getElementById('emojiSearch');
+            if (searchInput) {
+                searchInput.focus();
+            }
+        }, 200);
+    }
+}
+</script>
 </body>
 </html>
