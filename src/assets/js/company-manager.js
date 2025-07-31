@@ -4088,9 +4088,16 @@ bulkEdit() {
 }
 
 addNewCompany() {
-    // Abrir modal en lugar de prompt feo
-showAddCompanyWizard();
-return; // Salir porque el modal maneja todo - EVITA TODOS LOS PROMPTS
+    // Usar función global desde window
+    if (window.showAddCompanyWizard) {
+        window.showAddCompanyWizard();
+    } else {
+        // Fallback si no existe
+        console.log('Abriendo modal de nueva empresa...');
+        const modal = document.getElementById('addCompanyModal');
+        if (modal) modal.classList.add('show');
+    }
+    return; // Salir porque el modal maneja todo
     
    // const icon = prompt('🎨 Emoji para la empresa (ej: 🏭, 🏪, 🏢):', '🏢');//
     //if (!icon) return;//
