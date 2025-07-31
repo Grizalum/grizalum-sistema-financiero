@@ -4,45 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GRIZALUM | Centro de Control Financiero</title>
+    
     <!-- ESTILOS EXTERNOS PROFESIONALES -->
-<link rel="stylesheet" href="./src/assets/css/styles.css">
-<!-- Meta Tags SEO -->
-<meta name="description" content="Sistema financiero empresarial premium con IA integrada para empresas peruanas. Dashboard ejecutivo, flujo de caja, análisis predictivo.">
-<meta name="keywords" content="sistema financiero, empresas peru, contabilidad, flujo de caja, dashboard, IA">
-<meta name="author" content="GRIZALUM">
-
-<!-- Favicon -->
-<link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
-
-<!-- Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-<!-- Chart.js -->
-<script src="https://unpkg.com/chart.js"></script>
+    <link rel="stylesheet" href="./src/assets/css/styles.css">
     
-<!-- FontAwesome -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-   
- <!-- ADVANCED AI ASSISTANT PROFESIONAL -->
-<!-- SOLO PARA PRUEBA -->
-<script>
-console.log('🤖 Probando IA básica...');
-</script>
-    
-<!-- PWA MANIFEST -->
-<link rel="manifest" href="manifest.json">
+    <!-- Meta Tags SEO -->
+    <meta name="description" content="Sistema financiero empresarial premium con IA integrada para empresas peruanas. Dashboard ejecutivo, flujo de caja, análisis predictivo.">
+    <meta name="keywords" content="sistema financiero, empresas peru, contabilidad, flujo de caja, dashboard, IA">
+    <meta name="author" content="GRIZALUM">
 
-<!-- META TAGS PARA PWA -->
-<meta name="application-name" content="GRIZALUM">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="GRIZALUM">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="msapplication-TileColor" content="#d4af37">
-<meta name="theme-color" content="#d4af37">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
 
-<!-- ICONOS ADICIONALES -->
-<link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://unpkg.com/chart.js"></script>
+        
+    <!-- FontAwesome -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+       
+    <!-- PWA MANIFEST -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- META TAGS PARA PWA -->
+    <meta name="application-name" content="GRIZALUM">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="GRIZALUM">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="msapplication-TileColor" content="#d4af37">
+    <meta name="theme-color" content="#d4af37">
+
+    <!-- ICONOS ADICIONALES -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
 
 </head>
 <body>
@@ -165,665 +161,298 @@ console.log('🤖 Probando IA básica...');
                </div>
 
                <div class="header-controls">
-               <div class="time-period-selector">
-                  <button class="period-btn active" onclick="changePeriod('hoy', this)">Hoy</button>
-                 <button class="period-btn" onclick="changePeriod('semana', this)">Semana</button>
-                 <button class="period-btn" onclick="changePeriod('mes', this)">Mes</button>
-                 <button class="period-btn" onclick="changePeriod('trimestre', this)">Trimestre</button>
-                 <button class="period-btn" onclick="changePeriod('año', this)">Año</button>
-             </div>
-    
-            <button class="notification-center" onclick="showNotifications()">
-                 <i class="fas fa-bell"></i>
-             <span class="notification-badge">3</span>
+                   <div class="time-period-selector">
+                      <button class="period-btn active" onclick="changePeriod('hoy', this)">Hoy</button>
+                     <button class="period-btn" onclick="changePeriod('semana', this)">Semana</button>
+                     <button class="period-btn" onclick="changePeriod('mes', this)">Mes</button>
+                     <button class="period-btn" onclick="changePeriod('trimestre', this)">Trimestre</button>
+                     <button class="period-btn" onclick="changePeriod('año', this)">Año</button>
+                 </div>
+        
+                <button class="notification-center" onclick="showNotifications()">
+                     <i class="fas fa-bell"></i>
+                 <span class="notification-badge">3</span>
+                </button>
+        
+                <!-- BOTÓN IA EN HEADER -->
+             <button class="ai-header-button" onclick="toggleAIAssistant()">
+             <i class="fas fa-brain"></i>
+             <span>IA Assistant</span>
             </button>
-    
-            <!-- BOTÓN IA EN HEADER -->
-         <button class="ai-header-button" onclick="toggleAIAssistant()">
-         <i class="fas fa-brain"></i>
-         <span>IA Assistant</span>
-        </button>
-          <!-- SELECTOR DE EMPRESAS -->
-          <div class="company-selector" id="companySelector">
-          <!-- Se genera automáticamente por company-selector.js -->
-               </div>
+              <!-- SELECTOR DE EMPRESAS -->
+              <div class="company-selector" id="companySelector">
+              <!-- Se genera automáticamente por company-manager.js -->
+                   </div>
+                    </div>
                 </div>
-            </div>
            </header>
 
            <!-- DASHBOARD CONTENT -->
            <div id="dashboardContent" class="dashboard-content" style="padding-top: 0 !important; margin-top: 0 !important;">
                <!-- METRICS GRID -->
                <section class="metrics-grid">
-    <!-- CARD 1: INGRESOS -->
-    <div class="metric-card revenue">
-        <div class="metric-header">
-            <span class="metric-title">Ingresos Totales</span>
-            <div class="metric-icon revenue">
-                <i class="fas fa-arrow-trend-up"></i>
-            </div>
-        </div>
-        <div class="metric-value" id="revenueValue">S/. 2,847,293</div>
-        <div class="metric-change positive">
-            <i class="fas fa-arrow-up"></i>
-            <span>+12.5% vs mes anterior</span>
-        </div>
-    </div>
+                    <!-- CARD 1: INGRESOS -->
+                    <div class="metric-card revenue">
+                        <div class="metric-header">
+                            <span class="metric-title">Ingresos Totales</span>
+                            <div class="metric-icon revenue">
+                                <i class="fas fa-arrow-trend-up"></i>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="revenueValue">S/. 2,847,293</div>
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+12.5% vs mes anterior</span>
+                        </div>
+                    </div>
 
-    <!-- CARD 2: GASTOS -->
-    <div class="metric-card expenses">
-        <div class="metric-header">
-            <span class="metric-title">Gastos Operativos</span>
-            <div class="metric-icon expenses">
-                <i class="fas fa-receipt"></i>
-            </div>
-        </div>
-        <div class="metric-value" id="expensesValue">S/. 28,700</div>
-        <div class="metric-change negative">
-            <i class="fas fa-arrow-down"></i>
-            <span>+3.2% vs mes anterior</span>
-        </div>
-    </div>
+                    <!-- CARD 2: GASTOS -->
+                    <div class="metric-card expenses">
+                        <div class="metric-header">
+                            <span class="metric-title">Gastos Operativos</span>
+                            <div class="metric-icon expenses">
+                                <i class="fas fa-receipt"></i>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="expensesValue">S/. 28,700</div>
+                        <div class="metric-change negative">
+                            <i class="fas fa-arrow-down"></i>
+                            <span>+3.2% vs mes anterior</span>
+                        </div>
+                    </div>
 
-    <!-- CARD 3: UTILIDAD -->
-    <div class="metric-card profit">
-        <div class="metric-header">
-            <span class="metric-title">Utilidad Neta</span>
-            <div class="metric-icon profit">
-                <i class="fas fa-coins"></i>
-            </div>
-        </div>
-        <div class="metric-value" id="profitValue">S/. 16,500</div>
-        <div class="metric-change positive">
-            <i class="fas fa-arrow-up"></i>
-            <span>+18.7% vs mes anterior</span>
-        </div>
-    </div>
+                    <!-- CARD 3: UTILIDAD -->
+                    <div class="metric-card profit">
+                        <div class="metric-header">
+                            <span class="metric-title">Utilidad Neta</span>
+                            <div class="metric-icon profit">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="profitValue">S/. 16,500</div>
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+18.7% vs mes anterior</span>
+                        </div>
+                    </div>
 
-    <!-- CARD 4: CRECIMIENTO -->
-    <div class="metric-card growth">
-        <div class="metric-header">
-            <span class="metric-title">Crecimiento</span>
-            <div class="metric-icon growth">
-                <i class="fas fa-chart-area"></i>
-            </div>
-        </div>
-        <div class="metric-value" id="growthValue">+24.8%</div>
-        <div class="metric-change positive">
-            <i class="fas fa-arrow-up"></i>
-            <span>Meta anual: 20%</span>
-        </div>
-    </div>
-</section>
+                    <!-- CARD 4: CRECIMIENTO -->
+                    <div class="metric-card growth">
+                        <div class="metric-header">
+                            <span class="metric-title">Crecimiento</span>
+                            <div class="metric-icon growth">
+                                <i class="fas fa-chart-area"></i>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="growthValue">+24.8%</div>
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>Meta anual: 20%</span>
+                        </div>
+                    </div>
+                </section>
 
               <!-- CHARTS SECTION COMPLETA -->
-<section class="charts-section">
-    <!-- Gráfico Principal de Flujo de Caja -->
-    <div class="chart-card main-chart">
-        <div class="chart-header">
-            <h3 class="chart-title">Flujo de Caja - Últimos 6 Meses</h3>
-            <div class="chart-filters">
-                <button class="filter-btn active">6M</button>
-                <button class="filter-btn">1A</button>
-                <button class="filter-btn">2A</button>
-            </div>
-        </div>
-        <div class="chart-container">
-            <canvas id="cashFlowChart"></canvas>
-        </div>
-    </div>
+                <section class="charts-section">
+                    <!-- Gráfico Principal de Flujo de Caja -->
+                    <div class="chart-card main-chart">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Flujo de Caja - Últimos 6 Meses</h3>
+                            <div class="chart-filters">
+                                <button class="filter-btn active">6M</button>
+                                <button class="filter-btn">1A</button>
+                                <button class="filter-btn">2A</button>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="cashFlowChart"></canvas>
+                        </div>
+                    </div>
 
-    <!-- Gráfico de Distribución de Gastos -->
-    <div class="chart-card">
-        <div class="chart-header">
-            <h3 class="chart-title">Distribución de Gastos</h3>
-        </div>
-        <div class="chart-container">
-            <canvas id="expensesChart"></canvas>
-        </div>
-    </div>
-    
-    <!-- Gráfico de Ingresos vs Gastos -->
-    <div class="chart-card">
-        <div class="chart-header">
-            <h3 class="chart-title">Ingresos vs Gastos</h3>
-        </div>
-        <div class="chart-container">
-            <canvas id="revenueChart"></canvas>
-        </div>
-    </div>
-    
-    <!-- Gráfico de Antigüedad de Cuentas -->
-    <div class="chart-card">
-        <div class="chart-header">
-            <h3 class="chart-title">Antigüedad de Cuentas</h3>
-        </div>
-        <div class="chart-container">
-            <canvas id="agingChart"></canvas>
-        </div>
-    </div>
-    
-    <!-- Gráfico Detallado de Flujo de Caja -->
-    <div class="chart-card">
-        <div class="chart-header">
-            <h3 class="chart-title">Flujo de Caja Diario</h3>
-        </div>
-        <div class="chart-container">
-            <canvas id="cashFlowDetailChart"></canvas>
-                 </div>
-              </div>
-          </section>
+                    <!-- Gráfico de Distribución de Gastos -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Distribución de Gastos</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="expensesChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Gráfico de Ingresos vs Gastos -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Ingresos vs Gastos</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Gráfico de Antigüedad de Cuentas -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Antigüedad de Cuentas</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="agingChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Gráfico Detallado de Flujo de Caja -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Flujo de Caja Diario</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="cashFlowDetailChart"></canvas>
+                                 </div>
+                              </div>
+                          </section>
            </div>
        </main>
    </div>
-<!-- MODAL GESTIÓN AVANZADA DE EMPRESAS -->
-<div id="companyManagementModal" class="grizalum-modal">
-    <div class="grizalum-modal-content">
-        <div class="grizalum-modal-header">
-            <div class="modal-title">
-                <i class="fas fa-building"></i>
-                <span>Gestión Avanzada de Empresas</span>
-            </div>
-            <button class="modal-close-btn" onclick="closeCompanyManagement()">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        
-        <div class="company-tabs">
-            <button class="company-tab active" data-tab="edit">
-                <i class="fas fa-edit"></i> Información
-            </button>
-            <button class="company-tab" data-tab="customization">
-                <i class="fas fa-palette"></i> Personalización
-            </button>
-            <button class="company-tab" data-tab="reports">
-                <i class="fas fa-file-pdf"></i> Reportes
-            </button>
-            <button class="company-tab" data-tab="advanced">
-                <i class="fas fa-cogs"></i> Avanzado
-            </button>
-        </div>
-        
-        <div class="company-tab-content">
-            <!-- TAB INFORMACIÓN -->
-            <div id="editTab" class="tab-panel active">
-                <div class="company-edit-form">
-                    <div class="form-group">
-                        <label>Nombre de la Empresa</label>
-                        <input type="text" id="companyNameEdit" class="grizalum-input" placeholder="Ej: Fundición Laguna">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Estado Operativo</label>
-                        <select id="companyStatusEdit" class="grizalum-select">
-                            <option value="operativo">Totalmente Operativo</option>
-                            <option value="regular">Regular</option>
-                            <option value="mantenimiento">En Mantenimiento</option>
-                            <option value="critico">Estado Crítico</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <button class="btn-cancel" onclick="closeCompanyManagement()">Cancelar</button>
-                        <button class="btn-create" onclick="saveCompanyChanges()">
-                            <i class="fas fa-save"></i> Guardar Cambios
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- TAB PERSONALIZACIÓN -->
-            <div id="customizationTab" class="tab-panel">
-                <h3>Personalización Visual</h3>
-                <p>Próximamente: Themes y colores personalizados</p>
-            </div>
-            
-            <!-- TAB REPORTES -->
-            <div id="reportsTab" class="tab-panel">
-                <h3>Reportes y Descargas</h3>
-                <p>Próximamente: Generación de PDFs profesionales</p>
-            </div>
-            
-            <!-- TAB AVANZADO -->
-            <div id="advancedTab" class="tab-panel">
-                <h3>Configuración Avanzada</h3>
-                <p>Próximamente: Configuraciones empresariales</p>
-            </div>
-        </div>
-    </div>
-</div>
-    
-    <!-- MODAL AGREGAR NUEVA EMPRESA -->
-<div id="addCompanyModal" class="grizalum-modal">
-    <div class="grizalum-modal-content">
-        <div class="grizalum-modal-header">
-            <div class="modal-title">
-                <i class="fas fa-plus-circle"></i>
-                <span>Nueva Empresa</span>
-            </div>
-            <button class="modal-close-btn" onclick="closeAddCompanyModal()">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        
-        <div class="grizalum-modal-body">
-            <div class="company-form">
-                <div class="form-step active" id="step1">
-                    <h3>Información Básica</h3>
-                    
-                    <div class="form-field">
-                        <label>Nombre de la empresa</label>
-                        <input type="text" id="newCompanyName" placeholder="Ej: Mi Nueva Empresa S.A.C." class="grizalum-input">
-                    </div>
-                    <div class="form-field">
-    <label>Icono de la empresa</label>
-    <div class="emoji-selector-container">
-        <div class="selected-emoji" id="selectedEmoji">
-            <span class="emoji-display">🏢</span>
-            <span class="emoji-label">Seleccionar icono</span>
-            <i class="fas fa-chevron-down"></i>
-        </div>
-        
-        <!-- EMOJI PICKER ÉPICO -->
-        <div id="emojiPicker" class="emoji-picker">
-            <div class="emoji-search">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Buscar emoji..." id="emojiSearch">
-            </div>
-            
-<div class="emoji-categories">
-    <button class="emoji-cat active" data-category="business" title="Negocios">💼</button>
-    <button class="emoji-cat" data-category="faces" title="Caritas">😀</button>
-    <button class="emoji-cat" data-category="people" title="Personas">👤</button>
-    <button class="emoji-cat" data-category="industry" title="Industria">🏭</button>
-    <button class="emoji-cat" data-category="commerce" title="Comercio">🏪</button>
-    <button class="emoji-cat" data-category="food" title="Comida">🍕</button>
-    <button class="emoji-cat" data-category="transport" title="Transporte">🚚</button>
-    <button class="emoji-cat" data-category="tech" title="Tecnología">💻</button>
-    <button class="emoji-cat" data-category="medical" title="Salud">🏥</button>
-    <button class="emoji-cat" data-category="education" title="Educación">🎓</button>
-    <button class="emoji-cat" data-category="animals" title="Animales">🐶</button>
-    <button class="emoji-cat" data-category="nature" title="Naturaleza">🌱</button>
-    <button class="emoji-cat" data-category="hands" title="Manos">👋</button>
-    <button class="emoji-cat" data-category="objects" title="Objetos">📱</button>
-    <button class="emoji-cat" data-category="symbols" title="Símbolos">❤️</button>
-</div>
-            
-            <div class="emoji-grid" id="emojiGrid">
-                <!-- Se llena dinámicamente -->
-            </div>
-            
-            <div class="emoji-recents">
-                <h4>🕒 Recientes</h4>
-                <div class="emoji-recent-list" id="recentEmojis">
-                    <!-- Emojis recientes -->
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-                    <div class="form-field">
-                        <label>Tipo de negocio</label>
-                        <select id="newCompanyType" class="grizalum-select">
-                            <option value="">Selecciona el tipo</option>
-                            <option value="industria">🏭 Industria</option>
-                            <option value="comercio">🏪 Comercio</option>
-                            <option value="servicios">⚙️ Servicios</option>
-                            <option value="agropecuario">🐔 Agropecuario</option>
-                            <option value="tecnologia">💻 Tecnología</option>
-                            <option value="construccion">🏗️ Construcción</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-field">
-                        <label>Estado inicial</label>
-                        <div class="status-selector">
-                            <div class="status-option active" data-status="operativo">
-                                <div class="status-indicator green"></div>
-                                <span>Operativo</span>
-                            </div>
-                            <div class="status-option" data-status="preparacion">
-                                <div class="status-indicator yellow"></div>
-                                <span>En Preparación</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="grizalum-modal-footer">
-            <button class="btn-cancel" onclick="closeAddCompanyModal()">
-                <i class="fas fa-times"></i>
-                Cancelar
-            </button>
-            <button class="btn-create" onclick="createNewCompany()">
-                <i class="fas fa-plus"></i>
-                Crear Empresa
-            </button>
-        </div>
-    </div>
-</div>
+
 <!-- SCRIPTS INTEGRADOS --> 
 <script src="./src/assets/js/company-manager.js"></script>
 <script src="./src/assets/js/charts.js"></script>
 <script src="./src/assets/js/main.js"></script>
 
-<!-- SCRIPT PRINCIPAL GRIZALUM - VERSIÓN LIMPIA -->
+<!-- SCRIPT PRINCIPAL GRIZALUM - VERSIÓN LIMPIA Y MODULAR -->
 <script>
 // ================================================================
-// GRIZALUM SISTEMA COMPLETO - VERSIÓN CORREGIDA
+// GRIZALUM SISTEMA PRINCIPAL - ÁRBOL LIMPIO
+// Solo funciones esenciales del INDEX
 // ================================================================
 
-// BLOQUEAR PROMPTS DEL NAVEGADOR
-window.prompt = function(message) {
-    console.log('🚫 Prompt bloqueado:', message);
-    if (message && message.includes('emoji')) {
-        setTimeout(() => showAddCompanyWizard(), 100);
-        return '🏢';
-    }
-    return null;
-};
+console.log('🌳 GRIZALUM - Árbol principal iniciando...');
 
 // ================================================================
-// EMOJI CATEGORIES COMPLETAS - MÁS DE 500 EMOJIS
+// VARIABLES GLOBALES PRINCIPALES
 // ================================================================
-const EMOJI_CATEGORIES = {
-    business: ['🏢', '🏬', '🏪', '🏫', '🏦', '🏛️', '🏤', '🏣', '🏗️', '💼', '📊', '📈', '📉', '💹', '💰', '💳', '🏭', '🏗️', '🏘️', '🏚️', '🏠', '🏡', '🏟️', '🏞️', '🏜️', '🏝️', '🏖️', '🏕️', '🏉', '🏈', '⚽', '🏀', '🎾', '🎱', '🎳', '🏆', '🥇', '🥈', '🥉', '🏅', '🎖️', '🏵️', '🎗️', '🎫', '🎟️', '🎪', '🎭', '🎨', '🎬', '🎤', '🎧', '🎼', '🎵', '🎶', '🎹', '🥁', '🎷', '🎺', '🎸', '🪕', '🎻'],
-    industry: ['🏭', '⚙️', '🔧', '🔨', '⛏️', '🛠️', '⚡', '🔥', '💡', '🚧', '⚒️', '🧰', '🔩', '🏗️', '⛽', '🛢️', '🔋', '🪫', '💡', '🕯️', '🪔', '💎', '💍', '📿', '💄', '👑', '👒', '🎩', '🎓', '🧢', '⛑️', '📢', '📣', '📯', '🔔', '🔕', '🎵', '🎶', '💹', '💱', '💲', '💸', '💴', '💵', '💶', '💷', '🪙', '💰', '💳', '🧾', '💎', '⚖️', '🔗', '⛓️', '🧲', '🔫', '💣', '🧨', '🔪', '🗡️', '⚔️', '🛡️', '🚬', '⚱️'],
-    commerce: ['🏪', '🛒', '🛍️', '💳', '💰', '💵', '💴', '💶', '💷', '🏬', '📦', '📮', '🎁', '🛎️', '🏷️', '💎', '🛒', '🛍️', '🎪', '🎠', '🎡', '🎢', '🚂', '🚃', '🚄', '🚅', '🚆', '🚇', '🚈', '🚝', '🚞', '🚋', '🚌', '🚍', '🚎', '🚐', '🚑', '🚒', '🚓', '🚔', '🚕', '🚖', '🚗', '🚘', '🚙', '🛻', '🚚', '🚛', '🚜', '🏎️', '🏍️', '🛵', '🦽', '🦼', '🛴', '🚲', '🛹', '🛼', '🚁', '🛸', '✈️', '🛩️', '🪂', '💺', '🚀', '🛰️', '🚢', '⛵', '🚤', '🛥️', '🛶', '⛴️', '🚧'],
-    food: ['🍎', '🍏', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🍆', '🥑', '🥦', '🥬', '🥒', '🌶️', '🫑', '🌽', '🥕', '🫒', '🧄', '🧅', '🥔', '🍠', '🥐', '🥖', '🍞', '🥨', '🥯', '🥞', '🧇', '🧀', '🍖', '🍗', '🥩', '🥓', '🍔', '🍟', '🍕', '🌭', '🥪', '🌮', '🌯', '🫔', '🥙', '🧆', '🥚', '🍳', '🥘', '🍲', '🫕', '🥣', '🥗', '🍿', '🧈', '🧂', '🥫', '🍱', '🍘', '🍙', '🍚', '🍛', '🍜', '🍝', '🍠', '🍢', '🍣', '🍤', '🍥', '🥮', '🍡', '🥟', '🥠', '🥡'],
-    transport: ['🚗', '🚕', '🚙', '🚌', '🚎', '🏎️', '🚓', '🚑', '🚒', '🚐', '🛻', '🚚', '🚛', '🚜', '🏍️', '🛵', '🚲', '🛴', '🛹', '🛼', '🚁', '✈️', '🛩️', '🛫', '🛬', '🪂', '💺', '🚀', '🛸', '🚢', '⛵', '🚤', '🛥️', '🛶', '⛴️', '🚧', '🚥', '🚦', '🚏', '🗺️', '🗿', '🗽', '🗼', '🏰', '🏯', '🏟️', '🎡', '🎢', '🎠', '⛲', '⛱️', '🏖️', '🏝️', '🏜️', '🌋', '⛰️', '🏔️', '🗻', '🏕️', '⛺', '🏠', '🏡', '🏘️', '🏚️', '🏗️', '🏭', '🏢', '🏬', '🏣', '🏤', '🏥', '🏦', '🏨', '🏪', '🏫', '🏩', '💒', '🏛️', '⛪', '🕌', '🛕', '🕍', '⛩️', '🕋'],
-    tech: ['💻', '🖥️', '🖨️', '⌨️', '🖱️', '💾', '💿', '📀', '📱', '☎️', '📞', '📟', '📠', '📺', '📻', '🎮', '🕹️', '🎛️', '⏱️', '⏰', '⏲️', '🕰️', '⏳', '⌛', '📡', '🔋', '🪫', '🔌', '💡', '🔦', '🕯️', '🪔', '🧯', '🛢️', '💸', '💴', '💵', '💶', '💷', '🪙', '💰', '💳', '🧾', '💎', '⚖️', '🦯', '🔗', '⛓️', '🧲', '🔫', '💣', '🧨', '🔪', '🗡️', '⚔️', '🛡️', '🚬', '⚱️', '🏺', '🔮', '📿', '🧿', '💈', '⚗️', '🔭', '🔬', '🕳️', '🩹', '🩺', '💊', '💉', '🧬', '🦠', '🧫', '🧪', '🌡️', '🧹', '🧴', '🧽', '🧯'],
-    medical: ['🏥', '⚕️', '💊', '💉', '🩺', '🦷', '🧬', '🔬', '🧪', '🧫', '🩹', '🩼', '🩻', '🚑', '👨‍⚕️', '👩‍⚕️', '🧑‍⚕️', '🩸', '🧠', '🫀', '🫁', '🦴', '👁️', '👅', '👂', '👃', '🦵', '🦶', '🤏', '👌', '🤌', '🤏', '✋', '🖐️', '🖖', '👋', '🤙', '💪', '🦾', '🖕', '✍️', '🙏', '🦶', '🦵', '🦿', '👣', '👥', '👤', '🗣️', '👶', '🧒', '👦', '👧', '🧑', '👱', '👨', '🧔', '👩', '🧓', '👴', '👵', '💀', '☠️', '👻', '👽', '👾', '🤖', '🎃', '😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾'],
-    education: ['🎓', '📚', '📖', '📝', '✏️', '📏', '📐', '📊', '🎒', '🏫', '📋', '📌', '📍', '🖇️', '📎', '✂️', '📐', '📏', '📖', '📗', '📘', '📙', '📔', '📒', '📕', '📓', '📜', '📃', '📄', '📑', '🗒️', '🗓️', '📅', '📆', '🗑️', '📇', '🗃️', '🗳️', '🗄️', '📂', '📁', '💼', '📊', '📈', '📉', '📋', '📌', '📍', '📎', '🖇️', '📐', '📏', '✂️', '🖊️', '🖋️', '✒️', '🖌️', '🖍️', '📝', '✏️', '🔍', '🔎', '🔒', '🔓', '🔏', '🔐', '🔑', '🗝️', '🔨', '🪓', '⛏️', '⚒️', '🛠️', '🗡️', '⚔️', '🔫', '🏹', '🛡️', '🔧', '🔩'],
-    animals: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐻‍❄️', '🐨', '🐯', '🦁', '🐮', '🐷', '🐽', '🐸', '🐵', '🙈', '🙉', '🙊', '🐒', '🐔', '🐧', '🐦', '🐤', '🐣', '🐥', '🦆', '🦅', '🦉', '🦇', '🐺', '🐗', '🐴', '🦄', '🐝', '🐛', '🦋', '🐌', '🐞', '🐜', '🦟', '🦗', '🕷️', '🕸️', '🦂', '🐢', '🐍', '🦎', '🦖', '🦕', '🐙', '🦑', '🦐', '🦞', '🦀', '🐡', '🐠', '🐟', '🐬', '🐳', '🐋', '🦈', '🐊', '🐅', '🐆', '🦓', '🦍', '🦧', '🐘', '🦛', '🦏', '🐪', '🐫', '🦒', '🦘', '🐃', '🐂', '🐄', '🐎', '🐖', '🐏', '🐑', '🦙', '🐐', '🦌', '🐕', '🐩', '🦮', '🐕‍🦺', '🐈', '🐈‍⬛'],
-    nature: ['🌱', '🌿', '☘️', '🍀', '🎍', '🎋', '🍃', '🍂', '🍁', '🍄', '🌾', '💐', '🌷', '🌹', '🥀', '🌺', '🌸', '🌼', '🌻', '🌞', '🌝', '🌛', '🌜', '🌚', '🌕', '🌖', '🌗', '🌘', '🌑', '🌒', '🌓', '🌔', '🌙', '🌎', '🌍', '🌏', '🪐', '💫', '⭐', '🌟', '✨', '⚡', '☄️', '💥', '🔥', '🌪️', '🌈', '☀️', '🌤️', '⛅', '🌥️', '☁️', '🌦️', '🌧️', '⛈️', '🌩️', '🌨️', '❄️', '☃️', '⛄', '🌬️', '💨', '💧', '💦', '☔', '☂️', '🌊', '🌫️', '🍏', '🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝']
-};
-
-// ================================================================
-// VARIABLES GLOBALES - UNA SOLA VEZ
-// ================================================================
-let selectedEmojiValue = '🏢';
-let recentEmojis = JSON.parse(localStorage.getItem('grizalum_recent_emojis') || '["🏢", "🏭", "🏪", "💼", "🚚", "💻", "🏥", "🎓"]');
-
-// ================================================================
-// FUNCIONES EMOJI PICKER - ORDEN CORRECTO
-// ================================================================
-function loadEmojiCategory(category) {
-    console.log('📱 Cargando categoría ULTRA:', category);
-    
-    const grid = document.getElementById('emojiGrid');
-    if (!grid) {
-        console.error('❌ Grid no encontrado');
-        return;
-    }
-    
-    const emojis = EMOJI_CATEGORIES[category] || EMOJI_CATEGORIES.business;
-    console.log('📦 Emojis a cargar:', emojis.length);
-    
-    // RENDERIZADO ULTRA RÁPIDO
-    const fragment = document.createDocumentFragment();
-    
-    // Mostrar MÁS emojis por categoría
-    const maxEmojis = category === 'business' ? emojis.length : Math.min(emojis.length, 120);
-    
-    for (let i = 0; i < maxEmojis; i++) {
-        const emoji = emojis[i];
-        const div = document.createElement('div');
-        div.className = 'emoji-item';
-        div.textContent = emoji;
-        div.title = emoji;
-        div.onclick = () => selectEmoji(emoji);
-        
-        // OPTIMIZACIÓN: No usar innerHTML
-        fragment.appendChild(div);
-    }
-    
-    // Actualización súper rápida
-    grid.innerHTML = '';
-    grid.appendChild(fragment);
-    
-    // Actualizar categorías activas
-    document.querySelectorAll('.emoji-cat').forEach(cat => {
-        cat.classList.remove('active');
-        if (cat.dataset.category === category) {
-            cat.classList.add('active');
-        }
-    });
-    
-    console.log('✅ ULTRA categoría cargada:', maxEmojis, 'emojis de calidad premium');
-}
-function selectEmoji(emoji) {
-    console.log('🎯 Emoji seleccionado:', emoji);
-    
-    selectedEmojiValue = emoji;
-    
-    const display = document.querySelector('.emoji-display');
-    const label = document.querySelector('.emoji-label');
-    
-    if (display && label) {
-        display.style.transform = 'scale(0.8) rotate(-10deg)';
-        
-        setTimeout(() => {
-            display.textContent = emoji;
-            label.textContent = 'Icono seleccionado';
-            display.style.transform = 'scale(1.1) rotate(5deg)';
-            
-            setTimeout(() => {
-                display.style.transform = 'scale(1) rotate(0deg)';
-            }, 200);
-        }, 150);
-    }
-    
-    addToRecentEmojis(emoji);
-    
-    setTimeout(() => {
-        const picker = document.getElementById('emojiPicker');
-        if (picker) picker.classList.remove('show');
-    }, 300);
-    
-    showNotification(`Icono ${emoji} seleccionado`, 'success');
-}
-
-function addToRecentEmojis(emoji) {
-    recentEmojis = recentEmojis.filter(e => e !== emoji);
-    recentEmojis.unshift(emoji);
-    recentEmojis = recentEmojis.slice(0, 8);
-    
-    localStorage.setItem('grizalum_recent_emojis', JSON.stringify(recentEmojis));
-    updateRecentEmojis();
-}
-
-function updateRecentEmojis() {
-    const container = document.getElementById('recentEmojis');
-    if (container) {
-        const fragment = document.createDocumentFragment();
-        
-        recentEmojis.forEach(emoji => {
-            const div = document.createElement('div');
-            div.className = 'emoji-item';
-            div.textContent = emoji;
-            div.title = `Reciente: ${emoji}`;
-            div.onclick = () => selectEmoji(emoji);
-            fragment.appendChild(div);
-        });
-        
-        container.innerHTML = '';
-        container.appendChild(fragment);
-    }
-}
-
-function searchEmojis(query) {
-    if (!query.trim()) {
-        loadEmojiCategory('business');
-        return;
-    }
-    
-    console.log('🔍 Buscando:', query);
-    
-    const allEmojis = Object.values(EMOJI_CATEGORIES).flat();
-    const uniqueEmojis = [...new Set(allEmojis)];
-    const filtered = uniqueEmojis.slice(0, 64);
-    
-    const grid = document.getElementById('emojiGrid');
-    if (grid) {
-        const fragment = document.createDocumentFragment();
-        
-        filtered.forEach(emoji => {
-            const div = document.createElement('div');
-            div.className = 'emoji-item';
-            div.textContent = emoji;
-            div.title = `Búsqueda: ${emoji}`;
-            div.onclick = () => selectEmoji(emoji);
-            fragment.appendChild(div);
-        });
-        
-        grid.innerHTML = '';
-        grid.appendChild(fragment);
-    }
-    
-    document.querySelectorAll('.emoji-cat').forEach(cat => cat.classList.remove('active'));
-}
-
-function forceToggleEmojiPicker() {
-    console.log('🚀 Toggle emoji picker');
-    
-    const picker = document.getElementById('emojiPicker');
-    if (!picker) {
-        console.error('❌ Picker no encontrado');
-        return;
-    }
-    
-    const isVisible = picker.classList.contains('show');
-    
-    if (isVisible) {
-        picker.classList.remove('show');
-        console.log('👆 Picker cerrado');
-    } else {
-        picker.classList.add('show');
-        loadEmojiCategory('business');
-        updateRecentEmojis();
-        console.log('👆 Picker abierto');
-        
-        setTimeout(() => {
-            const searchInput = document.getElementById('emojiSearch');
-            if (searchInput) searchInput.focus();
-        }, 100);
-    }
-}
-
-// ================================================================
-// DATOS DE EMPRESAS
-// ================================================================
-function getCompaniesData() {
-    const saved = localStorage.getItem('grizalum_companies');
-    if (saved) {
-        return JSON.parse(saved);
-    }
-    
-    const defaultCompanies = {
-        'fundicion-laguna': {
-            name: 'Fundición Laguna',
-            icon: '🔥',
-            status: 'Operativo',
-            theme: { primary: '#dc2626', secondary: '#ea580c' },
-            data: { cashFlow: 24500, revenue: 2847293, expenses: 1892847, profit: 954446 }
-        },
-        'fundicion-joel': {
-            name: 'Fundición Joel',
-            icon: '🔥',
-            status: 'Operativo',
-            theme: { primary: '#ea580c', secondary: '#f97316' },
-            data: { cashFlow: 18300, revenue: 2100000, expenses: 1400000, profit: 700000 }
-        },
-        'avicola-san-juan': {
-            name: 'Avícola San Juan',
-            icon: '🐔',
-            status: 'Operativo',
-            theme: { primary: '#059669', secondary: '#10b981' },
-            data: { cashFlow: 32100, revenue: 3200000, expenses: 2100000, profit: 1100000 }
-        },
-        'import-lm': {
-            name: 'Import LM',
-            icon: '📦',
-            status: 'Operativo',
-            theme: { primary: '#8b5cf6', secondary: '#a78bfa' },
-            data: { cashFlow: 45200, revenue: 4500000, expenses: 2800000, profit: 1700000 }
-        },
-        'bodega-central': {
-            name: 'Bodega Central',
-            icon: '🏪',
-            status: 'Regular',
-            theme: { primary: '#3b82f6', secondary: '#60a5fa' },
-            data: { cashFlow: 15800, revenue: 1800000, expenses: 1200000, profit: 600000 }
-        }
-    };
-    
-    saveCompaniesData(defaultCompanies);
-    return defaultCompanies;
-}
-
-function saveCompaniesData(companies) {
-    localStorage.setItem('grizalum_companies', JSON.stringify(companies));
-}
+let isSystemReady = false;
+let currentTheme = 'goldman-platinum';
 
 // ================================================================
 // FUNCIONES PRINCIPALES DEL SISTEMA
 // ================================================================
-function showAddCompanyWizard() {
-    const modal = document.getElementById('addCompanyModal');
-    modal.classList.add('show');
-    document.getElementById('newCompanyName').value = '';
-    document.getElementById('newCompanyType').value = '';
-    document.querySelectorAll('.status-option').forEach(opt => opt.classList.remove('active'));
-    document.querySelector('.status-option[data-status="operativo"]').classList.add('active');
-    console.log('🚀 Wizard abierto');
-}
 
-function closeAddCompanyModal() {
-    document.getElementById('addCompanyModal').classList.remove('show');
-}
-
-function createNewCompany() {
-    const name = document.getElementById('newCompanyName').value;
-    const type = document.getElementById('newCompanyType').value;
-    const status = document.querySelector('.status-option.active').dataset.status;
+/**
+ * Función principal de inicialización del sistema
+ */
+function initializeGrizalumSystem() {
+    console.log('🚀 Inicializando sistema GRIZALUM...');
     
-    if (!name || !type) {
-        showNotification('❌ Completa todos los campos', 'error');
-        return;
+    // Ocultar loading después de la carga
+    setTimeout(() => {
+        const loading = document.getElementById('loadingScreen');
+        if (loading) {
+            loading.classList.add('hide');
+            console.log('✅ Pantalla de carga ocultada');
+        }
+    }, 3000);
+    
+    // Inicializar gráficos
+    setTimeout(() => {
+        if (typeof Chart !== 'undefined' && typeof initializeCharts === 'function') {
+            try {
+                initializeCharts();
+                console.log('📊 Gráficos inicializados');
+            } catch (error) {
+                console.error('❌ Error inicializando gráficos:', error);
+            }
+        }
+    }, 1000);
+    
+    // Configurar eventos
+    setupEventListeners();
+    
+    // Marcar sistema como listo
+    isSystemReady = true;
+    console.log('✅ Sistema GRIZALUM listo');
+}
+
+/**
+ * Configurar event listeners principales
+ */
+function setupEventListeners() {
+    // Filtros de gráficos
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+    
+    console.log('🎯 Event listeners configurados');
+}
+
+/**
+ * Alternar sidebar móvil
+ */
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) {
+        sidebar.classList.toggle('open');
+        console.log('📱 Sidebar toggled');
     }
-    
-    const companyId = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-    
-    const companies = getCompaniesData();
-    companies[companyId] = {
-        name: name,
-        icon: selectedEmojiValue,
-        status: status === 'operativo' ? 'Operativo' : 'En Preparación',
-        theme: getThemeForType(type),
-        data: { cashFlow: 0, revenue: 0, expenses: 0, profit: 0 }
-    };
-    
-    saveCompaniesData(companies);
-    closeAddCompanyModal();
-    showNotification(`✅ Empresa "${name}" creada`, 'success');
 }
 
-function getThemeForType(type) {
-    const themes = {
-        'industria': { primary: '#dc2626', secondary: '#ea580c' },
-        'comercio': { primary: '#3b82f6', secondary: '#60a5fa' },
-        'servicios': { primary: '#8b5cf6', secondary: '#a78bfa' },
-        'agropecuario': { primary: '#059669', secondary: '#10b981' },
-        'tecnologia': { primary: '#6366f1', secondary: '#818cf8' },
-        'construccion': { primary: '#f59e0b', secondary: '#fbbf24' }
-    };
-    return themes[type] || { primary: '#d4af37', secondary: '#b87333' };
+/**
+ * Cambiar período de tiempo
+ */
+function changePeriod(period, button) {
+    if (!button) return;
+    
+    document.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('active'));
+    button.classList.add('active');
+    
+    console.log(`📅 Período cambiado a: ${period}`);
+    
+    // Notificar a otros módulos
+    document.dispatchEvent(new CustomEvent('grizalumPeriodChanged', {
+        detail: { period, timestamp: Date.now() }
+    }));
 }
 
-function showNotification(message, type = 'info') {
+/**
+ * Mostrar notificaciones
+ */
+function showNotifications() {
+    console.log('🔔 Centro de notificaciones');
+    showSystemNotification('📢 Centro de notificaciones próximamente', 'info');
+}
+
+/**
+ * Mostrar sección específica
+ */
+function showSection(section) {
+    console.log(`📱 Navegando a sección: ${section}`);
+    
+    // Aquí puedes agregar lógica para cambiar secciones
+    document.dispatchEvent(new CustomEvent('grizalumSectionChanged', {
+        detail: { section, timestamp: Date.now() }
+    }));
+    
+    showSystemNotification(`📱 Sección ${section} próximamente`, 'info');
+}
+
+/**
+ * Toggle IA Assistant
+ */
+function toggleAIAssistant() {
+    console.log('🤖 IA Assistant');
+    showSystemNotification('🤖 IA Assistant próximamente', 'info');
+}
+
+// ================================================================
+// SISTEMA DE NOTIFICACIONES GLOBAL
+// ================================================================
+
+/**
+ * Mostrar notificación del sistema
+ */
+function showSystemNotification(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = `grizalum-notification ${type}`;
     
@@ -853,132 +482,156 @@ function showNotification(message, type = 'info') {
     }
     
     container.appendChild(notification);
-    setTimeout(() => notification.remove(), 5000);
-}
-
-// ================================================================
-// FUNCIONES AUXILIARES
-// ================================================================
-function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('open');
-}
-
-function changePeriod(period, button) {
-    document.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('active'));
-    button.classList.add('active');
-    console.log(`📅 Período: ${period}`);
-}
-
-function showNotifications() {
-    console.log('🔔 Notificaciones');
-}
-
-function showSection(section) {
-    console.log(`📱 Sección: ${section}`);
-}
-
-function toggleAIAssistant() {
-    console.log('🤖 AI Assistant');
-}
-
-function setupEventListeners() {
-    // Filtros de gráficos
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-        });
-    });
-}
-
-// ================================================================
-// INICIALIZACIÓN PRINCIPAL - UNA SOLA VEZ
-// ================================================================
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 GRIZALUM Iniciando...');
-    
-    // Ocultar loading
     setTimeout(() => {
-        const loading = document.getElementById('loadingScreen');
-        if (loading) loading.classList.add('hide');
-    }, 3000);
-    
-    // Inicializar gráficos
-    setTimeout(() => {
-        if (typeof Chart !== 'undefined' && typeof initializeCharts === 'function') {
-            try {
-                initializeCharts();
-                console.log('📊 Gráficos inicializados');
-            } catch (error) {
-                console.error('❌ Error gráficos:', error);
-            }
+        if (notification.parentElement) {
+            notification.remove();
         }
-    }, 1000);
+    }, 5000);
+}
+
+// ================================================================
+// FUNCIONES DE INTEGRACIÓN CON MÓDULOS
+// ================================================================
+
+/**
+ * Actualizar KPIs en el dashboard
+ */
+function updateKPIs(data) {
+    if (!data) return;
     
-    // Configurar eventos
-    setupEventListeners();
-    
-    // CONFIGURAR EMOJI PICKER
-    setTimeout(() => {
-        const selectedEmoji = document.getElementById('selectedEmoji');
-        if (selectedEmoji) {
-            selectedEmoji.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('🔥 CLICK EMOJI');
-                forceToggleEmojiPicker();
-            });
-            
-            // Eventos de categorías
-            document.querySelectorAll('.emoji-cat').forEach(cat => {
-                cat.addEventListener('click', function() {
-                    const category = this.dataset.category;
-                    loadEmojiCategory(category);
-                });
-            });
-            
-            // Búsqueda con debounce
-            const searchInput = document.getElementById('emojiSearch');
-            if (searchInput) {
-                let searchTimeout;
-                searchInput.addEventListener('input', function() {
-                    clearTimeout(searchTimeout);
-                    searchTimeout = setTimeout(() => {
-                        searchEmojis(this.value.toLowerCase());
-                    }, 300);
-                });
-            }
-            
-            // Cerrar al hacer clic fuera
-            document.addEventListener('click', function(e) {
-                const picker = document.getElementById('emojiPicker');
-                const container = document.querySelector('.emoji-selector-container');
-                
-                if (container && !container.contains(e.target) && picker) {
-                    picker.classList.remove('show');
+    try {
+        // Actualizar valores en el dashboard
+        const elements = {
+            revenueValue: data.revenue,
+            expensesValue: data.expenses,
+            profitValue: data.profit,
+            growthValue: data.growth || '+24.8%'
+        };
+        
+        Object.entries(elements).forEach(([id, value]) => {
+            const element = document.getElementById(id);
+            if (element) {
+                if (typeof value === 'number') {
+                    element.textContent = `S/. ${value.toLocaleString()}`;
+                } else {
+                    element.textContent = value;
                 }
-            });
-            
-            // Status selector
-            document.querySelectorAll('.status-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    document.querySelectorAll('.status-option').forEach(opt => opt.classList.remove('active'));
-                    this.classList.add('active');
-                });
-            });
-            
-            // Cargar datos iniciales
-            loadEmojiCategory('business');
-            updateRecentEmojis();
-            
-            console.log('✅ Emoji picker configurado');
-        }
-    }, 1000);
+            }
+        });
+        
+        console.log('📊 KPIs actualizados');
+    } catch (error) {
+        console.error('❌ Error actualizando KPIs:', error);
+    }
+}
+
+/**
+ * Actualizar sidebar financiero
+ */
+function updateSidebar(data) {
+    if (!data) return;
     
-    console.log('✅ GRIZALUM listo');
+    try {
+        const cashFlowElement = document.getElementById('sidebarCashFlow');
+        const profitElement = document.getElementById('sidebarProfit');
+        
+        if (cashFlowElement) {
+            cashFlowElement.textContent = `S/. ${data.cashFlow?.toLocaleString() || '0'}`;
+        }
+        
+        if (profitElement) {
+            profitElement.textContent = `S/. ${data.profit?.toLocaleString() || '0'}`;
+        }
+        
+        console.log('💰 Sidebar actualizado');
+    } catch (error) {
+        console.error('❌ Error actualizando sidebar:', error);
+    }
+}
+
+/**
+ * Aplicar tema de empresa
+ */
+function applyCompanyThemeIntegration(companyId) {
+    console.log(`🎨 Aplicando tema para empresa: ${companyId}`);
+    
+    // Esta función se puede expandir para aplicar temas visuales
+    document.dispatchEvent(new CustomEvent('grizalumThemeChanged', {
+        detail: { companyId, timestamp: Date.now() }
+    }));
+}
+
+// ================================================================
+// EVENT LISTENERS PARA INTEGRACIÓN CON MÓDULOS
+// ================================================================
+
+// Escuchar cambios de empresa desde company-manager
+document.addEventListener('grizalumCompanyChanged', function(event) {
+    const { companyId, company } = event.detail;
+    console.log(`🏢 Empresa cambiada en sistema principal: ${company.name}`);
+    
+    // Actualizar datos en el dashboard
+    updateKPIs(company.data);
+    updateSidebar(company.data);
+    
+    // Aplicar tema si existe
+    if (company.theme) {
+        applyCompanyThemeIntegration(companyId);
+    }
 });
 
-console.log('🎯 GRIZALUM Sistema LIMPIO cargado');
+// Escuchar eventos del sistema
+document.addEventListener('grizalumPeriodChanged', function(event) {
+    console.log(`📅 Período cambiado en el sistema: ${event.detail.period}`);
+});
+
+document.addEventListener('grizalumSectionChanged', function(event) {
+    console.log(`📱 Sección cambiada en el sistema: ${event.detail.section}`);
+});
+
+// ================================================================
+// INICIALIZACIÓN AUTOMÁTICA
+// ================================================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🌳 DOM cargado - Iniciando GRIZALUM...');
+    initializeGrizalumSystem();
+});
+
+// ================================================================
+// API PÚBLICA DEL SISTEMA
+// ================================================================
+
+// Exponer funciones necesarias al objeto global
+window.GRIZALUM = {
+    version: '2.0.0',
+    isReady: () => isSystemReady,
+    updateKPIs: updateKPIs,
+    updateSidebar: updateSidebar,
+    showNotification: showSystemNotification,
+    applyTheme: applyCompanyThemeIntegration
+};
+
+console.log(`
+🌳 ===================================================
+   GRIZALUM SISTEMA PRINCIPAL - ÁRBOL LIMPIO
+🌳 ===================================================
+
+✨ CARACTERÍSTICAS:
+   • Arquitectura modular y limpia
+   • Sistema de eventos centralizado
+   • Gestión automática de módulos
+   • API pública unificada
+   • Notificaciones globales del sistema
+   • Integración perfecta con company-manager
+
+🛠️ MÓDULOS CONECTADOS:
+   • company-manager.js (Gestión de empresas)
+   • charts.js (Gráficos y visualización)
+   • main.js (Funciones auxiliares)
+
+🌳 ===================================================
+`);
 </script>
 </body>
 </html>
