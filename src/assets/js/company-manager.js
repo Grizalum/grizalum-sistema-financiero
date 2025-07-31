@@ -4088,11 +4088,12 @@ bulkEdit() {
 }
 
 addNewCompany() {
-    const name = prompt('📝 Nombre de la nueva empresa:', '');
-    if (!name) return;
+    // Abrir modal en lugar de prompt feo
+showAddCompanyWizard();
+return; // Salir porque el modal maneja todo - EVITA TODOS LOS PROMPTS
     
-    const icon = prompt('🎨 Emoji para la empresa (ej: 🏭, 🏪, 🏢):', '🏢');
-    if (!icon) return;
+   // const icon = prompt('🎨 Emoji para la empresa (ej: 🏭, 🏪, 🏢):', '🏢');//
+    //if (!icon) return;//
     
     const newId = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
     
