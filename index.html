@@ -497,413 +497,54 @@ console.log('🤖 Probando IA básica...');
         </div>
     </div>
 </div>
-    <!-- SCRIPTS INTEGRADOS --> 
+<!-- SCRIPTS INTEGRADOS --> 
 <script src="./src/assets/js/company-manager.js"></script>
 <script src="./src/assets/js/charts.js"></script>
 <script src="./src/assets/js/main.js"></script>
-<!-- SCRIPTS INTEGRADOS PRINCIPALES -->
+
+<!-- SCRIPT PRINCIPAL GRIZALUM - VERSIÓN LIMPIA -->
 <script>
+// ================================================================
+// GRIZALUM SISTEMA COMPLETO - VERSIÓN CORREGIDA
+// ================================================================
 
 // BLOQUEAR PROMPTS DEL NAVEGADOR
 window.prompt = function(message) {
     console.log('🚫 Prompt bloqueado:', message);
     if (message && message.includes('emoji')) {
-        setTimeout(() => {
-            showAddCompanyWizard();
-        }, 100);
+        setTimeout(() => showAddCompanyWizard(), 100);
         return '🏢';
     }
     return null;
 };
-    
+
+// ================================================================
 // EMOJI CATEGORIES COMPLETAS - MÁS DE 500 EMOJIS
 // ================================================================
 const EMOJI_CATEGORIES = {
     business: ['🏢', '🏬', '🏪', '🏫', '🏦', '🏛️', '🏤', '🏣', '🏗️', '💼', '📊', '📈', '📉', '💹', '💰', '💳', '🏭', '🏗️', '🏘️', '🏚️', '🏠', '🏡', '🏟️', '🏞️', '🏜️', '🏝️', '🏖️', '🏕️', '🏉', '🏈', '⚽', '🏀', '🎾', '🎱', '🎳', '🏆', '🥇', '🥈', '🥉', '🏅', '🎖️', '🏵️', '🎗️', '🎫', '🎟️', '🎪', '🎭', '🎨', '🎬', '🎤', '🎧', '🎼', '🎵', '🎶', '🎹', '🥁', '🎷', '🎺', '🎸', '🪕', '🎻'],
-    
     industry: ['🏭', '⚙️', '🔧', '🔨', '⛏️', '🛠️', '⚡', '🔥', '💡', '🚧', '⚒️', '🧰', '🔩', '🏗️', '⛽', '🛢️', '🔋', '🪫', '💡', '🕯️', '🪔', '💎', '💍', '📿', '💄', '👑', '👒', '🎩', '🎓', '🧢', '⛑️', '📢', '📣', '📯', '🔔', '🔕', '🎵', '🎶', '💹', '💱', '💲', '💸', '💴', '💵', '💶', '💷', '🪙', '💰', '💳', '🧾', '💎', '⚖️', '🔗', '⛓️', '🧲', '🔫', '💣', '🧨', '🔪', '🗡️', '⚔️', '🛡️', '🚬', '⚱️'],
-    
     commerce: ['🏪', '🛒', '🛍️', '💳', '💰', '💵', '💴', '💶', '💷', '🏬', '📦', '📮', '🎁', '🛎️', '🏷️', '💎', '🛒', '🛍️', '🎪', '🎠', '🎡', '🎢', '🚂', '🚃', '🚄', '🚅', '🚆', '🚇', '🚈', '🚝', '🚞', '🚋', '🚌', '🚍', '🚎', '🚐', '🚑', '🚒', '🚓', '🚔', '🚕', '🚖', '🚗', '🚘', '🚙', '🛻', '🚚', '🚛', '🚜', '🏎️', '🏍️', '🛵', '🦽', '🦼', '🛴', '🚲', '🛹', '🛼', '🚁', '🛸', '✈️', '🛩️', '🪂', '💺', '🚀', '🛰️', '🚢', '⛵', '🚤', '🛥️', '🛶', '⛴️', '🚧'],
-    
     food: ['🍎', '🍏', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🍆', '🥑', '🥦', '🥬', '🥒', '🌶️', '🫑', '🌽', '🥕', '🫒', '🧄', '🧅', '🥔', '🍠', '🥐', '🥖', '🍞', '🥨', '🥯', '🥞', '🧇', '🧀', '🍖', '🍗', '🥩', '🥓', '🍔', '🍟', '🍕', '🌭', '🥪', '🌮', '🌯', '🫔', '🥙', '🧆', '🥚', '🍳', '🥘', '🍲', '🫕', '🥣', '🥗', '🍿', '🧈', '🧂', '🥫', '🍱', '🍘', '🍙', '🍚', '🍛', '🍜', '🍝', '🍠', '🍢', '🍣', '🍤', '🍥', '🥮', '🍡', '🥟', '🥠', '🥡'],
-    
     transport: ['🚗', '🚕', '🚙', '🚌', '🚎', '🏎️', '🚓', '🚑', '🚒', '🚐', '🛻', '🚚', '🚛', '🚜', '🏍️', '🛵', '🚲', '🛴', '🛹', '🛼', '🚁', '✈️', '🛩️', '🛫', '🛬', '🪂', '💺', '🚀', '🛸', '🚢', '⛵', '🚤', '🛥️', '🛶', '⛴️', '🚧', '🚥', '🚦', '🚏', '🗺️', '🗿', '🗽', '🗼', '🏰', '🏯', '🏟️', '🎡', '🎢', '🎠', '⛲', '⛱️', '🏖️', '🏝️', '🏜️', '🌋', '⛰️', '🏔️', '🗻', '🏕️', '⛺', '🏠', '🏡', '🏘️', '🏚️', '🏗️', '🏭', '🏢', '🏬', '🏣', '🏤', '🏥', '🏦', '🏨', '🏪', '🏫', '🏩', '💒', '🏛️', '⛪', '🕌', '🛕', '🕍', '⛩️', '🕋'],
-    
     tech: ['💻', '🖥️', '🖨️', '⌨️', '🖱️', '💾', '💿', '📀', '📱', '☎️', '📞', '📟', '📠', '📺', '📻', '🎮', '🕹️', '🎛️', '⏱️', '⏰', '⏲️', '🕰️', '⏳', '⌛', '📡', '🔋', '🪫', '🔌', '💡', '🔦', '🕯️', '🪔', '🧯', '🛢️', '💸', '💴', '💵', '💶', '💷', '🪙', '💰', '💳', '🧾', '💎', '⚖️', '🦯', '🔗', '⛓️', '🧲', '🔫', '💣', '🧨', '🔪', '🗡️', '⚔️', '🛡️', '🚬', '⚱️', '🏺', '🔮', '📿', '🧿', '💈', '⚗️', '🔭', '🔬', '🕳️', '🩹', '🩺', '💊', '💉', '🧬', '🦠', '🧫', '🧪', '🌡️', '🧹', '🧴', '🧽', '🧯'],
-    
     medical: ['🏥', '⚕️', '💊', '💉', '🩺', '🦷', '🧬', '🔬', '🧪', '🧫', '🩹', '🩼', '🩻', '🚑', '👨‍⚕️', '👩‍⚕️', '🧑‍⚕️', '🩸', '🧠', '🫀', '🫁', '🦴', '👁️', '👅', '👂', '👃', '🦵', '🦶', '🤏', '👌', '🤌', '🤏', '✋', '🖐️', '🖖', '👋', '🤙', '💪', '🦾', '🖕', '✍️', '🙏', '🦶', '🦵', '🦿', '👣', '👥', '👤', '🗣️', '👶', '🧒', '👦', '👧', '🧑', '👱', '👨', '🧔', '👩', '🧓', '👴', '👵', '💀', '☠️', '👻', '👽', '👾', '🤖', '🎃', '😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾'],
-    
     education: ['🎓', '📚', '📖', '📝', '✏️', '📏', '📐', '📊', '🎒', '🏫', '📋', '📌', '📍', '🖇️', '📎', '✂️', '📐', '📏', '📖', '📗', '📘', '📙', '📔', '📒', '📕', '📓', '📜', '📃', '📄', '📑', '🗒️', '🗓️', '📅', '📆', '🗑️', '📇', '🗃️', '🗳️', '🗄️', '📂', '📁', '💼', '📊', '📈', '📉', '📋', '📌', '📍', '📎', '🖇️', '📐', '📏', '✂️', '🖊️', '🖋️', '✒️', '🖌️', '🖍️', '📝', '✏️', '🔍', '🔎', '🔒', '🔓', '🔏', '🔐', '🔑', '🗝️', '🔨', '🪓', '⛏️', '⚒️', '🛠️', '🗡️', '⚔️', '🔫', '🏹', '🛡️', '🔧', '🔩'],
-    
     animals: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐻‍❄️', '🐨', '🐯', '🦁', '🐮', '🐷', '🐽', '🐸', '🐵', '🙈', '🙉', '🙊', '🐒', '🐔', '🐧', '🐦', '🐤', '🐣', '🐥', '🦆', '🦅', '🦉', '🦇', '🐺', '🐗', '🐴', '🦄', '🐝', '🐛', '🦋', '🐌', '🐞', '🐜', '🦟', '🦗', '🕷️', '🕸️', '🦂', '🐢', '🐍', '🦎', '🦖', '🦕', '🐙', '🦑', '🦐', '🦞', '🦀', '🐡', '🐠', '🐟', '🐬', '🐳', '🐋', '🦈', '🐊', '🐅', '🐆', '🦓', '🦍', '🦧', '🐘', '🦛', '🦏', '🐪', '🐫', '🦒', '🦘', '🐃', '🐂', '🐄', '🐎', '🐖', '🐏', '🐑', '🦙', '🐐', '🦌', '🐕', '🐩', '🦮', '🐕‍🦺', '🐈', '🐈‍⬛'],
-    
-    nature: ['🌱', '🌿', '☘️', '🍀', '🎍', '🎋', '🍃', '🍂', '🍁', '🍄', '🌾', '💐', '🌷', '🌹', '🥀', '🌺', '🌸', '🌼', '🌻', '🌞', '🌝', '🌛', '🌜', '🌚', '🌕', '🌖', '🌗', '🌘', '🌑', '🌒', '🌓', '🌔', '🌙', '🌎', '🌍', '🌏', '🪐', '💫', '⭐', '🌟', '✨', '⚡', '☄️', '💥', '🔥', '🌪️', '🌈', '☀️', '🌤️', '⛅', '🌥️', '☁️', '🌦️', '🌧️', '⛈️', '🌩️', '🌨️', '❄️', '☃️', '⛄', '🌬️', '💨', '💧', '💦', '☔', '☂️', '🌊', '🌫️', '🍏', '🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝'],
-    
-    sports: ['⚽', '🏀', '🏈', '⚾', '🥎', '🎾', '🏐', '🏉', '🥏', '🎱', '🪀', '🏓', '🏸', '🏒', '🏑', '🥍', '🏏', '🪃', '🥅', '⛳', '🪁', '🏹', '🎣', '🤿', '🥽', '🥼', '🦺', '⛷️', '🏂', '🏋️', '🤼', '🤸', '⛹️', '🤺', '🤾', '🏌️', '🏇', '🧘', '🏃', '🚶', '🧎', '🧍', '🤳', '💃', '🕺', '👯', '🤹', '🎭', '🎨', '🎬', '🎤', '🎧', '🎼', '🎵', '🎶', '🎹', '🥁', '🎷', '🎺', '🎸', '🪕', '🎻', '🎲', '♠️', '♥️', '♦️', '♣️', '♟️', '🃏', '🀄', '🎴', '🎯', '🎪', '🎨', '🎭', '🪗', '🎤', '🎧', '📻', '🎷', '🪘', '🥁', '🎸', '🪕', '🎺', '🎹', '🪗'],
-    
-    flags: ['🏁', '🚩', '🎌', '🏴', '🏳️', '🏳️‍🌈', '🏳️‍⚧️', '🏴‍☠️', '🇦🇫', '🇦🇽', '🇦🇱', '🇩🇿', '🇦🇸', '🇦🇩', '🇦🇴', '🇦🇮', '🇦🇶', '🇦🇬', '🇦🇷', '🇦🇲', '🇦🇼', '🇦🇺', '🇦🇹', '🇦🇿', '🇧🇸', '🇧🇭', '🇧🇩', '🇧🇧', '🇧🇾', '🇧🇪', '🇧🇿', '🇧🇯', '🇧🇲', '🇧🇹', '🇧🇴', '🇧🇦', '🇧🇼', '🇧🇷', '🇮🇴', '🇻🇬', '🇧🇳', '🇧🇬', '🇧🇫', '🇧🇮', '🇰🇭', '🇨🇲', '🇨🇦', '🇮🇨', '🇨🇻', '🇧🇶', '🇰🇾', '🇨🇫', '🇹🇩', '🇨🇱', '🇨🇳', '🇨🇽', '🇨🇨', '🇨🇴', '🇰🇲', '🇨🇬', '🇨🇩', '🇨🇰', '🇨🇷', '🇨🇮', '🇭🇷', '🇨🇺', '🇨🇼', '🇨🇾', '🇨🇿', '🇩🇰', '🇩🇯', '🇩🇲', '🇩🇴', '🇪🇨', '🇪🇬', '🇸🇻', '🇬🇶', '🇪🇷', '🇪🇪', '🇪🇹', '🇪🇺', '🇫🇰', '🇫🇴', '🇫🇯', '🇫🇮', '🇫🇷', '🇬🇫', '🇵🇫', '🇹🇫', '🇬🇦', '🇬🇲', '🇬🇪', '🇩🇪', '🇬🇭', '🇬🇮', '🇬🇷', '🇬🇱', '🇬🇩', '🇬🇵', '🇬🇺', '🇬🇹', '🇬🇬', '🇬🇳', '🇬🇼', '🇬🇾', '🇭🇹', '🇭🇳', '🇭🇰', '🇭🇺', '🇮🇸', '🇮🇳', '🇮🇩', '🇮🇷', '🇮🇶', '🇮🇪', '🇮🇲', '🇮🇱', '🇮🇹', '🇯🇲', '🇯🇵', '🇯🇪', '🇯🇴', '🇰🇿', '🇰🇪', '🇰🇮', '🇽🇰', '🇰🇼', '🇰🇬', '🇱🇦', '🇱🇻', '🇱🇧', '🇱🇸', '🇱🇷', '🇱🇾', '🇱🇮', '🇱🇹', '🇱🇺', '🇲🇴', '🇲🇰', '🇲🇬', '🇲🇼', '🇲🇾', '🇲🇻', '🇲🇱', '🇲🇹', '🇲🇭', '🇲🇶', '🇲🇷', '🇲🇺', '🇾🇹', '🇲🇽', '🇫🇲', '🇲🇩', '🇲🇨', '🇲🇳', '🇲🇪', '🇲🇸', '🇲🇦', '🇲🇿', '🇲🇲', '🇳🇦', '🇳🇷', '🇳🇵', '🇳🇱', '🇳🇨', '🇳🇿', '🇳🇮', '🇳🇪', '🇳🇬', '🇳🇺', '🇳🇫', '🇰🇵', '🇲🇵', '🇳🇴', '🇴🇲', '🇵🇰', '🇵🇼', '🇵🇸', '🇵🇦', '🇵🇬', '🇵🇾', '🇵🇪', '🇵🇭', '🇵🇳', '🇵🇱', '🇵🇹', '🇵🇷', '🇶🇦', '🇷🇪', '🇷🇴', '🇷🇺', '🇷🇼', '🇼🇸', '🇸🇲', '🇸🇹', '🇸🇦', '🇸🇳', '🇷🇸', '🇸🇨', '🇸🇱', '🇸🇬', '🇸🇽', '🇸🇰', '🇸🇮', '🇸🇧', '🇸🇴', '🇿🇦', '🇬🇸', '🇰🇷', '🇸🇸', '🇪🇸', '🇱🇰', '🇧🇱', '🇸🇭', '🇰🇳', '🇱🇨', '🇲🇫', '🇵🇲', '🇻🇨', '🇸🇩', '🇸🇷', '🇸🇪', '🇨🇭', '🇸🇾', '🇹🇼', '🇹🇯', '🇹🇿', '🇹🇭', '🇹🇱', '🇹🇬', '🇹🇰', '🇹🇴', '🇹🇹', '🇹🇳', '🇹🇷', '🇹🇲', '🇹🇨', '🇹🇻', '🇺🇬', '🇺🇦', '🇦🇪', '🇬🇧', '🇺🇸', '🇺🇾', '🇺🇿', '🇻🇺', '🇻🇦', '🇻🇪', '🇻🇳', '🇼🇫', '🇪🇭', '🇾🇪', '🇿🇲', '🇿🇼']
+    nature: ['🌱', '🌿', '☘️', '🍀', '🎍', '🎋', '🍃', '🍂', '🍁', '🍄', '🌾', '💐', '🌷', '🌹', '🥀', '🌺', '🌸', '🌼', '🌻', '🌞', '🌝', '🌛', '🌜', '🌚', '🌕', '🌖', '🌗', '🌘', '🌑', '🌒', '🌓', '🌔', '🌙', '🌎', '🌍', '🌏', '🪐', '💫', '⭐', '🌟', '✨', '⚡', '☄️', '💥', '🔥', '🌪️', '🌈', '☀️', '🌤️', '⛅', '🌥️', '☁️', '🌦️', '🌧️', '⛈️', '🌩️', '🌨️', '❄️', '☃️', '⛄', '🌬️', '💨', '💧', '💦', '☔', '☂️', '🌊', '🌫️', '🍏', '🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝']
 };
 
-let selectedEmojiValue = '🏢';
-let recentEmojis = JSON.parse(localStorage.getItem('grizalum_recent_emojis') || '["🏢", "🏭", "🏪", "💼", "🚚", "💻", "🏥", "🎓"]');
-    
 // ================================================================
-// INICIALIZACIÓN PRINCIPAL - VERSIÓN CORREGIDA SIN DUPLICADOS
-// ================================================================
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 GRIZALUM Iniciando sistema...');
-    
-    // Ocultar pantalla de carga
-    setTimeout(() => {
-        const loading = document.getElementById('loadingScreen');
-        if (loading) {
-            loading.classList.add('hide');
-            console.log('📱 Pantalla de carga ocultada');
-        }
-    }, 3000);
-    
-    // Inicializar gráficos cuando Chart.js esté listo
-    setTimeout(() => {
-        if (typeof Chart !== 'undefined' && typeof initializeCharts === 'function') {
-            try {
-                initializeCharts();
-                console.log('📊 Gráficos inicializados correctamente');
-            } catch (error) {
-                console.error('❌ Error inicializando gráficos:', error);
-            }
-        } else {
-            console.warn('⚠️ Chart.js no disponible');
-        }
-    }, 1000);
-    
-    // Configurar eventos principales
-    setupEventListeners();
-    
-    // INICIALIZAR EMOJI PICKER - CORREGIDO
-    initializeEmojiPicker();
-    
-    // Configurar status selector para modal
-    document.querySelectorAll('.status-option').forEach(option => {
-        option.addEventListener('click', function() {
-            document.querySelectorAll('.status-option').forEach(opt => opt.classList.remove('active'));
-            this.classList.add('active');
-        });
-    });
-    
-    console.log('✅ GRIZALUM completamente inicializado');
-});
-function setupEmojiPicker() {
-    // Event listener para abrir emoji picker
-    const selectedEmoji = document.getElementById('selectedEmoji');
-    if (selectedEmoji) {
-        // Limpiar listeners existentes
-        selectedEmoji.replaceWith(selectedEmoji.cloneNode(true));
-        const newEmoji = document.getElementById('selectedEmoji');
-        
-        newEmoji.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('🔥 Click en emoji selector detectado');
-            forceToggleEmojiPicker();
-        });
-        console.log('✅ Emoji picker configurado');
-    }
-    
-    // Cargar emojis por defecto
-    loadEmojiCategory('business');
-}
-    
-    // MOSTRAR NOTIFICACIONES IA AL CARGAR
-    setTimeout(() => {
-        const notifications = document.getElementById('aiNotifications');
-        if (notifications) {
-            notifications.textContent = '1';
-            notifications.classList.add('show');
-        }
-    }, 5000);
-});
- 
-    // DATOS DE EMPRESAS
-       function getCompaniesData() {
-           const saved = localStorage.getItem('grizalum_companies');
-           if (saved) {
-               return JSON.parse(saved);
-           }
-           
-           const defaultCompanies = {
-               'fundicion-laguna': {
-                   name: 'Fundición Laguna',
-                   icon: '🔥',
-                   status: 'Operativo',
-                   theme: { primary: '#dc2626', secondary: '#ea580c' },
-                   data: { cashFlow: 24500, revenue: 2847293, expenses: 1892847, profit: 954446 }
-               },
-               'fundicion-joel': {
-                   name: 'Fundición Joel',
-                   icon: '🔥',
-                   status: 'Operativo',
-                   theme: { primary: '#ea580c', secondary: '#f97316' },
-                   data: { cashFlow: 18300, revenue: 2100000, expenses: 1400000, profit: 700000 }
-               },
-               'avicola-san-juan': {
-                   name: 'Avícola San Juan',
-                   icon: '🐔',
-                   status: 'Operativo',
-                   theme: { primary: '#059669', secondary: '#10b981' },
-                   data: { cashFlow: 32100, revenue: 3200000, expenses: 2100000, profit: 1100000 }
-               },
-               'import-lm': {
-                   name: 'Import LM',
-                   icon: '📦',
-                   status: 'Operativo',
-                   theme: { primary: '#8b5cf6', secondary: '#a78bfa' },
-                   data: { cashFlow: 45200, revenue: 4500000, expenses: 2800000, profit: 1700000 }
-               },
-               'bodega-central': {
-                   name: 'Bodega Central',
-                   icon: '🏪',
-                   status: 'Regular',
-                   theme: { primary: '#3b82f6', secondary: '#60a5fa' },
-                   data: { cashFlow: 15800, revenue: 1800000, expenses: 1200000, profit: 600000 }
-               }
-           };
-           
-           saveCompaniesData(defaultCompanies);
-           return defaultCompanies;
-       }
-
-       function saveCompaniesData(companies) {
-           localStorage.setItem('grizalum_companies', JSON.stringify(companies));
-       }
-
-       // SELECTOR DE EMPRESAS  
-       function updateCompanyData(companyId) {
-           const companies = getCompaniesData();
-           const company = companies[companyId];
-           
-           if (company) {
-               updateKPIs(company.data);
-               updateSidebar(company.data);
-               updateCompanyTheme(company.theme);
-               console.log(`📊 Datos actualizados para: ${company.name}`);
-           }
-       }
-
-       function updateKPIs(data) {
-           const elements = {
-               'revenueValue': data.revenue,
-               'expensesValue': data.expenses,
-               'profitValue': data.profit
-           };
-           
-           Object.entries(elements).forEach(([id, value]) => {
-               const element = document.getElementById(id);
-               if (element) {
-                   animateValue(element, 0, value, 1500, 'S/. ');
-               }
-           });
-       }
-
-       function updateSidebar(data) {
-           const elements = {
-               'sidebarCashFlow': data.cashFlow,
-               'sidebarProfit': data.profit
-           };
-           
-           Object.entries(elements).forEach(([id, value]) => {
-               const element = document.getElementById(id);
-               if (element) {
-                   element.textContent = `S/. ${value.toLocaleString()}`;
-               }
-           });
-       }
-
-       function updateCompanyTheme(theme) {
-           if (!theme) return;
-           
-           console.log('🎨 Actualizando tema:', theme);
-           
-           document.documentElement.style.setProperty('--company-primary', theme.primary);
-           document.documentElement.style.setProperty('--company-secondary', theme.secondary);
-           
-           // Actualizar colores del AI
-           const aiButton = document.getElementById('aiAssistantButton');
-           if (aiButton) {
-               aiButton.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
-           }
-           
-           console.log('✅ Tema actualizado correctamente');
-       }
-
-       function updateAITheme(theme) {
-           const aiButton = document.getElementById('aiAssistantButton');
-           if (aiButton && theme) {
-               aiButton.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
-           }
-       }
-    
-       function getCompanyName(companyId) {
-           const companies = getCompaniesData();
-           return companies[companyId]?.name || 'Empresa';
-       }
-
-       function animateValue(element, start, end, duration, prefix = '') {
-           let current = start;
-           const range = end - start;
-           const increment = end > start ? 1 : -1;
-           const stepTime = Math.abs(Math.floor(duration / range));
-           const timer = setInterval(() => {
-               current += increment * Math.ceil(range / 100);
-               if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
-                   current = end;
-                   clearInterval(timer);
-               }
-               element.textContent = prefix + Math.floor(current).toLocaleString();
-           }, stepTime);
-       }
-
-       // FUNCIONES AUXILIARES
-       function toggleSidebar() {
-           document.getElementById('sidebar').classList.toggle('open');
-       }
-
-       function changePeriod(period, button) {
-           document.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('active'));
-           button.classList.add('active');
-           console.log(`📅 Período cambiado a: ${period}`);
-       }
-
-       function showNotifications() {
-           console.log('🔔 Mostrar notificaciones');
-       }
-
-      function showSection(section) {
-    // Verificar que el elemento existe
-    const targetSection = document.getElementById(section + 'Content');
-    if (!targetSection) {
-        console.warn(`⚠️ Sección no encontrada: ${section}Content`);
-        return;
-    }
-    
-    // El resto del código...
-    console.log(`📱 Mostrar sección: ${section}`);
-}
-
-      function toggleAIAssistant() {
-    if (window.advancedAI) {
-        window.advancedAI.toggle();
-    } else {
-        console.log('🤖 AI Assistant cargando...');
-    }
-}
-       function showNotification(message, type = 'info') {
-    // Crear notificación profesional
-    const notification = document.createElement('div');
-    notification.className = `grizalum-notification ${type}`;
-    
-    const icons = {
-        'success': 'fas fa-check-circle',
-        'error': 'fas fa-exclamation-circle', 
-        'warning': 'fas fa-exclamation-triangle',
-        'info': 'fas fa-info-circle'
-    };
-    
-    notification.innerHTML = `
-        <div class="notification-content">
-            <i class="${icons[type] || icons.info}"></i>
-            <span>${message}</span>
-        </div>
-        <button class="notification-close" onclick="this.parentElement.remove()">
-            <i class="fas fa-times"></i>
-        </button>
-    `;
-    
-    // Agregar al DOM
-    let container = document.getElementById('notificationContainer');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'notificationContainer';
-        container.className = 'notification-container';
-        document.body.appendChild(container);
-    }
-    
-    container.appendChild(notification);
-    
-    // Auto-remove después de 5 segundos
-    setTimeout(() => {
-        if (notification.parentElement) {
-            notification.remove();
-        }
-    }, 5000);
-    
-    console.log(`${type === 'success' ? '✅' : '📢'} ${message}`);
-}
-       function setupEventListeners() {
-           // Cerrar dropdown al hacer clic fuera
-           document.addEventListener('click', function(event) {
-               const selector = document.getElementById('companySelector');
-               const dropdown = document.getElementById('companyDropdown');
-               
-               if (selector && !selector.contains(event.target)) {
-                   dropdown.classList.remove('show');
-                   document.getElementById('dropdownArrow').classList.remove('rotate');
-               }
-           });
-           
-           // Atajos de teclado
-           document.addEventListener('keydown', function(event) {
-               if (event.ctrlKey && event.key === 'a') {
-                   event.preventDefault();
-                   toggleAIAssistant();
-               }
-           });
-
-           // Filtros de gráficos
-           document.querySelectorAll('.filter-btn').forEach(btn => {
-               btn.addEventListener('click', function() {
-                   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                   this.classList.add('active');
-               });
-           });
-       }
-// ================================================================
-// EMOJI PICKER OPTIMIZADO Y RÁPIDO - VERSIÓN CORREGIDA
+// VARIABLES GLOBALES - UNA SOLA VEZ
 // ================================================================
 let selectedEmojiValue = '🏢';
 let recentEmojis = JSON.parse(localStorage.getItem('grizalum_recent_emojis') || '["🏢", "🏭", "🏪", "💼", "🚚", "💻", "🏥", "🎓"]');
 
-// FUNCIÓN PRINCIPAL - SIN DUPLICADOS
-function forceToggleEmojiPicker() {
-    console.log('🚀 Toggle emoji picker OPTIMIZADO');
-    
-    const picker = document.getElementById('emojiPicker');
-    if (!picker) {
-        console.error('❌ Picker no encontrado');
-        return;
-    }
-    
-    const isVisible = picker.classList.contains('show');
-    
-    if (isVisible) {
-        picker.classList.remove('show');
-        console.log('👆 Picker cerrado');
-    } else {
-        picker.classList.add('show');
-        loadEmojiCategory('business');
-        updateRecentEmojis();
-        console.log('👆 Picker abierto');
-        
-        // Focus en búsqueda
-        setTimeout(() => {
-            const searchInput = document.getElementById('emojiSearch');
-            if (searchInput) searchInput.focus();
-        }, 100);
-    }
-}
-
-// CARGAR CATEGORÍA - OPTIMIZADA CON DOCUMENTFRAGMENT
+// ================================================================
+// FUNCIONES EMOJI PICKER - ORDEN CORRECTO
+// ================================================================
 function loadEmojiCategory(category) {
-    console.log('📱 Cargando categoría OPTIMIZADA:', category);
+    console.log('📱 Cargando categoría:', category);
     
     const grid = document.getElementById('emojiGrid');
     if (!grid) {
@@ -914,7 +555,7 @@ function loadEmojiCategory(category) {
     const emojis = EMOJI_CATEGORIES[category] || EMOJI_CATEGORIES.business;
     console.log('📦 Emojis a cargar:', emojis.length);
     
-    // OPTIMIZACIÓN: DocumentFragment para mejor rendimiento
+    // Usar DocumentFragment para mejor rendimiento
     const fragment = document.createDocumentFragment();
     
     emojis.forEach(emoji => {
@@ -926,7 +567,6 @@ function loadEmojiCategory(category) {
         fragment.appendChild(div);
     });
     
-    // Limpiar y agregar en una sola operación
     grid.innerHTML = '';
     grid.appendChild(fragment);
     
@@ -938,10 +578,9 @@ function loadEmojiCategory(category) {
         }
     });
     
-    console.log('✅ Categoría cargada con', emojis.length, 'emojis');
+    console.log('✅ Categoría cargada:', emojis.length, 'emojis');
 }
 
-// SELECCIONAR EMOJI - MEJORADA
 function selectEmoji(emoji) {
     console.log('🎯 Emoji seleccionado:', emoji);
     
@@ -951,7 +590,6 @@ function selectEmoji(emoji) {
     const label = document.querySelector('.emoji-label');
     
     if (display && label) {
-        // Animación suave
         display.style.transform = 'scale(0.8) rotate(-10deg)';
         
         setTimeout(() => {
@@ -967,7 +605,6 @@ function selectEmoji(emoji) {
     
     addToRecentEmojis(emoji);
     
-    // Cerrar picker automáticamente
     setTimeout(() => {
         const picker = document.getElementById('emojiPicker');
         if (picker) picker.classList.remove('show');
@@ -976,7 +613,6 @@ function selectEmoji(emoji) {
     showNotification(`Icono ${emoji} seleccionado`, 'success');
 }
 
-// RECIENTES - OPTIMIZADA
 function addToRecentEmojis(emoji) {
     recentEmojis = recentEmojis.filter(e => e !== emoji);
     recentEmojis.unshift(emoji);
@@ -1005,19 +641,16 @@ function updateRecentEmojis() {
     }
 }
 
-// BÚSQUEDA RÁPIDA CON DEBOUNCE
 function searchEmojis(query) {
     if (!query.trim()) {
         loadEmojiCategory('business');
         return;
     }
     
-    console.log('🔍 Buscando emojis:', query);
+    console.log('🔍 Buscando:', query);
     
     const allEmojis = Object.values(EMOJI_CATEGORIES).flat();
     const uniqueEmojis = [...new Set(allEmojis)];
-    
-    // Filtrar resultados (máximo 64 para rendimiento)
     const filtered = uniqueEmojis.slice(0, 64);
     
     const grid = document.getElementById('emojiGrid');
@@ -1037,87 +670,106 @@ function searchEmojis(query) {
         grid.appendChild(fragment);
     }
     
-    // Desactivar categorías durante búsqueda
     document.querySelectorAll('.emoji-cat').forEach(cat => cat.classList.remove('active'));
 }
 
-// INICIALIZACIÓN COMPLETA
-function initializeEmojiPicker() {
-    console.log('🎯 Inicializando emoji picker CORREGIDO...');
+function forceToggleEmojiPicker() {
+    console.log('🚀 Toggle emoji picker');
     
-    setTimeout(() => {
-        const selectedEmoji = document.getElementById('selectedEmoji');
-        if (!selectedEmoji) {
-            console.error('❌ selectedEmoji no encontrado');
-            return;
-        }
-        
-        // Eliminar eventos previos y agregar nuevo
-        selectedEmoji.replaceWith(selectedEmoji.cloneNode(true));
-        const newSelectedEmoji = document.getElementById('selectedEmoji');
-        
-        // Evento principal del selector
-        newSelectedEmoji.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('🔥 CLICK EMOJI DETECTADO');
-            forceToggleEmojiPicker();
-        });
-        
-        // Eventos de categorías
-        document.querySelectorAll('.emoji-cat').forEach(cat => {
-            cat.addEventListener('click', function() {
-                const category = this.dataset.category;
-                loadEmojiCategory(category);
-            });
-        });
-        
-        // Búsqueda con debounce para mejor rendimiento
-        const searchInput = document.getElementById('emojiSearch');
-        if (searchInput) {
-            let searchTimeout;
-            searchInput.addEventListener('input', function() {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    const query = this.value.toLowerCase();
-                    searchEmojis(query);
-                }, 300); // Esperar 300ms antes de buscar
-            });
-        }
-        
-        // Cerrar al hacer clic fuera
-        document.addEventListener('click', function(e) {
-            const picker = document.getElementById('emojiPicker');
-            const container = document.querySelector('.emoji-selector-container');
-            
-            if (container && !container.contains(e.target) && picker) {
-                picker.classList.remove('show');
-            }
-        });
-        
-        // Cargar datos iniciales
+    const picker = document.getElementById('emojiPicker');
+    if (!picker) {
+        console.error('❌ Picker no encontrado');
+        return;
+    }
+    
+    const isVisible = picker.classList.contains('show');
+    
+    if (isVisible) {
+        picker.classList.remove('show');
+        console.log('👆 Picker cerrado');
+    } else {
+        picker.classList.add('show');
         loadEmojiCategory('business');
         updateRecentEmojis();
+        console.log('👆 Picker abierto');
         
-        console.log('✅ Emoji picker OPTIMIZADO y listo');
-    }, 500);
+        setTimeout(() => {
+            const searchInput = document.getElementById('emojiSearch');
+            if (searchInput) searchInput.focus();
+        }, 100);
+    }
 }
+
+// ================================================================
+// DATOS DE EMPRESAS
+// ================================================================
+function getCompaniesData() {
+    const saved = localStorage.getItem('grizalum_companies');
+    if (saved) {
+        return JSON.parse(saved);
+    }
     
-       // PLACEHOLDER FUNCTIONS
-       function showAddCompanyWizard() {
+    const defaultCompanies = {
+        'fundicion-laguna': {
+            name: 'Fundición Laguna',
+            icon: '🔥',
+            status: 'Operativo',
+            theme: { primary: '#dc2626', secondary: '#ea580c' },
+            data: { cashFlow: 24500, revenue: 2847293, expenses: 1892847, profit: 954446 }
+        },
+        'fundicion-joel': {
+            name: 'Fundición Joel',
+            icon: '🔥',
+            status: 'Operativo',
+            theme: { primary: '#ea580c', secondary: '#f97316' },
+            data: { cashFlow: 18300, revenue: 2100000, expenses: 1400000, profit: 700000 }
+        },
+        'avicola-san-juan': {
+            name: 'Avícola San Juan',
+            icon: '🐔',
+            status: 'Operativo',
+            theme: { primary: '#059669', secondary: '#10b981' },
+            data: { cashFlow: 32100, revenue: 3200000, expenses: 2100000, profit: 1100000 }
+        },
+        'import-lm': {
+            name: 'Import LM',
+            icon: '📦',
+            status: 'Operativo',
+            theme: { primary: '#8b5cf6', secondary: '#a78bfa' },
+            data: { cashFlow: 45200, revenue: 4500000, expenses: 2800000, profit: 1700000 }
+        },
+        'bodega-central': {
+            name: 'Bodega Central',
+            icon: '🏪',
+            status: 'Regular',
+            theme: { primary: '#3b82f6', secondary: '#60a5fa' },
+            data: { cashFlow: 15800, revenue: 1800000, expenses: 1200000, profit: 600000 }
+        }
+    };
+    
+    saveCompaniesData(defaultCompanies);
+    return defaultCompanies;
+}
+
+function saveCompaniesData(companies) {
+    localStorage.setItem('grizalum_companies', JSON.stringify(companies));
+}
+
+// ================================================================
+// FUNCIONES PRINCIPALES DEL SISTEMA
+// ================================================================
+function showAddCompanyWizard() {
     const modal = document.getElementById('addCompanyModal');
     modal.classList.add('show');
-    // Limpiar formulario
     document.getElementById('newCompanyName').value = '';
     document.getElementById('newCompanyType').value = '';
-    // Resetear status selector
     document.querySelectorAll('.status-option').forEach(opt => opt.classList.remove('active'));
     document.querySelector('.status-option[data-status="operativo"]').classList.add('active');
-    console.log('🚀 Wizard para agregar empresa abierto');
+    console.log('🚀 Wizard abierto');
 }
+
 function closeAddCompanyModal() {
-    const modal = document.getElementById('addCompanyModal');
-    modal.classList.remove('show');
+    document.getElementById('addCompanyModal').classList.remove('show');
 }
 
 function createNewCompany() {
@@ -1126,7 +778,7 @@ function createNewCompany() {
     const status = document.querySelector('.status-option.active').dataset.status;
     
     if (!name || !type) {
-        showNotification('❌ Por favor completa todos los campos', 'error');
+        showNotification('❌ Completa todos los campos', 'error');
         return;
     }
     
@@ -1142,22 +794,8 @@ function createNewCompany() {
     };
     
     saveCompaniesData(companies);
-    updateCompanySelector();
     closeAddCompanyModal();
-    
-    showNotification(`✅ Empresa "${name}" creada exitosamente`, 'success');
-}
-
-function getIconForType(type) {
-    const icons = {
-        'industria': '🏭',
-        'comercio': '🏪',
-        'servicios': '⚙️',
-        'agropecuario': '🐔',
-        'tecnologia': '💻',
-        'construccion': '🏗️'
-    };
-    return icons[type] || '🏢';
+    showNotification(`✅ Empresa "${name}" creada`, 'success');
 }
 
 function getThemeForType(type) {
@@ -1171,211 +809,163 @@ function getThemeForType(type) {
     };
     return themes[type] || { primary: '#d4af37', secondary: '#b87333' };
 }
-       // GESTIÓN DE EMPRESAS - FUNCIONES MEJORADAS
-function openCompanyManagement() {
-    const modal = document.getElementById('companyManagementModal');
-    if (modal) {
-        modal.classList.add('show');
-        loadCurrentCompanyData();
-        console.log('⚙️ Gestión de empresas abierta');
-    } else {
-        console.error('Modal de gestión no encontrado');
-        showNotification('Error: Modal no encontrado', 'error');
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `grizalum-notification ${type}`;
+    
+    const icons = {
+        'success': 'fas fa-check-circle',
+        'error': 'fas fa-exclamation-circle', 
+        'warning': 'fas fa-exclamation-triangle',
+        'info': 'fas fa-info-circle'
+    };
+    
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="${icons[type] || icons.info}"></i>
+            <span>${message}</span>
+        </div>
+        <button class="notification-close" onclick="this.parentElement.remove()">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    let container = document.getElementById('notificationContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'notificationContainer';
+        container.className = 'notification-container';
+        document.body.appendChild(container);
     }
+    
+    container.appendChild(notification);
+    setTimeout(() => notification.remove(), 5000);
 }
 
-function closeCompanyManagement() {
-    const modal = document.getElementById('companyManagementModal');
-    modal.classList.remove('show');
+// ================================================================
+// FUNCIONES AUXILIARES
+// ================================================================
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
 }
 
-function loadCurrentCompanyData() {
-    const currentCompany = getCurrentCompany();
-    const companies = getCompaniesData();
-    const companyData = companies[currentCompany];
-    
-    if (companyData) {
-        document.getElementById('companyNameEdit').value = companyData.name;
-        document.getElementById('companyStatusEdit').value = companyData.status.toLowerCase();
-        
-        // Seleccionar icono actual
-        document.querySelectorAll('.icon-option').forEach(option => {
-            option.classList.remove('active');
-            if (option.dataset.icon === companyData.icon) {
-                option.classList.add('active');
-            }
-        });
-    }
+function changePeriod(period, button) {
+    document.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('active'));
+    button.classList.add('active');
+    console.log(`📅 Período: ${period}`);
 }
 
-function saveCompanyChanges() {
-    const currentCompany = getCurrentCompany();
-    const companies = getCompaniesData();
-    
-    const newName = document.getElementById('companyNameEdit').value;
-    const newStatus = document.getElementById('companyStatusEdit').value;
-    const newIcon = document.querySelector('.icon-option.active')?.dataset.icon || '🏢';
-    
-    if (companies[currentCompany]) {
-        companies[currentCompany].name = newName;
-        companies[currentCompany].status = newStatus;
-        companies[currentCompany].icon = newIcon;
-        
-        saveCompaniesData(companies);
-        updateCompanySelector();
-        closeCompanyManagement();
-        
-        showNotification('✅ Empresa actualizada correctamente', 'success');
-        console.log('✅ Cambios guardados para:', newName);
-    }
+function showNotifications() {
+    console.log('🔔 Notificaciones');
 }
 
-// MANEJO DE TABS
-document.addEventListener('DOMContentLoaded', function() {
-    // Event listeners para tabs
-    document.querySelectorAll('.company-tab').forEach(tab => {
-        tab.addEventListener('click', function() {
-            const targetTab = this.dataset.tab;
-            switchCompanyTab(targetTab);
-        });
-    });
-    
-    // Event listeners para iconos
-    document.querySelectorAll('.icon-option').forEach(icon => {
-        icon.addEventListener('click', function() {
-            document.querySelectorAll('.icon-option').forEach(i => i.classList.remove('active'));
+function showSection(section) {
+    console.log(`📱 Sección: ${section}`);
+}
+
+function toggleAIAssistant() {
+    console.log('🤖 AI Assistant');
+}
+
+function setupEventListeners() {
+    // Filtros de gráficos
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
         });
     });
-    // Categorías de emojis
-    document.querySelectorAll('.emoji-cat').forEach(cat => {
-        cat.addEventListener('click', function() {
-            const category = this.dataset.category;
-            loadEmojiCategory(category);
-        });
-    });
-    
-    // Búsqueda de emojis
-    const searchInput = document.getElementById('emojiSearch');
-    if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            const query = this.value.toLowerCase();
-            searchEmojis(query);
-        });
-    }
-    
-    // Cerrar picker al hacer clic fuera
-    document.addEventListener('click', function(e) {
-        const picker = document.getElementById('emojiPicker');
-        const container = document.querySelector('.emoji-selector-container');
-        
-        if (container && !container.contains(e.target)) {
-            picker.classList.remove('show');
-        }
-    });
-    
-    // Status selector para modal agregar empresa
-    document.querySelectorAll('.status-option').forEach(option => {
-        option.addEventListener('click', function() {
-            document.querySelectorAll('.status-option').forEach(opt => opt.classList.remove('active'));
-            this.classList.add('active');
-        });
-    });
-});
-
-function switchCompanyTab(tabName) {
-    // Cambiar tabs activos
-    document.querySelectorAll('.company-tab').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-    
-    // Cambiar contenido
-    document.querySelectorAll('.tab-panel').forEach(panel => {
-        panel.classList.remove('active');
-    });
-    document.getElementById(tabName + 'Tab').classList.add('active');
 }
 
-function getCurrentCompany() {
-    return localStorage.getItem('grizalum_current_company') || 'fundicion-laguna';
-}
-
-       console.log('🎯 GRIZALUM Sistema CORREGIDO Y COMPLETO');
-       console.log('🎨 Colores y gradientes: ✅');
-       console.log('🤖 IA Assistant visible: ✅');
-       console.log('📊 Dashboard profesional: ✅');
-       console.log('🏢 Multi-empresa: ✅');
-       console.log('📱 Responsive: ✅');
-   </script>
-    </script>  ← Aquí termina el script grande
-
-<!-- AQUÍ VA EL CÓDIGO NUEVO -->
-<script>
-// SOLUCIÓN DEFINITIVA EMOJI PICKER
+// ================================================================
+// INICIALIZACIÓN PRINCIPAL - UNA SOLA VEZ
+// ================================================================
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 GRIZALUM Iniciando...');
+    
+    // Ocultar loading
     setTimeout(() => {
-        initializeEmojiPicker();
+        const loading = document.getElementById('loadingScreen');
+        if (loading) loading.classList.add('hide');
+    }, 3000);
+    
+    // Inicializar gráficos
+    setTimeout(() => {
+        if (typeof Chart !== 'undefined' && typeof initializeCharts === 'function') {
+            try {
+                initializeCharts();
+                console.log('📊 Gráficos inicializados');
+            } catch (error) {
+                console.error('❌ Error gráficos:', error);
+            }
+        }
     }, 1000);
+    
+    // Configurar eventos
+    setupEventListeners();
+    
+    // CONFIGURAR EMOJI PICKER
+    setTimeout(() => {
+        const selectedEmoji = document.getElementById('selectedEmoji');
+        if (selectedEmoji) {
+            selectedEmoji.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🔥 CLICK EMOJI');
+                forceToggleEmojiPicker();
+            });
+            
+            // Eventos de categorías
+            document.querySelectorAll('.emoji-cat').forEach(cat => {
+                cat.addEventListener('click', function() {
+                    const category = this.dataset.category;
+                    loadEmojiCategory(category);
+                });
+            });
+            
+            // Búsqueda con debounce
+            const searchInput = document.getElementById('emojiSearch');
+            if (searchInput) {
+                let searchTimeout;
+                searchInput.addEventListener('input', function() {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => {
+                        searchEmojis(this.value.toLowerCase());
+                    }, 300);
+                });
+            }
+            
+            // Cerrar al hacer clic fuera
+            document.addEventListener('click', function(e) {
+                const picker = document.getElementById('emojiPicker');
+                const container = document.querySelector('.emoji-selector-container');
+                
+                if (container && !container.contains(e.target) && picker) {
+                    picker.classList.remove('show');
+                }
+            });
+            
+            // Status selector
+            document.querySelectorAll('.status-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.status-option').forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Cargar datos iniciales
+            loadEmojiCategory('business');
+            updateRecentEmojis();
+            
+            console.log('✅ Emoji picker configurado');
+        }
+    }, 1000);
+    
+    console.log('✅ GRIZALUM listo');
 });
 
-function initializeEmojiPicker() {
-    console.log('🎯 Inicializando emoji picker...');
-    
-    // Encontrar el elemento
-    const selectedEmoji = document.getElementById('selectedEmoji');
-    if (!selectedEmoji) {
-        console.error('❌ selectedEmoji no encontrado');
-        return;
-    }
-    
-    // Remover listeners existentes
-    selectedEmoji.replaceWith(selectedEmoji.cloneNode(true));
-    const newSelectedEmoji = document.getElementById('selectedEmoji');
-    
-    // Agregar evento definitivo
-    newSelectedEmoji.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        console.log('🔥 CLICK DETECTADO EN EMOJI!');
-        forceToggleEmojiPicker();
-    });
-    
-    // Cargar categorías por defecto
-    loadEmojiCategory('business');
-    updateRecentEmojis();
-    
-    console.log('✅ Emoji picker configurado correctamente');
-}
-
-    // AGREGAR AQUÍ LA NUEVA FUNCIÓN
-function forceToggleEmojiPicker() {
-    console.log('🚀 Ejecutando forceToggleEmojiPicker');
-    
-    const picker = document.getElementById('emojiPicker');
-    if (!picker) {
-        console.error('❌ emojiPicker no encontrado');
-        return;
-    }
-    
-    const isVisible = picker.classList.contains('show');
-    console.log('📱 Estado actual del picker:', isVisible ? 'visible' : 'oculto');
-    
-    if (isVisible) {
-        picker.classList.remove('show');
-        console.log('👆 Picker cerrado');
-    } else {
-        picker.classList.add('show');
-        loadEmojiCategory('business');
-        updateRecentEmojis();
-        console.log('👆 Picker abierto');
-        
-        setTimeout(() => {
-            const searchInput = document.getElementById('emojiSearch');
-            if (searchInput) searchInput.focus();
-        }, 200);
-    }
-}
+console.log('🎯 GRIZALUM Sistema LIMPIO cargado');
 </script>
 </body>
 </html>
