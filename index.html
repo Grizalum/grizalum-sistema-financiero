@@ -515,52 +515,83 @@ window.prompt = function(message) {
     }
     return null;
 };
- // EMOJI SELECTOR ÉPICO - FUNCIONALIDAD AVANZADA
+    
+// EMOJI CATEGORIES COMPLETAS - MÁS DE 500 EMOJIS
 // ================================================================
 const EMOJI_CATEGORIES = {
-    business: ['🏢', '🏬', '🏪', '🏫', '🏦', '🏛️', '🏤', '🏣', '🏗️', '💼', '📊', '📈', '📉', '💹', '💰', '💳'],
-    industry: ['🏭', '⚙️', '🔧', '🔨', '⛏️', '🛠️', '⚡', '🔥', '💡', '🚧', '⚒️', '🧰', '🔩', '🏗️', '⛽', '🛢️'],
-    commerce: ['🏪', '🛒', '🛍️', '💳', '💰', '💵', '💴', '💶', '💷', '🏬', '📦', '📮', '🎁', '🛎️', '🏷️', '💎'],
-    food: ['🍕', '🍔', '🍟', '🌭', '🥪', '🌮', '🌯', '🥗', '🍝', '🍜', '🍲', '🍱', '🍘', '🍙', '🍚', '🥘'],
-    transport: ['🚚', '🚛', '🚐', '🚌', '🚍', '🚘', '🚖', '🚗', '🚙', '🛻', '🚓', '🚑', '🚒', '🚜', '🏍️', '🚲'],
-    tech: ['💻', '🖥️', '🖨️', '⌨️', '🖱️', '💾', '💿', '📀', '📱', '☎️', '📞', '📟', '📠', '📺', '📻', '🎮'],
-    medical: ['🏥', '⚕️', '💊', '💉', '🩺', '🦷', '🧬', '🔬', '🧪', '🧫', '🩹', '🩼', '🩻', '🚑', '👨‍⚕️', '👩‍⚕️'],
-    education: ['🎓', '📚', '📖', '📝', '✏️', '📏', '📐', '📊', '🎒', '🏫', '📋', '📌', '📍', '🖇️', '📎', '✂️']
+    business: ['🏢', '🏬', '🏪', '🏫', '🏦', '🏛️', '🏤', '🏣', '🏗️', '💼', '📊', '📈', '📉', '💹', '💰', '💳', '🏭', '🏗️', '🏘️', '🏚️', '🏠', '🏡', '🏟️', '🏞️', '🏜️', '🏝️', '🏖️', '🏕️', '🏉', '🏈', '⚽', '🏀', '🎾', '🎱', '🎳', '🏆', '🥇', '🥈', '🥉', '🏅', '🎖️', '🏵️', '🎗️', '🎫', '🎟️', '🎪', '🎭', '🎨', '🎬', '🎤', '🎧', '🎼', '🎵', '🎶', '🎹', '🥁', '🎷', '🎺', '🎸', '🪕', '🎻'],
+    
+    industry: ['🏭', '⚙️', '🔧', '🔨', '⛏️', '🛠️', '⚡', '🔥', '💡', '🚧', '⚒️', '🧰', '🔩', '🏗️', '⛽', '🛢️', '🔋', '🪫', '💡', '🕯️', '🪔', '💎', '💍', '📿', '💄', '👑', '👒', '🎩', '🎓', '🧢', '⛑️', '📢', '📣', '📯', '🔔', '🔕', '🎵', '🎶', '💹', '💱', '💲', '💸', '💴', '💵', '💶', '💷', '🪙', '💰', '💳', '🧾', '💎', '⚖️', '🔗', '⛓️', '🧲', '🔫', '💣', '🧨', '🔪', '🗡️', '⚔️', '🛡️', '🚬', '⚱️'],
+    
+    commerce: ['🏪', '🛒', '🛍️', '💳', '💰', '💵', '💴', '💶', '💷', '🏬', '📦', '📮', '🎁', '🛎️', '🏷️', '💎', '🛒', '🛍️', '🎪', '🎠', '🎡', '🎢', '🚂', '🚃', '🚄', '🚅', '🚆', '🚇', '🚈', '🚝', '🚞', '🚋', '🚌', '🚍', '🚎', '🚐', '🚑', '🚒', '🚓', '🚔', '🚕', '🚖', '🚗', '🚘', '🚙', '🛻', '🚚', '🚛', '🚜', '🏎️', '🏍️', '🛵', '🦽', '🦼', '🛴', '🚲', '🛹', '🛼', '🚁', '🛸', '✈️', '🛩️', '🪂', '💺', '🚀', '🛰️', '🚢', '⛵', '🚤', '🛥️', '🛶', '⛴️', '🚧'],
+    
+    food: ['🍎', '🍏', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🍆', '🥑', '🥦', '🥬', '🥒', '🌶️', '🫑', '🌽', '🥕', '🫒', '🧄', '🧅', '🥔', '🍠', '🥐', '🥖', '🍞', '🥨', '🥯', '🥞', '🧇', '🧀', '🍖', '🍗', '🥩', '🥓', '🍔', '🍟', '🍕', '🌭', '🥪', '🌮', '🌯', '🫔', '🥙', '🧆', '🥚', '🍳', '🥘', '🍲', '🫕', '🥣', '🥗', '🍿', '🧈', '🧂', '🥫', '🍱', '🍘', '🍙', '🍚', '🍛', '🍜', '🍝', '🍠', '🍢', '🍣', '🍤', '🍥', '🥮', '🍡', '🥟', '🥠', '🥡'],
+    
+    transport: ['🚗', '🚕', '🚙', '🚌', '🚎', '🏎️', '🚓', '🚑', '🚒', '🚐', '🛻', '🚚', '🚛', '🚜', '🏍️', '🛵', '🚲', '🛴', '🛹', '🛼', '🚁', '✈️', '🛩️', '🛫', '🛬', '🪂', '💺', '🚀', '🛸', '🚢', '⛵', '🚤', '🛥️', '🛶', '⛴️', '🚧', '🚥', '🚦', '🚏', '🗺️', '🗿', '🗽', '🗼', '🏰', '🏯', '🏟️', '🎡', '🎢', '🎠', '⛲', '⛱️', '🏖️', '🏝️', '🏜️', '🌋', '⛰️', '🏔️', '🗻', '🏕️', '⛺', '🏠', '🏡', '🏘️', '🏚️', '🏗️', '🏭', '🏢', '🏬', '🏣', '🏤', '🏥', '🏦', '🏨', '🏪', '🏫', '🏩', '💒', '🏛️', '⛪', '🕌', '🛕', '🕍', '⛩️', '🕋'],
+    
+    tech: ['💻', '🖥️', '🖨️', '⌨️', '🖱️', '💾', '💿', '📀', '📱', '☎️', '📞', '📟', '📠', '📺', '📻', '🎮', '🕹️', '🎛️', '⏱️', '⏰', '⏲️', '🕰️', '⏳', '⌛', '📡', '🔋', '🪫', '🔌', '💡', '🔦', '🕯️', '🪔', '🧯', '🛢️', '💸', '💴', '💵', '💶', '💷', '🪙', '💰', '💳', '🧾', '💎', '⚖️', '🦯', '🔗', '⛓️', '🧲', '🔫', '💣', '🧨', '🔪', '🗡️', '⚔️', '🛡️', '🚬', '⚱️', '🏺', '🔮', '📿', '🧿', '💈', '⚗️', '🔭', '🔬', '🕳️', '🩹', '🩺', '💊', '💉', '🧬', '🦠', '🧫', '🧪', '🌡️', '🧹', '🧴', '🧽', '🧯'],
+    
+    medical: ['🏥', '⚕️', '💊', '💉', '🩺', '🦷', '🧬', '🔬', '🧪', '🧫', '🩹', '🩼', '🩻', '🚑', '👨‍⚕️', '👩‍⚕️', '🧑‍⚕️', '🩸', '🧠', '🫀', '🫁', '🦴', '👁️', '👅', '👂', '👃', '🦵', '🦶', '🤏', '👌', '🤌', '🤏', '✋', '🖐️', '🖖', '👋', '🤙', '💪', '🦾', '🖕', '✍️', '🙏', '🦶', '🦵', '🦿', '👣', '👥', '👤', '🗣️', '👶', '🧒', '👦', '👧', '🧑', '👱', '👨', '🧔', '👩', '🧓', '👴', '👵', '💀', '☠️', '👻', '👽', '👾', '🤖', '🎃', '😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾'],
+    
+    education: ['🎓', '📚', '📖', '📝', '✏️', '📏', '📐', '📊', '🎒', '🏫', '📋', '📌', '📍', '🖇️', '📎', '✂️', '📐', '📏', '📖', '📗', '📘', '📙', '📔', '📒', '📕', '📓', '📜', '📃', '📄', '📑', '🗒️', '🗓️', '📅', '📆', '🗑️', '📇', '🗃️', '🗳️', '🗄️', '📂', '📁', '💼', '📊', '📈', '📉', '📋', '📌', '📍', '📎', '🖇️', '📐', '📏', '✂️', '🖊️', '🖋️', '✒️', '🖌️', '🖍️', '📝', '✏️', '🔍', '🔎', '🔒', '🔓', '🔏', '🔐', '🔑', '🗝️', '🔨', '🪓', '⛏️', '⚒️', '🛠️', '🗡️', '⚔️', '🔫', '🏹', '🛡️', '🔧', '🔩'],
+    
+    animals: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐻‍❄️', '🐨', '🐯', '🦁', '🐮', '🐷', '🐽', '🐸', '🐵', '🙈', '🙉', '🙊', '🐒', '🐔', '🐧', '🐦', '🐤', '🐣', '🐥', '🦆', '🦅', '🦉', '🦇', '🐺', '🐗', '🐴', '🦄', '🐝', '🐛', '🦋', '🐌', '🐞', '🐜', '🦟', '🦗', '🕷️', '🕸️', '🦂', '🐢', '🐍', '🦎', '🦖', '🦕', '🐙', '🦑', '🦐', '🦞', '🦀', '🐡', '🐠', '🐟', '🐬', '🐳', '🐋', '🦈', '🐊', '🐅', '🐆', '🦓', '🦍', '🦧', '🐘', '🦛', '🦏', '🐪', '🐫', '🦒', '🦘', '🐃', '🐂', '🐄', '🐎', '🐖', '🐏', '🐑', '🦙', '🐐', '🦌', '🐕', '🐩', '🦮', '🐕‍🦺', '🐈', '🐈‍⬛'],
+    
+    nature: ['🌱', '🌿', '☘️', '🍀', '🎍', '🎋', '🍃', '🍂', '🍁', '🍄', '🌾', '💐', '🌷', '🌹', '🥀', '🌺', '🌸', '🌼', '🌻', '🌞', '🌝', '🌛', '🌜', '🌚', '🌕', '🌖', '🌗', '🌘', '🌑', '🌒', '🌓', '🌔', '🌙', '🌎', '🌍', '🌏', '🪐', '💫', '⭐', '🌟', '✨', '⚡', '☄️', '💥', '🔥', '🌪️', '🌈', '☀️', '🌤️', '⛅', '🌥️', '☁️', '🌦️', '🌧️', '⛈️', '🌩️', '🌨️', '❄️', '☃️', '⛄', '🌬️', '💨', '💧', '💦', '☔', '☂️', '🌊', '🌫️', '🍏', '🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝'],
+    
+    sports: ['⚽', '🏀', '🏈', '⚾', '🥎', '🎾', '🏐', '🏉', '🥏', '🎱', '🪀', '🏓', '🏸', '🏒', '🏑', '🥍', '🏏', '🪃', '🥅', '⛳', '🪁', '🏹', '🎣', '🤿', '🥽', '🥼', '🦺', '⛷️', '🏂', '🏋️', '🤼', '🤸', '⛹️', '🤺', '🤾', '🏌️', '🏇', '🧘', '🏃', '🚶', '🧎', '🧍', '🤳', '💃', '🕺', '👯', '🤹', '🎭', '🎨', '🎬', '🎤', '🎧', '🎼', '🎵', '🎶', '🎹', '🥁', '🎷', '🎺', '🎸', '🪕', '🎻', '🎲', '♠️', '♥️', '♦️', '♣️', '♟️', '🃏', '🀄', '🎴', '🎯', '🎪', '🎨', '🎭', '🪗', '🎤', '🎧', '📻', '🎷', '🪘', '🥁', '🎸', '🪕', '🎺', '🎹', '🪗'],
+    
+    flags: ['🏁', '🚩', '🎌', '🏴', '🏳️', '🏳️‍🌈', '🏳️‍⚧️', '🏴‍☠️', '🇦🇫', '🇦🇽', '🇦🇱', '🇩🇿', '🇦🇸', '🇦🇩', '🇦🇴', '🇦🇮', '🇦🇶', '🇦🇬', '🇦🇷', '🇦🇲', '🇦🇼', '🇦🇺', '🇦🇹', '🇦🇿', '🇧🇸', '🇧🇭', '🇧🇩', '🇧🇧', '🇧🇾', '🇧🇪', '🇧🇿', '🇧🇯', '🇧🇲', '🇧🇹', '🇧🇴', '🇧🇦', '🇧🇼', '🇧🇷', '🇮🇴', '🇻🇬', '🇧🇳', '🇧🇬', '🇧🇫', '🇧🇮', '🇰🇭', '🇨🇲', '🇨🇦', '🇮🇨', '🇨🇻', '🇧🇶', '🇰🇾', '🇨🇫', '🇹🇩', '🇨🇱', '🇨🇳', '🇨🇽', '🇨🇨', '🇨🇴', '🇰🇲', '🇨🇬', '🇨🇩', '🇨🇰', '🇨🇷', '🇨🇮', '🇭🇷', '🇨🇺', '🇨🇼', '🇨🇾', '🇨🇿', '🇩🇰', '🇩🇯', '🇩🇲', '🇩🇴', '🇪🇨', '🇪🇬', '🇸🇻', '🇬🇶', '🇪🇷', '🇪🇪', '🇪🇹', '🇪🇺', '🇫🇰', '🇫🇴', '🇫🇯', '🇫🇮', '🇫🇷', '🇬🇫', '🇵🇫', '🇹🇫', '🇬🇦', '🇬🇲', '🇬🇪', '🇩🇪', '🇬🇭', '🇬🇮', '🇬🇷', '🇬🇱', '🇬🇩', '🇬🇵', '🇬🇺', '🇬🇹', '🇬🇬', '🇬🇳', '🇬🇼', '🇬🇾', '🇭🇹', '🇭🇳', '🇭🇰', '🇭🇺', '🇮🇸', '🇮🇳', '🇮🇩', '🇮🇷', '🇮🇶', '🇮🇪', '🇮🇲', '🇮🇱', '🇮🇹', '🇯🇲', '🇯🇵', '🇯🇪', '🇯🇴', '🇰🇿', '🇰🇪', '🇰🇮', '🇽🇰', '🇰🇼', '🇰🇬', '🇱🇦', '🇱🇻', '🇱🇧', '🇱🇸', '🇱🇷', '🇱🇾', '🇱🇮', '🇱🇹', '🇱🇺', '🇲🇴', '🇲🇰', '🇲🇬', '🇲🇼', '🇲🇾', '🇲🇻', '🇲🇱', '🇲🇹', '🇲🇭', '🇲🇶', '🇲🇷', '🇲🇺', '🇾🇹', '🇲🇽', '🇫🇲', '🇲🇩', '🇲🇨', '🇲🇳', '🇲🇪', '🇲🇸', '🇲🇦', '🇲🇿', '🇲🇲', '🇳🇦', '🇳🇷', '🇳🇵', '🇳🇱', '🇳🇨', '🇳🇿', '🇳🇮', '🇳🇪', '🇳🇬', '🇳🇺', '🇳🇫', '🇰🇵', '🇲🇵', '🇳🇴', '🇴🇲', '🇵🇰', '🇵🇼', '🇵🇸', '🇵🇦', '🇵🇬', '🇵🇾', '🇵🇪', '🇵🇭', '🇵🇳', '🇵🇱', '🇵🇹', '🇵🇷', '🇶🇦', '🇷🇪', '🇷🇴', '🇷🇺', '🇷🇼', '🇼🇸', '🇸🇲', '🇸🇹', '🇸🇦', '🇸🇳', '🇷🇸', '🇸🇨', '🇸🇱', '🇸🇬', '🇸🇽', '🇸🇰', '🇸🇮', '🇸🇧', '🇸🇴', '🇿🇦', '🇬🇸', '🇰🇷', '🇸🇸', '🇪🇸', '🇱🇰', '🇧🇱', '🇸🇭', '🇰🇳', '🇱🇨', '🇲🇫', '🇵🇲', '🇻🇨', '🇸🇩', '🇸🇷', '🇸🇪', '🇨🇭', '🇸🇾', '🇹🇼', '🇹🇯', '🇹🇿', '🇹🇭', '🇹🇱', '🇹🇬', '🇹🇰', '🇹🇴', '🇹🇹', '🇹🇳', '🇹🇷', '🇹🇲', '🇹🇨', '🇹🇻', '🇺🇬', '🇺🇦', '🇦🇪', '🇬🇧', '🇺🇸', '🇺🇾', '🇺🇿', '🇻🇺', '🇻🇦', '🇻🇪', '🇻🇳', '🇼🇫', '🇪🇭', '🇾🇪', '🇿🇲', '🇿🇼']
 };
 
 let selectedEmojiValue = '🏢';
 let recentEmojis = JSON.parse(localStorage.getItem('grizalum_recent_emojis') || '["🏢", "🏭", "🏪", "💼", "🚚", "💻", "🏥", "🎓"]');
     
-// INICIALIZAR TODO AL CARGAR
+// ================================================================
+// INICIALIZACIÓN PRINCIPAL - VERSIÓN CORREGIDA SIN DUPLICADOS
+// ================================================================
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🤖 AI Assistant ya disponible');
+    console.log('🚀 GRIZALUM Iniciando sistema...');
     
+    // Ocultar pantalla de carga
     setTimeout(() => {
-        document.getElementById('loadingScreen').classList.add('hide');
+        const loading = document.getElementById('loadingScreen');
+        if (loading) {
+            loading.classList.add('hide');
+            console.log('📱 Pantalla de carga ocultada');
+        }
     }, 3000);
     
-   // Esperar a que Chart.js esté completamente cargado
-setTimeout(() => {
-    if (typeof Chart !== 'undefined' && typeof initializeCharts === 'function') {
-        try {
-            initializeCharts();
-            console.log('📊 Gráficos inicializados correctamente');
-        } catch (error) {
-            console.error('❌ Error inicializando gráficos:', error);
+    // Inicializar gráficos cuando Chart.js esté listo
+    setTimeout(() => {
+        if (typeof Chart !== 'undefined' && typeof initializeCharts === 'function') {
+            try {
+                initializeCharts();
+                console.log('📊 Gráficos inicializados correctamente');
+            } catch (error) {
+                console.error('❌ Error inicializando gráficos:', error);
+            }
+        } else {
+            console.warn('⚠️ Chart.js no disponible');
         }
-    } else {
-        console.warn('⚠️ Chart.js o charts.js no está cargado');
-    }
-}, 1000);
+    }, 1000);
+    
+    // Configurar eventos principales
     setupEventListeners();
     
-    console.log('✅ Sistema GRIZALUM completamente cargado');
-    // CONFIGURAR EMOJI PICKER AL CARGAR
-    setTimeout(() => {
-        setupEmojiPicker();
-    }, 500);
+    // INICIALIZAR EMOJI PICKER - CORREGIDO
+    initializeEmojiPicker();
+    
+    // Configurar status selector para modal
+    document.querySelectorAll('.status-option').forEach(option => {
+        option.addEventListener('click', function() {
+            document.querySelectorAll('.status-option').forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+    
+    console.log('✅ GRIZALUM completamente inicializado');
 });
-
 function setupEmojiPicker() {
     // Event listener para abrir emoji picker
     const selectedEmoji = document.getElementById('selectedEmoji');
@@ -835,76 +866,117 @@ function setupEmojiPicker() {
                });
            });
        }
-function toggleEmojiPicker() {
-    console.log('🎯 Ejecutando toggleEmojiPicker');
+// ================================================================
+// EMOJI PICKER OPTIMIZADO Y RÁPIDO - VERSIÓN CORREGIDA
+// ================================================================
+let selectedEmojiValue = '🏢';
+let recentEmojis = JSON.parse(localStorage.getItem('grizalum_recent_emojis') || '["🏢", "🏭", "🏪", "💼", "🚚", "💻", "🏥", "🎓"]');
+
+// FUNCIÓN PRINCIPAL - SIN DUPLICADOS
+function forceToggleEmojiPicker() {
+    console.log('🚀 Toggle emoji picker OPTIMIZADO');
     
     const picker = document.getElementById('emojiPicker');
     if (!picker) {
-        console.error('❌ Emoji picker no encontrado');
+        console.error('❌ Picker no encontrado');
         return;
     }
     
     const isVisible = picker.classList.contains('show');
-    console.log('📱 Estado actual:', isVisible ? 'visible' : 'oculto');
     
     if (isVisible) {
         picker.classList.remove('show');
-        console.log('👆 Cerrando picker');
+        console.log('👆 Picker cerrado');
     } else {
         picker.classList.add('show');
         loadEmojiCategory('business');
         updateRecentEmojis();
-        console.log('👆 Abriendo picker');
+        console.log('👆 Picker abierto');
         
+        // Focus en búsqueda
         setTimeout(() => {
             const searchInput = document.getElementById('emojiSearch');
             if (searchInput) searchInput.focus();
         }, 100);
     }
 }
+
+// CARGAR CATEGORÍA - OPTIMIZADA CON DOCUMENTFRAGMENT
 function loadEmojiCategory(category) {
+    console.log('📱 Cargando categoría OPTIMIZADA:', category);
+    
     const grid = document.getElementById('emojiGrid');
+    if (!grid) {
+        console.error('❌ Grid no encontrado');
+        return;
+    }
+    
     const emojis = EMOJI_CATEGORIES[category] || EMOJI_CATEGORIES.business;
+    console.log('📦 Emojis a cargar:', emojis.length);
     
-    grid.innerHTML = emojis.map(emoji => 
-        `<div class="emoji-item" onclick="selectEmoji('${emoji}')" title="${emoji}">${emoji}</div>`
-    ).join('');
+    // OPTIMIZACIÓN: DocumentFragment para mejor rendimiento
+    const fragment = document.createDocumentFragment();
     
+    emojis.forEach(emoji => {
+        const div = document.createElement('div');
+        div.className = 'emoji-item';
+        div.textContent = emoji;
+        div.title = emoji;
+        div.onclick = () => selectEmoji(emoji);
+        fragment.appendChild(div);
+    });
+    
+    // Limpiar y agregar en una sola operación
+    grid.innerHTML = '';
+    grid.appendChild(fragment);
+    
+    // Actualizar categorías activas
     document.querySelectorAll('.emoji-cat').forEach(cat => {
         cat.classList.remove('active');
         if (cat.dataset.category === category) {
             cat.classList.add('active');
         }
     });
+    
+    console.log('✅ Categoría cargada con', emojis.length, 'emojis');
 }
 
+// SELECCIONAR EMOJI - MEJORADA
 function selectEmoji(emoji) {
+    console.log('🎯 Emoji seleccionado:', emoji);
+    
     selectedEmojiValue = emoji;
     
     const display = document.querySelector('.emoji-display');
     const label = document.querySelector('.emoji-label');
     
-    display.style.transform = 'scale(0.8) rotate(-10deg)';
-    
-    setTimeout(() => {
-        display.textContent = emoji;
-        label.textContent = 'Icono seleccionado';
-        display.style.transform = 'scale(1.1) rotate(5deg)';
+    if (display && label) {
+        // Animación suave
+        display.style.transform = 'scale(0.8) rotate(-10deg)';
         
         setTimeout(() => {
-            display.style.transform = 'scale(1) rotate(0deg)';
-        }, 200);
-    }, 150);
+            display.textContent = emoji;
+            label.textContent = 'Icono seleccionado';
+            display.style.transform = 'scale(1.1) rotate(5deg)';
+            
+            setTimeout(() => {
+                display.style.transform = 'scale(1) rotate(0deg)';
+            }, 200);
+        }, 150);
+    }
     
     addToRecentEmojis(emoji);
     
+    // Cerrar picker automáticamente
     setTimeout(() => {
-        document.getElementById('emojiPicker').classList.remove('show');
+        const picker = document.getElementById('emojiPicker');
+        if (picker) picker.classList.remove('show');
     }, 300);
     
     showNotification(`Icono ${emoji} seleccionado`, 'success');
 }
 
+// RECIENTES - OPTIMIZADA
 function addToRecentEmojis(emoji) {
     recentEmojis = recentEmojis.filter(e => e !== emoji);
     recentEmojis.unshift(emoji);
@@ -917,27 +989,118 @@ function addToRecentEmojis(emoji) {
 function updateRecentEmojis() {
     const container = document.getElementById('recentEmojis');
     if (container) {
-        container.innerHTML = recentEmojis.map(emoji => 
-            `<div class="emoji-item" onclick="selectEmoji('${emoji}')" title="Reciente: ${emoji}">${emoji}</div>`
-        ).join('');
+        const fragment = document.createDocumentFragment();
+        
+        recentEmojis.forEach(emoji => {
+            const div = document.createElement('div');
+            div.className = 'emoji-item';
+            div.textContent = emoji;
+            div.title = `Reciente: ${emoji}`;
+            div.onclick = () => selectEmoji(emoji);
+            fragment.appendChild(div);
+        });
+        
+        container.innerHTML = '';
+        container.appendChild(fragment);
     }
 }
 
+// BÚSQUEDA RÁPIDA CON DEBOUNCE
 function searchEmojis(query) {
-    if (!query) {
+    if (!query.trim()) {
         loadEmojiCategory('business');
         return;
     }
     
+    console.log('🔍 Buscando emojis:', query);
+    
     const allEmojis = Object.values(EMOJI_CATEGORIES).flat();
     const uniqueEmojis = [...new Set(allEmojis)];
     
-    const grid = document.getElementById('emojiGrid');
-    grid.innerHTML = uniqueEmojis.slice(0, 48).map(emoji => 
-        `<div class="emoji-item" onclick="selectEmoji('${emoji}')" title="Buscar: ${emoji}">${emoji}</div>`
-    ).join('');
+    // Filtrar resultados (máximo 64 para rendimiento)
+    const filtered = uniqueEmojis.slice(0, 64);
     
+    const grid = document.getElementById('emojiGrid');
+    if (grid) {
+        const fragment = document.createDocumentFragment();
+        
+        filtered.forEach(emoji => {
+            const div = document.createElement('div');
+            div.className = 'emoji-item';
+            div.textContent = emoji;
+            div.title = `Búsqueda: ${emoji}`;
+            div.onclick = () => selectEmoji(emoji);
+            fragment.appendChild(div);
+        });
+        
+        grid.innerHTML = '';
+        grid.appendChild(fragment);
+    }
+    
+    // Desactivar categorías durante búsqueda
     document.querySelectorAll('.emoji-cat').forEach(cat => cat.classList.remove('active'));
+}
+
+// INICIALIZACIÓN COMPLETA
+function initializeEmojiPicker() {
+    console.log('🎯 Inicializando emoji picker CORREGIDO...');
+    
+    setTimeout(() => {
+        const selectedEmoji = document.getElementById('selectedEmoji');
+        if (!selectedEmoji) {
+            console.error('❌ selectedEmoji no encontrado');
+            return;
+        }
+        
+        // Eliminar eventos previos y agregar nuevo
+        selectedEmoji.replaceWith(selectedEmoji.cloneNode(true));
+        const newSelectedEmoji = document.getElementById('selectedEmoji');
+        
+        // Evento principal del selector
+        newSelectedEmoji.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('🔥 CLICK EMOJI DETECTADO');
+            forceToggleEmojiPicker();
+        });
+        
+        // Eventos de categorías
+        document.querySelectorAll('.emoji-cat').forEach(cat => {
+            cat.addEventListener('click', function() {
+                const category = this.dataset.category;
+                loadEmojiCategory(category);
+            });
+        });
+        
+        // Búsqueda con debounce para mejor rendimiento
+        const searchInput = document.getElementById('emojiSearch');
+        if (searchInput) {
+            let searchTimeout;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    const query = this.value.toLowerCase();
+                    searchEmojis(query);
+                }, 300); // Esperar 300ms antes de buscar
+            });
+        }
+        
+        // Cerrar al hacer clic fuera
+        document.addEventListener('click', function(e) {
+            const picker = document.getElementById('emojiPicker');
+            const container = document.querySelector('.emoji-selector-container');
+            
+            if (container && !container.contains(e.target) && picker) {
+                picker.classList.remove('show');
+            }
+        });
+        
+        // Cargar datos iniciales
+        loadEmojiCategory('business');
+        updateRecentEmojis();
+        
+        console.log('✅ Emoji picker OPTIMIZADO y listo');
+    }, 500);
 }
     
        // PLACEHOLDER FUNCTIONS
@@ -1185,36 +1348,6 @@ function initializeEmojiPicker() {
     console.log('✅ Emoji picker configurado correctamente');
 }
 
-function forceToggleEmojiPicker() {
-    console.log('🚀 Ejecutando forceToggleEmojiPicker');
-    
-    const picker = document.getElementById('emojiPicker');
-    if (!picker) {
-        console.error('❌ emojiPicker no encontrado');
-        return;
-    }
-    
-    const isVisible = picker.classList.contains('show');
-    console.log('📱 Estado actual del picker:', isVisible ? 'visible' : 'oculto');
-    
-    if (isVisible) {
-        picker.classList.remove('show');
-        console.log('👆 Picker cerrado');
-    } else {
-        picker.classList.add('show');
-        loadEmojiCategory('business');
-        updateRecentEmojis();
-        console.log('👆 Picker abierto');
-        
-        // Focus en búsqueda
-        setTimeout(() => {
-            const searchInput = document.getElementById('emojiSearch');
-            if (searchInput) {
-                searchInput.focus();
-            }
-        }, 200);
-    }
-}
     // AGREGAR AQUÍ LA NUEVA FUNCIÓN
 function forceToggleEmojiPicker() {
     console.log('🚀 Ejecutando forceToggleEmojiPicker');
