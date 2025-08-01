@@ -4214,7 +4214,7 @@ class GrizalumCompanyManager {
                             <i class="fas fa-edit"></i>
                             Edición Masiva
                         </button>
-                        <button class="action-btn primary" onclick="grizalumCompanyManager.addNewCompany()">
+                        <button class="action-btn primary" onclick="grizalumCompanyManager.showAddCompanyWizard()">
                             <i class="fas fa-plus"></i>
                             Nueva Empresa
                         </button>
