@@ -835,16 +835,17 @@ class GrizalumCompanyManager {
                 justify-content: center;
             }
 
-            .management-modal-content {
-                background: white;
-                border-radius: 20px;
-                width: 95%;
-                max-width: 1400px;
-                max-height: 90vh;
-                overflow: hidden;
-                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
-                animation: modalSlideIn 0.3s ease;
-            }
+           .management-modal-content {
+    background: white;
+    border-radius: 20px;
+    width: 98%;                    /* ← MÁS ANCHO */
+    max-width: 1800px;            /* ← LÍMITE MÁS GRANDE */
+    max-height: 95vh;             /* ← MÁS ALTO */
+    overflow: hidden;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+    animation: modalSlideIn 0.3s ease;
+    position: relative;
+}
 
             .management-header {
                 background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
