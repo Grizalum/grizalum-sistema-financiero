@@ -166,7 +166,7 @@ class GrizalumCompanyManager {
                 position: absolute;
                 top: 100%;
                 right: 0;
-                width: 450px;
+                width: 350px;
                 background: white;
                 border-radius: 20px;
                 box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
@@ -347,40 +347,37 @@ class GrizalumCompanyManager {
 
             /* =============== MODAL PROFESIONAL =============== */
             .grizalum-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.9) !important;
-    z-index: 999999 !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(8px);
-}
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.8);
+                z-index: 60000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+            }
+
             .grizalum-modal.show {
                 opacity: 1;
                 visibility: visible;
             }
 
             .grizalum-modal-content {
-    background: white;
-    border-radius: 20px;
-    width: 95% !important;
-    max-width: 1200px !important;
-    min-width: 800px !important;
-    max-height: 85vh !important;
-    min-height: 600px !important;
-    overflow: hidden;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
-    animation: modalSlideIn 0.3s ease;
-    position: relative;
-    margin: 5vh auto;
-}
+                background: white;
+                border-radius: 20px;
+                width: 99%;
+                max-width: 2100px;
+                max-height: 98vh;
+                overflow: hidden;
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+                animation: modalSlideIn 0.3s ease;
+                position: relative;
+            }
 
             @keyframes modalSlideIn {
                 from { opacity: 0; transform: scale(0.9) translateY(-20px); }
@@ -3347,7 +3344,6 @@ class GrizalumCompanyManager {
         
         document.head.appendChild(style);
         console.log('🎨 Estilos del Company Manager creados');
-        
     }
 
     // ================================================================
@@ -3576,7 +3572,6 @@ class GrizalumCompanyManager {
     showAddCompanyWizard() {
         this.createAddCompanyModal();
         const modal = document.getElementById('addCompanyModal');
-        this.showModal();
         modal.classList.add('show');
         document.getElementById('newCompanyName').value = '';
         document.getElementById('newCompanyType').value = '';
@@ -3814,7 +3809,6 @@ class GrizalumCompanyManager {
         const modal = document.getElementById('addCompanyModal');
         if (modal) {
             modal.classList.remove('show');
-            this.closeModal();
             setTimeout(() => modal.remove(), 300);
         }
     }
@@ -4096,9 +4090,8 @@ class GrizalumCompanyManager {
         
         // Mostrar modal con animación
         setTimeout(() => {
-       this.showModal();
-        modal.classList.add('show');
-     }, 100);
+            modal.classList.add('show');
+        }, 100);
         
         console.log('🎛️ Modal de gestión avanzada creado');
     }
@@ -6697,16 +6690,6 @@ function initializeCompanyManager() {
         
     } catch (error) {
         console.error('❌ Error inicializando Company Manager:', error);
-    }
-    // Funciones para manejar modales correctamente
-    showModal() {
-        document.body.style.overflow = 'hidden';
-        console.log('📱 Modal abierto correctamente');
-    }
-
-    closeModal() {
-        document.body.style.overflow = 'auto';
-        console.log('📱 Modal cerrado correctamente');
     }
 }
 
