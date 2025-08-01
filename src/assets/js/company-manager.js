@@ -370,9 +370,9 @@ class GrizalumCompanyManager {
             .grizalum-modal-content {
                 background: white;
                 border-radius: 20px;
-                width: 95%;
-                max-width: 1400px;
-                max-height: 90vh;
+                width: 99%;
+                max-width: 2100px;
+                max-height: 98vh;
                 overflow: hidden;
                 box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
                 animation: modalSlideIn 0.3s ease;
@@ -829,7 +829,7 @@ class GrizalumCompanyManager {
                 position: fixed;
                 top: 0; left: 0; right: 0; bottom: 0;
                 background: rgba(0, 0, 0, 0.8);
-                z-index: 50000;
+                z-index: 99999;
                 display: flex;
                 align-items: center;
                 justify-content: center;
