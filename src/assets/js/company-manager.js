@@ -353,7 +353,7 @@ class GrizalumCompanyManager {
                 right: 0;
                 bottom: 0;
                 background: rgba(0, 0, 0, 0.8);
-                z-index: 50000;
+                z-index: 60000;
                 display: flex;
                 align-items: center;
                 justify-content: center;
