@@ -838,10 +838,10 @@ class GrizalumCompanyManager {
            .management-modal-content {
     background: white;
     border-radius: 20px;
-    width: 85vw;                
-    max-width: 1400px;           
-    height: 80vh;               
-    max-height: 900px;           
+    width: 96vw;                 
+    max-width: 2200px;           
+    height: 92vh;               
+    max-height: 1200px;          
     overflow: hidden;
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
     animation: modalSlideIn 0.3s ease;
