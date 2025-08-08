@@ -2228,6 +2228,21 @@ button:focus,
     display: flex !important;
     flex-direction: column !important;
 }
+.management-modal-content {
+    background: white !important;
+    border-radius: 20px !important;
+    width: 80vw !important;
+    max-width: 1200px !important;
+    height: 75vh !important;
+    max-height: 800px !important;
+    overflow: hidden !important;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4) !important;
+    animation: modalSlideIn 0.3s ease !important;
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    z-index: 500000 !important;  /* ← AGREGAR ESTA LÍNEA */
+}
 
 .management-content {
     padding: 0 !important;
