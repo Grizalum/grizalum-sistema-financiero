@@ -838,24 +838,28 @@ class GrizalumCompanyManager {
            .management-modal-content {
     background: white;
     border-radius: 20px;
-    width: 99%;
-    max-width: 2100px;
-     max-height: 98vh;           
+    width: 95vw;
+    max-width: none;
+    height: 95vh;
+    max-height: none;
     overflow: hidden;
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
     animation: modalSlideIn 0.3s ease;
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
             .management-header {
-                background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
-                color: white;
-                padding: 2rem;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-
+    background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    border-bottom: 3px solid rgba(255,255,255,0.2);
+}
             .close-modal {
                 background: none; border: none;
                 color: white; font-size: 2rem;
@@ -870,10 +874,12 @@ class GrizalumCompanyManager {
             }
 
             .management-tabs {
-                display: flex;
-                background: #f8f9fa;
-                border-bottom: 1px solid #e9ecef;
-            }
+    display: flex;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    flex-shrink: 0;
+    min-height: 60px;
+}
 
             .tab-btn {
                 flex: 1; padding: 1.5rem;
@@ -893,11 +899,12 @@ class GrizalumCompanyManager {
                 color: #d4af37;
             }
 
-            .management-content {
-                padding: 0;
-                max-height: 75vh;
-                overflow-y: auto;
-            }
+           .management-content {
+    padding: 0;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+}
 
             .tab-content {
                 display: none;
@@ -3319,6 +3326,41 @@ class GrizalumCompanyManager {
                 background: linear-gradient(135deg, #b87333 0%, #a0691f 100%);
             }
 
+/* =============== MEJORAS PARA MODAL MÁS GRANDE =============== */
+.advanced-management-modal {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.tab-content {
+    height: 100%;
+    overflow-y: auto;
+}
+
+.tab-content.active {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Scrollbar personalizado para el contenido */
+.management-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.management-content::-webkit-scrollbar-track {
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: 10px;
+}
+
+.management-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+    border-radius: 10px;
+}
+
+.management-content::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #b87333 0%, #a0691f 100%);
+}
             /* =============== ANIMACIONES AVANZADAS =============== */
             @keyframes companyItemSlide {
                 from {
