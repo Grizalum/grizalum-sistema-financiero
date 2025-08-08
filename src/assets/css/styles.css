@@ -2311,3 +2311,41 @@ button:focus,
     scrollbar-width: thin !important;
     scrollbar-color: #d4af37 rgba(212, 175, 55, 0.1) !important;
 }
+/* ================================================================
+   FORZAR MODAL NUEVA EMPRESA ADELANTE - SOLUCIÓN DEFINITIVA
+   ================================================================ */
+
+/* Modal de gestión avanzada */
+.advanced-management-modal,
+#advancedManagementModal {
+    z-index: 50000 !important;
+}
+
+/* Modal nueva empresa - MÁS ALTO */
+.grizalum-modal,
+#addCompanyModal {
+    z-index: 60000 !important;
+}
+
+/* Cuando el modal nueva empresa está visible */
+.grizalum-modal.show,
+#addCompanyModal.show {
+    z-index: 70000 !important;
+}
+
+/* Contenido del modal nueva empresa */
+.grizalum-modal-content {
+    z-index: 70001 !important;
+    position: relative !important;
+}
+
+/* Forzar todos los modals GRIZALUM por delante */
+div[class*="grizalum-modal"] {
+    z-index: 80000 !important;
+}
+
+/* Última medida - cualquier modal que contenga "addCompany" */
+*[id*="addCompany"],
+*[class*="addCompany"] {
+    z-index: 90000 !important;
+}
