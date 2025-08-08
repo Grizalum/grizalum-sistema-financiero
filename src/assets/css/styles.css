@@ -2211,3 +2211,62 @@ button:focus,
    Responsive perfecto para TODOS los dispositivos ✅
    Nivel Fortune 500 Internacional garantizado ✅
    ================================================================ */
+/* ================================================================
+   MODAL GESTIÓN AVANZADA - TAMAÑO GRANDE
+   ================================================================ */
+.management-modal-content {
+    background: white !important;
+    border-radius: 20px !important;
+    width: 92vw !important;
+    max-width: 1800px !important;
+    height: 88vh !important;
+    max-height: 1000px !important;
+    overflow: hidden !important;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4) !important;
+    animation: modalSlideIn 0.3s ease !important;
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.management-content {
+    padding: 0 !important;
+    flex: 1 !important;
+    overflow-y: auto !important;
+    min-height: 0 !important;
+}
+
+.management-header {
+    background: linear-gradient(135deg, #d4af37 0%, #b87333 100%) !important;
+    color: white !important;
+    padding: 1.5rem 2rem !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    flex-shrink: 0 !important;
+    border-bottom: 3px solid rgba(255,255,255,0.2) !important;
+}
+
+.management-tabs {
+    display: flex !important;
+    background: #f8f9fa !important;
+    border-bottom: 1px solid #e9ecef !important;
+    flex-shrink: 0 !important;
+    min-height: 60px !important;
+}
+
+.advanced-management-modal {
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+}
+
+.tab-content {
+    height: 100% !important;
+    overflow-y: auto !important;
+}
+
+.tab-content.active {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+}
