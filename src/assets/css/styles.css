@@ -2520,3 +2520,45 @@ div[class*="grizalum-modal"] {
 .metric-card:hover {
     animation: themeGlow 2s infinite !important;
 }
+/* ================================================================
+   VARIABLES CSS DINÁMICAS PARA TEMAS - SOLUCIÓN DEFINITIVA
+   ================================================================ */
+:root {
+    --theme-primary: #d4af37;
+    --theme-secondary: #b87333;
+    --theme-gradient: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
+    --theme-shadow: rgba(212, 175, 55, 0.3);
+    --theme-glow: rgba(212, 175, 55, 0.1);
+}
+
+/* FORZAR APLICACIÓN DE TEMAS */
+.executive-header {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, var(--theme-glow) 100%) !important;
+    border-bottom: 3px solid var(--theme-primary) !important;
+}
+
+.sidebar-header {
+    background: var(--theme-gradient) !important;
+}
+
+.metric-card::before {
+    background: var(--theme-gradient) !important;
+    height: 6px !important;
+}
+
+.metric-icon {
+    background: var(--theme-gradient) !important;
+}
+
+.period-btn.active {
+    background: var(--theme-primary) !important;
+    color: white !important;
+}
+
+.ai-header-button {
+    background: var(--theme-gradient) !important;
+}
+
+.chart-card {
+    border-top: 4px solid var(--theme-primary) !important;
+}
