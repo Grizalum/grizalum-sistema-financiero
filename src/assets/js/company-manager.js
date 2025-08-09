@@ -169,7 +169,7 @@ class GrizalumCompanyManager {
                 border-radius: 20px;
                 box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
                 border: 1px solid rgba(212, 175, 55, 0.2);
-                z-index: 10000;
+                z-index: 9999999
                 will-change: transform, opacity;
                 opacity: 0;
                 visibility: hidden;
