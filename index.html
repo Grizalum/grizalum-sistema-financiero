@@ -552,12 +552,184 @@ function updateSidebar(data) {
 /**
  * Aplicar tema de empresa
  */
+/**
+ * Aplicar tema de empresa - VERSIÓN COMPLETA
+ */
 function applyCompanyThemeIntegration(companyId) {
     console.log(`🎨 Aplicando tema para empresa: ${companyId}`);
     
-    // Esta función se puede expandir para aplicar temas visuales
+    // Obtener datos de la empresa desde company-manager
+    let company = null;
+    if (window.grizalumCompanyManager && window.grizalumCompanyManager.companies) {
+        company = window.grizalumCompanyManager.companies[companyId];
+    }
+    
+    if (!company || !company.theme) {
+        console.warn('❌ No se encontró empresa o tema');
+        return;
+    }
+    
+    const theme = company.theme;
+    console.log(`🎨 Aplicando colores: ${theme.primary} -> ${theme.secondary}`);
+    
+    // 🎨 CREAR/ACTUALIZAR ESTILOS GLOBALES EN EL INDEX
+    const styleId = 'grizalum-index-theme';
+    let existingStyle = document.getElementById(styleId);
+    
+    if (existingStyle) {
+        existingStyle.remove();
+    }
+    
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = `
+        /* APLICAR TEMA A ELEMENTOS DEL INDEX */
+        
+        /* Header ejecutivo */
+        .executive-header {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, ${theme.primary}22 100%) !important;
+            border-bottom: 3px solid ${theme.primary} !important;
+            box-shadow: 0 4px 20px ${theme.primary}33 !important;
+        }
+        
+        /* Sidebar */
+        .sidebar-header {
+            background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%) !important;
+        }
+        
+        /* Tarjetas de métricas */
+        .metric-card {
+            border-top: 4px solid ${theme.primary} !important;
+            box-shadow: 0 2px 8px ${theme.primary}22 !important;
+        }
+        
+        .metric-card::before {
+            background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%) !important;
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+        
+        /* Iconos de métricas */
+        .metric-icon {
+            background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%) !important;
+            box-shadow: 0 4px 12px ${theme.primary}44 !important;
+        }
+        
+        /* Botones de período */
+        .period-btn.active {
+            background: ${theme.primary} !important;
+            border-color: ${theme.primary} !important;
+            color: white !important;
+            box-shadow: 0 4px 12px ${theme.primary}44 !important;
+        }
+        
+        .period-btn:hover {
+            background: ${theme.secondary} !important;
+            border-color: ${theme.secondary} !important;
+        }
+        
+        /* Botón IA Assistant */
+        .ai-header-button {
+            background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%) !important;
+            box-shadow: 0 6px 20px ${theme.primary}44 !important;
+        }
+        
+        /* Tarjetas de gráficos */
+        .chart-card {
+            border-top: 4px solid ${theme.primary} !important;
+            box-shadow: 0 2px 8px ${theme.primary}22 !important;
+        }
+        
+        /* Enlaces de navegación activos */
+        .nav-link.active {
+            background: ${theme.primary} !important;
+            color: white !important;
+        }
+        
+        /* Botones de filtro */
+        .filter-btn.active {
+            background: ${theme.primary} !important;
+            color: white !important;
+        }
+        
+        /* Brand icon */
+        .brand-icon {
+            background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%) !important;
+        }
+        
+        /* Summary values en sidebar */
+        .summary-value {
+            color: ${theme.primary} !important;
+            font-weight: bold;
+        }
+        
+        /* Variables CSS globales */
+        :root {
+            --theme-primary: ${theme.primary} !important;
+            --theme-secondary: ${theme.secondary} !important;
+            --theme-gradient: linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%) !important;
+        }
+    `;
+    
+    document.head.appendChild(style);
+    
+    // 🎯 APLICAR DIRECTAMENTE A ELEMENTOS ESPECÍFICOS DEL INDEX
+    try {
+        // Header ejecutivo
+        const header = document.querySelector('.executive-header');
+        if (header) {
+            header.style.background = `linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, ${theme.primary}22 100%)`;
+            header.style.borderBottom = `3px solid ${theme.primary}`;
+        }
+        
+        // Sidebar header
+        const sidebarHeader = document.querySelector('.sidebar-header');
+        if (sidebarHeader) {
+            sidebarHeader.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
+        }
+        
+        // Tarjetas de métricas
+        document.querySelectorAll('.metric-card').forEach(card => {
+            if (card) {
+                card.style.borderTop = `4px solid ${theme.primary}`;
+                card.style.position = 'relative';
+            }
+        });
+        
+        // Iconos de métricas
+        document.querySelectorAll('.metric-icon').forEach(icon => {
+            if (icon) {
+                icon.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
+                icon.style.boxShadow = `0 4px 12px ${theme.primary}44`;
+            }
+        });
+        
+        // Botón IA
+        const aiBtn = document.querySelector('.ai-header-button');
+        if (aiBtn) {
+            aiBtn.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
+            aiBtn.style.boxShadow = `0 6px 20px ${theme.primary}44`;
+        }
+        
+        // Brand icon
+        const brandIcon = document.querySelector('.brand-icon');
+        if (brandIcon) {
+            brandIcon.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
+        }
+        
+        console.log(`✅ Tema ${theme.primary} aplicado al INDEX correctamente`);
+        
+    } catch (error) {
+        console.error('❌ Error aplicando tema al index:', error);
+    }
+    
+    // Disparar evento de confirmación
     document.dispatchEvent(new CustomEvent('grizalumThemeChanged', {
-        detail: { companyId, timestamp: Date.now() }
+        detail: { companyId, company, theme, timestamp: Date.now() }
     }));
 }
 
