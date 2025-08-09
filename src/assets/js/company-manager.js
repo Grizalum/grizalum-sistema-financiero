@@ -5626,16 +5626,79 @@ class GrizalumCompanyManager {
     }
 
     applyTheme(companyId) {
-        const themeSelect = document.getElementById(`theme_${companyId}`);
-        if (!themeSelect || !this.companies[companyId]) return;
-        
-        const selectedTheme = themeSelect.value;
-        console.log(`🎨 Aplicando tema ${selectedTheme} a ${companyId}`);
-        
-        // Aquí aplicarías el tema seleccionado
-        this.showNotification(`🎨 Tema aplicado a ${this.companies[companyId].name}`, 'success');
-        this.logAuditAction('THEME_APPLIED', `Tema ${selectedTheme} aplicado a ${this.companies[companyId].name}`);
+    const themeSelect = document.getElementById(`theme_${companyId}`);
+    if (!themeSelect || !this.companies[companyId]) return;
+    
+    const selectedTheme = themeSelect.value;
+    console.log(`🎨 Aplicando tema ${selectedTheme} a ${companyId}`);
+    
+    // Temas disponibles
+    const availableThemes = {
+        'goldman-platinum': { primary: '#d4af37', secondary: '#b87333' },
+        'tesla-futuristic': { primary: '#ff0040', secondary: '#ff6b9d' },
+        'cupertino-elite': { primary: '#007aff', secondary: '#5ac8fa' },
+        'netflix-premium': { primary: '#e50914', secondary: '#f40612' },
+        'midnight-corporate': { primary: '#00d9ff', secondary: '#0099cc' },
+        'emerald-nature': { primary: '#10b981', secondary: '#059669' },
+        'royal-purple': { primary: '#8b5cf6', secondary: '#7c3aed' },
+        'cyber-neon': { primary: '#00ff88', secondary: '#00cc6a' },
+        'fire-industries': { primary: '#dc2626', secondary: '#ea580c' },
+        'ocean-commerce': { primary: '#0891b2', secondary: '#0e7490' }
+    };
+    
+    const theme = availableThemes[selectedTheme];
+    if (!theme) {
+        this.showNotification('❌ Tema no válido', 'error');
+        return;
     }
+    
+    // Aplicar tema a la empresa
+    this.companies[companyId].theme = { ...theme };
+    this.companies[companyId].lastModified = new Date().toISOString();
+    this.saveCompaniesData(this.companies);
+    
+    // Actualizar avatar en la tarjeta de temas
+    const avatar = document.querySelector(`[data-company="${companyId}"] .company-avatar-theme`);
+    if (avatar) {
+        avatar.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
+        avatar.style.transform = 'scale(1.1)';
+        setTimeout(() => {
+            avatar.style.transform = 'scale(1)';
+        }, 300);
+    }
+    
+    // Actualizar preview
+    const preview = document.getElementById(`preview_${companyId}`);
+    if (preview) {
+        preview.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
+        preview.style.transform = 'scale(1.02)';
+        setTimeout(() => {
+            preview.style.transform = 'scale(1)';
+        }, 300);
+    }
+    
+    // Actualizar colores personalizados
+    const primaryInput = document.getElementById(`primary_${companyId}`);
+    const secondaryInput = document.getElementById(`secondary_${companyId}`);
+    if (primaryInput) primaryInput.value = theme.primary;
+    if (secondaryInput) secondaryInput.value = theme.secondary;
+    
+    // Si es la empresa activa, actualizar UI principal
+    if (this.selectedCompany === companyId) {
+        this.updateSelectedCompany(companyId);
+        
+        // Notificar al sistema principal
+        if (window.GRIZALUM && window.GRIZALUM.applyTheme) {
+            window.GRIZALUM.applyTheme(companyId);
+        }
+    }
+    
+    // Actualizar lista de empresas
+    this.renderCompaniesList();
+    
+    this.showNotification(`🎨 Tema "${selectedTheme}" aplicado a ${this.companies[companyId].name}`, 'success');
+    this.logAuditAction('THEME_APPLIED', `Tema ${selectedTheme} aplicado a ${this.companies[companyId].name}`);
+}
 
     updateCustomColors(companyId) {
         const primaryColor = document.getElementById(`primary_${companyId}`)?.value;
