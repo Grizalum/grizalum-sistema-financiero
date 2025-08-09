@@ -7297,6 +7297,46 @@ exportCurrentCompanyTheme() {
             ]
         };
     }
+    // ================================================================
+    // INTEGRACIÓN CON DASHBOARD PRINCIPAL
+    // ================================================================
+    
+    applyCompanyThemeIntegration(companyId) {
+        console.log(`🎨 Aplicando tema para empresa: ${companyId}`);
+        
+        const company = this.companies[companyId];
+        if (!company || !company.theme) {
+            console.warn('❌ Empresa o tema no encontrado');
+            return;
+        }
+        
+        const theme = company.theme;
+        console.log(`🎨 Aplicando colores: ${theme.primary} -> ${theme.secondary}`);
+        
+        // Actualizar selector principal de empresas
+        const companyIcon = document.getElementById('grizalumCurrentCompanyIcon');
+        if (companyIcon && companyIcon.parentElement) {
+            companyIcon.parentElement.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
+            companyIcon.parentElement.style.transition = 'all 0.3s ease';
+            companyIcon.parentElement.style.transform = 'scale(1.05)';
+            
+            setTimeout(() => {
+                companyIcon.parentElement.style.transform = 'scale(1)';
+            }, 300);
+        }
+        
+        // Disparar evento para otros módulos
+        document.dispatchEvent(new CustomEvent('grizalumThemeChanged', {
+            detail: { 
+                companyId, 
+                company: company,
+                theme: theme,
+                timestamp: Date.now() 
+            }
+        }));
+        
+        this.logAuditAction('THEME_INTEGRATION', `Tema integrado en dashboard: ${company.name} - ${theme.primary}`);
+    }
 }
 
 // ================================================================
@@ -7422,45 +7462,6 @@ console.log(`
    • Optimización automática de storage
    • Reportes de riesgo y recomendaciones
    • Mantenimiento preventivo automático
-// ================================================================
-    // INTEGRACIÓN CON DASHBOARD PRINCIPAL
-    // ================================================================
-    
-    applyCompanyThemeIntegration(companyId) {
-        console.log(`🎨 Aplicando tema para empresa: ${companyId}`);
-        
-        const company = this.companies[companyId];
-        if (!company || !company.theme) {
-            console.warn('❌ Empresa o tema no encontrado');
-            return;
-        }
-        
-        const theme = company.theme;
-        console.log(`🎨 Aplicando colores: ${theme.primary} -> ${theme.secondary}`);
-        
-        // Actualizar selector principal de empresas
-        const companyIcon = document.getElementById('grizalumCurrentCompanyIcon');
-        if (companyIcon && companyIcon.parentElement) {
-            companyIcon.parentElement.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
-            companyIcon.parentElement.style.transition = 'all 0.3s ease';
-            companyIcon.parentElement.style.transform = 'scale(1.05)';
-            
-            setTimeout(() => {
-                companyIcon.parentElement.style.transform = 'scale(1)';
-            }, 300);
-        }
-        
-        // Disparar evento para otros módulos
-        document.dispatchEvent(new CustomEvent('grizalumThemeChanged', {
-            detail: { 
-                companyId, 
-                company: company,
-                theme: theme,
-                timestamp: Date.now() 
-            }
-        }));
-        
-        this.logAuditAction('THEME_INTEGRATION', `Tema integrado en dashboard: ${company.name} - ${theme.primary}`);
-    }
+
 🏢 ===================================================
 `);
