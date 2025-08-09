@@ -4902,6 +4902,8 @@ class GrizalumCompanyManager {
         }
         
         this.showNotification(`🎨 Tema ${selectedTheme} aplicado a ${this.companies[companyId].name}`, 'success');
+        // APLICAR TEMA A TODA LA APP
+        this.applyGlobalTheme(companyId);
         this.logAuditAction('THEME_APPLIED', `Tema ${selectedTheme} aplicado a ${this.companies[companyId].name}`);
     }
 
@@ -5823,7 +5825,45 @@ class GrizalumCompanyManager {
     this.showNotification(`🎨 Tema "${selectedTheme}" aplicado a ${this.companies[companyId].name}`, 'success');
     this.logAuditAction('THEME_APPLIED', `Tema ${selectedTheme} aplicado a ${this.companies[companyId].name}`);
 }
+// FUNCIÓN PARA APLICAR TEMA GLOBAL A TODA LA APP
+applyGlobalTheme(companyId) {
+    const company = this.companies[companyId];
+    if (!company || !company.theme) return;
+    
+    const theme = company.theme;
+    console.log(`🌈 Aplicando tema global: ${theme.primary} -> ${theme.secondary}`);
+    
+    // CAMBIAR VARIABLES CSS GLOBALES
+    document.documentElement.style.setProperty('--theme-primary', theme.primary);
+    document.documentElement.style.setProperty('--theme-secondary', theme.secondary);
+    document.documentElement.style.setProperty('--theme-gradient', 
+        `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`);
+    document.documentElement.style.setProperty('--theme-shadow', 
+        `${theme.primary}66`);
+    document.documentElement.style.setProperty('--theme-glow', 
+        `${theme.primary}1a`);
+    
+    // APLICAR AL SELECTOR DE EMPRESAS
+    this.applyCompanyThemeIntegration(companyId);
+    
+    // NOTIFICACIÓN ÉPICA
+    this.showNotification(`🎨 Tema ${this.getThemeName(theme)} aplicado a toda la app`, 'success');
+    
+    console.log('🌈 Tema global aplicado a toda la aplicación');
+}
 
+// OBTENER NOMBRE DEL TEMA
+getThemeName(theme) {
+    const themes = {
+        '#e50914': 'Netflix Premium',
+        '#d4af37': 'Goldman Platinum', 
+        '#ff0040': 'Tesla Futuristic',
+        '#007aff': 'Cupertino Elite',
+        '#10b981': 'Emerald Nature',
+        '#8b5cf6': 'Royal Purple'
+    };
+    return themes[theme.primary] || 'Personalizado';
+}
     updateCustomColors(companyId) {
         const primaryColor = document.getElementById(`primary_${companyId}`)?.value;
         const secondaryColor = document.getElementById(`secondary_${companyId}`)?.value;
