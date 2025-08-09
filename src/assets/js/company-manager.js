@@ -123,7 +123,7 @@ class GrizalumCompanyManager {
             .grizalum-company-icon {
                 width: 48px;
                 height: 48px;
-                background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+                background: linear-gradient(135deg, var(--company-primary, #d4af37) 0%, var(--company-secondary, #b87333) 100%);
                 border-radius: 12px;
                 display: flex;
                 align-items: center;
