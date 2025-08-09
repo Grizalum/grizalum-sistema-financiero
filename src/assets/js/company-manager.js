@@ -5894,45 +5894,36 @@ applyGlobalThemeFromPreset(themeName) {
     const theme = themes[themeName] || themes['goldman-platinum'];
     const gradient = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
     
-    // CAMBIAR TODA LA APP CON FUERZA
-// 1. Header
-const header = document.querySelector('.executive-header');
-if (header) {
-    header.style.setProperty('background', `linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, ${theme.primary}22 100%)`, 'important');
-    header.style.setProperty('border-bottom', `3px solid ${theme.primary}`, 'important');
-    header.style.setProperty('box-shadow', `0 4px 20px ${theme.primary}66`, 'important');
-}
-
-// 2. Sidebar Header
-const sidebarHeader = document.querySelector('.sidebar-header');
-if (sidebarHeader) {
-    sidebarHeader.style.setProperty('background', gradient, 'important');
-}
-
-// 3. FORZAR CAMBIO EN TODAS LAS TARJETAS
-document.querySelectorAll('.metric-card').forEach(card => {
-    card.style.setProperty('border-top', `6px solid ${theme.primary}`, 'important');
+    // CAMBIAR TODA LA APP
+    // 1. Header
+    const header = document.querySelector('.executive-header');
+    if (header) {
+        header.style.background = `linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, ${theme.primary}22 100%)`;
+        header.style.borderBottom = `3px solid ${theme.primary}`;
+    }
     
-    // Buscar la línea superior de cada tarjeta
-    const cardBefore = card.querySelector('::before');
-    card.style.setProperty('--theme-primary', theme.primary, 'important');
-});
-
-// 4. FORZAR CAMBIO EN TODOS LOS ICONOS
-document.querySelectorAll('.metric-icon').forEach(icon => {
-    icon.style.setProperty('background', gradient, 'important');
-});
-
-// 5. CAMBIAR BOTONES Y ELEMENTOS ACTIVOS
-document.querySelectorAll('.period-btn.active').forEach(btn => {
-    btn.style.setProperty('background', theme.primary, 'important');
-    btn.style.setProperty('color', 'white', 'important');
-});
-
-// 6. AI BUTTON
-const aiButton = document.querySelector('.ai-header-button');
-if (aiButton) {
-    aiButton.style.setProperty('background', gradient, 'important');
+    // 2. Sidebar
+    const sidebarHeader = document.querySelector('.sidebar-header');
+    if (sidebarHeader) {
+        sidebarHeader.style.background = gradient;
+    }
+    
+    // 3. Tarjetas
+    document.querySelectorAll('.metric-card').forEach(card => {
+        card.style.borderTop = `6px solid ${theme.primary}`;
+    });
+    
+    // 4. Iconos
+    document.querySelectorAll('.metric-icon').forEach(icon => {
+        icon.style.background = gradient;
+    });
+    
+    // 5. Botones
+    document.querySelectorAll('.period-btn.active').forEach(btn => {
+        btn.style.background = theme.primary;
+    });
+    
+    console.log(`✅ Tema ${themeName} aplicado a TODA la app`);
 }
 // OBTENER NOMBRE DEL TEMA
 getThemeName(theme) {
