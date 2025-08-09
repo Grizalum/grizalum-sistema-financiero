@@ -2409,7 +2409,7 @@ div[class*="grizalum-modal"] {
     transition: transform 0.3s ease !important;
 }
 /* ================================================================
-   SISTEMA DE TEMAS DINÁMICOS GLOBAL - NIVEL NETFLIX/SPOTIFY
+   SISTEMA DE TEMAS DINÁMICOS GLOBAL - FORZAR TODOS LOS ELEMENTOS
    ================================================================ */
 
 :root {
@@ -2421,64 +2421,102 @@ div[class*="grizalum-modal"] {
     --theme-glow: rgba(212, 175, 55, 0.1);
 }
 
-/* APLICAR TEMA AL HEADER COMPLETO */
+/* FORZAR TEMA AL HEADER COMPLETO */
 .executive-header {
     background: linear-gradient(135deg, 
         rgba(255, 255, 255, 0.95) 0%, 
         var(--theme-glow) 100%) !important;
+    border-bottom: 3px solid var(--theme-primary) !important;
+    box-shadow: 0 4px 20px var(--theme-shadow) !important;
+}
+
+/* FORZAR TEMA A SIDEBAR */
+.sidebar-header {
+    background: var(--theme-gradient) !important;
     border-bottom: 2px solid var(--theme-primary) !important;
 }
 
-/* APLICAR TEMA A TARJETAS DE MÉTRICAS */
+.nav-link.active {
+    background: var(--theme-gradient) !important;
+    border-left: 4px solid var(--theme-primary) !important;
+}
+
+.nav-link:hover {
+    color: var(--theme-primary) !important;
+    border-left: 3px solid var(--theme-primary) !important;
+}
+
+/* FORZAR TEMA A TARJETAS DE MÉTRICAS */
 .metric-card::before {
     background: var(--theme-gradient) !important;
+    height: 6px !important;
 }
 
 .metric-card:hover {
     border-color: var(--theme-primary) !important;
     box-shadow: 0 15px 40px var(--theme-shadow) !important;
+    transform: translateY(-6px) !important;
 }
 
-/* APLICAR TEMA A GRÁFICOS */
+.metric-card:hover .metric-value {
+    color: var(--theme-primary) !important;
+    text-shadow: 0 0 20px var(--theme-shadow) !important;
+}
+
+/* FORZAR TEMA A GRÁFICOS */
+.chart-card {
+    border-top: 4px solid var(--theme-primary) !important;
+}
+
 .chart-card:hover {
     border-color: var(--theme-primary) !important;
-    box-shadow: 0 10px 30px var(--theme-shadow) !important;
+    box-shadow: 0 12px 35px var(--theme-shadow) !important;
 }
 
-/* APLICAR TEMA A SIDEBAR */
-.sidebar-header {
-    background: var(--theme-gradient) !important;
+.filter-btn.active {
+    background: var(--theme-primary) !important;
+    border-color: var(--theme-primary) !important;
+    color: white !important;
 }
 
-.nav-link.active {
-    background: var(--theme-gradient) !important;
-}
-
-.nav-link:hover {
-    color: var(--theme-primary) !important;
-}
-
-/* APLICAR TEMA A BOTONES */
+/* FORZAR TEMA A BOTONES */
 .period-btn.active {
     background: var(--theme-primary) !important;
     color: white !important;
+    box-shadow: 0 4px 12px var(--theme-shadow) !important;
 }
 
 .ai-header-button {
     background: var(--theme-gradient) !important;
+    box-shadow: 0 6px 20px var(--theme-shadow) !important;
 }
 
-/* APLICAR TEMA A NOTIFICACIONES */
+/* FORZAR TEMA A ICONOS DE MÉTRICAS */
+.metric-icon.revenue { 
+    background: var(--theme-gradient) !important; 
+}
+.metric-icon.expenses { 
+    background: var(--theme-gradient) !important; 
+}
+.metric-icon.profit { 
+    background: var(--theme-gradient) !important; 
+}
+.metric-icon.growth { 
+    background: var(--theme-gradient) !important; 
+}
+
+/* EFECTOS DINÁMICOS POTENTES */
 .notification-center:hover {
     background: var(--theme-glow) !important;
+    border: 2px solid var(--theme-primary) !important;
 }
 
-/* EFECTOS DINÁMICOS CON TEMA */
-.metric-card:hover .metric-value {
-    color: var(--theme-primary) !important;
+/* ANIMACIÓN DE BRILLO */
+@keyframes themeGlow {
+    0%, 100% { box-shadow: 0 0 5px var(--theme-shadow); }
+    50% { box-shadow: 0 0 20px var(--theme-shadow), 0 0 30px var(--theme-shadow); }
 }
 
-.chart-filters .filter-btn.active {
-    background: var(--theme-primary) !important;
-    border-color: var(--theme-primary) !important;
+.metric-card:hover {
+    animation: themeGlow 2s infinite !important;
 }
