@@ -5912,9 +5912,37 @@ class GrizalumCompanyManager {
     }
 
     filterThemes(category) {
-        console.log(`🔍 Filtrando temas por: ${category}`);
-        this.showNotification(`🔍 Mostrando temas: ${category}`, 'info');
-    }
+    console.log(`🔍 Filtrando temas por: ${category}`);
+    
+    const themes = document.querySelectorAll('.showcase-theme');
+    const filters = document.querySelectorAll('.filter-chip');
+    
+    // Actualizar filtros activos
+    filters.forEach(filter => {
+        filter.classList.remove('active');
+        if (filter.textContent.toLowerCase().includes(category.toLowerCase()) || category === 'todos') {
+            filter.classList.add('active');
+        }
+    });
+    
+    // Mostrar/ocultar temas con animación
+    themes.forEach((theme, index) => {
+        const themeCategory = theme.dataset.category?.toLowerCase() || '';
+        
+        if (category === 'todos' || themeCategory === category.toLowerCase()) {
+            theme.style.display = 'block';
+            theme.style.animation = `fadeInUp 0.3s ease ${index * 0.1}s forwards`;
+            theme.style.opacity = '0';
+            setTimeout(() => {
+                theme.style.opacity = '1';
+            }, index * 100);
+        } else {
+            theme.style.display = 'none';
+        }
+    });
+    
+    this.showNotification(`🎨 Mostrando temas: ${category}`, 'success');
+}
 
     applyThemeToAll() {
         this.showNotification('🎨 Aplicar tema a todas próximamente', 'info');
