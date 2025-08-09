@@ -550,13 +550,10 @@ function updateSidebar(data) {
 }
 
 /**
- * Aplicar tema de empresa
- */
-/**
- * Aplicar tema de empresa - VERSIÓN COMPLETA
+ * Aplicar tema de empresa - VERSIÓN FUTURISTA OSCURA
  */
 function applyCompanyThemeIntegration(companyId) {
-    console.log(`🎨 Aplicando tema elegante para empresa: ${companyId}`);
+    console.log(`🌟 Aplicando tema FUTURISTA para empresa: ${companyId}`);
     
     // Obtener datos de la empresa desde company-manager
     let company = null;
@@ -570,10 +567,10 @@ function applyCompanyThemeIntegration(companyId) {
     }
     
     const theme = company.theme;
-    console.log(`🎨 Aplicando tema elegante: ${theme.primary} -> ${theme.secondary}`);
+    console.log(`🌟 Aplicando tema futurista: ${theme.primary} -> ${theme.secondary}`);
     
-    // 🎨 ESTILOS ELEGANTES Y PROFESIONALES
-    const styleId = 'grizalum-elegant-theme';
+    // 🌟 ESTILOS FUTURISTAS OSCUROS
+    const styleId = 'grizalum-futuristic-theme';
     let existingStyle = document.getElementById(styleId);
     
     if (existingStyle) {
@@ -583,164 +580,367 @@ function applyCompanyThemeIntegration(companyId) {
     const style = document.createElement('style');
     style.id = styleId;
     style.textContent = `
-        /* ===== TEMA ELEGANTE Y PROFESIONAL ===== */
+        /* ===== TEMA FUTURISTA OSCURO ===== */
         
-        /* Variables CSS */
-        :root {
-            --theme-primary: ${theme.primary} !important;
-            --theme-secondary: ${theme.secondary} !important;
-        }
-        
-        /* SIDEBAR - Solo cambiar el color de fondo principal */
-        .sidebar {
-            background: ${theme.primary} !important;
-        }
-        
-        /* SIDEBAR HEADER - Mantener elegante */
-        .sidebar-header {
-            background: rgba(0,0,0,0.1) !important;
-            border-bottom: 1px solid rgba(255,255,255,0.2) !important;
-        }
-        
-        /* HEADER EJECUTIVO - Sutil y elegante */
-        .executive-header {
-            border-bottom: 3px solid ${theme.primary} !important;
+        /* FONDO PRINCIPAL FUTURISTA */
+        body {
             background: linear-gradient(135deg, 
-                rgba(255,255,255,0.98) 0%, 
-                rgba(255,255,255,0.95) 100%) !important;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08) !important;
+                #0f172a 0%, 
+                #1e293b 25%, 
+                #334155 50%, 
+                #1e293b 75%, 
+                #0f172a 100%) !important;
+            color: white !important;
+            min-height: 100vh;
         }
         
-        /* TARJETAS MÉTRICAS - Elegantes sin exagerar */
+        .app-container {
+            background: transparent !important;
+        }
+        
+        .main-content {
+            background: rgba(15, 23, 42, 0.8) !important;
+            backdrop-filter: blur(20px) !important;
+        }
+        
+        /* SIDEBAR FUTURISTA */
+        .sidebar {
+            background: linear-gradient(180deg, 
+                ${theme.primary} 0%, 
+                ${theme.secondary} 50%, 
+                ${theme.primary} 100%) !important;
+            box-shadow: 
+                4px 0 20px rgba(0,0,0,0.5),
+                inset -1px 0 0 rgba(255,255,255,0.1) !important;
+            border-right: 1px solid rgba(255,255,255,0.1) !important;
+        }
+        
+        .sidebar-header {
+            background: linear-gradient(135deg, 
+                rgba(0,0,0,0.3) 0%, 
+                rgba(0,0,0,0.1) 100%) !important;
+            border-bottom: 1px solid rgba(255,255,255,0.2) !important;
+            backdrop-filter: blur(10px) !important;
+        }
+        
+        /* HEADER EJECUTIVO FUTURISTA */
+        .executive-header {
+            background: linear-gradient(135deg, 
+                rgba(15, 23, 42, 0.95) 0%, 
+                rgba(30, 41, 59, 0.9) 50%, 
+                rgba(15, 23, 42, 0.95) 100%) !important;
+            border-bottom: 2px solid ${theme.primary} !important;
+            box-shadow: 
+                0 4px 20px rgba(0,0,0,0.3),
+                0 1px 0 rgba(255,255,255,0.1) !important;
+            backdrop-filter: blur(20px) !important;
+            color: white !important;
+        }
+        
+        .page-title {
+            color: white !important;
+            text-shadow: 0 0 10px ${theme.primary}50 !important;
+        }
+        
+        .page-subtitle {
+            color: #94a3b8 !important;
+        }
+        
+        .ai-insights {
+            background: linear-gradient(90deg, ${theme.primary}20, transparent) !important;
+            color: ${theme.primary} !important;
+            padding: 0.5rem 1rem !important;
+            border-radius: 20px !important;
+            border: 1px solid ${theme.primary}30 !important;
+        }
+        
+        /* TARJETAS MÉTRICAS FUTURISTAS */
         .metric-card {
-            border-top: 4px solid ${theme.primary} !important;
-            background: white !important;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06) !important;
-            transition: all 0.3s ease !important;
+            background: linear-gradient(135deg, 
+                rgba(30, 41, 59, 0.8) 0%, 
+                rgba(51, 65, 85, 0.6) 100%) !important;
+            border: 1px solid rgba(255,255,255,0.1) !important;
+            border-top: 3px solid ${theme.primary} !important;
+            border-radius: 16px !important;
+            box-shadow: 
+                0 8px 32px rgba(0,0,0,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.1) !important;
+            backdrop-filter: blur(10px) !important;
+            color: white !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                ${theme.primary} 0%, 
+                ${theme.secondary} 50%, 
+                ${theme.primary} 100%);
+            background-size: 200% 100%;
+            animation: borderGlow 3s infinite;
+        }
+        
+        @keyframes borderGlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
         
         .metric-card:hover {
-            transform: translateY(-3px) !important;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.12) !important;
+            transform: translateY(-5px) !important;
+            box-shadow: 
+                0 15px 40px rgba(0,0,0,0.4),
+                0 0 20px ${theme.primary}30 !important;
+            border-color: ${theme.primary}50 !important;
         }
         
-        /* ICONOS DE MÉTRICAS - Simples y elegantes */
+        .metric-title {
+            color: #cbd5e1 !important;
+        }
+        
+        .metric-value {
+            color: white !important;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3) !important;
+        }
+        
+        /* ICONOS FUTURISTAS */
         .metric-icon {
-            background: ${theme.primary} !important;
+            background: linear-gradient(135deg, 
+                ${theme.primary} 0%, 
+                ${theme.secondary} 100%) !important;
             color: white !important;
+            box-shadow: 
+                0 6px 20px ${theme.primary}40,
+                inset 0 1px 0 rgba(255,255,255,0.2) !important;
+            border: 1px solid rgba(255,255,255,0.1) !important;
+            transition: all 0.3s ease !important;
         }
         
-        /* BOTONES DE PERÍODO - Elegantes */
+        .metric-icon:hover {
+            transform: scale(1.1) !important;
+            box-shadow: 
+                0 8px 25px ${theme.primary}60,
+                0 0 15px ${theme.primary}40 !important;
+        }
+        
+        /* BOTONES FUTURISTAS */
+        .period-btn {
+            background: rgba(51, 65, 85, 0.6) !important;
+            border: 1px solid rgba(255,255,255,0.2) !important;
+            color: #cbd5e1 !important;
+            border-radius: 10px !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease !important;
+        }
+        
         .period-btn.active {
-            background: ${theme.primary} !important;
+            background: linear-gradient(135deg, 
+                ${theme.primary} 0%, 
+                ${theme.secondary} 100%) !important;
             color: white !important;
-            border: 2px solid ${theme.primary} !important;
+            border-color: transparent !important;
+            box-shadow: 
+                0 6px 20px ${theme.primary}40,
+                0 0 15px ${theme.primary}30 !important;
+            transform: scale(1.05) !important;
         }
         
         .period-btn:hover:not(.active) {
-            border-color: ${theme.primary} !important;
-            color: ${theme.primary} !important;
+            background: rgba(71, 85, 105, 0.8) !important;
+            border-color: ${theme.primary}50 !important;
+            color: white !important;
+            transform: translateY(-2px) !important;
         }
         
-        /* BOTÓN IA ASSISTANT - Simple y elegante */
+        /* BOTÓN IA ASSISTANT FUTURISTA */
         .ai-header-button {
-            background: ${theme.primary} !important;
+            background: linear-gradient(135deg, 
+                ${theme.primary} 0%, 
+                ${theme.secondary} 100%) !important;
             color: white !important;
-            border: none !important;
+            border: 1px solid rgba(255,255,255,0.2) !important;
+            border-radius: 12px !important;
+            box-shadow: 
+                0 6px 20px ${theme.primary}40,
+                0 0 15px ${theme.primary}30 !important;
+            transition: all 0.3s ease !important;
         }
         
         .ai-header-button:hover {
-            background: ${theme.secondary} !important;
-            transform: translateY(-1px) !important;
+            transform: translateY(-2px) scale(1.05) !important;
+            box-shadow: 
+                0 10px 30px ${theme.primary}50,
+                0 0 20px ${theme.primary}40 !important;
         }
         
-        /* TARJETAS DE GRÁFICOS - Sutiles */
+        /* TARJETAS DE GRÁFICOS FUTURISTAS */
         .chart-card {
+            background: linear-gradient(135deg, 
+                rgba(30, 41, 59, 0.8) 0%, 
+                rgba(51, 65, 85, 0.6) 100%) !important;
+            border: 1px solid rgba(255,255,255,0.1) !important;
             border-top: 3px solid ${theme.primary} !important;
-            background: white !important;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+            border-radius: 16px !important;
+            box-shadow: 
+                0 8px 32px rgba(0,0,0,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.1) !important;
+            backdrop-filter: blur(10px) !important;
+            color: white !important;
+            transition: all 0.3s ease !important;
         }
         
-        /* NAVEGACIÓN ACTIVA - Elegante */
-        .nav-link.active {
-            background: rgba(255,255,255,0.15) !important;
+        .chart-card:hover {
+            transform: translateY(-3px) !important;
+            box-shadow: 
+                0 12px 40px rgba(0,0,0,0.4),
+                0 0 15px ${theme.primary}20 !important;
+        }
+        
+        .chart-title {
             color: white !important;
-            border-radius: 8px !important;
+            text-shadow: 0 0 8px ${theme.primary}50 !important;
+        }
+        
+        /* NAVEGACIÓN FUTURISTA */
+        .nav-link {
+            color: rgba(255,255,255,0.8) !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        .nav-link.active {
+            background: linear-gradient(135deg, 
+                rgba(255,255,255,0.15) 0%, 
+                rgba(255,255,255,0.05) 100%) !important;
+            color: white !important;
+            border-radius: 10px !important;
+            box-shadow: 
+                0 4px 15px rgba(0,0,0,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.2) !important;
+            border: 1px solid rgba(255,255,255,0.1) !important;
         }
         
         .nav-link:hover:not(.active) {
             background: rgba(255,255,255,0.08) !important;
-            border-radius: 8px !important;
-        }
-        
-        /* BRAND ICON - Simple */
-        .brand-icon {
-            background: rgba(255,255,255,0.2) !important;
             color: white !important;
+            border-radius: 10px !important;
+            transform: translateX(5px) !important;
         }
         
-        /* SELECTOR DE EMPRESA - Elegante */
+        .nav-section-title {
+            color: rgba(255,255,255,0.6) !important;
+        }
+        
+        /* BRAND FUTURISTA */
+        .brand-icon {
+            background: linear-gradient(135deg, 
+                rgba(255,255,255,0.2) 0%, 
+                rgba(255,255,255,0.1) 100%) !important;
+            color: white !important;
+            box-shadow: 
+                0 6px 20px rgba(0,0,0,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.3) !important;
+            border: 1px solid rgba(255,255,255,0.2) !important;
+        }
+        
+        .brand-text h1 {
+            color: white !important;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3) !important;
+        }
+        
+        .brand-text p {
+            color: rgba(255,255,255,0.8) !important;
+        }
+        
+        /* SUMMARY VALUES FUTURISTA */
+        .summary-value {
+            color: white !important;
+            font-weight: 700 !important;
+            text-shadow: 0 0 8px rgba(255,255,255,0.4) !important;
+        }
+        
+        .summary-label {
+            color: rgba(255,255,255,0.8) !important;
+        }
+        
+        /* SELECTOR DE EMPRESA FUTURISTA */
         .grizalum-selected-company {
-            border: 2px solid ${theme.primary}40 !important;
-            background: white !important;
+            background: linear-gradient(135deg, 
+                rgba(30, 41, 59, 0.8) 0%, 
+                rgba(51, 65, 85, 0.6) 100%) !important;
+            border: 1px solid rgba(255,255,255,0.2) !important;
+            border-radius: 12px !important;
+            color: white !important;
+            backdrop-filter: blur(10px) !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
         }
         
         .grizalum-selected-company:hover {
-            border-color: ${theme.primary} !important;
-            box-shadow: 0 3px 12px ${theme.primary}20 !important;
+            border-color: ${theme.primary}60 !important;
+            box-shadow: 
+                0 6px 20px rgba(0,0,0,0.4),
+                0 0 15px ${theme.primary}30 !important;
+            transform: translateY(-2px) !important;
         }
         
-        /* FILTROS DE GRÁFICOS */
+        .grizalum-company-name {
+            color: white !important;
+        }
+        
+        .grizalum-company-status {
+            color: #94a3b8 !important;
+        }
+        
+        /* FILTROS FUTURISTAS */
+        .filter-btn {
+            background: rgba(51, 65, 85, 0.6) !important;
+            border: 1px solid rgba(255,255,255,0.2) !important;
+            color: #cbd5e1 !important;
+            backdrop-filter: blur(10px) !important;
+        }
+        
         .filter-btn.active {
             background: ${theme.primary} !important;
             color: white !important;
+            border-color: transparent !important;
+            box-shadow: 0 4px 12px ${theme.primary}40 !important;
         }
         
-        /* TÍTULOS DE GRÁFICOS */
-        .chart-title {
-            color: ${theme.primary} !important;
-        }
-        
-        /* SUMMARY VALUES EN SIDEBAR */
-        .summary-value {
-            color: white !important;
-            font-weight: 600 !important;
-        }
-        
-        /* COMPANY ICON EN SELECTOR */
-        .grizalum-company-icon {
-            background: ${theme.primary} !important;
-            color: white !important;
-        }
-        
-        /* NOTIFICATION BADGE */
+        /* NOTIFICACIONES */
         .notification-badge {
             background: ${theme.secondary} !important;
+            box-shadow: 0 0 10px ${theme.secondary}60 !important;
         }
         
-        /* PEQUEÑOS DETALLES ELEGANTES */
-        .metric-change.positive {
-            color: #10b981 !important;
+        /* SCROLLBAR FUTURISTA */
+        ::-webkit-scrollbar {
+            width: 8px;
         }
         
-        .metric-change.negative {
-            color: #ef4444 !important;
+        ::-webkit-scrollbar-track {
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 10px;
         }
         
-        /* AI INSIGHTS */
-        .ai-insights {
-            color: ${theme.primary} !important;
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, ${theme.primary}, ${theme.secondary});
+            border-radius: 10px;
+            box-shadow: 0 0 5px ${theme.primary}50;
         }
         
-        /* PAGE TITLE */
-        .page-title {
-            color: ${theme.primary} !important;
+        ::-webkit-scrollbar-thumb:hover {
+            box-shadow: 0 0 10px ${theme.primary}80;
         }
     `;
     
     document.head.appendChild(style);
     
-    console.log(`✅ Tema elegante aplicado: ${theme.primary}`);
+    console.log(`✅ Tema FUTURISTA aplicado: ${theme.primary} -> ${theme.secondary}`);
     
     // Disparar evento de confirmación
     document.dispatchEvent(new CustomEvent('grizalumThemeChanged', {
