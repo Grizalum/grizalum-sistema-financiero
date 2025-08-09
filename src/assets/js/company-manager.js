@@ -97,7 +97,7 @@ class GrizalumCompanyManager {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(184, 115, 51, 0.1) 100%);
+                background: rgba(255, 255, 255, 0.95);
                 border: 2px solid rgba(212, 175, 55, 0.3);
                 border-radius: 16px;
                 padding: 1rem 1.5rem;
