@@ -7299,42 +7299,59 @@ exportCurrentCompanyTheme() {
     // INTEGRACIÓN CON DASHBOARD PRINCIPAL
     // ================================================================
     
-    applyCompanyThemeIntegration(companyId) {
-        console.log(`🎨 Aplicando tema para empresa: ${companyId}`);
-        
-        const company = this.companies[companyId];
-        if (!company || !company.theme) {
-            console.warn('❌ Empresa o tema no encontrado');
-            return;
-        }
-        
-        const theme = company.theme;
-        console.log(`🎨 Aplicando colores: ${theme.primary} -> ${theme.secondary}`);
-        
-        // Actualizar selector principal de empresas
-        const companyIcon = document.getElementById('grizalumCurrentCompanyIcon');
-        if (companyIcon && companyIcon.parentElement) {
-            companyIcon.parentElement.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
-            companyIcon.parentElement.style.transition = 'all 0.3s ease';
-            companyIcon.parentElement.style.transform = 'scale(1.05)';
-            
-            setTimeout(() => {
-                companyIcon.parentElement.style.transform = 'scale(1)';
-            }, 300);
-        }
-        
-        // Disparar evento para otros módulos
-        document.dispatchEvent(new CustomEvent('grizalumThemeChanged', {
-            detail: { 
-                companyId, 
-                company: company,
-                theme: theme,
-                timestamp: Date.now() 
-            }
-        }));
-        
-        this.logAuditAction('THEME_INTEGRATION', `Tema integrado en dashboard: ${company.name} - ${theme.primary}`);
+   applyCompanyThemeIntegration(companyId) {
+    console.log(`🎨 Aplicando tema para empresa: ${companyId}`);
+    
+    const company = this.companies[companyId];
+    if (!company || !company.theme) {
+        console.warn('❌ Empresa o tema no encontrado');
+        return;
     }
+    
+    const theme = company.theme;
+    console.log(`🎨 Aplicando colores: ${theme.primary} -> ${theme.secondary}`);
+    
+    // APLICAR COLORES DINÁMICOS AL SELECTOR CON DISEÑO ESTÉTICO
+    const selector = document.querySelector('.grizalum-selected-company');
+    if (selector) {
+        // Aplicar gradiente dinámico con transparencia estética
+        selector.style.background = `linear-gradient(135deg, ${theme.primary}e6 0%, ${theme.secondary}e6 100%)`;
+        selector.style.borderColor = `${theme.primary}4d`;
+        selector.style.boxShadow = `0 8px 25px ${theme.primary}66`;
+        
+        // Efecto hover dinámico
+        selector.onmouseenter = function() {
+            this.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
+            this.style.boxShadow = `0 12px 35px ${theme.primary}99`;
+            this.style.transform = 'translateY(-2px)';
+        };
+        
+        selector.onmouseleave = function() {
+            this.style.background = `linear-gradient(135deg, ${theme.primary}e6 0%, ${theme.secondary}e6 100%)`;
+            this.style.boxShadow = `0 8px 25px ${theme.primary}66`;
+            this.style.transform = 'translateY(0)';
+        };
+    }
+    
+    // Actualizar icono de empresa
+    const companyIcon = document.querySelector('.grizalum-company-icon');
+    if (companyIcon) {
+        companyIcon.style.background = `rgba(255, 255, 255, 0.25)`;
+        companyIcon.style.backdropFilter = 'blur(10px)';
+    }
+    
+    // Disparar evento para otros módulos
+    document.dispatchEvent(new CustomEvent('grizalumThemeChanged', {
+        detail: { 
+            companyId, 
+            company: company,
+            theme: theme,
+            timestamp: Date.now() 
+        }
+    }));
+    
+    this.logAuditAction('THEME_INTEGRATION', `Tema integrado: ${company.name} - ${theme.primary}`);
+ }
 }
 
 // ================================================================
