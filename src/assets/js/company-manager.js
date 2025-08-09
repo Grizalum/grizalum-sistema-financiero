@@ -94,19 +94,20 @@ class GrizalumCompanyManager {
             }
 
             .grizalum-selected-company {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                background: rgba(255, 255, 255, 0.95);
-                border: 2px solid rgba(212, 175, 55, 0.3);
-                border-radius: 16px;
-                padding: 1rem 1.5rem;
-                cursor: pointer;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                backdrop-filter: blur(10px);
-                position: relative;
-                z-index: 1001;
-            }
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white !important;
+    border: 2px solid #e5e7eb !important;
+    border-radius: 16px;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 1001;
+    color: #1f2937 !important;
+}
 
             .grizalum-selected-company:hover {
                 transform: translateY(-2px);
