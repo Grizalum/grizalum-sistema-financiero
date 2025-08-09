@@ -5831,17 +5831,63 @@ applyGlobalTheme(companyId) {
     if (!company || !company.theme) return;
     
     const theme = company.theme;
-    console.log(`🌈 Aplicando tema global: ${theme.primary} -> ${theme.secondary}`);
+    console.log(`🌈 Aplicando tema global DIRECTO: ${theme.primary} -> ${theme.secondary}`);
     
-    // CAMBIAR VARIABLES CSS GLOBALES
-    document.documentElement.style.setProperty('--theme-primary', theme.primary);
-    document.documentElement.style.setProperty('--theme-secondary', theme.secondary);
-    document.documentElement.style.setProperty('--theme-gradient', 
-        `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`);
-    document.documentElement.style.setProperty('--theme-shadow', 
-        `${theme.primary}66`);
-    document.documentElement.style.setProperty('--theme-glow', 
-        `${theme.primary}1a`);
+    // APLICAR DIRECTAMENTE A ELEMENTOS ESPECÍFICOS
+    const gradient = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
+    const shadow = `${theme.primary}66`;
+    const glow = `${theme.primary}33`;
+    
+    // 1. CAMBIAR HEADER
+    const header = document.querySelector('.executive-header');
+    if (header) {
+        header.style.background = `linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, ${theme.primary}22 100%)`;
+        header.style.borderBottom = `3px solid ${theme.primary}`;
+        header.style.boxShadow = `0 4px 20px ${shadow}`;
+    }
+    
+    // 2. CAMBIAR SIDEBAR
+    const sidebarHeader = document.querySelector('.sidebar-header');
+    if (sidebarHeader) {
+        sidebarHeader.style.background = gradient;
+    }
+    
+    // 3. CAMBIAR TARJETAS DE MÉTRICAS
+    document.querySelectorAll('.metric-card').forEach(card => {
+        card.style.borderTop = `6px solid ${theme.primary}`;
+        card.addEventListener('mouseenter', function() {
+            this.style.boxShadow = `0 15px 40px ${shadow}`;
+            this.style.borderColor = theme.primary;
+            this.style.transform = 'translateY(-6px)';
+        });
+        card.addEventListener('mouseleave', function() {
+            this.style.boxShadow = '';
+            this.style.borderColor = '';
+            this.style.transform = '';
+        });
+    });
+    
+    // 4. CAMBIAR ICONOS DE MÉTRICAS
+    document.querySelectorAll('.metric-icon').forEach(icon => {
+        icon.style.background = gradient;
+    });
+    
+    // 5. CAMBIAR GRÁFICOS
+    document.querySelectorAll('.chart-card').forEach(chart => {
+        chart.style.borderTop = `4px solid ${theme.primary}`;
+    });
+    
+    // 6. CAMBIAR BOTONES ACTIVOS
+    document.querySelectorAll('.period-btn.active').forEach(btn => {
+        btn.style.background = theme.primary;
+        btn.style.color = 'white';
+    });
+    
+    // 7. CAMBIAR AI BUTTON
+    const aiButton = document.querySelector('.ai-header-button');
+    if (aiButton) {
+        aiButton.style.background = gradient;
+    }
     
     // APLICAR AL SELECTOR DE EMPRESAS
     this.applyCompanyThemeIntegration(companyId);
@@ -5849,9 +5895,8 @@ applyGlobalTheme(companyId) {
     // NOTIFICACIÓN ÉPICA
     this.showNotification(`🎨 Tema ${this.getThemeName(theme)} aplicado a toda la app`, 'success');
     
-    console.log('🌈 Tema global aplicado a toda la aplicación');
+    console.log('🌈 Tema global aplicado DIRECTAMENTE a todos los elementos');
 }
-
 // OBTENER NOMBRE DEL TEMA
 getThemeName(theme) {
     const themes = {
