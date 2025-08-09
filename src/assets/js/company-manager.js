@@ -5883,12 +5883,13 @@ applyGlobalThemeFromPreset(themeName) {
     
     // COLORES POR TEMA
     const themes = {
-        'netflix-premium': { primary: '#e50914', secondary: '#b20710' },
-        'goldman-platinum': { primary: '#d4af37', secondary: '#b87333' },
-        'royal-purple': { primary: '#8b5cf6', secondary: '#7c3aed' },
-        'emerald-nature': { primary: '#10b981', secondary: '#059669' },
-        'ocean-commerce': { primary: '#0ea5e9', secondary: '#0284c7' }
-    };
+    'Netflix Premium': { primary: '#e50914', secondary: '#b20710' },
+    'Goldman Platinum': { primary: '#d4af37', secondary: '#b87333' },
+    'Royal Purple': { primary: '#8b5cf6', secondary: '#7c3aed' },
+    'Emerald Nature': { primary: '#10b981', secondary: '#059669' },
+    'Ocean Commerce': { primary: '#0ea5e9', secondary: '#0284c7' },
+    'Midnight Corporate': { primary: '#1e40af', secondary: '#1e3a8a' }
+};
     
     const theme = themes[themeName] || themes['goldman-platinum'];
     const gradient = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
