@@ -1167,6 +1167,32 @@ function applyCompanyThemeIntegration(companyId) {
         .emoji-recents h4 {
             color: #94a3b8 !important;
         }
+        /* ===== FORZAR Z-INDEX DROPDOWN ===== */
+        .grizalum-company-dropdown {
+            z-index: 99999999 !important;
+            position: absolute !important;
+            top: 100% !important;
+            right: 0 !important;
+            transform: none !important;
+        }
+        
+        .grizalum-company-selector {
+            position: relative !important;
+            z-index: 99999998 !important;
+        }
+        
+        .grizalum-selected-company {
+            position: relative !important;
+            z-index: 99999997 !important;
+        }
+        
+        /* FORZAR ENCIMA DE TODO */
+        .grizalum-company-dropdown.show {
+            z-index: 99999999 !important;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
     `;
     
     document.head.appendChild(style);
