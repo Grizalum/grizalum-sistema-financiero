@@ -3556,7 +3556,7 @@ class GrizalumCompanyManager {
         }
         
         this.showNotification(`🏢 Cambiado a ${this.companies[companyId].name}`, 'success');
-        
+        this.applyCompanyThemeIntegration(companyId);
         // Disparar evento personalizado
         this.dispatchCompanyChangeEvent(companyId);
         
@@ -4766,45 +4766,94 @@ class GrizalumCompanyManager {
     // FUNCIONES AVANZADAS DE TEMAS
     // ================================================================
 
-    previewTheme(companyId, themeKey) {
-        console.log(`🎨 Previsualizando tema ${themeKey} para ${companyId}`);
+   previewTheme(companyId, themeKey) {
+    console.log(`🎨 Previsualizando tema ${themeKey} para ${companyId}`);
+    
+    const availableThemes = {
+        'goldman-platinum': { primary: '#d4af37', secondary: '#b87333', name: 'Goldman Platinum' },
+        'tesla-futuristic': { primary: '#ff0040', secondary: '#ff6b9d', name: 'Tesla Futuristic' },
+        'cupertino-elite': { primary: '#007aff', secondary: '#5ac8fa', name: 'Cupertino Elite' },
+        'netflix-premium': { primary: '#e50914', secondary: '#f40612', name: 'Netflix Premium' },
+        'midnight-corporate': { primary: '#00d9ff', secondary: '#0099cc', name: 'Midnight Corporate' },
+        'emerald-nature': { primary: '#10b981', secondary: '#059669', name: 'Emerald Nature' },
+        'royal-purple': { primary: '#8b5cf6', secondary: '#7c3aed', name: 'Royal Purple' },
+        'cyber-neon': { primary: '#00ff88', secondary: '#00cc6a', name: 'Cyber Neon' },
+        'fire-industries': { primary: '#dc2626', secondary: '#ea580c', name: 'Fire Industries' },
+        'ocean-commerce': { primary: '#0891b2', secondary: '#0e7490', name: 'Ocean Commerce' }
+    };
+    
+    const theme = availableThemes[themeKey];
+    if (!theme) {
+        this.showNotification('❌ Tema no encontrado', 'error');
+        return;
+    }
+    
+    // Actualizar preview principal con animación
+    const preview = document.getElementById(`preview_${companyId}`);
+    if (preview) {
+        // Animación de salida
+        preview.style.transform = 'scale(0.9)';
+        preview.style.opacity = '0.7';
         
-        const availableThemes = {
-            'goldman-platinum': { primary: '#d4af37', secondary: '#b87333' },
-            'tesla-futuristic': { primary: '#ff0040', secondary: '#ff6b9d' },
-            'cupertino-elite': { primary: '#007aff', secondary: '#5ac8fa' },
-            'netflix-premium': { primary: '#e50914', secondary: '#f40612' },
-            'midnight-corporate': { primary: '#00d9ff', secondary: '#0099cc' },
-            'emerald-nature': { primary: '#10b981', secondary: '#059669' },
-            'royal-purple': { primary: '#8b5cf6', secondary: '#7c3aed' },
-            'cyber-neon': { primary: '#00ff88', secondary: '#00cc6a' },
-            'fire-industries': { primary: '#dc2626', secondary: '#ea580c' },
-            'ocean-commerce': { primary: '#0891b2', secondary: '#0e7490' }
-        };
-        
-        const theme = availableThemes[themeKey];
-        if (!theme) return;
-        
-        // Actualizar preview
-        const preview = document.getElementById(`preview_${companyId}`);
-        if (preview) {
+        setTimeout(() => {
+            // Cambiar colores
             preview.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
             
-            // Efecto de transición suave
-            preview.style.transform = 'scale(0.95)';
+            // Animación de entrada
+            preview.style.transform = 'scale(1.05)';
+            preview.style.opacity = '1';
+            
             setTimeout(() => {
                 preview.style.transform = 'scale(1)';
-            }, 200);
-        }
-        
-        // Actualizar avatar del tema
-        const avatar = document.querySelector(`[data-company="${companyId}"] .company-avatar-theme`);
-        if (avatar) {
-            avatar.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
-        }
-        
-        this.showNotification(`🎨 Vista previa del tema ${themeKey}`, 'info');
+            }, 300);
+        }, 150);
     }
+    
+    // Actualizar avatar con efecto
+    const avatar = document.querySelector(`[data-company="${companyId}"] .company-avatar-theme`);
+    if (avatar) {
+        avatar.style.transition = 'all 0.3s ease';
+        avatar.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
+        avatar.style.transform = 'scale(1.1) rotate(5deg)';
+        
+        setTimeout(() => {
+            avatar.style.transform = 'scale(1) rotate(0deg)';
+        }, 400);
+    }
+    
+    // Actualizar selectores de color personalizados
+    const primaryInput = document.getElementById(`primary_${companyId}`);
+    const secondaryInput = document.getElementById(`secondary_${companyId}`);
+    
+    if (primaryInput) {
+        primaryInput.value = theme.primary;
+        primaryInput.style.transform = 'scale(1.05)';
+        setTimeout(() => {
+            primaryInput.style.transform = 'scale(1)';
+        }, 200);
+    }
+    
+    if (secondaryInput) {
+        secondaryInput.value = theme.secondary;
+        secondaryInput.style.transform = 'scale(1.05)';
+        setTimeout(() => {
+            secondaryInput.style.transform = 'scale(1)';
+        }, 200);
+    }
+    
+    // Actualizar códigos de color
+    const primaryCode = document.querySelector(`#primary_${companyId}`).parentElement.querySelector('.color-code');
+    const secondaryCode = document.querySelector(`#secondary_${companyId}`).parentElement.querySelector('.color-code');
+    
+    if (primaryCode) primaryCode.textContent = theme.primary;
+    if (secondaryCode) secondaryCode.textContent = theme.secondary;
+    
+    // Notificación con nombre del tema
+    this.showNotification(`👁️ Vista previa: ${theme.name}`, 'info');
+    
+    // Log de auditoría
+    this.logAuditAction('THEME_PREVIEW', `Vista previa del tema ${theme.name} para ${this.companies[companyId]?.name}`);
+}
 
     applyTheme(companyId) {
         const themeSelect = document.getElementById(`theme_${companyId}`);
@@ -4858,52 +4907,129 @@ class GrizalumCompanyManager {
         this.logAuditAction('THEME_APPLIED', `Tema ${selectedTheme} aplicado a ${this.companies[companyId].name}`);
     }
 
-    updateCustomColors(companyId) {
-        const primaryColor = document.getElementById(`primary_${companyId}`)?.value;
-        const secondaryColor = document.getElementById(`secondary_${companyId}`)?.value;
+   updateCustomColors(companyId) {
+    const primaryColor = document.getElementById(`primary_${companyId}`)?.value;
+    const secondaryColor = document.getElementById(`secondary_${companyId}`)?.value;
+    
+    if (!this.companies[companyId] || !primaryColor || !secondaryColor) return;
+    
+    console.log(`🎨 Actualizando colores: ${primaryColor} -> ${secondaryColor}`);
+    
+    // Actualizar tema custom INMEDIATAMENTE
+    this.companies[companyId].theme = {
+        primary: primaryColor,
+        secondary: secondaryColor
+    };
+    this.companies[companyId].lastModified = new Date().toISOString();
+    
+    // Guardar cambios
+    this.saveCompaniesData(this.companies);
+    
+    // 1. Actualizar preview principal con animación fluida
+    const preview = document.getElementById(`preview_${companyId}`);
+    if (preview) {
+        preview.style.transition = 'all 0.3s ease';
+        preview.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`;
+        preview.style.transform = 'scale(1.03)';
         
-        if (!this.companies[companyId] || !primaryColor || !secondaryColor) return;
-        
-        // Actualizar tema custom
-        this.companies[companyId].theme = {
-            primary: primaryColor,
-            secondary: secondaryColor
-        };
-        this.companies[companyId].lastModified = new Date().toISOString();
-        
-        this.saveCompaniesData(this.companies);
-        
-        // Actualizar preview
-        const preview = document.getElementById(`preview_${companyId}`);
-        const avatar = document.querySelector(`[data-company="${companyId}"] .company-avatar-theme`);
-        const colorCodes = document.querySelectorAll(`#primary_${companyId} + .color-code, #secondary_${companyId} + .color-code`);
-        
-        if (preview) {
-            preview.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`;
-        }
-        
-        if (avatar) {
-            avatar.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`;
-        }
-        
-        // Actualizar códigos de color
-        const primaryCodeElement = document.querySelector(`#primary_${companyId}`).parentElement.querySelector('.color-code');
-        const secondaryCodeElement = document.querySelector(`#secondary_${companyId}`).parentElement.querySelector('.color-code');
-        
-        if (primaryCodeElement) primaryCodeElement.textContent = primaryColor;
-        if (secondaryCodeElement) secondaryCodeElement.textContent = secondaryColor;
-        
-        // Efecto visual de cambio
-        if (preview) {
-            preview.style.transform = 'scale(1.02)';
-            setTimeout(() => {
-                preview.style.transform = 'scale(1)';
-            }, 300);
-        }
-        
-        this.showNotification(`🎨 Colores personalizados actualizados`, 'success');
-        this.logAuditAction('CUSTOM_COLORS', `Colores personalizados para ${this.companies[companyId].name}: ${primaryColor}, ${secondaryColor}`);
+        setTimeout(() => {
+            preview.style.transform = 'scale(1)';
+        }, 200);
     }
+    
+    // 2. Actualizar avatar con efecto
+    const avatar = document.querySelector(`[data-company="${companyId}"] .company-avatar-theme`);
+    if (avatar) {
+        avatar.style.transition = 'all 0.3s ease';
+        avatar.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`;
+        avatar.style.transform = 'scale(1.1) rotate(3deg)';
+        
+        setTimeout(() => {
+            avatar.style.transform = 'scale(1) rotate(0deg)';
+        }, 300);
+    }
+    
+    // 3. Actualizar códigos de color con animación
+    const primaryCodeElement = document.querySelector(`#primary_${companyId}`).parentElement.querySelector('.color-code');
+    const secondaryCodeElement = document.querySelector(`#secondary_${companyId}`).parentElement.querySelector('.color-code');
+    
+    if (primaryCodeElement) {
+        primaryCodeElement.style.transition = 'all 0.2s ease';
+        primaryCodeElement.textContent = primaryColor;
+        primaryCodeElement.style.background = '#f0f9ff';
+        setTimeout(() => {
+            primaryCodeElement.style.background = '#f3f4f6';
+        }, 500);
+    }
+    
+    if (secondaryCodeElement) {
+        secondaryCodeElement.style.transition = 'all 0.2s ease';
+        secondaryCodeElement.textContent = secondaryColor;
+        secondaryCodeElement.style.background = '#f0f9ff';
+        setTimeout(() => {
+            secondaryCodeElement.style.background = '#f3f4f6';
+        }, 500);
+    }
+    
+    // 4. Actualizar selector de temas (marcarlo como "Custom")
+    const themeSelect = document.getElementById(`theme_${companyId}`);
+    if (themeSelect) {
+        // Agregar opción custom si no existe
+        let customOption = themeSelect.querySelector('option[value="custom"]');
+        if (!customOption) {
+            customOption = document.createElement('option');
+            customOption.value = 'custom';
+            customOption.textContent = '🎨 Tema Personalizado';
+            themeSelect.appendChild(customOption);
+        }
+        themeSelect.value = 'custom';
+    }
+    
+    // 5. Si es la empresa activa, actualizar UI principal
+    if (this.selectedCompany === companyId) {
+        this.updateSelectedCompany(companyId);
+        
+        // Actualizar el selector principal de empresas
+        const mainIcon = document.getElementById('grizalumCurrentCompanyIcon');
+        if (mainIcon) {
+            mainIcon.parentElement.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`;
+        }
+        
+        // Notificar al sistema principal
+        if (window.GRIZALUM && window.GRIZALUM.applyTheme) {
+            window.GRIZALUM.applyTheme(companyId);
+        }
+    }
+    
+    // 6. Actualizar lista de empresas con nuevos colores
+    this.renderCompaniesList();
+    
+    // 7. Feedback visual en los color pickers
+    const primaryInput = document.getElementById(`primary_${companyId}`);
+    const secondaryInput = document.getElementById(`secondary_${companyId}`);
+    
+    if (primaryInput) {
+        primaryInput.style.transform = 'scale(1.05)';
+        setTimeout(() => {
+            primaryInput.style.transform = 'scale(1)';
+        }, 150);
+    }
+    
+    if (secondaryInput) {
+        secondaryInput.style.transform = 'scale(1.05)';
+        setTimeout(() => {
+            secondaryInput.style.transform = 'scale(1)';
+        }, 150);
+    }
+    
+    // Notificación sin spam (solo cada 2 segundos)
+    if (!this.lastColorUpdate || Date.now() - this.lastColorUpdate > 2000) {
+        this.showNotification(`🎨 Colores actualizados en tiempo real`, 'success');
+        this.lastColorUpdate = Date.now();
+    }
+    
+    this.logAuditAction('CUSTOM_COLORS', `Colores personalizados: ${primaryColor} + ${secondaryColor}`);
+}
 
     filterThemes(category) {
         console.log(`🔍 Filtrando temas por: ${category}`);
@@ -5963,16 +6089,402 @@ class GrizalumCompanyManager {
 
     // Funciones para temas
     createCustomTheme() {
-        this.showNotification('🎨 Creador de temas personalizados próximamente', 'info');
+    console.log('🎨 Abriendo creador de tema personalizado');
+    
+    // Eliminar modal existente si existe
+    const existingModal = document.getElementById('customThemeModal');
+    if (existingModal) {
+        existingModal.remove();
     }
 
-    importTheme() {
-        this.showNotification('📥 Importador de temas próximamente', 'info');
-    }
+    const modal = document.createElement('div');
+    modal.id = 'customThemeModal';
+    modal.className = 'grizalum-modal';
+    modal.innerHTML = `
+        <div class="grizalum-modal-content" style="max-width: 600px;">
+            <div class="grizalum-modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-palette"></i>
+                    <span>🎨 Crear Tema Personalizado</span>
+                </div>
+                <button class="modal-close-btn" onclick="this.closest('.grizalum-modal').remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="grizalum-modal-body" style="padding: 32px;">
+                <div style="margin-bottom: 24px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Nombre del Tema</label>
+                    <input type="text" id="customThemeName" placeholder="Ej: Mi Tema Corporativo" 
+                           style="width: 100%; padding: 12px 16px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; outline: none;"
+                           onkeyup="grizalumCompanyManager.updateCustomThemePreview()">
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Color Primario</label>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <input type="color" id="customPrimaryColor" value="#d4af37" 
+                                   style="width: 50px; height: 40px; border: none; border-radius: 6px; cursor: pointer;"
+                                   onchange="grizalumCompanyManager.updateCustomThemePreview()">
+                            <input type="text" id="customPrimaryText" value="#d4af37" 
+                                   style="flex: 1; padding: 8px 12px; border: 1px solid #e5e7eb; border-radius: 6px; font-family: monospace;"
+                                   onkeyup="grizalumCompanyManager.syncColorInputs('primary')">
+                        </div>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Color Secundario</label>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <input type="color" id="customSecondaryColor" value="#b87333" 
+                                   style="width: 50px; height: 40px; border: none; border-radius: 6px; cursor: pointer;"
+                                   onchange="grizalumCompanyManager.updateCustomThemePreview()">
+                            <input type="text" id="customSecondaryText" value="#b87333" 
+                                   style="flex: 1; padding: 8px 12px; border: 1px solid #e5e7eb; border-radius: 6px; font-family: monospace;"
+                                   onkeyup="grizalumCompanyManager.syncColorInputs('secondary')">
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 24px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Vista Previa</label>
+                    <div id="customThemePreview" style="background: linear-gradient(135deg, #d4af37 0%, #b87333 100%); 
+                         border-radius: 16px; padding: 24px; color: white; text-align: center; transition: all 0.3s ease;
+                         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);">
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 16px;">
+                            <div style="font-size: 2rem;">🏢</div>
+                            <div>
+                                <h3 style="margin: 0 0 8px 0; font-size: 20px; font-weight: 700;" id="previewThemeName">Mi Tema Corporativo</h3>
+                                <p style="margin: 0; opacity: 0.9;">Dashboard Empresarial</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-around; margin-top: 16px; font-size: 14px;">
+                            <div><strong>S/. 2.5M</strong><br>Ingresos</div>
+                            <div><strong>+24%</strong><br>Crecimiento</div>
+                            <div><strong>S/. 450K</strong><br>Utilidad</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 16px; justify-content: flex-end;">
+                    <button onclick="this.closest('.grizalum-modal').remove()" 
+                            style="padding: 12px 24px; border: 2px solid #e5e7eb; background: white; color: #6b7280; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                        Cancelar
+                    </button>
+                    <button onclick="grizalumCompanyManager.saveCustomTheme()" 
+                            style="padding: 12px 24px; border: none; background: linear-gradient(135deg, #d4af37, #b87333); color: white; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                        <i class="fas fa-save"></i> Guardar Tema
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    setTimeout(() => modal.classList.add('show'), 100);
+    
+    // Focus en el nombre
+    setTimeout(() => {
+        document.getElementById('customThemeName').focus();
+    }, 200);
+    
+    this.logAuditAction('CUSTOM_THEME_MODAL', 'Modal de creación de tema personalizado abierto');
+}
 
-    exportThemes() {
-        this.showNotification('📤 Exportador de temas próximamente', 'info');
+// Función auxiliar para actualizar preview
+updateCustomThemePreview() {
+    const name = document.getElementById('customThemeName')?.value || 'Mi Tema Corporativo';
+    const primary = document.getElementById('customPrimaryColor')?.value || '#d4af37';
+    const secondary = document.getElementById('customSecondaryColor')?.value || '#b87333';
+    
+    const preview = document.getElementById('customThemePreview');
+    const nameElement = document.getElementById('previewThemeName');
+    
+    if (preview) {
+        preview.style.background = `linear-gradient(135deg, ${primary} 0%, ${secondary} 100%)`;
+        preview.style.transform = 'scale(1.02)';
+        setTimeout(() => {
+            preview.style.transform = 'scale(1)';
+        }, 200);
     }
+    
+    if (nameElement) {
+        nameElement.textContent = name || 'Mi Tema Corporativo';
+    }
+}
+
+// Función auxiliar para sincronizar inputs de color
+syncColorInputs(type) {
+    if (type === 'primary') {
+        const colorInput = document.getElementById('customPrimaryColor');
+        const textInput = document.getElementById('customPrimaryText');
+        if (colorInput && textInput) {
+            colorInput.value = textInput.value;
+        }
+    } else if (type === 'secondary') {
+        const colorInput = document.getElementById('customSecondaryColor');
+        const textInput = document.getElementById('customSecondaryText');
+        if (colorInput && textInput) {
+            colorInput.value = textInput.value;
+        }
+    }
+    this.updateCustomThemePreview();
+}
+
+// Función para guardar el tema personalizado
+saveCustomTheme() {
+    const name = document.getElementById('customThemeName')?.value?.trim();
+    const primary = document.getElementById('customPrimaryColor')?.value;
+    const secondary = document.getElementById('customSecondaryColor')?.value;
+    
+    if (!name) {
+        this.showNotification('❌ Ingresa un nombre para el tema', 'error');
+        return;
+    }
+    
+    if (name.length < 3) {
+        this.showNotification('❌ El nombre debe tener al menos 3 caracteres', 'error');
+        return;
+    }
+    
+    // Guardar tema personalizado
+    const customThemes = JSON.parse(localStorage.getItem('grizalum_custom_themes') || '{}');
+    const themeKey = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    
+    customThemes[themeKey] = {
+        name: name,
+        primary: primary,
+        secondary: secondary,
+        createdAt: new Date().toISOString(),
+        author: 'Usuario'
+    };
+    
+    localStorage.setItem('grizalum_custom_themes', JSON.stringify(customThemes));
+    
+    // Cerrar modal
+    document.getElementById('customThemeModal').remove();
+    
+    // Recargar la galería de temas para mostrar el nuevo
+    this.refreshThemesGallery();
+    
+    this.showNotification(`🎨 Tema "${name}" creado exitosamente`, 'success');
+    this.logAuditAction('CUSTOM_THEME_CREATED', `Tema personalizado creado: ${name} (${themeKey})`);
+}
+
+// Función para refrescar la galería de temas
+refreshThemesGallery() {
+    // Recargar el tab de temas si está abierto
+    const themesTab = document.getElementById('themes-management-tab');
+    if (themesTab && themesTab.classList.contains('active')) {
+        themesTab.innerHTML = this.generateThemesTab();
+    }
+}
+
+   importTheme() {
+    console.log('📥 Iniciando importación de tema');
+    
+    // Crear input de archivo oculto
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.style.display = 'none';
+    
+    input.onchange = (e) => {
+        const file = e.target.files[0];
+        if (!file) {
+            this.showNotification('❌ No se seleccionó archivo', 'error');
+            return;
+        }
+        
+        if (!file.name.endsWith('.json')) {
+            this.showNotification('❌ Solo se permiten archivos .json', 'error');
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const importData = JSON.parse(e.target.result);
+                
+                // Validar estructura del archivo
+                if (!importData.themes && !importData.name) {
+                    this.showNotification('❌ Archivo de tema inválido', 'error');
+                    return;
+                }
+                
+                let importedCount = 0;
+                const customThemes = JSON.parse(localStorage.getItem('grizalum_custom_themes') || '{}');
+                
+                // Importar tema único
+                if (importData.name && importData.primary && importData.secondary) {
+                    const themeKey = importData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                    
+                    // Verificar si ya existe
+                    if (customThemes[themeKey]) {
+                        const confirmOverwrite = confirm(`¿Sobrescribir el tema existente "${importData.name}"?`);
+                        if (!confirmOverwrite) {
+                            this.showNotification('📥 Importación cancelada', 'info');
+                            return;
+                        }
+                    }
+                    
+                    customThemes[themeKey] = {
+                        name: importData.name,
+                        primary: importData.primary,
+                        secondary: importData.secondary,
+                        importedAt: new Date().toISOString(),
+                        author: importData.author || 'Importado'
+                    };
+                    importedCount = 1;
+                }
+                // Importar múltiples temas
+                else if (importData.themes) {
+                    Object.entries(importData.themes).forEach(([key, theme]) => {
+                        if (theme.name && theme.primary && theme.secondary) {
+                            const themeKey = theme.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                            
+                            customThemes[themeKey] = {
+                                ...theme,
+                                importedAt: new Date().toISOString()
+                            };
+                            importedCount++;
+                        }
+                    });
+                }
+                
+                if (importedCount === 0) {
+                    this.showNotification('❌ No se encontraron temas válidos en el archivo', 'error');
+                    return;
+                }
+                
+                // Guardar temas importados
+                localStorage.setItem('grizalum_custom_themes', JSON.stringify(customThemes));
+                
+                // Actualizar galería
+                this.refreshThemesGallery();
+                
+                this.showNotification(`✅ ${importedCount} tema(s) importado(s) exitosamente`, 'success');
+                this.logAuditAction('THEMES_IMPORTED', `${importedCount} temas importados desde archivo`);
+                
+            } catch (error) {
+                console.error('Error importando tema:', error);
+                this.showNotification('❌ Error al leer el archivo de tema', 'error');
+            }
+        };
+        
+        reader.onerror = () => {
+            this.showNotification('❌ Error al leer el archivo', 'error');
+        };
+        
+        reader.readAsText(file);
+    };
+    
+    // Trigger del input
+    document.body.appendChild(input);
+    input.click();
+    document.body.removeChild(input);
+    
+    this.logAuditAction('THEME_IMPORT_STARTED', 'Proceso de importación de tema iniciado');
+}
+
+exportThemes() {
+    console.log('📤 Iniciando exportación de temas');
+    
+    const customThemes = JSON.parse(localStorage.getItem('grizalum_custom_themes') || '{}');
+    
+    if (Object.keys(customThemes).length === 0) {
+        this.showNotification('ℹ️ No hay temas personalizados para exportar', 'info');
+        
+        // Ofrecer exportar tema actual si existe
+        if (this.selectedCompany && this.companies[this.selectedCompany]?.theme) {
+            const currentCompany = this.companies[this.selectedCompany];
+            const confirmExport = confirm(`¿Exportar el tema actual de "${currentCompany.name}"?`);
+            
+            if (confirmExport) {
+                this.exportCurrentCompanyTheme();
+            }
+        }
+        return;
+    }
+    
+    // Crear estructura de exportación
+    const exportData = {
+        metadata: {
+            title: 'Temas Personalizados GRIZALUM',
+            description: 'Colección de temas visuales personalizados',
+            exportDate: new Date().toISOString(),
+            version: '2.0.0',
+            totalThemes: Object.keys(customThemes).length,
+            appName: 'GRIZALUM Company Manager'
+        },
+        themes: customThemes,
+        instructions: {
+            howToImport: 'Usar la función "Importar Tema" en GRIZALUM',
+            compatibility: 'Compatible con GRIZALUM v2.0+',
+            format: 'JSON estándar con estructura validada'
+        }
+    };
+    
+    // Crear y descargar archivo
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { 
+        type: 'application/json;charset=utf-8' 
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `grizalum-temas-personalizados-${new Date().toISOString().split('T')[0]}.json`;
+    a.style.display = 'none';
+    
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    this.showNotification(`📤 ${Object.keys(customThemes).length} temas exportados exitosamente`, 'success');
+    this.logAuditAction('THEMES_EXPORTED', `Temas personalizados exportados: ${Object.keys(customThemes).length}`);
+}
+
+// Función auxiliar para exportar tema de empresa actual
+exportCurrentCompanyTheme() {
+    if (!this.selectedCompany || !this.companies[this.selectedCompany]) {
+        this.showNotification('❌ No hay empresa seleccionada', 'error');
+        return;
+    }
+    
+    const company = this.companies[this.selectedCompany];
+    const theme = company.theme;
+    
+    if (!theme || !theme.primary || !theme.secondary) {
+        this.showNotification('❌ La empresa no tiene un tema válido', 'error');
+        return;
+    }
+    
+    const exportData = {
+        name: `Tema de ${company.name}`,
+        primary: theme.primary,
+        secondary: theme.secondary,
+        description: `Tema visual extraído de la empresa ${company.name}`,
+        exportedFrom: company.name,
+        exportDate: new Date().toISOString(),
+        author: 'GRIZALUM System'
+    };
+    
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { 
+        type: 'application/json;charset=utf-8' 
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `tema-${company.name.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.json`;
+    a.style.display = 'none';
+    
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    this.showNotification(`📤 Tema de "${company.name}" exportado`, 'success');
+    this.logAuditAction('COMPANY_THEME_EXPORTED', `Tema de empresa exportado: ${company.name}`);
+}
 
     filterThemes(category) {
     console.log(`🔍 Filtrando temas por: ${category}`);
@@ -6910,6 +7422,45 @@ console.log(`
    • Optimización automática de storage
    • Reportes de riesgo y recomendaciones
    • Mantenimiento preventivo automático
-
+// ================================================================
+    // INTEGRACIÓN CON DASHBOARD PRINCIPAL
+    // ================================================================
+    
+    applyCompanyThemeIntegration(companyId) {
+        console.log(`🎨 Aplicando tema para empresa: ${companyId}`);
+        
+        const company = this.companies[companyId];
+        if (!company || !company.theme) {
+            console.warn('❌ Empresa o tema no encontrado');
+            return;
+        }
+        
+        const theme = company.theme;
+        console.log(`🎨 Aplicando colores: ${theme.primary} -> ${theme.secondary}`);
+        
+        // Actualizar selector principal de empresas
+        const companyIcon = document.getElementById('grizalumCurrentCompanyIcon');
+        if (companyIcon && companyIcon.parentElement) {
+            companyIcon.parentElement.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
+            companyIcon.parentElement.style.transition = 'all 0.3s ease';
+            companyIcon.parentElement.style.transform = 'scale(1.05)';
+            
+            setTimeout(() => {
+                companyIcon.parentElement.style.transform = 'scale(1)';
+            }, 300);
+        }
+        
+        // Disparar evento para otros módulos
+        document.dispatchEvent(new CustomEvent('grizalumThemeChanged', {
+            detail: { 
+                companyId, 
+                company: company,
+                theme: theme,
+                timestamp: Date.now() 
+            }
+        }));
+        
+        this.logAuditAction('THEME_INTEGRATION', `Tema integrado en dashboard: ${company.name} - ${theme.primary}`);
+    }
 🏢 ===================================================
 `);
