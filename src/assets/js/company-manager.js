@@ -4901,10 +4901,12 @@ class GrizalumCompanyManager {
             }
         }
         
-        this.showNotification(`🎨 Tema ${selectedTheme} aplicado a ${this.companies[companyId].name}`, 'success');
-        // APLICAR TEMA A TODA LA APP
-        this.applyGlobalTheme(companyId);
-        this.logAuditAction('THEME_APPLIED', `Tema ${selectedTheme} aplicado a ${this.companies[companyId].name}`);
+       this.showNotification(`🎨 Tema ${selectedTheme} aplicado a ${this.companies[companyId].name}`, 'success');
+
+       // APLICAR TEMA A TODA LA APP (NO SOLO AL SELECTOR)
+      this.applyGlobalThemeFromPreset(selectedTheme);
+
+      this.logAuditAction('THEME_APPLIED', `Tema ${selectedTheme} aplicado a ${this.companies[companyId].name}`);
     }
 
    updateCustomColors(companyId) {
@@ -5874,6 +5876,53 @@ applyGlobalTheme(companyId) {
     this.showNotification(`🎨 Tema aplicado: ${theme.primary}`, 'success');
     
     console.log('🏁 TEMA GLOBAL APLICADO COMPLETAMENTE');
+}
+    // APLICAR TEMA GLOBAL DESDE PRESET (Netflix, Goldman, etc.)
+applyGlobalThemeFromPreset(themeName) {
+    console.log(`🌈 Aplicando tema GLOBAL: ${themeName}`);
+    
+    // COLORES POR TEMA
+    const themes = {
+        'netflix-premium': { primary: '#e50914', secondary: '#b20710' },
+        'goldman-platinum': { primary: '#d4af37', secondary: '#b87333' },
+        'royal-purple': { primary: '#8b5cf6', secondary: '#7c3aed' },
+        'emerald-nature': { primary: '#10b981', secondary: '#059669' },
+        'ocean-commerce': { primary: '#0ea5e9', secondary: '#0284c7' }
+    };
+    
+    const theme = themes[themeName] || themes['goldman-platinum'];
+    const gradient = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
+    
+    // CAMBIAR TODA LA APP
+    // 1. Header
+    const header = document.querySelector('.executive-header');
+    if (header) {
+        header.style.background = `linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, ${theme.primary}22 100%)`;
+        header.style.borderBottom = `3px solid ${theme.primary}`;
+    }
+    
+    // 2. Sidebar
+    const sidebarHeader = document.querySelector('.sidebar-header');
+    if (sidebarHeader) {
+        sidebarHeader.style.background = gradient;
+    }
+    
+    // 3. Tarjetas
+    document.querySelectorAll('.metric-card').forEach(card => {
+        card.style.borderTop = `6px solid ${theme.primary}`;
+    });
+    
+    // 4. Iconos
+    document.querySelectorAll('.metric-icon').forEach(icon => {
+        icon.style.background = gradient;
+    });
+    
+    // 5. Botones
+    document.querySelectorAll('.period-btn.active').forEach(btn => {
+        btn.style.background = theme.primary;
+    });
+    
+    console.log(`✅ Tema ${themeName} aplicado a TODA la app`);
 }
 // OBTENER NOMBRE DEL TEMA
 getThemeName(theme) {
