@@ -97,16 +97,14 @@ class GrizalumCompanyManager {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: white !important;
-    border: 2px solid #e5e7eb !important;
-    border-radius: 16px;
-    padding: 1rem 1.5rem;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(10px);
-    position: relative;
-    z-index: 1001;
-    color: #1f2937 !important;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    min-width: 200px;
 }
 
             .grizalum-selected-company:hover {
@@ -122,17 +120,16 @@ class GrizalumCompanyManager {
             }
 
             .grizalum-company-icon {
-                width: 48px;
-                height: 48px;
-                background: linear-gradient(135deg, var(--company-primary, #d4af37) 0%, var(--company-secondary, #b87333) 100%);
-                border-radius: 12px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 1.5rem;
-                box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
-                transition: all 0.3s ease;
-            }
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+}
 
             .grizalum-company-details {
                 display: flex;
