@@ -556,7 +556,7 @@ function updateSidebar(data) {
  * Aplicar tema de empresa - VERSIÓN COMPLETA
  */
 function applyCompanyThemeIntegration(companyId) {
-    console.log(`🎨 Aplicando tema para empresa: ${companyId}`);
+    console.log(`🎨 Aplicando tema PREMIUM para empresa: ${companyId}`);
     
     // Obtener datos de la empresa desde company-manager
     let company = null;
@@ -570,10 +570,10 @@ function applyCompanyThemeIntegration(companyId) {
     }
     
     const theme = company.theme;
-    console.log(`🎨 Aplicando colores: ${theme.primary} -> ${theme.secondary}`);
+    console.log(`🎨 Aplicando colores PREMIUM: ${theme.primary} -> ${theme.secondary}`);
     
-    // 🎨 CREAR/ACTUALIZAR ESTILOS GLOBALES EN EL INDEX
-    const styleId = 'grizalum-index-theme';
+    // 🎨 CREAR ESTILOS PREMIUM PROFESIONALES
+    const styleId = 'grizalum-premium-theme';
     let existingStyle = document.getElementById(styleId);
     
     if (existingStyle) {
@@ -583,156 +583,373 @@ function applyCompanyThemeIntegration(companyId) {
     const style = document.createElement('style');
     style.id = styleId;
     style.textContent = `
-        /* APLICAR TEMA A ELEMENTOS DEL INDEX */
+        /* ===== TEMA PREMIUM PROFESIONAL ===== */
         
-        /* Header ejecutivo */
+        /* Variables CSS Premium */
+        :root {
+            --theme-primary: ${theme.primary} !important;
+            --theme-secondary: ${theme.secondary} !important;
+            --theme-gradient: linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%) !important;
+            --theme-light: ${theme.primary}15 !important;
+            --theme-medium: ${theme.primary}25 !important;
+            --theme-dark: ${theme.primary}90 !important;
+        }
+        
+        /* FONDO GENERAL PROFESIONAL */
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f1f5f9 100%) !important;
+            backdrop-filter: blur(20px);
+        }
+        
+        .app-container {
+            background: transparent !important;
+        }
+        
+        .main-content {
+            background: linear-gradient(135deg, rgba(248,250,252,0.8) 0%, rgba(241,245,249,0.6) 100%) !important;
+            backdrop-filter: blur(30px) !important;
+        }
+        
+        /* HEADER EJECUTIVO PREMIUM */
         .executive-header {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, ${theme.primary}22 100%) !important;
+            background: linear-gradient(135deg, 
+                rgba(255,255,255,0.95) 0%, 
+                ${theme.primary}08 25%, 
+                ${theme.primary}15 50%, 
+                ${theme.primary}08 75%, 
+                rgba(255,255,255,0.95) 100%) !important;
             border-bottom: 3px solid ${theme.primary} !important;
-            box-shadow: 0 4px 20px ${theme.primary}33 !important;
+            box-shadow: 
+                0 8px 30px ${theme.primary}20,
+                0 4px 15px rgba(0,0,0,0.1),
+                inset 0 1px 0 rgba(255,255,255,0.8) !important;
+            backdrop-filter: blur(20px) !important;
+            border-radius: 0 0 20px 20px !important;
+            position: relative;
+            overflow: hidden;
         }
         
-        /* Sidebar */
+        .executive-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, ${theme.primary} 0%, ${theme.secondary} 50%, ${theme.primary} 100%);
+            background-size: 200% 100%;
+            animation: headerShine 3s infinite;
+        }
+        
+        @keyframes headerShine {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        /* SIDEBAR PREMIUM PROFESIONAL */
+        .sidebar {
+            background: linear-gradient(180deg, 
+                ${theme.primary} 0%, 
+                ${theme.secondary} 50%, 
+                ${theme.primary} 100%) !important;
+            box-shadow: 
+                8px 0 30px ${theme.primary}30,
+                4px 0 15px rgba(0,0,0,0.15) !important;
+            backdrop-filter: blur(20px) !important;
+            border-right: 1px solid rgba(255,255,255,0.2) !important;
+        }
+        
         .sidebar-header {
-            background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%) !important;
+            background: linear-gradient(135deg, 
+                rgba(255,255,255,0.15) 0%, 
+                rgba(255,255,255,0.05) 100%) !important;
+            border-bottom: 1px solid rgba(255,255,255,0.2) !important;
+            backdrop-filter: blur(15px) !important;
         }
         
-        /* Tarjetas de métricas */
+        /* TARJETAS MÉTRICAS PREMIUM */
         .metric-card {
+            background: linear-gradient(135deg, 
+                rgba(255,255,255,0.95) 0%, 
+                rgba(255,255,255,0.85) 100%) !important;
+            border: 1px solid rgba(255,255,255,0.8) !important;
             border-top: 4px solid ${theme.primary} !important;
-            box-shadow: 0 2px 8px ${theme.primary}22 !important;
+            border-radius: 20px !important;
+            box-shadow: 
+                0 10px 40px ${theme.primary}15,
+                0 5px 20px rgba(0,0,0,0.08),
+                inset 0 1px 0 rgba(255,255,255,0.9) !important;
+            backdrop-filter: blur(20px) !important;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
         }
         
         .metric-card::before {
-            background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%) !important;
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             height: 4px;
+            background: linear-gradient(90deg, ${theme.primary} 0%, ${theme.secondary} 100%);
+            background-size: 200% 100%;
+            animation: cardShine 4s infinite;
         }
         
-        /* Iconos de métricas */
+        @keyframes cardShine {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-8px) scale(1.02) !important;
+            box-shadow: 
+                0 20px 60px ${theme.primary}25,
+                0 10px 30px rgba(0,0,0,0.15) !important;
+            border-color: ${theme.primary}50 !important;
+        }
+        
+        /* ICONOS PREMIUM CON EFECTOS */
         .metric-icon {
             background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%) !important;
-            box-shadow: 0 4px 12px ${theme.primary}44 !important;
+            box-shadow: 
+                0 8px 25px ${theme.primary}40,
+                0 4px 15px rgba(0,0,0,0.2),
+                inset 0 1px 0 rgba(255,255,255,0.3) !important;
+            border-radius: 16px !important;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease !important;
         }
         
-        /* Botones de período */
+        .metric-icon::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+            animation: iconGlow 3s infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes iconGlow {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .metric-icon:hover {
+            transform: scale(1.1) rotate(5deg) !important;
+            box-shadow: 
+                0 12px 35px ${theme.primary}50,
+                0 6px 20px rgba(0,0,0,0.25) !important;
+        }
+        
+        /* BOTONES PREMIUM */
+        .period-btn {
+            background: rgba(255,255,255,0.9) !important;
+            border: 2px solid rgba(255,255,255,0.5) !important;
+            border-radius: 12px !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            position: relative;
+            overflow: hidden;
+        }
+        
         .period-btn.active {
-            background: ${theme.primary} !important;
-            border-color: ${theme.primary} !important;
+            background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%) !important;
+            border-color: transparent !important;
             color: white !important;
-            box-shadow: 0 4px 12px ${theme.primary}44 !important;
+            box-shadow: 
+                0 8px 25px ${theme.primary}40,
+                0 4px 15px rgba(0,0,0,0.2) !important;
+            transform: scale(1.05) !important;
         }
         
-        .period-btn:hover {
-            background: ${theme.secondary} !important;
-            border-color: ${theme.secondary} !important;
+        .period-btn:hover:not(.active) {
+            background: ${theme.primary}15 !important;
+            border-color: ${theme.primary}50 !important;
+            color: ${theme.primary} !important;
+            transform: translateY(-2px) !important;
         }
         
-        /* Botón IA Assistant */
+        /* BOTÓN IA ASSISTANT PREMIUM */
         .ai-header-button {
             background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%) !important;
-            box-shadow: 0 6px 20px ${theme.primary}44 !important;
+            box-shadow: 
+                0 10px 30px ${theme.primary}40,
+                0 5px 15px rgba(0,0,0,0.2) !important;
+            border: none !important;
+            border-radius: 15px !important;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease !important;
         }
         
-        /* Tarjetas de gráficos */
+        .ai-header-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+            transition: left 0.5s ease;
+        }
+        
+        .ai-header-button:hover::before {
+            left: 100%;
+        }
+        
+        .ai-header-button:hover {
+            transform: translateY(-3px) scale(1.05) !important;
+            box-shadow: 
+                0 15px 40px ${theme.primary}50,
+                0 8px 20px rgba(0,0,0,0.25) !important;
+        }
+        
+        /* TARJETAS DE GRÁFICOS PREMIUM */
         .chart-card {
+            background: linear-gradient(135deg, 
+                rgba(255,255,255,0.95) 0%, 
+                rgba(255,255,255,0.85) 100%) !important;
+            border: 1px solid rgba(255,255,255,0.8) !important;
             border-top: 4px solid ${theme.primary} !important;
-            box-shadow: 0 2px 8px ${theme.primary}22 !important;
+            border-radius: 20px !important;
+            box-shadow: 
+                0 10px 40px ${theme.primary}15,
+                0 5px 20px rgba(0,0,0,0.08) !important;
+            backdrop-filter: blur(20px) !important;
+            transition: all 0.3s ease !important;
         }
         
-        /* Enlaces de navegación activos */
+        .chart-card:hover {
+            transform: translateY(-5px) !important;
+            box-shadow: 
+                0 20px 60px ${theme.primary}20,
+                0 10px 30px rgba(0,0,0,0.12) !important;
+        }
+        
+        /* NAVEGACIÓN PREMIUM */
         .nav-link.active {
-            background: ${theme.primary} !important;
+            background: linear-gradient(135deg, 
+                rgba(255,255,255,0.25) 0%, 
+                rgba(255,255,255,0.1) 100%) !important;
+            border-radius: 12px !important;
             color: white !important;
+            box-shadow: 
+                0 4px 15px rgba(0,0,0,0.2),
+                inset 0 1px 0 rgba(255,255,255,0.3) !important;
+            backdrop-filter: blur(10px) !important;
         }
         
-        /* Botones de filtro */
+        .nav-link:hover:not(.active) {
+            background: rgba(255,255,255,0.15) !important;
+            border-radius: 12px !important;
+            transform: translateX(5px) !important;
+        }
+        
+        /* BRAND ICON PREMIUM */
+        .brand-icon {
+            background: linear-gradient(135deg, 
+                rgba(255,255,255,0.3) 0%, 
+                rgba(255,255,255,0.1) 100%) !important;
+            box-shadow: 
+                0 8px 25px rgba(0,0,0,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.5) !important;
+            backdrop-filter: blur(15px) !important;
+        }
+        
+        /* SELECTOR DE EMPRESA PREMIUM */
+        .grizalum-selected-company {
+            background: linear-gradient(135deg, 
+                rgba(255,255,255,0.95) 0%, 
+                rgba(255,255,255,0.85) 100%) !important;
+            border: 2px solid ${theme.primary}30 !important;
+            border-radius: 15px !important;
+            box-shadow: 
+                0 8px 25px ${theme.primary}20,
+                0 4px 15px rgba(0,0,0,0.08) !important;
+            backdrop-filter: blur(20px) !important;
+        }
+        
+        .grizalum-selected-company:hover {
+            border-color: ${theme.primary}60 !important;
+            box-shadow: 
+                0 12px 35px ${theme.primary}30,
+                0 6px 20px rgba(0,0,0,0.12) !important;
+            transform: translateY(-2px) !important;
+        }
+        
+        /* FILTROS DE GRÁFICOS */
         .filter-btn.active {
             background: ${theme.primary} !important;
             color: white !important;
+            border-radius: 8px !important;
+            box-shadow: 0 4px 12px ${theme.primary}40 !important;
         }
         
-        /* Brand icon */
-        .brand-icon {
-            background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%) !important;
-        }
-        
-        /* Summary values en sidebar */
+        /* VALORES SIDEBAR PREMIUM */
         .summary-value {
-            color: ${theme.primary} !important;
-            font-weight: bold;
+            color: white !important;
+            font-weight: 800 !important;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;
         }
         
-        /* Variables CSS globales */
-        :root {
-            --theme-primary: ${theme.primary} !important;
-            --theme-secondary: ${theme.secondary} !important;
-            --theme-gradient: linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%) !important;
+        /* DASHBOARD CONTENT PREMIUM */
+        .dashboard-content {
+            background: transparent !important;
+        }
+        
+        .metrics-grid {
+            gap: 2rem !important;
+        }
+        
+        .charts-section {
+            gap: 2rem !important;
+        }
+        
+        /* EFECTOS ADICIONALES */
+        .metric-value {
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+        }
+        
+        .chart-title {
+            color: ${theme.primary} !important;
+            font-weight: 700 !important;
+        }
+        
+        /* SCROLLBAR PREMIUM */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: ${theme.primary}10;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: ${theme.primary};
         }
     `;
     
     document.head.appendChild(style);
     
-    // 🎯 APLICAR DIRECTAMENTE A ELEMENTOS ESPECÍFICOS DEL INDEX
-    try {
-        // Header ejecutivo
-        const header = document.querySelector('.executive-header');
-        if (header) {
-            header.style.background = `linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, ${theme.primary}22 100%)`;
-            header.style.borderBottom = `3px solid ${theme.primary}`;
-        }
-        
-        // Sidebar header
-        const sidebarHeader = document.querySelector('.sidebar-header');
-        if (sidebarHeader) {
-            sidebarHeader.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
-        }
-        
-        // Tarjetas de métricas
-        document.querySelectorAll('.metric-card').forEach(card => {
-            if (card) {
-                card.style.borderTop = `4px solid ${theme.primary}`;
-                card.style.position = 'relative';
-            }
-        });
-        
-        // Iconos de métricas
-        document.querySelectorAll('.metric-icon').forEach(icon => {
-            if (icon) {
-                icon.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
-                icon.style.boxShadow = `0 4px 12px ${theme.primary}44`;
-            }
-        });
-        
-        // Botón IA
-        const aiBtn = document.querySelector('.ai-header-button');
-        if (aiBtn) {
-            aiBtn.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
-            aiBtn.style.boxShadow = `0 6px 20px ${theme.primary}44`;
-        }
-        
-        // Brand icon
-        const brandIcon = document.querySelector('.brand-icon');
-        if (brandIcon) {
-            brandIcon.style.background = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
-        }
-        
-        console.log(`✅ Tema ${theme.primary} aplicado al INDEX correctamente`);
-        
-    } catch (error) {
-        console.error('❌ Error aplicando tema al index:', error);
-    }
+    console.log(`✅ Tema PREMIUM aplicado: ${theme.primary} -> ${theme.secondary}`);
     
     // Disparar evento de confirmación
     document.dispatchEvent(new CustomEvent('grizalumThemeChanged', {
         detail: { companyId, company, theme, timestamp: Date.now() }
     }));
 }
-
 // ================================================================
 // EVENT LISTENERS PARA INTEGRACIÓN CON MÓDULOS
 // ================================================================
