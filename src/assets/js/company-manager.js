@@ -5878,52 +5878,88 @@ applyGlobalTheme(companyId) {
     console.log('🏁 TEMA GLOBAL APLICADO COMPLETAMENTE');
 }
     // APLICAR TEMA GLOBAL DESDE PRESET (Netflix, Goldman, etc.)
+// APLICAR TEMA GLOBAL DESDE PRESET (Netflix, Goldman, etc.)
 applyGlobalThemeFromPreset(themeName) {
     console.log(`🌈 Aplicando tema GLOBAL: ${themeName}`);
     
-    // COLORES POR TEMA
+    // COLORES POR TEMA - VERSIÓN CORREGIDA
     const themes = {
-    'Netflix Premium': { primary: '#e50914', secondary: '#b20710' },
-    'Goldman Platinum': { primary: '#d4af37', secondary: '#b87333' },
-    'Royal Purple': { primary: '#8b5cf6', secondary: '#7c3aed' },
-    'Emerald Nature': { primary: '#10b981', secondary: '#059669' },
-    'Ocean Commerce': { primary: '#0ea5e9', secondary: '#0284c7' },
-    'Midnight Corporate': { primary: '#1e40af', secondary: '#1e3a8a' }
-};
+        'netflix-premium': { primary: '#e50914', secondary: '#b20710' },
+        'goldman-platinum': { primary: '#d4af37', secondary: '#b87333' },
+        'royal-purple': { primary: '#8b5cf6', secondary: '#7c3aed' },
+        'emerald-nature': { primary: '#10b981', secondary: '#059669' },
+        'ocean-commerce': { primary: '#0ea5e9', secondary: '#0284c7' },
+        'midnight-corporate': { primary: '#1e40af', secondary: '#1e3a8a' }
+    };
     
     const theme = themes[themeName] || themes['goldman-platinum'];
+    
+    // 🎨 ACTUALIZAR VARIABLES CSS DINÁMICAS - ESTO ES LO IMPORTANTE
+    document.documentElement.style.setProperty('--theme-primary', theme.primary);
+    document.documentElement.style.setProperty('--theme-secondary', theme.secondary);
+    document.documentElement.style.setProperty('--theme-gradient', `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`);
+    document.documentElement.style.setProperty('--theme-shadow', `${theme.primary}66`);
+    document.documentElement.style.setProperty('--theme-glow', `${theme.primary}22`);
+    
+    // APLICAR DIRECTAMENTE A ELEMENTOS CRÍTICOS
     const gradient = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
     
-    // CAMBIAR TODA LA APP
-    // 1. Header
+    // 1. Header principal
     const header = document.querySelector('.executive-header');
     if (header) {
         header.style.background = `linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, ${theme.primary}22 100%)`;
         header.style.borderBottom = `3px solid ${theme.primary}`;
+        header.style.boxShadow = `0 4px 20px ${theme.primary}66`;
     }
     
-    // 2. Sidebar
+    // 2. Sidebar header
     const sidebarHeader = document.querySelector('.sidebar-header');
     if (sidebarHeader) {
         sidebarHeader.style.background = gradient;
     }
     
-    // 3. Tarjetas
+    // 3. Tarjetas métricas - TODAS
     document.querySelectorAll('.metric-card').forEach(card => {
-        card.style.borderTop = `6px solid ${theme.primary}`;
+        card.style.setProperty('--card-border-color', theme.primary);
+        // Forzar el ::before con importante
+        const style = document.createElement('style');
+        style.textContent = `
+            .metric-card::before {
+                background: ${gradient} !important;
+                height: 6px !important;
+            }
+        `;
+        document.head.appendChild(style);
     });
     
-    // 4. Iconos
+    // 4. Iconos de métricas - TODOS
     document.querySelectorAll('.metric-icon').forEach(icon => {
         icon.style.background = gradient;
+        icon.style.boxShadow = `0 4px 12px ${theme.primary}66`;
     });
     
-    // 5. Botones
+    // 5. Botones activos
     document.querySelectorAll('.period-btn.active').forEach(btn => {
         btn.style.background = theme.primary;
+        btn.style.boxShadow = `0 4px 12px ${theme.primary}66`;
     });
     
-    console.log(`✅ Tema ${themeName} aplicado a TODA la app`);
+    // 6. IA Assistant button
+    const aiBtn = document.querySelector('.ai-header-button');
+    if (aiBtn) {
+        aiBtn.style.background = gradient;
+        aiBtn.style.boxShadow = `0 6px 20px ${theme.primary}66`;
+    }
+    
+    // 7. Charts
+    document.querySelectorAll('.chart-card').forEach(card => {
+        card.style.borderTop = `4px solid ${theme.primary}`;
+    });
+    
+    console.log(`✅ Tema ${themeName} aplicado GLOBALMENTE con colores ${theme.primary} -> ${theme.secondary}`);
+    
+    // Notificación visual
+    this.showNotification(`🎨 Tema ${themeName} aplicado a toda la aplicación`, 'success');
 }
 // OBTENER NOMBRE DEL TEMA
 getThemeName(theme) {
