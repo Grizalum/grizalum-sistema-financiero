@@ -2350,12 +2350,11 @@ div[class*="grizalum-modal"] {
     z-index: 90000 !important;
 }
 /* ================================================================
-   COMPANY SELECTOR BONITO Y FUNCIONAL - DISEÑO ORIGINAL MEJORADO
+   COMPANY SELECTOR DINÁMICO - COLORES DE TEMAS VISUALES
    ================================================================ */
 
-/* SELECTOR PRINCIPAL - BONITO CON GRADIENTE */
 .grizalum-selected-company {
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(168, 85, 247, 0.9) 100%) !important;
+    /* SIN colores forzados - vienen de JavaScript */
     border: 2px solid rgba(255, 255, 255, 0.3) !important;
     border-radius: 16px !important;
     padding: 12px 20px !important;
@@ -2364,16 +2363,9 @@ div[class*="grizalum-modal"] {
     justify-content: space-between !important;
     cursor: pointer !important;
     transition: all 0.3s ease !important;
-    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4) !important;
     color: white !important;
     backdrop-filter: blur(10px) !important;
     min-width: 200px !important;
-}
-
-.grizalum-selected-company:hover {
-    background: linear-gradient(135deg, rgba(139, 92, 246, 1) 0%, rgba(168, 85, 247, 1) 100%) !important;
-    box-shadow: 0 12px 35px rgba(139, 92, 246, 0.6) !important;
-    transform: translateY(-2px) !important;
 }
 
 .grizalum-company-info {
@@ -2415,15 +2407,4 @@ div[class*="grizalum-modal"] {
     color: rgba(255, 255, 255, 0.8) !important;
     font-size: 16px !important;
     transition: transform 0.3s ease !important;
-}
-
-.grizalum-dropdown-arrow.rotate {
-    transform: rotate(180deg) !important;
-}
-
-/* CONTENEDOR TRANSPARENTE */
-#companySelector {
-    background: transparent !important;
-    border: none !important;
-    position: relative !important;
 }
