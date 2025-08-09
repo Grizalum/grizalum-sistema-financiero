@@ -5826,76 +5826,54 @@ class GrizalumCompanyManager {
     this.logAuditAction('THEME_APPLIED', `Tema ${selectedTheme} aplicado a ${this.companies[companyId].name}`);
 }
 // FUNCIÓN PARA APLICAR TEMA GLOBAL A TODA LA APP
+// FUNCIÓN PARA APLICAR TEMA GLOBAL A TODA LA APP
 applyGlobalTheme(companyId) {
+    console.log('🔥 INICIANDO applyGlobalTheme para:', companyId);
+    
     const company = this.companies[companyId];
-    if (!company || !company.theme) return;
+    if (!company || !company.theme) {
+        console.error('❌ No se encontró empresa o tema');
+        return;
+    }
     
     const theme = company.theme;
-    console.log(`🌈 Aplicando tema global DIRECTO: ${theme.primary} -> ${theme.secondary}`);
+    console.log(`🌈 TEMA ENCONTRADO: ${theme.primary} -> ${theme.secondary}`);
     
     // APLICAR DIRECTAMENTE A ELEMENTOS ESPECÍFICOS
     const gradient = `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`;
-    const shadow = `${theme.primary}66`;
-    const glow = `${theme.primary}33`;
     
-    // 1. CAMBIAR HEADER
+    // 1. BUSCAR Y CAMBIAR HEADER
     const header = document.querySelector('.executive-header');
+    console.log('🎯 Header encontrado:', !!header);
     if (header) {
         header.style.background = `linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, ${theme.primary}22 100%)`;
         header.style.borderBottom = `3px solid ${theme.primary}`;
-        header.style.boxShadow = `0 4px 20px ${shadow}`;
+        console.log('✅ Header aplicado con color:', theme.primary);
     }
     
-    // 2. CAMBIAR SIDEBAR
-    const sidebarHeader = document.querySelector('.sidebar-header');
-    if (sidebarHeader) {
-        sidebarHeader.style.background = gradient;
-    }
-    
-    // 3. CAMBIAR TARJETAS DE MÉTRICAS
-    document.querySelectorAll('.metric-card').forEach(card => {
+    // 2. BUSCAR Y CAMBIAR TARJETAS
+    const cards = document.querySelectorAll('.metric-card');
+    console.log('🎯 Tarjetas encontradas:', cards.length);
+    cards.forEach((card, index) => {
         card.style.borderTop = `6px solid ${theme.primary}`;
-        card.addEventListener('mouseenter', function() {
-            this.style.boxShadow = `0 15px 40px ${shadow}`;
-            this.style.borderColor = theme.primary;
-            this.style.transform = 'translateY(-6px)';
-        });
-        card.addEventListener('mouseleave', function() {
-            this.style.boxShadow = '';
-            this.style.borderColor = '';
-            this.style.transform = '';
-        });
+        console.log(`✅ Tarjeta ${index + 1} aplicada`);
     });
     
-    // 4. CAMBIAR ICONOS DE MÉTRICAS
-    document.querySelectorAll('.metric-icon').forEach(icon => {
+    // 3. BUSCAR Y CAMBIAR ICONOS
+    const icons = document.querySelectorAll('.metric-icon');
+    console.log('🎯 Iconos encontrados:', icons.length);
+    icons.forEach((icon, index) => {
         icon.style.background = gradient;
+        console.log(`✅ Icono ${index + 1} aplicado`);
     });
-    
-    // 5. CAMBIAR GRÁFICOS
-    document.querySelectorAll('.chart-card').forEach(chart => {
-        chart.style.borderTop = `4px solid ${theme.primary}`;
-    });
-    
-    // 6. CAMBIAR BOTONES ACTIVOS
-    document.querySelectorAll('.period-btn.active').forEach(btn => {
-        btn.style.background = theme.primary;
-        btn.style.color = 'white';
-    });
-    
-    // 7. CAMBIAR AI BUTTON
-    const aiButton = document.querySelector('.ai-header-button');
-    if (aiButton) {
-        aiButton.style.background = gradient;
-    }
     
     // APLICAR AL SELECTOR DE EMPRESAS
     this.applyCompanyThemeIntegration(companyId);
     
-    // NOTIFICACIÓN ÉPICA
-    this.showNotification(`🎨 Tema ${this.getThemeName(theme)} aplicado a toda la app`, 'success');
+    // NOTIFICACIÓN
+    this.showNotification(`🎨 Tema aplicado: ${theme.primary}`, 'success');
     
-    console.log('🌈 Tema global aplicado DIRECTAMENTE a todos los elementos');
+    console.log('🏁 TEMA GLOBAL APLICADO COMPLETAMENTE');
 }
 // OBTENER NOMBRE DEL TEMA
 getThemeName(theme) {
