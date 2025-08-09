@@ -2350,28 +2350,30 @@ div[class*="grizalum-modal"] {
     z-index: 90000 !important;
 }
 /* ================================================================
-   ARREGLO URGENTE COMPANY SELECTOR - SOBRESCRIBIR CONFLICTOS
+   COMPANY SELECTOR BONITO Y FUNCIONAL - DISEÑO ORIGINAL MEJORADO
    ================================================================ */
 
-/* FORZAR ESTILOS CORRECTOS */
+/* SELECTOR PRINCIPAL - BONITO CON GRADIENTE */
 .grizalum-selected-company {
-    background: white !important;
-    border: 2px solid #e5e7eb !important;
-    border-radius: 12px !important;
-    padding: 12px 16px !important;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(168, 85, 247, 0.9) 100%) !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 16px !important;
+    padding: 12px 20px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
     cursor: pointer !important;
     transition: all 0.3s ease !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
-    color: #1f2937 !important;
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4) !important;
+    color: white !important;
+    backdrop-filter: blur(10px) !important;
+    min-width: 200px !important;
 }
 
 .grizalum-selected-company:hover {
-    border-color: #d4af37 !important;
-    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2) !important;
-    transform: translateY(-1px) !important;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 1) 0%, rgba(168, 85, 247, 1) 100%) !important;
+    box-shadow: 0 12px 35px rgba(139, 92, 246, 0.6) !important;
+    transform: translateY(-2px) !important;
 }
 
 .grizalum-company-info {
@@ -2381,34 +2383,37 @@ div[class*="grizalum-modal"] {
 }
 
 .grizalum-company-icon {
-    width: 36px !important;
-    height: 36px !important;
-    background: linear-gradient(135deg, #d4af37 0%, #b87333 100%) !important;
-    border-radius: 8px !important;
+    width: 40px !important;
+    height: 40px !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 10px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    font-size: 18px !important;
+    font-size: 20px !important;
     color: white !important;
-    box-shadow: 0 2px 6px rgba(212, 175, 55, 0.3) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+    backdrop-filter: blur(10px) !important;
 }
 
 .grizalum-company-name {
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    color: #1f2937 !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: white !important;
     margin-bottom: 2px !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
 }
 
 .grizalum-company-status {
-    font-size: 12px !important;
-    color: #6b7280 !important;
+    font-size: 13px !important;
+    color: rgba(255, 255, 255, 0.9) !important;
     font-weight: 500 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
 }
 
 .grizalum-dropdown-arrow {
-    color: #6b7280 !important;
-    font-size: 14px !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-size: 16px !important;
     transition: transform 0.3s ease !important;
 }
 
@@ -2416,13 +2421,9 @@ div[class*="grizalum-modal"] {
     transform: rotate(180deg) !important;
 }
 
-/* REMOVER CUALQUIER FONDO EXTRAÑO */
-#companySelector * {
-    background-image: none !important;
-    background-color: transparent !important;
-}
-
+/* CONTENEDOR TRANSPARENTE */
 #companySelector {
     background: transparent !important;
     border: none !important;
+    position: relative !important;
 }
