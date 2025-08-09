@@ -936,6 +936,237 @@ function applyCompanyThemeIntegration(companyId) {
         ::-webkit-scrollbar-thumb:hover {
             box-shadow: 0 0 10px ${theme.primary}80;
         }
+        /* ===== DROPDOWN SELECTOR DE EMPRESAS FUTURISTA ===== */
+        .grizalum-company-dropdown {
+            background: linear-gradient(135deg, 
+                rgba(30, 41, 59, 0.95) 0%, 
+                rgba(51, 65, 85, 0.9) 100%) !important;
+            border: 1px solid rgba(255,255,255,0.2) !important;
+            border-radius: 16px !important;
+            box-shadow: 
+                0 20px 60px rgba(0,0,0,0.5),
+                0 0 30px ${theme.primary}20 !important;
+            backdrop-filter: blur(20px) !important;
+            z-index: 999999 !important;
+            color: white !important;
+        }
+        
+        .grizalum-dropdown-header {
+            background: linear-gradient(135deg, 
+                rgba(0,0,0,0.3) 0%, 
+                rgba(0,0,0,0.1) 100%) !important;
+            border-bottom: 1px solid rgba(255,255,255,0.2) !important;
+            color: white !important;
+        }
+        
+        .grizalum-dropdown-header h4 {
+            color: white !important;
+        }
+        
+        .grizalum-btn-add-company {
+            background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%) !important;
+            border: none !important;
+            color: white !important;
+            box-shadow: 0 4px 12px ${theme.primary}40 !important;
+        }
+        
+        .grizalum-btn-add-company:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 20px ${theme.primary}60 !important;
+        }
+        
+        .grizalum-companies-list {
+            background: transparent !important;
+        }
+        
+        .grizalum-company-item {
+            background: transparent !important;
+            color: white !important;
+            border-radius: 12px !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        .grizalum-company-item:hover {
+            background: linear-gradient(135deg, 
+                rgba(255,255,255,0.1) 0%, 
+                rgba(255,255,255,0.05) 100%) !important;
+            transform: translateX(8px) !important;
+            border-left: 3px solid ${theme.primary} !important;
+        }
+        
+        .grizalum-company-item.active {
+            background: linear-gradient(135deg, 
+                ${theme.primary}40 0%, 
+                ${theme.secondary}20 100%) !important;
+            border: 1px solid ${theme.primary}60 !important;
+            border-left: 4px solid ${theme.primary} !important;
+        }
+        
+        .grizalum-company-item-icon {
+            background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%) !important;
+            color: white !important;
+            border: 1px solid rgba(255,255,255,0.2) !important;
+        }
+        
+        .grizalum-company-item-name {
+            color: white !important;
+        }
+        
+        .grizalum-company-item-stats {
+            color: #94a3b8 !important;
+        }
+        
+        .grizalum-dropdown-footer {
+            background: linear-gradient(135deg, 
+                rgba(0,0,0,0.2) 0%, 
+                rgba(0,0,0,0.1) 100%) !important;
+            border-top: 1px solid rgba(255,255,255,0.2) !important;
+        }
+        
+        .grizalum-manage-companies-btn {
+            background: rgba(51, 65, 85, 0.6) !important;
+            color: white !important;
+            border: 1px solid rgba(255,255,255,0.2) !important;
+            backdrop-filter: blur(10px) !important;
+        }
+        
+        .grizalum-manage-companies-btn:hover {
+            background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%) !important;
+            border-color: transparent !important;
+            transform: translateY(-2px) !important;
+        }
+        
+        .grizalum-total-companies {
+            color: ${theme.primary} !important;
+            text-shadow: 0 0 8px ${theme.primary}50 !important;
+        }
+        
+        /* ===== MODALES FUTURISTAS ===== */
+        .grizalum-modal {
+            z-index: 999999 !important;
+            backdrop-filter: blur(10px) !important;
+        }
+        
+        .grizalum-modal-content {
+            background: linear-gradient(135deg, 
+                rgba(30, 41, 59, 0.95) 0%, 
+                rgba(51, 65, 85, 0.9) 100%) !important;
+            border: 1px solid rgba(255,255,255,0.2) !important;
+            color: white !important;
+            backdrop-filter: blur(20px) !important;
+        }
+        
+        .grizalum-modal-header {
+            background: linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%) !important;
+            border-bottom: 1px solid rgba(255,255,255,0.2) !important;
+        }
+        
+        /* ===== NOTIFICACIONES FUTURISTAS ===== */
+        .grizalum-notification {
+            background: linear-gradient(135deg, 
+                rgba(30, 41, 59, 0.95) 0%, 
+                rgba(51, 65, 85, 0.9) 100%) !important;
+            border: 1px solid rgba(255,255,255,0.2) !important;
+            color: white !important;
+            backdrop-filter: blur(20px) !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
+        }
+        
+        .notification-content {
+            color: white !important;
+        }
+        
+        .notification-close {
+            color: #94a3b8 !important;
+        }
+        
+        .notification-close:hover {
+            color: white !important;
+            background: rgba(255,255,255,0.1) !important;
+        }
+        
+        /* ===== INPUTS Y FORMS FUTURISTAS ===== */
+        .grizalum-input, .grizalum-select {
+            background: rgba(51, 65, 85, 0.6) !important;
+            border: 1px solid rgba(255,255,255,0.2) !important;
+            color: white !important;
+            backdrop-filter: blur(10px) !important;
+        }
+        
+        .grizalum-input:focus, .grizalum-select:focus {
+            border-color: ${theme.primary} !important;
+            box-shadow: 0 0 0 3px ${theme.primary}30 !important;
+            background: rgba(51, 65, 85, 0.8) !important;
+        }
+        
+        .grizalum-input::placeholder {
+            color: #94a3b8 !important;
+        }
+        
+        /* ===== STATUS OPTIONS FUTURISTAS ===== */
+        .status-option {
+            background: rgba(51, 65, 85, 0.6) !important;
+            border: 1px solid rgba(255,255,255,0.2) !important;
+            color: white !important;
+            backdrop-filter: blur(10px) !important;
+        }
+        
+        .status-option:hover,
+        .status-option.active {
+            border-color: ${theme.primary} !important;
+            background: ${theme.primary}20 !important;
+            box-shadow: 0 4px 12px ${theme.primary}30 !important;
+        }
+        
+        /* ===== EMOJI PICKER FUTURISTA ===== */
+        .emoji-picker {
+            background: linear-gradient(135deg, 
+                rgba(30, 41, 59, 0.95) 0%, 
+                rgba(51, 65, 85, 0.9) 100%) !important;
+            border: 1px solid rgba(255,255,255,0.2) !important;
+            backdrop-filter: blur(20px) !important;
+            z-index: 999999 !important;
+        }
+        
+        .emoji-search {
+            border-bottom: 1px solid rgba(255,255,255,0.2) !important;
+        }
+        
+        .emoji-search input {
+            background: rgba(51, 65, 85, 0.6) !important;
+            border: 1px solid rgba(255,255,255,0.2) !important;
+            color: white !important;
+        }
+        
+        .emoji-search input::placeholder {
+            color: #94a3b8 !important;
+        }
+        
+        .emoji-categories {
+            border-bottom: 1px solid rgba(255,255,255,0.2) !important;
+        }
+        
+        .emoji-cat {
+            background: rgba(51, 65, 85, 0.6) !important;
+            color: white !important;
+        }
+        
+        .emoji-cat:hover,
+        .emoji-cat.active {
+            background: ${theme.primary}40 !important;
+        }
+        
+        .emoji-item:hover {
+            background: ${theme.primary}30 !important;
+        }
+        
+        .emoji-recents {
+            border-top: 1px solid rgba(255,255,255,0.2) !important;
+        }
+        
+        .emoji-recents h4 {
+            color: #94a3b8 !important;
+        }
     `;
     
     document.head.appendChild(style);
