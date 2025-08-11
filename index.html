@@ -568,63 +568,74 @@ function applyCompanyThemeIntegration(companyId) {
     
     const theme = company.theme;
     console.log(`🌟 Aplicando tema futurista: ${theme.primary} -> ${theme.secondary}`);
-// 🚀 FORZAR Z-INDEX CON JAVASCRIPT - VERSIÓN CORREGIDA
+// 🚀 SOLUCIÓN AGRESIVA - POSITION FIXED
     setTimeout(() => {
         try {
             const dropdown = document.querySelector('.grizalum-company-dropdown');
             const selector = document.querySelector('.grizalum-company-selector');
             
             if (dropdown) {
-                dropdown.style.zIndex = '999999999';
-                dropdown.style.position = 'absolute';
-                dropdown.style.top = '100%';
-                dropdown.style.right = '0';
-                dropdown.style.background = `linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.9) 100%)`;
-                dropdown.style.border = '1px solid rgba(255,255,255,0.2)';
+                // FORZAR POSITION FIXED PARA EVITAR CLIPPING
+                dropdown.style.position = 'fixed !important';
+                dropdown.style.zIndex = '999999999999';
+                dropdown.style.top = 'auto';
+                dropdown.style.right = '20px';
+                dropdown.style.left = 'auto';
+                dropdown.style.bottom = 'auto';
+                dropdown.style.width = '350px';
+                dropdown.style.background = `linear-gradient(135deg, rgba(30, 41, 59, 0.98) 0%, rgba(51, 65, 85, 0.95) 100%)`;
+                dropdown.style.border = '2px solid rgba(255,255,255,0.3)';
                 dropdown.style.borderRadius = '16px';
                 dropdown.style.backdropFilter = 'blur(20px)';
                 dropdown.style.color = 'white';
-                dropdown.style.boxShadow = '0 20px 60px rgba(0,0,0,0.5), 0 0 30px rgba(212, 175, 55, 0.2)';
-                console.log('✅ Dropdown styling aplicado');
-            } else {
-                console.log('❌ Dropdown no encontrado');
+                dropdown.style.boxShadow = '0 20px 60px rgba(0,0,0,0.8), 0 0 30px rgba(212, 175, 55, 0.4)';
+                dropdown.style.transform = 'none';
+                dropdown.style.marginTop = '10px';
+                
+                // ASEGURAR QUE SE VEA ENCIMA DE TODO
+                dropdown.style.setProperty('position', 'fixed', 'important');
+                dropdown.style.setProperty('z-index', '999999999999', 'important');
+                
+                console.log('✅ Dropdown FIXED aplicado');
             }
             
             if (selector) {
                 selector.style.position = 'relative';
                 selector.style.zIndex = '999999998';
-                console.log('✅ Selector styling aplicado');
             }
             
-            // Bajar z-index de tarjetas métricas
-            const metricCards = document.querySelectorAll('.metric-card, .chart-card');
-            metricCards.forEach(card => {
+            // ELIMINAR Z-INDEX DE TODAS LAS TARJETAS
+            const allCards = document.querySelectorAll('.metric-card, .chart-card, .executive-header, .main-content, .dashboard-content');
+            allCards.forEach(card => {
                 if (card) {
-                    card.style.zIndex = '1';
+                    card.style.zIndex = 'auto';
                     card.style.position = 'relative';
                 }
             });
-            console.log(`✅ ${metricCards.length} tarjetas ajustadas`);
             
-            // Forzar estilos a elementos internos del dropdown
-            const dropdownItems = document.querySelectorAll('.grizalum-company-item');
-            dropdownItems.forEach(item => {
-                if (item) {
-                    item.style.color = 'white';
-                    item.style.background = 'transparent';
+            // AJUSTAR POSICIÓN CUANDO SE ABRA EL DROPDOWN
+            const observer = new MutationObserver(() => {
+                const dropdown = document.querySelector('.grizalum-company-dropdown.show');
+                if (dropdown) {
+                    const selectorRect = document.querySelector('.grizalum-company-selector').getBoundingClientRect();
+                    dropdown.style.top = (selectorRect.bottom + 5) + 'px';
+                    dropdown.style.right = (window.innerWidth - selectorRect.right) + 'px';
+                    dropdown.style.position = 'fixed';
+                    dropdown.style.zIndex = '999999999999';
                 }
             });
             
-            const dropdownHeader = document.querySelector('.grizalum-dropdown-header');
-            if (dropdownHeader) {
-                dropdownHeader.style.background = 'linear-gradient(135deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 100%)';
-                dropdownHeader.style.color = 'white';
-            }
+            observer.observe(document.body, { 
+                childList: true, 
+                subtree: true, 
+                attributes: true, 
+                attributeFilter: ['class'] 
+            });
             
-            console.log('🔧 Z-index forzado con JavaScript - SIN ERRORES');
+            console.log('🚀 SOLUCIÓN AGRESIVA APLICADA');
             
         } catch (error) {
-            console.error('❌ Error en el código JavaScript:', error);
+            console.error('❌ Error:', error);
         }
     }, 1000);
     
