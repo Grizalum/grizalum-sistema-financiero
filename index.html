@@ -606,6 +606,19 @@ function applyCompanyThemeIntegration(companyId) {
         
         console.log('🔧 Z-index forzado con JavaScript');
     }, 500);
+    // 🔧 BAJAR Z-INDEX DE TARJETAS MÉTRICAS
+        const metricCards = document.querySelectorAll('.metric-card, .chart-card');
+        metricCards.forEach(card => {
+            card.style.zIndex = '1';
+            card.style.position = 'relative';
+        });
+        
+        // Asegurar que el dropdown esté encima de TODO
+        if (dropdown && dropdown.classList.contains('show')) {
+            dropdown.style.zIndex = '9999999999';
+        }
+        
+        console.log('🔧 Z-index de tarjetas ajustado');
     
     // 🌟 ESTILOS FUTURISTAS OSCUROS
     const styleId = 'grizalum-futuristic-theme';
