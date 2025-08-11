@@ -568,57 +568,65 @@ function applyCompanyThemeIntegration(companyId) {
     
     const theme = company.theme;
     console.log(`🌟 Aplicando tema futurista: ${theme.primary} -> ${theme.secondary}`);
-    // 🚀 FORZAR Z-INDEX CON JAVASCRIPT
+// 🚀 FORZAR Z-INDEX CON JAVASCRIPT - VERSIÓN CORREGIDA
     setTimeout(() => {
-        const dropdown = document.querySelector('.grizalum-company-dropdown');
-        const selector = document.querySelector('.grizalum-company-selector');
-        
-        if (dropdown) {
-            dropdown.style.zIndex = '999999999';
-            dropdown.style.position = 'absolute';
-            dropdown.style.top = '100%';
-            dropdown.style.right = '0';
-            dropdown.style.background = `linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.9) 100%)`;
-            dropdown.style.border = '1px solid rgba(255,255,255,0.2)';
-            dropdown.style.borderRadius = '16px';
-            dropdown.style.backdropFilter = 'blur(20px)';
-            dropdown.style.color = 'white';
-            dropdown.style.boxShadow = '0 20px 60px rgba(0,0,0,0.5), 0 0 30px rgba(212, 175, 55, 0.2)';
+        try {
+            const dropdown = document.querySelector('.grizalum-company-dropdown');
+            const selector = document.querySelector('.grizalum-company-selector');
+            
+            if (dropdown) {
+                dropdown.style.zIndex = '999999999';
+                dropdown.style.position = 'absolute';
+                dropdown.style.top = '100%';
+                dropdown.style.right = '0';
+                dropdown.style.background = `linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.9) 100%)`;
+                dropdown.style.border = '1px solid rgba(255,255,255,0.2)';
+                dropdown.style.borderRadius = '16px';
+                dropdown.style.backdropFilter = 'blur(20px)';
+                dropdown.style.color = 'white';
+                dropdown.style.boxShadow = '0 20px 60px rgba(0,0,0,0.5), 0 0 30px rgba(212, 175, 55, 0.2)';
+                console.log('✅ Dropdown styling aplicado');
+            } else {
+                console.log('❌ Dropdown no encontrado');
+            }
+            
+            if (selector) {
+                selector.style.position = 'relative';
+                selector.style.zIndex = '999999998';
+                console.log('✅ Selector styling aplicado');
+            }
+            
+            // Bajar z-index de tarjetas métricas
+            const metricCards = document.querySelectorAll('.metric-card, .chart-card');
+            metricCards.forEach(card => {
+                if (card) {
+                    card.style.zIndex = '1';
+                    card.style.position = 'relative';
+                }
+            });
+            console.log(`✅ ${metricCards.length} tarjetas ajustadas`);
+            
+            // Forzar estilos a elementos internos del dropdown
+            const dropdownItems = document.querySelectorAll('.grizalum-company-item');
+            dropdownItems.forEach(item => {
+                if (item) {
+                    item.style.color = 'white';
+                    item.style.background = 'transparent';
+                }
+            });
+            
+            const dropdownHeader = document.querySelector('.grizalum-dropdown-header');
+            if (dropdownHeader) {
+                dropdownHeader.style.background = 'linear-gradient(135deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 100%)';
+                dropdownHeader.style.color = 'white';
+            }
+            
+            console.log('🔧 Z-index forzado con JavaScript - SIN ERRORES');
+            
+        } catch (error) {
+            console.error('❌ Error en el código JavaScript:', error);
         }
-        
-        if (selector) {
-            selector.style.position = 'relative';
-            selector.style.zIndex = '999999998';
-        }
-        
-        // Forzar estilos a elementos internos
-        const dropdownItems = document.querySelectorAll('.grizalum-company-item');
-        dropdownItems.forEach(item => {
-            item.style.color = 'white';
-            item.style.background = 'transparent';
-        });
-        
-        const dropdownHeader = document.querySelector('.grizalum-dropdown-header');
-        if (dropdownHeader) {
-            dropdownHeader.style.background = 'linear-gradient(135deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 100%)';
-            dropdownHeader.style.color = 'white';
-        }
-        
-        console.log('🔧 Z-index forzado con JavaScript');
-    }, 500);
-    // 🔧 BAJAR Z-INDEX DE TARJETAS MÉTRICAS
-        const metricCards = document.querySelectorAll('.metric-card, .chart-card');
-        metricCards.forEach(card => {
-            card.style.zIndex = '1';
-            card.style.position = 'relative';
-        });
-        
-        // Asegurar que el dropdown esté encima de TODO
-        if (dropdown && dropdown.classList.contains('show')) {
-            dropdown.style.zIndex = '9999999999';
-        }
-        
-        console.log('🔧 Z-index de tarjetas ajustado');
+    }, 1000);
     
     // 🌟 ESTILOS FUTURISTAS OSCUROS
     const styleId = 'grizalum-futuristic-theme';
