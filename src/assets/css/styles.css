@@ -2616,3 +2616,48 @@ div[class*="grizalum-modal"] {
     position: relative !important;
     z-index: 10001 !important;
 }
+/* ===== SOLUCIÓN FORZADA DROPDOWN ===== */
+.grizalum-company-dropdown,
+#grizalumCompanyDropdown {
+    position: fixed !important;
+    top: 130px !important;
+    right: 20px !important;
+    left: auto !important;
+    width: 350px !important;
+    z-index: 2147483647 !important;
+    background: white !important;
+    border-radius: 16px !important;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5) !important;
+    border: 1px solid #d4af37 !important;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease !important;
+}
+
+.grizalum-company-dropdown.show,
+#grizalumCompanyDropdown.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) !important;
+    z-index: 2147483647 !important;
+}
+
+/* BAJAR TODO LO DEMÁS */
+.dashboard-content,
+.metrics-grid,
+.charts-section,
+.metric-card,
+.chart-card,
+.main-content,
+.executive-header {
+    z-index: 1 !important;
+}
+
+/* FORZAR SELECTOR ENCIMA */
+.header-controls,
+#companySelector,
+.grizalum-company-selector {
+    z-index: 2147483646 !important;
+    position: relative !important;
+}
