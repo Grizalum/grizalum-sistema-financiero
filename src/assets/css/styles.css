@@ -2562,3 +2562,13 @@ div[class*="grizalum-modal"] {
 .chart-card {
     border-top: 4px solid var(--theme-primary) !important;
 }
+
+/* ARREGLO DEFINITIVO DEL DROPDOWN */
+.grizalum-company-dropdown {
+    z-index: 999999999 !important;
+    position: fixed !important;
+}
+
+.metric-card, .chart-card {
+    z-index: 1 !important;
+}
