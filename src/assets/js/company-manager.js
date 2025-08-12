@@ -160,7 +160,7 @@ class GrizalumCompanyManager {
             }
 
             /* =============== DROPDOWN PROFESIONAL =============== */
-           .grizalum-company-dropdown {
+          .grizalum-company-dropdown {
     position: fixed !important;
     top: 130px !important;
     right: 20px !important;
@@ -169,7 +169,7 @@ class GrizalumCompanyManager {
     border-radius: 20px !important;
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8) !important;
     border: 1px solid rgba(212, 175, 55, 0.2) !important;
-    z-index: 999999999 !important;
+    z-index: 2147483647 !important;
     backdrop-filter: blur(30px) !important;
     color: white !important;
     opacity: 0;
@@ -181,8 +181,8 @@ class GrizalumCompanyManager {
 .grizalum-company-dropdown.show {
     opacity: 1 !important;
     visibility: visible !important;
-    transform: translateY(5px) !important;
-    z-index: 999999999 !important;
+    transform: translateY(0) !important;
+    z-index: 2147483647 !important;
     position: fixed !important;
 }
             .grizalum-dropdown-header {
