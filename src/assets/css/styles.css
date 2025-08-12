@@ -2572,3 +2572,33 @@ div[class*="grizalum-modal"] {
 .metric-card, .chart-card {
     z-index: 1 !important;
 }
+/* SOLUCIÓN DEFINITIVA - BAJAR Z-INDEX DE TARJETAS ESPECÍFICAS */
+.metrics-grid {
+    z-index: 1 !important;
+}
+
+.metrics-grid .metric-card {
+    z-index: 1 !important;
+    position: relative !important;
+}
+
+.dashboard-content {
+    z-index: 1 !important;
+}
+
+.charts-section {
+    z-index: 1 !important;
+}
+
+/* FORZAR DROPDOWN ENCIMA */
+.grizalum-company-dropdown {
+    z-index: 999999999 !important;
+    position: fixed !important;
+    top: 140px !important;
+    right: 20px !important;
+}
+
+.grizalum-company-selector {
+    z-index: 999999998 !important;
+    position: relative !important;
+}
