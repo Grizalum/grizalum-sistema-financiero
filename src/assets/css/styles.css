@@ -2606,3 +2606,13 @@ div[class*="grizalum-modal"] {
     z-index: 1 !important;
     position: relative !important;
 }
+/* SOLUCIÓN FINAL DROPDOWN - AGREGAR AL FINAL */
+.header-controls {
+    position: relative !important;
+    z-index: 10000 !important;
+}
+
+#companySelector {
+    position: relative !important;
+    z-index: 10001 !important;
+}
