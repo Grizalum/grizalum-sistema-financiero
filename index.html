@@ -568,38 +568,7 @@ function applyCompanyThemeIntegration(companyId) {
     
     const theme = company.theme;
     console.log(`🌟 Aplicando tema futurista: ${theme.primary} -> ${theme.secondary}`);
-// 🎯 SOLUCIÓN RADICAL - MOVER DROPDOWN AL BODY
-    setTimeout(() => {
-        const dropdown = document.querySelector('.grizalum-company-dropdown');
-        if (dropdown) {
-            // Mover el dropdown al body (fuera de todos los contenedores)
-            document.body.appendChild(dropdown);
-            
-            // Aplicar estilos para positioning
-            dropdown.style.position = 'fixed';
-            dropdown.style.zIndex = '999999999';
-            dropdown.style.top = '130px';
-            dropdown.style.right = '20px';
-            dropdown.style.width = '350px';
-            dropdown.style.background = 'rgba(30, 41, 59, 0.95)';
-            dropdown.style.backdropFilter = 'blur(20px)';
-            dropdown.style.border = '2px solid rgba(255,255,255,0.3)';
-            dropdown.style.borderRadius = '16px';
-            dropdown.style.color = 'white';
-            dropdown.style.boxShadow = '0 20px 60px rgba(0,0,0,0.8)';
-            
-            console.log('✅ Dropdown movido al body');
-        }
-        
-        // Bajar z-index de TODAS las tarjetas
-        const problemCards = document.querySelectorAll('.metric-card, .chart-card, .main-content, .dashboard-content, .executive-header');
-        problemCards.forEach(card => {
-            card.style.zIndex = '1';
-            card.style.isolation = 'auto';
-        });
-        
-        console.log('🎯 Dropdown reubicado completamente');
-    }, 1000);
+
     
     // 🌟 ESTILOS FUTURISTAS OSCUROS
     const styleId = 'grizalum-futuristic-theme';
