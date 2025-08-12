@@ -7629,4 +7629,41 @@ console.log(`
 
 🏢 ===================================================
 `);
+// ================================================================
+// SOLUCIÓN DEFINITIVA DROPDOWN - FORZAR DESPUÉS DE TEMAS
+// ================================================================
 
+// Función para forzar dropdown encima SIEMPRE
+function forceDropdownOnTop() {
+    const dropdown = document.getElementById('grizalumCompanyDropdown');
+    if (dropdown) {
+        dropdown.style.setProperty('z-index', '2147483647', 'important');
+        dropdown.style.setProperty('position', 'fixed', 'important');
+        dropdown.style.setProperty('top', '130px', 'important');
+        dropdown.style.setProperty('right', '20px', 'important');
+    }
+}
+
+// Ejecutar cada vez que se aplique un tema
+document.addEventListener('grizalumThemeChanged', function() {
+    setTimeout(forceDropdownOnTop, 100);
+});
+
+// Ejecutar cuando se cambie de empresa
+document.addEventListener('grizalumCompanyChanged', function() {
+    setTimeout(forceDropdownOnTop, 100);
+});
+
+// Ejecutar cada vez que se abra el dropdown
+if (window.grizalumCompanyManager) {
+    const originalToggle = window.grizalumCompanyManager.toggleDropdown;
+    window.grizalumCompanyManager.toggleDropdown = function() {
+        originalToggle.call(this);
+        setTimeout(forceDropdownOnTop, 50);
+    };
+}
+
+// Forzar al inicio
+setTimeout(forceDropdownOnTop, 1000);
+
+console.log('🔥 Solución definitiva dropdown aplicada');
