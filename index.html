@@ -314,19 +314,31 @@
    </div>
 
 <!-- ================================================================ -->
-<!-- SCRIPTS - SOLO CARGAR LOS ARCHIVOS LIMPIOS -->
+<!-- 🚀 ARQUITECTURA MODULAR GRIZALUM -->
+<!-- Sistema distribuido en 6 archivos especializados -->
 <!-- ================================================================ -->
 
-<!-- Scripts existentes (mantenemos por ahora) -->
+<!-- 📦 MÓDULOS EXISTENTES (mantener orden) -->
 <script src="./src/assets/js/company-manager.js"></script>
 <script src="./src/assets/js/charts.js"></script>
 <script src="./src/assets/js/main.js"></script>
 
-<!-- NUEVO: El script principal limpio que reemplaza el script masivo -->
-<script src="./src/assets/js/grizalum-principal.js"></script>
-<script src="./src/assets/js/manejo-sidebar.js"></script>    
-<script src="./src/assets/js/sistema-notificaciones.js"></script>
-    
+<!-- 🧠 MÓDULOS NUEVOS (orden específico requerido) -->
+<script src="./src/assets/js/grizalum-principal.js"></script>      <!-- 🧠 Cerebro del sistema -->
+<script src="./src/assets/js/manejo-sidebar.js"></script>          <!-- 📱 Menú lateral -->
+<script src="./src/assets/js/sistema-notificaciones.js"></script>  <!-- 🔔 Alertas -->
+<script src="./src/assets/js/actualizador-kpis.js"></script>       <!-- 📊 Números dashboard -->
+<script src="./src/assets/js/controlador-header.js"></script>      <!-- 🏗️ Barra superior -->
+<script src="./src/assets/js/motor-temas.js"></script>             <!-- 🎨 Colores y temas -->
+
+<!-- ================================================================ -->
+<!-- ✨ SISTEMA COMPLETAMENTE MODULAR Y ORGANIZADO ✨ -->
+<!-- - 6 archivos especializados vs 1 script masivo -->
+<!-- - Cada archivo tiene UNA responsabilidad específica -->
+<!-- - Fácil mantenimiento y debugging -->
+<!-- - Perfecto para trabajo en equipo -->
+<!-- - Totalmente escalable -->
+<!-- ================================================================ -->
 
 </body>
 </html>
