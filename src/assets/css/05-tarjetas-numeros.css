@@ -1,0 +1,579 @@
+/* ================================================================
+   05-TARJETAS-NUMEROS.css - MÉTRICAS Y KPIs GRIZALUM
+   Todo lo relacionado con las tarjetas de números del dashboard
+   ================================================================ */
+
+/* ===== GRID DE MÉTRICAS ===== */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+    align-items: stretch;
+    grid-auto-rows: 1fr;
+    width: 100%;
+}
+
+/* ===== TARJETA DE MÉTRICA BASE ===== */
+.metric-card {
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.95) 0%, 
+        rgba(255, 255, 255, 0.8) 100%);
+    backdrop-filter: var(--backdrop-blur);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--glass-border);
+    position: relative;
+    overflow: hidden;
+    transition: all var(--transition-normal);
+    padding: var(--spacing-xl);
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    will-change: transform;
+    contain: layout style paint;
+}
+
+/* Barra superior de color */
+.metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-gold);
+    transition: all var(--transition-normal);
+}
+
+/* Colores específicos por tipo de métrica */
+.metric-card.revenue::before { 
+    background: var(--gradient-primary); 
+}
+.metric-card.expenses::before { 
+    background: var(--gradient-warning); 
+}
+.metric-card.profit::before { 
+    background: var(--gradient-success); 
+}
+.metric-card.growth::before { 
+    background: var(--gradient-purple); 
+}
+
+/* ===== EFECTOS HOVER ===== */
+.metric-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-2xl);
+    border-color: rgba(212, 175, 55, 0.3);
+}
+
+.metric-card:hover::before {
+    height: 6px;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+}
+
+/* ===== HEADER DE LA TARJETA ===== */
+.metric-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-lg);
+    gap: var(--spacing-md);
+}
+
+.metric-title {
+    font-size: var(--text-sm);
+    color: var(--gray-600);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+    flex: 1;
+}
+
+/* ===== ICONOS DE MÉTRICAS ===== */
+.metric-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-lg);
+    color: white;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Colores específicos de iconos */
+.metric-icon.revenue { 
+    background: var(--gradient-primary); 
+}
+.metric-icon.expenses { 
+    background: var(--gradient-warning); 
+}
+.metric-icon.profit { 
+    background: var(--gradient-success); 
+}
+.metric-icon.growth { 
+    background: var(--gradient-purple); 
+}
+
+/* Efecto hover en iconos */
+.metric-card:hover .metric-icon {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: var(--shadow-xl);
+}
+
+/* Brillo sutil en los iconos */
+.metric-icon::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.3), 
+        transparent);
+    transition: left 0.5s ease;
+}
+
+.metric-card:hover .metric-icon::after {
+    left: 100%;
+}
+
+/* ===== VALOR PRINCIPAL ===== */
+.metric-value {
+    font-size: var(--text-3xl);
+    font-weight: 900;
+    color: var(--gray-800);
+    margin-bottom: var(--spacing-md);
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    transition: all var(--transition-normal);
+}
+
+.metric-card:hover .metric-value {
+    color: var(--peru-gold);
+    transform: scale(1.02);
+}
+
+/* ===== INDICADOR DE CAMBIO ===== */
+.metric-change {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: 6px;
+    background: var(--glass-effect);
+    backdrop-filter: var(--backdrop-blur);
+    border: 1px solid var(--glass-border);
+    transition: all var(--transition-normal);
+}
+
+.metric-change.positive { 
+    color: #059669; 
+    background: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.2);
+}
+
+.metric-change.negative { 
+    color: #dc2626; 
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.2);
+}
+
+.metric-change:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Iconos de cambio con animación */
+.metric-change i {
+    transition: transform var(--transition-normal);
+}
+
+.metric-change.positive:hover i {
+    transform: translateY(-2px);
+    animation: bounceUp 0.6s ease;
+}
+
+.metric-change.negative:hover i {
+    transform: translateY(2px);
+    animation: bounceDown 0.6s ease;
+}
+
+@keyframes bounceUp {
+    0%, 100% { transform: translateY(-2px); }
+    50% { transform: translateY(-4px); }
+}
+
+@keyframes bounceDown {
+    0%, 100% { transform: translateY(2px); }
+    50% { transform: translateY(4px); }
+}
+
+/* ===== ANIMACIONES DE ENTRADA ===== */
+.metric-card {
+    animation: fadeInUp 0.6s var(--transition-normal) both;
+}
+
+.metric-card:nth-child(1) { animation-delay: 0.1s; }
+.metric-card:nth-child(2) { animation-delay: 0.2s; }
+.metric-card:nth-child(3) { animation-delay: 0.3s; }
+.metric-card:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== ESTADOS ESPECIALES ===== */
+
+/* Tarjeta actualizándose */
+.metric-card.kpi-updating {
+    position: relative;
+    overflow: hidden;
+}
+
+.metric-card.kpi-updating::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(212, 175, 55, 0.2), 
+        transparent);
+    animation: updating 1s infinite;
+}
+
+@keyframes updating {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Estados de aumentos y disminuciones */
+.metric-card.kpi-increase {
+    animation: kpiIncrease 1s ease;
+}
+
+.metric-card.kpi-decrease {
+    animation: kpiDecrease 1s ease;
+}
+
+@keyframes kpiIncrease {
+    0% { transform: scale(1); }
+    50% { 
+        transform: scale(1.05); 
+        box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+        border-color: rgba(16, 185, 129, 0.6);
+    }
+    100% { transform: scale(1); }
+}
+
+@keyframes kpiDecrease {
+    0% { transform: scale(1); }
+    50% { 
+        transform: scale(1.05); 
+        box-shadow: 0 0 30px rgba(239, 68, 68, 0.4);
+        border-color: rgba(239, 68, 68, 0.6);
+    }
+    100% { transform: scale(1); }
+}
+
+/* ===== RESPONSIVE TABLET ===== */
+@media (max-width: 1200px) {
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 1rem !important;
+    }
+}
+
+@media (max-width: 991px) {
+    .metrics-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--spacing-lg);
+    }
+    
+    .metric-card {
+        min-height: 140px;
+        padding: var(--spacing-lg);
+    }
+    
+    .metric-value {
+        font-size: var(--text-2xl);
+    }
+    
+    .metric-icon {
+        width: 42px;
+        height: 42px;
+        font-size: var(--text-base);
+    }
+}
+
+/* ===== RESPONSIVE MÓVIL ===== */
+@media (max-width: 768px) {
+    .metrics-grid {
+        grid-template-columns: 1fr !important;
+        gap: 0.75rem !important;
+    }
+    
+    .metric-card {
+        min-height: 120px;
+        padding: var(--spacing-md);
+    }
+    
+    .metric-header {
+        margin-bottom: var(--spacing-md);
+        gap: var(--spacing-sm);
+    }
+    
+    .metric-title {
+        font-size: var(--text-xs);
+    }
+    
+    .metric-value {
+        font-size: var(--text-xl);
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .metric-icon {
+        width: 36px;
+        height: 36px;
+        font-size: var(--text-sm);
+    }
+    
+    .metric-change {
+        font-size: var(--text-xs);
+        padding: var(--spacing-xs);
+    }
+}
+
+/* ===== MÓVIL PEQUEÑO ===== */
+@media (max-width: 575px) {
+    .metric-card {
+        min-height: 100px;
+        padding: var(--spacing-sm);
+    }
+    
+    .metric-value {
+        font-size: var(--text-lg);
+    }
+    
+    .metric-icon {
+        width: 32px;
+        height: 32px;
+        font-size: var(--text-sm);
+    }
+    
+    .metric-header {
+        gap: var(--spacing-xs);
+    }
+    
+    .metric-change {
+        font-size: 10px;
+        padding: 2px 6px;
+    }
+}
+
+/* ===== MÓVIL MUY PEQUEÑO ===== */
+@media (max-width: 375px) {
+    .metric-card {
+        min-height: 90px;
+        padding: var(--spacing-xs);
+    }
+    
+    .metric-value {
+        font-size: var(--text-base);
+    }
+    
+    .metric-title {
+        font-size: 10px;
+    }
+    
+    .metric-icon {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+    }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+    .metric-card {
+        break-inside: avoid;
+        box-shadow: none !important;
+        border: 1px solid var(--gray-300) !important;
+        background: white !important;
+        backdrop-filter: none !important;
+    }
+    
+    .metric-card::before {
+        display: none !important;
+    }
+    
+    .metric-value {
+        color: black !important;
+    }
+    
+    .metric-icon {
+        background: var(--gray-200) !important;
+        color: black !important;
+    }
+    
+    .metrics-grid {
+        gap: 10px !important;
+    }
+}
+
+/* ===== ACCESIBILIDAD ===== */
+.metric-card:focus {
+    outline: 2px solid var(--peru-gold);
+    outline-offset: 2px;
+}
+
+/* Mejoras para lectores de pantalla */
+.metric-card[aria-label] {
+    cursor: pointer;
+}
+
+.metric-value::after {
+    content: attr(data-currency) attr(data-unit);
+    font-size: var(--text-sm);
+    color: var(--gray-500);
+    margin-left: var(--spacing-xs);
+}
+
+/* ===== HIGH CONTRAST MODE ===== */
+@media (prefers-contrast: high) {
+    .metric-card {
+        background: white;
+        border: 2px solid black;
+    }
+    
+    .metric-card.revenue {
+        border-left: 5px solid blue;
+    }
+    
+    .metric-card.expenses {
+        border-left: 5px solid orange;
+    }
+    
+    .metric-card.profit {
+        border-left: 5px solid green;
+    }
+    
+    .metric-card.growth {
+        border-left: 5px solid purple;
+    }
+    
+    .metric-value {
+        color: black;
+    }
+    
+    .metric-icon {
+        background: black !important;
+        color: white !important;
+    }
+}
+
+/* ===== REDUCIR MOVIMIENTO ===== */
+@media (prefers-reduced-motion: reduce) {
+    .metric-card,
+    .metric-card *,
+    .metric-icon,
+    .metric-value,
+    .metric-change {
+        animation: none !important;
+        transition: none !important;
+        transform: none !important;
+    }
+    
+    .metric-card:hover {
+        transform: none !important;
+    }
+}
+
+/* ===== TEMA DINÁMICO BASE ===== */
+.metric-card[data-theme] {
+    transition: all var(--transition-slow);
+}
+
+.metric-card[data-theme]::before {
+    transition: all var(--transition-normal);
+}
+
+.metric-card[data-theme] .metric-icon {
+    transition: all var(--transition-normal);
+}
+
+/* ===== LOADING SKELETON ===== */
+.metric-card.loading {
+    pointer-events: none;
+}
+
+.metric-card.loading .metric-value,
+.metric-card.loading .metric-title,
+.metric-card.loading .metric-change {
+    background: linear-gradient(90deg, 
+        var(--gray-200) 25%, 
+        var(--gray-300) 50%, 
+        var(--gray-200) 75%);
+    background-size: 200% 100%;
+    animation: skeleton 1.5s infinite;
+    color: transparent;
+    border-radius: 4px;
+}
+
+@keyframes skeleton {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ===== UTILIDADES ESPECÍFICAS ===== */
+
+/* Forzar visibilidad */
+.metric-card {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 160px !important;
+}
+
+/* Grid forzado */
+.metrics-grid {
+    display: grid !important;
+    width: 100% !important;
+}
+
+/* Prevenir texto overflow */
+.metric-title,
+.metric-value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.metric-change span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 120px;
+}
