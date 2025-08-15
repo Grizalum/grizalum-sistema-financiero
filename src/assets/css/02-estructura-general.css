@@ -1,0 +1,513 @@
+/* ================================================================
+   02-ESTRUCTURA-GENERAL.css - LAYOUT Y CONTAINERS GRIZALUM
+   Layout principal, containers, estructura base de la aplicación
+   ================================================================ */
+
+/* ===== LAYOUT PRINCIPAL ===== */
+.app-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+}
+
+/* ===== MAIN CONTENT CONTAINER ===== */
+.main-content {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    overflow-y: auto;
+    background: transparent;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: all var(--transition-normal);
+}
+
+/* ===== DASHBOARD CONTENT ===== */
+.dashboard-content {
+    flex: 1;
+    padding: 4px 14px;
+    padding-top: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Forzar visibilidad del dashboard por defecto */
+#dashboardContent {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+    padding: 1rem !important;
+}
+
+/* ===== SISTEMA DE SECCIONES ===== */
+.dashboard-content:not(.active) {
+    display: none;
+}
+
+.dashboard-content.active {
+    display: flex;
+}
+
+/* ===== CONTAINERS ESPECIALIZADOS ===== */
+
+/* Container para métricas */
+.metrics-container {
+    width: 100%;
+    margin-bottom: var(--cards-bottom-margin);
+}
+
+/* Container para gráficos */
+.charts-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+}
+
+/* Container para modales */
+.modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10000;
+    pointer-events: none;
+}
+
+.modal-container.active {
+    pointer-events: all;
+}
+
+/* ===== COMPANY SELECTOR CONTAINER ===== */
+.company-selector {
+    position: relative;
+    z-index: 1000;
+    min-width: 200px;
+}
+
+/* Forzar visibilidad del selector de empresas */
+#companySelector {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    z-index: 1000 !important;
+    min-width: 200px !important;
+    background: white !important;
+    border: 2px solid var(--peru-gold) !important;
+    border-radius: 8px !important;
+    padding: 10px !important;
+    margin-left: 10px !important;
+}
+
+.grizalum-selected-company {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: white;
+    border: 1px solid var(--gray-300);
+    border-radius: 8px;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--gray-700);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    min-width: 180px;
+    justify-content: space-between;
+}
+
+.grizalum-selected-company:hover {
+    border-color: var(--peru-gold);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Estilos para contenido del selector */
+.grizalum-company-icon {
+    color: var(--peru-gold) !important;
+    font-size: 24px !important;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: rgba(212, 175, 55, 0.1);
+}
+
+.grizalum-company-name {
+    color: var(--gray-800) !important;
+    font-weight: 600 !important;
+    font-size: var(--text-sm) !important;
+}
+
+.grizalum-company-status {
+    color: var(--gray-600) !important;
+    font-size: var(--text-xs) !important;
+}
+
+.grizalum-dropdown-arrow {
+    color: var(--gray-600) !important;
+    font-size: 16px !important;
+    transition: transform var(--transition-normal);
+}
+
+.grizalum-dropdown-arrow.rotate {
+    transform: rotate(180deg);
+}
+
+/* ===== DROPDOWN DE EMPRESAS ===== */
+.grizalum-company-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    box-shadow: var(--shadow-xl);
+    min-width: 280px;
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all var(--transition-normal);
+}
+
+.grizalum-company-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.grizalum-dropdown-header {
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--gray-200);
+    background: var(--gray-50);
+    border-radius: 12px 12px 0 0;
+}
+
+.grizalum-dropdown-header h4 {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--gray-800);
+    margin-bottom: var(--spacing-xs);
+}
+
+.grizalum-companies-list {
+    padding: var(--spacing-sm);
+}
+
+.grizalum-company-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-md);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    margin-bottom: var(--spacing-xs);
+}
+
+.grizalum-company-item:hover {
+    background: var(--gray-50);
+    transform: translateX(4px);
+}
+
+.grizalum-company-item.active {
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.grizalum-company-item-main {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.grizalum-company-item-icon {
+    width: 42px !important;
+    height: 42px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 24px !important;
+    line-height: 1 !important;
+    overflow: hidden !important;
+    text-align: center !important;
+    border-radius: 12px !important;
+    flex-shrink: 0 !important;
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif !important;
+    background: var(--gray-100);
+    border: 1px solid var(--gray-200);
+}
+
+/* Eliminar pseudoelementos que interfieren */
+.grizalum-company-item-icon:before,
+.grizalum-company-item-icon:after {
+    display: none !important;
+}
+
+.grizalum-company-item-details h4 {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 2px;
+}
+
+.grizalum-company-item-status {
+    font-size: var(--text-xs);
+    color: var(--gray-500);
+}
+
+.grizalum-company-item-metrics {
+    text-align: right;
+}
+
+.grizalum-company-item-revenue {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--gray-800);
+    margin-bottom: 2px;
+}
+
+.grizalum-company-trend {
+    font-size: var(--text-xs);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.grizalum-company-trend.positive {
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+}
+
+.grizalum-company-trend.negative {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+}
+
+.grizalum-dropdown-footer {
+    padding: var(--spacing-md);
+    border-top: 1px solid var(--gray-200);
+    background: var(--gray-50);
+    border-radius: 0 0 12px 12px;
+}
+
+.grizalum-btn-add-company,
+.grizalum-manage-companies-btn {
+    width: 100%;
+    background: var(--gradient-gold);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: var(--spacing-md);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    margin-bottom: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+}
+
+.grizalum-btn-add-company:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.grizalum-manage-companies-btn {
+    background: var(--gray-600);
+    margin-bottom: 0;
+}
+
+.grizalum-manage-companies-btn:hover {
+    background: var(--gray-700);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.grizalum-total-companies {
+    text-align: center;
+    padding: var(--spacing-md);
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: 8px;
+    margin-bottom: var(--spacing-md);
+}
+
+.grizalum-holdings-label {
+    font-size: var(--text-xs);
+    color: var(--gray-600);
+    margin-bottom: var(--spacing-xs);
+}
+
+.grizalum-holdings-value {
+    font-size: var(--text-lg);
+    font-weight: 900;
+    color: var(--peru-gold);
+}
+
+/* ===== ESTADOS ESPECIALES ===== */
+.loading-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    background: var(--glass-effect);
+    border-radius: 16px;
+    backdrop-filter: var(--backdrop-blur);
+}
+
+.loading-spinner {
+    width: 30px;
+    height: 30px;
+    border: 3px solid var(--glass-border);
+    border-top: 3px solid var(--peru-gold);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ===== OPTIMIZACIONES LAYOUT ===== */
+.metric-card,
+.chart-card {
+    will-change: transform;
+    contain: layout style paint;
+}
+
+/* ===== STICKY ELEMENTS ===== */
+.sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: var(--backdrop-blur);
+}
+
+/* ===== FLEX UTILITIES ===== */
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.flex-row {
+    flex-direction: row;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.flex-none {
+    flex: none;
+}
+
+/* ===== GRID UTILITIES ===== */
+.grid {
+    display: grid;
+}
+
+.grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.gap-sm {
+    gap: var(--spacing-sm);
+}
+
+.gap-md {
+    gap: var(--spacing-md);
+}
+
+.gap-lg {
+    gap: var(--spacing-lg);
+}
+
+.gap-xl {
+    gap: var(--spacing-xl);
+}
+
+/* ===== POSITION UTILITIES ===== */
+.relative {
+    position: relative;
+}
+
+.absolute {
+    position: absolute;
+}
+
+.fixed {
+    position: fixed;
+}
+
+.sticky {
+    position: sticky;
+}
+
+/* ===== OVERFLOW UTILITIES ===== */
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.overflow-y-auto {
+    overflow-y: auto;
+}
+
+.overflow-x-hidden {
+    overflow-x: hidden;
+}
+
+/* ===== WIDTH/HEIGHT UTILITIES ===== */
+.w-full {
+    width: 100%;
+}
+
+.h-full {
+    height: 100%;
+}
+
+.min-h-screen {
+    min-height: 100vh;
+}
