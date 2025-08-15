@@ -160,31 +160,31 @@ class GrizalumCompanyManager {
             }
 
             /* =============== DROPDOWN PROFESIONAL =============== */
-          .grizalum-company-dropdown {
-    position: fixed !important;
-    top: 130px !important;
-    right: 20px !important;
-    width: 350px !important;
-    background: rgba(30, 41, 59, 0.95) !important;
-    border-radius: 20px !important;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8) !important;
-    border: 1px solid rgba(212, 175, 55, 0.2) !important;
-    z-index: 2147483647 !important;
-    backdrop-filter: blur(30px) !important;
-    color: white !important;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-15px);
-    transition: all 0.15s ease-in-out;
-}
+            .grizalum-company-dropdown {
+                position: absolute;
+                top: 100%;
+                right: 0;
+                width: 350px;
+                background: white;
+                border-radius: 20px;
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+                border: 1px solid rgba(212, 175, 55, 0.2);
+                z-index: 9999999
+                will-change: transform, opacity;
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(-15px);
+                transition: all 0.15s ease-in-out;
+                backdrop-filter: blur(30px);
+                overflow: hidden;
+            }
 
-.grizalum-company-dropdown.show {
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: translateY(0) !important;
-    z-index: 2147483647 !important;
-    position: fixed !important;
-}
+            .grizalum-company-dropdown.show {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(5px);
+            }
+
             .grizalum-dropdown-header {
                 padding: 1.5rem;
                 border-bottom: 1px solid rgba(212, 175, 55, 0.1);
@@ -7629,41 +7629,3 @@ console.log(`
 
 🏢 ===================================================
 `);
-// ================================================================
-// SOLUCIÓN DEFINITIVA DROPDOWN - FORZAR DESPUÉS DE TEMAS
-// ================================================================
-
-// Función para forzar dropdown encima SIEMPRE
-function forceDropdownOnTop() {
-    const dropdown = document.getElementById('grizalumCompanyDropdown');
-    if (dropdown) {
-        dropdown.style.setProperty('z-index', '2147483647', 'important');
-        dropdown.style.setProperty('position', 'fixed', 'important');
-        dropdown.style.setProperty('top', '130px', 'important');
-        dropdown.style.setProperty('right', '20px', 'important');
-    }
-}
-
-// Ejecutar cada vez que se aplique un tema
-document.addEventListener('grizalumThemeChanged', function() {
-    setTimeout(forceDropdownOnTop, 100);
-});
-
-// Ejecutar cuando se cambie de empresa
-document.addEventListener('grizalumCompanyChanged', function() {
-    setTimeout(forceDropdownOnTop, 100);
-});
-
-// Ejecutar cada vez que se abra el dropdown
-if (window.grizalumCompanyManager) {
-    const originalToggle = window.grizalumCompanyManager.toggleDropdown;
-    window.grizalumCompanyManager.toggleDropdown = function() {
-        originalToggle.call(this);
-        setTimeout(forceDropdownOnTop, 50);
-    };
-}
-
-// Forzar al inicio
-setTimeout(forceDropdownOnTop, 1000);
-
-console.log('🔥 Solución definitiva dropdown aplicada');
