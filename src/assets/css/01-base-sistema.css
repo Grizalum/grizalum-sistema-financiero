@@ -1,0 +1,268 @@
+/* ================================================================
+   01-BASE-SISTEMA.css - VARIABLES Y RESET GRIZALUM
+   Variables CSS, colores, fuentes, espaciados y reset
+   ================================================================ */
+
+/* RESET AVANZADO */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* ===== COLORES PREMIUM GRIZALUM ===== */
+    --peru-gold: #d4af37;
+    --peru-gold-dark: #b87333;
+    --peru-gold-light: #f5d76e;
+    
+    /* ===== GRADIENTES PROFESIONALES ===== */
+    --gradient-gold: linear-gradient(135deg, var(--peru-gold) 0%, var(--peru-gold-dark) 100%);
+    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    --gradient-purple: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    
+    /* ===== EFECTOS GLASS PREMIUM ===== */
+    --glass-effect: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --backdrop-blur: blur(20px);
+    
+    /* ===== ESCALA DE GRISES PROFESIONAL ===== */
+    --white: #ffffff;
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-300: #cbd5e1;
+    --gray-400: #94a3b8;
+    --gray-500: #64748b;
+    --gray-600: #475569;
+    --gray-700: #334155;
+    --gray-800: #1e293b;
+    --gray-900: #0f172a;
+    
+    /* ===== SOMBRAS PREMIUM ===== */
+    --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    --shadow-gold: 0 10px 40px rgba(212, 175, 55, 0.3);
+    
+    /* ===== DIMENSIONES CONTROLADAS ===== */
+    --sidebar-width: 280px;
+    --header-height: 60px;
+    
+    /* ===== ESPACIADOS PRECISOS ===== */
+    --spacing-xs: 0.25rem;    /* 4px */
+    --spacing-sm: 0.5rem;     /* 8px */
+    --spacing-md: 0.75rem;    /* 12px */
+    --spacing-lg: 1rem;       /* 16px */
+    --spacing-xl: 1.5rem;     /* 24px */
+    --spacing-2xl: 2rem;      /* 32px */
+    --spacing-3xl: 3rem;      /* 48px */
+   
+    /* ===== ESPACIADOS ESPECÍFICOS DASHBOARD ===== */
+    --dashboard-padding: 14px;
+    --dashboard-gap: 10px;
+    --cards-gap: 12px;
+    --cards-bottom-margin: 18px;
+    --header-to-content: 2px;
+
+    /* ===== ESPACIADOS MÓVIL ===== */
+    --dashboard-padding-mobile: 8px;
+    --cards-gap-mobile: 8px;
+   
+    /* ===== TIPOGRAFÍA CONTROLADA ===== */
+    --text-xs: 0.75rem;       /* 12px */
+    --text-sm: 0.875rem;      /* 14px */
+    --text-base: 1rem;        /* 16px */
+    --text-lg: 1.125rem;      /* 18px */
+    --text-xl: 1.25rem;       /* 20px */
+    --text-2xl: 1.5rem;       /* 24px */
+    --text-3xl: 1.875rem;     /* 30px */
+    --text-4xl: 2.25rem;      /* 36px */
+    
+    /* ===== TRANSICIONES SUAVES ===== */
+    --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== RESET Y BASE PROFESIONAL ===== */
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+    color: var(--gray-800);
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    font-variant-numeric: tabular-nums;
+}
+
+/* ===== PANTALLA DE CARGA ===== */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.loading-screen.hide {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loading-content {
+    text-align: center;
+    color: white;
+}
+
+.loading-logo {
+    font-size: 3rem;
+    color: var(--peru-gold);
+    margin-bottom: var(--spacing-lg);
+}
+
+.loading-content h1 {
+    font-size: var(--text-3xl);
+    font-weight: 900;
+    background: var(--gradient-gold);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: var(--spacing-sm);
+}
+
+.loading-content p {
+    font-size: var(--text-base);
+    color: var(--gray-400);
+    margin-bottom: var(--spacing-xl);
+}
+
+.loading-bar {
+    width: 200px;
+    height: 4px;
+    background: var(--gray-700);
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.loading-progress {
+    height: 100%;
+    background: var(--gradient-gold);
+    width: 0%;
+    animation: loadingProgress 3s ease-in-out forwards;
+}
+
+@keyframes loadingProgress {
+    to { width: 100%; }
+}
+
+/* ===== SCROLLBAR PERSONALIZADO GLOBAL ===== */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--gray-100);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--peru-gold), var(--peru-gold-dark));
+    border-radius: 4px;
+    transition: all var(--transition-normal);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--peru-gold-dark);
+    transform: scaleY(1.1);
+}
+
+/* ===== SOPORTE PARA DARK MODE ===== */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --gray-50: #0f172a;
+        --gray-100: #1e293b;
+        --gray-200: #334155;
+        --gray-300: #475569;
+        --gray-400: #64748b;
+        --gray-500: #94a3b8;
+        --gray-600: #cbd5e1;
+        --gray-700: #e2e8f0;
+        --gray-800: #f1f5f9;
+        --gray-900: #f8fafc;
+        --white: #0f172a;
+    }
+    
+    body {
+        background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%);
+        color: var(--gray-100);
+    }
+}
+
+/* ===== ACCESIBILIDAD ===== */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ===== FOCUS STYLES MEJORADOS ===== */
+button:focus,
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+    outline: 2px solid var(--peru-gold);
+    outline-offset: 2px;
+}
+
+/* ===== OPTIMIZACIONES DE RENDIMIENTO ===== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ===== PRINT STYLES BASE ===== */
+@media print {
+    body {
+        background: white !important;
+        color: black !important;
+    }
+    
+    * {
+        box-shadow: none !important;
+        background: transparent !important;
+    }
+}
