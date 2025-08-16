@@ -1,0 +1,753 @@
+/* ================================================================
+   07-MODALES-SISTEMA.css - MODALES Y OVERLAYS GRIZALUM
+   Todo lo relacionado con modales, popups y overlays del sistema
+   ================================================================ */
+
+/* ===== MODAL BASE UNIVERSAL ===== */
+.grizalum-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, 
+        rgba(15, 23, 42, 0.98) 0%, 
+        rgba(30, 41, 59, 0.98) 100%);
+    backdrop-filter: blur(25px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: modalBackdropEnter 0.4s ease-out;
+}
+
+@keyframes modalBackdropEnter {
+    from {
+        backdrop-filter: blur(0px);
+        background: rgba(15, 23, 42, 0);
+    }
+    to {
+        backdrop-filter: blur(25px);
+        background: linear-gradient(135deg, 
+            rgba(15, 23, 42, 0.98) 0%, 
+            rgba(30, 41, 59, 0.98) 100%);
+    }
+}
+
+.grizalum-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ===== CONTENIDO DEL MODAL ===== */
+.grizalum-modal-content {
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.95) 0%, 
+        rgba(255, 255, 255, 0.9) 100%);
+    backdrop-filter: blur(40px);
+    border-radius: 24px;
+    width: 95%;
+    max-width: 720px;
+    max-height: 85vh;
+    overflow: hidden;
+    box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(212, 175, 55, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transform: scale(0.8) translateY(40px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.grizalum-modal.show .grizalum-modal-content {
+    transform: scale(1) translateY(0);
+}
+
+/* ===== HEADER DEL MODAL ===== */
+.grizalum-modal-header {
+    background: linear-gradient(135deg, var(--peru-gold) 0%, var(--peru-gold-dark) 100%);
+    padding: 24px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.grizalum-modal-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, 
+        transparent 30%, 
+        rgba(255, 255, 255, 0.1) 50%, 
+        transparent 70%);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.modal-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: white;
+    font-size: 20px;
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
+}
+
+.modal-close-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 12px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+    font-size: 18px;
+}
+
+.modal-close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1) rotate(90deg);
+}
+
+/* ===== CUERPO DEL MODAL ===== */
+.grizalum-modal-body {
+    padding: 32px;
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* ===== FOOTER DEL MODAL ===== */
+.grizalum-modal-footer {
+    padding: 24px 32px;
+    background: var(--gray-50);
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    border-top: 1px solid var(--gray-200);
+}
+
+/* ===== BOTONES DEL MODAL ===== */
+.btn-cancel,
+.btn-create,
+.btn-save,
+.btn-delete {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 120px;
+    justify-content: center;
+}
+
+.btn-cancel {
+    background: var(--gray-200);
+    color: var(--gray-700);
+}
+
+.btn-cancel:hover {
+    background: var(--gray-300);
+    transform: translateY(-2px);
+}
+
+.btn-create,
+.btn-save {
+    background: linear-gradient(135deg, var(--peru-gold) 0%, var(--peru-gold-dark) 100%);
+    color: white;
+    box-shadow: 0 8px 16px rgba(212, 175, 55, 0.3);
+}
+
+.btn-create:hover,
+.btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(212, 175, 55, 0.4);
+}
+
+.btn-delete {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    box-shadow: 0 8px 16px rgba(239, 68, 68, 0.3);
+}
+
+.btn-delete:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(239, 68, 68, 0.4);
+}
+
+/* ===== FORMULARIOS EN MODALES ===== */
+.company-form h3 {
+    color: var(--gray-800);
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.form-field {
+    margin-bottom: 24px;
+}
+
+.form-field label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: 8px;
+}
+
+.grizalum-input,
+.grizalum-select,
+.grizalum-textarea {
+    width: 100%;
+    padding: 16px 20px;
+    border: 2px solid transparent;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, var(--peru-gold-light), var(--peru-gold)) border-box;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    outline: none;
+    font-family: 'Inter', sans-serif;
+}
+
+.grizalum-textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.grizalum-input:focus,
+.grizalum-select:focus,
+.grizalum-textarea:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(212, 175, 55, 0.2);
+}
+
+/* ===== SELECTOR DE ESTADO ===== */
+.status-selector {
+    display: flex;
+    gap: 16px;
+}
+
+.status-option {
+    flex: 1;
+    padding: 16px;
+    border: 2px solid var(--gray-200);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.status-option:hover {
+    border-color: var(--peru-gold);
+    transform: translateY(-2px);
+}
+
+.status-option.active {
+    border-color: var(--peru-gold);
+    background: rgba(212, 175, 55, 0.1);
+    box-shadow: 0 8px 16px rgba(212, 175, 55, 0.2);
+}
+
+.status-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    position: relative;
+}
+
+.status-indicator.green {
+    background: #10b981;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+}
+
+.status-indicator.yellow {
+    background: #f59e0b;
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+}
+
+/* ===== TABS EN MODALES ===== */
+.company-tabs {
+    display: flex;
+    background: var(--gray-100);
+    padding: 8px 16px;
+    gap: 8px;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.company-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-600);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.company-tab:hover {
+    background: var(--gray-200);
+    color: var(--gray-800);
+    transform: translateY(-1px);
+}
+
+.company-tab.active {
+    background: white;
+    color: var(--peru-gold);
+    box-shadow: 0 4px 8px rgba(212, 175, 55, 0.2);
+    transform: translateY(-2px);
+}
+
+.company-tab-content {
+    padding: 24px 32px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.tab-panel {
+    display: none;
+    animation: fadeInTab 0.3s ease-out;
+}
+
+.tab-panel.active {
+    display: block;
+}
+
+@keyframes fadeInTab {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== MODAL DE GESTIÓN AVANZADA ===== */
+.management-modal-content {
+    background: white;
+    border-radius: 20px;
+    width: 80vw;
+    max-width: 1200px;
+    height: 75vh;
+    max-height: 800px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+    animation: modalSlideIn 0.3s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    z-index: 500000;
+}
+
+.management-content {
+    padding: 0;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+}
+
+.management-header {
+    background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    border-bottom: 3px solid rgba(255,255,255,0.2);
+}
+
+.management-tabs {
+    display: flex;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    flex-shrink: 0;
+    min-height: 60px;
+}
+
+.tab-content {
+    height: 100%;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.tab-content.active {
+    display: block;
+    height: 100%;
+}
+
+/* ===== MODAL CONFIRMACIÓN ===== */
+.confirmation-modal .grizalum-modal-content {
+    max-width: 450px;
+    text-align: center;
+}
+
+.confirmation-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.confirmation-icon.warning {
+    color: #f59e0b;
+}
+
+.confirmation-icon.danger {
+    color: #ef4444;
+}
+
+.confirmation-icon.success {
+    color: #10b981;
+}
+
+.confirmation-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--gray-800);
+    margin-bottom: 12px;
+}
+
+.confirmation-message {
+    font-size: 16px;
+    color: var(--gray-600);
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+/* ===== MODAL LOADING ===== */
+.loading-modal .grizalum-modal-content {
+    max-width: 350px;
+    text-align: center;
+    padding: 40px;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid var(--gray-200);
+    border-top: 4px solid var(--peru-gold);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: 8px;
+}
+
+.loading-subtext {
+    font-size: 14px;
+    color: var(--gray-500);
+}
+
+/* ===== RESPONSIVE TABLET ===== */
+@media (max-width: 991px) {
+    .grizalum-modal-content {
+        width: 90%;
+        max-width: 600px;
+    }
+    
+    .management-modal-content {
+        width: 95%;
+        height: 80vh;
+    }
+    
+    .grizalum-modal-header,
+    .grizalum-modal-body,
+    .grizalum-modal-footer {
+        padding: 20px 24px;
+    }
+    
+    .company-tabs {
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .company-tab {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
+
+/* ===== RESPONSIVE MÓVIL ===== */
+@media (max-width: 768px) {
+    .grizalum-modal-content {
+        width: 95%;
+        max-width: none;
+        margin: 20px;
+        max-height: 90vh;
+    }
+    
+    .management-modal-content {
+        width: 100%;
+        height: 100vh;
+        border-radius: 0;
+        margin: 0;
+    }
+    
+    .grizalum-modal-header {
+        padding: 16px 20px;
+    }
+    
+    .modal-title {
+        font-size: 18px;
+    }
+    
+    .grizalum-modal-body {
+        padding: 20px;
+        max-height: 50vh;
+    }
+    
+    .grizalum-modal-footer {
+        padding: 16px 20px;
+        flex-direction: column;
+    }
+    
+    .btn-cancel,
+    .btn-create,
+    .btn-save,
+    .btn-delete {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+    
+    .status-selector {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .form-field {
+        margin-bottom: 20px;
+    }
+    
+    .grizalum-input,
+    .grizalum-select,
+    .grizalum-textarea {
+        padding: 14px 16px;
+        font-size: 16px; /* Evita zoom en iOS */
+    }
+}
+
+/* ===== MÓVIL PEQUEÑO ===== */
+@media (max-width: 575px) {
+    .grizalum-modal-content {
+        margin: 10px;
+        max-height: 95vh;
+    }
+    
+    .grizalum-modal-header {
+        padding: 12px 16px;
+    }
+    
+    .grizalum-modal-body {
+        padding: 16px;
+    }
+    
+    .grizalum-modal-footer {
+        padding: 12px 16px;
+    }
+    
+    .modal-title {
+        font-size: 16px;
+    }
+    
+    .modal-close-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+    
+    .company-tab-content {
+        padding: 16px 20px;
+    }
+}
+
+/* ===== SCROLLBARS PERSONALIZADOS ===== */
+.grizalum-modal-body::-webkit-scrollbar,
+.management-content::-webkit-scrollbar,
+.tab-content::-webkit-scrollbar,
+.company-tab-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.grizalum-modal-body::-webkit-scrollbar-track,
+.management-content::-webkit-scrollbar-track,
+.tab-content::-webkit-scrollbar-track,
+.company-tab-content::-webkit-scrollbar-track {
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: 10px;
+}
+
+.grizalum-modal-body::-webkit-scrollbar-thumb,
+.management-content::-webkit-scrollbar-thumb,
+.tab-content::-webkit-scrollbar-thumb,
+.company-tab-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+    border-radius: 10px;
+}
+
+.grizalum-modal-body::-webkit-scrollbar-thumb:hover,
+.management-content::-webkit-scrollbar-thumb:hover,
+.tab-content::-webkit-scrollbar-thumb:hover,
+.company-tab-content::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #b87333 0%, #a0691f 100%);
+}
+
+/* ===== ACCESIBILIDAD ===== */
+.grizalum-modal:focus {
+    outline: none;
+}
+
+.modal-close-btn:focus,
+.btn-cancel:focus,
+.btn-create:focus,
+.btn-save:focus,
+.btn-delete:focus {
+    outline: 2px solid var(--peru-gold);
+    outline-offset: 2px;
+}
+
+.grizalum-input:focus,
+.grizalum-select:focus,
+.grizalum-textarea:focus {
+    outline: 2px solid var(--peru-gold);
+    outline-offset: 2px;
+}
+
+/* ===== HIGH CONTRAST MODE ===== */
+@media (prefers-contrast: high) {
+    .grizalum-modal {
+        background: rgba(0, 0, 0, 0.9);
+    }
+    
+    .grizalum-modal-content {
+        background: white;
+        border: 2px solid black;
+    }
+    
+    .grizalum-modal-header {
+        background: black;
+        color: white;
+    }
+    
+    .btn-create,
+    .btn-save {
+        background: black;
+        color: white;
+    }
+    
+    .btn-cancel {
+        background: white;
+        color: black;
+        border: 2px solid black;
+    }
+}
+
+/* ===== REDUCIR MOVIMIENTO ===== */
+@media (prefers-reduced-motion: reduce) {
+    .grizalum-modal,
+    .grizalum-modal-content,
+    .btn-cancel,
+    .btn-create,
+    .btn-save,
+    .btn-delete,
+    .status-option,
+    .company-tab {
+        animation: none !important;
+        transition: none !important;
+        transform: none !important;
+    }
+    
+    .grizalum-modal-header::before {
+        animation: none !important;
+    }
+    
+    .loading-spinner {
+        animation: none !important;
+    }
+}
+
+/* ===== UTILIDADES ESPECÍFICAS ===== */
+
+/* Forzar z-index correcto */
+.grizalum-modal,
+#addCompanyModal {
+    z-index: 70000 !important;
+}
+
+.grizalum-modal.show,
+#addCompanyModal.show {
+    z-index: 80000 !important;
+}
+
+/* Prevenir scroll del body cuando modal está abierto */
+.modal-open {
+    overflow: hidden;
+    padding-right: 15px; /* Compensar scrollbar */
+}
+
+/* Mejorar renderizado */
+.grizalum-modal-content {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Animación de entrada para modales */
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
