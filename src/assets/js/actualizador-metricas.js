@@ -1,597 +1,509 @@
 // ================================================================
-// ACTUALIZADOR DE KPIs GRIZALUM
-// Este archivo maneja SOLO la actualización de los números del dashboard
+// 📊 GRIZALUM ACTUALIZADOR DE MÉTRICAS - VERSIÓN OPTIMIZADA 2.0
+// Sistema eficiente y liviano para actualización de KPIs financieros
 // ================================================================
 
-console.log('📊 Cargando actualizador de KPIs...');
+/**
+ * GRIZALUM Metrics Updater
+ * Actualizador optimizado de métricas financieras con animaciones profesionales
+ * Diseñado específicamente para empresas peruanas
+ */
 
-// ================================================================
-// VARIABLES DEL ACTUALIZADOR DE KPIs
-// ================================================================
-let datosKPIsActuales = {
-    revenue: 2847293,
-    expenses: 28700,
-    profit: 16500,
-    growth: '+24.8%',
-    cashFlow: 24500
-};
-
-let animacionesHabilitadas = true;
-let formatoMoneda = 'PEN'; // PEN, USD, EUR
-
-// ================================================================
-// CLASE PRINCIPAL DEL ACTUALIZADOR DE KPIs
-// ================================================================
-class ActualizadorKPIs {
+class GrizalumMetricsUpdater {
     constructor() {
-        this.elementos = new Map();
-        this.valoresAnteriores = new Map();
-        this.animacionesActivas = new Map();
-        this.configuracion = {
-            animacionDuracion: 1000,
-            decimales: 0,
-            simboloMoneda: 'S/.',
-            separadorMiles: ',',
-            formatearNumeros: true,
-            mostrarCambios: true,
-            velocidadConteo: 50
+        this.isInitialized = false;
+        this.config = null;
+        this.elements = new Map();
+        this.animations = new Map();
+        
+        console.log('📊 Inicializando Actualizador de Métricas v2.0...');
+    }
+
+    // ======= INICIALIZACIÓN =======
+    initialize() {
+        try {
+            // Cargar configuración
+            this.loadConfiguration();
+            
+            // Mapear elementos del DOM
+            this.mapDOMElements();
+            
+            // Agregar estilos CSS
+            this.injectStyles();
+            
+            // Configurar eventos
+            this.bindEvents();
+            
+            this.isInitialized = true;
+            console.log('✅ Actualizador de Métricas inicializado');
+            
+            return true;
+            
+        } catch (error) {
+            console.error('❌ Error inicializando Actualizador de Métricas:', error);
+            return false;
+        }
+    }
+
+    loadConfiguration() {
+        // Usar configuración global o valores por defecto
+        this.config = {
+            currency: window.GRIZALUM_CONFIG?.currency || 'PEN',
+            locale: window.GRIZALUM_CONFIG?.locale || 'es-PE',
+            financial: window.GRIZALUM_CONFIG?.financial || {
+                currency_symbol: 'S/.',
+                decimal_places: 0,
+                thousand_separator: ',',
+                update_interval: 30000
+            },
+            animation: {
+                duration: 800,
+                easing: 'ease-out',
+                counter_speed: 50
+            }
         };
+        
+        console.log('⚙️ Configuración de métricas cargada');
     }
 
-    /**
-     * Inicializar el actualizador de KPIs
-     */
-    inicializar() {
-        console.log('🚀 Inicializando actualizador de KPIs...');
-        
-        // Encontrar todos los elementos KPI
-        this.encontrarElementosKPI();
-        
-        // Configurar observadores de cambio
-        this.configurarObservadores();
-        
-        // Cargar valores iniciales
-        this.cargarValoresIniciales();
-        
-        console.log('✅ Actualizador de KPIs inicializado');
-        console.log(`📊 Elementos KPI encontrados: ${this.elementos.size}`);
-    }
-
-    /**
-     * Encontrar todos los elementos KPI en el DOM
-     */
-    encontrarElementosKPI() {
-        // Elementos principales del dashboard
-        const elementosKPI = [
-            { id: 'revenueValue', tipo: 'moneda', label: 'Ingresos Totales' },
-            { id: 'expensesValue', tipo: 'moneda', label: 'Gastos Operativos' },
-            { id: 'profitValue', tipo: 'moneda', label: 'Utilidad Neta' },
-            { id: 'growthValue', tipo: 'porcentaje', label: 'Crecimiento' },
-            { id: 'sidebarCashFlow', tipo: 'moneda', label: 'Flujo de Caja (Sidebar)' },
-            { id: 'sidebarProfit', tipo: 'moneda', label: 'Utilidad (Sidebar)' }
+    mapDOMElements() {
+        // Definir elementos de métricas principales
+        const metricsMap = [
+            { id: 'revenueValue', type: 'currency', label: 'Ingresos Totales' },
+            { id: 'expensesValue', type: 'currency', label: 'Gastos Operativos' },
+            { id: 'profitValue', type: 'currency', label: 'Utilidad Neta' },
+            { id: 'growthValue', type: 'percentage', label: 'Crecimiento' },
+            { id: 'sidebarCashFlow', type: 'currency', label: 'Flujo de Caja' },
+            { id: 'sidebarProfit', type: 'currency', label: 'Utilidad Sidebar' }
         ];
 
-        elementosKPI.forEach(({ id, tipo, label }) => {
-            const elemento = document.getElementById(id);
-            if (elemento) {
-                this.elementos.set(id, {
-                    elemento: elemento,
-                    tipo: tipo,
-                    label: label,
-                    valorActual: this.extraerValorNumerico(elemento.textContent),
-                    valorAnterior: 0
+        let found = 0;
+        metricsMap.forEach(({ id, type, label }) => {
+            const element = document.getElementById(id);
+            if (element) {
+                this.elements.set(id, {
+                    element,
+                    type,
+                    label,
+                    currentValue: this.extractNumericValue(element.textContent),
+                    previousValue: 0
                 });
-                console.log(`📍 KPI encontrado: ${label} (${id})`);
-            } else {
-                console.warn(`⚠️ Elemento KPI no encontrado: ${id}`);
+                found++;
             }
         });
+        
+        console.log(`📍 Elementos de métricas mapeados: ${found}/${metricsMap.length}`);
     }
 
-    /**
-     * Configurar observadores para detectar cambios automáticamente
-     */
-    configurarObservadores() {
-        // Observador de mutaciones para detectar cambios en los elementos
-        this.elementos.forEach((kpi, id) => {
-            const observer = new MutationObserver((mutations) => {
-                mutations.forEach((mutation) => {
-                    if (mutation.type === 'childList' || mutation.type === 'characterData') {
-                        this.procesarCambioElemento(id);
-                    }
-                });
-            });
-
-            observer.observe(kpi.elemento, {
-                childList: true,
-                subtree: true,
-                characterData: true
-            });
-        });
-
-        console.log('👀 Observadores de KPIs configurados');
-    }
-
-    /**
-     * Cargar valores iniciales de los elementos
-     */
-    cargarValoresIniciales() {
-        this.elementos.forEach((kpi, id) => {
-            const valorInicial = this.extraerValorNumerico(kpi.elemento.textContent);
-            kpi.valorActual = valorInicial;
-            kpi.valorAnterior = valorInicial;
-            this.valoresAnteriores.set(id, valorInicial);
-        });
-
-        console.log('📊 Valores iniciales de KPIs cargados');
-    }
-
-    /**
-     * Procesar cambio en un elemento específico
-     */
-    procesarCambioElemento(id) {
-        const kpi = this.elementos.get(id);
-        if (!kpi) return;
-
-        const nuevoValor = this.extraerValorNumerico(kpi.elemento.textContent);
-        const valorAnterior = kpi.valorActual;
-
-        if (nuevoValor !== valorAnterior) {
-            console.log(`📈 Cambio detectado en ${kpi.label}: ${valorAnterior} → ${nuevoValor}`);
-            this.mostrarCambioVisual(id, valorAnterior, nuevoValor);
-            kpi.valorAnterior = valorAnterior;
-            kpi.valorActual = nuevoValor;
-        }
-    }
-
-    /**
-     * Actualizar KPIs con nuevos datos
-     * @param {Object} datos - Objeto con los nuevos valores
-     */
-    actualizar(datos) {
-        if (!datos || typeof datos !== 'object') {
-            console.warn('⚠️ Datos de KPIs inválidos:', datos);
-            return;
+    // ======= API PRINCIPAL =======
+    updateMetrics(data) {
+        if (!this.isInitialized || !data) {
+            console.warn('⚠️ Actualizador no inicializado o datos inválidos');
+            return false;
         }
 
-        console.log('📊 Actualizando KPIs con nuevos datos...');
+        console.log('📊 Actualizando métricas financieras...');
 
         // Mapeo de propiedades de datos a elementos
-        const mapeoKPIs = {
-            revenue: 'revenueValue',
+        const dataMap = {
+            // Datos en español
             ingresos: 'revenueValue',
-            expenses: 'expensesValue',
             gastos: 'expensesValue',
-            profit: 'profitValue',
             utilidad: 'profitValue',
-            growth: 'growthValue',
             crecimiento: 'growthValue',
-            cashFlow: 'sidebarCashFlow',
-            flujoCaja: 'sidebarCashFlow'
+            flujo_caja: 'sidebarCashFlow',
+            flujoCaja: 'sidebarCashFlow',
+            
+            // Datos en inglés (compatibilidad)
+            revenue: 'revenueValue',
+            expenses: 'expensesValue',
+            profit: 'profitValue',
+            growth: 'growthValue',
+            cashFlow: 'sidebarCashFlow'
         };
 
-        // Actualizar cada KPI
-        Object.entries(datos).forEach(([clave, valor]) => {
-            const elementoId = mapeoKPIs[clave] || clave;
+        let updated = 0;
+        
+        // Procesar cada dato
+        Object.entries(data).forEach(([key, value]) => {
+            const elementId = dataMap[key] || key;
             
-            if (this.elementos.has(elementoId)) {
-                this.actualizarKPIIndividual(elementoId, valor);
+            if (this.elements.has(elementId)) {
+                this.updateSingleMetric(elementId, value);
+                updated++;
             }
         });
 
-        // Actualizar sidebar si hay datos de profit
-        if (datos.profit !== undefined) {
-            this.actualizarKPIIndividual('sidebarProfit', datos.profit);
+        // Actualizar sidebar profit si hay datos de utilidad
+        if (data.profit !== undefined || data.utilidad !== undefined) {
+            const profitValue = data.profit || data.utilidad;
+            this.updateSingleMetric('sidebarProfit', profitValue);
         }
 
-        // Guardar datos actuales
-        datosKPIsActuales = { ...datosKPIsActuales, ...datos };
-
-        console.log('✅ KPIs actualizados correctamente');
+        console.log(`✅ ${updated} métricas actualizadas`);
+        return true;
     }
 
-    /**
-     * Actualizar un KPI individual
-     */
-    actualizarKPIIndividual(elementoId, nuevoValor) {
-        const kpi = this.elementos.get(elementoId);
-        if (!kpi) {
-            console.warn(`⚠️ KPI no encontrado: ${elementoId}`);
-            return;
+    updateSingleMetric(elementId, newValue) {
+        const metric = this.elements.get(elementId);
+        if (!metric) return;
+
+        const numericValue = this.extractNumericValue(newValue);
+        const previousValue = metric.currentValue;
+
+        // Actualizar valores
+        metric.previousValue = previousValue;
+        metric.currentValue = numericValue;
+
+        // Animar cambio
+        this.animateMetricChange(elementId, previousValue, numericValue, metric.type);
+
+        // Mostrar efecto visual si hay cambio significativo
+        const change = numericValue - previousValue;
+        if (Math.abs(change) > Math.abs(previousValue) * 0.05) { // Cambio > 5%
+            this.showChangeEffect(metric.element, change);
         }
-
-        const valorAnterior = kpi.valorActual;
-        const valorNumerico = typeof nuevoValor === 'number' ? nuevoValor : this.extraerValorNumerico(nuevoValor.toString());
-
-        // Actualizar valor en el objeto
-        kpi.valorAnterior = valorAnterior;
-        kpi.valorActual = valorNumerico;
-
-        // Mostrar cambio con animación
-        if (animacionesHabilitadas) {
-            this.animarCambioValor(elementoId, valorAnterior, valorNumerico, kpi.tipo);
-        } else {
-            this.actualizarElementoDirecto(elementoId, nuevoValor, kpi.tipo);
-        }
-
-        console.log(`📊 ${kpi.label} actualizado: ${valorAnterior} → ${valorNumerico}`);
     }
 
-    /**
-     * Animar cambio de valor con efecto de conteo
-     */
-    animarCambioValor(elementoId, valorInicial, valorFinal, tipo) {
-        const kpi = this.elementos.get(elementoId);
-        if (!kpi) return;
+    // ======= ANIMACIONES =======
+    animateMetricChange(elementId, fromValue, toValue, type) {
+        const metric = this.elements.get(elementId);
+        if (!metric) return;
 
-        // Cancelar animación anterior si existe
-        if (this.animacionesActivas.has(elementoId)) {
-            clearInterval(this.animacionesActivas.get(elementoId));
+        // Cancelar animación anterior
+        if (this.animations.has(elementId)) {
+            clearInterval(this.animations.get(elementId));
+            this.animations.delete(elementId);
         }
 
-        const elemento = kpi.elemento;
-        const duracion = this.configuracion.animacionDuracion;
-        const pasos = Math.ceil(duracion / this.configuracion.velocidadConteo);
-        const incremento = (valorFinal - valorInicial) / pasos;
+        const element = metric.element;
+        const duration = this.config.animation.duration;
+        const steps = Math.ceil(duration / this.config.animation.counter_speed);
+        const increment = (toValue - fromValue) / steps;
         
-        let valorActual = valorInicial;
-        let paso = 0;
+        let currentValue = fromValue;
+        let currentStep = 0;
 
-        // Agregar clase de animación
-        elemento.classList.add('kpi-updating');
+        // Aplicar clase de animación
+        element.classList.add('metric-updating');
 
-        const animacion = setInterval(() => {
-            paso++;
-            valorActual += incremento;
+        const animation = setInterval(() => {
+            currentStep++;
+            currentValue += increment;
 
+            // Valor final en el último paso
+            const displayValue = currentStep === steps ? toValue : currentValue;
+            
             // Actualizar elemento
-            const valorMostrado = paso === pasos ? valorFinal : valorActual;
-            this.actualizarElementoDirecto(elementoId, valorMostrado, tipo);
+            element.textContent = this.formatValue(displayValue, type);
 
-            // Terminar animación
-            if (paso >= pasos) {
-                clearInterval(animacion);
-                this.animacionesActivas.delete(elementoId);
-                elemento.classList.remove('kpi-updating');
+            // Finalizar animación
+            if (currentStep >= steps) {
+                clearInterval(animation);
+                this.animations.delete(elementId);
+                element.classList.remove('metric-updating');
                 
-                // Mostrar efecto de cambio
-                this.mostrarEfectoCambio(elementoId, valorInicial, valorFinal);
+                // Trigger evento de actualización
+                this.triggerUpdateEvent(elementId, fromValue, toValue);
             }
-        }, this.configuracion.velocidadConteo);
+        }, this.config.animation.counter_speed);
 
-        this.animacionesActivas.set(elementoId, animacion);
+        this.animations.set(elementId, animation);
     }
 
-    /**
-     * Actualizar elemento directamente sin animación
-     */
-    actualizarElementoDirecto(elementoId, valor, tipo) {
-        const kpi = this.elementos.get(elementoId);
-        if (!kpi) return;
-
-        let valorFormateado;
-        
-        if (tipo === 'moneda') {
-            valorFormateado = this.formatearMoneda(valor);
-        } else if (tipo === 'porcentaje') {
-            valorFormateado = this.formatearPorcentaje(valor);
-        } else {
-            valorFormateado = this.formatearNumero(valor);
-        }
-
-        kpi.elemento.textContent = valorFormateado;
-    }
-
-    /**
-     * Mostrar efecto visual de cambio
-     */
-    mostrarEfectoCambio(elementoId, valorAnterior, valorNuevo) {
-        const kpi = this.elementos.get(elementoId);
-        if (!kpi) return;
-
-        const elemento = kpi.elemento;
-        const diferencia = valorNuevo - valorAnterior;
-        
-        if (diferencia === 0) return;
-
-        // Determinar clase de cambio
-        const claseEfecto = diferencia > 0 ? 'kpi-increase' : 'kpi-decrease';
+    showChangeEffect(element, changeValue) {
+        const isIncrease = changeValue > 0;
+        const effectClass = isIncrease ? 'metric-increase' : 'metric-decrease';
         
         // Aplicar efecto
-        elemento.classList.add(claseEfecto);
+        element.classList.add(effectClass);
         
-        // Remover efecto después de la animación
+        // Crear indicador de cambio
+        this.createChangeIndicator(element, changeValue, isIncrease);
+        
+        // Remover efecto
         setTimeout(() => {
-            elemento.classList.remove(claseEfecto);
+            element.classList.remove(effectClass);
         }, 1000);
+    }
 
-        // Mostrar notificación si el cambio es significativo
-        if (Math.abs(diferencia) > valorAnterior * 0.1) { // Cambio mayor al 10%
-            this.mostrarNotificacionCambio(kpi.label, diferencia, valorNuevo);
+    createChangeIndicator(element, changeValue, isIncrease) {
+        const indicator = document.createElement('div');
+        indicator.className = `metric-change-indicator ${isIncrease ? 'positive' : 'negative'}`;
+        indicator.innerHTML = `
+            <i class="fas fa-arrow-${isIncrease ? 'up' : 'down'}"></i>
+            <span>${isIncrease ? '+' : ''}${this.formatValue(Math.abs(changeValue), 'currency', true)}</span>
+        `;
+        
+        // Posicionar indicador
+        const rect = element.getBoundingClientRect();
+        indicator.style.position = 'fixed';
+        indicator.style.left = `${rect.right + 10}px`;
+        indicator.style.top = `${rect.top}px`;
+        indicator.style.zIndex = '1000';
+        
+        document.body.appendChild(indicator);
+        
+        // Animar y remover
+        setTimeout(() => {
+            indicator.style.opacity = '0';
+            indicator.style.transform = 'translateY(-20px)';
+        }, 100);
+        
+        setTimeout(() => {
+            if (indicator.parentNode) {
+                indicator.parentNode.removeChild(indicator);
+            }
+        }, 1500);
+    }
+
+    // ======= FORMATEO =======
+    formatValue(value, type, abbreviated = false) {
+        if (typeof value !== 'number') {
+            value = this.extractNumericValue(value);
+        }
+
+        switch (type) {
+            case 'currency':
+                return this.formatCurrency(value, abbreviated);
+            case 'percentage':
+                return this.formatPercentage(value);
+            default:
+                return this.formatNumber(value);
         }
     }
 
-    /**
-     * Mostrar cambio visual temporal
-     */
-    mostrarCambioVisual(elementoId, valorAnterior, valorNuevo) {
-        if (!this.configuracion.mostrarCambios) return;
-
-        const diferencia = valorNuevo - valorAnterior;
-        if (diferencia === 0) return;
-
-        this.mostrarEfectoCambio(elementoId, valorAnterior, valorNuevo);
-    }
-
-    /**
-     * Mostrar notificación de cambio significativo
-     */
-    mostrarNotificacionCambio(label, diferencia, valorNuevo) {
-        const porcentajeCambio = Math.abs(diferencia / (valorNuevo - diferencia) * 100);
-        const direccion = diferencia > 0 ? 'aumento' : 'disminución';
-        const emoji = diferencia > 0 ? '📈' : '📉';
-        const tipo = diferencia > 0 ? 'success' : 'warning';
-
-        const mensaje = `${emoji} ${label}: ${direccion} significativo del ${porcentajeCambio.toFixed(1)}%`;
+    formatCurrency(value, abbreviated = false) {
+        const { currency_symbol, decimal_places } = this.config.financial;
         
-        if (window.mostrarNotificacion) {
-            window.mostrarNotificacion(mensaje, tipo, 4000);
+        if (abbreviated && value >= 1000000) {
+            return `${currency_symbol} ${(value / 1000000).toFixed(1)}M`;
+        } else if (abbreviated && value >= 1000) {
+            return `${currency_symbol} ${(value / 1000).toFixed(0)}K`;
         }
+        
+        return new Intl.NumberFormat(this.config.locale, {
+            style: 'currency',
+            currency: this.config.currency,
+            minimumFractionDigits: decimal_places,
+            maximumFractionDigits: decimal_places
+        }).format(value);
     }
 
-    /**
-     * Extraer valor numérico de un texto
-     */
-    extraerValorNumerico(texto) {
-        if (typeof texto === 'number') return texto;
+    formatPercentage(value) {
+        if (typeof value === 'string' && value.includes('%')) {
+            return value; // Ya formateado
+        }
         
-        // Remover símbolos de moneda, espacios y caracteres especiales
-        const numeroLimpio = texto.toString()
-            .replace(/[S\/\.\s,₡$€£¥]/g, '')
+        const numValue = typeof value === 'number' ? value : this.extractNumericValue(value);
+        const sign = numValue >= 0 ? '+' : '';
+        return `${sign}${numValue.toFixed(1)}%`;
+    }
+
+    formatNumber(value) {
+        return new Intl.NumberFormat(this.config.locale, {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+        }).format(value);
+    }
+
+    extractNumericValue(text) {
+        if (typeof text === 'number') return text;
+        
+        // Extraer número de texto con símbolos de moneda
+        const cleanText = text.toString()
+            .replace(/[S\/\.\s,₡$€£¥%]/g, '')
             .replace(/[^\d\.-]/g, '');
         
-        const numero = parseFloat(numeroLimpio);
-        return isNaN(numero) ? 0 : numero;
+        const number = parseFloat(cleanText);
+        return isNaN(number) ? 0 : number;
     }
 
-    /**
-     * Formatear número como moneda
-     */
-    formatearMoneda(valor) {
-        if (typeof valor !== 'number') {
-            valor = this.extraerValorNumerico(valor);
-        }
-
-        const simbolo = this.configuracion.simboloMoneda;
-        const numeroFormateado = valor.toLocaleString('es-PE', {
-            minimumFractionDigits: this.configuracion.decimales,
-            maximumFractionDigits: this.configuracion.decimales
-        });
-
-        return `${simbolo} ${numeroFormateado}`;
-    }
-
-    /**
-     * Formatear como porcentaje
-     */
-    formatearPorcentaje(valor) {
-        if (typeof valor === 'string' && valor.includes('%')) {
-            return valor; // Ya es un porcentaje formateado
-        }
-
-        if (typeof valor !== 'number') {
-            valor = this.extraerValorNumerico(valor);
-        }
-
-        return `${valor > 0 ? '+' : ''}${valor.toFixed(1)}%`;
-    }
-
-    /**
-     * Formatear número general
-     */
-    formatearNumero(valor) {
-        if (typeof valor !== 'number') {
-            valor = this.extraerValorNumerico(valor);
-        }
-
-        return valor.toLocaleString('es-PE', {
-            minimumFractionDigits: this.configuracion.decimales,
-            maximumFractionDigits: this.configuracion.decimales
-        });
-    }
-
-    /**
-     * Obtener datos actuales de los KPIs
-     */
-    obtenerDatosActuales() {
-        const datos = {};
+    // ======= UTILIDADES =======
+    updateForPeriod(period) {
+        console.log(`📅 Métricas actualizadas para período: ${period}`);
         
-        this.elementos.forEach((kpi, id) => {
-            datos[id] = {
-                valor: kpi.valorActual,
-                valorAnterior: kpi.valorAnterior,
-                label: kpi.label,
-                tipo: kpi.tipo
+        // Aquí podrías implementar lógica específica por período
+        // Por ejemplo, cargar datos diferentes según el período
+        
+        // Disparar evento para notificar a otros módulos
+        const event = new CustomEvent('metricsUpdatedForPeriod', {
+            detail: { period, timestamp: Date.now() }
+        });
+        document.dispatchEvent(event);
+    }
+
+    getCurrentMetrics() {
+        const metrics = {};
+        this.elements.forEach((metric, id) => {
+            metrics[id] = {
+                value: metric.currentValue,
+                previousValue: metric.previousValue,
+                label: metric.label,
+                type: metric.type,
+                formattedValue: this.formatValue(metric.currentValue, metric.type)
             };
         });
-
-        return datos;
+        return metrics;
     }
 
-    /**
-     * Configurar opciones del actualizador
-     */
-    configurar(opciones) {
-        this.configuracion = { ...this.configuracion, ...opciones };
-        console.log('⚙️ Configuración de KPIs actualizada:', opciones);
+    // ======= EVENTOS =======
+    bindEvents() {
+        // Escuchar cambios de período
+        document.addEventListener('periodChanged', (e) => {
+            if (e.detail?.period) {
+                this.updateForPeriod(e.detail.period);
+            }
+        });
+
+        // Escuchar cambios de empresa
+        document.addEventListener('companyChanged', (e) => {
+            if (e.detail?.data) {
+                this.updateMetrics(e.detail.data);
+            }
+        });
+
+        console.log('🔗 Eventos de métricas configurados');
     }
 
-    /**
-     * Habilitar/deshabilitar animaciones
-     */
-    configurarAnimaciones(habilitadas) {
-        animacionesHabilitadas = habilitadas;
-        console.log(`🎬 Animaciones de KPIs: ${habilitadas ? 'habilitadas' : 'deshabilitadas'}`);
+    triggerUpdateEvent(elementId, oldValue, newValue) {
+        const event = new CustomEvent('metricUpdated', {
+            detail: {
+                elementId,
+                oldValue,
+                newValue,
+                change: newValue - oldValue,
+                timestamp: Date.now()
+            }
+        });
+        document.dispatchEvent(event);
     }
 
-    /**
-     * Agregar estilos CSS para las animaciones
-     */
-    agregarEstilosCSS() {
-        const styleId = 'grizalum-kpis-styles';
-        
+    // ======= ESTILOS CSS =======
+    injectStyles() {
+        const styleId = 'grizalum-metrics-styles';
         if (document.getElementById(styleId)) return;
 
-        const estilos = document.createElement('style');
-        estilos.id = styleId;
-        estilos.textContent = `
-            /* Estilos para animaciones de KPIs */
-            .kpi-updating {
+        const styles = document.createElement('style');
+        styles.id = styleId;
+        styles.textContent = `
+            /* Estilos para animaciones de métricas */
+            .metric-updating {
+                transition: transform 0.2s ease;
+            }
+            
+            .metric-increase {
+                animation: metricIncrease 1s ease;
+            }
+            
+            .metric-decrease {
+                animation: metricDecrease 1s ease;
+            }
+            
+            .metric-change-indicator {
+                position: fixed;
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 4px;
                 transition: all 0.3s ease;
+                pointer-events: none;
             }
             
-            .kpi-increase {
-                animation: kpiIncrease 1s ease;
+            .metric-change-indicator.positive {
+                background: rgba(16, 185, 129, 0.9);
             }
             
-            .kpi-decrease {
-                animation: kpiDecrease 1s ease;
+            .metric-change-indicator.negative {
+                background: rgba(239, 68, 68, 0.9);
             }
             
-            @keyframes kpiIncrease {
+            @keyframes metricIncrease {
                 0% { transform: scale(1); }
                 50% { transform: scale(1.05); color: #10b981; }
                 100% { transform: scale(1); }
             }
             
-            @keyframes kpiDecrease {
+            @keyframes metricDecrease {
                 0% { transform: scale(1); }
                 50% { transform: scale(1.05); color: #ef4444; }
                 100% { transform: scale(1); }
             }
         `;
         
-        document.head.appendChild(estilos);
+        document.head.appendChild(styles);
+        console.log('🎨 Estilos de métricas inyectados');
+    }
+
+    // ======= API PÚBLICA =======
+    getStatus() {
+        return {
+            isInitialized: this.isInitialized,
+            elementsCount: this.elements.size,
+            activeAnimations: this.animations.size,
+            config: this.config
+        };
     }
 }
 
-// ================================================================
-// INSTANCIA GLOBAL DEL ACTUALIZADOR
-// ================================================================
-const actualizadorKPIs = new ActualizadorKPIs();
+// ======= INSTANCIA GLOBAL =======
+const grizalumMetricsUpdater = new GrizalumMetricsUpdater();
 
-// ================================================================
-// FUNCIONES GLOBALES PARA COMPATIBILIDAD
-// ================================================================
+// ======= FUNCIONES DE COMPATIBILIDAD =======
 
 /**
- * Función global principal para actualizar KPIs
- * Compatible con la función del grizalum-principal.js
+ * Función principal para actualizar métricas (compatibilidad)
  */
-function actualizarKPIs(datos) {
-    return actualizadorKPIs.actualizar(datos);
+function actualizarMetricas(data) {
+    return grizalumMetricsUpdater.updateMetrics(data);
 }
 
 /**
- * Función específica para actualizar sidebar
+ * Función para actualizar sidebar específicamente
  */
-function actualizarSidebar(datos) {
-    if (!datos) return;
+function actualizarSidebar(data) {
+    if (!data) return false;
     
-    const datosKPI = {};
-    if (datos.cashFlow !== undefined) datosKPI.cashFlow = datos.cashFlow;
-    if (datos.profit !== undefined) datosKPI.profit = datos.profit;
+    const sidebarData = {};
+    if (data.cashFlow !== undefined) sidebarData.cashFlow = data.cashFlow;
+    if (data.profit !== undefined) sidebarData.profit = data.profit;
+    if (data.flujoCaja !== undefined) sidebarData.cashFlow = data.flujoCaja;
+    if (data.utilidad !== undefined) sidebarData.profit = data.utilidad;
     
-    return actualizadorKPIs.actualizar(datosKPI);
+    return grizalumMetricsUpdater.updateMetrics(sidebarData);
 }
 
-// ================================================================
-// INTEGRACIÓN CON OTROS MÓDULOS
-// ================================================================
-
-// Escuchar cambios de empresa para actualizar KPIs
-document.addEventListener('grizalumCompanyChanged', function(evento) {
-    const { company } = evento.detail;
-    if (company && company.data) {
-        console.log('🏢 Actualizando KPIs por cambio de empresa...');
-        actualizadorKPIs.actualizar(company.data);
-    }
-});
-
-// Escuchar cambios de período para simular actualización
-document.addEventListener('grizalumPeriodoCambiado', function(evento) {
-    const { periodo } = evento.detail;
-    console.log(`📅 Período cambiado a ${periodo} - KPIs podrían necesitar actualización`);
-    
-    // Aquí podrías implementar lógica para cargar datos del nuevo período
-    // Por ahora solo mostramos una notificación
-    if (window.mostrarNotificacion) {
-        window.mostrarNotificacion(`📊 KPIs actualizados para período: ${periodo}`, 'info', 3000);
-    }
-});
-
-// ================================================================
-// INICIALIZACIÓN AUTOMÁTICA
-// ================================================================
-
-// Inicializar cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('📊 DOM listo - Inicializando actualizador de KPIs...');
-    
-    // Esperar un poco para que otros módulos se carguen
+// ======= INICIALIZACIÓN =======
+document.addEventListener('DOMContentLoaded', () => {
+    // Inicialización con retraso para asegurar que el DOM esté listo
     setTimeout(() => {
-        actualizadorKPIs.inicializar();
-        actualizadorKPIs.agregarEstilosCSS();
-    }, 500);
+        grizalumMetricsUpdater.initialize();
+    }, 600);
 });
 
-// ================================================================
-// API PÚBLICA DEL ACTUALIZADOR DE KPIs
-// ================================================================
+// ======= EXPORTACIÓN GLOBAL =======
 
-// Exponer API globalmente
-window.GRIZALUM_KPIS = {
-    version: '1.0.0',
-    actualizar: (datos) => actualizadorKPIs.actualizar(datos),
-    obtenerDatos: () => actualizadorKPIs.obtenerDatosActuales(),
-    configurar: (opciones) => actualizadorKPIs.configurar(opciones),
-    animaciones: (habilitadas) => actualizadorKPIs.configurarAnimaciones(habilitadas)
-};
+// API principal
+window.GrizalumMetrics = grizalumMetricsUpdater;
 
-// Hacer funciones disponibles globalmente para compatibilidad
-window.actualizarKPIs = actualizarKPIs;
+// Funciones de compatibilidad
+window.actualizarMetricas = actualizarMetricas;
 window.actualizarSidebar = actualizarSidebar;
 
-console.log(`
-📊 ===================================================
-   ACTUALIZADOR DE KPIs CARGADO
-📊 ===================================================
+// Alias para compatibilidad con código existente
+window.actualizarKPIs = actualizarMetricas;
 
-✨ FUNCIONES DISPONIBLES:
-   • actualizarKPIs(datos) - Actualizar todos los KPIs
-   • actualizarSidebar(datos) - Actualizar solo sidebar
-   • GRIZALUM_KPIS.configurar(opciones) - Personalizar formato
-
-💰 ELEMENTOS MONITOREADOS:
-   • Ingresos Totales (revenueValue)
-   • Gastos Operativos (expensesValue)  
-   • Utilidad Neta (profitValue)
-   • Crecimiento (growthValue)
-   • Flujo de Caja Sidebar (sidebarCashFlow)
-   • Utilidad Sidebar (sidebarProfit)
-
-🎬 CARACTERÍSTICAS:
-   • Animaciones de conteo suaves
-   • Detección automática de cambios
-   • Efectos visuales para aumentos/disminuciones
-   • Formateo automático de moneda peruana
-   • Notificaciones para cambios significativos
-
-⚙️ CONFIGURACIÓN:
-   • Velocidad de animación personalizable
-   • Formato de moneda configurable
-   • Activar/desactivar efectos visuales
-
-📊 ===================================================
-`);
-
+console.log('📊 GRIZALUM Metrics Updater v2.0 cargado');
+console.log('✨ Funcionalidades:');
+console.log('  • 📊 Actualización animada de métricas');
+console.log('  • 💰 Formato de moneda peruana optimizado');
+console.log('  • 📈 Indicadores visuales de cambios');
+console.log('  • ⚡ Animaciones suaves y profesionales');
+console.log('  • 🔗 Integración con sistema de períodos');
+console.log('  • 📱 Optimizado para rendimiento');
+console.log('🚀 Actualizador de métricas listo para empresas peruanas');
