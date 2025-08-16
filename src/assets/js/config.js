@@ -1,13 +1,17 @@
-/**
- * GRIZALUM - Configuración Central
- * Configuración unificada para toda la aplicación
- */
+// ================================================================
+// 🔧 GRIZALUM - Configuración Central v2.0
+// Configuración unificada para toda la aplicación
+// ================================================================
 
-export const GRIZALUM_CONFIG = {
-    // Versión del sistema
+// 🌍 Variable global accesible desde todos los módulos
+window.GRIZALUM_CONFIG = {
+    // 📋 Información del sistema
     version: '2.0.0',
+    name: 'GRIZALUM',
+    locale: 'es-PE',
+    currency: 'PEN',
     
-    // Configuración de gráficos
+    // 📊 Configuración de gráficos
     charts: {
         enabled: ['cashFlow', 'expenses', 'revenue', 'aging', 'cashFlowDetail'],
         containers: {
@@ -20,22 +24,40 @@ export const GRIZALUM_CONFIG = {
         defaultOptions: {
             responsive: true,
             maintainAspectRatio: false,
-            font: {
-                family: 'Inter, sans-serif'
+            plugins: {
+                legend: {
+                    labels: {
+                        font: {
+                            family: 'Inter, sans-serif'
+                        }
+                    }
+                }
             }
         }
     },
     
-    // Configuración de empresas
+    // 🏢 Configuración de empresas
     companies: {
         default: 'fundicion-laguna',
-        dataKeys: ['cashFlow', 'revenue', 'expenses', 'profit']
+        dataKeys: ['cashFlow', 'revenue', 'expenses', 'profit', 'growth']
     },
     
-    // Configuración de módulos
+    // 🧠 Configuración de módulos
     modules: {
         ai: { enabled: true, endpoint: '/api/ai' },
         notifications: { enabled: true, maxCount: 10 },
-        themes: { enabled: true, persistent: true }
+        themes: { enabled: true, persistent: true },
+        sidebar: { enabled: true, collapsible: true }
+    },
+    
+    // 💰 Configuración financiera
+    financial: {
+        currency_symbol: 'S/.',
+        decimal_places: 2,
+        thousand_separator: ',',
+        update_interval: 30000 // 30 segundos
     }
 };
+
+// 🚀 Inicializar configuración
+console.log('⚙️ Configuración GRIZALUM cargada:', window.GRIZALUM_CONFIG.version);
