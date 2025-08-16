@@ -1,0 +1,778 @@
+/* ================================================================
+   09-RESPONSIVE-MOBILE.css - OPTIMIZACIONES MÓVILES GRIZALUM
+   Ajustes específicos para dispositivos móviles y tablets
+   ================================================================ */
+
+/* ===== BREAKPOINTS PRINCIPALES ===== */
+/* 
+   1200px+ : Desktop grande
+   992px-1199px : Desktop estándar  
+   768px-991px : Tablet
+   576px-767px : Móvil grande
+   0px-575px : Móvil pequeño
+*/
+
+/* ===== OPTIMIZACIONES GENERALES MÓVIL ===== */
+@media (max-width: 991px) {
+    
+    /* Ajustar variables para móvil */
+    :root {
+        --sidebar-width: 100vw;
+        --header-height: 70px;
+        --dashboard-padding: 12px;
+        --cards-gap: 10px;
+    }
+    
+    /* Ocultar elementos no esenciales en móvil */
+    .ai-insights {
+        display: none;
+    }
+    
+    .page-subtitle {
+        display: none;
+    }
+    
+    /* Simplificar tipografía */
+    .page-title {
+        font-size: 1.5rem !important;
+        line-height: 1.2;
+    }
+    
+    /* Optimizar espaciados */
+    .executive-header {
+        padding: 12px 16px;
+        min-height: 60px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    
+    .dashboard-content {
+        padding: 12px;
+        gap: 12px;
+    }
+}
+
+/* ===== TABLET (768px - 991px) ===== */
+@media (max-width: 991px) and (min-width: 768px) {
+    
+    /* Sidebar comportamiento tablet */
+    .sidebar {
+        transform: translateX(-100%);
+        z-index: 1100;
+        box-shadow: 
+            var(--shadow-2xl),
+            inset -1px 0 0 rgba(255, 255, 255, 0.1);
+    }
+    
+    .sidebar.open {
+        transform: translateX(0);
+    }
+    
+    /* Main content en tablet */
+    .main-content {
+        margin-left: 0;
+        width: 100vw;
+    }
+    
+    /* Mostrar botón de menú */
+    .mobile-menu-toggle {
+        display: flex;
+        order: -1;
+    }
+    
+    /* Header reorganizado */
+    .page-header {
+        order: 1;
+        flex: 1;
+        min-width: 200px;
+    }
+    
+    .header-controls {
+        order: 2;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: flex-end;
+    }
+    
+    /* Métricas en 2 columnas */
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px;
+    }
+    
+    /* Gráficos apilados */
+    .charts-section {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .chart-card.main-chart {
+        grid-column: 1;
+        min-height: 350px;
+    }
+    
+    /* Controles de tiempo compactos */
+    .time-period-selector {
+        gap: 4px;
+    }
+    
+    .period-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+}
+
+/* ===== MÓVIL GRANDE (576px - 767px) ===== */
+@media (max-width: 767px) {
+    
+    /* Variables móvil */
+    :root {
+        --dashboard-padding: 8px;
+        --cards-gap: 8px;
+        --spacing-xs: 0.125rem;
+        --spacing-sm: 0.25rem;
+        --spacing-md: 0.5rem;
+        --spacing-lg: 0.75rem;
+        --spacing-xl: 1rem;
+    }
+    
+    /* Header móvil compacto */
+    .executive-header {
+        padding: 8px 12px;
+        min-height: 50px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .page-header {
+        order: 2;
+        width: 100%;
+    }
+    
+    .header-controls {
+        order: 1;
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .mobile-menu-toggle {
+        order: 1;
+    }
+    
+    .company-selector {
+        order: 2;
+        flex: 1;
+        margin: 0 12px;
+    }
+    
+    .notification-center,
+    .ai-header-button {
+        order: 3;
+    }
+    
+    /* Ocultar elementos no críticos */
+    .ai-header-button span {
+        display: none;
+    }
+    
+    .time-period-selector {
+        order: 4;
+        width: 100%;
+        justify-content: center;
+        margin-top: 8px;
+        background: var(--gray-100);
+        border-radius: 8px;
+        padding: 4px;
+    }
+    
+    /* Métricas en columna única */
+    .metrics-grid {
+        grid-template-columns: 1fr !important;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+    
+    /* Tarjetas métricas compactas */
+    .metric-card {
+        min-height: 120px;
+        padding: 16px;
+        border-radius: 12px;
+    }
+    
+    .metric-header {
+        margin-bottom: 12px;
+        gap: 8px;
+    }
+    
+    .metric-title {
+        font-size: 11px;
+        letter-spacing: 0.3px;
+    }
+    
+    .metric-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+    
+    .metric-value {
+        font-size: 1.25rem;
+        margin-bottom: 8px;
+    }
+    
+    .metric-change {
+        font-size: 11px;
+        padding: 4px 8px;
+    }
+    
+    /* Gráficos móvil */
+    .chart-card {
+        min-height: 280px;
+        padding: 12px;
+        border-radius: 12px;
+    }
+    
+    .chart-card.main-chart {
+        min-height: 300px;
+    }
+    
+    .chart-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+    }
+    
+    .chart-title {
+        font-size: 14px;
+        order: 1;
+    }
+    
+    .chart-filters {
+        order: 2;
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    
+    .filter-btn {
+        padding: 6px 12px;
+        font-size: 11px;
+        min-width: 35px;
+    }
+    
+    .chart-container {
+        min-height: 200px;
+        padding: 4px;
+    }
+    
+    /* Sidebar móvil */
+    .sidebar-header {
+        padding: 16px;
+    }
+    
+    .brand-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+    
+    .brand-text h1 {
+        font-size: 18px;
+    }
+    
+    .brand-text p {
+        font-size: 12px;
+    }
+    
+    .financial-summary {
+        gap: 8px;
+    }
+    
+    .summary-item {
+        padding: 8px;
+    }
+    
+    .nav-menu {
+        padding: 12px;
+    }
+    
+    .nav-section {
+        margin-bottom: 16px;
+    }
+    
+    .nav-link {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+    
+    .nav-icon {
+        width: 16px;
+        font-size: 14px;
+    }
+}
+
+/* ===== MÓVIL PEQUEÑO (0px - 575px) ===== */
+@media (max-width: 575px) {
+    
+    /* Variables móvil pequeño */
+    :root {
+        --dashboard-padding: 6px;
+        --cards-gap: 6px;
+    }
+    
+    /* Header ultra compacto */
+    .executive-header {
+        padding: 6px 8px;
+        min-height: 45px;
+    }
+    
+    .page-title {
+        font-size: 1.125rem !important;
+        margin-bottom: 0;
+    }
+    
+    .mobile-menu-toggle {
+        padding: 6px;
+        font-size: 16px;
+    }
+    
+    /* Company selector compacto */
+    .company-selector {
+        margin: 0 8px;
+    }
+    
+    .grizalum-company-btn {
+        padding: 6px 8px;
+        min-width: 140px;
+    }
+    
+    .grizalum-company-name {
+        font-size: 12px !important;
+    }
+    
+    .grizalum-company-status {
+        font-size: 10px !important;
+    }
+    
+    /* Botones header compactos */
+    .notification-center,
+    .ai-header-button {
+        padding: 6px 8px;
+        font-size: 14px;
+    }
+    
+    /* Período selector móvil */
+    .time-period-selector {
+        padding: 2px;
+        gap: 2px;
+    }
+    
+    .period-btn {
+        padding: 6px 8px;
+        font-size: 10px;
+        min-width: auto;
+        flex: 1;
+    }
+    
+    /* Dashboard ultra compacto */
+    .dashboard-content {
+        padding: 6px;
+        gap: 8px;
+    }
+    
+    /* Métricas mini */
+    .metric-card {
+        min-height: 100px;
+        padding: 12px;
+    }
+    
+    .metric-header {
+        margin-bottom: 8px;
+        gap: 6px;
+    }
+    
+    .metric-title {
+        font-size: 10px;
+    }
+    
+    .metric-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+    
+    .metric-value {
+        font-size: 1rem;
+        margin-bottom: 6px;
+    }
+    
+    .metric-change {
+        font-size: 10px;
+        padding: 2px 6px;
+    }
+    
+    /* Gráficos mini */
+    .chart-card {
+        min-height: 240px;
+        padding: 8px;
+    }
+    
+    .chart-card.main-chart {
+        min-height: 260px;
+    }
+    
+    .chart-header {
+        margin-bottom: 8px;
+        gap: 8px;
+    }
+    
+    .chart-title {
+        font-size: 12px;
+    }
+    
+    .filter-btn {
+        padding: 4px 8px;
+        font-size: 10px;
+        min-width: 30px;
+    }
+    
+    .chart-container {
+        min-height: 160px;
+        padding: 2px;
+    }
+    
+    /* Sidebar móvil pequeño */
+    .sidebar-header {
+        padding: 12px;
+    }
+    
+    .company-brand {
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+    
+    .brand-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+    
+    .brand-text h1 {
+        font-size: 16px;
+    }
+    
+    .brand-text p {
+        font-size: 11px;
+    }
+    
+    .financial-summary {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+    
+    .summary-item {
+        padding: 6px;
+        text-align: left;
+    }
+    
+    .summary-label {
+        font-size: 10px;
+    }
+    
+    .summary-value {
+        font-size: 12px;
+    }
+    
+    .nav-menu {
+        padding: 8px;
+    }
+    
+    .nav-section-title {
+        font-size: 10px;
+        margin-bottom: 6px;
+    }
+    
+    .nav-link {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+    
+    .nav-icon {
+        width: 14px;
+        font-size: 12px;
+    }
+}
+
+/* ===== OPTIMIZACIONES TOUCH ===== */
+@media (hover: none) and (pointer: coarse) {
+    
+    /* Áreas de toque más grandes */
+    .nav-link,
+    .period-btn,
+    .filter-btn,
+    .mobile-menu-toggle,
+    .notification-center {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Eliminar hover effects en touch */
+    .metric-card:hover,
+    .chart-card:hover {
+        transform: none;
+        box-shadow: var(--shadow-lg);
+    }
+    
+    /* Simplificar transiciones */
+    .metric-card,
+    .chart-card,
+    .nav-link {
+        transition: none;
+    }
+    
+    /* Mejorar feedback táctil */
+    .metric-card:active,
+    .chart-card:active {
+        transform: scale(0.98);
+    }
+    
+    .nav-link:active {
+        background: var(--gray-200);
+    }
+    
+    .period-btn:active,
+    .filter-btn:active {
+        transform: scale(0.95);
+    }
+}
+
+/* ===== MODO LANDSCAPE MÓVIL ===== */
+@media (max-width: 767px) and (orientation: landscape) {
+    
+    /* Header más compacto en landscape */
+    .executive-header {
+        padding: 4px 8px;
+        min-height: 40px;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .page-header {
+        order: 2;
+        flex: 1;
+    }
+    
+    .header-controls {
+        order: 3;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 6px;
+    }
+    
+    .time-period-selector {
+        order: 4;
+        width: auto;
+        margin-top: 0;
+        margin-left: 8px;
+    }
+    
+    /* Métricas en 2 columnas en landscape */
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    
+    /* Gráficos más bajos */
+    .chart-card {
+        min-height: 200px;
+    }
+    
+    .chart-card.main-chart {
+        min-height: 220px;
+    }
+    
+    .chart-container {
+        min-height: 120px;
+    }
+}
+
+/* ===== OPTIMIZACIONES DE RENDIMIENTO MÓVIL ===== */
+@media (max-width: 991px) {
+    
+    /* Reducir animaciones en móvil */
+    .metric-card,
+    .chart-card {
+        animation-duration: 0.3s;
+    }
+    
+    /* Simplificar efectos visuales */
+    .metric-card::before,
+    .chart-card::after {
+        display: none;
+    }
+    
+    /* Optimizar backdrop-filter para rendimiento */
+    .sidebar,
+    .executive-header {
+        backdrop-filter: blur(10px);
+    }
+    
+    /* Reducir sombras complejas */
+    .metric-card,
+    .chart-card {
+        box-shadow: var(--shadow-md);
+    }
+    
+    .metric-card:hover,
+    .chart-card:hover {
+        box-shadow: var(--shadow-lg);
+    }
+}
+
+/* ===== SAFE AREAS PARA NOTCH ===== */
+@supports (padding: max(0px)) {
+    .executive-header {
+        padding-left: max(var(--spacing-lg), env(safe-area-inset-left));
+        padding-right: max(var(--spacing-lg), env(safe-area-inset-right));
+        padding-top: max(var(--spacing-md), env(safe-area-inset-top));
+    }
+    
+    .dashboard-content {
+        padding-left: max(var(--dashboard-padding), env(safe-area-inset-left));
+        padding-right: max(var(--dashboard-padding), env(safe-area-inset-right));
+    }
+    
+    .sidebar {
+        padding-top: max(0px, env(safe-area-inset-top));
+        padding-bottom: max(0px, env(safe-area-inset-bottom));
+    }
+}
+
+/* ===== MODO OSCURO AUTOMÁTICO MÓVIL ===== */
+@media (prefers-color-scheme: dark) and (max-width: 991px) {
+    .executive-header,
+    .sidebar {
+        background: linear-gradient(135deg, 
+            rgba(15, 23, 42, 0.95) 0%, 
+            rgba(30, 41, 59, 0.95) 100%);
+    }
+    
+    .metric-card,
+    .chart-card {
+        background: linear-gradient(135deg, 
+            rgba(30, 41, 59, 0.95) 0%, 
+            rgba(51, 65, 85, 0.95) 100%);
+        color: var(--gray-100);
+    }
+}
+
+/* ===== ACCESIBILIDAD MÓVIL ===== */
+@media (max-width: 991px) {
+    
+    /* Tamaños de fuente mínimos */
+    .metric-title {
+        font-size: max(11px, 1rem);
+    }
+    
+    .metric-value {
+        font-size: max(16px, 1.25rem);
+    }
+    
+    .chart-title {
+        font-size: max(14px, 1rem);
+    }
+    
+    /* Contraste mejorado */
+    .period-btn,
+    .filter-btn {
+        border-width: 2px;
+    }
+    
+    .period-btn.active,
+    .filter-btn.active {
+        border-width: 3px;
+    }
+    
+    /* Espaciado para accesibilidad */
+    .nav-link {
+        margin-bottom: 4px;
+    }
+    
+    .metric-card {
+        margin-bottom: 8px;
+    }
+}
+
+/* ===== MODO REDUCIR MOVIMIENTO MÓVIL ===== */
+@media (prefers-reduced-motion: reduce) and (max-width: 991px) {
+    
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .sidebar {
+        transition: transform 0.01ms !important;
+    }
+    
+    .metric-card:hover,
+    .chart-card:hover {
+        transform: none !important;
+    }
+}
+
+/* ===== UTILIDADES MÓVIL ===== */
+
+/* Ocultar en móvil */
+.hide-mobile {
+    display: none !important;
+}
+
+@media (min-width: 768px) {
+    .hide-mobile {
+        display: block !important;
+    }
+}
+
+/* Mostrar solo en móvil */
+.show-mobile {
+    display: none !important;
+}
+
+@media (max-width: 767px) {
+    .show-mobile {
+        display: block !important;
+    }
+}
+
+/* Texto responsivo */
+.text-responsive {
+    font-size: clamp(0.875rem, 2.5vw, 1.125rem);
+}
+
+/* Espaciado responsivo */
+.p-responsive {
+    padding: clamp(0.5rem, 3vw, 1.5rem);
+}
+
+.m-responsive {
+    margin: clamp(0.25rem, 2vw, 1rem);
+}
+
+/* Grid responsivo automático */
+.grid-responsive {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: clamp(0.5rem, 2vw, 1.5rem);
+}
+
+@media (max-width: 575px) {
+    .grid-responsive {
+        grid-template-columns: 1fr;
+    }
+}
