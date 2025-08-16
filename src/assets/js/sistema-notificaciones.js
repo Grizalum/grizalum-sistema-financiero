@@ -1,58 +1,241 @@
-// ================================================================
-// SISTEMA DE NOTIFICACIONES GRIZALUM
-// Este archivo maneja SOLO las notificaciones y alertas del sistema
-// ================================================================
+/**
+ * ================================================================
+ * GRIZALUM NOTIFICATION SYSTEM - ULTRA PROFESSIONAL EDITION v2.0
+ * Sistema centralizado de notificaciones con gestión avanzada
+ * Integrado con ecosistema completo GRIZALUM
+ * ================================================================
+ */
 
-console.log('🔔 Cargando sistema de notificaciones...');
-
-// ================================================================
-// VARIABLES DEL SISTEMA DE NOTIFICACIONES
-// ================================================================
-let notificacionesActivas = [];
-let contenedorNotificaciones = null;
-let contadorNotificaciones = 0;
-
-// ================================================================
-// CLASE PRINCIPAL DEL SISTEMA DE NOTIFICACIONES
-// ================================================================
-class SistemaNotificaciones {
+class SistemaNotificacionesGRIZALUM {
     constructor() {
+        this.version = '2.0.0';
         this.notificaciones = [];
+        this.cola = [];
         this.contenedor = null;
-        this.posicion = 'top-right'; // top-right, top-left, bottom-right, bottom-left
-        this.duracionPorDefecto = 5000; // 5 segundos
-        this.maxNotificaciones = 5;
+        this.utilidades = null;
+        this.gestorTemas = null;
+        this.cache = new Map();
+        this.inicializado = false;
+        
+        // Configuración avanzada
         this.configuracion = {
-            animacionEntrada: 'slideInRight',
-            animacionSalida: 'slideOutRight',
-            sonidoHabilitado: false,
-            agruparSimilares: true
+            posicion: 'top-right', // top-right, top-left, bottom-right, bottom-left, center
+            duracionPorDefecto: 5000,
+            maxNotificaciones: 5,
+            maxCola: 10,
+            animacion: {
+                entrada: 'slideInRight',
+                salida: 'slideOutRight',
+                duracion: 300,
+                easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+            },
+            accesibilidad: {
+                liveRegion: true,
+                autoFocus: true,
+                anunciarTipo: true
+            },
+            sonido: {
+                habilitado: false,
+                volumen: 0.3,
+                archivos: {
+                    success: null,
+                    error: null,
+                    warning: null,
+                    info: null
+                }
+            },
+            comportamiento: {
+                pausarEnHover: true,
+                cerrarEnClick: false,
+                agruparSimilares: true,
+                persistirConfiguracion: true
+            },
+            templates: {
+                simple: true,
+                avanzado: true,
+                conBotones: true
+            }
         };
+        
+        // Métricas y analíticas
+        this.metricas = {
+            totalMostradas: 0,
+            porTipo: { success: 0, error: 0, warning: 0, info: 0 },
+            interacciones: { cerradas: 0, clicks: 0, hovers: 0 },
+            tiemposVisualizacion: []
+        };
+        
+        this.log('🚀 Inicializando GRIZALUM Notification System v2.0...');
     }
 
-    /**
-     * Inicializar el sistema de notificaciones
-     */
+    // ======= INICIALIZACIÓN AVANZADA =======
+    
     inicializar() {
-        console.log('🚀 Inicializando sistema de notificaciones...');
-        
-        // Crear contenedor principal
-        this.crearContenedorPrincipal();
-        
-        // Crear estilos CSS
-        this.crearEstilosCSS();
-        
-        // Configurar eventos globales
-        this.configurarEventos();
-        
-        console.log('✅ Sistema de notificaciones inicializado');
-        console.log(`📍 Posición: ${this.posicion}`);
-        console.log(`⏱️ Duración por defecto: ${this.duracionPorDefecto}ms`);
+        try {
+            this.log('🔔 Inicializando sistema de notificaciones...', 'info');
+            
+            // Detectar dependencias
+            this.detectarDependencias();
+            
+            // Cargar configuración global
+            this.cargarConfiguracionGlobal();
+            
+            // Cargar configuración persistente
+            this.cargarConfiguracionPersistente();
+            
+            // Crear contenedor principal
+            this.crearContenedorPrincipal();
+            
+            // Configurar accesibilidad
+            this.configurarAccesibilidad();
+            
+            // Crear estilos dinámicos
+            this.aplicarEstilosDinamicos();
+            
+            // Configurar eventos
+            this.configurarEventos();
+            
+            // Inicializar sistema de sonido si está habilitado
+            if (this.configuracion.sonido.habilitado) {
+                this.inicializarSistemaSonido();
+            }
+            
+            this.inicializado = true;
+            this.log('✅ Sistema de notificaciones inicializado correctamente', 'success');
+            
+            // Disparar evento de inicialización
+            this.dispararEvento('notificationSystemReady', {
+                version: this.version,
+                configuracion: this.configuracion
+            });
+            
+        } catch (error) {
+            this.log(`❌ Error inicializando sistema de notificaciones: ${error.message}`, 'error');
+        }
     }
 
-    /**
-     * Crear contenedor principal de notificaciones
-     */
+    detectarDependencias() {
+        // Detectar utilidades GRIZALUM
+        this.utilidades = window.GrizalumUtils || null;
+        if (this.utilidades) {
+            this.log('🔗 Sistema de utilidades GRIZALUM detectado', 'success');
+        }
+        
+        // Detectar gestor de temas
+        this.gestorTemas = window.themeManager || window.gestorTemas || null;
+        if (this.gestorTemas) {
+            this.log('🎨 Gestor de temas GRIZALUM detectado', 'success');
+        }
+    }
+
+    cargarConfiguracionGlobal() {
+        const config = window.GRIZALUM_CONFIG || {};
+        
+        // Fusionar configuración de notificaciones
+        if (config.notifications) {
+            this.configuracion = this.fusionarConfiguracion(this.configuracion, config.notifications);
+        }
+        
+        // Aplicar configuración de animaciones globales
+        if (config.animation) {
+            this.configuracion.animacion = {
+                ...this.configuracion.animacion,
+                duracion: config.animation.duration || this.configuracion.animacion.duracion,
+                easing: config.animation.easing || this.configuracion.animacion.easing
+            };
+        }
+        
+        this.log('⚙️ Configuración global de notificaciones cargada', 'info');
+    }
+
+    cargarConfiguracionPersistente() {
+        if (!this.configuracion.comportamiento.persistirConfiguracion) return;
+        
+        const cacheKey = 'grizalum_notifications_config';
+        let configGuardada = null;
+        
+        if (this.utilidades) {
+            configGuardada = this.utilidades.cargarDeStorage(cacheKey);
+        } else {
+            try {
+                const guardada = localStorage.getItem(cacheKey);
+                configGuardada = guardada ? JSON.parse(guardada) : null;
+            } catch (error) {
+                this.log(`Error cargando configuración persistente: ${error.message}`, 'warn');
+            }
+        }
+        
+        if (configGuardada) {
+            // Solo persistir ciertas configuraciones
+            this.configuracion.posicion = configGuardada.posicion || this.configuracion.posicion;
+            this.configuracion.sonido.habilitado = configGuardada.sonidoHabilitado || this.configuracion.sonido.habilitado;
+            
+            this.log('📂 Configuración persistente de notificaciones cargada', 'info');
+        }
+    }
+
+    guardarConfiguracionPersistente() {
+        if (!this.configuracion.comportamiento.persistirConfiguracion) return;
+        
+        const configParaGuardar = {
+            posicion: this.configuracion.posicion,
+            sonidoHabilitado: this.configuracion.sonido.habilitado,
+            timestamp: Date.now(),
+            version: this.version
+        };
+        
+        const cacheKey = 'grizalum_notifications_config';
+        
+        if (this.utilidades) {
+            this.utilidades.guardarEnStorage(cacheKey, configParaGuardar);
+        } else {
+            try {
+                localStorage.setItem(cacheKey, JSON.stringify(configParaGuardar));
+            } catch (error) {
+                this.log(`Error guardando configuración persistente: ${error.message}`, 'warn');
+            }
+        }
+    }
+
+    fusionarConfiguracion(destino, origen) {
+        const resultado = { ...destino };
+        
+        Object.keys(origen).forEach(clave => {
+            if (typeof origen[clave] === 'object' && !Array.isArray(origen[clave])) {
+                resultado[clave] = { ...resultado[clave], ...origen[clave] };
+            } else {
+                resultado[clave] = origen[clave];
+            }
+        });
+        
+        return resultado;
+    }
+
+    log(mensaje, tipo = 'info') {
+        if (this.utilidades) {
+            this.utilidades.log(`[Notifications] ${mensaje}`, tipo);
+        } else {
+            const timestamp = new Date().toLocaleTimeString('es-PE');
+            const prefijo = `[GRIZALUM-Notifications ${timestamp}]`;
+            
+            switch (tipo) {
+                case 'error':
+                    console.error(`${prefijo} ❌`, mensaje);
+                    break;
+                case 'warn':
+                    console.warn(`${prefijo} ⚠️`, mensaje);
+                    break;
+                case 'success':
+                    console.log(`${prefijo} ✅`, mensaje);
+                    break;
+                default:
+                    console.log(`${prefijo} ℹ️`, mensaje);
+            }
+        }
+    }
+
+    // ======= CONTENEDOR Y ACCESIBILIDAD =======
+    
     crearContenedorPrincipal() {
         // Eliminar contenedor existente si existe
         const contenedorExistente = document.getElementById('grizalum-notifications-container');
@@ -61,278 +244,101 @@ class SistemaNotificaciones {
         }
 
         // Crear nuevo contenedor
-        this.contenedor = document.createElement('div');
-        this.contenedor.id = 'grizalum-notifications-container';
-        this.contenedor.className = `notifications-container ${this.posicion}`;
+        this.contenedor = this.utilidades?.crearElemento('div', {
+            id: 'grizalum-notifications-container',
+            className: `grizalum-notifications-container ${this.configuracion.posicion}`,
+            role: 'region',
+            'aria-label': 'Notificaciones del sistema',
+            'aria-live': 'polite'
+        }) || this.crearContenedorManual();
         
         document.body.appendChild(this.contenedor);
-        contenedorNotificaciones = this.contenedor;
+        this.cache.set('contenedor', this.contenedor);
         
-        console.log('📦 Contenedor de notificaciones creado');
+        this.log('📦 Contenedor de notificaciones creado', 'info');
     }
 
-    /**
-     * Crear estilos CSS para las notificaciones
-     */
-    crearEstilosCSS() {
-        const styleId = 'grizalum-notifications-styles';
+    crearContenedorManual() {
+        const contenedor = document.createElement('div');
+        contenedor.id = 'grizalum-notifications-container';
+        contenedor.className = `grizalum-notifications-container ${this.configuracion.posicion}`;
+        contenedor.setAttribute('role', 'region');
+        contenedor.setAttribute('aria-label', 'Notificaciones del sistema');
+        contenedor.setAttribute('aria-live', 'polite');
+        return contenedor;
+    }
+
+    configurarAccesibilidad() {
+        if (!this.configuracion.accesibilidad.liveRegion) return;
         
-        // Eliminar estilos existentes
-        const estilosExistentes = document.getElementById(styleId);
-        if (estilosExistentes) {
-            estilosExistentes.remove();
+        // Crear región aria-live para anuncios
+        let liveRegion = document.getElementById('grizalum-live-region');
+        if (!liveRegion) {
+            liveRegion = this.utilidades?.crearElemento('div', {
+                id: 'grizalum-live-region',
+                'aria-live': 'assertive',
+                'aria-atomic': 'true',
+                style: {
+                    position: 'absolute',
+                    left: '-10000px',
+                    width: '1px',
+                    height: '1px',
+                    overflow: 'hidden'
+                }
+            }) || this.crearLiveRegionManual();
+            
+            document.body.appendChild(liveRegion);
         }
-
-        const estilos = document.createElement('style');
-        estilos.id = styleId;
-        estilos.textContent = `
-            /* ===== ESTILOS DEL SISTEMA DE NOTIFICACIONES ===== */
-            
-            .notifications-container {
-                position: fixed;
-                z-index: 999999;
-                pointer-events: none;
-                max-width: 400px;
-                width: 100%;
-            }
-            
-            /* Posiciones del contenedor */
-            .notifications-container.top-right {
-                top: 20px;
-                right: 20px;
-            }
-            
-            .notifications-container.top-left {
-                top: 20px;
-                left: 20px;
-            }
-            
-            .notifications-container.bottom-right {
-                bottom: 20px;
-                right: 20px;
-            }
-            
-            .notifications-container.bottom-left {
-                bottom: 20px;
-                left: 20px;
-            }
-            
-            /* Notificación individual */
-            .grizalum-notification {
-                background: linear-gradient(135deg, 
-                    rgba(30, 41, 59, 0.95) 0%, 
-                    rgba(51, 65, 85, 0.9) 100%);
-                border: 1px solid rgba(255,255,255,0.2);
-                border-radius: 12px;
-                box-shadow: 
-                    0 10px 30px rgba(0,0,0,0.3),
-                    0 0 20px rgba(0,0,0,0.1);
-                backdrop-filter: blur(20px);
-                color: white;
-                margin-bottom: 12px;
-                padding: 16px 20px;
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                pointer-events: all;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                position: relative;
-                overflow: hidden;
-                max-width: 100%;
-                word-break: break-word;
-            }
-            
-            /* Barra de progreso */
-            .grizalum-notification::before {
-                content: '';
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                height: 3px;
-                width: 100%;
-                background: linear-gradient(90deg, 
-                    var(--notification-color, #3b82f6) 0%, 
-                    var(--notification-color-secondary, #60a5fa) 100%);
-                transform: scaleX(1);
-                transform-origin: left;
-                animation: notificationProgress var(--duration, 5000ms) linear forwards;
-            }
-            
-            @keyframes notificationProgress {
-                from { transform: scaleX(1); }
-                to { transform: scaleX(0); }
-            }
-            
-            /* Tipos de notificaciones */
-            .grizalum-notification.success {
-                --notification-color: #10b981;
-                --notification-color-secondary: #34d399;
-                border-left: 4px solid #10b981;
-            }
-            
-            .grizalum-notification.error {
-                --notification-color: #ef4444;
-                --notification-color-secondary: #f87171;
-                border-left: 4px solid #ef4444;
-            }
-            
-            .grizalum-notification.warning {
-                --notification-color: #f59e0b;
-                --notification-color-secondary: #fbbf24;
-                border-left: 4px solid #f59e0b;
-            }
-            
-            .grizalum-notification.info {
-                --notification-color: #3b82f6;
-                --notification-color-secondary: #60a5fa;
-                border-left: 4px solid #3b82f6;
-            }
-            
-            /* Contenido de la notificación */
-            .notification-content {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                flex: 1;
-                color: white;
-            }
-            
-            .notification-icon {
-                font-size: 20px;
-                min-width: 20px;
-                opacity: 0.9;
-            }
-            
-            .notification-text {
-                flex: 1;
-                line-height: 1.4;
-                font-weight: 500;
-            }
-            
-            .notification-title {
-                font-weight: 600;
-                margin-bottom: 4px;
-                font-size: 14px;
-            }
-            
-            .notification-message {
-                font-size: 13px;
-                opacity: 0.9;
-            }
-            
-            /* Botón de cerrar */
-            .notification-close {
-                background: none;
-                border: none;
-                color: rgba(255,255,255,0.6);
-                cursor: pointer;
-                padding: 4px;
-                border-radius: 6px;
-                font-size: 14px;
-                min-width: 24px;
-                height: 24px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: all 0.2s ease;
-            }
-            
-            .notification-close:hover {
-                background: rgba(255,255,255,0.1);
-                color: white;
-                transform: scale(1.1);
-            }
-            
-            /* Animaciones de entrada */
-            .notification-enter {
-                animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-            
-            @keyframes slideInRight {
-                from {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-            }
-            
-            @keyframes slideInLeft {
-                from {
-                    transform: translateX(-100%);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-            }
-            
-            /* Animaciones de salida */
-            .notification-exit {
-                animation: slideOutRight 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-            }
-            
-            @keyframes slideOutRight {
-                from {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-                to {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-            }
-            
-            /* Hover effects */
-            .grizalum-notification:hover {
-                transform: translateY(-2px);
-                box-shadow: 
-                    0 15px 40px rgba(0,0,0,0.4),
-                    0 0 25px rgba(0,0,0,0.15);
-            }
-            
-            .grizalum-notification:hover::before {
-                animation-play-state: paused;
-            }
-            
-            /* Responsive */
-            @media (max-width: 768px) {
-                .notifications-container {
-                    left: 10px !important;
-                    right: 10px !important;
-                    max-width: none;
-                }
-                
-                .grizalum-notification {
-                    margin-bottom: 8px;
-                    padding: 12px 16px;
-                }
-                
-                .notification-text {
-                    font-size: 14px;
-                }
-            }
-        `;
         
-        document.head.appendChild(estilos);
-        console.log('🎨 Estilos de notificaciones aplicados');
+        this.cache.set('liveRegion', liveRegion);
+        this.log('♿ Región aria-live configurada', 'info');
     }
 
-    /**
-     * Configurar eventos del sistema
-     */
-    configurarEventos() {
-        // Limpiar notificaciones cuando cambie de página
-        window.addEventListener('beforeunload', () => {
-            this.limpiarTodas();
-        });
-
-        console.log('🎯 Eventos de notificaciones configurados');
+    crearLiveRegionManual() {
+        const liveRegion = document.createElement('div');
+        liveRegion.id = 'grizalum-live-region';
+        liveRegion.setAttribute('aria-live', 'assertive');
+        liveRegion.setAttribute('aria-atomic', 'true');
+        liveRegion.style.cssText = `
+            position: absolute;
+            left: -10000px;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        `;
+        return liveRegion;
     }
 
+    anunciarParaAccesibilidad(mensaje, tipo) {
+        if (!this.configuracion.accesibilidad.liveRegion) return;
+        
+        const liveRegion = this.cache.get('liveRegion');
+        if (!liveRegion) return;
+        
+        const tipoTexto = this.configuracion.accesibilidad.anunciarTipo 
+            ? this.obtenerTextoTipo(tipo) + ': ' 
+            : '';
+        
+        liveRegion.textContent = tipoTexto + mensaje;
+        
+        // Limpiar después de un momento
+        setTimeout(() => {
+            liveRegion.textContent = '';
+        }, 1000);
+    }
+
+    obtenerTextoTipo(tipo) {
+        const textos = {
+            success: 'Éxito',
+            error: 'Error',
+            warning: 'Advertencia',
+            info: 'Información'
+        };
+        return textos[tipo] || 'Notificación';
+    }
+
+    // ======= FUNCIONALIDAD PRINCIPAL =======
+    
     /**
      * Mostrar notificación principal
      * @param {string|Object} mensaje - Texto o configuración completa
@@ -341,109 +347,330 @@ class SistemaNotificaciones {
      * @param {Object} opciones - Opciones adicionales
      */
     mostrar(mensaje, tipo = 'info', duracion = null, opciones = {}) {
-        // Si el mensaje es un objeto, extraer configuración
-        let configuracion = {};
-        if (typeof mensaje === 'object') {
-            configuracion = mensaje;
-            mensaje = configuracion.mensaje || configuracion.text || '';
-            tipo = configuracion.tipo || configuracion.type || 'info';
-            duracion = configuracion.duracion || configuracion.duration || null;
-            opciones = configuracion.opciones || configuracion.options || {};
+        // Validar inicialización
+        if (!this.inicializado) {
+            this.log('⚠️ Sistema de notificaciones no inicializado', 'warn');
+            return null;
         }
 
-        // Usar duración por defecto si no se especifica
-        duracion = duracion || this.duracionPorDefecto;
+        // Procesar configuración de entrada
+        const config = this.procesarConfiguracionEntrada(mensaje, tipo, duracion, opciones);
+        
+        // Verificar si debe agruparse con una notificación similar
+        if (this.configuracion.comportamiento.agruparSimilares) {
+            const notificacionSimilar = this.buscarNotificacionSimilar(config.mensaje, config.tipo);
+            if (notificacionSimilar) {
+                return this.actualizarNotificacionSimilar(notificacionSimilar, config);
+            }
+        }
 
         // Verificar límite de notificaciones
-        if (this.notificaciones.length >= this.maxNotificaciones) {
-            this.removerMasAntigua();
+        if (this.notificaciones.length >= this.configuracion.maxNotificaciones) {
+            if (this.cola.length < this.configuracion.maxCola) {
+                this.cola.push(config);
+                this.log('📥 Notificación agregada a la cola', 'info');
+                return null;
+            } else {
+                this.removerMasAntigua();
+            }
         }
 
         // Crear la notificación
-        const notificacion = this.crearNotificacion(mensaje, tipo, duracion, opciones);
+        const notificacion = this.crearNotificacion(config);
         
-        // Agregar al contenedor
-        this.contenedor.appendChild(notificacion);
-        this.notificaciones.push(notificacion);
-        notificacionesActivas.push(notificacion);
-        contadorNotificaciones++;
-
-        // Activar animación de entrada
-        setTimeout(() => {
-            notificacion.classList.add('notification-enter');
-        }, 10);
-
-        // Auto-remover después del tiempo especificado
-        if (duracion > 0) {
-            setTimeout(() => {
-                this.remover(notificacion);
-            }, duracion);
+        // Agregar al contenedor con animación
+        this.agregarAlContenedor(notificacion, config);
+        
+        // Actualizar métricas
+        this.actualizarMetricas(config.tipo);
+        
+        // Programar auto-remove si corresponde
+        if (config.duracion > 0) {
+            this.programarAutoRemove(notificacion, config.duracion);
         }
 
-        console.log(`🔔 Notificación mostrada: ${tipo} - ${mensaje.substring(0, 50)}...`);
+        this.log(`🔔 Notificación mostrada: ${config.tipo} - ${config.mensaje.substring(0, 50)}...`, 'info');
         
         return notificacion;
     }
 
-    /**
-     * Crear elemento de notificación
-     */
-    crearNotificacion(mensaje, tipo, duracion, opciones = {}) {
-        const notificacion = document.createElement('div');
-        notificacion.className = `grizalum-notification ${tipo}`;
-        notificacion.style.setProperty('--duration', `${duracion}ms`);
+    procesarConfiguracionEntrada(mensaje, tipo, duracion, opciones) {
+        let config = {};
         
-        // ID único para la notificación
-        notificacion.id = `notification-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        // Si el mensaje es un objeto, extraer configuración
+        if (typeof mensaje === 'object') {
+            config = { ...mensaje };
+            config.mensaje = config.mensaje || config.text || config.message || '';
+            config.tipo = config.tipo || config.type || 'info';
+            config.duracion = config.duracion || config.duration || null;
+            config.opciones = config.opciones || config.options || {};
+        } else {
+            config = {
+                mensaje: mensaje,
+                tipo: tipo,
+                duracion: duracion,
+                opciones: opciones
+            };
+        }
 
-        // Iconos por tipo
+        // Usar duración por defecto si no se especifica
+        config.duracion = config.duracion || this.configuracion.duracionPorDefecto;
+        
+        // Validar tipo
+        if (!['success', 'error', 'warning', 'info'].includes(config.tipo)) {
+            this.log(`⚠️ Tipo de notificación inválido: ${config.tipo}`, 'warn');
+            config.tipo = 'info';
+        }
+
+        return config;
+    }
+
+    buscarNotificacionSimilar(mensaje, tipo) {
+        return this.notificaciones.find(notif => {
+            const notifData = notif.dataset;
+            return notifData.mensaje === mensaje && notifData.tipo === tipo;
+        });
+    }
+
+    actualizarNotificacionSimilar(notificacion, config) {
+        // Incrementar contador si existe
+        const contador = notificacion.querySelector('.notification-counter');
+        if (contador) {
+            const count = parseInt(contador.textContent) + 1;
+            contador.textContent = count;
+        } else {
+            // Agregar contador
+            const contenido = notificacion.querySelector('.notification-text');
+            if (contenido) {
+                const contadorEl = document.createElement('span');
+                contadorEl.className = 'notification-counter';
+                contadorEl.textContent = '2';
+                contenido.appendChild(contadorEl);
+            }
+        }
+        
+        // Reiniciar animación de progreso
+        this.reiniciarProgreso(notificacion, config.duracion);
+        
+        this.log('🔄 Notificación similar actualizada', 'info');
+        return notificacion;
+    }
+
+    crearNotificacion(config) {
+        const notificacion = this.utilidades?.crearElemento('div', {
+            className: `grizalum-notification ${config.tipo}`,
+            role: 'alert',
+            'aria-live': 'assertive',
+            tabindex: '-1',
+            style: {
+                '--duration': `${config.duracion}ms`,
+                '--notification-color': this.obtenerColorTema(config.tipo),
+                '--notification-color-secondary': this.obtenerColorTema(config.tipo, true)
+            }
+        }) || this.crearNotificacionManual(config);
+        
+        // ID único
+        notificacion.id = `grizalum-notification-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        
+        // Almacenar datos en el elemento
+        notificacion.dataset.mensaje = config.mensaje;
+        notificacion.dataset.tipo = config.tipo;
+        notificacion.dataset.timestamp = Date.now();
+        
+        // Generar contenido según template
+        notificacion.innerHTML = this.generarContenidoNotificacion(config);
+        
+        // Configurar eventos de la notificación
+        this.configurarEventosNotificacion(notificacion, config);
+        
+        return notificacion;
+    }
+
+    crearNotificacionManual(config) {
+        const notificacion = document.createElement('div');
+        notificacion.className = `grizalum-notification ${config.tipo}`;
+        notificacion.setAttribute('role', 'alert');
+        notificacion.setAttribute('aria-live', 'assertive');
+        notificacion.setAttribute('tabindex', '-1');
+        notificacion.style.setProperty('--duration', `${config.duracion}ms`);
+        return notificacion;
+    }
+
+    obtenerColorTema(tipo, secundario = false) {
+        if (!this.gestorTemas) {
+            const colores = {
+                success: secundario ? '#34d399' : '#10b981',
+                error: secundario ? '#f87171' : '#ef4444',
+                warning: secundario ? '#fbbf24' : '#f59e0b',
+                info: secundario ? '#60a5fa' : '#3b82f6'
+            };
+            return colores[tipo] || colores.info;
+        }
+        
+        // Obtener colores del tema actual
+        const temaActual = this.gestorTemas.obtenerTemaActual();
+        if (temaActual?.tema?.colores) {
+            const sufijo = secundario ? 'Light' : '';
+            return temaActual.tema.colores[tipo + sufijo] || 
+                   temaActual.tema.colores[tipo] || 
+                   temaActual.tema.colores.primary;
+        }
+        
+        return '#3b82f6'; // Fallback
+    }
+
+    generarContenidoNotificacion(config) {
         const iconos = {
-            'success': 'fas fa-check-circle',
-            'error': 'fas fa-exclamation-circle',
-            'warning': 'fas fa-exclamation-triangle',
-            'info': 'fas fa-info-circle'
+            success: 'fas fa-check-circle',
+            error: 'fas fa-exclamation-circle',
+            warning: 'fas fa-exclamation-triangle',
+            info: 'fas fa-info-circle'
         };
 
-        // Estructura HTML
-        const titulo = opciones.titulo || opciones.title || '';
-        const icono = opciones.icono || opciones.icon || iconos[tipo] || iconos.info;
+        const titulo = config.opciones.titulo || config.opciones.title || '';
+        const icono = config.opciones.icono || config.opciones.icon || iconos[config.tipo];
+        const template = config.opciones.template || 'simple';
         
-        notificacion.innerHTML = `
+        // Contenido base
+        let contenido = `
             <div class="notification-content">
-                <i class="notification-icon ${icono}"></i>
+                <i class="notification-icon ${icono}" aria-hidden="true"></i>
                 <div class="notification-text">
                     ${titulo ? `<div class="notification-title">${titulo}</div>` : ''}
-                    <div class="notification-message">${mensaje}</div>
+                    <div class="notification-message">${config.mensaje}</div>
                 </div>
             </div>
-            <button class="notification-close" title="Cerrar notificación">
-                <i class="fas fa-times"></i>
+        `;
+        
+        // Agregar botones si están especificados
+        if (config.opciones.botones && Array.isArray(config.opciones.botones)) {
+            contenido += '<div class="notification-actions">';
+            config.opciones.botones.forEach(boton => {
+                contenido += `
+                    <button class="notification-btn ${boton.clase || ''}" 
+                            data-action="${boton.accion}"
+                            ${boton.primary ? 'data-primary="true"' : ''}>
+                        ${boton.texto}
+                    </button>
+                `;
+            });
+            contenido += '</div>';
+        }
+        
+        // Botón de cerrar
+        contenido += `
+            <button class="notification-close" 
+                    title="Cerrar notificación" 
+                    aria-label="Cerrar notificación">
+                <i class="fas fa-times" aria-hidden="true"></i>
             </button>
         `;
+        
+        return contenido;
+    }
 
-        // Configurar botón de cerrar
+    configurarEventosNotificacion(notificacion, config) {
+        // Botón de cerrar
         const botonCerrar = notificacion.querySelector('.notification-close');
-        botonCerrar.addEventListener('click', () => {
-            this.remover(notificacion);
+        if (botonCerrar) {
+            botonCerrar.addEventListener('click', () => {
+                this.remover(notificacion);
+                this.metricas.interacciones.cerradas++;
+            });
+        }
+        
+        // Botones de acción
+        const botonesAccion = notificacion.querySelectorAll('.notification-btn[data-action]');
+        botonesAccion.forEach(boton => {
+            boton.addEventListener('click', (evento) => {
+                const accion = evento.target.dataset.action;
+                this.manejarAccionBoton(accion, notificacion, config);
+                this.metricas.interacciones.clicks++;
+            });
         });
 
         // Pausar progreso al hacer hover
-        notificacion.addEventListener('mouseenter', () => {
-            notificacion.style.setProperty('--duration', 'paused');
-        });
+        if (this.configuracion.comportamiento.pausarEnHover) {
+            notificacion.addEventListener('mouseenter', () => {
+                this.pausarProgreso(notificacion);
+                this.metricas.interacciones.hovers++;
+            });
 
-        notificacion.addEventListener('mouseleave', () => {
-            notificacion.style.setProperty('--duration', `${duracion}ms`);
+            notificacion.addEventListener('mouseleave', () => {
+                this.reanudarProgreso(notificacion, config.duracion);
+            });
+        }
+        
+        // Cerrar en click si está habilitado
+        if (this.configuracion.comportamiento.cerrarEnClick) {
+            notificacion.addEventListener('click', (evento) => {
+                if (!evento.target.closest('button')) {
+                    this.remover(notificacion);
+                }
+            });
+        }
+        
+        // Eventos de teclado para accesibilidad
+        notificacion.addEventListener('keydown', (evento) => {
+            if (evento.key === 'Escape') {
+                this.remover(notificacion);
+            }
         });
-
-        return notificacion;
     }
 
-    /**
-     * Remover notificación específica
-     */
+    manejarAccionBoton(accion, notificacion, config) {
+        // Disparar evento personalizado
+        this.dispararEvento('notificationAction', {
+            accion,
+            notificacion,
+            config,
+            timestamp: Date.now()
+        });
+        
+        // Cerrar notificación después de la acción
+        setTimeout(() => {
+            this.remover(notificacion);
+        }, 100);
+    }
+
+    agregarAlContenedor(notificacion, config) {
+        this.contenedor.appendChild(notificacion);
+        this.notificaciones.push(notificacion);
+        
+        // Anunciar para accesibilidad
+        this.anunciarParaAccesibilidad(config.mensaje, config.tipo);
+        
+        // Reproducir sonido si está habilitado
+        this.reproducirSonido(config.tipo);
+        
+        // Activar animación de entrada
+        setTimeout(() => {
+            notificacion.classList.add('notification-enter');
+            
+            // Auto-focus si está habilitado
+            if (this.configuracion.accesibilidad.autoFocus) {
+                notificacion.focus();
+            }
+        }, 10);
+    }
+
+    programarAutoRemove(notificacion, duracion) {
+        setTimeout(() => {
+            if (notificacion.parentElement) {
+                this.remover(notificacion);
+            }
+        }, duracion);
+    }
+
+    // ======= GESTIÓN DE NOTIFICACIONES =======
+    
     remover(notificacion) {
         if (!notificacion || !notificacion.parentElement) return;
+
+        // Registrar tiempo de visualización
+        const timestamp = parseInt(notificacion.dataset.timestamp);
+        const tiempoVisualizacion = Date.now() - timestamp;
+        this.metricas.tiemposVisualizacion.push(tiempoVisualizacion);
 
         // Animación de salida
         notificacion.classList.add('notification-exit');
@@ -454,27 +681,23 @@ class SistemaNotificaciones {
                 notificacion.remove();
             }
             
-            // Remover de arrays
+            // Remover de array
             this.notificaciones = this.notificaciones.filter(n => n !== notificacion);
-            notificacionesActivas = notificacionesActivas.filter(n => n !== notificacion);
             
-        }, 300);
+            // Procesar cola si hay elementos
+            this.procesarCola();
+            
+        }, this.configuracion.animacion.duracion);
 
-        console.log('🗑️ Notificación removida');
+        this.log('🗑️ Notificación removida', 'info');
     }
 
-    /**
-     * Remover la notificación más antigua
-     */
     removerMasAntigua() {
         if (this.notificaciones.length > 0) {
             this.remover(this.notificaciones[0]);
         }
     }
 
-    /**
-     * Limpiar todas las notificaciones
-     */
     limpiarTodas() {
         this.notificaciones.forEach(notificacion => {
             if (notificacion.parentElement) {
@@ -483,15 +706,66 @@ class SistemaNotificaciones {
         });
         
         this.notificaciones = [];
-        notificacionesActivas = [];
-        console.log('🧹 Todas las notificaciones limpiadas');
+        this.cola = [];
+        
+        this.log('🧹 Todas las notificaciones limpiadas', 'info');
     }
 
-    /**
-     * Métodos de conveniencia para tipos específicos
-     */
+    procesarCola() {
+        if (this.cola.length > 0 && this.notificaciones.length < this.configuracion.maxNotificaciones) {
+            const siguienteConfig = this.cola.shift();
+            setTimeout(() => {
+                this.mostrar(siguienteConfig);
+            }, 200);
+        }
+    }
+
+    // ======= CONTROL DE PROGRESO =======
+    
+    pausarProgreso(notificacion) {
+        notificacion.style.setProperty('--duration', 'paused');
+    }
+
+    reanudarProgreso(notificacion, duracion) {
+        notificacion.style.setProperty('--duration', `${duracion}ms`);
+    }
+
+    reiniciarProgreso(notificacion, duracion) {
+        // Reiniciar animación de barra de progreso
+        notificacion.style.animation = 'none';
+        notificacion.offsetHeight; // Trigger reflow
+        notificacion.style.animation = null;
+        notificacion.style.setProperty('--duration', `${duracion}ms`);
+    }
+
+    // ======= SISTEMA DE SONIDO =======
+    
+    inicializarSistemaSonido() {
+        // Aquí se podría implementar carga de archivos de sonido
+        this.log('🔊 Sistema de sonido inicializado', 'info');
+    }
+
+    reproducirSonido(tipo) {
+        if (!this.configuracion.sonido.habilitado) return;
+        
+        const archivo = this.configuracion.sonido.archivos[tipo];
+        if (archivo) {
+            try {
+                const audio = new Audio(archivo);
+                audio.volume = this.configuracion.sonido.volumen;
+                audio.play().catch(error => {
+                    this.log(`Error reproduciendo sonido: ${error.message}`, 'warn');
+                });
+            } catch (error) {
+                this.log(`Error creando audio: ${error.message}`, 'warn');
+            }
+        }
+    }
+
+    // ======= MÉTODOS DE CONVENIENCIA =======
+    
     exito(mensaje, opciones = {}) {
-        return this.mostrar(mensaje, 'success', opciones.duracion, opciones);
+        return this.mostrar(mensaje, 'success', opciones.duracion || 3000, opciones);
     }
 
     error(mensaje, opciones = {}) {
@@ -503,145 +777,644 @@ class SistemaNotificaciones {
     }
 
     informacion(mensaje, opciones = {}) {
-        return this.mostrar(mensaje, 'info', opciones.duracion, opciones);
+        return this.mostrar(mensaje, 'info', opciones.duracion || 4000, opciones);
     }
 
-    /**
-     * Configurar posición de las notificaciones
-     */
+    // Método para notificaciones con botones
+    mostrarConBotones(mensaje, botones, tipo = 'info', opciones = {}) {
+        return this.mostrar(mensaje, tipo, 0, { // Duración 0 para no auto-cerrar
+            ...opciones,
+            botones: botones
+        });
+    }
+
+    // ======= CONFIGURACIÓN =======
+    
     configurarPosicion(posicion) {
-        const posicionesValidas = ['top-right', 'top-left', 'bottom-right', 'bottom-left'];
+        const posicionesValidas = ['top-right', 'top-left', 'bottom-right', 'bottom-left', 'center'];
         
         if (!posicionesValidas.includes(posicion)) {
-            console.warn(`⚠️ Posición inválida: ${posicion}`);
-            return;
+            this.log(`⚠️ Posición inválida: ${posicion}`, 'warn');
+            return false;
         }
 
-        this.posicion = posicion;
-        this.contenedor.className = `notifications-container ${posicion}`;
+        this.configuracion.posicion = posicion;
+        if (this.contenedor) {
+            this.contenedor.className = `grizalum-notifications-container ${posicion}`;
+        }
         
-        console.log(`📍 Posición de notificaciones cambiada a: ${posicion}`);
+        // Guardar configuración
+        this.guardarConfiguracionPersistente();
+        
+        this.log(`📍 Posición de notificaciones cambiada a: ${posicion}`, 'info');
+        return true;
     }
 
-    /**
-     * Obtener estadísticas del sistema
-     */
+    configurarSonido(habilitado, volumen = null) {
+        this.configuracion.sonido.habilitado = habilitado;
+        if (volumen !== null) {
+            this.configuracion.sonido.volumen = Math.max(0, Math.min(1, volumen));
+        }
+        
+        this.guardarConfiguracionPersistente();
+        this.log(`🔊 Sonido de notificaciones: ${habilitado ? 'habilitado' : 'deshabilitado'}`, 'info');
+    }
+
+    // ======= EVENTOS =======
+    
+    configurarEventos() {
+        // Limpiar notificaciones antes de cerrar página
+        window.addEventListener('beforeunload', () => {
+            this.limpiarTodas();
+        });
+
+        // Escuchar eventos del sistema para notificaciones automáticas
+        this.configurarEventosIntegracion();
+
+        // Escuchar cambios de tema
+        document.addEventListener('grizalumThemeChanged', () => {
+            this.aplicarEstilosDinamicos();
+        });
+
+        this.log('🎯 Eventos de notificaciones configurados', 'info');
+    }
+
+    configurarEventosIntegracion() {
+        // Cambio de empresa
+        document.addEventListener('grizalumCompanyChanged', (evento) => {
+            const { company } = evento.detail;
+            this.exito(`🏢 Empresa: ${company.name}`, {
+                duracion: 3000,
+                titulo: 'Empresa Cambiada'
+            });
+        });
+
+        // Cambio de período
+        document.addEventListener('grizalumPeriodoCambiado', (evento) => {
+            const { periodo } = evento.detail;
+            const nombrePeriodo = this.utilidades?.capitalizar(periodo) || periodo;
+            this.informacion(`📅 Período: ${nombrePeriodo}`, {
+                duracion: 2000
+            });
+        });
+
+        // Navegación del sidebar
+        document.addEventListener('navegacionSidebar', (evento) => {
+            const { seccion } = evento.detail;
+            const nombres = {
+                'dashboard': 'Panel de Control',
+                'cash-flow': 'Flujo de Caja',
+                'income-statement': 'Estado de Resultados',
+                'balance-sheet': 'Balance General',
+                'inventory': 'Inventario',
+                'sales': 'Ventas'
+            };
+            
+            const nombre = nombres[seccion] || this.utilidades?.capitalizar(seccion) || seccion;
+            this.informacion(`📱 ${nombre}`, {
+                duracion: 2000
+            });
+        });
+
+        // Error de sistema
+        document.addEventListener('systemError', (evento) => {
+            const { message, details } = evento.detail;
+            this.error(message, {
+                titulo: 'Error del Sistema',
+                duracion: 8000
+            });
+        });
+    }
+
+    dispararEvento(nombreEvento, detalle = {}) {
+        const evento = new CustomEvent(nombreEvento, {
+            detail: {
+                ...detalle,
+                notificationSystemVersion: this.version,
+                timestamp: detalle.timestamp || Date.now()
+            }
+        });
+        document.dispatchEvent(evento);
+    }
+
+    // ======= ESTILOS DINÁMICOS =======
+    
+    aplicarEstilosDinamicos() {
+        const idEstilo = 'grizalum-notifications-dynamic-styles';
+        let estiloExistente = document.getElementById(idEstilo);
+        
+        if (estiloExistente) {
+            estiloExistente.remove();
+        }
+
+        const estilo = document.createElement('style');
+        estilo.id = idEstilo;
+        estilo.textContent = this.generarCSSPersonalizado();
+        
+        document.head.appendChild(estilo);
+        this.log('🎨 Estilos dinámicos de notificaciones aplicados', 'info');
+    }
+
+    generarCSSPersonalizado() {
+        return `
+            /* GRIZALUM Notifications Dynamic Styles v2.0 */
+            
+            .grizalum-notifications-container {
+                position: fixed !important;
+                z-index: 999999 !important;
+                pointer-events: none !important;
+                max-width: 420px !important;
+                width: 100% !important;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+            }
+            
+            /* Posiciones del contenedor */
+            .grizalum-notifications-container.top-right {
+                top: 20px !important;
+                right: 20px !important;
+            }
+            
+            .grizalum-notifications-container.top-left {
+                top: 20px !important;
+                left: 20px !important;
+            }
+            
+            .grizalum-notifications-container.bottom-right {
+                bottom: 20px !important;
+                right: 20px !important;
+            }
+            
+            .grizalum-notifications-container.bottom-left {
+                bottom: 20px !important;
+                left: 20px !important;
+            }
+            
+            .grizalum-notifications-container.center {
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                max-width: 500px !important;
+            }
+            
+            /* Notificación individual */
+            .grizalum-notification {
+                background: linear-gradient(135deg, 
+                    var(--theme-surface, rgba(30, 41, 59, 0.95)) 0%, 
+                    var(--theme-elevated, rgba(51, 65, 85, 0.9)) 100%) !important;
+                border: var(--theme-border-glow, 1px solid rgba(255,255,255,0.2)) !important;
+                border-radius: 12px !important;
+                box-shadow: var(--theme-shadow-elevated, 0 10px 30px rgba(0,0,0,0.3)) !important;
+                backdrop-filter: blur(20px) !important;
+                color: var(--theme-text-primary, white) !important;
+                margin-bottom: 12px !important;
+                padding: 16px 20px !important;
+                display: flex !important;
+                align-items: flex-start !important;
+                gap: 12px !important;
+                pointer-events: all !important;
+                transition: all ${this.configuracion.animacion.duracion}ms ${this.configuracion.animacion.easing} !important;
+                position: relative !important;
+                overflow: hidden !important;
+                max-width: 100% !important;
+                word-break: break-word !important;
+                opacity: 0 !important;
+                transform: translateX(100%) !important;
+            }
+            
+            /* Barra de progreso */
+            .grizalum-notification::before {
+                content: '' !important;
+                position: absolute !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                height: 3px !important;
+                width: 100% !important;
+                background: linear-gradient(90deg, 
+                    var(--notification-color, var(--theme-primary, #3b82f6)) 0%, 
+                    var(--notification-color-secondary, var(--theme-secondary, #60a5fa)) 100%) !important;
+                transform: scaleX(1) !important;
+                transform-origin: left !important;
+                animation: grizalum-notification-progress var(--duration, 5000ms) linear forwards !important;
+            }
+            
+            @keyframes grizalum-notification-progress {
+                from { transform: scaleX(1); }
+                to { transform: scaleX(0); }
+            }
+            
+            /* Tipos de notificaciones con colores del tema */
+            .grizalum-notification.success {
+                --notification-color: var(--theme-success, #10b981);
+                --notification-color-secondary: #34d399;
+                border-left: 4px solid var(--theme-success, #10b981) !important;
+            }
+            
+            .grizalum-notification.error {
+                --notification-color: var(--theme-danger, #ef4444);
+                --notification-color-secondary: #f87171;
+                border-left: 4px solid var(--theme-danger, #ef4444) !important;
+            }
+            
+            .grizalum-notification.warning {
+                --notification-color: var(--theme-warning, #f59e0b);
+                --notification-color-secondary: #fbbf24;
+                border-left: 4px solid var(--theme-warning, #f59e0b) !important;
+            }
+            
+            .grizalum-notification.info {
+                --notification-color: var(--theme-info, #3b82f6);
+                --notification-color-secondary: #60a5fa;
+                border-left: 4px solid var(--theme-info, #3b82f6) !important;
+            }
+            
+            /* Contenido de la notificación */
+            .notification-content {
+                display: flex !important;
+                align-items: flex-start !important;
+                gap: 12px !important;
+                flex: 1 !important;
+                color: var(--theme-text-primary, white) !important;
+            }
+            
+            .notification-icon {
+                font-size: 20px !important;
+                min-width: 20px !important;
+                opacity: 0.9 !important;
+                margin-top: 2px !important;
+                color: var(--notification-color, var(--theme-primary, #3b82f6)) !important;
+            }
+            
+            .notification-text {
+                flex: 1 !important;
+                line-height: 1.4 !important;
+                font-weight: 500 !important;
+                min-width: 0 !important;
+            }
+            
+            .notification-title {
+                font-weight: 600 !important;
+                margin-bottom: 4px !important;
+                font-size: 14px !important;
+                color: var(--theme-text-primary, white) !important;
+            }
+            
+            .notification-message {
+                font-size: 13px !important;
+                opacity: 0.9 !important;
+                color: var(--theme-text-secondary, rgba(255,255,255,0.8)) !important;
+                word-wrap: break-word !important;
+            }
+            
+            .notification-counter {
+                display: inline-block !important;
+                background: var(--notification-color, var(--theme-primary, #3b82f6)) !important;
+                color: white !important;
+                font-size: 11px !important;
+                font-weight: 600 !important;
+                padding: 2px 6px !important;
+                border-radius: 10px !important;
+                margin-left: 8px !important;
+                min-width: 18px !important;
+                text-align: center !important;
+            }
+            
+            /* Botones de acción */
+            .notification-actions {
+                display: flex !important;
+                gap: 8px !important;
+                margin-top: 8px !important;
+                flex-wrap: wrap !important;
+            }
+            
+            .notification-btn {
+                background: var(--theme-glass-effect, rgba(255,255,255,0.1)) !important;
+                border: 1px solid var(--theme-border-glow, rgba(255,255,255,0.2)) !important;
+                color: var(--theme-text-primary, white) !important;
+                padding: 6px 12px !important;
+                border-radius: 6px !important;
+                font-size: 12px !important;
+                font-weight: 500 !important;
+                cursor: pointer !important;
+                transition: all 0.2s ease !important;
+            }
+            
+            .notification-btn:hover {
+                background: var(--notification-color, var(--theme-primary, #3b82f6)) !important;
+                transform: translateY(-1px) !important;
+            }
+            
+            .notification-btn[data-primary="true"] {
+                background: var(--notification-color, var(--theme-primary, #3b82f6)) !important;
+                border-color: var(--notification-color, var(--theme-primary, #3b82f6)) !important;
+            }
+            
+            /* Botón de cerrar */
+            .notification-close {
+                background: none !important;
+                border: none !important;
+                color: var(--theme-text-muted, rgba(255,255,255,0.6)) !important;
+                cursor: pointer !important;
+                padding: 6px !important;
+                border-radius: 6px !important;
+                font-size: 14px !important;
+                min-width: 28px !important;
+                height: 28px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                transition: all 0.2s ease !important;
+                flex-shrink: 0 !important;
+            }
+            
+            .notification-close:hover {
+                background: rgba(255,255,255,0.1) !important;
+                color: var(--theme-text-primary, white) !important;
+                transform: scale(1.1) !important;
+            }
+            
+            .notification-close:focus {
+                outline: 2px solid var(--theme-primary, #3b82f6) !important;
+                outline-offset: 2px !important;
+            }
+            
+            /* Animaciones de entrada */
+            .notification-enter {
+                opacity: 1 !important;
+                transform: translateX(0) !important;
+            }
+            
+            .grizalum-notifications-container.top-left .notification-enter,
+            .grizalum-notifications-container.bottom-left .notification-enter {
+                transform: translateX(0) !important;
+            }
+            
+            .grizalum-notifications-container.top-left .grizalum-notification,
+            .grizalum-notifications-container.bottom-left .grizalum-notification {
+                transform: translateX(-100%) !important;
+            }
+            
+            .grizalum-notifications-container.center .grizalum-notification {
+                transform: scale(0.8) !important;
+            }
+            
+            .grizalum-notifications-container.center .notification-enter {
+                transform: scale(1) !important;
+            }
+            
+            /* Animaciones de salida */
+            .notification-exit {
+                opacity: 0 !important;
+                transform: translateX(100%) scale(0.9) !important;
+                transition: all ${this.configuracion.animacion.duracion}ms ${this.configuracion.animacion.easing} !important;
+            }
+            
+            .grizalum-notifications-container.top-left .notification-exit,
+            .grizalum-notifications-container.bottom-left .notification-exit {
+                transform: translateX(-100%) scale(0.9) !important;
+            }
+            
+            .grizalum-notifications-container.center .notification-exit {
+                transform: scale(0.8) !important;
+            }
+            
+            /* Hover effects */
+            .grizalum-notification:hover {
+                transform: translateY(-3px) !important;
+                box-shadow: var(--theme-shadow-glow, 0 15px 40px rgba(0,0,0,0.4)) !important;
+            }
+            
+            .grizalum-notification:hover::before {
+                animation-play-state: paused !important;
+            }
+            
+            .grizalum-notification:focus {
+                outline: 2px solid var(--theme-primary, #3b82f6) !important;
+                outline-offset: 2px !important;
+            }
+            
+            /* Responsive */
+            @media (max-width: 768px) {
+                .grizalum-notifications-container {
+                    left: 10px !important;
+                    right: 10px !important;
+                    max-width: none !important;
+                }
+                
+                .grizalum-notification {
+                    margin-bottom: 8px !important;
+                    padding: 14px 16px !important;
+                }
+                
+                .notification-text {
+                    font-size: 14px !important;
+                }
+                
+                .notification-title {
+                    font-size: 13px !important;
+                }
+                
+                .notification-message {
+                    font-size: 12px !important;
+                }
+                
+                .notification-actions {
+                    margin-top: 10px !important;
+                }
+                
+                .notification-btn {
+                    font-size: 11px !important;
+                    padding: 5px 10px !important;
+                }
+            }
+            
+            /* Modo de alto contraste */
+            @media (prefers-contrast: high) {
+                .grizalum-notification {
+                    border: 2px solid var(--notification-color, var(--theme-primary, #3b82f6)) !important;
+                }
+            }
+            
+            /* Modo de movimiento reducido */
+            @media (prefers-reduced-motion: reduce) {
+                .grizalum-notification,
+                .notification-enter,
+                .notification-exit,
+                .notification-btn,
+                .notification-close {
+                    transition: none !important;
+                    animation: none !important;
+                }
+                
+                .grizalum-notification::before {
+                    animation: none !important;
+                }
+            }
+        `;
+    }
+
+    // ======= MÉTRICAS Y ANALÍTICAS =======
+    
+    actualizarMetricas(tipo) {
+        this.metricas.totalMostradas++;
+        this.metricas.porTipo[tipo]++;
+    }
+
     obtenerEstadisticas() {
+        const promedioVisualizacion = this.metricas.tiemposVisualizacion.length > 0
+            ? this.metricas.tiemposVisualizacion.reduce((a, b) => a + b, 0) / this.metricas.tiemposVisualizacion.length
+            : 0;
+
         return {
+            version: this.version,
+            inicializado: this.inicializado,
             activas: this.notificaciones.length,
-            totalMostradas: contadorNotificaciones,
-            posicion: this.posicion,
-            duracionPorDefecto: this.duracionPorDefecto,
-            maxNotificaciones: this.maxNotificaciones
+            enCola: this.cola.length,
+            posicion: this.configuracion.posicion,
+            duracionPorDefecto: this.configuracion.duracionPorDefecto,
+            maxNotificaciones: this.configuracion.maxNotificaciones,
+            metricas: {
+                ...this.metricas,
+                promedioVisualizacion: Math.round(promedioVisualizacion)
+            },
+            configuracion: { ...this.configuracion }
         };
+    }
+
+    obtenerAnalyticas() {
+        return {
+            rendimiento: {
+                notificacionesPorMinuto: this.calcularNotificacionesPorMinuto(),
+                tasaCierre: this.calcularTasaCierre(),
+                tiempoPromedioVisualizacion: this.metricas.tiemposVisualizacion.length > 0
+                    ? this.metricas.tiemposVisualizacion.reduce((a, b) => a + b, 0) / this.metricas.tiemposVisualizacion.length
+                    : 0
+            },
+            distribucion: this.metricas.porTipo,
+            interacciones: this.metricas.interacciones
+        };
+    }
+
+    calcularNotificacionesPorMinuto() {
+        // Implementación simplificada
+        return Math.round(this.metricas.totalMostradas / 5); // Asumiendo 5 minutos de uso
+    }
+
+    calcularTasaCierre() {
+        return this.metricas.totalMostradas > 0
+            ? (this.metricas.interacciones.cerradas / this.metricas.totalMostradas) * 100
+            : 0;
+    }
+
+    // ======= API PÚBLICA =======
+    
+    obtenerEstado() {
+        return {
+            version: this.version,
+            inicializado: this.inicializado,
+            notificacionesActivas: this.notificaciones.length,
+            notificacionesEnCola: this.cola.length,
+            configuracion: { ...this.configuracion }
+        };
+    }
+
+    reiniciarMetricas() {
+        this.metricas = {
+            totalMostradas: 0,
+            porTipo: { success: 0, error: 0, warning: 0, info: 0 },
+            interacciones: { cerradas: 0, clicks: 0, hovers: 0 },
+            tiemposVisualizacion: []
+        };
+        this.log('📊 Métricas de notificaciones reiniciadas', 'info');
     }
 }
 
-// ================================================================
-// INSTANCIA GLOBAL DEL SISTEMA
-// ================================================================
-const sistemaNotificaciones = new SistemaNotificaciones();
+// ======= INSTANCIA GLOBAL =======
+let sistemaNotificacionesGrizalum = null;
 
-// ================================================================
-// FUNCIONES GLOBALES PARA COMPATIBILIDAD
-// ================================================================
+// ======= INICIALIZACIÓN AUTOMÁTICA =======
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🔔 DOM listo - Inicializando GRIZALUM Notification System v2.0...');
+    
+    try {
+        sistemaNotificacionesGrizalum = new SistemaNotificacionesGRIZALUM();
+        sistemaNotificacionesGrizalum.inicializar();
+        
+        // Alias globales
+        window.notificationSystem = sistemaNotificacionesGrizalum;
+        window.sistemaNotificaciones = sistemaNotificacionesGrizalum; // Compatibilidad
+        
+        // Mostrar notificación de bienvenida después de un momento
+        setTimeout(() => {
+            sistemaNotificacionesGrizalum.exito('🚀 Sistema GRIZALUM iniciado correctamente', {
+                titulo: '¡Bienvenido!',
+                duracion: 4000
+            });
+        }, 2000);
+        
+    } catch (error) {
+        console.error('❌ Error inicializando Notification System:', error);
+    }
+});
+
+// ======= FUNCIONES GLOBALES PARA COMPATIBILIDAD =======
 
 /**
  * Función global principal para mostrar notificaciones
  * Compatible con la función del grizalum-principal.js
  */
 function mostrarNotificacion(mensaje, tipo = 'info', duracion = 5000) {
-    return sistemaNotificaciones.mostrar(mensaje, tipo, duracion);
+    return window.notificationSystem?.mostrar(mensaje, tipo, duracion) || null;
 }
 
 /**
  * Funciones de conveniencia globales
  */
 function notificacionExito(mensaje, opciones = {}) {
-    return sistemaNotificaciones.exito(mensaje, opciones);
+    return window.notificationSystem?.exito(mensaje, opciones) || null;
 }
 
 function notificacionError(mensaje, opciones = {}) {
-    return sistemaNotificaciones.error(mensaje, opciones);
+    return window.notificationSystem?.error(mensaje, opciones) || null;
 }
 
 function notificacionAdvertencia(mensaje, opciones = {}) {
-    return sistemaNotificaciones.advertencia(mensaje, opciones);
+    return window.notificationSystem?.advertencia(mensaje, opciones) || null;
 }
 
 function notificacionInfo(mensaje, opciones = {}) {
-    return sistemaNotificaciones.informacion(mensaje, opciones);
+    return window.notificationSystem?.informacion(mensaje, opciones) || null;
 }
 
-// ================================================================
-// INTEGRACIÓN CON OTROS MÓDULOS
-// ================================================================
-
-// Escuchar eventos del sistema para mostrar notificaciones automáticas
-document.addEventListener('grizalumCompanyChanged', function(evento) {
-    const { company } = evento.detail;
-    notificacionExito(`🏢 Empresa cambiada a: ${company.name}`, {
-        duracion: 3000
-    });
-});
-
-document.addEventListener('grizalumPeriodoCambiado', function(evento) {
-    const { periodo } = evento.detail;
-    notificacionInfo(`📅 Período cambiado a: ${periodo}`, {
-        duracion: 2000
-    });
-});
-
-document.addEventListener('navegacionSidebar', function(evento) {
-    const { seccion } = evento.detail;
-    const nombres = {
-        'dashboard': 'Panel de Control',
-        'cash-flow': 'Flujo de Caja',
-        'income-statement': 'Estado de Resultados',
-        'balance-sheet': 'Balance General',
-        'inventory': 'Inventario',
-        'sales': 'Ventas'
-    };
-    
-    const nombre = nombres[seccion] || seccion;
-    notificacionInfo(`📱 ${nombre}`, {
-        duracion: 2000
-    });
-});
-
-// ================================================================
-// INICIALIZACIÓN AUTOMÁTICA
-// ================================================================
-
-// Inicializar cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🔔 DOM listo - Inicializando sistema de notificaciones...');
-    sistemaNotificaciones.inicializar();
-    
-    // Mostrar notificación de bienvenida
-    setTimeout(() => {
-        notificacionExito('🚀 Sistema GRIZALUM iniciado correctamente', {
-            titulo: '¡Bienvenido!',
-            duracion: 4000
-        });
-    }, 2000);
-});
-
-// ================================================================
-// API PÚBLICA DEL SISTEMA DE NOTIFICACIONES
-// ================================================================
-
-// Exponer API globalmente
+// ======= API PÚBLICA DEL SISTEMA DE NOTIFICACIONES =======
 window.GRIZALUM_NOTIFICATIONS = {
-    version: '1.0.0',
-    mostrar: (mensaje, tipo, duracion, opciones) => sistemaNotificaciones.mostrar(mensaje, tipo, duracion, opciones),
-    exito: (mensaje, opciones) => sistemaNotificaciones.exito(mensaje, opciones),
-    error: (mensaje, opciones) => sistemaNotificaciones.error(mensaje, opciones),
-    advertencia: (mensaje, opciones) => sistemaNotificaciones.advertencia(mensaje, opciones),
-    info: (mensaje, opciones) => sistemaNotificaciones.informacion(mensaje, opciones),
-    limpiar: () => sistemaNotificaciones.limpiarTodas(),
-    configurarPosicion: (posicion) => sistemaNotificaciones.configurarPosicion(posicion),
-    estadisticas: () => sistemaNotificaciones.obtenerEstadisticas()
+    version: '2.0.0',
+    
+    // Métodos principales
+    mostrar: (mensaje, tipo, duracion, opciones) => window.notificationSystem?.mostrar(mensaje, tipo, duracion, opciones),
+    exito: (mensaje, opciones) => window.notificationSystem?.exito(mensaje, opciones),
+    error: (mensaje, opciones) => window.notificationSystem?.error(mensaje, opciones),
+    advertencia: (mensaje, opciones) => window.notificationSystem?.advertencia(mensaje, opciones),
+    info: (mensaje, opciones) => window.notificationSystem?.informacion(mensaje, opciones),
+    
+    // Notificaciones avanzadas
+    mostrarConBotones: (mensaje, botones, tipo, opciones) => window.notificationSystem?.mostrarConBotones(mensaje, botones, tipo, opciones),
+    
+    // Gestión
+    limpiar: () => window.notificationSystem?.limpiarTodas(),
+    remover: (notificacion) => window.notificationSystem?.remover(notificacion),
+    
+    // Configuración
+    configurarPosicion: (posicion) => window.notificationSystem?.configurarPosicion(posicion),
+    configurarSonido: (habilitado, volumen) => window.notificationSystem?.configurarSonido(habilitado, volumen),
+    
+    // Estado y analíticas
+    obtenerEstado: () => window.notificationSystem?.obtenerEstado(),
+    obtenerEstadisticas: () => window.notificationSystem?.obtenerEstadisticas(),
+    obtenerAnalyticas: () => window.notificationSystem?.obtenerAnalyticas(),
+    reiniciarMetricas: () => window.notificationSystem?.reiniciarMetricas(),
+    
+    // Utilidades
+    estaInicializado: () => window.notificationSystem?.inicializado || false
 };
 
 // Hacer funciones disponibles globalmente para compatibilidad
@@ -651,9 +1424,21 @@ window.notificacionError = notificacionError;
 window.notificacionAdvertencia = notificacionAdvertencia;
 window.notificacionInfo = notificacionInfo;
 
+console.log('🔔 GRIZALUM Notification System v2.0 cargado');
+console.log('✨ Funcionalidades principales:');
+console.log('  • 🎯 4 tipos de notificaciones con estilos dinámicos por tema');
+console.log('  • 🎨 Integración completa con gestor de temas');
+console.log('  • ♿ Accesibilidad profesional con ARIA live regions');
+console.log('  • 🔊 Sistema de sonido opcional');
+console.log('  • 📊 Sistema de colas y límites inteligentes');
+console.log('  • 🎭 Templates avanzados con botones de acción');
+console.log('  • 📈 Métricas y analíticas completas');
+console.log('  • 💾 Persistencia de configuración');
+console.log('🚀 ¡Sistema de notificaciones de clase mundial listo!');
+
 console.log(`
 🔔 ===================================================
-   SISTEMA DE NOTIFICACIONES CARGADO
+   GRIZALUM NOTIFICATION SYSTEM v2.0 - ULTRA PROFESSIONAL
 🔔 ===================================================
 
 ✨ FUNCIONES DISPONIBLES:
@@ -662,24 +1447,29 @@ console.log(`
    • notificacionError(mensaje, opciones)
    • notificacionAdvertencia(mensaje, opciones)
    • notificacionInfo(mensaje, opciones)
+   • GRIZALUM_NOTIFICATIONS.* - API completa
 
-🎨 CARACTERÍSTICAS:
-   • 4 tipos: success, error, warning, info
-   • Animaciones suaves de entrada/salida
-   • Barra de progreso automática
-   • Responsive para móviles
-   • Hover para pausar auto-close
-   • Límite máximo de notificaciones
+🎨 MEJORAS v2.0:
+   • Integración completa con ecosistema GRIZALUM
+   • Colores dinámicos según tema activo
+   • Accesibilidad profesional (ARIA live regions)
+   • Sistema de colas inteligente
+   • Templates con botones de acción
+   • Métricas y analíticas avanzadas
+   • Persistencia de configuración
+   • Sistema de sonido opcional
+   • 5 posiciones configurables
+   • Responsive optimizado
 
-⚙️ API AVANZADA:
-   • GRIZALUM_NOTIFICATIONS.configurarPosicion('top-left')
-   • GRIZALUM_NOTIFICATIONS.limpiar()
-   • GRIZALUM_NOTIFICATIONS.estadisticas()
-
-🔗 INTEGRACIÓN AUTOMÁTICA:
-   • Reacciona a cambios de empresa
-   • Reacciona a cambios de período
-   • Reacciona a navegación del sidebar
+🎭 CARACTERÍSTICAS AVANZADAS:
+   • Agrupación de notificaciones similares
+   • Barra de progreso con pausa en hover
+   • Animaciones configurables
+   • Focus management automático
+   • Eventos personalizados
+   • Cache inteligente
+   • Modo alto contraste
+   • Movimiento reducido
 
 🔔 ===================================================
 `);
