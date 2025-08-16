@@ -1,0 +1,564 @@
+/* ================================================================
+   10-TEMAS-COLORES.css - SISTEMA DE TEMAS GRIZALUM
+   Manejo de temas, colores y personalización visual
+   ================================================================ */
+
+/* ===== TEMA BASE (DORADO PERÚ) - DEFAULT ===== */
+:root {
+    /* Colores primarios del tema dorado */
+    --theme-primary: #d4af37;
+    --theme-primary-dark: #b87333;
+    --theme-primary-light: #f5d76e;
+    --theme-primary-alpha: rgba(212, 175, 55, 0.2);
+    
+    /* Gradientes del tema */
+    --theme-gradient: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark) 100%);
+    --theme-gradient-soft: linear-gradient(135deg, var(--theme-primary-light) 0%, var(--theme-primary) 100%);
+    
+    /* Sombras temáticas */
+    --theme-shadow: 0 10px 40px rgba(212, 175, 55, 0.3);
+    --theme-shadow-light: 0 4px 20px rgba(212, 175, 55, 0.2);
+    
+    /* Estados del tema */
+    --theme-hover: #c19b26;
+    --theme-active: #a68422;
+    --theme-focus: rgba(212, 175, 55, 0.4);
+}
+
+/* ===== TEMA AZUL CORPORATIVO ===== */
+[data-theme="blue"] {
+    --theme-primary: #2563eb;
+    --theme-primary-dark: #1d4ed8;
+    --theme-primary-light: #60a5fa;
+    --theme-primary-alpha: rgba(37, 99, 235, 0.2);
+    
+    --theme-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    --theme-gradient-soft: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
+    
+    --theme-shadow: 0 10px 40px rgba(37, 99, 235, 0.3);
+    --theme-shadow-light: 0 4px 20px rgba(37, 99, 235, 0.2);
+    
+    --theme-hover: #1e40af;
+    --theme-active: #1e3a8a;
+    --theme-focus: rgba(37, 99, 235, 0.4);
+}
+
+/* ===== TEMA VERDE NATURALEZA ===== */
+[data-theme="green"] {
+    --theme-primary: #059669;
+    --theme-primary-dark: #047857;
+    --theme-primary-light: #34d399;
+    --theme-primary-alpha: rgba(5, 150, 105, 0.2);
+    
+    --theme-gradient: linear-gradient(135deg, #059669 0%, #047857 100%);
+    --theme-gradient-soft: linear-gradient(135deg, #34d399 0%, #059669 100%);
+    
+    --theme-shadow: 0 10px 40px rgba(5, 150, 105, 0.3);
+    --theme-shadow-light: 0 4px 20px rgba(5, 150, 105, 0.2);
+    
+    --theme-hover: #065f46;
+    --theme-active: #064e3b;
+    --theme-focus: rgba(5, 150, 105, 0.4);
+}
+
+/* ===== TEMA PÚRPURA PREMIUM ===== */
+[data-theme="purple"] {
+    --theme-primary: #7c3aed;
+    --theme-primary-dark: #6d28d9;
+    --theme-primary-light: #a78bfa;
+    --theme-primary-alpha: rgba(124, 58, 237, 0.2);
+    
+    --theme-gradient: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+    --theme-gradient-soft: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+    
+    --theme-shadow: 0 10px 40px rgba(124, 58, 237, 0.3);
+    --theme-shadow-light: 0 4px 20px rgba(124, 58, 237, 0.2);
+    
+    --theme-hover: #5b21b6;
+    --theme-active: #581c87;
+    --theme-focus: rgba(124, 58, 237, 0.4);
+}
+
+/* ===== TEMA ROJO EJECUTIVO ===== */
+[data-theme="red"] {
+    --theme-primary: #dc2626;
+    --theme-primary-dark: #b91c1c;
+    --theme-primary-light: #f87171;
+    --theme-primary-alpha: rgba(220, 38, 38, 0.2);
+    
+    --theme-gradient: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    --theme-gradient-soft: linear-gradient(135deg, #f87171 0%, #dc2626 100%);
+    
+    --theme-shadow: 0 10px 40px rgba(220, 38, 38, 0.3);
+    --theme-shadow-light: 0 4px 20px rgba(220, 38, 38, 0.2);
+    
+    --theme-hover: #991b1b;
+    --theme-active: #7f1d1d;
+    --theme-focus: rgba(220, 38, 38, 0.4);
+}
+
+/* ===== TEMA OSCURO PROFESIONAL ===== */
+[data-theme="dark"] {
+    /* Colores base oscuros */
+    --white: #0f172a;
+    --gray-50: #1e293b;
+    --gray-100: #334155;
+    --gray-200: #475569;
+    --gray-300: #64748b;
+    --gray-400: #94a3b8;
+    --gray-500: #cbd5e1;
+    --gray-600: #e2e8f0;
+    --gray-700: #f1f5f9;
+    --gray-800: #f8fafc;
+    --gray-900: #ffffff;
+    
+    /* Colores temáticos para oscuro */
+    --theme-primary: #fbbf24;
+    --theme-primary-dark: #f59e0b;
+    --theme-primary-light: #fde047;
+    --theme-primary-alpha: rgba(251, 191, 36, 0.2);
+    
+    --theme-gradient: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    --theme-gradient-soft: linear-gradient(135deg, #fde047 0%, #fbbf24 100%);
+    
+    --theme-shadow: 0 10px 40px rgba(251, 191, 36, 0.3);
+    --theme-shadow-light: 0 4px 20px rgba(251, 191, 36, 0.2);
+    
+    /* Fondos oscuros */
+    --glass-effect: rgba(30, 41, 59, 0.8);
+    --glass-border: rgba(148, 163, 184, 0.2);
+}
+
+[data-theme="dark"] body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: var(--gray-700);
+}
+
+[data-theme="dark"] .sidebar {
+    background: linear-gradient(180deg, 
+        rgba(30, 41, 59, 0.95) 0%, 
+        rgba(15, 23, 42, 0.9) 100%);
+}
+
+[data-theme="dark"] .executive-header {
+    background: linear-gradient(135deg, 
+        rgba(30, 41, 59, 0.95) 0%, 
+        rgba(51, 65, 85, 0.8) 100%);
+}
+
+[data-theme="dark"] .metric-card,
+[data-theme="dark"] .chart-card {
+    background: linear-gradient(135deg, 
+        rgba(30, 41, 59, 0.95) 0%, 
+        rgba(51, 65, 85, 0.8) 100%);
+    border-color: rgba(148, 163, 184, 0.2);
+}
+
+/* ===== APLICACIÓN DE TEMAS ===== */
+
+/* Sidebar con tema */
+.sidebar-header {
+    background: var(--theme-gradient) !important;
+}
+
+.nav-link.active {
+    background: var(--theme-gradient) !important;
+    box-shadow: var(--theme-shadow-light) !important;
+}
+
+.nav-link:hover {
+    color: var(--theme-primary) !important;
+}
+
+/* Métricas con tema */
+.metric-card::before {
+    background: var(--theme-gradient) !important;
+}
+
+.metric-card:hover {
+    border-color: var(--theme-primary-alpha) !important;
+}
+
+.metric-card:hover .metric-value {
+    color: var(--theme-primary) !important;
+}
+
+.metric-icon {
+    background: var(--theme-gradient) !important;
+    box-shadow: var(--theme-shadow-light) !important;
+}
+
+/* Header con tema */
+.page-title {
+    background: var(--theme-gradient) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+.ai-insights {
+    color: var(--theme-primary) !important;
+    background: var(--theme-primary-alpha) !important;
+    border-color: var(--theme-primary-alpha) !important;
+}
+
+.period-btn.active {
+    color: var(--theme-primary) !important;
+}
+
+.ai-header-button {
+    background: var(--theme-gradient) !important;
+    box-shadow: var(--theme-shadow-light) !important;
+}
+
+/* Gráficos con tema */
+.chart-header::after {
+    background: var(--theme-gradient) !important;
+}
+
+.chart-title::before {
+    background: var(--theme-gradient) !important;
+    box-shadow: 0 0 10px var(--theme-primary-alpha) !important;
+}
+
+.filter-btn.active {
+    background: var(--theme-gradient) !important;
+    border-color: var(--theme-primary) !important;
+}
+
+.filter-btn:hover {
+    border-color: var(--theme-primary) !important;
+}
+
+/* Modales con tema */
+.grizalum-modal-header {
+    background: var(--theme-gradient) !important;
+}
+
+.btn-create,
+.btn-save {
+    background: var(--theme-gradient) !important;
+    box-shadow: var(--theme-shadow-light) !important;
+}
+
+.btn-create:hover,
+.btn-save:hover {
+    box-shadow: var(--theme-shadow) !important;
+}
+
+.grizalum-input:focus,
+.grizalum-select:focus,
+.grizalum-textarea:focus {
+    box-shadow: 0 12px 24px var(--theme-primary-alpha) !important;
+}
+
+.status-option.active {
+    border-color: var(--theme-primary) !important;
+    background: var(--theme-primary-alpha) !important;
+    box-shadow: var(--theme-shadow-light) !important;
+}
+
+.company-tab.active {
+    color: var(--theme-primary) !important;
+    box-shadow: var(--theme-shadow-light) !important;
+}
+
+/* Notificaciones con tema */
+.grizalum-notification {
+    border-left-color: var(--theme-primary) !important;
+}
+
+.notification-icon {
+    background: var(--theme-gradient) !important;
+}
+
+.notification-progress {
+    background: var(--theme-primary) !important;
+}
+
+/* ===== SELECTOR DE TEMAS ===== */
+.theme-selector {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: white;
+    border-radius: 50px;
+    box-shadow: var(--shadow-2xl);
+    padding: 8px;
+    display: flex;
+    gap: 8px;
+    border: 1px solid var(--gray-200);
+    backdrop-filter: blur(20px);
+    transition: all 0.3s ease;
+}
+
+.theme-selector:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+}
+
+.theme-option {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-option:hover {
+    transform: scale(1.1);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+.theme-option.active {
+    border-color: var(--theme-primary);
+    box-shadow: 0 0 0 2px var(--theme-primary-alpha);
+}
+
+.theme-option.active::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Colores específicos de cada tema */
+.theme-option[data-theme="gold"] {
+    background: linear-gradient(135deg, #d4af37 0%, #b87333 100%);
+}
+
+.theme-option[data-theme="blue"] {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+}
+
+.theme-option[data-theme="green"] {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.theme-option[data-theme="purple"] {
+    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+}
+
+.theme-option[data-theme="red"] {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+.theme-option[data-theme="dark"] {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+}
+
+/* ===== TRANSICIONES DE TEMA ===== */
+* {
+    transition: 
+        background-color 0.3s ease,
+        border-color 0.3s ease,
+        color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.sidebar,
+.executive-header,
+.metric-card,
+.chart-card,
+.grizalum-modal-content {
+    transition: 
+        background 0.5s ease,
+        backdrop-filter 0.5s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+/* ===== MODO AUTO (SISTEMA) ===== */
+@media (prefers-color-scheme: dark) {
+    [data-theme="auto"] {
+        /* Aplicar tema oscuro automáticamente */
+        --white: #0f172a;
+        --gray-50: #1e293b;
+        --gray-100: #334155;
+        --gray-200: #475569;
+        --gray-300: #64748b;
+        --gray-400: #94a3b8;
+        --gray-500: #cbd5e1;
+        --gray-600: #e2e8f0;
+        --gray-700: #f1f5f9;
+        --gray-800: #f8fafc;
+        --gray-900: #ffffff;
+        
+        --theme-primary: #fbbf24;
+        --theme-primary-dark: #f59e0b;
+        --theme-primary-light: #fde047;
+        --theme-primary-alpha: rgba(251, 191, 36, 0.2);
+        
+        --theme-gradient: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        --theme-gradient-soft: linear-gradient(135deg, #fde047 0%, #fbbf24 100%);
+        
+        --glass-effect: rgba(30, 41, 59, 0.8);
+        --glass-border: rgba(148, 163, 184, 0.2);
+    }
+    
+    [data-theme="auto"] body {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: var(--gray-700);
+    }
+}
+
+/* ===== TEMAS PERSONALIZADOS ===== */
+[data-theme="custom"] {
+    /* Variables que pueden ser sobrescritas por JavaScript */
+    --theme-primary: var(--custom-primary, #d4af37);
+    --theme-primary-dark: var(--custom-primary-dark, #b87333);
+    --theme-primary-light: var(--custom-primary-light, #f5d76e);
+    --theme-primary-alpha: var(--custom-primary-alpha, rgba(212, 175, 55, 0.2));
+    
+    --theme-gradient: var(--custom-gradient, linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark) 100%));
+    --theme-gradient-soft: var(--custom-gradient-soft, linear-gradient(135deg, var(--theme-primary-light) 0%, var(--theme-primary) 100%));
+}
+
+/* ===== TEMAS ESTACIONALES ===== */
+
+/* Tema Navidad */
+[data-theme="christmas"] {
+    --theme-primary: #dc2626;
+    --theme-primary-dark: #991b1b;
+    --theme-primary-light: #f87171;
+    --theme-primary-alpha: rgba(220, 38, 38, 0.2);
+    
+    --theme-gradient: linear-gradient(135deg, #dc2626 0%, #059669 50%, #dc2626 100%);
+    --theme-gradient-soft: linear-gradient(135deg, #f87171 0%, #34d399 50%, #f87171 100%);
+}
+
+/* Tema Año Nuevo */
+[data-theme="newyear"] {
+    --theme-primary: #fbbf24;
+    --theme-primary-dark: #d97706;
+    --theme-primary-light: #fde047;
+    --theme-primary-alpha: rgba(251, 191, 36, 0.2);
+    
+    --theme-gradient: linear-gradient(135deg, #fbbf24 0%, #8b5cf6 50%, #fbbf24 100%);
+    --theme-gradient-soft: linear-gradient(135deg, #fde047 0%, #a78bfa 50%, #fde047 100%);
+}
+
+/* ===== RESPONSIVE PARA SELECTOR DE TEMAS ===== */
+@media (max-width: 768px) {
+    .theme-selector {
+        bottom: 10px;
+        right: 10px;
+        padding: 6px;
+        gap: 6px;
+    }
+    
+    .theme-option {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .theme-option.active::after {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 575px) {
+    .theme-selector {
+        flex-direction: column;
+        bottom: 60px;
+        right: 10px;
+        border-radius: 25px;
+        padding: 8px 6px;
+    }
+    
+    .theme-option {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .theme-option.active::after {
+        font-size: 10px;
+    }
+}
+
+/* ===== ACCESIBILIDAD EN TEMAS ===== */
+@media (prefers-contrast: high) {
+    [data-theme] {
+        --theme-primary: #000000;
+        --theme-primary-dark: #000000;
+        --theme-primary-light: #333333;
+        --theme-gradient: linear-gradient(135deg, #000000 0%, #333333 100%);
+    }
+    
+    [data-theme="dark"] {
+        --theme-primary: #ffffff;
+        --theme-primary-dark: #ffffff;
+        --theme-primary-light: #cccccc;
+        --theme-gradient: linear-gradient(135deg, #ffffff 0%, #cccccc 100%);
+    }
+    
+    .theme-option {
+        border-width: 4px;
+    }
+}
+
+/* ===== REDUCIR MOVIMIENTO EN TEMAS ===== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+    }
+    
+    .theme-selector,
+    .theme-option {
+        transition: none !important;
+        transform: none !important;
+    }
+    
+    .theme-option:hover {
+        transform: none !important;
+    }
+}
+
+/* ===== UTILIDADES DE TEMA ===== */
+
+/* Forzar color primario */
+.text-theme {
+    color: var(--theme-primary) !important;
+}
+
+.bg-theme {
+    background: var(--theme-gradient) !important;
+}
+
+.border-theme {
+    border-color: var(--theme-primary) !important;
+}
+
+.shadow-theme {
+    box-shadow: var(--theme-shadow) !important;
+}
+
+/* Variables CSS personalizadas para JavaScript */
+.theme-dynamic {
+    background: var(--dynamic-bg, var(--theme-gradient));
+    color: var(--dynamic-color, var(--theme-primary));
+    border-color: var(--dynamic-border, var(--theme-primary));
+}
+
+/* Clase para animación de cambio de tema */
+.theme-changing * {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Reset de tema personalizado */
+.theme-reset {
+    --theme-primary: initial;
+    --theme-primary-dark: initial;
+    --theme-primary-light: initial;
+    --theme-primary-alpha: initial;
+    --theme-gradient: initial;
+    --theme-gradient-soft: initial;
+}
