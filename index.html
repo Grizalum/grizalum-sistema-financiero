@@ -5,30 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GRIZALUM | Centro de Control Financiero</title>
     
-    <!-- ESTILOS EXTERNOS PROFESIONALES -->
-    <link rel="stylesheet" href="./src/assets/css/styles.css">
+    <!-- ================================================================
+         🎨 ESTILOS PRINCIPAL - SISTEMA MODULAR GRIZALUM v4.0
+         ================================================================ -->
+    <link rel="stylesheet" href="./src/assets/css/grizalum-principal.css">
     
-    <!-- Meta Tags SEO -->
+    <!-- ================================================================
+         📊 META TAGS SEO Y SOCIAL
+         ================================================================ -->
     <meta name="description" content="Sistema financiero empresarial premium con IA integrada para empresas peruanas. Dashboard ejecutivo, flujo de caja, análisis predictivo.">
     <meta name="keywords" content="sistema financiero, empresas peru, contabilidad, flujo de caja, dashboard, IA">
     <meta name="author" content="GRIZALUM">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="GRIZALUM | Sistema Financiero Empresarial">
+    <meta property="og:description" content="Dashboard ejecutivo premium para empresas peruanas">
+    <meta property="og:image" content="./src/assets/images/grizalum-preview.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="GRIZALUM | Sistema Financiero">
+    <meta property="twitter:description" content="Control financiero profesional">
 
-    <!-- Favicon -->
+    <!-- ================================================================
+         🌐 FAVICON Y ICONOS OPTIMIZADOS
+         ================================================================ -->
     <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+    <link rel="apple-touch-icon" href="./src/assets/images/apple-touch-icon.png">
 
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-    <!-- Chart.js -->
-    <script src="https://unpkg.com/chart.js"></script>
-        
-    <!-- FontAwesome -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-       
-    <!-- PWA MANIFEST -->
-    <link rel="manifest" href="manifest.json">
-
-    <!-- META TAGS PARA PWA -->
+    <!-- ================================================================
+         📱 PWA CONFIGURATION
+         ================================================================ -->
+    <link rel="manifest" href="./manifest.json">
     <meta name="application-name" content="GRIZALUM">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -37,27 +46,55 @@
     <meta name="msapplication-TileColor" content="#d4af37">
     <meta name="theme-color" content="#d4af37">
 
-    <!-- ICONOS ADICIONALES -->
-    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+    <!-- ================================================================
+         🔤 FONTS OPTIMIZADOS
+         ================================================================ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- ================================================================
+         📈 LIBRERÍAS EXTERNAS OPTIMIZADAS
+         ================================================================ -->
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js" defer></script>
+    
+    <!-- FontAwesome para iconos -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js" defer></script>
+
+    <!-- ================================================================
+         ⚡ PRELOAD CRÍTICO
+         ================================================================ -->
+    <link rel="preload" href="./src/assets/css/grizalum-principal.css" as="style">
+    <link rel="preload" href="./src/assets/js/main.js" as="script">
 
 </head>
 <body>
-   <!-- PANTALLA DE CARGA -->
+   <!-- ================================================================
+        🔄 PANTALLA DE CARGA PREMIUM
+        ================================================================ -->
    <div id="loadingScreen" class="loading-screen">
        <div class="loading-content">
            <div class="brand-icon loading-logo">
                <i class="fas fa-chart-line"></i>
            </div>
            <h1>GRIZALUM</h1>
-           <p>Cargando sistema financiero...</p>
+           <p>Iniciando sistema financiero...</p>
            <div class="loading-bar">
                <div class="loading-progress"></div>
            </div>
+           <div class="loading-version">v4.0 Professional</div>
        </div>
    </div>
 
+   <!-- ================================================================
+        🏗️ CONTENEDOR PRINCIPAL DE LA APLICACIÓN
+        ================================================================ -->
    <div class="app-container">
-       <!-- BARRA LATERAL -->
+       
+       <!-- ================================================================
+            📋 BARRA LATERAL DE NAVEGACIÓN
+            ================================================================ -->
        <nav class="sidebar" id="sidebar">
            <div class="sidebar-header">
                <div class="company-brand">
@@ -142,8 +179,14 @@
            </div>
        </nav>
 
-       <!-- CONTENIDO PRINCIPAL -->
+       <!-- ================================================================
+            📊 CONTENIDO PRINCIPAL
+            ================================================================ -->
        <main class="main-content">
+           
+           <!-- ================================================================
+                🏗️ HEADER EJECUTIVO
+                ================================================================ -->
            <header class="executive-header">
                <button class="mobile-menu-toggle" onclick="toggleSidebar()">
                    <i class="fas fa-bars"></i>
@@ -179,17 +222,23 @@
              <i class="fas fa-brain"></i>
              <span>IA Assistant</span>
             </button>
+
               <!-- SELECTOR DE EMPRESAS -->
               <div class="company-selector" id="companySelector">
-              <!-- Se genera automáticamente por company-manager.js -->
+                  <!-- Se genera automáticamente por company-manager.js -->
                    </div>
                     </div>
                 </div>
            </header>
 
-           <!-- DASHBOARD CONTENT -->
-           <div id="dashboardContent" class="dashboard-content" style="padding-top: 0 !important; margin-top: 0 !important;">
-               <!-- METRICS GRID -->
+           <!-- ================================================================
+                📊 DASHBOARD CONTENT - ÁREA PRINCIPAL
+                ================================================================ -->
+           <div id="dashboardContent" class="dashboard-content active">
+               
+               <!-- ================================================================
+                    📈 MÉTRICAS PRINCIPALES (KPIs)
+                    ================================================================ -->
                <section class="metrics-grid">
                     <!-- CARD 1: INGRESOS -->
                     <div class="metric-card revenue">
@@ -252,7 +301,9 @@
                     </div>
                 </section>
 
-              <!-- CHARTS SECTION COMPLETA -->
+              <!-- ================================================================
+                   📊 GRÁFICOS Y VISUALIZACIONES
+                   ================================================================ -->
                 <section class="charts-section">
                     <!-- Gráfico Principal de Flujo de Caja -->
                     <div class="chart-card main-chart">
@@ -310,35 +361,74 @@
                               </div>
                           </section>
            </div>
+
+           <!-- ================================================================
+                📄 OTRAS SECCIONES (CASH FLOW, REPORTS, ETC.)
+                ================================================================ 
+                Aquí irían las demás secciones cuando las desarrolles
+                -->
+
        </main>
    </div>
 
-<!-- ================================================================ -->
-<!-- 🚀 ARQUITECTURA MODULAR GRIZALUM -->
-<!-- Sistema distribuido en 6 archivos especializados -->
-<!-- ================================================================ -->
+   <!-- ================================================================
+        🎨 SELECTOR DE TEMAS FLOTANTE
+        ================================================================ -->
+   <div class="theme-selector">
+       <div class="theme-option active" data-theme="gold" onclick="changeTheme('gold')"></div>
+       <div class="theme-option" data-theme="blue" onclick="changeTheme('blue')"></div>
+       <div class="theme-option" data-theme="green" onclick="changeTheme('green')"></div>
+       <div class="theme-option" data-theme="purple" onclick="changeTheme('purple')"></div>
+       <div class="theme-option" data-theme="red" onclick="changeTheme('red')"></div>
+       <div class="theme-option" data-theme="dark" onclick="changeTheme('dark')"></div>
+   </div>
 
-<!-- 📦 MÓDULOS EXISTENTES (mantener orden) -->
-<script src="./src/assets/js/company-manager.js"></script>
-<script src="./src/assets/js/charts.js"></script>
-<script src="./src/assets/js/main.js"></script>
+   <!-- ================================================================
+        📦 CONTENEDOR PARA NOTIFICACIONES
+        ================================================================ -->
+   <div class="notification-container" id="notificationContainer">
+       <!-- Las notificaciones se generan dinámicamente por JavaScript -->
+   </div>
+
+<!-- ================================================================
+     🚀 SISTEMA JAVASCRIPT MODULAR GRIZALUM v4.0
+     ================================================================ -->
+
+<!-- 📦 MÓDULOS EXISTENTES (mantener orden específico) -->
+<script src="./src/assets/js/company-manager.js" defer></script>
+<script src="./src/assets/js/charts.js" defer></script>
+<script src="./src/assets/js/main.js" defer></script>
 
 <!-- 🧠 MÓDULOS NUEVOS (orden específico requerido) -->
-<script src="./src/assets/js/grizalum-principal.js"></script>      <!-- 🧠 Cerebro del sistema -->
-<script src="./src/assets/js/manejo-sidebar.js"></script>          <!-- 📱 Menú lateral -->
-<script src="./src/assets/js/sistema-notificaciones.js"></script>  <!-- 🔔 Alertas -->
-<script src="./src/assets/js/actualizador-kpis.js"></script>       <!-- 📊 Números dashboard -->
-<script src="./src/assets/js/controlador-header.js"></script>      <!-- 🏗️ Barra superior -->
-<script src="./src/assets/js/motor-temas.js"></script>             <!-- 🎨 Colores y temas -->
+<script src="./src/assets/js/grizalum-principal.js" defer></script>      <!-- 🧠 Cerebro del sistema -->
+<script src="./src/assets/js/manejo-sidebar.js" defer></script>          <!-- 📱 Menú lateral -->
+<script src="./src/assets/js/sistema-notificaciones.js" defer></script>  <!-- 🔔 Alertas -->
+<script src="./src/assets/js/actualizador-kpis.js" defer></script>       <!-- 📊 Números dashboard -->
+<script src="./src/assets/js/controlador-header.js" defer></script>      <!-- 🏗️ Barra superior -->
+<script src="./src/assets/js/motor-temas.js" defer></script>             <!-- 🎨 Colores y temas -->
 
-<!-- ================================================================ -->
-<!-- ✨ SISTEMA COMPLETAMENTE MODULAR Y ORGANIZADO ✨ -->
-<!-- - 6 archivos especializados vs 1 script masivo -->
-<!-- - Cada archivo tiene UNA responsabilidad específica -->
-<!-- - Fácil mantenimiento y debugging -->
-<!-- - Perfecto para trabajo en equipo -->
-<!-- - Totalmente escalable -->
-<!-- ================================================================ -->
+<!-- ================================================================
+     ✨ SISTEMA COMPLETAMENTE MODULAR Y ORGANIZADO ✨
+     - 6 archivos CSS especializados vs 1 CSS masivo
+     - 9 archivos JS especializados vs 1 script masivo  
+     - Cada archivo tiene UNA responsabilidad específica
+     - Fácil mantenimiento y debugging
+     - Perfecto para trabajo en equipo
+     - Totalmente escalable
+     ================================================================ -->
+
+<!-- ================================================================
+     🔧 SERVICE WORKER PARA PWA (OPCIONAL)
+     ================================================================ -->
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then(registration => console.log('SW registrado'))
+            .catch(error => console.log('SW error:', error));
+    });
+}
+</script>
 
 </body>
 </html>
