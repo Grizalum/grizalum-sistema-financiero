@@ -1,41 +1,117 @@
 /**
  * ================================================================
- * GRIZALUM THEME MANAGER - ULTRA PROFESSIONAL EDITION
+ * GRIZALUM THEME MANAGER - ULTRA PROFESSIONAL EDITION v2.0
  * Sistema de temas dinámicos inspirado en Goldman Sachs + Tesla
  * Paletas de nivel Fortune 500 para sistemas financieros
  * ================================================================
  */
 
-class GrizalumThemeManager {
+class GestorTemasGRIZALUM {
     constructor() {
-        this.currentTheme = 'goldman-platinum';
-        this.themes = this.initializeUltraPremiumThemes();
-        this.companyThemes = this.loadCompanyThemes();
-        this.isInitialized = false;
-        this.init();
+        this.version = '2.0.0';
+        this.temaActual = 'goldman-platinum';
+        this.temas = this.inicializarTemasUltraPremium();
+        this.temasEmpresa = this.cargarTemasEmpresa();
+        this.cache = new Map();
+        this.inicializado = false;
+        this.utilidades = null;
+        
+        this.inicializar();
     }
 
-    init() {
+    // ======= INICIALIZACIÓN AVANZADA =======
+    inicializar() {
         try {
-            this.createDynamicThemeStyles();
-            this.loadSavedTheme();
-            this.isInitialized = true;
-            console.log('🏆 GRIZALUM Theme Manager - Ultra Professional Edition Loaded');
-            console.log('💎 6 Premium Themes Available - Fortune 500 Level');
+            this.log('🚀 Inicializando GRIZALUM Theme Manager Ultra Professional v2.0...');
+            
+            // Detectar utilidades GRIZALUM
+            this.detectarUtilidades();
+            
+            // Cargar configuración global
+            this.cargarConfiguracionGlobal();
+            
+            // Crear estilos dinámicos
+            this.crearSistemaEstilosDinamicos();
+            
+            // Cargar tema guardado
+            this.cargarTemaGuardado();
+            
+            // Configurar eventos
+            this.configurarEventos();
+            
+            this.inicializado = true;
+            this.log('✅ GRIZALUM Theme Manager inicializado correctamente', 'success');
+            this.mostrarInformacionSistema();
+            
         } catch (error) {
-            console.error('❌ Theme Manager Error:', error);
+            this.log(`❌ Error inicializando Theme Manager: ${error.message}`, 'error');
+        }
+    }
+
+    detectarUtilidades() {
+        this.utilidades = window.GrizalumUtils || null;
+        if (this.utilidades) {
+            this.log('🔗 Sistema de utilidades GRIZALUM detectado', 'success');
+        } else {
+            this.log('⚠️ Sistema de utilidades no detectado, usando funciones básicas', 'warn');
+        }
+    }
+
+    cargarConfiguracionGlobal() {
+        const config = window.GRIZALUM_CONFIG || {};
+        
+        this.configuracion = {
+            empresaActual: config.currentCompany || 'fundicion-laguna',
+            animaciones: {
+                duracion: config.animation?.duration || 400,
+                easing: config.animation?.easing || 'cubic-bezier(0.4, 0, 0.2, 1)'
+            },
+            cache: {
+                habilitado: true,
+                tiempoVida: 300000 // 5 minutos
+            },
+            rendimiento: {
+                cargaLazy: config.performance?.lazyLoad || true,
+                optimizarCSS: config.performance?.optimizeCSS || true
+            }
+        };
+        
+        this.log('⚙️ Configuración global cargada', 'info');
+    }
+
+    log(mensaje, tipo = 'info') {
+        if (this.utilidades) {
+            this.utilidades.log(`[ThemeManager] ${mensaje}`, tipo);
+        } else {
+            const timestamp = new Date().toLocaleTimeString('es-PE');
+            const prefijo = `[GRIZALUM-Themes ${timestamp}]`;
+            
+            switch (tipo) {
+                case 'error':
+                    console.error(`${prefijo} ❌`, mensaje);
+                    break;
+                case 'warn':
+                    console.warn(`${prefijo} ⚠️`, mensaje);
+                    break;
+                case 'success':
+                    console.log(`${prefijo} ✅`, mensaje);
+                    break;
+                default:
+                    console.log(`${prefijo} ℹ️`, mensaje);
+            }
         }
     }
 
     // ======= PALETAS ULTRA PROFESIONALES =======
-    initializeUltraPremiumThemes() {
+    inicializarTemasUltraPremium() {
         return {
             // 🏦 GOLDMAN PLATINUM - Inspirado en Goldman Sachs
             'goldman-platinum': {
-                name: 'Goldman Platinum',
-                description: 'Elegancia bancaria de clase mundial',
-                category: 'financial-elite',
-                colors: {
+                nombre: 'Goldman Platinum',
+                descripcion: 'Elegancia bancaria de clase mundial',
+                categoria: 'financial-elite',
+                prioridad: 1,
+                colores: {
                     // Colores principales
                     primary: '#d4af37',                    // Oro Goldman Sachs
                     secondary: '#b8941f',                  // Oro oscuro
@@ -75,10 +151,11 @@ class GrizalumThemeManager {
 
             // 🚀 TESLA FUTURISTIC - Inspirado en el diseño de Tesla
             'tesla-futuristic': {
-                name: 'Tesla Futuristic',
-                description: 'El futuro según Elon Musk',
-                category: 'tech-innovation',
-                colors: {
+                nombre: 'Tesla Futuristic',
+                descripcion: 'El futuro según Elon Musk',
+                categoria: 'tech-innovation',
+                prioridad: 2,
+                colores: {
                     primary: '#ff0040',                    // Rojo Tesla icónico
                     secondary: '#1a1a1a',                  // Negro Tesla profundo
                     accent: '#00d4ff',                     // Cian futurista
@@ -112,10 +189,11 @@ class GrizalumThemeManager {
 
             // 🍎 CUPERTINO ELITE - Inspirado en Apple
             'cupertino-elite': {
-                name: 'Cupertino Elite',
-                description: 'Diseño premium desde Cupertino',
-                category: 'design-excellence',
-                colors: {
+                nombre: 'Cupertino Elite',
+                descripcion: 'Diseño premium desde Cupertino',
+                categoria: 'design-excellence',
+                prioridad: 3,
+                colores: {
                     primary: '#007aff',                    // Azul Apple
                     secondary: '#5856d6',                  // Púrpura iOS
                     accent: '#30d158',                     // Verde Apple
@@ -149,10 +227,11 @@ class GrizalumThemeManager {
 
             // 🔴 NETFLIX PREMIUM - Inspirado en Netflix
             'netflix-premium': {
-                name: 'Netflix Premium',
-                description: 'Entretenimiento de clase mundial',
-                category: 'media-excellence',
-                colors: {
+                nombre: 'Netflix Premium',
+                descripcion: 'Entretenimiento de clase mundial',
+                categoria: 'media-excellence',
+                prioridad: 4,
+                colores: {
                     primary: '#e50914',                    // Rojo Netflix icónico
                     secondary: '#221f1f',                  // Gris oscuro Netflix
                     accent: '#ffffff',                     // Blanco contraste
@@ -186,10 +265,11 @@ class GrizalumThemeManager {
 
             // 💎 MIDNIGHT CORPORATE - Tema nocturno premium
             'midnight-corporate': {
-                name: 'Midnight Corporate',
-                description: 'Elegancia nocturna corporativa',
-                category: 'corporate-premium',
-                colors: {
+                nombre: 'Midnight Corporate',
+                descripcion: 'Elegancia nocturna corporativa',
+                categoria: 'corporate-premium',
+                prioridad: 5,
+                colores: {
                     primary: '#00d9ff',                    // Cian eléctrico
                     secondary: '#8b5cf6',                  // Púrpura neón
                     accent: '#00ff87',                     // Verde neón
@@ -223,10 +303,11 @@ class GrizalumThemeManager {
 
             // 🖤 EXECUTIVE DARK - Tema ejecutivo minimalista
             'executive-dark': {
-                name: 'Executive Dark',
-                description: 'Minimalismo ejecutivo sofisticado',
-                category: 'executive-minimal',
-                colors: {
+                nombre: 'Executive Dark',
+                descripcion: 'Minimalismo ejecutivo sofisticado',
+                categoria: 'executive-minimal',
+                prioridad: 6,
+                colores: {
                     primary: '#6b7280',                    // Gris ejecutivo
                     secondary: '#4b5563',                  // Gris profundo
                     accent: '#d1d5db',                     // Gris claro
@@ -260,89 +341,165 @@ class GrizalumThemeManager {
         };
     }
 
-    // ======= ASIGNACIÓN DE TEMAS POR EMPRESA =======
-    loadCompanyThemes() {
-        const saved = localStorage.getItem('grizalum_company_themes');
-        if (saved) {
-            return JSON.parse(saved);
+    // ======= ASIGNACIÓN ESTRATÉGICA POR EMPRESA =======
+    cargarTemasEmpresa() {
+        const cacheKey = 'grizalum_company_themes_v2';
+        let temasGuardados = null;
+        
+        if (this.utilidades) {
+            temasGuardados = this.utilidades.cargarDeStorage(cacheKey);
+        } else {
+            try {
+                const guardado = localStorage.getItem(cacheKey);
+                temasGuardados = guardado ? JSON.parse(guardado) : null;
+            } catch (error) {
+                this.log(`Error cargando temas de empresa: ${error.message}`, 'error');
+            }
+        }
+
+        if (temasGuardados) {
+            this.log('📂 Temas de empresa cargados desde storage', 'info');
+            return temasGuardados;
         }
 
         // Asignación estratégica de temas por tipo de empresa
-        const defaultThemes = {
+        const temasDefecto = {
             'fundicion-laguna': 'tesla-futuristic',      // Tecnología + Futurista
             'fundicion-joel': 'netflix-premium',         // Entretenimiento Premium
             'avicola-san-juan': 'cupertino-elite',       // Diseño Elegante
             'import-lm': 'goldman-platinum',             // Financiero Élite
-            'bodega-central': 'executive-dark'           // Ejecutivo Minimalista
+            'bodega-central': 'executive-dark',          // Ejecutivo Minimalista
+            'empresa-demo': 'midnight-corporate'         // Corporativo Premium
         };
 
-        this.saveCompanyThemes(defaultThemes);
-        return defaultThemes;
+        this.guardarTemasEmpresa(temasDefecto);
+        this.log('🏢 Temas de empresa inicializados por defecto', 'info');
+        return temasDefecto;
     }
 
-    saveCompanyThemes(themes) {
-        localStorage.setItem('grizalum_company_themes', JSON.stringify(themes));
+    guardarTemasEmpresa(temas) {
+        const cacheKey = 'grizalum_company_themes_v2';
+        
+        if (this.utilidades) {
+            this.utilidades.guardarEnStorage(cacheKey, temas);
+        } else {
+            try {
+                localStorage.setItem(cacheKey, JSON.stringify(temas));
+            } catch (error) {
+                this.log(`Error guardando temas de empresa: ${error.message}`, 'error');
+            }
+        }
     }
 
-    // ======= APLICACIÓN DE TEMAS =======
-    applyTheme(themeName) {
-        if (!this.themes[themeName]) {
-            console.error(`❌ Tema '${themeName}' no encontrado`);
+    // ======= APLICACIÓN DE TEMAS OPTIMIZADA =======
+    aplicarTema(nombreTema) {
+        if (!this.temas[nombreTema]) {
+            this.log(`❌ Tema '${nombreTema}' no encontrado`, 'error');
+            if (this.utilidades) {
+                this.utilidades.mostrarError(`Tema '${nombreTema}' no encontrado`);
+            }
             return false;
         }
 
-        const theme = this.themes[themeName];
-        const root = document.documentElement;
+        const tema = this.temas[nombreTema];
+        const inicio = performance.now();
 
         try {
-            // Aplicar todas las variables CSS del tema
-            Object.entries(theme.colors).forEach(([key, value]) => {
-                const cssVar = this.camelToKebab(key);
-                root.style.setProperty(`--theme-${cssVar}`, value);
-            });
+            // Verificar cache
+            const cacheKey = `tema_${nombreTema}`;
+            if (this.cache.has(cacheKey) && this.configuracion.cache.habilitado) {
+                const datosCache = this.cache.get(cacheKey);
+                if (Date.now() - datosCache.timestamp < this.configuracion.cache.tiempoVida) {
+                    this.aplicarVariablesCSS(datosCache.variables);
+                    this.log(`🚀 Tema aplicado desde cache: ${tema.nombre}`, 'success');
+                    return true;
+                }
+            }
 
-            this.currentTheme = themeName;
-            localStorage.setItem('grizalum_current_theme', themeName);
+            // Aplicar tema y guardar en cache
+            const variables = this.aplicarVariablesCSS(tema.colores);
             
-            console.log(`🎨 Tema aplicado: ${theme.name} (${theme.category})`);
+            if (this.configuracion.cache.habilitado) {
+                this.cache.set(cacheKey, {
+                    variables,
+                    timestamp: Date.now()
+                });
+            }
+
+            this.temaActual = nombreTema;
+            this.guardarTemaActual(nombreTema);
             
-            // Disparar evento para otros componentes
-            this.dispatchThemeChangeEvent(themeName, theme);
+            const duracion = (performance.now() - inicio).toFixed(2);
+            this.log(`🎨 Tema aplicado: ${tema.nombre} (${tema.categoria}) - ${duracion}ms`, 'success');
+            
+            // Mostrar notificación si está disponible
+            if (this.utilidades) {
+                this.utilidades.mostrarExito(`Tema cambiado a: ${tema.nombre}`, 2000);
+            }
+            
+            // Disparar evento personalizado
+            this.dispararEventoCambioTema(nombreTema, tema);
             return true;
             
         } catch (error) {
-            console.error('❌ Error aplicando tema:', error);
+            this.log(`❌ Error aplicando tema: ${error.message}`, 'error');
+            if (this.utilidades) {
+                this.utilidades.mostrarError(`Error aplicando tema: ${error.message}`);
+            }
             return false;
         }
     }
 
-    applyCompanyTheme(companyId) {
-        const themeName = this.companyThemes[companyId];
-        if (themeName && this.themes[themeName]) {
-            this.applyTheme(themeName);
-            console.log(`🏢 Empresa: ${companyId} → Tema: ${this.themes[themeName].name}`);
-            return true;
+    aplicarVariablesCSS(colores) {
+        const root = document.documentElement;
+        const variables = {};
+
+        Object.entries(colores).forEach(([clave, valor]) => {
+            const cssVar = this.camelAKebab(clave);
+            const nombreVariable = `--theme-${cssVar}`;
+            root.style.setProperty(nombreVariable, valor);
+            variables[nombreVariable] = valor;
+        });
+
+        return variables;
+    }
+
+    aplicarTemaEmpresa(idEmpresa) {
+        const nombreTema = this.temasEmpresa[idEmpresa];
+        if (nombreTema && this.temas[nombreTema]) {
+            const exito = this.aplicarTema(nombreTema);
+            if (exito) {
+                this.log(`🏢 Empresa: ${idEmpresa} → Tema: ${this.temas[nombreTema].nombre}`, 'info');
+                return true;
+            }
         } else {
-            console.warn(`⚠️ No hay tema asignado para: ${companyId}, usando tema por defecto`);
-            this.applyTheme('goldman-platinum');
+            this.log(`⚠️ No hay tema asignado para: ${idEmpresa}, usando tema por defecto`, 'warn');
+            this.aplicarTema('goldman-platinum');
             return false;
         }
     }
 
-    // ======= ESTILOS DINÁMICOS =======
-    createDynamicThemeStyles() {
-        const styleId = 'grizalum-ultra-theme-system';
-        let existingStyle = document.getElementById(styleId);
+    // ======= SISTEMA DE ESTILOS DINÁMICOS AVANZADO =======
+    crearSistemaEstilosDinamicos() {
+        const idEstilo = 'grizalum-ultra-theme-system-v2';
+        let estiloExistente = document.getElementById(idEstilo);
         
-        if (existingStyle) {
-            existingStyle.remove();
+        if (estiloExistente) {
+            estiloExistente.remove();
         }
 
-        const style = document.createElement('style');
-        style.id = styleId;
-        style.textContent = `
+        const estilo = document.createElement('style');
+        estilo.id = idEstilo;
+        estilo.textContent = this.generarCSSUltraProfesional();
+        
+        document.head.appendChild(estilo);
+        this.log('🎨 Sistema de estilos dinámicos v2.0 creado', 'info');
+    }
+
+    generarCSSUltraProfesional() {
+        return `
             /* ========================================= */
-            /* GRIZALUM ULTRA PROFESSIONAL THEME SYSTEM */
+            /* GRIZALUM ULTRA PROFESSIONAL THEME v2.0   */
             /* ========================================= */
             
             :root {
@@ -370,46 +527,109 @@ class GrizalumThemeManager {
                 --theme-shadow-soft: 0 8px 25px rgba(0, 0, 0, 0.3);
                 --theme-glass-effect: rgba(212, 175, 55, 0.08);
                 --theme-border-glow: 1px solid rgba(212, 175, 55, 0.3);
+                
+                /* Variables adicionales para mejor control */
+                --theme-transition: all ${this.configuracion.animaciones.duracion}ms ${this.configuracion.animaciones.easing};
+                --theme-border-radius: 12px;
+                --theme-border-radius-lg: 16px;
+                --theme-blur: 20px;
+                --theme-blur-heavy: 30px;
             }
 
-            /* === APLICACIÓN GLOBAL DEL TEMA === */
+            /* === APLICACIÓN GLOBAL MEJORADA === */
             body {
                 background: var(--theme-background) !important;
                 color: var(--theme-text-primary) !important;
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                transition: var(--theme-transition) !important;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
             }
 
-            /* === SIDEBAR PREMIUM === */
+            /* === CONTENEDOR PRINCIPAL === */
+            .main-content {
+                background: var(--theme-background) !important;
+                min-height: 100vh !important;
+            }
+
+            /* === SIDEBAR ULTRA PREMIUM === */
             .sidebar {
                 background: linear-gradient(180deg, var(--theme-surface) 0%, var(--theme-background) 100%) !important;
                 border-right: var(--theme-border-glow) !important;
-                backdrop-filter: blur(20px) !important;
+                backdrop-filter: blur(var(--theme-blur)) !important;
+                position: relative !important;
+            }
+
+            .sidebar::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background: var(--theme-gradient-primary) !important;
+                box-shadow: var(--theme-shadow-glow) !important;
             }
 
             .sidebar-header {
                 background: var(--theme-gradient-primary) !important;
                 box-shadow: var(--theme-shadow-glow) !important;
+                border-radius: 0 0 var(--theme-border-radius) var(--theme-border-radius) !important;
+                margin: 1rem !important;
+                padding: 1.5rem !important;
+            }
+
+            .sidebar-header h3 {
+                color: white !important;
+                font-weight: 700 !important;
+                text-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;
             }
 
             /* === NAVEGACIÓN PREMIUM === */
-            .nav-link.active {
+            .nav-link {
+                transition: var(--theme-transition) !important;
+                border-radius: var(--theme-border-radius) !important;
+                margin: 0.25rem 0.75rem !important;
+                position: relative !important;
+                overflow: hidden !important;
+            }
+
+            .nav-link::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 0;
+                height: 100%;
+                width: 0;
                 background: var(--theme-gradient-primary) !important;
+                transition: width 0.3s ease !important;
+                z-index: -1;
+            }
+
+            .nav-link.active::before,
+            .nav-link:hover::before {
+                width: 100% !important;
+            }
+
+            .nav-link.active {
+                color: white !important;
                 box-shadow: var(--theme-shadow-glow) !important;
                 border-left: 4px solid var(--theme-primary) !important;
+                font-weight: 600 !important;
             }
 
             .nav-link:hover {
-                background: var(--theme-glass-effect) !important;
                 color: var(--theme-primary) !important;
-                border-left: 2px solid var(--theme-primary) !important;
+                background: var(--theme-glass-effect) !important;
+                transform: translateX(5px) !important;
             }
 
             /* === HEADER EJECUTIVO === */
-            .executive-header {
+            .executive-header,
+            .header-section {
                 background: var(--theme-glass-effect) !important;
-                backdrop-filter: blur(30px) !important;
+                backdrop-filter: blur(var(--theme-blur-heavy)) !important;
                 border-bottom: var(--theme-border-glow) !important;
                 box-shadow: var(--theme-shadow-soft) !important;
+                border-radius: 0 0 var(--theme-border-radius-lg) var(--theme-border-radius-lg) !important;
             }
 
             .page-header h1 {
@@ -417,101 +637,218 @@ class GrizalumThemeManager {
                 -webkit-background-clip: text !important;
                 -webkit-text-fill-color: transparent !important;
                 background-clip: text !important;
+                font-weight: 800 !important;
+                text-shadow: none !important;
             }
 
             /* === BOTÓN IA PREMIUM === */
-            .ai-header-button {
+            .ai-header-button,
+            .ai-toggle-button {
                 background: var(--theme-gradient-primary) !important;
                 box-shadow: var(--theme-shadow-glow) !important;
                 border: var(--theme-border-glow) !important;
+                border-radius: var(--theme-border-radius) !important;
+                color: white !important;
+                font-weight: 600 !important;
+                position: relative !important;
+                overflow: hidden !important;
             }
 
-            .ai-header-button:hover {
+            .ai-header-button:hover,
+            .ai-toggle-button:hover {
                 transform: translateY(-3px) !important;
-               box-shadow: 0 15px 35px rgba(var(--theme-primary), 0.4) !important;
+                box-shadow: 0 15px 35px rgba(var(--theme-primary), 0.4) !important;
             }
 
-            /* === TARJETAS MÉTRICAS PREMIUM === */
-            .metric-card {
+            .ai-header-button::before,
+            .ai-toggle-button::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+                transition: left 0.5s ease !important;
+            }
+
+            .ai-header-button:hover::before,
+            .ai-toggle-button:hover::before {
+                left: 100% !important;
+            }
+
+            /* === TARJETAS MÉTRICAS ULTRA PREMIUM === */
+            .metric-card,
+            .chart-card,
+            .card {
                 background: var(--theme-glass-effect) !important;
-                backdrop-filter: blur(25px) !important;
+                backdrop-filter: blur(var(--theme-blur)) !important;
                 border: var(--theme-border-glow) !important;
                 box-shadow: var(--theme-shadow-soft) !important;
+                border-radius: var(--theme-border-radius-lg) !important;
+                position: relative !important;
+                overflow: hidden !important;
+                transition: var(--theme-transition) !important;
             }
 
-            .metric-card:hover {
+            .metric-card::before,
+            .chart-card::before,
+            .card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: var(--theme-gradient-primary) !important;
+                opacity: 0.7 !important;
+            }
+
+            .metric-card:hover,
+            .chart-card:hover,
+            .card:hover {
                 box-shadow: var(--theme-shadow-elevated) !important;
                 border-color: var(--theme-primary) !important;
+                transform: translateY(-8px) !important;
             }
 
-            .metric-card::before {
-                background: var(--theme-gradient-primary) !important;
-                height: 5px !important;
+            .metric-card:hover::before,
+            .chart-card:hover::before,
+            .card:hover::before {
+                opacity: 1 !important;
+                box-shadow: var(--theme-shadow-glow) !important;
             }
 
-            .metric-value {
+            .metric-value,
+            .kpi-value {
                 background: var(--theme-gradient-primary) !important;
                 -webkit-background-clip: text !important;
                 -webkit-text-fill-color: transparent !important;
                 background-clip: text !important;
+                font-weight: 800 !important;
+                font-size: 2.5rem !important;
             }
 
             /* === INSIGHTS IA === */
-            .ai-insights {
+            .ai-insights,
+            .ai-panel {
                 background: var(--theme-gradient-glass) !important;
                 border: var(--theme-border-glow) !important;
-                color: var(--theme-primary) !important;
-                backdrop-filter: blur(15px) !important;
+                color: var(--theme-text-primary) !important;
+                backdrop-filter: blur(var(--theme-blur)) !important;
+                border-radius: var(--theme-border-radius-lg) !important;
+                position: relative !important;
+            }
+
+            .ai-insights::before,
+            .ai-panel::before {
+                content: '🤖';
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                font-size: 1.5rem;
+                opacity: 0.3;
             }
 
             /* === SELECTOR DE EMPRESAS === */
-            .company-dropdown {
+            .company-dropdown,
+            .dropdown-menu {
                 background: var(--theme-surface) !important;
                 border: var(--theme-border-glow) !important;
                 box-shadow: var(--theme-shadow-elevated) !important;
-                backdrop-filter: blur(30px) !important;
+                backdrop-filter: blur(var(--theme-blur-heavy)) !important;
+                border-radius: var(--theme-border-radius-lg) !important;
             }
 
-            .company-item:hover {
+            .company-item,
+            .dropdown-item {
+                transition: var(--theme-transition) !important;
+                border-radius: var(--theme-border-radius) !important;
+                margin: 0.25rem !important;
+            }
+
+            .company-item:hover,
+            .dropdown-item:hover {
                 background: var(--theme-glass-effect) !important;
                 border-left: 3px solid var(--theme-primary) !important;
+                color: var(--theme-primary) !important;
+                transform: translateX(5px) !important;
             }
 
             .company-item.active {
                 background: var(--theme-gradient-glass) !important;
                 border: var(--theme-border-glow) !important;
                 box-shadow: var(--theme-shadow-glow) !important;
+                color: var(--theme-primary) !important;
             }
 
-            /* === GRÁFICOS PREMIUM === */
-            .chart-card {
-                background: var(--theme-glass-effect) !important;
-                border: var(--theme-border-glow) !important;
-                backdrop-filter: blur(20px) !important;
-                box-shadow: var(--theme-shadow-soft) !important;
-            }
-
-            /* === BOTONES === */
+            /* === BOTONES PREMIUM === */
             .btn-primary {
                 background: var(--theme-gradient-primary) !important;
                 box-shadow: var(--theme-shadow-glow) !important;
+                border: none !important;
+                border-radius: var(--theme-border-radius) !important;
+                color: white !important;
+                font-weight: 600 !important;
+                transition: var(--theme-transition) !important;
+            }
+
+            .btn-primary:hover {
+                transform: translateY(-2px) !important;
+                box-shadow: 0 12px 30px rgba(var(--theme-primary), 0.4) !important;
             }
 
             .btn-success {
                 background: var(--theme-gradient-success) !important;
+                border: none !important;
+                color: white !important;
             }
 
-            .btn-neutral {
+            .btn-warning {
+                background: var(--theme-gradient-warning) !important;
+                border: none !important;
+                color: white !important;
+            }
+
+            .btn-danger {
+                background: var(--theme-gradient-danger) !important;
+                border: none !important;
+                color: white !important;
+            }
+
+            .btn-neutral,
+            .btn-outline {
                 background: var(--theme-glass-effect) !important;
                 border: var(--theme-border-glow) !important;
                 color: var(--theme-text-primary) !important;
+                backdrop-filter: blur(10px) !important;
             }
 
-            /* === EFECTOS PREMIUM === */
+            /* === PERÍODOS === */
+            .period-btn {
+                transition: var(--theme-transition) !important;
+                border-radius: var(--theme-border-radius) !important;
+                border: var(--theme-border-glow) !important;
+                background: var(--theme-glass-effect) !important;
+            }
+
             .period-btn.active {
                 background: var(--theme-gradient-primary) !important;
                 color: white !important;
                 box-shadow: var(--theme-shadow-glow) !important;
+                border-color: var(--theme-primary) !important;
+            }
+
+            .period-btn:hover {
+                border-color: var(--theme-primary) !important;
+                color: var(--theme-primary) !important;
+                transform: translateY(-2px) !important;
+            }
+
+            /* === NOTIFICACIONES === */
+            .notification-center {
+                transition: var(--theme-transition) !important;
+                border-radius: var(--theme-border-radius) !important;
             }
 
             .notification-center:hover {
@@ -520,231 +857,303 @@ class GrizalumThemeManager {
                 box-shadow: var(--theme-shadow-soft) !important;
             }
 
-            /* === TRANSICIONES SUAVES === */
-            * {
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            }
-
-            /* === SCROLLBAR PREMIUM === */
+            /* === SCROLLBAR ULTRA PREMIUM === */
             ::-webkit-scrollbar {
-                width: 8px;
-                height: 8px;
+                width: 10px;
+                height: 10px;
             }
 
             ::-webkit-scrollbar-track {
                 background: var(--theme-surface);
+                border-radius: 5px;
             }
 
             ::-webkit-scrollbar-thumb {
-                background: var(--theme-primary);
-                border-radius: 4px;
+                background: var(--theme-gradient-primary);
+                border-radius: 5px;
+                border: 2px solid var(--theme-surface);
             }
 
             ::-webkit-scrollbar-thumb:hover {
-                background: var(--theme-secondary);
+                background: var(--theme-primary);
+                box-shadow: var(--theme-shadow-glow);
+            }
+
+            /* === ANIMACIONES ESPECIALES === */
+            @keyframes theme-glow-pulse {
+                0%, 100% { 
+                    box-shadow: var(--theme-shadow-soft); 
+                }
+                50% { 
+                    box-shadow: var(--theme-shadow-glow); 
+                }
+            }
+
+            .pulse-effect {
+                animation: theme-glow-pulse 2s infinite;
+            }
+
+            /* === EFECTOS DE CARGA === */
+            .loading-shimmer {
+                background: linear-gradient(90deg, 
+                    var(--theme-surface) 25%, 
+                    var(--theme-elevated) 50%, 
+                    var(--theme-surface) 75%);
+                background-size: 200% 100%;
+                animation: shimmer 1.5s infinite;
+            }
+
+            @keyframes shimmer {
+                0% { background-position: -200% 0; }
+                100% { background-position: 200% 0; }
+            }
+
+            /* === MODO ALTO CONTRASTE === */
+            @media (prefers-contrast: high) {
+                :root {
+                    --theme-border-glow: 2px solid var(--theme-primary);
+                    --theme-shadow-glow: 0 0 20px var(--theme-primary);
+                }
+            }
+
+            /* === MODO MOVIMIENTO REDUCIDO === */
+            @media (prefers-reduced-motion: reduce) {
+                * {
+                    transition: none !important;
+                    animation: none !important;
+                }
             }
         `;
-        
-        document.head.appendChild(style);
-        console.log('🎨 Sistema de estilos dinámicos creado');
     }
 
-    // ======= UTILIDADES =======
-    camelToKebab(str) {
+    // ======= EVENTOS Y COMUNICACIÓN =======
+    configurarEventos() {
+        // Listener para cambios de empresa
+        document.addEventListener('companyChanged', (evento) => {
+            if (evento.detail?.companyId) {
+                this.aplicarTemaEmpresa(evento.detail.companyId);
+            }
+        });
+
+        // Listener para cambios de tema personalizado
+        document.addEventListener('themeChangeRequest', (evento) => {
+            if (evento.detail?.themeName) {
+                this.aplicarTema(evento.detail.themeName);
+            }
+        });
+
+        // Listener para vista previa de tema
+        document.addEventListener('themePreviewRequest', (evento) => {
+            if (evento.detail?.themeName && evento.detail?.duration) {
+                this.previsualizarTema(evento.detail.themeName, evento.detail.duration);
+            }
+        });
+
+        this.log('🔗 Eventos de tema configurados', 'info');
+    }
+
+    dispararEventoCambioTema(nombreTema, tema) {
+        const evento = new CustomEvent('grizalumThemeChanged', {
+            detail: { 
+                nombreTema, 
+                tema, 
+                timestamp: Date.now(),
+                categoria: tema.categoria,
+                version: this.version
+            }
+        });
+        document.dispatchEvent(evento);
+    }
+
+    // ======= UTILIDADES OPTIMIZADAS =======
+    camelAKebab(str) {
         return str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
     }
 
-    loadSavedTheme() {
-        const saved = localStorage.getItem('grizalum_current_theme');
-        if (saved && this.themes[saved]) {
-            this.applyTheme(saved);
+    cargarTemaGuardado() {
+        const cacheKey = 'grizalum_current_theme_v2';
+        let temaGuardado = null;
+        
+        if (this.utilidades) {
+            temaGuardado = this.utilidades.cargarDeStorage(cacheKey);
         } else {
-            this.applyTheme('goldman-platinum');
+            try {
+                temaGuardado = localStorage.getItem(cacheKey);
+            } catch (error) {
+                this.log(`Error cargando tema guardado: ${error.message}`, 'error');
+            }
+        }
+        
+        if (temaGuardado && this.temas[temaGuardado]) {
+            this.aplicarTema(temaGuardado);
+        } else {
+            this.aplicarTema('goldman-platinum');
         }
     }
 
-    dispatchThemeChangeEvent(themeName, theme) {
-        const event = new CustomEvent('grizalumThemeChanged', {
-            detail: { 
-                themeName, 
-                theme, 
-                timestamp: Date.now(),
-                category: theme.category
+    guardarTemaActual(nombreTema) {
+        const cacheKey = 'grizalum_current_theme_v2';
+        
+        if (this.utilidades) {
+            this.utilidades.guardarEnStorage(cacheKey, nombreTema);
+        } else {
+            try {
+                localStorage.setItem(cacheKey, nombreTema);
+            } catch (error) {
+                this.log(`Error guardando tema actual: ${error.message}`, 'error');
             }
-        });
-        document.dispatchEvent(event);
+        }
     }
 
-    // ======= API PÚBLICA =======
-    getAvailableThemes() {
-        return Object.keys(this.themes).map(key => ({
-            key,
-            name: this.themes[key].name,
-            description: this.themes[key].description,
-            category: this.themes[key].category
-        }));
+    // ======= API PÚBLICA AVANZADA =======
+    obtenerTemasDisponibles() {
+        return Object.keys(this.temas).map(clave => ({
+            clave,
+            nombre: this.temas[clave].nombre,
+            descripcion: this.temas[clave].descripcion,
+            categoria: this.temas[clave].categoria,
+            prioridad: this.temas[clave].prioridad
+        })).sort((a, b) => a.prioridad - b.prioridad);
     }
 
-    getCurrentTheme() {
+    obtenerTemaActual() {
         return {
-            key: this.currentTheme,
-            theme: this.themes[this.currentTheme]
+            clave: this.temaActual,
+            tema: this.temas[this.temaActual]
         };
     }
 
-    getThemeColors(themeName) {
-        return this.themes[themeName]?.colors || null;
+    obtenerColoresTema(nombreTema) {
+        return this.temas[nombreTema]?.colores || null;
     }
 
-    setCompanyTheme(companyId, themeName) {
-        if (!this.themes[themeName]) {
-            console.error(`❌ Tema '${themeName}' no existe`);
+    establecerTemaEmpresa(idEmpresa, nombreTema) {
+        if (!this.temas[nombreTema]) {
+            this.log(`❌ Tema '${nombreTema}' no existe`, 'error');
             return false;
         }
 
-        this.companyThemes[companyId] = themeName;
-        this.saveCompanyThemes(this.companyThemes);
+        this.temasEmpresa[idEmpresa] = nombreTema;
+        this.guardarTemasEmpresa(this.temasEmpresa);
         
-        console.log(`✅ Tema asignado: ${companyId} → ${themeName}`);
+        this.log(`✅ Tema asignado: ${idEmpresa} → ${nombreTema}`, 'success');
+        
+        if (this.utilidades) {
+            this.utilidades.mostrarExito(`Tema ${this.temas[nombreTema].nombre} asignado a ${idEmpresa}`);
+        }
+        
         return true;
     }
 
-    previewTheme(themeName, duration = 3000) {
-        if (!this.themes[themeName]) return false;
+    previsualizarTema(nombreTema, duracion = 3000) {
+        if (!this.temas[nombreTema]) {
+            this.log(`❌ Tema '${nombreTema}' no existe para previsualización`, 'error');
+            return false;
+        }
         
-        const currentTheme = this.currentTheme;
-        this.applyTheme(themeName);
+        const temaAnterior = this.temaActual;
+        this.aplicarTema(nombreTema);
         
-        console.log(`👁️ Previsualizando tema: ${this.themes[themeName].name}`);
+        this.log(`👁️ Previsualizando tema: ${this.temas[nombreTema].nombre}`, 'info');
+        
+        if (this.utilidades) {
+            this.utilidades.mostrarInfo(`Previsualizando: ${this.temas[nombreTema].nombre}`, duracion);
+        }
         
         setTimeout(() => {
-            this.applyTheme(currentTheme);
-            console.log(`↩️ Revirtiendo a tema: ${this.themes[currentTheme].name}`);
-        }, duration);
+            this.aplicarTema(temaAnterior);
+            this.log(`↩️ Revirtiendo a tema: ${this.temas[temaAnterior].nombre}`, 'info');
+        }, duracion);
         
         return true;
     }
 
-    // ======= ANÁLISIS DE TEMAS =======
-    getThemeAnalytics() {
+    // ======= ANÁLISIS Y MÉTRICAS =======
+    obtenerAnalyticasTemas() {
         return {
-            totalThemes: Object.keys(this.themes).length,
-            currentTheme: this.currentTheme,
-            companyThemes: this.companyThemes,
-            categories: [...new Set(Object.values(this.themes).map(t => t.category))],
-            isInitialized: this.isInitialized
+            version: this.version,
+            totalTemas: Object.keys(this.temas).length,
+            temaActual: this.temaActual,
+            temasEmpresa: this.temasEmpresa,
+            categorias: [...new Set(Object.values(this.temas).map(t => t.categoria))],
+            inicializado: this.inicializado,
+            cache: {
+                entradas: this.cache.size,
+                habilitado: this.configuracion.cache.habilitado
+            },
+            rendimiento: {
+                tiempoInicializacion: this.tiempoInicializacion || 0,
+                temasEnCache: this.cache.size
+            }
         };
+    }
+
+    limpiarCache() {
+        const entradas = this.cache.size;
+        this.cache.clear();
+        this.log(`🧹 Cache de temas limpiado: ${entradas} entradas eliminadas`, 'info');
     }
 
     // ======= EXPORTAR/IMPORTAR CONFIGURACIÓN =======
-    exportThemeConfiguration() {
+    exportarConfiguracionTemas() {
         return {
-            version: '1.0.0',
-            currentTheme: this.currentTheme,
-            companyThemes: this.companyThemes,
+            version: this.version,
+            temaActual: this.temaActual,
+            temasEmpresa: this.temasEmpresa,
+            configuracion: this.configuracion,
             timestamp: Date.now(),
-            system: 'GRIZALUM-Ultra-Professional'
+            sistema: 'GRIZALUM-Ultra-Professional-v2'
         };
     }
 
-    importThemeConfiguration(config) {
+    importarConfiguracionTemas(config) {
         try {
-            if (config.version && config.companyThemes) {
-                this.companyThemes = config.companyThemes;
-                this.saveCompanyThemes(config.companyThemes);
+            if (config.version && config.temasEmpresa) {
+                this.temasEmpresa = config.temasEmpresa;
+                this.guardarTemasEmpresa(config.temasEmpresa);
                 
-                if (config.currentTheme && this.themes[config.currentTheme]) {
-                    this.applyTheme(config.currentTheme);
+                if (config.temaActual && this.temas[config.temaActual]) {
+                    this.aplicarTema(config.temaActual);
                 }
                 
-                console.log('✅ Configuración de temas importada correctamente');
+                this.log('✅ Configuración de temas importada correctamente', 'success');
+                
+                if (this.utilidades) {
+                    this.utilidades.mostrarExito('Configuración de temas importada');
+                }
+                
                 return true;
             }
             return false;
         } catch (error) {
-            console.error('❌ Error importando configuración:', error);
+            this.log(`❌ Error importando configuración: ${error.message}`, 'error');
+            
+            if (this.utilidades) {
+                this.utilidades.mostrarError('Error importando configuración de temas');
+            }
+            
             return false;
         }
     }
-}
 
-// ======= INICIALIZACIÓN GLOBAL =======
-let grizalumThemeManager = null;
-
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Inicializando GRIZALUM Theme Manager Ultra Professional...');
-    
-    try {
-        // Crear instancia global
-        grizalumThemeManager = new GrizalumThemeManager();
-        window.themeManager = grizalumThemeManager;
-        
-        // Listener para eventos de tema
-        document.addEventListener('grizalumThemeChanged', function(event) {
-            console.log('🎨 Tema cambiado:', event.detail);
-        });
-        
-        console.log('✅ GRIZALUM Theme Manager cargado exitosamente');
-        console.log('💎 Sistema Ultra Profesional - 6 Temas Premium Disponibles');
-        
-    } catch (error) {
-        console.error('❌ Error inicializando Theme Manager:', error);
-    }
-});
-
-// ======= INTEGRACIÓN CON SELECTOR DE EMPRESAS =======
-function applyCompanyThemeIntegration(companyId) {
-    if (window.themeManager && window.themeManager.isInitialized) {
-        const success = window.themeManager.applyCompanyTheme(companyId);
-        if (success) {
-            console.log(`🏢 Tema de empresa aplicado: ${companyId}`);
-        }
-        return success;
-    } else {
-        console.warn('⚠️ Theme Manager no está inicializado');
-        return false;
-    }
-}
-
-// ======= FUNCIONES DE UTILIDAD GLOBAL =======
-window.GrizalumThemeUtils = {
-    // Obtener tema actual
-    getCurrentTheme: () => window.themeManager?.getCurrentTheme(),
-    
-    // Obtener todos los temas disponibles
-    getAvailableThemes: () => window.themeManager?.getAvailableThemes(),
-    
-    // Previsualizar tema
-    previewTheme: (themeName, duration) => window.themeManager?.previewTheme(themeName, duration),
-    
-    // Obtener analíticas
-    getAnalytics: () => window.themeManager?.getThemeAnalytics(),
-    
-    // Exportar configuración
-    export: () => window.themeManager?.exportThemeConfiguration(),
-    
-    // Importar configuración
-    import: (config) => window.themeManager?.importThemeConfiguration(config)
-};
-
-// ======= EXPORTAR CLASE PARA USO AVANZADO =======
-window.GrizalumThemeManager = GrizalumThemeManager;
-
-// ======= INFORMACIÓN DEL SISTEMA =======
-console.log(`
+    // ======= INFORMACIÓN DEL SISTEMA =======
+    mostrarInformacionSistema() {
+        console.log(`
 🏆 ===================================================
-   GRIZALUM THEME MANAGER - ULTRA PROFESSIONAL
+   GRIZALUM THEME MANAGER - ULTRA PROFESSIONAL v2.0
 🏆 ===================================================
 
-📊 CARACTERÍSTICAS:
+📊 CARACTERÍSTICAS AVANZADAS:
    • 6 Temas Ultra Premium (Fortune 500 Level)
    • Paletas Goldman Sachs + Tesla + Apple + Netflix
-   • Sistema dinámico de variables CSS
+   • Sistema dinámico de variables CSS optimizado
+   • Cache inteligente para mejor rendimiento
    • Cambio automático por empresa
    • Efectos premium (glassmorphism, gradientes)
-   • Persistencia en localStorage
+   • Persistencia mejorada en localStorage
    • API completa para personalización avanzada
    • Transiciones suaves y profesionales
+   • Integración con sistema de utilidades
 
 🎨 TEMAS DISPONIBLES:
    1. Goldman Platinum (Financiero Élite)
@@ -754,12 +1163,104 @@ console.log(`
    5. Midnight Corporate (Corporativo Premium)
    6. Executive Dark (Ejecutivo Minimalista)
 
-🔧 USO:
-   - Cambio automático: Por empresa
-   - Preview: themeManager.previewTheme('theme-name')
-   - Analytics: themeManager.getThemeAnalytics()
-   - Export/Import: Configuración completa
+🔧 MEJORAS v2.0:
+   - Integración con GrizalumUtils
+   - Cache inteligente con TTL
+   - Validaciones robustas
+   - Sistema de eventos unificado
+   - Mejor manejo de errores
+   - Notificaciones integradas
+   - Rendimiento optimizado
 
 💫 ¡Tu dashboard nunca se verá igual!
 🏆 ===================================================
-`);
+        `);
+    }
+}
+
+// ======= INSTANCIA GLOBAL =======
+let gestorTemasGrizalum = null;
+
+// ======= INICIALIZACIÓN =======
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Inicializando GRIZALUM Theme Manager Ultra Professional v2.0...');
+    
+    try {
+        // Crear instancia global
+        gestorTemasGrizalum = new GestorTemasGRIZALUM();
+        window.themeManager = gestorTemasGrizalum;
+        window.gestorTemas = gestorTemasGrizalum; // Alias en español
+        
+        // Listener para eventos de tema
+        document.addEventListener('grizalumThemeChanged', function(evento) {
+            console.log('🎨 Evento de cambio de tema:', evento.detail);
+        });
+        
+        console.log('✅ GRIZALUM Theme Manager v2.0 cargado exitosamente');
+        
+    } catch (error) {
+        console.error('❌ Error inicializando Theme Manager:', error);
+    }
+});
+
+// ======= INTEGRACIÓN CON SELECTOR DE EMPRESAS =======
+function aplicarTemaEmpresaIntegracion(idEmpresa) {
+    if (window.themeManager && window.themeManager.inicializado) {
+        const exito = window.themeManager.aplicarTemaEmpresa(idEmpresa);
+        if (exito) {
+            console.log(`🏢 Tema de empresa aplicado: ${idEmpresa}`);
+        }
+        return exito;
+    } else {
+        console.warn('⚠️ Theme Manager no está inicializado');
+        return false;
+    }
+}
+
+// ======= UTILIDADES GLOBALES =======
+window.GrizalumThemeUtils = {
+    // Obtener tema actual
+    getCurrentTheme: () => window.themeManager?.obtenerTemaActual(),
+    
+    // Obtener todos los temas disponibles
+    getAvailableThemes: () => window.themeManager?.obtenerTemasDisponibles(),
+    
+    // Previsualizar tema
+    previewTheme: (themeName, duration) => window.themeManager?.previsualizarTema(themeName, duration),
+    
+    // Obtener analíticas
+    getAnalytics: () => window.themeManager?.obtenerAnalyticasTemas(),
+    
+    // Exportar configuración
+    export: () => window.themeManager?.exportarConfiguracionTemas(),
+    
+    // Importar configuración
+    import: (config) => window.themeManager?.importarConfiguracionTemas(config),
+    
+    // Limpiar cache
+    clearCache: () => window.themeManager?.limpiarCache(),
+    
+    // Aplicar tema específico
+    applyTheme: (themeName) => window.themeManager?.aplicarTema(themeName),
+    
+    // Establecer tema para empresa
+    setCompanyTheme: (companyId, themeName) => window.themeManager?.establecerTemaEmpresa(companyId, themeName)
+};
+
+// ======= EXPORTAR CLASE =======
+window.GestorTemasGRIZALUM = GestorTemasGRIZALUM;
+
+// ======= FUNCIONES DE COMPATIBILIDAD =======
+window.applyCompanyTheme = aplicarTemaEmpresaIntegracion;
+window.changeTheme = (themeName) => window.themeManager?.aplicarTema(themeName);
+
+console.log('🎨 GRIZALUM Theme Manager v2.0 cargado');
+console.log('✨ Funcionalidades principales:');
+console.log('  • 🏆 6 Temas Ultra Premium de Fortune 500');
+console.log('  • 🎨 Sistema de variables CSS dinámicas');
+console.log('  • 🏢 Asignación automática por empresa');
+console.log('  • 💎 Efectos glassmorphism y gradientes');
+console.log('  • 🚀 Cache inteligente para rendimiento');
+console.log('  • 🔔 Integración con sistema de notificaciones');
+console.log('  • 📱 API completa y eventos unificados');
+console.log('🚀 ¡Sistema de temas de clase mundial listo!');
