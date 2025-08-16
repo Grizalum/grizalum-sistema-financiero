@@ -73,10 +73,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js" defer></script>
 
     <!-- ================================================================
-         ⚡ PRELOAD CRÍTICO
+         ⚡ PRELOAD CRÍTICO - ACTUALIZADO
          ================================================================ -->
     <link rel="preload" href="./src/assets/css/grizalum-principal.css" as="style">
-    <link rel="preload" href="./src/assets/js/main.js" as="script">
+    <link rel="preload" href="./src/assets/js/principal.js" as="script">
 
 </head>
 <body>
@@ -235,7 +235,7 @@
 
               <!-- SELECTOR DE EMPRESAS -->
               <div class="company-selector" id="companySelector">
-                  <!-- Se genera automáticamente por company-manager.js -->
+                  <!-- Se genera automáticamente por gestor-empresas-principal.js -->
                    </div>
                     </div>
                 </div>
@@ -401,43 +401,46 @@
    </div>
 
 <!-- ================================================================
-     🚀 SISTEMA JAVASCRIPT MODULAR GRIZALUM v4.0
+     🚀 SISTEMA JAVASCRIPT MODULAR GRIZALUM v4.0 - ACTUALIZADO
      ================================================================ -->
 
-<!-- 📦 MÓDULOS EXISTENTES (mantener orden específico) -->
-<!-- 🏢 GESTOR DE EMPRESAS MODULAR v2.0 (orden crítico) -->
+<!-- 📦 CONFIGURACIÓN Y UTILIDADES (cargar primero) -->
+<script src="./src/assets/js/config.js" defer></script>
+<script src="./src/assets/js/utilidades.js" defer></script>
+
+<!-- 🏢 GESTOR DE EMPRESAS MODULAR (orden crítico) -->
 <script src="./src/assets/js/gestor-empresas-principal.js" defer></script>
 <script src="./src/assets/js/gestor-empresas-emojis.js" defer></script>
 <script src="./src/assets/js/gestor-empresas-formularios.js" defer></script>
 <script src="./src/assets/js/gestor-empresas-temas.js" defer></script>
 <script src="./src/assets/js/gestor-empresas-reportes.js" defer></script>
 
-<!-- 📊 SISTEMA PRINCIPAL -->
-<script src="./src/assets/js/config.js" defer></script>
-<script src="./src/assets/js/utilidades.js" defer></script>
+<!-- 📊 SISTEMA PRINCIPAL Y GRÁFICOS -->
 <script src="./src/assets/js/graficos.js" defer></script>
-<script src="./src/assets/js/principal.js" defer></script>
-
-<!-- 🧠 MÓDULOS DEL SISTEMA -->
 <script src="./src/assets/js/grizalum-principal.js" defer></script>
+
+<!-- 🧠 MÓDULOS DEL SISTEMA (orden específico) -->
 <script src="./src/assets/js/manejo-sidebar.js" defer></script>
 <script src="./src/assets/js/sistema-notificaciones.js" defer></script>
 <script src="./src/assets/js/actualizador-metricas.js" defer></script>
 <script src="./src/assets/js/controlador-cabecera.js" defer></script>
-<script src="./src/assets/js/gestor-temas.js" defer></script>
+<script src="./src/assets/js/motor-temas.js" defer></script>
 
 <!-- 🤖 INTELIGENCIA ARTIFICIAL -->
 <script src="./src/assets/js/inteligencia-artificial.js" defer></script>
 <script src="./src/assets/js/asistente-ia-avanzado.js" defer></script>
 
+<!-- 🚀 CONTROLADOR PRINCIPAL (cargar al final) -->
+<script src="./src/assets/js/principal.js" defer></script>
+
 <!-- ================================================================
      ✨ SISTEMA COMPLETAMENTE MODULAR Y ORGANIZADO ✨
-     - 6 archivos CSS especializados vs 1 CSS masivo
-     - 9 archivos JS especializados vs 1 script masivo  
+     - 11 archivos CSS especializados
+     - 15 archivos JS especializados con nombres en español
      - Cada archivo tiene UNA responsabilidad específica
      - Fácil mantenimiento y debugging
      - Perfecto para trabajo en equipo
-     - Totalmente escalable
+     - Totalmente escalable para empresas peruanas
      ================================================================ -->
 
 <!-- ================================================================
