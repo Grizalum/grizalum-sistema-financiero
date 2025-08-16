@@ -1,881 +1,1053 @@
 /**
- * ================================================
- * GRIZALUM - UTILS MODULE
- * Funciones utilitarias y helpers
- * ================================================
+ * ========================================
+ * GRIZALUM - SISTEMA DE UTILIDADES CORE
+ * ========================================
+ * Funciones utilitarias centralizadas para toda la aplicación
+ * Versión: 2.0 | Última actualización: 2025
  */
 
-// ======= UTILIDADES GENERALES =======
-
-// Formatear números a moneda peruana
-function formatCurrency(amount, includeSymbol = true) {
-    const formatted = new Intl.NumberFormat('es-PE', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2
-    }).format(amount);
-    
-    return includeSymbol ? `S/. ${formatted}` : formatted;
-}
-
-// Formatear porcentajes
-function formatPercentage(value, decimals = 1) {
-    return `${value.toFixed(decimals)}%`;
-}
-
-// Formatear fechas
-function formatDate(date, format = 'dd/mm/yyyy') {
-    const d = new Date(date);
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const year = d.getFullYear();
-    
-    switch (format) {
-        case 'dd/mm/yyyy':
-            return `${day}/${month}/${year}`;
-        case 'mm/dd/yyyy':
-            return `${month}/${day}/${year}`;
-        case 'yyyy-mm-dd':
-            return `${year}-${month}-${day}`;
-        case 'relative':
-            return getRelativeTime(d);
-        default:
-            return d.toLocaleDateString('es-PE');
-    }
-}
-
-// Obtener tiempo relativo (hace 2 horas, ayer, etc.)
-function getRelativeTime(date) {
-    const now = new Date();
-    const diffMs = now - date;
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffMinutes = Math.floor(diffMs / (1000 * 60));
-    
-    if (diffMinutes < 1) return 'Ahora mismo';
-    if (diffMinutes < 60) return `Hace ${diffMinutes} minuto${diffMinutes > 1 ? 's' : ''}`;
-    if (diffHours < 24) return `Hace ${diffHours} hora${diffHours > 1 ? 's' : ''}`;
-    if (diffDays === 1) return 'Ayer';
-    if (diffDays < 7) return `Hace ${diffDays} días`;
-    if (diffDays < 30) return `Hace ${Math.floor(diffDays / 7)} semana${Math.floor(diffDays / 7) > 1 ? 's' : ''}`;
-    if (diffDays < 365) return `Hace ${Math.floor(diffDays / 30)} mes${Math.floor(diffDays / 30) > 1 ? 'es' : ''}`;
-    return `Hace ${Math.floor(diffDays / 365)} año${Math.floor(diffDays / 365) > 1 ? 's' : ''}`;
-}
-
-// ======= VALIDACIONES =======
-
-// Validar email
-function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
-
-// Validar RUC peruano
-function isValidRUC(ruc) {
-    if (!ruc || ruc.length !== 11) return false;
-    
-    // Verificar que sean solo números
-    if (!/^\d{11}$/.test(ruc)) return false;
-    
-    // Verificar primer dígito
-    const firstDigit = parseInt(ruc[0]);
-    if (![1, 2].includes(firstDigit)) return false;
-    
-    // Algoritmo de validación RUC
-    const factors = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2];
-    let sum = 0;
-    
-    for (let i = 0; i < 10; i++) {
-        sum += parseInt(ruc[i]) * factors[i];
-    }
-    
-    const remainder = sum % 11;
-    const checkDigit = remainder < 2 ? remainder : 11 - remainder;
-    
-    return checkDigit === parseInt(ruc[10]);
-}
-
-// Validar DNI peruano
-function isValidDNI(dni) {
-    return /^\d{8}$/.test(dni);
-}
-
-// Validar número de teléfono peruano
-function isValidPhone(phone) {
-    // Formatos: 999999999, +51999999999, 51999999999
-    const phoneRegex = /^(\+?51)?[9][0-9]{8}$/;
-    return phoneRegex.test(phone.replace(/\s+/g, ''));
-}
-
-// ======= MANIPULACIÓN DEL DOM =======
-
-// Crear elemento con atributos
-function createElement(tag, attributes = {}, content = '') {
-    const element = document.createElement(tag);
-    
-    Object.entries(attributes).forEach(([key, value]) => {
-        if (key === 'className') {
-            element.className = value;
-        } else if (key === 'innerHTML') {
-            element.innerHTML = value;
-        } else if (key === 'textContent') {
-            element.textContent = value;
-        } else {
-            element.setAttribute(key, value);
-        }
-    });
-    
-    if (content) {
-        element.innerHTML = content;
-    }
-    
-    return element;
-}
-
-// Mostrar/ocultar elemento con animación
-function toggleElement(element, show = null) {
-    if (typeof element === 'string') {
-        element = document.getElementById(element);
-    }
-    
-    if (!element) return;
-    
-    const isVisible = element.style.display !== 'none';
-    const shouldShow = show !== null ? show : !isVisible;
-    
-    if (shouldShow) {
-        element.style.display = 'block';
-        element.style.opacity = '0';
-        setTimeout(() => {
-            element.style.transition = 'opacity 0.3s ease';
-            element.style.opacity = '1';
-        }, 10);
-    } else {
-        element.style.transition = 'opacity 0.3s ease';
-        element.style.opacity = '0';
-        setTimeout(() => {
-            element.style.display = 'none';
-        }, 300);
-    }
-}
-
-// ======= GESTIÓN DE EVENTOS =======
-
-// Debounce para optimizar eventos
-function debounce(func, wait, immediate = false) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            timeout = null;
-            if (!immediate) func(...args);
-        };
-        const callNow = immediate && !timeout;
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-        if (callNow) func(...args);
-    };
-}
-
-// Throttle para limitar frecuencia de eventos
-function throttle(func, limit) {
-    let inThrottle;
-    return function(...args) {
-        if (!inThrottle) {
-            func.apply(this, args);
-            inThrottle = true;
-            setTimeout(() => inThrottle = false, limit);
-        }
-    };
-}
-
-// ======= ALMACENAMIENTO LOCAL =======
-
-// Guardar en localStorage con manejo de errores
-function saveToStorage(key, data) {
-    try {
-        localStorage.setItem(key, JSON.stringify(data));
-        return true;
-    } catch (e) {
-        console.error('Error guardando en localStorage:', e);
-        return false;
-    }
-}
-
-// Cargar de localStorage con manejo de errores
-function loadFromStorage(key, defaultValue = null) {
-    try {
-        const item = localStorage.getItem(key);
-        return item ? JSON.parse(item) : defaultValue;
-    } catch (e) {
-        console.error('Error cargando de localStorage:', e);
-        return defaultValue;
-    }
-}
-
-// Eliminar de localStorage
-function removeFromStorage(key) {
-    try {
-        localStorage.removeItem(key);
-        return true;
-    } catch (e) {
-        console.error('Error eliminando de localStorage:', e);
-        return false;
-    }
-}
-
-// ======= UTILIDADES DE RED =======
-
-// Realizar petición HTTP simple
-async function httpRequest(url, options = {}) {
-    const defaultOptions = {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    };
-    
-    const mergedOptions = { ...defaultOptions, ...options };
-    
-    try {
-        const response = await fetch(url, mergedOptions);
+class UtilidadesGRIZALUM {
+    constructor() {
+        this.debug = true;
+        this.inicializado = false;
+        this.configuracion = this.cargarConfiguracion();
+        this.cache = new Map();
+        this.sistemaNotificaciones = null;
         
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-            return await response.json();
-        } else {
-            return await response.text();
-        }
-    } catch (error) {
-        console.error('Error en petición HTTP:', error);
-        throw error;
+        this.inicializar();
     }
-}
 
-// ======= UTILIDADES MATEMÁTICAS =======
-
-// Generar número aleatorio en rango
-function randomInRange(min, max) {
-    return Math.random() * (max - min) + min;
-}
-
-// Redondear a decimales específicos
-function roundToDecimals(number, decimals = 2) {
-    return Math.round(number * Math.pow(10, decimals)) / Math.pow(10, decimals);
-}
-
-// Calcular porcentaje de cambio
-function calculatePercentageChange(oldValue, newValue) {
-    if (oldValue === 0) return newValue > 0 ? 100 : 0;
-    return ((newValue - oldValue) / oldValue) * 100;
-}
-
-// Calcular promedio de array
-function calculateAverage(numbers) {
-    if (!Array.isArray(numbers) || numbers.length === 0) return 0;
-    const sum = numbers.reduce((acc, num) => acc + num, 0);
-    return sum / numbers.length;
-}
-
-// ======= UTILIDADES DE ARRAYS =======
-
-// Agrupar array por propiedad
-function groupBy(array, key) {
-    return array.reduce((result, item) => {
-        const group = item[key];
-        if (!result[group]) {
-            result[group] = [];
+    // ======= INICIALIZACIÓN =======
+    inicializar() {
+        try {
+            this.log('🔧 Inicializando Sistema de Utilidades GRIZALUM v2.0...');
+            
+            this.configurarErrorHandler();
+            this.verificarCompatibilidad();
+            this.inyectarEstilos();
+            this.inicializarSistemaNotificaciones();
+            
+            this.inicializado = true;
+            this.log('✅ Sistema de Utilidades inicializado correctamente');
+            
+        } catch (error) {
+            console.error('❌ Error inicializando Utilidades GRIZALUM:', error);
         }
-        result[group].push(item);
-        return result;
-    }, {});
-}
+    }
 
-// Eliminar duplicados de array
-function removeDuplicates(array, key = null) {
-    if (key) {
-        const seen = new Set();
-        return array.filter(item => {
-            const val = item[key];
-            if (seen.has(val)) {
-                return false;
+    cargarConfiguracion() {
+        // Integración con configuración global de GRIZALUM
+        const configGlobal = window.GRIZALUM_CONFIG || {};
+        
+        return {
+            // Configuración regional (Perú)
+            moneda: configGlobal.currency || 'PEN',
+            locale: configGlobal.locale || 'es-PE',
+            simboloMoneda: configGlobal.financial?.currency_symbol || 'S/.',
+            decimales: configGlobal.financial?.decimal_places || 0,
+            separadorMiles: configGlobal.financial?.thousand_separator || ',',
+            
+            // Configuración de animaciones
+            animacion: {
+                duracion: 300,
+                easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+                velocidadContador: 50
+            },
+            
+            // Configuración de notificaciones
+            notificaciones: {
+                duracionDefecto: 5000,
+                posicion: 'top-right',
+                maxVisibles: 5
+            },
+            
+            // Configuración de formato
+            formato: {
+                fecha: 'DD/MM/YYYY',
+                idioma: 'es'
             }
-            seen.add(val);
-            return true;
+        };
+    }
+
+    configurarErrorHandler() {
+        window.addEventListener('error', (event) => {
+            if (this.debug) {
+                console.error('🚨 Error global capturado:', event.error);
+            }
+        });
+        
+        window.addEventListener('unhandledrejection', (event) => {
+            if (this.debug) {
+                console.error('🚨 Promise rechazada:', event.reason);
+            }
         });
     }
-    return [...new Set(array)];
-}
 
-// Ordenar array por múltiples criterios
-function sortBy(array, ...criteria) {
-    return array.sort((a, b) => {
-        for (const criterion of criteria) {
-            let { key, order = 'asc' } = typeof criterion === 'string' 
-                ? { key: criterion } 
-                : criterion;
-            
-            const aValue = a[key];
-            const bValue = b[key];
-            
-            if (aValue < bValue) return order === 'asc' ? -1 : 1;
-            if (aValue > bValue) return order === 'asc' ? 1 : -1;
+    verificarCompatibilidad() {
+        const funcionalidades = {
+            localStorage: typeof Storage !== 'undefined',
+            fetch: typeof fetch !== 'undefined',
+            promises: typeof Promise !== 'undefined',
+            customEvents: typeof CustomEvent !== 'undefined'
+        };
+
+        const incompatibles = Object.entries(funcionalidades)
+            .filter(([nombre, disponible]) => !disponible)
+            .map(([nombre]) => nombre);
+
+        if (incompatibles.length > 0) {
+            this.log(`⚠️ Funcionalidades no disponibles: ${incompatibles.join(', ')}`);
         }
-        return 0;
-    });
-}
 
-// ======= UTILIDADES DE TEXTO =======
+        return funcionalidades;
+    }
 
-// Capitalizar primera letra
-function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-}
+    log(mensaje, tipo = 'info') {
+        if (!this.debug) return;
+        
+        const timestamp = new Date().toLocaleTimeString('es-PE');
+        const prefijo = `[GRIZALUM-Utils ${timestamp}]`;
+        
+        switch (tipo) {
+            case 'error':
+                console.error(`${prefijo} ❌`, mensaje);
+                break;
+            case 'warn':
+                console.warn(`${prefijo} ⚠️`, mensaje);
+                break;
+            case 'success':
+                console.log(`${prefijo} ✅`, mensaje);
+                break;
+            default:
+                console.log(`${prefijo} ℹ️`, mensaje);
+        }
+    }
 
-// Convertir a título
-function toTitleCase(str) {
-    return str.replace(/\w\S*/g, txt => 
-        txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
-    );
-}
+    // ======= FORMATEO DE DATOS =======
 
-// Truncar texto
-function truncateText(text, maxLength, suffix = '...') {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + suffix;
-}
+    formatearMoneda(cantidad, incluirSimbolo = true, abreviado = false) {
+        if (typeof cantidad !== 'number') {
+            cantidad = this.extraerValorNumerico(cantidad);
+        }
 
-// Generar slug URL-friendly
-function generateSlug(text) {
-    return text
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '') // Eliminar acentos
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
-}
+        const { simboloMoneda, decimales, locale } = this.configuracion;
+        
+        if (abreviado && cantidad >= 1000000) {
+            return `${simboloMoneda} ${(cantidad / 1000000).toFixed(1)}M`;
+        } else if (abreviado && cantidad >= 1000) {
+            return `${simboloMoneda} ${(cantidad / 1000).toFixed(0)}K`;
+        }
+        
+        const formateado = new Intl.NumberFormat(locale, {
+            minimumFractionDigits: decimales,
+            maximumFractionDigits: decimales
+        }).format(cantidad);
+        
+        return incluirSimbolo ? `${simboloMoneda} ${formateado}` : formateado;
+    }
 
-// ======= UTILIDADES DE COLORES =======
+    formatearPorcentaje(valor, decimales = 1) {
+        if (typeof valor === 'string' && valor.includes('%')) {
+            return valor; // Ya formateado
+        }
+        
+        const numValor = typeof valor === 'number' ? valor : this.extraerValorNumerico(valor);
+        const signo = numValor >= 0 ? '+' : '';
+        return `${signo}${numValor.toFixed(decimales)}%`;
+    }
 
-// Convertir hex a RGB
-function hexToRgb(hex) {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-    } : null;
-}
+    formatearFecha(fecha, formato = null) {
+        const formatoFinal = formato || this.configuracion.formato.fecha;
+        const d = new Date(fecha);
+        
+        if (isNaN(d.getTime())) {
+            this.log('Fecha inválida proporcionada', 'warn');
+            return '';
+        }
+        
+        const dia = String(d.getDate()).padStart(2, '0');
+        const mes = String(d.getMonth() + 1).padStart(2, '0');
+        const año = d.getFullYear();
+        
+        switch (formatoFinal) {
+            case 'DD/MM/YYYY':
+                return `${dia}/${mes}/${año}`;
+            case 'MM/DD/YYYY':
+                return `${mes}/${dia}/${año}`;
+            case 'YYYY-MM-DD':
+                return `${año}-${mes}-${dia}`;
+            case 'relativo':
+                return this.obtenerTiempoRelativo(d);
+            default:
+                return d.toLocaleDateString('es-PE');
+        }
+    }
 
-// Convertir RGB a hex
-function rgbToHex(r, g, b) {
-    return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-}
+    obtenerTiempoRelativo(fecha) {
+        const ahora = new Date();
+        const diffMs = ahora - fecha;
+        const diffDias = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        const diffHoras = Math.floor(diffMs / (1000 * 60 * 60));
+        const diffMinutos = Math.floor(diffMs / (1000 * 60));
+        
+        if (diffMinutos < 1) return 'Ahora mismo';
+        if (diffMinutos < 60) return `Hace ${diffMinutos} minuto${diffMinutos > 1 ? 's' : ''}`;
+        if (diffHoras < 24) return `Hace ${diffHoras} hora${diffHoras > 1 ? 's' : ''}`;
+        if (diffDias === 1) return 'Ayer';
+        if (diffDias < 7) return `Hace ${diffDias} días`;
+        if (diffDias < 30) return `Hace ${Math.floor(diffDias / 7)} semana${Math.floor(diffDias / 7) > 1 ? 's' : ''}`;
+        if (diffDias < 365) return `Hace ${Math.floor(diffDias / 30)} mes${Math.floor(diffDias / 30) > 1 ? 'es' : ''}`;
+        return `Hace ${Math.floor(diffDias / 365)} año${Math.floor(diffDias / 365) > 1 ? 's' : ''}`;
+    }
 
-// Obtener color de contraste (blanco o negro)
-function getContrastColor(hexColor) {
-    const rgb = hexToRgb(hexColor);
-    if (!rgb) return '#000000';
-    
-    const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
-    return brightness > 128 ? '#000000' : '#ffffff';
-}
+    extraerValorNumerico(texto) {
+        if (typeof texto === 'number') return texto;
+        
+        // Extraer número de texto con símbolos de moneda peruanos
+        const textoLimpio = texto.toString()
+            .replace(/[S\/\.\s,₡$€£¥%]/g, '')
+            .replace(/[^\d\.-]/g, '');
+        
+        const numero = parseFloat(textoLimpio);
+        return isNaN(numero) ? 0 : numero;
+    }
 
-// ======= UTILIDADES DE RENDIMIENTO =======
+    // ======= VALIDACIONES PERUANAS =======
 
-// Medir tiempo de ejecución
-function measureTime(label, fn) {
-    const start = performance.now();
-    const result = fn();
-    const end = performance.now();
-    console.log(`${label}: ${end - start} milliseconds`);
-    return result;
-}
+    esEmailValido(email) {
+        const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regexEmail.test(email);
+    }
 
-// Cargar script dinámicamente
-function loadScript(src) {
-    return new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = src;
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.appendChild(script);
-    });
-}
+    esRUCValido(ruc) {
+        if (!ruc || ruc.length !== 11) return false;
+        
+        // Verificar que sean solo números
+        if (!/^\d{11}$/.test(ruc)) return false;
+        
+        // Verificar primer dígito (10, 20 para empresas, 15 para extranjeros)
+        const primerDigito = parseInt(ruc.substring(0, 2));
+        if (![10, 20, 15].includes(primerDigito)) return false;
+        
+        // Algoritmo de validación RUC
+        const factores = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2];
+        let suma = 0;
+        
+        for (let i = 0; i < 10; i++) {
+            suma += parseInt(ruc[i]) * factores[i];
+        }
+        
+        const residuo = suma % 11;
+        const digitoVerificacion = residuo < 2 ? residuo : 11 - residuo;
+        
+        return digitoVerificacion === parseInt(ruc[10]);
+    }
 
-// Cargar CSS dinámicamente
-function loadCSS(href) {
-    return new Promise((resolve, reject) => {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = href;
-        link.onload = resolve;
-        link.onerror = reject;
-        document.head.appendChild(link);
-    });
-}
+    esDNIValido(dni) {
+        return /^\d{8}$/.test(dni);
+    }
 
-// ======= UTILIDADES DE DISPOSITIVO =======
+    esTelefonoValido(telefono) {
+        // Formatos: 999999999, +51999999999, 51999999999
+        const regexTelefono = /^(\+?51)?[9][0-9]{8}$/;
+        return regexTelefono.test(telefono.replace(/\s+/g, ''));
+    }
 
-// Detectar si es dispositivo móvil
-function isMobile() {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-}
+    // ======= MANIPULACIÓN DEL DOM =======
 
-// Detectar si es tablet
-function isTablet() {
-    return /iPad|Android(?=.*Tablet)|Tablet/i.test(navigator.userAgent);
-}
-
-// Obtener información del navegador
-function getBrowserInfo() {
-    const ua = navigator.userAgent;
-    let browser = 'Unknown';
-    
-    if (ua.includes('Chrome')) browser = 'Chrome';
-    else if (ua.includes('Firefox')) browser = 'Firefox';
-    else if (ua.includes('Safari')) browser = 'Safari';
-    else if (ua.includes('Edge')) browser = 'Edge';
-    else if (ua.includes('Opera')) browser = 'Opera';
-    
-    return {
-        browser,
-        userAgent: ua,
-        platform: navigator.platform,
-        language: navigator.language
-    };
-}
-
-// ======= UTILIDADES DE FORMULARIOS =======
-
-// Serializar formulario a objeto
-function serializeForm(form) {
-    const formData = new FormData(form);
-    const data = {};
-    
-    for (let [key, value] of formData.entries()) {
-        if (data[key]) {
-            if (Array.isArray(data[key])) {
-                data[key].push(value);
+    crearElemento(etiqueta, atributos = {}, contenido = '') {
+        const elemento = document.createElement(etiqueta);
+        
+        Object.entries(atributos).forEach(([clave, valor]) => {
+            if (clave === 'className') {
+                elemento.className = valor;
+            } else if (clave === 'innerHTML') {
+                elemento.innerHTML = valor;
+            } else if (clave === 'textContent') {
+                elemento.textContent = valor;
+            } else if (clave === 'style' && typeof valor === 'object') {
+                Object.assign(elemento.style, valor);
             } else {
-                data[key] = [data[key], value];
+                elemento.setAttribute(clave, valor);
             }
+        });
+        
+        if (contenido) {
+            elemento.innerHTML = contenido;
+        }
+        
+        return elemento;
+    }
+
+    alternarElemento(elemento, mostrar = null) {
+        if (typeof elemento === 'string') {
+            elemento = document.getElementById(elemento);
+        }
+        
+        if (!elemento) {
+            this.log('Elemento no encontrado para alternar', 'warn');
+            return;
+        }
+        
+        const esVisible = elemento.style.display !== 'none';
+        const debeMostrar = mostrar !== null ? mostrar : !esVisible;
+        
+        if (debeMostrar) {
+            elemento.style.display = 'block';
+            elemento.style.opacity = '0';
+            setTimeout(() => {
+                elemento.style.transition = `opacity ${this.configuracion.animacion.duracion}ms ${this.configuracion.animacion.easing}`;
+                elemento.style.opacity = '1';
+            }, 10);
         } else {
-            data[key] = value;
+            elemento.style.transition = `opacity ${this.configuracion.animacion.duracion}ms ${this.configuracion.animacion.easing}`;
+            elemento.style.opacity = '0';
+            setTimeout(() => {
+                elemento.style.display = 'none';
+            }, this.configuracion.animacion.duracion);
         }
     }
-    
-    return data;
-}
 
-// Validar formulario
-function validateForm(form, rules = {}) {
-    const errors = {};
-    const formData = serializeForm(form);
-    
-    Object.entries(rules).forEach(([field, rule]) => {
-        const value = formData[field];
-        
-        if (rule.required && (!value || value.trim() === '')) {
-            errors[field] = rule.requiredMessage || `${field} es requerido`;
-            return;
-        }
-        
-        if (value && rule.minLength && value.length < rule.minLength) {
-            errors[field] = rule.minLengthMessage || 
-                `${field} debe tener al menos ${rule.minLength} caracteres`;
-            return;
-        }
-        
-        if (value && rule.pattern && !rule.pattern.test(value)) {
-            errors[field] = rule.patternMessage || `${field} tiene formato inválido`;
-            return;
-        }
-        
-        if (value && rule.custom && !rule.custom(value)) {
-            errors[field] = rule.customMessage || `${field} no es válido`;
-            return;
-        }
-    });
-    
-    return {
-        isValid: Object.keys(errors).length === 0,
-        errors
-    };
-}
+    // ======= OPTIMIZACIÓN DE EVENTOS =======
 
-// ======= UTILIDADES DE NOTIFICACIONES =======
-
-// Sistema de notificaciones mejorado
-class NotificationSystem {
-    constructor() {
-        this.container = this.createContainer();
-        this.notifications = new Map();
-        this.defaultDuration = 5000;
+    debounce(func, espera, inmediato = false) {
+        let timeout;
+        return function ejecutarFuncion(...args) {
+            const tarde = () => {
+                timeout = null;
+                if (!inmediato) func(...args);
+            };
+            const llamarAhora = inmediato && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(tarde, espera);
+            if (llamarAhora) func(...args);
+        };
     }
-    
-    createContainer() {
-        let container = document.getElementById('notification-container');
-        if (!container) {
-            container = createElement('div', {
-                id: 'notification-container',
-                className: 'notification-container',
-                style: 'position: fixed; top: 20px; right: 20px; z-index: 10000; max-width: 400px;'
+
+    throttle(func, limite) {
+        let enThrottle;
+        return function(...args) {
+            if (!enThrottle) {
+                func.apply(this, args);
+                enThrottle = true;
+                setTimeout(() => enThrottle = false, limite);
+            }
+        };
+    }
+
+    // ======= ALMACENAMIENTO LOCAL =======
+
+    guardarEnStorage(clave, datos) {
+        try {
+            const datosSerializados = JSON.stringify({
+                valor: datos,
+                timestamp: Date.now(),
+                version: '2.0'
             });
-            document.body.appendChild(container);
+            localStorage.setItem(`grizalum_${clave}`, datosSerializados);
+            return true;
+        } catch (error) {
+            this.log(`Error guardando en localStorage: ${error.message}`, 'error');
+            return false;
         }
-        return container;
+    }
+
+    cargarDeStorage(clave, valorDefecto = null) {
+        try {
+            const item = localStorage.getItem(`grizalum_${clave}`);
+            if (!item) return valorDefecto;
+            
+            const datosDeserializados = JSON.parse(item);
+            
+            // Verificar si los datos son del formato nuevo
+            if (datosDeserializados.version && datosDeserializados.valor !== undefined) {
+                return datosDeserializados.valor;
+            }
+            
+            // Compatibilidad con formato anterior
+            return datosDeserializados;
+            
+        } catch (error) {
+            this.log(`Error cargando de localStorage: ${error.message}`, 'error');
+            return valorDefecto;
+        }
+    }
+
+    eliminarDeStorage(clave) {
+        try {
+            localStorage.removeItem(`grizalum_${clave}`);
+            return true;
+        } catch (error) {
+            this.log(`Error eliminando de localStorage: ${error.message}`, 'error');
+            return false;
+        }
+    }
+
+    // ======= PETICIONES HTTP =======
+
+    async peticionHTTP(url, opciones = {}) {
+        const opcionesDefecto = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'GRIZALUM-App'
+            },
+            timeout: 10000
+        };
+        
+        const opcionesFusionadas = { ...opcionesDefecto, ...opciones };
+        
+        try {
+            // Crear AbortController para timeout
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), opcionesFusionadas.timeout);
+            
+            const response = await fetch(url, {
+                ...opcionesFusionadas,
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const tipoContenido = response.headers.get('content-type');
+            if (tipoContenido && tipoContenido.includes('application/json')) {
+                return await response.json();
+            } else {
+                return await response.text();
+            }
+            
+        } catch (error) {
+            this.log(`Error en petición HTTP a ${url}: ${error.message}`, 'error');
+            throw error;
+        }
+    }
+
+    // ======= UTILIDADES MATEMÁTICAS =======
+
+    aleatorioEnRango(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+
+    redondearADecimales(numero, decimales = 2) {
+        return Math.round(numero * Math.pow(10, decimales)) / Math.pow(10, decimales);
+    }
+
+    calcularCambioPorcentual(valorAnterior, valorNuevo) {
+        if (valorAnterior === 0) return valorNuevo > 0 ? 100 : 0;
+        return ((valorNuevo - valorAnterior) / valorAnterior) * 100;
+    }
+
+    calcularPromedio(numeros) {
+        if (!Array.isArray(numeros) || numeros.length === 0) return 0;
+        const suma = numeros.reduce((acc, num) => acc + num, 0);
+        return suma / numeros.length;
+    }
+
+    // ======= UTILIDADES DE ARRAYS =======
+
+    agruparPor(array, clave) {
+        return array.reduce((resultado, item) => {
+            const grupo = typeof clave === 'function' ? clave(item) : item[clave];
+            if (!resultado[grupo]) {
+                resultado[grupo] = [];
+            }
+            resultado[grupo].push(item);
+            return resultado;
+        }, {});
+    }
+
+    eliminarDuplicados(array, clave = null) {
+        if (clave) {
+            const vistos = new Set();
+            return array.filter(item => {
+                const val = typeof clave === 'function' ? clave(item) : item[clave];
+                if (vistos.has(val)) {
+                    return false;
+                }
+                vistos.add(val);
+                return true;
+            });
+        }
+        return [...new Set(array)];
+    }
+
+    ordenarPor(array, ...criterios) {
+        return array.sort((a, b) => {
+            for (const criterio of criterios) {
+                let { clave, orden = 'asc' } = typeof criterio === 'string' 
+                    ? { clave: criterio } 
+                    : criterio;
+                
+                const valorA = typeof clave === 'function' ? clave(a) : a[clave];
+                const valorB = typeof clave === 'function' ? clave(b) : b[clave];
+                
+                if (valorA < valorB) return orden === 'asc' ? -1 : 1;
+                if (valorA > valorB) return orden === 'asc' ? 1 : -1;
+            }
+            return 0;
+        });
+    }
+
+    // ======= UTILIDADES DE TEXTO =======
+
+    capitalizar(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    }
+
+    aTituloCompleto(str) {
+        return str.replace(/\w\S*/g, txt => 
+            txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+        );
+    }
+
+    truncarTexto(texto, longitudMaxima, sufijo = '...') {
+        if (texto.length <= longitudMaxima) return texto;
+        return texto.substring(0, longitudMaxima) + sufijo;
+    }
+
+    generarSlug(texto) {
+        return texto
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '') // Eliminar acentos
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+    }
+
+    // ======= UTILIDADES DE DISPOSITIVO =======
+
+    esMobil() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+
+    esTablet() {
+        return /iPad|Android(?=.*Tablet)|Tablet/i.test(navigator.userAgent);
+    }
+
+    obtenerInfoNavegador() {
+        const ua = navigator.userAgent;
+        let navegador = 'Desconocido';
+        
+        if (ua.includes('Chrome')) navegador = 'Chrome';
+        else if (ua.includes('Firefox')) navegador = 'Firefox';
+        else if (ua.includes('Safari')) navegador = 'Safari';
+        else if (ua.includes('Edge')) navegador = 'Edge';
+        else if (ua.includes('Opera')) navegador = 'Opera';
+        
+        return {
+            navegador,
+            userAgent: ua,
+            plataforma: navigator.platform,
+            idioma: navigator.language,
+            esMobil: this.esMobil(),
+            esTablet: this.esTablet()
+        };
+    }
+
+    // ======= SISTEMA DE NOTIFICACIONES =======
+
+    inicializarSistemaNotificaciones() {
+        this.sistemaNotificaciones = new SistemaNotificacionesGRIZALUM(this.configuracion.notificaciones);
+    }
+
+    mostrarNotificacion(mensaje, tipo = 'info', duracion = null, acciones = []) {
+        return this.sistemaNotificaciones.mostrar(mensaje, tipo, duracion, acciones);
+    }
+
+    mostrarExito(mensaje, duracion = 3000) {
+        return this.mostrarNotificacion(mensaje, 'success', duracion);
+    }
+
+    mostrarError(mensaje, duracion = 5000) {
+        return this.mostrarNotificacion(mensaje, 'error', duracion);
+    }
+
+    mostrarAdvertencia(mensaje, duracion = 4000) {
+        return this.mostrarNotificacion(mensaje, 'warning', duracion);
+    }
+
+    mostrarInfo(mensaje, duracion = 3000) {
+        return this.mostrarNotificacion(mensaje, 'info', duracion);
+    }
+
+    // ======= SISTEMA DE CARGA =======
+
+    mostrarCarga(objetivo = document.body, mensaje = 'Cargando...') {
+        const overlay = this.crearElemento('div', {
+            className: 'grizalum-loading-overlay',
+            style: {
+                position: objetivo === document.body ? 'fixed' : 'absolute',
+                top: '0',
+                left: '0',
+                right: '0',
+                bottom: '0',
+                background: 'rgba(255, 255, 255, 0.95)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: '9999',
+                flexDirection: 'column',
+                gap: '1rem',
+                backdropFilter: 'blur(2px)'
+            }
+        });
+        
+        const spinner = this.crearElemento('div', {
+            className: 'grizalum-spinner',
+            style: {
+                width: '48px',
+                height: '48px',
+                border: '4px solid #f3f4f6',
+                borderTop: '4px solid #3b82f6',
+                borderRadius: '50%',
+                animation: 'grizalum-spin 1s linear infinite'
+            }
+        });
+        
+        const texto = this.crearElemento('div', {
+            style: {
+                color: '#374151',
+                fontWeight: '600',
+                fontSize: '14px'
+            },
+            textContent: mensaje
+        });
+        
+        overlay.appendChild(spinner);
+        overlay.appendChild(texto);
+        objetivo.appendChild(overlay);
+        
+        return overlay;
+    }
+
+    ocultarCarga(objetivo = document.body) {
+        const overlay = objetivo.querySelector('.grizalum-loading-overlay');
+        if (overlay) {
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                if (overlay.parentNode) {
+                    overlay.parentNode.removeChild(overlay);
+                }
+            }, this.configuracion.animacion.duracion);
+        }
+    }
+
+    // ======= MEDICIÓN DE RENDIMIENTO =======
+
+    medirTiempo(etiqueta, fn) {
+        const inicio = performance.now();
+        const resultado = fn();
+        const fin = performance.now();
+        this.log(`${etiqueta}: ${(fin - inicio).toFixed(2)}ms`, 'info');
+        return resultado;
+    }
+
+    async medirTiempoAsync(etiqueta, fn) {
+        const inicio = performance.now();
+        const resultado = await fn();
+        const fin = performance.now();
+        this.log(`${etiqueta}: ${(fin - inicio).toFixed(2)}ms`, 'info');
+        return resultado;
+    }
+
+    // ======= ESTILOS CSS =======
+
+    inyectarEstilos() {
+        const idEstilo = 'grizalum-utilidades-estilos';
+        if (document.getElementById(idEstilo)) return;
+
+        const estilos = this.crearElemento('style', { id: idEstilo });
+        estilos.textContent = `
+            /* GRIZALUM - Estilos de Utilidades */
+            @keyframes grizalum-spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            
+            @keyframes grizalum-fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            
+            @keyframes grizalum-slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            
+            @keyframes grizalum-pulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+            }
+            
+            .grizalum-loading-overlay {
+                backdrop-filter: blur(2px) !important;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            }
+            
+            .grizalum-notification-container {
+                pointer-events: none;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            }
+            
+            .grizalum-notification {
+                pointer-events: all;
+                animation: grizalum-slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            
+            .grizalum-notification:hover {
+                transform: translateX(-5px);
+                box-shadow: 0 8px 25px rgba(0,0,0,0.2) !important;
+            }
+            
+            .grizalum-fade-in {
+                animation: grizalum-fadeIn 0.3s ease-out;
+            }
+            
+            .grizalum-pulse {
+                animation: grizalum-pulse 2s infinite;
+            }
+        `;
+        
+        document.head.appendChild(estilos);
+        this.log('🎨 Estilos de utilidades inyectados');
+    }
+
+    // ======= API PÚBLICA =======
+
+    obtenerEstado() {
+        return {
+            inicializado: this.inicializado,
+            configuracion: this.configuracion,
+            cache: {
+                entradas: this.cache.size,
+                claves: Array.from(this.cache.keys())
+            },
+            notificaciones: this.sistemaNotificaciones?.obtenerEstado() || null,
+            compatibilidad: this.verificarCompatibilidad()
+        };
+    }
+
+    limpiarCache() {
+        const entradas = this.cache.size;
+        this.cache.clear();
+        this.log(`🧹 Cache limpiado: ${entradas} entradas eliminadas`);
+    }
+}
+
+// ======= SISTEMA DE NOTIFICACIONES AVANZADO =======
+
+class SistemaNotificacionesGRIZALUM {
+    constructor(configuracion = {}) {
+        this.configuracion = {
+            duracionDefecto: configuracion.duracionDefecto || 5000,
+            posicion: configuracion.posicion || 'top-right',
+            maxVisibles: configuracion.maxVisibles || 5,
+            ...configuracion
+        };
+        
+        this.notificaciones = new Map();
+        this.contenedor = this.crearContenedor();
+        this.contador = 0;
     }
     
-    show(message, type = 'info', duration = null, actions = []) {
-        const id = 'notif_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        const finalDuration = duration !== null ? duration : this.defaultDuration;
+    crearContenedor() {
+        let contenedor = document.getElementById('grizalum-notification-container');
+        if (!contenedor) {
+            contenedor = document.createElement('div');
+            contenedor.id = 'grizalum-notification-container';
+            contenedor.className = 'grizalum-notification-container';
+            
+            const posicionEstilos = this.obtenerEstilosPosicion();
+            Object.assign(contenedor.style, {
+                position: 'fixed',
+                zIndex: '10000',
+                maxWidth: '420px',
+                ...posicionEstilos
+            });
+            
+            document.body.appendChild(contenedor);
+        }
+        return contenedor;
+    }
+    
+    obtenerEstilosPosicion() {
+        switch (this.configuracion.posicion) {
+            case 'top-left':
+                return { top: '20px', left: '20px' };
+            case 'top-center':
+                return { top: '20px', left: '50%', transform: 'translateX(-50%)' };
+            case 'top-right':
+                return { top: '20px', right: '20px' };
+            case 'bottom-left':
+                return { bottom: '20px', left: '20px' };
+            case 'bottom-center':
+                return { bottom: '20px', left: '50%', transform: 'translateX(-50%)' };
+            case 'bottom-right':
+                return { bottom: '20px', right: '20px' };
+            default:
+                return { top: '20px', right: '20px' };
+        }
+    }
+    
+    mostrar(mensaje, tipo = 'info', duracion = null, acciones = []) {
+        // Limitar número de notificaciones visibles
+        if (this.notificaciones.size >= this.configuracion.maxVisibles) {
+            const primeraNotificacion = this.notificaciones.keys().next().value;
+            this.eliminar(primeraNotificacion);
+        }
         
-        const notification = this.createNotification(id, message, type, actions);
-        this.container.appendChild(notification);
-        this.notifications.set(id, notification);
+        const id = `grizalum_notif_${++this.contador}_${Date.now()}`;
+        const duracionFinal = duracion !== null ? duracion : this.configuracion.duracionDefecto;
+        
+        const notificacion = this.crearNotificacion(id, mensaje, tipo, acciones);
+        this.contenedor.appendChild(notificacion);
+        this.notificaciones.set(id, notificacion);
         
         // Animación de entrada
         setTimeout(() => {
-            notification.style.transform = 'translateX(0)';
-            notification.style.opacity = '1';
+            notificacion.style.transform = 'translateX(0)';
+            notificacion.style.opacity = '1';
         }, 10);
         
-        // Auto-remove si tiene duración
-        if (finalDuration > 0) {
+        // Auto-eliminación
+        if (duracionFinal > 0) {
             setTimeout(() => {
-                this.remove(id);
-            }, finalDuration);
+                this.eliminar(id);
+            }, duracionFinal);
         }
         
         return id;
     }
     
-    createNotification(id, message, type, actions) {
-        const colors = {
-            success: { bg: '#10b981', icon: 'fas fa-check-circle' },
-            error: { bg: '#ef4444', icon: 'fas fa-exclamation-circle' },
-            warning: { bg: '#f59e0b', icon: 'fas fa-exclamation-triangle' },
-            info: { bg: '#3b82f6', icon: 'fas fa-info-circle' }
+    crearNotificacion(id, mensaje, tipo, acciones) {
+        const colores = {
+            success: { 
+                bg: 'linear-gradient(135deg, #10b981, #059669)', 
+                icono: 'fas fa-check-circle',
+                border: '#10b981'
+            },
+            error: { 
+                bg: 'linear-gradient(135deg, #ef4444, #dc2626)', 
+                icono: 'fas fa-exclamation-circle',
+                border: '#ef4444'
+            },
+            warning: { 
+                bg: 'linear-gradient(135deg, #f59e0b, #d97706)', 
+                icono: 'fas fa-exclamation-triangle',
+                border: '#f59e0b'
+            },
+            info: { 
+                bg: 'linear-gradient(135deg, #3b82f6, #2563eb)', 
+                icono: 'fas fa-info-circle',
+                border: '#3b82f6'
+            }
         };
         
-        const config = colors[type] || colors.info;
+        const config = colores[tipo] || colores.info;
         
-        const notification = createElement('div', {
-            className: 'notification',
-            style: `
-                background: ${config.bg};
-                color: white;
-                padding: 1rem 1.5rem;
-                border-radius: 8px;
-                margin-bottom: 10px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                transform: translateX(100%);
-                opacity: 0;
-                transition: all 0.3s ease;
-                display: flex;
-                align-items: center;
-                gap: 0.75rem;
-                font-weight: 500;
-                position: relative;
-                overflow: hidden;
-            `
+        const notificacion = document.createElement('div');
+        notificacion.className = 'grizalum-notification';
+        Object.assign(notificacion.style, {
+            background: config.bg,
+            color: 'white',
+            padding: '16px 20px',
+            borderRadius: '12px',
+            marginBottom: '12px',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.1), 0 4px 12px rgba(0,0,0,0.1)',
+            transform: 'translateX(100%)',
+            opacity: '0',
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            fontWeight: '500',
+            position: 'relative',
+            overflow: 'hidden',
+            backdropFilter: 'blur(10px)',
+            border: `1px solid ${config.border}`,
+            fontSize: '14px',
+            lineHeight: '1.4'
         });
         
         // Icono
-        const icon = createElement('i', { className: config.icon });
-        notification.appendChild(icon);
+        if (typeof config.icono === 'string') {
+            const icono = document.createElement('i');
+            icono.className = config.icono;
+            icono.style.fontSize = '18px';
+            notificacion.appendChild(icono);
+        }
         
         // Mensaje
-        const messageEl = createElement('div', { 
-            style: 'flex: 1; line-height: 1.4;',
-            innerHTML: message 
-        });
-        notification.appendChild(messageEl);
+        const mensajeEl = document.createElement('div');
+        mensajeEl.style.flex = '1';
+        mensajeEl.innerHTML = mensaje;
+        notificacion.appendChild(mensajeEl);
         
         // Acciones
-        if (actions.length > 0) {
-            const actionsContainer = createElement('div', {
-                style: 'display: flex; gap: 0.5rem; margin-left: 0.5rem;'
+        if (acciones.length > 0) {
+            const contenedorAcciones = document.createElement('div');
+            Object.assign(contenedorAcciones.style, {
+                display: 'flex',
+                gap: '8px',
+                marginLeft: '8px'
             });
             
-            actions.forEach(action => {
-                const btn = createElement('button', {
-                    style: `
-                        background: rgba(255,255,255,0.2);
-                        border: 1px solid rgba(255,255,255,0.3);
-                        color: white;
-                        padding: 0.25rem 0.75rem;
-                        border-radius: 4px;
-                        font-size: 0.8rem;
-                        cursor: pointer;
-                        transition: all 0.2s ease;
-                    `,
-                    textContent: action.label
+            acciones.forEach(accion => {
+                const boton = document.createElement('button');
+                Object.assign(boton.style, {
+                    background: 'rgba(255,255,255,0.2)',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    color: 'white',
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                });
+                boton.textContent = accion.etiqueta;
+                
+                boton.addEventListener('click', () => {
+                    accion.manejador();
+                    this.eliminar(id);
                 });
                 
-                btn.addEventListener('click', () => {
-                    action.handler();
-                    this.remove(id);
+                boton.addEventListener('mouseenter', () => {
+                    boton.style.background = 'rgba(255,255,255,0.3)';
+                    boton.style.transform = 'translateY(-1px)';
                 });
                 
-                btn.addEventListener('mouseenter', () => {
-                    btn.style.background = 'rgba(255,255,255,0.3)';
+                boton.addEventListener('mouseleave', () => {
+                    boton.style.background = 'rgba(255,255,255,0.2)';
+                    boton.style.transform = 'translateY(0)';
                 });
                 
-                btn.addEventListener('mouseleave', () => {
-                    btn.style.background = 'rgba(255,255,255,0.2)';
-                });
-                
-                actionsContainer.appendChild(btn);
+                contenedorAcciones.appendChild(boton);
             });
             
-            notification.appendChild(actionsContainer);
+            notificacion.appendChild(contenedorAcciones);
         }
         
         // Botón cerrar
-        const closeBtn = createElement('button', {
-            style: `
-                background: none;
-                border: none;
-                color: white;
-                font-size: 1.2rem;
-                cursor: pointer;
-                padding: 0;
-                margin-left: 0.5rem;
-                opacity: 0.7;
-                transition: opacity 0.2s ease;
-            `,
-            innerHTML: '&times;'
+        const botonCerrar = document.createElement('button');
+        Object.assign(botonCerrar.style, {
+            background: 'none',
+            border: 'none',
+            color: 'white',
+            fontSize: '20px',
+            cursor: 'pointer',
+            padding: '0',
+            marginLeft: '8px',
+            opacity: '0.8',
+            transition: 'all 0.2s ease',
+            width: '24px',
+            height: '24px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: '4px'
+        });
+        botonCerrar.innerHTML = '&times;';
+        
+        botonCerrar.addEventListener('click', () => this.eliminar(id));
+        botonCerrar.addEventListener('mouseenter', () => {
+            botonCerrar.style.opacity = '1';
+            botonCerrar.style.background = 'rgba(255,255,255,0.2)';
+        });
+        botonCerrar.addEventListener('mouseleave', () => {
+            botonCerrar.style.opacity = '0.8';
+            botonCerrar.style.background = 'none';
         });
         
-        closeBtn.addEventListener('click', () => this.remove(id));
-        closeBtn.addEventListener('mouseenter', () => closeBtn.style.opacity = '1');
-        closeBtn.addEventListener('mouseleave', () => closeBtn.style.opacity = '0.7');
+        notificacion.appendChild(botonCerrar);
         
-        notification.appendChild(closeBtn);
-        
-        return notification;
+        return notificacion;
     }
     
-    remove(id) {
-        const notification = this.notifications.get(id);
-        if (!notification) return;
+    eliminar(id) {
+        const notificacion = this.notificaciones.get(id);
+        if (!notificacion) return;
         
-        notification.style.transform = 'translateX(100%)';
-        notification.style.opacity = '0';
+        notificacion.style.transform = 'translateX(100%)';
+        notificacion.style.opacity = '0';
         
         setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
+            if (notificacion.parentNode) {
+                notificacion.parentNode.removeChild(notificacion);
             }
-            this.notifications.delete(id);
+            this.notificaciones.delete(id);
         }, 300);
     }
     
-    clear() {
-        this.notifications.forEach((_, id) => this.remove(id));
+    limpiar() {
+        this.notificaciones.forEach((_, id) => this.eliminar(id));
+    }
+    
+    obtenerEstado() {
+        return {
+            notificacionesActivas: this.notificaciones.size,
+            configuracion: this.configuracion
+        };
     }
 }
 
-// Instancia global del sistema de notificaciones
-const notificationSystem = new NotificationSystem();
+// ======= INSTANCIA GLOBAL =======
+const utilidadesGrizalum = new UtilidadesGRIZALUM();
 
-// Funciones de conveniencia para notificaciones
-function showNotification(message, type = 'info', duration = null, actions = []) {
-    return notificationSystem.show(message, type, duration, actions);
-}
+// ======= EXPORTACIÓN GLOBAL =======
 
-function showSuccessNotification(message, duration = 3000) {
-    return notificationSystem.show(message, 'success', duration);
-}
+// API principal
+window.GrizalumUtils = utilidadesGrizalum;
 
-function showErrorNotification(message, duration = 5000) {
-    return notificationSystem.show(message, 'error', duration);
-}
+// Funciones de conveniencia globales
+window.formatCurrency = (amount, includeSymbol) => utilidadesGrizalum.formatearMoneda(amount, includeSymbol);
+window.formatPercentage = (value, decimals) => utilidadesGrizalum.formatearPorcentaje(value, decimals);
+window.formatDate = (date, format) => utilidadesGrizalum.formatearFecha(date, format);
+window.showNotification = (...args) => utilidadesGrizalum.mostrarNotificacion(...args);
+window.showSuccessNotification = (message, duration) => utilidadesGrizalum.mostrarExito(message, duration);
+window.showErrorNotification = (message, duration) => utilidadesGrizalum.mostrarError(message, duration);
+window.showWarningNotification = (message, duration) => utilidadesGrizalum.mostrarAdvertencia(message, duration);
+window.showInfoNotification = (message, duration) => utilidadesGrizalum.mostrarInfo(message, duration);
 
-function showWarningNotification(message, duration = 4000) {
-    return notificationSystem.show(message, 'warning', duration);
-}
+// Compatibilidad con código existente
+window.debounce = (...args) => utilidadesGrizalum.debounce(...args);
+window.throttle = (...args) => utilidadesGrizalum.throttle(...args);
+window.isValidEmail = (email) => utilidadesGrizalum.esEmailValido(email);
+window.isValidRUC = (ruc) => utilidadesGrizalum.esRUCValido(ruc);
+window.isValidDNI = (dni) => utilidadesGrizalum.esDNIValido(dni);
 
-function showInfoNotification(message, duration = 3000) {
-    return notificationSystem.show(message, 'info', duration);
-}
-
-// ======= UTILIDADES DE CARGA =======
-
-// Loading spinner simple
-function showLoading(target = document.body, message = 'Cargando...') {
-    const overlay = createElement('div', {
-        className: 'loading-overlay',
-        style: `
-            position: ${target === document.body ? 'fixed' : 'absolute'};
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            flex-direction: column;
-            gap: 1rem;
-        `
-    });
-    
-    const spinner = createElement('div', {
-        style: `
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3b82f6;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        `
-    });
-    
-    const text = createElement('div', {
-        style: 'color: #374151; font-weight: 500;',
-        textContent: message
-    });
-    
-    overlay.appendChild(spinner);
-    overlay.appendChild(text);
-    target.appendChild(overlay);
-    
-    return overlay;
-}
-
-function hideLoading(target = document.body) {
-    const overlay = target.querySelector('.loading-overlay');
-    if (overlay) {
-        overlay.style.opacity = '0';
-        setTimeout(() => {
-            if (overlay.parentNode) {
-                overlay.parentNode.removeChild(overlay);
+// ======= INICIALIZACIÓN =======
+document.addEventListener('DOMContentLoaded', () => {
+    // Esperar un poco para asegurar que otros módulos estén listos
+    setTimeout(() => {
+        // Disparar evento de inicialización
+        const evento = new CustomEvent('grizalumUtilsReady', {
+            detail: { 
+                version: '2.0',
+                utils: utilidadesGrizalum,
+                timestamp: Date.now() 
             }
-        }, 300);
-    }
-}
+        });
+        document.dispatchEvent(evento);
+        
+        utilidadesGrizalum.log('🚀 GRIZALUM Utils completamente inicializado y listo', 'success');
+        
+    }, 100);
+});
 
-// ======= EXPORTAR UTILIDADES =======
-
-// Objeto con todas las utilidades para fácil acceso
-window.GrizalumUtils = {
-    // Formateo
-    formatCurrency,
-    formatPercentage,
-    formatDate,
-    getRelativeTime,
-    
-    // Validaciones
-    isValidEmail,
-    isValidRUC,
-    isValidDNI,
-    isValidPhone,
-    
-    // DOM
-    createElement,
-    toggleElement,
-    
-    // Eventos
-    debounce,
-    throttle,
-    
-    // Storage
-    saveToStorage,
-    loadFromStorage,
-    removeFromStorage,
-    
-    // Red
-    httpRequest,
-    
-    // Matemáticas
-    randomInRange,
-    roundToDecimals,
-    calculatePercentageChange,
-    calculateAverage,
-    
-    // Arrays
-    groupBy,
-    removeDuplicates,
-    sortBy,
-    
-    // Texto
-    capitalize,
-    toTitleCase,
-    truncateText,
-    generateSlug,
-    
-    // Colores
-    hexToRgb,
-    rgbToHex,
-    getContrastColor,
-    
-    // Rendimiento
-    measureTime,
-    loadScript,
-    loadCSS,
-    
-    // Dispositivo
-    isMobile,
-    isTablet,
-    getBrowserInfo,
-    
-    // Formularios
-    serializeForm,
-    validateForm,
-    
-    // Notificaciones
-    showNotification,
-    showSuccessNotification,
-    showErrorNotification,
-    showWarningNotification,
-    showInfoNotification,
-    
-    // Loading
-    showLoading,
-    hideLoading,
-    
-    // Sistema de notificaciones
-    notificationSystem
-};
-
-// Agregar estilos CSS necesarios
-const utilsCSS = `
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    
-    .notification-container {
-        pointer-events: none;
-    }
-    
-    .notification-container .notification {
-        pointer-events: all;
-    }
-    
-    .loading-overlay {
-        backdrop-filter: blur(2px);
-    }
-`;
-
-// Inyectar estilos
-const styleSheet = document.createElement('style');
-styleSheet.textContent = utilsCSS;
-document.head.appendChild(styleSheet);
-
-console.log('🛠️ Utils Module cargado');
-console.log('✨ Utilidades disponibles en window.GrizalumUtils:');
-console.log('  • Formateo de números, fechas y texto');
-console.log('  • Validaciones (RUC, DNI, email, etc.)');
-console.log('  • Manipulación del DOM');
-console.log('  • Sistema de notificaciones avanzado');
-console.log('  • Utilidades matemáticas y de arrays');
-console.log('  • Gestión de almacenamiento local');
-console.log('  • Y mucho más...');
-console.log('🚀 ¡Listo para usar!');
+console.log('🛠️ GRIZALUM Sistema de Utilidades v2.0 cargado');
+console.log('✨ Funcionalidades principales:');
+console.log('  • 💰 Formateo de moneda peruana optimizado');
+console.log('  • 📊 Validaciones específicas para Perú (RUC, DNI)');
+console.log('  • 🔔 Sistema de notificaciones avanzado');
+console.log('  • 📱 Detección de dispositivos móviles');
+console.log('  • 💾 Gestión de almacenamiento local');
+console.log('  • 🎨 Animaciones y transiciones suaves');
+console.log('  • ⚡ Optimización de eventos y rendimiento');
+console.log('  • 🌐 Peticiones HTTP con timeout');
+console.log('  • 🔧 Manipulación avanzada del DOM');
+console.log('🚀 ¡Sistema de utilidades listo para empresas peruanas!');
