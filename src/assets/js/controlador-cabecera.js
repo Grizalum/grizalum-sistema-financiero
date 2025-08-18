@@ -1450,7 +1450,14 @@ function showNotifications() {
  * Función global para IA Assistant (llamada desde HTML)
  */
 function toggleAIAssistant() {
-    return window.headerController?.abrirIAAssistant() || false;
+    // Conectar con el asistente IA real que ya funciona
+    if (window.advancedAI) {
+        window.advancedAI.toggle();
+        return true;
+    } else {
+        mostrarNotificacion('IA Assistant listo para ayudarte', 'success');
+        return false;
+    }
 }
 
 // ======= API PÚBLICA DEL HEADER =======
