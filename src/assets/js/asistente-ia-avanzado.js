@@ -1215,9 +1215,20 @@ Como experto en gestión empresarial, veo que tu pregunta toca aspectos importan
     console.log('🎯 Toggle panel - Estado actual:', panel.classList.contains('show'));
     
     if (panel.classList.contains('show')) {
+        // CERRAR PANEL
         panel.classList.remove('show');
+        
+        // Remover estilos forzados para que se cierre correctamente
+        setTimeout(() => {
+            panel.style.display = '';
+            panel.style.opacity = '';
+            panel.style.visibility = '';
+            panel.style.zIndex = '';
+        }, 50);
+        
         console.log('❌ Panel cerrado');
     } else {
+        // ABRIR PANEL
         panel.classList.add('show');
         console.log('✅ Panel abierto');
         
