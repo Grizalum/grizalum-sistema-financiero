@@ -115,17 +115,9 @@ class AdvancedAIAssistant {
 
     // ======= INTERFAZ DE USUARIO =======
     createAIInterface() {
+        // CREAR SOLO EL PANEL, NO EL BOTÓN FLOTANTE
         const aiHTML = `
-            <!-- BOTÓN FLOTANTE IA -->
-            <div id="aiAssistantButton" class="ai-assistant-button" onclick="advancedAI.toggle()">
-                <div class="ai-icon">
-                    <i class="fas fa-brain"></i>
-                </div>
-                <div class="ai-pulse"></div>
-                <div class="ai-notification-badge" id="aiNotificationBadge" style="display: none;">!</div>
-            </div>
-
-            <!-- PANEL PRINCIPAL -->
+            <!-- PANEL PRINCIPAL (sin botón flotante) -->
             <div id="aiAssistantPanel" class="ai-assistant-panel">
                 <!-- HEADER -->
                 <div class="ai-panel-header">
@@ -1346,7 +1338,74 @@ Como experto en gestión empresarial, veo que tu pregunta toca aspectos importan
     }
 
     bindEvents() {
+        // CONECTAR BOTÓN EXISTENTE "IA ASSISTANT"
+        this.conectarBotonExistente();
         console.log('🔗 Eventos del AI Assistant vinculados');
+    }
+
+    conectarBotonExistente() {
+        // Buscar el botón "IA Assistant" existente
+        const posiblesSelectores = [
+            '#iaAssistantBtn',
+            '.ia-assistant-btn', 
+            '[data-action="ia-assistant"]',
+            'button:contains("IA Assistant")',
+            '.btn-ia-assistant'
+        ];
+
+        let botonEncontrado = null;
+
+        // Intentar encontrar el botón por diferentes selectores
+        for (const selector of posiblesSelectores) {
+            try {
+                botonEncontrado = document.querySelector(selector);
+                if (botonEncontrado) {
+                    console.log(`✅ Botón IA Assistant encontrado con selector: ${selector}`);
+                    break;
+                }
+            } catch (e) {
+                // Continuar buscando
+            }
+        }
+
+        // Si no lo encuentra, buscar por texto
+        if (!botonEncontrado) {
+            const botones = document.querySelectorAll('button');
+            for (const boton of botones) {
+                if (boton.textContent.includes('IA Assistant') || 
+                    boton.textContent.includes('AI Assistant') ||
+                    boton.innerHTML.includes('IA Assistant')) {
+                    botonEncontrado = boton;
+                    console.log('✅ Botón IA Assistant encontrado por texto');
+                    break;
+                }
+            }
+        }
+
+        // Conectar el botón si se encuentra
+        if (botonEncontrado) {
+            // Remover eventos previos
+            botonEncontrado.onclick = null;
+            
+            // Agregar nuevo evento
+            botonEncontrado.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('🎯 Botón IA Assistant clickeado - abriendo panel');
+                this.toggle();
+            });
+
+            // Actualizar el texto si dice "próximamente disponible"
+            if (botonEncontrado.textContent.includes('próximamente')) {
+                botonEncontrado.innerHTML = botonEncontrado.innerHTML.replace(
+                    /próximamente disponible/gi, 
+                    'Listo para ayudarte'
+                );
+            }
+
+            console.log('🚀 Botón IA Assistant conectado exitosamente');
+        } else {
+            console.warn('⚠️ No se pudo encontrar el botón IA Assistant existente');
+        }
     }
 }
 
