@@ -850,37 +850,37 @@ class ControladorCabeceraGRIZALUM {
     // ======= IA ASSISTANT =======
     
     abrirIAAssistant() {
-        this.log('🤖 Abriendo IA Assistant...', 'info');
+    this.log('🧠 Abriendo IA Assistant...', 'info');
+    
+    try {
+        // Marcar botón como activo temporalmente
+        this.botonIA?.classList.add('active');
         
-        try {
-            // Marcar botón como activo temporalmente
-            this.botonIA?.classList.add('active');
-            
-            setTimeout(() => {
-                this.botonIA?.classList.remove('active');
-            }, 1000);
-
-            // Disparar evento personalizado
-            this.dispararEvento('grizalumIAAssistantSolicitado', {
-                timestamp: Date.now(),
-                origen: 'header'
-            });
-
-            // Mostrar notificación según modo
-            const mensaje = this.configuracion.ia.modoDemo 
-                ? '🤖 IA Assistant próximamente disponible'
-                : '🤖 Iniciando IA Assistant...';
-            
-            this.mostrarNotificacion(mensaje, 'info', 3000);
-            
-            return true;
-            
-        } catch (error) {
-            this.log(`❌ Error abriendo IA Assistant: ${error.message}`, 'error');
-            this.mostrarNotificacion('Error abriendo IA Assistant', 'error');
-            return false;
+        setTimeout(() => {
+            this.botonIA?.classList.remove('active');
+        }, 1000);
+        
+        // Disparar evento personalizado
+        this.dispararEvento('grizalumIAAssistantSolicitado', {
+            timestamp: Date.now(),
+            origen: 'header'
+        });
+        
+        // ABRIR EL ASISTENTE IA REAL en lugar de mostrar notificación
+        if (window.advancedAI) {
+            window.advancedAI.toggle();
+            this.log('✅ IA Assistant abierto exitosamente', 'success');
+        } else {
+            this.log('⚠️ IA Assistant no disponible aún', 'warning');
         }
+        
+        return true;
+        
+    } catch (error) {
+        this.log('❌ Error abriendo IA Assistant: ${error.message}', 'error');
+        return false;
     }
+}
 
     // ======= SIMULACIÓN DE DATOS =======
     
