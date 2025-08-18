@@ -1203,18 +1203,38 @@ Como experto en gestión empresarial, veo que tu pregunta toca aspectos importan
     // ======= FUNCIONES DE CONTROL =======
 
     toggle() {
-        const panel = document.getElementById('aiAssistantPanel');
-        if (panel) {
-            panel.classList.toggle('show');
-            
-            if (panel.classList.contains('show')) {
-                setTimeout(() => {
-                    const input = document.getElementById('aiChatInput');
-                    if (input) input.focus();
-                }, 300);
-            }
-        }
+    const panel = document.getElementById('aiAssistantPanel');
+    
+    if (!panel) {
+        console.log('⚠️ Panel no existe, creándolo...');
+        this.createAIInterface();
+        setTimeout(() => this.toggle(), 100);
+        return;
     }
+    
+    console.log('🎯 Toggle panel - Estado actual:', panel.classList.contains('show'));
+    
+    if (panel.classList.contains('show')) {
+        panel.classList.remove('show');
+        console.log('❌ Panel cerrado');
+    } else {
+        panel.classList.add('show');
+        console.log('✅ Panel abierto');
+        
+        // Forzar visibilidad si no aparece
+        setTimeout(() => {
+            panel.style.display = 'flex';
+            panel.style.opacity = '1';
+            panel.style.visibility = 'visible';
+            panel.style.zIndex = '9999';
+        }, 50);
+        
+        setTimeout(() => {
+            const input = document.getElementById('aiChatInput');
+            if (input) input.focus();
+        }, 300);
+    }
+}
 
     clearConversation() {
         const container = document.getElementById('aiChatMessages');
