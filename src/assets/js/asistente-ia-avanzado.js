@@ -161,12 +161,12 @@ class AsistenteIAMejorado {
                         <p class="ai-status-text">Listo para ayudarte</p>
                     </div>
                     <div class="ai-controls">
-                        <button class="ai-control-btn" onclick="window.assistantAI.clearConversation()" title="Nueva conversación">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                        <button class="ai-control-btn" onclick="window.assistantAI.toggle()" title="Cerrar">
-                            <i class="fas fa-times"></i>
-                        </button>
+                        <button class="ai-control-btn" onclick="if(window.assistantAI) window.assistantAI.clearConversation(); else if(window.advancedAI) window.advancedAI.clearConversation();" title="Nueva conversación">
+                       <i class="fas fa-plus"></i>
+                    </button>
+                       <button class="ai-control-btn" onclick="if(window.assistantAI) window.assistantAI.toggle(); else if(window.advancedAI) window.advancedAI.toggle();" title="Cerrar">
+                      <i class="fas fa-times"></i>
+                    </button>
                     </div>
                 </div>
 
