@@ -1624,6 +1624,24 @@ class GestorEmpresasProfesional {
         const modal = document.createElement('div');
         modal.id = 'grizalumModalEdicion';
         modal.className = 'grizalum-modal-overlay';
+        
+        // CSS para forzar visibilidad
+        modal.style.cssText = `
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: rgba(0, 0, 0, 0.8) !important;
+            z-index: 999999 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+        `;
+        
+        // Contenido del modal
         modal.innerHTML = `
             <div class="grizalum-modal">
                 <div class="grizalum-modal-header">
@@ -1652,40 +1670,14 @@ class GestorEmpresasProfesional {
                 </div>
             </div>
         `;
-                <div class="grizalum-modal-body">
-                    <div class="grizalum-campo">
-                        <label>📝 Nombre de la Empresa:</label>
-                        <input type="text" id="empresaNombre" value="${empresa.nombre}" maxlength="50">
-                    </div>
-                    <div class="grizalum-campo">
-                        <label>🎨 Icono de la Empresa:</label>
-                        <div class="grizalum-emoji-selector">
-                            <input type="text" id="empresaEmoji" value="${empresa.icono}" maxlength="2" readonly>
-                            <div class="grizalum-emojis-grid">
-                                ${this._generarEmojisDisponibles()}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="grizalum-modal-footer">
-                    <button class="grizalum-btn-cancelar" onclick="gestorEmpresas.cerrarModalEdicion()">
-                        ❌ Cancelar
-                    </button>
-                    <button class="grizalum-btn-guardar" onclick="gestorEmpresas.guardarEdicionBasica('${empresaId}')">
-                        💾 Guardar Cambios
-                    </button>
-                </div>
-            </div>
-        `;
 
         // Agregar al DOM
         document.body.appendChild(modal);
         
-        // Mostrar modal con animación
-        setTimeout(() => modal.classList.add('show'), 10);
-        
         // Focus en el nombre
-        document.getElementById('empresaNombre').focus();
+        setTimeout(() => {
+            document.getElementById('empresaNombre').focus();
+        }, 100);
         
         this._log('info', `📝 Modal de edición abierto para: ${empresa.nombre}`);
     }
