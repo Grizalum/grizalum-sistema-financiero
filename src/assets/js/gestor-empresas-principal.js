@@ -1537,14 +1537,14 @@ class GestorEmpresasProfesional {
     // ═══════════════════════════════════════════════════════════════════════════
 
     abrirModalNuevaEmpresa() {
-        this._log('info', '📝 Abriendo modal para nueva empresa');
-        console.log('🚀 Modal nueva empresa - Próximamente con gestor-empresas-formularios.js');
-        
-        // Cerrar lista
-        this._cerrarLista();
-        
-        // TODO: Implementar en gestor-empresas-formularios.js
-    }
+    this._log('info', '📝 Abriendo modal para nueva empresa');
+    
+    // Cerrar lista
+    this._cerrarLista();
+    
+    // Crear modal de nueva empresa
+    this._crearModalNuevaEmpresa();
+}
 
     editarEmpresa(empresaId) {
         this._log('info', `✏️ Editando empresa: ${empresaId}`);
