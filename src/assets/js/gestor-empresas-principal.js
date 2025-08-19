@@ -1758,8 +1758,20 @@ class GestorEmpresasProfesional {
 
         // Actualizar empresa
         this.estado.empresas[empresaId].nombre = nuevoNombre;
+
+        // Manejar icono/logo
+        if (this.logoTemporal) {
+        // Si hay logo personalizado, usarlo
+        this.estado.empresas[empresaId].logo = this.logoTemporal;
+        this.estado.empresas[empresaId].icono = null; // Limpiar emoji
+        this.logoTemporal = null; // Limpiar temporal
+        } else {
+       // Si es emoji normal
         this.estado.empresas[empresaId].icono = nuevoEmoji;
-        this.estado.empresas[empresaId].meta.fechaActualizacion = new Date().toISOString();
+        this.estado.empresas[empresaId].logo = null; // Limpiar logo
+       }
+
+       this.estado.empresas[empresaId].meta.fechaActualizacion = new Date().toISOString();
 
         // Guardar cambios
         this._guardarEmpresas();
