@@ -639,7 +639,7 @@ class GestorEmpresasProfesional {
             .grizalum-card-actions {
                 display: flex;
                 gap: 0.5rem;
-                opacity: 0;
+                opacity: 1;
                 transition: var(--grizalum-transition);
                 z-index: 1;
             }
