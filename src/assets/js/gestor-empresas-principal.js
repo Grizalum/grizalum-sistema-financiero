@@ -1613,74 +1613,44 @@ class GestorEmpresasProfesional {
      * @param {string} empresaId - ID de la empresa
      * @param {Object} empresa - Datos de la empresa
      */
-    _crearModalEdicionBasica(empresaId, empresa) {
-        // Remover modal previo si existe
-        const modalPrevio = document.getElementById('grizalumModalEdicion');
-        if (modalPrevio) {
-            modalPrevio.remove();
-        }
+   _crearModalEdicionBasica(empresaId, empresa) {
+    // Remover modal previo
+    const modalPrevio = document.getElementById('grizalumModalEdicion');
+    if (modalPrevio) modalPrevio.remove();
 
-        // Crear modal
-        const modal = document.createElement('div');
-        modal.id = 'grizalumModalEdicion';
-        modal.className = 'grizalum-modal-overlay';
-        
-        // CSS para forzar visibilidad
-        modal.style.cssText = `
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            height: 100% !important;
-            background: rgba(0, 0, 0, 0.8) !important;
-            z-index: 999999 !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            opacity: 1 !important;
-            visibility: visible !important;
-        `;
-        
-        // Contenido del modal
-        modal.innerHTML = `
-            <div class="grizalum-modal">
-                <div class="grizalum-modal-header">
-                    <h3>✏️ Editar Empresa</h3>
-                    <button class="grizalum-modal-close" onclick="gestorEmpresas.cerrarModalEdicion()">
-                        ✕
-                    </button>
+    // Crear modal súper simple
+    const modal = document.createElement('div');
+    modal.id = 'grizalumModalEdicion';
+    modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999999; display: flex; align-items: center; justify-content: center;';
+    
+    modal.innerHTML = `
+        <div style="background: white; border-radius: 16px; width: 500px; max-width: 90vw; box-shadow: 0 25px 50px rgba(0,0,0,0.3);">
+            <div style="background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; padding: 1.5rem; border-radius: 16px 16px 0 0;">
+                <h3 style="margin: 0; display: flex; justify-content: space-between; align-items: center;">
+                    ✏️ Editar Empresa
+                    <span onclick="gestorEmpresas.cerrarModalEdicion()" style="cursor: pointer; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.2); border-radius: 50%;">✕</span>
+                </h3>
+            </div>
+            <div style="padding: 2rem;">
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">📝 Nombre de la Empresa:</label>
+                    <input type="text" id="empresaNombre" value="${empresa.nombre}" maxlength="50" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;">
                 </div>
-                <div class="grizalum-modal-body">
-                    <div class="grizalum-campo">
-                        <label>📝 Nombre de la Empresa:</label>
-                        <input type="text" id="empresaNombre" value="${empresa.nombre}" maxlength="50">
-                    </div>
-                    <div class="grizalum-campo">
-                        <label>🎨 Icono de la Empresa:</label>
-                        <input type="text" id="empresaEmoji" value="${empresa.icono}" maxlength="2" style="width: 80px; text-align: center; font-size: 1.5rem;">
-                    </div>
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">🎨 Icono:</label>
+                    <input type="text" id="empresaEmoji" value="${empresa.icono}" maxlength="2" style="width: 80px; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1.5rem; text-align: center;">
                 </div>
-                <div class="grizalum-modal-footer">
-                    <button class="grizalum-btn-cancelar" onclick="gestorEmpresas.cerrarModalEdicion()">
-                        ❌ Cancelar
-                    </button>
-                    <button class="grizalum-btn-guardar" onclick="gestorEmpresas.guardarEdicionBasica('${empresaId}')">
-                        💾 Guardar Cambios
-                    </button>
+                <div style="display: flex; justify-content: flex-end; gap: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
+                    <button onclick="gestorEmpresas.cerrarModalEdicion()" style="background: #6b7280; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;">❌ Cancelar</button>
+                    <button onclick="gestorEmpresas.guardarEdicionBasica('${empresaId}')" style="background: #059669; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;">💾 Guardar</button>
                 </div>
             </div>
-        `;
+        </div>
+    `;
 
-        // Agregar al DOM
-        document.body.appendChild(modal);
-        
-        // Focus en el nombre
-        setTimeout(() => {
-            document.getElementById('empresaNombre').focus();
-        }, 100);
-        
-        this._log('info', `📝 Modal de edición abierto para: ${empresa.nombre}`);
-    }
+    document.body.appendChild(modal);
+    setTimeout(() => document.getElementById('empresaNombre').focus(), 100);
+}
 
     /**
      * Genera grid de emojis disponibles
