@@ -759,42 +759,76 @@ Como experto en gestión empresarial, veo que tu pregunta toca aspectos importan
     // ======= FUNCIONES DE CONTROL =======
 
     toggle() {
-    const panel = document.getElementById('aiAssistantPanel');
+    console.log('🎯 Toggle ejecutado');
+    
+    // FORZAR CREACIÓN DEL PANEL SI NO EXISTE
+    let panel = document.getElementById('aiAssistantPanel');
+    if (!panel) {
+        console.log('⚠️ Panel no existe, creándolo forzadamente...');
+        this.createAIInterface();
+        panel = document.getElementById('aiAssistantPanel');
+    }
     
     if (!panel) {
-        console.log('⚠️ Panel no existe, creándolo...');
-        this.createAIInterface();
-        setTimeout(() => this.toggle(), 100);
+        console.log('❌ No se pudo crear el panel');
+        // CREAR PANEL MÍNIMO DE EMERGENCIA
+        document.body.insertAdjacentHTML('beforeend', `
+            <div id="aiAssistantPanel" style="
+                position: fixed !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                width: 400px !important;
+                height: 500px !important;
+                background: white !important;
+                border: 2px solid #333 !important;
+                border-radius: 15px !important;
+                z-index: 999999 !important;
+                padding: 20px !important;
+                box-shadow: 0 0 50px rgba(0,0,0,0.5) !important;
+            ">
+                <h3>🤖 GRIZALUM AI EXPERT</h3>
+                <p>Panel de emergencia funcionando!</p>
+                <button onclick="document.getElementById('aiAssistantPanel').remove()" style="
+                    background: red; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;
+                ">Cerrar</button>
+                <textarea placeholder="Escribe tu pregunta..." style="width: 100%; height: 200px; margin: 10px 0;"></textarea>
+                <button style="background: blue; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">Enviar</button>
+            </div>
+        `);
+        console.log('✅ Panel de emergencia creado');
         return;
     }
     
-    console.log('🎯 Toggle panel - Estado actual:', panel.classList.contains('show'));
+    console.log('🎯 Panel encontrado, alternando visibilidad');
     
+    // FORZAR VISIBILIDAD TOTAL
     if (panel.classList.contains('show')) {
-        // CERRAR PANEL
         panel.classList.remove('show');
-        
-        // Remover estilos forzados para que se cierre correctamente
-        setTimeout(() => {
-            panel.style.display = '';
-            panel.style.opacity = '';
-            panel.style.visibility = '';
-            panel.style.zIndex = '';
-        }, 50);
-        
+        panel.style.display = 'none';
         console.log('❌ Panel cerrado');
     } else {
-        // ABRIR PANEL
         panel.classList.add('show');
-        console.log('✅ Panel abierto');
         
-        // Forzar visibilidad si no aparece
-        setTimeout(() => {
-            panel.style.display = 'flex';
-            panel.style.opacity = '1';
-            panel.style.visibility = 'visible';
-            panel.style.zIndex = '9999';
-        }, 50);
+        // FORZAR ESTILOS CRÍTICOS
+        panel.style.cssText = `
+            position: fixed !important;
+            bottom: 120px !important;
+            right: 30px !important;
+            width: 450px !important;
+            height: 600px !important;
+            background: white !important;
+            border: 2px solid #333 !important;
+            border-radius: 15px !important;
+            z-index: 999999 !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            display: flex !important;
+            flex-direction: column !important;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5) !important;
+        `;
+        
+        console.log('✅ Panel abierto y forzado');
         
         setTimeout(() => {
             const input = document.getElementById('aiChatInput');
