@@ -1845,17 +1845,26 @@ class GestorEmpresasProfesional {
      * @param {string} tema - Tema seleccionado
      */
     seleccionarTema(tema) {
-        // Remover selección previa
-        document.querySelectorAll('#grizalumModalNuevaEmpresa [onclick*="seleccionarTema"]').forEach(el => {
-            el.style.borderColor = 'transparent';
-        });
-        
-        // Marcar como seleccionado
+    // Verificar que el modal existe
+    const modal = document.getElementById('grizalumModalNuevaEmpresa');
+    if (!modal) return;
+    
+    // Remover selección previa
+    modal.querySelectorAll('[onclick*="seleccionarTema"]').forEach(el => {
+        el.style.borderColor = 'transparent';
+    });
+    
+    // Marcar como seleccionado
+    if (event && event.target) {
         event.target.style.borderColor = this.config.temas[tema].primary;
-        
-        // Guardar selección
-        document.getElementById('nuevaEmpresaTema').value = tema;
     }
+    
+    // Guardar selección
+    const temaInput = document.getElementById('nuevaEmpresaTema');
+    if (temaInput) {
+        temaInput.value = tema;
+    }
+}
 
     /**
      * Crea nueva empresa
@@ -1963,15 +1972,43 @@ class GestorEmpresasProfesional {
      * Selecciona un emoji para la empresa
      * @param {string} emoji - Emoji seleccionado
      */
-    seleccionarEmoji(emoji) {
-        document.getElementById('empresaEmoji').value = emoji;
-        
-        // Remover selección previa
-        document.querySelectorAll('.grizalum-emoji-option').forEach(el => el.classList.remove('selected'));
-        
-        // Marcar como seleccionado
-        event.target.classList.add('selected');
+   seleccionarEmoji(emoji) {
+    // Para modal de edición
+    const editEmoji = document.getElementById('empresaEmoji');
+    if (editEmoji) {
+        editEmoji.value = emoji;
     }
+    
+    // Para modal de nueva empresa
+    const newEmoji = document.getElementById('nuevaEmpresaEmoji');
+    if (newEmoji) {
+        newEmoji.value = emoji;
+    }
+    
+    // Efecto visual - buscar en ambos modales
+    const modalEdicion = document.getElementById('grizalumModalEdicion');
+    const modalNueva = document.getElementById('grizalumModalNuevaEmpresa');
+    
+    if (modalEdicion) {
+        modalEdicion.querySelectorAll('[onclick*="seleccionarEmoji"]').forEach(el => {
+            el.style.background = 'white';
+            el.style.borderColor = '#e5e7eb';
+        });
+    }
+    
+    if (modalNueva) {
+        modalNueva.querySelectorAll('[onclick*="seleccionarEmoji"]').forEach(el => {
+            el.style.background = 'white';
+            el.style.borderColor = '#e5e7eb';
+        });
+    }
+    
+    // Marcar como seleccionado
+    if (event && event.target) {
+        event.target.style.background = '#dc2626';
+        event.target.style.borderColor = '#dc2626';
+    }
+}
 
     /**
      * Guarda los cambios de edición básica
