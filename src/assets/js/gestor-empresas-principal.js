@@ -668,6 +668,253 @@ class GestorEmpresasProfesional {
                 transform: scale(1.1);
                 color: var(--grizalum-primary);
             }
+
+            /* ═══════════════════════════════════════════════════════════════
+               BOTONES ESPECÍFICOS POR TIPO Y ROLES
+               ═══════════════════════════════════════════════════════════════ */
+            
+            .grizalum-btn-editar:hover {
+                background: #3b82f6;
+                color: white;
+                box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+                transform: scale(1.1);
+            }
+
+            .grizalum-btn-admin:hover {
+                background: #8b5cf6;
+                color: white;
+                box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+                transform: scale(1.1);
+            }
+
+            .grizalum-btn-eliminar:hover {
+                background: #ef4444;
+                color: white;
+                box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+                transform: scale(1.1);
+            }
+
+            /* ═══════════════════════════════════════════════════════════════
+               MODAL DE EDICIÓN ULTRA PROFESIONAL
+               ═══════════════════════════════════════════════════════════════ */
+            
+            .grizalum-modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(5px);
+                z-index: 20000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+            }
+
+            .grizalum-modal-overlay.show {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .grizalum-modal {
+                background: white;
+                border-radius: 16px;
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+                width: 500px;
+                max-width: 90vw;
+                max-height: 90vh;
+                overflow: hidden;
+                transform: scale(0.9) translateY(20px);
+                transition: all 0.3s ease;
+            }
+
+            .grizalum-modal-overlay.show .grizalum-modal {
+                transform: scale(1) translateY(0);
+            }
+
+            .grizalum-modal-header {
+                background: linear-gradient(135deg, var(--grizalum-primary) 0%, var(--grizalum-secondary) 100%);
+                color: white;
+                padding: 1.5rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .grizalum-modal-header h3 {
+                margin: 0;
+                font-size: 1.2rem;
+                font-weight: 700;
+            }
+
+            .grizalum-modal-close {
+                background: rgba(255, 255, 255, 0.2);
+                border: none;
+                color: white;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+            }
+
+            .grizalum-modal-close:hover {
+                background: rgba(255, 255, 255, 0.3);
+                transform: scale(1.1);
+            }
+
+            .grizalum-modal-body {
+                padding: 2rem;
+            }
+
+            .grizalum-campo {
+                margin-bottom: 1.5rem;
+            }
+
+            .grizalum-campo label {
+                display: block;
+                font-weight: 600;
+                color: var(--grizalum-text);
+                margin-bottom: 0.5rem;
+                font-size: 0.95rem;
+            }
+
+            .grizalum-campo input[type="text"] {
+                width: 100%;
+                padding: 0.75rem 1rem;
+                border: 2px solid var(--grizalum-border);
+                border-radius: 8px;
+                font-size: 1rem;
+                transition: all 0.3s ease;
+                background: var(--grizalum-bg);
+            }
+
+            .grizalum-campo input[type="text"]:focus {
+                outline: none;
+                border-color: var(--grizalum-primary);
+                box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+            }
+
+            .grizalum-emoji-selector {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .grizalum-emoji-selector input {
+                width: 80px !important;
+                text-align: center;
+                font-size: 1.5rem;
+                cursor: pointer;
+            }
+
+            .grizalum-emojis-grid {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                flex: 1;
+            }
+
+            .grizalum-emoji-option {
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: var(--grizalum-bg-secondary);
+                border: 2px solid var(--grizalum-border);
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 1.2rem;
+                transition: all 0.3s ease;
+            }
+
+            .grizalum-emoji-option:hover {
+                background: var(--grizalum-primary);
+                border-color: var(--grizalum-primary);
+                transform: scale(1.1);
+            }
+
+            .grizalum-emoji-option.selected {
+                background: var(--grizalum-primary);
+                border-color: var(--grizalum-primary);
+                box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+            }
+
+            .grizalum-modal-footer {
+                background: var(--grizalum-bg-secondary);
+                padding: 1.5rem;
+                display: flex;
+                justify-content: flex-end;
+                gap: 1rem;
+                border-top: 1px solid var(--grizalum-border);
+            }
+
+            .grizalum-btn-cancelar {
+                background: #6b7280;
+                color: white;
+                border: none;
+                padding: 0.75rem 1.5rem;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .grizalum-btn-cancelar:hover {
+                background: #4b5563;
+                transform: translateY(-2px);
+            }
+
+            .grizalum-btn-guardar {
+                background: linear-gradient(135deg, var(--grizalum-success) 0%, #047857 100%);
+                color: white;
+                border: none;
+                padding: 0.75rem 1.5rem;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+            }
+
+            .grizalum-btn-guardar:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(5, 150, 105, 0.4);
+            }
+
+            /* Responsive para modales */
+            @media (max-width: 768px) {
+                .grizalum-modal {
+                    width: 95vw;
+                    margin: 1rem;
+                }
+
+                .grizalum-modal-body {
+                    padding: 1.5rem;
+                }
+
+                .grizalum-emojis-grid {
+                    justify-content: center;
+                }
+
+                .grizalum-modal-footer {
+                    flex-direction: column;
+                }
+            }
             
             .grizalum-list-footer {
                 padding: 1.25rem;
@@ -876,12 +1123,10 @@ class GestorEmpresasProfesional {
                 ${this._obtenerEmojiEstado(empresa.estado)}
             </div>
             <div class="grizalum-card-actions">
-                <button class="grizalum-action-btn" onclick="gestorEmpresas.editarEmpresa('${id}')" title="Editar">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="grizalum-action-btn" onclick="gestorEmpresas.configurarEmpresa('${id}')" title="Configurar">
-                    <i class="fas fa-cog"></i>
-                </button>
+            <button class="grizalum-action-btn grizalum-btn-editar" onclick="gestorEmpresas.editarEmpresaBasico('${id}')" title="Editar Empresa">
+            <i class="fas fa-edit"></i>
+            </button>
+            ${this._generarBotonesSegunRol(id)}
             </div>
         `;
         
@@ -893,6 +1138,34 @@ class GestorEmpresasProfesional {
         });
         
         return card;
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // SISTEMA DE BOTONES SEGÚN ROL
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    /**
+     * Genera botones según el rol del usuario
+     * @param {string} empresaId - ID de la empresa
+     * @returns {string} HTML de botones adicionales
+     */
+    _generarBotonesSegunRol(empresaId) {
+        // Por ahora, simulamos que somos ADMIN
+        // TODO: Implementar sistema de roles real
+        const esAdmin = true; // Cambiaremos esto después
+        
+        if (esAdmin) {
+            return `
+                <button class="grizalum-action-btn grizalum-btn-admin" onclick="gestorEmpresas.gestionarEmpresa('${empresaId}')" title="Gestión Admin">
+                    <i class="fas fa-crown"></i>
+                </button>
+                <button class="grizalum-action-btn grizalum-btn-eliminar" onclick="gestorEmpresas.confirmarEliminarEmpresa('${empresaId}')" title="Eliminar Empresa">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+        } else {
+            return ''; // Los operarios solo ven el botón editar
+        }
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
@@ -1285,6 +1558,195 @@ class GestorEmpresasProfesional {
         this._cerrarLista();
         
         // TODO: Implementar en gestor-empresas-temas.js
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // SISTEMA DE EDICIÓN POR ROLES
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    /**
+     * Abre modal de edición básica para operarios
+     * @param {string} empresaId - ID de la empresa a editar
+     */
+    editarEmpresaBasico(empresaId) {
+        const empresa = this.estado.empresas[empresaId];
+        if (!empresa) {
+            this._log('error', `Empresa no encontrada: ${empresaId}`);
+            return;
+        }
+
+        this._log('info', `✏️ Editando empresa básica: ${empresa.nombre}`);
+        
+        // Cerrar lista
+        this._cerrarLista();
+        
+        // Crear modal básico de edición
+        this._crearModalEdicionBasica(empresaId, empresa);
+    }
+
+    /**
+     * Gestión avanzada para administradores
+     * @param {string} empresaId - ID de la empresa
+     */
+    gestionarEmpresa(empresaId) {
+        this._log('info', `👑 Gestión admin de empresa: ${empresaId}`);
+        console.log('🚀 Panel Admin - Próximamente en Fase 2');
+        
+        this._cerrarLista();
+        // TODO: Implementar en Fase 2
+    }
+
+    /**
+     * Confirmar eliminación de empresa (solo admin)
+     * @param {string} empresaId - ID de la empresa
+     */
+    confirmarEliminarEmpresa(empresaId) {
+        this._log('info', `🗑️ Solicitud eliminar empresa: ${empresaId}`);
+        console.log('🚀 Eliminar empresa - Próximamente en Fase 3');
+        
+        this._cerrarLista();
+        // TODO: Implementar en Fase 3
+    }
+
+    /**
+     * Crea modal de edición básica
+     * @param {string} empresaId - ID de la empresa
+     * @param {Object} empresa - Datos de la empresa
+     */
+    _crearModalEdicionBasica(empresaId, empresa) {
+        // Remover modal previo si existe
+        const modalPrevio = document.getElementById('grizalumModalEdicion');
+        if (modalPrevio) {
+            modalPrevio.remove();
+        }
+
+        // Crear modal
+        const modal = document.createElement('div');
+        modal.id = 'grizalumModalEdicion';
+        modal.className = 'grizalum-modal-overlay';
+        modal.innerHTML = `
+            <div class="grizalum-modal">
+                <div class="grizalum-modal-header">
+                    <h3>✏️ Editar Empresa</h3>
+                    <button class="grizalum-modal-close" onclick="gestorEmpresas.cerrarModalEdicion()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="grizalum-modal-body">
+                    <div class="grizalum-campo">
+                        <label>📝 Nombre de la Empresa:</label>
+                        <input type="text" id="empresaNombre" value="${empresa.nombre}" maxlength="50">
+                    </div>
+                    <div class="grizalum-campo">
+                        <label>🎨 Icono de la Empresa:</label>
+                        <div class="grizalum-emoji-selector">
+                            <input type="text" id="empresaEmoji" value="${empresa.icono}" maxlength="2" readonly>
+                            <div class="grizalum-emojis-grid">
+                                ${this._generarEmojisDisponibles()}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grizalum-modal-footer">
+                    <button class="grizalum-btn-cancelar" onclick="gestorEmpresas.cerrarModalEdicion()">
+                        ❌ Cancelar
+                    </button>
+                    <button class="grizalum-btn-guardar" onclick="gestorEmpresas.guardarEdicionBasica('${empresaId}')">
+                        💾 Guardar Cambios
+                    </button>
+                </div>
+            </div>
+        `;
+
+        // Agregar al DOM
+        document.body.appendChild(modal);
+        
+        // Mostrar modal con animación
+        setTimeout(() => modal.classList.add('show'), 10);
+        
+        // Focus en el nombre
+        document.getElementById('empresaNombre').focus();
+        
+        this._log('info', `📝 Modal de edición abierto para: ${empresa.nombre}`);
+    }
+
+    /**
+     * Genera grid de emojis disponibles
+     * @returns {string} HTML de emojis
+     */
+    _generarEmojisDisponibles() {
+        const emojis = ['🏢', '🏭', '🏪', '🏦', '🏨', '🔥', '🐔', '🌟', '💎', '⚡', '🚀', '🛠️', '🌱', '💡', '🎯', '💰'];
+        return emojis.map(emoji => 
+            `<span class="grizalum-emoji-option" onclick="gestorEmpresas.seleccionarEmoji('${emoji}')">${emoji}</span>`
+        ).join('');
+    }
+
+    /**
+     * Selecciona un emoji para la empresa
+     * @param {string} emoji - Emoji seleccionado
+     */
+    seleccionarEmoji(emoji) {
+        document.getElementById('empresaEmoji').value = emoji;
+        
+        // Remover selección previa
+        document.querySelectorAll('.grizalum-emoji-option').forEach(el => el.classList.remove('selected'));
+        
+        // Marcar como seleccionado
+        event.target.classList.add('selected');
+    }
+
+    /**
+     * Guarda los cambios de edición básica
+     * @param {string} empresaId - ID de la empresa
+     */
+    guardarEdicionBasica(empresaId) {
+        const nuevoNombre = document.getElementById('empresaNombre').value.trim();
+        const nuevoEmoji = document.getElementById('empresaEmoji').value;
+
+        // Validaciones
+        if (!nuevoNombre) {
+            alert('❌ El nombre de la empresa es obligatorio');
+            return;
+        }
+
+        if (nuevoNombre.length < 3) {
+            alert('❌ El nombre debe tener al menos 3 caracteres');
+            return;
+        }
+
+        // Actualizar empresa
+        this.estado.empresas[empresaId].nombre = nuevoNombre;
+        this.estado.empresas[empresaId].icono = nuevoEmoji;
+        this.estado.empresas[empresaId].meta.fechaActualizacion = new Date().toISOString();
+
+        // Guardar cambios
+        this._guardarEmpresas();
+        
+        // Actualizar interfaz
+        this._actualizarListaEmpresas();
+        this._actualizarSelectorPrincipal();
+        
+        // Cerrar modal
+        this.cerrarModalEdicion();
+        
+        // Registrar actividad
+        this._registrarActividad('EMPRESA_EDITADA', `Empresa actualizada: ${nuevoNombre}`);
+        
+        this._log('success', `✅ Empresa actualizada: ${nuevoNombre}`);
+        
+        // Notificar cambios
+        this._dispararEvento('empresaActualizada', { empresaId, empresa: this.estado.empresas[empresaId] });
+    }
+
+    /**
+     * Cierra el modal de edición
+     */
+    cerrarModalEdicion() {
+        const modal = document.getElementById('grizalumModalEdicion');
+        if (modal) {
+            modal.classList.remove('show');
+            setTimeout(() => modal.remove(), 300);
+        }
     }
 
     _manejarErrorInicializacion(error) {
