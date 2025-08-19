@@ -13,7 +13,8 @@ class AsistenteIAMejorado {
         this.knowledgeBase = this.initializeKnowledgeBase();
         this.currentContext = null;
         this.isThinking = false;
-        this.panelVisible = false;
+         this.panelVisible = false;
+         this.isToggling = false;
         
         // Estado de inicialización
         this.initialized = false;
@@ -980,6 +981,18 @@ Como experto en gestión empresarial, veo que tu pregunta toca aspectos importan
 
     // ======= FUNCIONES DE CONTROL MEJORADAS =======
  toggle() {
+     // PREVENIR LLAMADAS MÚLTIPLES
+    if (this.isToggling) {
+        this.log('⚠️ Toggle ya en progreso, ignorando...', 'warn');
+        return;
+    }
+    this.isToggling = true;
+    
+    // TIMEOUT PARA RESETEAR
+    setTimeout(() => {
+        this.isToggling = false;
+    }, 500);
+     
     try {
         this.log('🎯 Toggle del panel AI ejecutado');
         
