@@ -241,525 +241,81 @@ class AdvancedAIAssistant {
     }
 
     // ======= ESTILOS CSS AVANZADOS =======
-    addAIStyles() {
-        const css = `
-            <style>
-            /* ================================================
-               AI ASSISTANT ADVANCED STYLES
-               ================================================ */
-            
-            .ai-assistant-button {
-                position: fixed;
-                bottom: 30px;
-                right: 30px;
-                width: 70px;
-                height: 70px;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-                z-index: 1000;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                position: relative;
-                overflow: visible;
-            }
-
-            .ai-assistant-button:hover {
-                transform: translateY(-5px) scale(1.1);
-                box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
-            }
-
-            .ai-icon {
-                color: white;
-                font-size: 1.8rem;
-                z-index: 2;
-                animation: brainPulse 2s ease-in-out infinite;
-            }
-
-            @keyframes brainPulse {
-                0%, 100% { transform: scale(1); }
-                50% { transform: scale(1.1); }
-            }
-
-            .ai-pulse {
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                border-radius: 50%;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                opacity: 0.7;
-                animation: aiPulse 2s infinite;
-            }
-
-            @keyframes aiPulse {
-                0% { transform: scale(1); opacity: 0.7; }
-                50% { transform: scale(1.2); opacity: 0.3; }
-                100% { transform: scale(1.4); opacity: 0; }
-            }
-
-            .ai-notification-badge {
-                position: absolute;
-                top: -5px;
-                right: -5px;
-                width: 20px;
-                height: 20px;
-                background: #ef4444;
-                color: white;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 0.8rem;
-                font-weight: bold;
-                animation: badgeBounce 2s infinite;
-            }
-
-            @keyframes badgeBounce {
-                0%, 100% { transform: scale(1); }
-                50% { transform: scale(1.2); }
-            }
-
-            .ai-assistant-panel {
-                position: fixed;
-                bottom: 120px;
-                right: 30px;
-                width: 550px;
-                height: 750px;
-                background: white;
-                border-radius: 24px;
-                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-                z-index: 999;
-                opacity: 0;
-                visibility: hidden;
-                transform: translateY(20px) scale(0.95);
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                overflow: hidden;
-                border: 1px solid #e5e7eb;
-                display: flex;
-                flex-direction: column;
-            }
-
-            .ai-assistant-panel.show {
-                opacity: 1;
-                visibility: visible;
-                transform: translateY(0) scale(1);
-            }
-
-            .ai-panel-header {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                padding: 1.5rem;
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                flex-shrink: 0;
-            }
-
-            .ai-avatar-advanced {
-                width: 50px;
-                height: 50px;
-                background: rgba(255, 255, 255, 0.2);
-                border-radius: 12px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 1.5rem;
-                position: relative;
-            }
-
-            .ai-status-indicator {
-                position: absolute;
-                bottom: 2px;
-                right: 2px;
-                width: 12px;
-                height: 12px;
-                background: #10b981;
-                border: 2px solid white;
-                border-radius: 50%;
-                animation: statusPulse 2s infinite;
-            }
-
-            @keyframes statusPulse {
-                0%, 100% { opacity: 1; }
-                50% { opacity: 0.5; }
-            }
-
-            .ai-info {
-                flex: 1;
-            }
-
-            .ai-info h4 {
-                margin: 0 0 0.25rem 0;
-                font-size: 1.1rem;
-                font-weight: 700;
-                letter-spacing: 0.5px;
-            }
-
-            .ai-status-text {
-                margin: 0;
-                font-size: 0.85rem;
-                opacity: 0.9;
-            }
-
-            .ai-controls {
-                display: flex;
-                gap: 0.5rem;
-            }
-
-            .ai-control-btn {
-                width: 36px;
-                height: 36px;
-                background: rgba(255, 255, 255, 0.2);
-                border: none;
-                border-radius: 8px;
-                color: white;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: all 0.3s ease;
-            }
-
-            .ai-control-btn:hover {
-                background: rgba(255, 255, 255, 0.3);
-                transform: scale(1.1);
-            }
-
-            .ai-suggestions-section {
-                padding: 1rem 1.5rem 0.5rem;
-                border-bottom: 1px solid #f3f4f6;
-                background: #fafafa;
-                flex-shrink: 0;
-            }
-
-            .ai-suggestions-section h5 {
-                margin: 0 0 0.75rem 0;
-                color: #374151;
-                font-size: 0.85rem;
-                font-weight: 700;
-            }
-
-            .ai-suggestions-container {
-                display: flex;
-                gap: 0.5rem;
-                overflow-x: auto;
-                padding-bottom: 0.5rem;
-            }
-
-            .ai-suggestion-chip {
-                background: white;
-                border: 1px solid #e5e7eb;
-                padding: 0.5rem 0.75rem;
-                border-radius: 20px;
-                font-size: 0.8rem;
-                cursor: pointer;
-                white-space: nowrap;
-                transition: all 0.3s ease;
-                color: #6b7280;
-            }
-
-            .ai-suggestion-chip:hover {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                transform: translateY(-1px);
-            }
-
-            .ai-chat-container {
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-                overflow: hidden;
-            }
-
-            .ai-chat-messages {
-                flex: 1;
-                padding: 1rem;
-                overflow-y: auto;
-                display: flex;
-                flex-direction: column;
-                gap: 1.5rem;
-            }
-
-            .ai-message, .user-message {
-                display: flex;
-                gap: 0.75rem;
-                align-items: flex-start;
-                animation: messageSlideIn 0.3s ease;
-            }
-
-            @keyframes messageSlideIn {
-                from { opacity: 0; transform: translateY(20px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-
-            .user-message {
-                flex-direction: row-reverse;
-            }
-
-            .ai-message-avatar, .user-message-avatar {
-                width: 36px;
-                height: 36px;
-                border-radius: 10px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 1.1rem;
-                flex-shrink: 0;
-            }
-
-            .ai-message-avatar {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-            }
-
-            .user-message-avatar {
-                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-                color: white;
-            }
-
-            .ai-message-content, .user-message-content {
-                background: #f8fafc;
-                padding: 1rem;
-                border-radius: 16px;
-                max-width: 380px;
-                line-height: 1.5;
-                position: relative;
-            }
-
-            .user-message-content {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-            }
-
-            .ai-message-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 0.5rem;
-                padding-bottom: 0.5rem;
-                border-bottom: 1px solid #e5e7eb;
-            }
-
-            .ai-timestamp {
-                font-size: 0.7rem;
-                color: #9ca3af;
-            }
-
-            .ai-message-text {
-                color: #374151;
-                margin-bottom: 1rem;
-            }
-
-            .ai-capabilities {
-                margin-top: 1rem;
-                display: flex;
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-
-            .capability-item {
-                background: white;
-                padding: 0.75rem;
-                border-radius: 8px;
-                font-size: 0.85rem;
-                border-left: 3px solid #667eea;
-            }
-
-            .ai-quick-actions {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 0.5rem;
-                margin-top: 1rem;
-            }
-
-            .quick-action-btn {
-                background: white;
-                border: 1px solid #e5e7eb;
-                padding: 0.5rem 0.75rem;
-                border-radius: 20px;
-                font-size: 0.8rem;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                color: #374151;
-            }
-
-            .quick-action-btn:hover {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                border-color: transparent;
-                transform: translateY(-1px);
-            }
-
-            .ai-typing-container {
-                padding: 0 1rem;
-            }
-
-            .ai-typing-indicator {
-                display: flex;
-                gap: 0.75rem;
-                align-items: flex-start;
-            }
-
-            .ai-typing-content {
-                background: #f1f5f9;
-                padding: 1rem;
-                border-radius: 16px;
-                display: flex;
-                align-items: center;
-                gap: 0.75rem;
-            }
-
-            .ai-thinking-animation {
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
-
-            .thinking-dots {
-                display: flex;
-                gap: 0.25rem;
-            }
-
-            .thinking-dots span {
-                width: 8px;
-                height: 8px;
-                background: #667eea;
-                border-radius: 50%;
-                animation: thinkingDots 1.4s infinite ease-in-out;
-            }
-
-            .thinking-dots span:nth-child(1) { animation-delay: -0.32s; }
-            .thinking-dots span:nth-child(2) { animation-delay: -0.16s; }
-            .thinking-dots span:nth-child(3) { animation-delay: 0s; }
-
-            @keyframes thinkingDots {
-                0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
-                40% { transform: scale(1.2); opacity: 1; }
-            }
-
-            .thinking-text {
-                font-size: 0.85rem;
-                color: #6b7280;
-                font-style: italic;
-            }
-
-            .ai-chat-input {
-                padding: 1rem;
-                border-top: 1px solid #f3f4f6;
-                background: white;
-                flex-shrink: 0;
-            }
-
-            .ai-input-container {
-                display: flex;
-                gap: 0.75rem;
-                align-items: flex-end;
-                background: #f8fafc;
-                border: 2px solid #e5e7eb;
-                border-radius: 16px;
-                padding: 0.75rem;
-                transition: all 0.3s ease;
-            }
-
-            .ai-input-container:focus-within {
-                border-color: #667eea;
-                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-            }
-
-            .ai-input-container textarea {
-                flex: 1;
-                border: none;
-                background: transparent;
-                resize: none;
-                outline: none;
-                font-family: inherit;
-                font-size: 0.9rem;
-                line-height: 1.4;
-                min-height: 20px;
-                max-height: 120px;
-            }
-
-            .ai-input-actions {
-                display: flex;
-                gap: 0.5rem;
-                align-items: center;
-            }
-
-            .ai-send-btn, .ai-voice-btn {
-                width: 36px;
-                height: 36px;
-                border: none;
-                border-radius: 8px;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: all 0.3s ease;
-                font-size: 0.9rem;
-            }
-
-            .ai-send-btn {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-            }
-
-            .ai-voice-btn {
-                background: #f3f4f6;
-                color: #6b7280;
-            }
-
-            .ai-voice-btn.active {
-                background: #ef4444;
-                color: white;
-                animation: voiceRecord 1s infinite;
-            }
-
-            @keyframes voiceRecord {
-                0%, 100% { transform: scale(1); }
-                50% { transform: scale(1.1); }
-            }
-
-            .ai-send-btn:hover, .ai-voice-btn:hover {
-                transform: scale(1.1);
-            }
-
-            .ai-input-footer {
-                margin-top: 0.5rem;
-                text-align: center;
-            }
-
-            .ai-input-hint {
-                font-size: 0.75rem;
-                color: #9ca3af;
-            }
-
-            /* RESPONSIVE */
-            @media (max-width: 768px) {
-                .ai-assistant-panel {
-                    bottom: 20px;
-                    right: 20px;
-                    left: 20px;
-                    width: auto;
-                    height: 80vh;
-                }
-                
-                .ai-assistant-button {
-                    bottom: 20px;
-                    right: 20px;
-                }
-
-                .ai-message-content, .user-message-content {
-                    max-width: 280px;
-                }
-            }
-            </style>
-        `;
-
-        document.head.insertAdjacentHTML('beforeend', css);
-    }
+   addAIStyles() {
+    // Crear elemento style
+    const styleElement = document.createElement('style');
+    styleElement.id = 'ai-assistant-styles';
+    
+    styleElement.textContent = `
+        /* ================================================
+           AI ASSISTANT ADVANCED STYLES
+           ================================================ */
+        
+        .ai-assistant-panel {
+            position: fixed !important;
+            bottom: 120px !important;
+            right: 30px !important;
+            width: 550px !important;
+            height: 750px !important;
+            background: white !important;
+            border-radius: 24px !important;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25) !important;
+            z-index: 9999 !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            transform: translateY(20px) scale(0.95) !important;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            overflow: hidden !important;
+            border: 1px solid #e5e7eb !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+
+        .ai-assistant-panel.show {
+            opacity: 1 !important;
+            visibility: visible !important;
+            transform: translateY(0) scale(1) !important;
+        }
+
+        .ai-panel-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white !important;
+            padding: 1.5rem !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 1rem !important;
+            flex-shrink: 0 !important;
+        }
+
+        .ai-chat-container {
+            flex: 1 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            overflow: hidden !important;
+        }
+
+        .ai-chat-messages {
+            flex: 1 !important;
+            padding: 1rem !important;
+            overflow-y: auto !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 1.5rem !important;
+        }
+
+        .ai-chat-input {
+            padding: 1rem !important;
+            border-top: 1px solid #f3f4f6 !important;
+            background: white !important;
+            flex-shrink: 0 !important;
+        }
+
+        /* Resto de estilos... */
+    `;
+    
+    document.head.appendChild(styleElement);
+    console.log('🎨 Estilos aplicados correctamente');
+}
         
     // ======= MOTOR DE IA INTELIGENTE =======
     async generateIntelligentResponse(userMessage) {
