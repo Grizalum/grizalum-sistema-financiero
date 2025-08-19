@@ -1122,11 +1122,11 @@ class GestorEmpresasProfesional {
             <div class="grizalum-card-estado">
                 ${this._obtenerEmojiEstado(empresa.estado)}
             </div>
-            <div class="grizalum-card-actions">
-            <button class="grizalum-action-btn grizalum-btn-editar" onclick="gestorEmpresas.editarEmpresaBasico('${id}')" title="Editar Empresa">
-            <i class="fas fa-edit"></i>
-            </button>
-            ${this._generarBotonesSegunRol(id)}
+           <div class="grizalum-card-actions">
+                <button class="grizalum-action-btn grizalum-btn-editar" onclick="gestorEmpresas.editarEmpresaBasico('${id}')" title="Editar Empresa">
+                    <i class="fas fa-edit"></i>
+                </button>
+                ${this._generarBotonesSegunRol(id)}
             </div>
         `;
         
