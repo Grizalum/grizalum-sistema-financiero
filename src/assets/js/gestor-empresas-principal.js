@@ -1629,9 +1629,29 @@ class GestorEmpresasProfesional {
                 <div class="grizalum-modal-header">
                     <h3>✏️ Editar Empresa</h3>
                     <button class="grizalum-modal-close" onclick="gestorEmpresas.cerrarModalEdicion()">
-                        <i class="fas fa-times"></i>
+                        ✕
                     </button>
                 </div>
+                <div class="grizalum-modal-body">
+                    <div class="grizalum-campo">
+                        <label>📝 Nombre de la Empresa:</label>
+                        <input type="text" id="empresaNombre" value="${empresa.nombre}" maxlength="50">
+                    </div>
+                    <div class="grizalum-campo">
+                        <label>🎨 Icono de la Empresa:</label>
+                        <input type="text" id="empresaEmoji" value="${empresa.icono}" maxlength="2" style="width: 80px; text-align: center; font-size: 1.5rem;">
+                    </div>
+                </div>
+                <div class="grizalum-modal-footer">
+                    <button class="grizalum-btn-cancelar" onclick="gestorEmpresas.cerrarModalEdicion()">
+                        ❌ Cancelar
+                    </button>
+                    <button class="grizalum-btn-guardar" onclick="gestorEmpresas.guardarEdicionBasica('${empresaId}')">
+                        💾 Guardar Cambios
+                    </button>
+                </div>
+            </div>
+        `;
                 <div class="grizalum-modal-body">
                     <div class="grizalum-campo">
                         <label>📝 Nombre de la Empresa:</label>
