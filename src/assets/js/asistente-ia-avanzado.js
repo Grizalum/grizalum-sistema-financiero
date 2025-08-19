@@ -198,11 +198,11 @@ class AsistenteIAMejorado {
                                 id="aiChatInput" 
                                 placeholder="¿Cómo puedo ayudarte? Ej: Analiza mi flujo de caja"
                                 rows="1"
-                                onkeydown="window.assistantAI.handleKeypress(event)"
-                                oninput="window.assistantAI.adjustTextareaHeight(this)"
+                               onkeydown="if(window.assistantAI) window.assistantAI.handleKeypress(event); else if(window.advancedAI) window.advancedAI.handleKeypress(event);"
+                               oninput="if(window.assistantAI) window.assistantAI.adjustTextareaHeight(this); else if(window.advancedAI) window.advancedAI.adjustTextareaHeight(this);"
                             ></textarea>
                             <div class="ai-input-actions">
-                                <button class="ai-send-btn" onclick="window.assistantAI.sendMessage()" title="Enviar mensaje">
+                                <button class="ai-send-btn" onclick="if(window.assistantAI) window.assistantAI.sendMessage(); else if(window.advancedAI) window.advancedAI.sendMessage();" title="Enviar mensaje">
                                     <i class="fas fa-paper-plane"></i>
                                 </button>
                             </div>
@@ -236,13 +236,13 @@ class AsistenteIAMejorado {
                         </div>
                         
                         <div class="ai-quick-actions">
-                            <button class="quick-action-btn" onclick="window.assistantAI.askPredefined('Analiza mi flujo de caja actual')">
+                            onclick="if(window.assistantAI) window.assistantAI.askPredefined('Analiza mi flujo de caja actual'); else if(window.advancedAI) window.advancedAI.askPredefined('Analiza mi flujo de caja actual');"
                                 💧 Analizar Flujo de Caja
                             </button>
-                            <button class="quick-action-btn" onclick="window.assistantAI.askPredefined('¿Cómo puedo reducir costos?')">
+                            onclick="if(window.assistantAI) window.assistantAI.askPredefined('¿Cómo puedo reducir costos?'); else if(window.advancedAI) window.advancedAI.askPredefined('¿Cómo puedo reducir costos?');"
                                 💰 Reducir Costos
                             </button>
-                            <button class="quick-action-btn" onclick="window.assistantAI.askPredefined('Estrategias para hacer crecer mi empresa')">
+                            onclick="if(window.assistantAI) window.assistantAI.askPredefined('Estrategias para hacer crecer mi empresa'); else if(window.advancedAI) window.advancedAI.askPredefined('Estrategias para hacer crecer mi empresa');"
                                 🚀 Estrategias de Crecimiento
                             </button>
                         </div>
