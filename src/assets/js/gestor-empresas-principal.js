@@ -1554,9 +1554,24 @@ class GestorEmpresasProfesional {
         }
     }
 
+        /**
+     * Selecciona tema de colores (CONECTADO CON TU SISTEMA)
+     * @param {string} tema - Tema seleccionado
+     */
     seleccionarTema(tema) {
         const modal = document.getElementById('grizalumModalNuevaEmpresa');
         if (!modal) return;
+        
+        // Mapear temas del gestor a tu sistema CSS
+        const mapaTemaCss = {
+            'rojo': 'red',
+            'azul': 'blue', 
+            'verde': 'green',
+            'morado': 'purple',
+            'dorado': 'gold'
+        };
+        
+        const temaCss = mapaTemaCss[tema] || 'gold';
         
         // Remover selección previa de TODOS los botones de tema
         modal.querySelectorAll('[data-tema]').forEach(el => {
@@ -1579,9 +1594,16 @@ class GestorEmpresasProfesional {
             temaInput.value = tema;
         }
         
-        this._log('info', `🎨 Tema seleccionado: ${tema}`);
+        // 🎨 APLICAR TEMA INMEDIATAMENTE AL MODAL (conexión con tu CSS)
+        modal.setAttribute('data-theme', temaCss);
+        
+        // Efecto visual de cambio
+        modal.classList.add('theme-changing');
+        setTimeout(() => modal.classList.remove('theme-changing'), 500);
+        
+        this._log('info', `🎨 Tema seleccionado: ${tema} → CSS: ${temaCss}`);
     }
-
+    
     crearNuevaEmpresa() {
         const nombre = document.getElementById('nuevaEmpresaNombre').value.trim();
         const categoria = document.getElementById('nuevaEmpresaCategoria').value;
@@ -1757,6 +1779,86 @@ class GestorEmpresasProfesional {
                 </div>
             `;
         }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // SISTEMA DE TEMAS POR EMPRESA (CONECTADO CON TU CSS)
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    /**
+     * Aplica el tema visual de la empresa seleccionada
+     * @param {Object} empresa - Datos de la empresa
+     */
+    _aplicarTemaEmpresa(empresa) {
+        if (!empresa || !empresa.tema) return;
+
+        // Mapear temas del gestor a tu sistema CSS existente
+        const mapaTemaCss = {
+            'rojo': 'red',
+            'azul': 'blue', 
+            'verde': 'green',
+            'morado': 'purple',
+            'dorado': 'gold'
+        };
+        
+        const temaCss = mapaTemaCss[empresa.tema] || 'gold';
+        
+        // Aplicar tema global usando tu sistema data-theme
+        document.documentElement.setAttribute('data-theme', temaCss);
+        
+        // Aplicar clase de cambio de tema para transiciones suaves
+        document.body.classList.add('theme-changing');
+        setTimeout(() => document.body.classList.remove('theme-changing'), 500);
+        
+        // Actualizar selector de temas si existe
+        const selectorTemas = document.querySelectorAll('.theme-option');
+        selectorTemas.forEach(option => {
+            option.classList.remove('active');
+            if (option.dataset.theme === temaCss) {
+                option.classList.add('active');
+            }
+        });
+
+        // Actualizar variables CSS específicas del gestor de empresas
+        const temaConfig = this.config.temas[empresa.tema];
+        if (temaConfig) {
+            document.documentElement.style.setProperty('--grizalum-primary', temaConfig.primary);
+            document.documentElement.style.setProperty('--grizalum-secondary', temaConfig.secondary);
+        }
+
+        this._log('success', `🎨 Tema aplicado: ${empresa.tema} → ${temaCss}`);
+        
+        // Guardar preferencia de tema de la empresa
+        localStorage.setItem('grizalum_tema_empresa_actual', empresa.tema);
+    }
+
+    /**
+     * ACTUALIZAR el método _actualizarSelectorPrincipal (BUSCA Y REEMPLAZA)
+     */
+    _actualizarSelectorPrincipal() {
+        const empresa = this._obtenerEmpresaActual();
+        if (!empresa) return;
+
+        const avatar = document.getElementById('grizalumEmpresaAvatar');
+        const nombre = document.getElementById('grizalumEmpresaNombre');
+        const estado = document.getElementById('grizalumEmpresaEstado');
+        const metricas = document.getElementById('grizalumEmpresaMetricas');
+
+        // Actualizar contenido
+        if (avatar) {
+            if (empresa.logo) {
+                avatar.innerHTML = `<img src="${empresa.logo}" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">`;
+            } else {
+                avatar.textContent = empresa.icono;
+            }
+        }
+        
+        if (nombre) nombre.textContent = empresa.nombre;
+        if (estado) estado.innerHTML = this._generarEstadoEmpresa(empresa);
+        if (metricas) metricas.innerHTML = `💰 ${this.config.regional.moneda} ${empresa.finanzas?.caja?.toLocaleString() || '0'}`;
+
+        // 🎨 APLICAR TEMA DE LA EMPRESA AUTOMÁTICAMENTE
+        this._aplicarTemaEmpresa(empresa);
     }
 }
 
