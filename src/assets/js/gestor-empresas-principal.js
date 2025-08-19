@@ -1844,7 +1844,7 @@ class GestorEmpresasProfesional {
      * Selecciona tema de colores
      * @param {string} tema - Tema seleccionado
      */
-    seleccionarTema(tema) {
+  seleccionarTema(tema) {
     // Verificar que el modal existe
     const modal = document.getElementById('grizalumModalNuevaEmpresa');
     if (!modal) return;
