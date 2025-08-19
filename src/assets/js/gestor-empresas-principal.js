@@ -1730,6 +1730,107 @@ class GestorEmpresasProfesional {
         `;
     }
     /**
+     * Crea modal para nueva empresa
+     */
+    _crearModalNuevaEmpresa() {
+        // Remover modal previo
+        const modalPrevio = document.getElementById('grizalumModalNuevaEmpresa');
+        if (modalPrevio) modalPrevio.remove();
+
+        // Crear modal
+        const modal = document.createElement('div');
+        modal.id = 'grizalumModalNuevaEmpresa';
+        modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999999; display: flex; align-items: center; justify-content: center;';
+        
+        modal.innerHTML = `
+            <div style="background: white; border-radius: 16px; width: 700px; max-width: 95vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.3);">
+                <div style="background: linear-gradient(135deg, #059669, #047857); color: white; padding: 1.5rem; border-radius: 16px 16px 0 0;">
+                    <h3 style="margin: 0; display: flex; justify-content: space-between; align-items: center;">
+                        ✨ Nueva Empresa
+                        <span onclick="gestorEmpresas.cerrarModalNuevaEmpresa()" style="cursor: pointer; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.2); border-radius: 50%;">✕</span>
+                    </h3>
+                </div>
+                <div style="padding: 2rem;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <div>
+                            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">🏢 Nombre de la Empresa:</label>
+                            <input type="text" id="nuevaEmpresaNombre" placeholder="Ej: Mi Nueva Empresa" maxlength="50" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">📋 Categoría:</label>
+                            <select id="nuevaEmpresaCategoria" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;">
+                                <option value="Manufactura">🏭 Manufactura</option>
+                                <option value="Comercio">🏪 Comercio</option>
+                                <option value="Servicios">🛠️ Servicios</option>
+                                <option value="Agropecuario">🌱 Agropecuario</option>
+                                <option value="Tecnología">💻 Tecnología</option>
+                                <option value="Salud">🏥 Salud</option>
+                                <option value="Educación">🎓 Educación</option>
+                                <option value="Restaurante">🍕 Restaurante</option>
+                                <option value="Transporte">🚗 Transporte</option>
+                                <option value="Construcción">🏗️ Construcción</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div style="margin: 1.5rem 0;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">🎨 Icono de la Empresa:</label>
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <input type="text" id="nuevaEmpresaEmoji" value="🏢" maxlength="2" readonly style="width: 80px; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1.5rem; text-align: center; background: #f8fafc;">
+                            <span style="color: #6b7280; font-size: 0.875rem;">👈 Selecciona un icono</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 0.5rem; padding: 1rem; background: #f8fafc; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 1rem;">
+                            ${this._generarGridEmojis()}
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <div>
+                            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">📍 Distrito:</label>
+                            <input type="text" id="nuevaEmpresaDistrito" placeholder="Ej: Lima" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">🏛️ Departamento:</label>
+                            <select id="nuevaEmpresaDepartamento" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;">
+                                <option value="Lima">Lima</option>
+                                <option value="Arequipa">Arequipa</option>
+                                <option value="Cusco">Cusco</option>
+                                <option value="Trujillo">Trujillo</option>
+                                <option value="Chiclayo">Chiclayo</option>
+                                <option value="Piura">Piura</option>
+                                <option value="Iquitos">Iquitos</option>
+                                <option value="Huancayo">Huancayo</option>
+                                <option value="Tacna">Tacna</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="margin: 1.5rem 0;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">🎨 Tema de Colores:</label>
+                        <div style="display: flex; gap: 1rem;">
+                            <div onclick="gestorEmpresas.seleccionarTema('rojo')" style="width: 60px; height: 40px; background: linear-gradient(135deg, #dc2626, #b91c1c); border-radius: 8px; cursor: pointer; border: 3px solid #dc2626; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem;">ROJO</div>
+                            <div onclick="gestorEmpresas.seleccionarTema('azul')" style="width: 60px; height: 40px; background: linear-gradient(135deg, #2563eb, #1d4ed8); border-radius: 8px; cursor: pointer; border: 3px solid transparent; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem;">AZUL</div>
+                            <div onclick="gestorEmpresas.seleccionarTema('verde')" style="width: 60px; height: 40px; background: linear-gradient(135deg, #059669, #047857); border-radius: 8px; cursor: pointer; border: 3px solid transparent; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem;">VERDE</div>
+                            <div onclick="gestorEmpresas.seleccionarTema('morado')" style="width: 60px; height: 40px; background: linear-gradient(135deg, #7c3aed, #6d28d9); border-radius: 8px; cursor: pointer; border: 3px solid transparent; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem;">MORADO</div>
+                            <div onclick="gestorEmpresas.seleccionarTema('dorado')" style="width: 60px; height: 40px; background: linear-gradient(135deg, #d97706, #b45309); border-radius: 8px; cursor: pointer; border: 3px solid transparent; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem;">DORADO</div>
+                        </div>
+                        <input type="hidden" id="nuevaEmpresaTema" value="rojo">
+                    </div>
+                </div>
+                <div style="background: #f8fafc; padding: 1.5rem; display: flex; justify-content: flex-end; gap: 1rem; border-top: 1px solid #e5e7eb;">
+                    <button onclick="gestorEmpresas.cerrarModalNuevaEmpresa()" style="background: #6b7280; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;">❌ Cancelar</button>
+                    <button onclick="gestorEmpresas.crearNuevaEmpresa()" style="background: #059669; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;">✨ Crear Empresa</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+        setTimeout(() => document.getElementById('nuevaEmpresaNombre').focus(), 100);
+        
+        this._log('info', '✨ Modal de nueva empresa abierto');
+    }
+    /**
      * Selecciona un emoji para la empresa
      * @param {string} emoji - Emoji seleccionado
      */
