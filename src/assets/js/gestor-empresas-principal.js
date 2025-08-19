@@ -1637,8 +1637,19 @@ class GestorEmpresasProfesional {
                     <input type="text" id="empresaNombre" value="${empresa.nombre}" maxlength="50" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;">
                 </div>
                 <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">🎨 Icono:</label>
-                    <input type="text" id="empresaEmoji" value="${empresa.icono}" maxlength="2" style="width: 80px; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1.5rem; text-align: center;">
+                       <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">🎨 Icono:</label>
+                 <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                 <input type="text" id="empresaEmoji" value="${empresa.icono}" maxlength="2" readonly style="width: 80px; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1.5rem; text-align: center; background: #f8fafc;">
+                 <span style="color: #6b7280; font-size: 0.875rem;">👈 Selecciona un icono abajo</span>
+               </div>
+                <div style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 0.5rem; padding: 1rem; background: #f8fafc; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 1rem;">
+                ${this._generarGridEmojis()}
+               </div>
+               <div style="margin-bottom: 1rem;">
+                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">📷 O sube tu logo:</label>
+                <input type="file" id="empresaLogo" accept="image/*" style="width: 100%; padding: 0.75rem; border: 2px dashed #e5e7eb; border-radius: 8px;" onchange="gestorEmpresas.manejarUploadLogo(event)">
+                <div id="previewLogo" style="margin-top: 0.5rem;"></div>
+               </div>
                 </div>
                 <div style="display: flex; justify-content: flex-end; gap: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
                     <button onclick="gestorEmpresas.cerrarModalEdicion()" style="background: #6b7280; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;">❌ Cancelar</button>
@@ -1656,13 +1667,62 @@ class GestorEmpresasProfesional {
      * Genera grid de emojis disponibles
      * @returns {string} HTML de emojis
      */
-    _generarEmojisDisponibles() {
-        const emojis = ['🏢', '🏭', '🏪', '🏦', '🏨', '🔥', '🐔', '🌟', '💎', '⚡', '🚀', '🛠️', '🌱', '💡', '🎯', '💰'];
-        return emojis.map(emoji => 
-            `<span class="grizalum-emoji-option" onclick="gestorEmpresas.seleccionarEmoji('${emoji}')">${emoji}</span>`
-        ).join('');
+  _generarGridEmojis() {
+    const emojis = [
+        '🏢', '🏭', '🏪', '🏦', '🏨', '🔥', '🐔', '🌟', 
+        '💎', '⚡', '🚀', '🛠️', '🌱', '💡', '🎯', '💰',
+        '🍕', '☕', '🚗', '✈️', '🏥', '🎓', '🎨', '🎵',
+        '📱', '💻', '⚽', '🏀', '🎮', '📚', '🔧', '⚖️'
+    ];
+    
+    return emojis.map(emoji => 
+        `<div onclick="gestorEmpresas.seleccionarEmoji('${emoji}')" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: white; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer; font-size: 1.2rem; transition: all 0.3s ease;" onmouseover="this.style.background='#dc2626'; this.style.borderColor='#dc2626'; this.style.transform='scale(1.1)'" onmouseout="this.style.background='white'; this.style.borderColor='#e5e7eb'; this.style.transform='scale(1)'">${emoji}</div>`
+    ).join('');
+}
+  /**
+     * Maneja el upload de logo
+     * @param {Event} event - Evento del input file
+     */
+    manejarUploadLogo(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const preview = document.getElementById('previewLogo');
+            preview.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 1rem; padding: 0.5rem; background: white; border-radius: 8px; border: 1px solid #e5e7eb;">
+                    <img src="${e.target.result}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                    <div>
+                        <div style="font-weight: 600; color: #059669;">✅ Logo cargado</div>
+                        <div style="font-size: 0.8rem; color: #6b7280;">${file.name}</div>
+                    </div>
+                    <button onclick="gestorEmpresas.usarLogo('${e.target.result}')" style="background: #059669; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.875rem;">Usar este logo</button>
+                </div>
+            `;
+        };
+        reader.readAsDataURL(file);
     }
 
+    /**
+     * Usa el logo subido
+     * @param {string} logoData - Data URL del logo
+     */
+    usarLogo(logoData) {
+        this.logoTemporal = logoData;
+        document.getElementById('empresaEmoji').value = '📷';
+        
+        const preview = document.getElementById('previewLogo');
+        preview.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 1rem; padding: 0.5rem; background: #f0fdf4; border-radius: 8px; border: 1px solid #059669;">
+                <img src="${logoData}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                <div>
+                    <div style="font-weight: 600; color: #059669;">🎉 Logo seleccionado</div>
+                    <div style="font-size: 0.8rem; color: #059669;">Se guardará al hacer clic en "Guardar"</div>
+                </div>
+            </div>
+        `;
+    }
     /**
      * Selecciona un emoji para la empresa
      * @param {string} emoji - Emoji seleccionado
