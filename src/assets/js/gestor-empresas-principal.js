@@ -1831,6 +1831,135 @@ class GestorEmpresasProfesional {
         this._log('info', '✨ Modal de nueva empresa abierto');
     }
     /**
+     * Cierra modal de nueva empresa
+     */
+    cerrarModalNuevaEmpresa() {
+        const modal = document.getElementById('grizalumModalNuevaEmpresa');
+        if (modal) {
+            modal.remove();
+        }
+    }
+
+    /**
+     * Selecciona tema de colores
+     * @param {string} tema - Tema seleccionado
+     */
+    seleccionarTema(tema) {
+        // Remover selección previa
+        document.querySelectorAll('#grizalumModalNuevaEmpresa [onclick*="seleccionarTema"]').forEach(el => {
+            el.style.borderColor = 'transparent';
+        });
+        
+        // Marcar como seleccionado
+        event.target.style.borderColor = this.config.temas[tema].primary;
+        
+        // Guardar selección
+        document.getElementById('nuevaEmpresaTema').value = tema;
+    }
+
+    /**
+     * Crea nueva empresa
+     */
+    crearNuevaEmpresa() {
+        const nombre = document.getElementById('nuevaEmpresaNombre').value.trim();
+        const categoria = document.getElementById('nuevaEmpresaCategoria').value;
+        const emoji = document.getElementById('nuevaEmpresaEmoji').value;
+        const distrito = document.getElementById('nuevaEmpresaDistrito').value.trim();
+        const departamento = document.getElementById('nuevaEmpresaDepartamento').value;
+        const tema = document.getElementById('nuevaEmpresaTema').value;
+
+        // Validaciones
+        if (!nombre) {
+            alert('❌ El nombre de la empresa es obligatorio');
+            return;
+        }
+
+        if (nombre.length < 3) {
+            alert('❌ El nombre debe tener al menos 3 caracteres');
+            return;
+        }
+
+        // Generar ID único
+        const empresaId = nombre.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').slice(0, 30);
+        
+        // Verificar que no exista
+        if (this.estado.empresas[empresaId]) {
+            alert('❌ Ya existe una empresa con ese nombre');
+            return;
+        }
+
+        // Crear empresa
+        const nuevaEmpresa = {
+            id: empresaId,
+            nombre: nombre,
+            icono: emoji,
+            tema: tema,
+            estado: 'Operativo',
+            categoria: categoria,
+            
+            legal: {
+                ruc: '20000000000',
+                razonSocial: nombre + ' S.A.C.',
+                regimen: 'General',
+                tipoEmpresa: 'S.A.C.'
+            },
+            
+            ubicacion: {
+                direccion: 'Por definir',
+                distrito: distrito || 'Lima',
+                provincia: distrito || 'Lima',
+                departamento: departamento,
+                codigoPostal: '00000'
+            },
+            
+            contacto: {
+                telefono: 'Por definir',
+                email: 'contacto@' + empresaId + '.pe',
+                web: 'www.' + empresaId + '.pe'
+            },
+            
+            finanzas: {
+                caja: 0,
+                ingresos: 0,
+                gastos: 0,
+                utilidadNeta: 0,
+                margenNeto: 0,
+                roi: 0
+            },
+            
+            meta: {
+                fechaCreacion: new Date().toISOString(),
+                fechaActualizacion: new Date().toISOString(),
+                version: '1.0',
+                activa: true
+            }
+        };
+
+        // Agregar a empresas
+        this.estado.empresas[empresaId] = nuevaEmpresa;
+        
+        // Guardar
+        this._guardarEmpresas();
+        
+        // Actualizar interfaz
+        this._actualizarListaEmpresas();
+        this._calcularMetricas();
+        
+        // Cerrar modal
+        this.cerrarModalNuevaEmpresa();
+        
+        // Seleccionar nueva empresa
+        this.seleccionarEmpresa(empresaId);
+        
+        // Registrar actividad
+        this._registrarActividad('EMPRESA_CREADA', `Nueva empresa creada: ${nombre}`);
+        
+        this._log('success', `✅ Empresa creada: ${nombre}`);
+        
+        // Notificar
+        this._dispararEvento('empresaCreada', { empresaId, empresa: nuevaEmpresa });
+    }
+    /**
      * Selecciona un emoji para la empresa
      * @param {string} emoji - Emoji seleccionado
      */
