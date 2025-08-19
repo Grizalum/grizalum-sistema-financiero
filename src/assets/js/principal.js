@@ -856,3 +856,39 @@ console.log('  • ⚡ Eventos y shortcuts optimizados');
 console.log('  • 💾 Persistencia de preferencias');
 console.log('  • 🛡️ Manejo robusto de errores');
 console.log('🚀 Controlador principal listo para empresas peruanas');
+
+/**
+ * ===================================================
+ * CONECTROR PARA IA ASSISTANT - GRIZALUM v4.0
+ * Conecta el botón del header con el asistente IA
+ * ===================================================
+ */
+function toggleAIAssistant() {
+    console.log('🎯 Botón IA Assistant clickeado desde header');
+    
+    // Verificar si el asistente está inicializado
+    if (window.assistantAI && typeof window.assistantAI.toggle === 'function') {
+        console.log('✅ Conectando con assistantAI.toggle()');
+        window.assistantAI.toggle();
+        
+        // Asegurar visibilidad del panel
+        setTimeout(() => {
+            const panel = document.getElementById('aiAssistantPanel');
+            if (panel && panel.classList.contains('show')) {
+                panel.style.zIndex = '999999'; // Encima de sidebar (z-index: 1000)
+                console.log('🔝 Z-index del panel ajustado');
+            }
+        }, 100);
+        
+    } else if (window.advancedAI && typeof window.advancedAI.toggle === 'function') {
+        console.log('✅ Conectando con advancedAI.toggle()');
+        window.advancedAI.toggle();
+        
+    } else {
+        console.error('❌ Asistente IA no encontrado');
+        // Mostrar notificación usando tu sistema
+        if (typeof mostrarNotificacion === 'function') {
+            mostrarNotificacion('Asistente IA no disponible', 'error');
+        }
+    }
+}
