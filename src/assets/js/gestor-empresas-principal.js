@@ -881,7 +881,7 @@ class GestorEmpresasProfesional {
         card.style.animationDelay = `${index * 50}ms`;
         
         card.innerHTML = `
-            <div class="grizalum-card-avatar" style="--empresa-color: ${this.config.temas[empresa.tema]?.primary || this.config.temas.rojo.primary}">
+           <div class="grizalum-card-avatar" style="background: linear-gradient(135deg, ${this.config.temas[empresa.tema]?.primary || this.config.temas.rojo.primary} 0%, ${this.config.temas[empresa.tema]?.secondary || this.config.temas.rojo.secondary} 100%); box-shadow: 0 4px 12px ${this.config.temas[empresa.tema]?.primary || this.config.temas.rojo.primary}30;">
                ${empresa.logo ? `<img src="${empresa.logo}" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">` : empresa.icono}
             </div>
             <div class="grizalum-card-info">
@@ -1014,25 +1014,36 @@ class GestorEmpresasProfesional {
     // MÉTODOS INTERNOS DE GESTIÓN
     // ═══════════════════════════════════════════════════════════════════════════
     _actualizarSelectorPrincipal() {
-        const empresa = this._obtenerEmpresaActual();
-        if (!empresa) return;
+    const empresa = this._obtenerEmpresaActual();
+    if (!empresa) return;
 
-        const avatar = document.getElementById('grizalumEmpresaAvatar');
-        const nombre = document.getElementById('grizalumEmpresaNombre');
-        const estado = document.getElementById('grizalumEmpresaEstado');
-        const metricas = document.getElementById('grizalumEmpresaMetricas');
+    const avatar = document.getElementById('grizalumEmpresaAvatar');
+    const nombre = document.getElementById('grizalumEmpresaNombre');
+    const estado = document.getElementById('grizalumEmpresaEstado');
+    const metricas = document.getElementById('grizalumEmpresaMetricas');
 
-        if (avatar) {
-            if (empresa.logo) {
-                avatar.innerHTML = `<img src="${empresa.logo}" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">`;
-            } else {
-                avatar.textContent = empresa.icono;
-            }
+    // Actualizar contenido
+    if (avatar) {
+        if (empresa.logo) {
+            avatar.innerHTML = `<img src="${empresa.logo}" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">`;
+        } else {
+            avatar.textContent = empresa.icono;
         }
-        if (nombre) nombre.textContent = empresa.nombre;
-        if (estado) estado.innerHTML = this._generarEstadoEmpresa(empresa);
-        if (metricas) metricas.innerHTML = `💰 ${this.config.regional.moneda} ${empresa.finanzas?.caja?.toLocaleString() || '0'}`;
+        
+        // 🎨 APLICAR TEMA/COLOR DE LA EMPRESA
+        const temaEmpresa = this.config.temas[empresa.tema] || this.config.temas.rojo;
+        avatar.style.background = `linear-gradient(135deg, ${temaEmpresa.primary} 0%, ${temaEmpresa.secondary} 100%)`;
+        avatar.style.boxShadow = `0 4px 12px ${temaEmpresa.primary}50`;
+        
+        // Actualizar variables CSS globales
+        document.documentElement.style.setProperty('--grizalum-primary', temaEmpresa.primary);
+        document.documentElement.style.setProperty('--grizalum-secondary', temaEmpresa.secondary);
     }
+    
+    if (nombre) nombre.textContent = empresa.nombre;
+    if (estado) estado.innerHTML = this._generarEstadoEmpresa(empresa);
+    if (metricas) metricas.innerHTML = `💰 ${this.config.regional.moneda} ${empresa.finanzas?.caja?.toLocaleString() || '0'}`;
+}
 
     _actualizarTarjetasActivas() {
         document.querySelectorAll('.grizalum-empresa-card').forEach(card => {
