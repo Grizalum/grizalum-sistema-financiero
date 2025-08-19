@@ -1104,8 +1104,8 @@ class GestorEmpresasProfesional {
         
         card.innerHTML = `
             <div class="grizalum-card-avatar" style="--empresa-color: ${this.config.temas[empresa.tema]?.primary || this.config.temas.rojo.primary}">
-                ${empresa.icono}
-            </div>
+               ${empresa.logo ? `<img src="${empresa.logo}" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">` : empresa.icono}
+        </div>
             <div class="grizalum-card-info">
                 <div class="grizalum-card-nombre">${empresa.nombre}</div>
                 <div class="grizalum-card-datos">
@@ -1275,7 +1275,13 @@ class GestorEmpresasProfesional {
         const estado = document.getElementById('grizalumEmpresaEstado');
         const metricas = document.getElementById('grizalumEmpresaMetricas');
 
-        if (avatar) avatar.textContent = empresa.icono;
+          if (avatar) {
+      if (empresa.logo) {
+          avatar.innerHTML = `<img src="${empresa.logo}" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">`;
+      } else {
+          avatar.textContent = empresa.icono;
+      }
+  }
         if (nombre) nombre.textContent = empresa.nombre;
         if (estado) estado.innerHTML = this._generarEstadoEmpresa(empresa);
         if (metricas) metricas.innerHTML = `💰 ${this.config.regional.moneda} ${empresa.finanzas?.caja?.toLocaleString() || '0'}`;
