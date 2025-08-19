@@ -236,15 +236,15 @@ class AsistenteIAMejorado {
                         </div>
                         
                         <div class="ai-quick-actions">
-                            onclick="if(window.assistantAI) window.assistantAI.askPredefined('Analiza mi flujo de caja actual'); else if(window.advancedAI) window.advancedAI.askPredefined('Analiza mi flujo de caja actual');"
-                                💧 Analizar Flujo de Caja
-                            </button>
-                            onclick="if(window.assistantAI) window.assistantAI.askPredefined('¿Cómo puedo reducir costos?'); else if(window.advancedAI) window.advancedAI.askPredefined('¿Cómo puedo reducir costos?');"
-                                💰 Reducir Costos
-                            </button>
-                            onclick="if(window.assistantAI) window.assistantAI.askPredefined('Estrategias para hacer crecer mi empresa'); else if(window.advancedAI) window.advancedAI.askPredefined('Estrategias para hacer crecer mi empresa');"
-                                🚀 Estrategias de Crecimiento
-                            </button>
+                            <button class="quick-action-btn" onclick="if(window.assistantAI) window.assistantAI.askPredefined('Analiza mi flujo de caja actual'); else if(window.advancedAI) window.advancedAI.askPredefined('Analiza mi flujo de caja actual');">
+                            💧 Analizar Flujo de Caja
+                       </button>
+                       <button class="quick-action-btn" onclick="if(window.assistantAI) window.assistantAI.askPredefined('¿Cómo puedo reducir costos?'); else if(window.advancedAI) window.advancedAI.askPredefined('¿Cómo puedo reducir costos?');">
+                            💰 Reducir Costos
+                       </button>
+                       <button class="quick-action-btn" onclick="if(window.assistantAI) window.assistantAI.askPredefined('Estrategias para hacer crecer mi empresa'); else if(window.advancedAI) window.advancedAI.askPredefined('Estrategias para hacer crecer mi empresa');">
+                       🚀 Estrategias de Crecimiento
+                       </button>
                         </div>
                     </div>
                 </div>
@@ -979,7 +979,7 @@ Como experto en gestión empresarial, veo que tu pregunta toca aspectos importan
     }
 
     // ======= FUNCIONES DE CONTROL MEJORADAS =======
-    toggle() {
+ toggle() {
     try {
         this.log('🎯 Toggle del panel AI ejecutado');
         
@@ -998,7 +998,6 @@ Como experto en gestión empresarial, veo que tu pregunta toca aspectos importan
         this.panelVisible = !this.panelVisible;
         
         if (this.panelVisible) {
-            // FORZAR VISIBILIDAD TOTAL
             panel.style.cssText = `
                 position: fixed !important;
                 top: 80px !important;
@@ -1020,16 +1019,25 @@ Como experto en gestión empresarial, veo que tu pregunta toca aspectos importan
             this.log('✅ Panel AI abierto CON ESTILOS FORZADOS');
             
         } else {
-            panel.style.display = 'none !important';
+            // CERRAR CORRECTAMENTE CON CSSTEXT
+            panel.style.cssText = `
+                position: fixed !important;
+                top: 80px !important;
+                right: 20px !important;
+                width: 450px !important;
+                height: 600px !important;
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+            `;
             panel.classList.remove('show');
-            this.log('❌ Panel AI cerrado');
+            this.log('❌ Panel AI cerrado CORRECTAMENTE');
         }
         
     } catch (error) {
         this.handleError('Error en toggle', error);
     }
 }
-
     // ======= CONEXIÓN CON BOTÓN EXISTENTE MEJORADA =======
     conectarBotonExistente() {
         try {
