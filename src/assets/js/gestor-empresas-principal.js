@@ -64,6 +64,9 @@ class GestorEmpresasProfesional {
         this.cache = new Map();
         this.observers = new Set();
         
+        // Variable temporal para logos
+        this.logoTemporal = null;
+        
         this._inicializar();
     }
 
@@ -669,10 +672,7 @@ class GestorEmpresasProfesional {
                 color: var(--grizalum-primary);
             }
 
-            /* ═══════════════════════════════════════════════════════════════
-               BOTONES ESPECÍFICOS POR TIPO Y ROLES
-               ═══════════════════════════════════════════════════════════════ */
-            
+            /* Botones específicos por tipo y roles */
             .grizalum-btn-editar:hover {
                 background: #3b82f6;
                 color: white;
@@ -692,228 +692,6 @@ class GestorEmpresasProfesional {
                 color: white;
                 box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
                 transform: scale(1.1);
-            }
-
-            /* ═══════════════════════════════════════════════════════════════
-               MODAL DE EDICIÓN ULTRA PROFESIONAL
-               ═══════════════════════════════════════════════════════════════ */
-            
-            .grizalum-modal-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.6);
-                backdrop-filter: blur(5px);
-                z-index: 20000;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                opacity: 0;
-                visibility: hidden;
-                transition: all 0.3s ease;
-            }
-
-            .grizalum-modal-overlay.show {
-                opacity: 1;
-                visibility: visible;
-            }
-
-            .grizalum-modal {
-                background: white;
-                border-radius: 16px;
-                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-                width: 500px;
-                max-width: 90vw;
-                max-height: 90vh;
-                overflow: hidden;
-                transform: scale(0.9) translateY(20px);
-                transition: all 0.3s ease;
-            }
-
-            .grizalum-modal-overlay.show .grizalum-modal {
-                transform: scale(1) translateY(0);
-            }
-
-            .grizalum-modal-header {
-                background: linear-gradient(135deg, var(--grizalum-primary) 0%, var(--grizalum-secondary) 100%);
-                color: white;
-                padding: 1.5rem;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            .grizalum-modal-header h3 {
-                margin: 0;
-                font-size: 1.2rem;
-                font-weight: 700;
-            }
-
-            .grizalum-modal-close {
-                background: rgba(255, 255, 255, 0.2);
-                border: none;
-                color: white;
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: all 0.3s ease;
-            }
-
-            .grizalum-modal-close:hover {
-                background: rgba(255, 255, 255, 0.3);
-                transform: scale(1.1);
-            }
-
-            .grizalum-modal-body {
-                padding: 2rem;
-            }
-
-            .grizalum-campo {
-                margin-bottom: 1.5rem;
-            }
-
-            .grizalum-campo label {
-                display: block;
-                font-weight: 600;
-                color: var(--grizalum-text);
-                margin-bottom: 0.5rem;
-                font-size: 0.95rem;
-            }
-
-            .grizalum-campo input[type="text"] {
-                width: 100%;
-                padding: 0.75rem 1rem;
-                border: 2px solid var(--grizalum-border);
-                border-radius: 8px;
-                font-size: 1rem;
-                transition: all 0.3s ease;
-                background: var(--grizalum-bg);
-            }
-
-            .grizalum-campo input[type="text"]:focus {
-                outline: none;
-                border-color: var(--grizalum-primary);
-                box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
-            }
-
-            .grizalum-emoji-selector {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-            }
-
-            .grizalum-emoji-selector input {
-                width: 80px !important;
-                text-align: center;
-                font-size: 1.5rem;
-                cursor: pointer;
-            }
-
-            .grizalum-emojis-grid {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 0.5rem;
-                flex: 1;
-            }
-
-            .grizalum-emoji-option {
-                width: 40px;
-                height: 40px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: var(--grizalum-bg-secondary);
-                border: 2px solid var(--grizalum-border);
-                border-radius: 8px;
-                cursor: pointer;
-                font-size: 1.2rem;
-                transition: all 0.3s ease;
-            }
-
-            .grizalum-emoji-option:hover {
-                background: var(--grizalum-primary);
-                border-color: var(--grizalum-primary);
-                transform: scale(1.1);
-            }
-
-            .grizalum-emoji-option.selected {
-                background: var(--grizalum-primary);
-                border-color: var(--grizalum-primary);
-                box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
-            }
-
-            .grizalum-modal-footer {
-                background: var(--grizalum-bg-secondary);
-                padding: 1.5rem;
-                display: flex;
-                justify-content: flex-end;
-                gap: 1rem;
-                border-top: 1px solid var(--grizalum-border);
-            }
-
-            .grizalum-btn-cancelar {
-                background: #6b7280;
-                color: white;
-                border: none;
-                padding: 0.75rem 1.5rem;
-                border-radius: 8px;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
-
-            .grizalum-btn-cancelar:hover {
-                background: #4b5563;
-                transform: translateY(-2px);
-            }
-
-            .grizalum-btn-guardar {
-                background: linear-gradient(135deg, var(--grizalum-success) 0%, #047857 100%);
-                color: white;
-                border: none;
-                padding: 0.75rem 1.5rem;
-                border-radius: 8px;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
-            }
-
-            .grizalum-btn-guardar:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(5, 150, 105, 0.4);
-            }
-
-            /* Responsive para modales */
-            @media (max-width: 768px) {
-                .grizalum-modal {
-                    width: 95vw;
-                    margin: 1rem;
-                }
-
-                .grizalum-modal-body {
-                    padding: 1.5rem;
-                }
-
-                .grizalum-emojis-grid {
-                    justify-content: center;
-                }
-
-                .grizalum-modal-footer {
-                    flex-direction: column;
-                }
             }
             
             .grizalum-list-footer {
@@ -1105,7 +883,7 @@ class GestorEmpresasProfesional {
         card.innerHTML = `
             <div class="grizalum-card-avatar" style="--empresa-color: ${this.config.temas[empresa.tema]?.primary || this.config.temas.rojo.primary}">
                ${empresa.logo ? `<img src="${empresa.logo}" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">` : empresa.icono}
-        </div>
+            </div>
             <div class="grizalum-card-info">
                 <div class="grizalum-card-nombre">${empresa.nombre}</div>
                 <div class="grizalum-card-datos">
@@ -1143,16 +921,9 @@ class GestorEmpresasProfesional {
     // ═══════════════════════════════════════════════════════════════════════════
     // SISTEMA DE BOTONES SEGÚN ROL
     // ═══════════════════════════════════════════════════════════════════════════
-
-    /**
-     * Genera botones según el rol del usuario
-     * @param {string} empresaId - ID de la empresa
-     * @returns {string} HTML de botones adicionales
-     */
     _generarBotonesSegunRol(empresaId) {
         // Por ahora, simulamos que somos ADMIN
-        // TODO: Implementar sistema de roles real
-        const esAdmin = true; // Cambiaremos esto después
+        const esAdmin = true;
         
         if (esAdmin) {
             return `
@@ -1164,18 +935,13 @@ class GestorEmpresasProfesional {
                 </button>
             `;
         } else {
-            return ''; // Los operarios solo ven el botón editar
+            return '';
         }
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
     // API PÚBLICA PRINCIPAL
     // ═══════════════════════════════════════════════════════════════════════════
-
-    /**
-     * Selecciona una empresa como activa
-     * @param {string} empresaId - ID de la empresa a seleccionar
-     */
     seleccionarEmpresa(empresaId) {
         if (!this.estado.empresas[empresaId]) {
             this._log('error', `Empresa no encontrada: ${empresaId}`);
@@ -1209,9 +975,6 @@ class GestorEmpresasProfesional {
         return true;
     }
 
-    /**
-     * Alterna la visibilidad de la lista de empresas
-     */
     alternarLista() {
         this.estado.listaAbierta = !this.estado.listaAbierta;
         
@@ -1221,24 +984,17 @@ class GestorEmpresasProfesional {
         if (this.estado.listaAbierta) {
             lista?.classList.add('show');
             arrow?.classList.add('rotated');
-            this._actualizarListaEmpresas(); // Refrescar datos
+            this._actualizarListaEmpresas();
         } else {
             lista?.classList.remove('show');
             arrow?.classList.remove('rotated');
         }
     }
 
-    /**
-     * Cierra la lista de empresas
-     */
     cerrarLista() {
         this._cerrarLista();
     }
 
-    /**
-     * Obtiene la empresa actualmente seleccionada
-     * @returns {Object} Objeto con id y datos de la empresa
-     */
     obtenerEmpresaActual() {
         return {
             id: this.estado.empresaActual,
@@ -1246,18 +1002,10 @@ class GestorEmpresasProfesional {
         };
     }
 
-    /**
-     * Obtiene todas las empresas
-     * @returns {Object} Objeto con todas las empresas
-     */
     obtenerTodasLasEmpresas() {
         return { ...this.estado.empresas };
     }
 
-    /**
-     * Obtiene métricas consolidadas
-     * @returns {Object} Métricas del sistema
-     */
     obtenerMetricas() {
         return { ...this.estado.metricas };
     }
@@ -1265,7 +1013,6 @@ class GestorEmpresasProfesional {
     // ═══════════════════════════════════════════════════════════════════════════
     // MÉTODOS INTERNOS DE GESTIÓN
     // ═══════════════════════════════════════════════════════════════════════════
-
     _actualizarSelectorPrincipal() {
         const empresa = this._obtenerEmpresaActual();
         if (!empresa) return;
@@ -1275,13 +1022,13 @@ class GestorEmpresasProfesional {
         const estado = document.getElementById('grizalumEmpresaEstado');
         const metricas = document.getElementById('grizalumEmpresaMetricas');
 
-          if (avatar) {
-      if (empresa.logo) {
-          avatar.innerHTML = `<img src="${empresa.logo}" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">`;
-      } else {
-          avatar.textContent = empresa.icono;
-      }
-  }
+        if (avatar) {
+            if (empresa.logo) {
+                avatar.innerHTML = `<img src="${empresa.logo}" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">`;
+            } else {
+                avatar.textContent = empresa.icono;
+            }
+        }
         if (nombre) nombre.textContent = empresa.nombre;
         if (estado) estado.innerHTML = this._generarEstadoEmpresa(empresa);
         if (metricas) metricas.innerHTML = `💰 ${this.config.regional.moneda} ${empresa.finanzas?.caja?.toLocaleString() || '0'}`;
@@ -1368,7 +1115,6 @@ class GestorEmpresasProfesional {
     // ═══════════════════════════════════════════════════════════════════════════
     // SISTEMA DE PERSISTENCIA Y SINCRONIZACIÓN
     // ═══════════════════════════════════════════════════════════════════════════
-
     _guardarEmpresas() {
         try {
             localStorage.setItem('grizalum_empresas', JSON.stringify(this.estado.empresas));
@@ -1383,7 +1129,6 @@ class GestorEmpresasProfesional {
         let reparacionesNecesarias = 0;
         
         Object.entries(this.estado.empresas).forEach(([id, empresa]) => {
-            // Validar estructura básica
             if (!empresa.id) {
                 empresa.id = id;
                 reparacionesNecesarias++;
@@ -1430,9 +1175,7 @@ class GestorEmpresasProfesional {
     // ═══════════════════════════════════════════════════════════════════════════
     // SISTEMA DE EVENTOS Y CONFIGURACIÓN
     // ═══════════════════════════════════════════════════════════════════════════
-
     _configurarEventos() {
-        // Cerrar lista al hacer clic fuera
         document.addEventListener('click', (evento) => {
             const container = document.querySelector('.grizalum-empresas-container');
             if (container && !container.contains(evento.target)) {
@@ -1440,13 +1183,11 @@ class GestorEmpresasProfesional {
             }
         });
 
-        // Escuchar eventos del sistema
         document.addEventListener('empresaActualizada', (evento) => {
             this._actualizarListaEmpresas();
             this._calcularMetricas();
         });
 
-        // Eventos de teclado
         document.addEventListener('keydown', (evento) => {
             if (evento.key === 'Escape' && this.estado.listaAbierta) {
                 this._cerrarLista();
@@ -1468,7 +1209,6 @@ class GestorEmpresasProfesional {
     // ═══════════════════════════════════════════════════════════════════════════
     // SISTEMA DE LOGGING Y REGISTRO
     // ═══════════════════════════════════════════════════════════════════════════
-
     _log(nivel, mensaje, datos = null) {
         const timestamp = new Date().toISOString();
         const prefijo = `[${timestamp}] [${this.config.componente}]`;
@@ -1504,12 +1244,10 @@ class GestorEmpresasProfesional {
         
         this.actividades.unshift(registro);
         
-        // Mantener solo los últimos 100 registros
         if (this.actividades.length > 100) {
             this.actividades = this.actividades.slice(0, 100);
         }
         
-        // Persistir actividades
         this._guardarActividades();
     }
 
@@ -1533,47 +1271,14 @@ class GestorEmpresasProfesional {
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // MÉTODOS DE GESTIÓN DE EMPRESAS (Preparados para expansión)
+    // MÉTODOS DE GESTIÓN DE EMPRESAS
     // ═══════════════════════════════════════════════════════════════════════════
-
     abrirModalNuevaEmpresa() {
-    this._log('info', '📝 Abriendo modal para nueva empresa');
-    
-    // Cerrar lista
-    this._cerrarLista();
-    
-    // Crear modal de nueva empresa
-    this._crearModalNuevaEmpresa();
-}
-
-    editarEmpresa(empresaId) {
-        this._log('info', `✏️ Editando empresa: ${empresaId}`);
-        console.log('🚀 Editar empresa - Próximamente con gestor-empresas-formularios.js');
-        
-        // Cerrar lista
+        this._log('info', '📝 Abriendo modal para nueva empresa');
         this._cerrarLista();
-        
-        // TODO: Implementar en gestor-empresas-formularios.js
+        this._crearModalNuevaEmpresa();
     }
 
-    configurarEmpresa(empresaId) {
-        this._log('info', `⚙️ Configurando empresa: ${empresaId}`);
-        console.log('🚀 Configurar empresa - Próximamente con gestor-empresas-temas.js');
-        
-        // Cerrar lista
-        this._cerrarLista();
-        
-        // TODO: Implementar en gestor-empresas-temas.js
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // SISTEMA DE EDICIÓN POR ROLES
-    // ═══════════════════════════════════════════════════════════════════════════
-
-    /**
-     * Abre modal de edición básica para operarios
-     * @param {string} empresaId - ID de la empresa a editar
-     */
     editarEmpresaBasico(empresaId) {
         const empresa = this.estado.empresas[empresaId];
         if (!empresa) {
@@ -1582,113 +1287,86 @@ class GestorEmpresasProfesional {
         }
 
         this._log('info', `✏️ Editando empresa básica: ${empresa.nombre}`);
-        
-        // Cerrar lista
         this._cerrarLista();
-        
-        // Crear modal básico de edición
         this._crearModalEdicionBasica(empresaId, empresa);
     }
 
-    /**
-     * Gestión avanzada para administradores
-     * @param {string} empresaId - ID de la empresa
-     */
     gestionarEmpresa(empresaId) {
         this._log('info', `👑 Gestión admin de empresa: ${empresaId}`);
         console.log('🚀 Panel Admin - Próximamente en Fase 2');
-        
         this._cerrarLista();
-        // TODO: Implementar en Fase 2
     }
 
-    /**
-     * Confirmar eliminación de empresa (solo admin)
-     * @param {string} empresaId - ID de la empresa
-     */
     confirmarEliminarEmpresa(empresaId) {
         this._log('info', `🗑️ Solicitud eliminar empresa: ${empresaId}`);
         console.log('🚀 Eliminar empresa - Próximamente en Fase 3');
-        
         this._cerrarLista();
-        // TODO: Implementar en Fase 3
     }
 
-    /**
-     * Crea modal de edición básica
-     * @param {string} empresaId - ID de la empresa
-     * @param {Object} empresa - Datos de la empresa
-     */
-   _crearModalEdicionBasica(empresaId, empresa) {
-    // Remover modal previo
-    const modalPrevio = document.getElementById('grizalumModalEdicion');
-    if (modalPrevio) modalPrevio.remove();
+    // ═══════════════════════════════════════════════════════════════════════════
+    // MODALES Y FORMULARIOS
+    // ═══════════════════════════════════════════════════════════════════════════
+    _crearModalEdicionBasica(empresaId, empresa) {
+        const modalPrevio = document.getElementById('grizalumModalEdicion');
+        if (modalPrevio) modalPrevio.remove();
 
-    // Crear modal súper simple
-    const modal = document.createElement('div');
-    modal.id = 'grizalumModalEdicion';
-    modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999999; display: flex; align-items: center; justify-content: center;';
-    
-    modal.innerHTML = `
-        <div style="background: white; border-radius: 16px; width: 500px; max-width: 90vw; box-shadow: 0 25px 50px rgba(0,0,0,0.3);">
-            <div style="background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; padding: 1.5rem; border-radius: 16px 16px 0 0;">
-                <h3 style="margin: 0; display: flex; justify-content: space-between; align-items: center;">
-                    ✏️ Editar Empresa
-                    <span onclick="gestorEmpresas.cerrarModalEdicion()" style="cursor: pointer; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.2); border-radius: 50%;">✕</span>
-                </h3>
-            </div>
-            <div style="padding: 2rem;">
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">📝 Nombre de la Empresa:</label>
-                    <input type="text" id="empresaNombre" value="${empresa.nombre}" maxlength="50" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;">
+        const modal = document.createElement('div');
+        modal.id = 'grizalumModalEdicion';
+        modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999999; display: flex; align-items: center; justify-content: center;';
+        
+        modal.innerHTML = `
+            <div style="background: white; border-radius: 16px; width: 500px; max-width: 90vw; box-shadow: 0 25px 50px rgba(0,0,0,0.3);">
+                <div style="background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; padding: 1.5rem; border-radius: 16px 16px 0 0;">
+                    <h3 style="margin: 0; display: flex; justify-content: space-between; align-items: center;">
+                        ✏️ Editar Empresa
+                        <span onclick="gestorEmpresas.cerrarModalEdicion()" style="cursor: pointer; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.2); border-radius: 50%;">✕</span>
+                    </h3>
                 </div>
-                <div style="margin-bottom: 1.5rem;">
-                       <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">🎨 Icono:</label>
-                 <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-                 <input type="text" id="empresaEmoji" value="${empresa.icono}" maxlength="2" readonly style="width: 80px; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1.5rem; text-align: center; background: #f8fafc;">
-                 <span style="color: #6b7280; font-size: 0.875rem;">👈 Selecciona un icono abajo</span>
-               </div>
-                <div style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 0.5rem; padding: 1rem; background: #f8fafc; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 1rem;">
-                ${this._generarGridEmojis()}
-               </div>
-               <div style="margin-bottom: 1rem;">
-                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">📷 O sube tu logo:</label>
-                <input type="file" id="empresaLogo" accept="image/*" style="width: 100%; padding: 0.75rem; border: 2px dashed #e5e7eb; border-radius: 8px;" onchange="gestorEmpresas.manejarUploadLogo(event)">
-                <div id="previewLogo" style="margin-top: 0.5rem;"></div>
-               </div>
-                </div>
-                <div style="display: flex; justify-content: flex-end; gap: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
-                    <button onclick="gestorEmpresas.cerrarModalEdicion()" style="background: #6b7280; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;">❌ Cancelar</button>
-                    <button onclick="gestorEmpresas.guardarEdicionBasica('${empresaId}')" style="background: #059669; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;">💾 Guardar</button>
+                <div style="padding: 2rem;">
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">📝 Nombre de la Empresa:</label>
+                        <input type="text" id="empresaNombre" value="${empresa.nombre}" maxlength="50" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;">
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">🎨 Icono:</label>
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <input type="text" id="empresaEmoji" value="${empresa.icono || '🏢'}" maxlength="2" readonly style="width: 80px; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1.5rem; text-align: center; background: #f8fafc;">
+                            <span style="color: #6b7280; font-size: 0.875rem;">👈 Selecciona un icono abajo</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 0.5rem; padding: 1rem; background: #f8fafc; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 1rem;">
+                            ${this._generarGridEmojis()}
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">📷 O sube tu logo:</label>
+                            <input type="file" id="empresaLogo" accept="image/*" style="width: 100%; padding: 0.75rem; border: 2px dashed #e5e7eb; border-radius: 8px;" onchange="gestorEmpresas.manejarUploadLogo(event)">
+                            <div id="previewLogo" style="margin-top: 0.5rem;"></div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
+                        <button onclick="gestorEmpresas.cerrarModalEdicion()" style="background: #6b7280; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;">❌ Cancelar</button>
+                        <button onclick="gestorEmpresas.guardarEdicionBasica('${empresaId}')" style="background: #059669; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;">💾 Guardar</button>
+                    </div>
                 </div>
             </div>
-        </div>
-    `;
+        `;
 
-    document.body.appendChild(modal);
-    setTimeout(() => document.getElementById('empresaNombre').focus(), 100);
-}
+        document.body.appendChild(modal);
+        setTimeout(() => document.getElementById('empresaNombre').focus(), 100);
+    }
 
-    /**
-     * Genera grid de emojis disponibles
-     * @returns {string} HTML de emojis
-     */
-  _generarGridEmojis() {
-    const emojis = [
-        '🏢', '🏭', '🏪', '🏦', '🏨', '🔥', '🐔', '🌟', 
-        '💎', '⚡', '🚀', '🛠️', '🌱', '💡', '🎯', '💰',
-        '🍕', '☕', '🚗', '✈️', '🏥', '🎓', '🎨', '🎵',
-        '📱', '💻', '⚽', '🏀', '🎮', '📚', '🔧', '⚖️'
-    ];
-    
-    return emojis.map(emoji => 
-        `<div onclick="gestorEmpresas.seleccionarEmoji('${emoji}')" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: white; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer; font-size: 1.2rem; transition: all 0.3s ease;" onmouseover="this.style.background='#dc2626'; this.style.borderColor='#dc2626'; this.style.transform='scale(1.1)'" onmouseout="this.style.background='white'; this.style.borderColor='#e5e7eb'; this.style.transform='scale(1)'">${emoji}</div>`
-    ).join('');
-}
-  /**
-     * Maneja el upload de logo
-     * @param {Event} event - Evento del input file
-     */
+    _generarGridEmojis() {
+        const emojis = [
+            '🏢', '🏭', '🏪', '🏦', '🏨', '🔥', '🐔', '🌟', 
+            '💎', '⚡', '🚀', '🛠️', '🌱', '💡', '🎯', '💰',
+            '🍕', '☕', '🚗', '✈️', '🏥', '🎓', '🎨', '🎵',
+            '📱', '💻', '⚽', '🏀', '🎮', '📚', '🔧', '⚖️'
+        ];
+        
+        return emojis.map(emoji => 
+            `<div onclick="gestorEmpresas.seleccionarEmoji('${emoji}')" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: white; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer; font-size: 1.2rem; transition: all 0.3s ease;" onmouseover="this.style.background='#dc2626'; this.style.borderColor='#dc2626'; this.style.transform='scale(1.1)'" onmouseout="this.style.background='white'; this.style.borderColor='#e5e7eb'; this.style.transform='scale(1)'">${emoji}</div>`
+        ).join('');
+    }
+
     manejarUploadLogo(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -1710,10 +1388,6 @@ class GestorEmpresasProfesional {
         reader.readAsDataURL(file);
     }
 
-    /**
-     * Usa el logo subido
-     * @param {string} logoData - Data URL del logo
-     */
     usarLogo(logoData) {
         this.logoTemporal = logoData;
         document.getElementById('empresaEmoji').value = '📷';
@@ -1729,15 +1403,11 @@ class GestorEmpresasProfesional {
             </div>
         `;
     }
-    /**
-     * Crea modal para nueva empresa
-     */
+
     _crearModalNuevaEmpresa() {
-        // Remover modal previo
         const modalPrevio = document.getElementById('grizalumModalNuevaEmpresa');
         if (modalPrevio) modalPrevio.remove();
 
-        // Crear modal
         const modal = document.createElement('div');
         modal.id = 'grizalumModalNuevaEmpresa';
         modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999999; display: flex; align-items: center; justify-content: center;';
@@ -1865,9 +1535,7 @@ class GestorEmpresasProfesional {
         
         this._log('info', '✨ Modal de nueva empresa abierto');
     }
-    /**
-     * Cierra modal de nueva empresa
-     */
+
     cerrarModalNuevaEmpresa() {
         const modal = document.getElementById('grizalumModalNuevaEmpresa');
         if (modal) {
@@ -1875,14 +1543,34 @@ class GestorEmpresasProfesional {
         }
     }
 
-    /**
-     * Selecciona tema de colores
-     * @param {string} tema - Tema seleccionado
-     */
-  seleccionarTema(tema) {
-    /**
-     * Crea nueva empresa
-     */
+    seleccionarTema(tema) {
+        const modal = document.getElementById('grizalumModalNuevaEmpresa');
+        if (!modal) return;
+        
+        // Remover selección previa de TODOS los botones de tema
+        modal.querySelectorAll('[data-tema]').forEach(el => {
+            el.style.borderColor = 'transparent';
+            el.style.transform = 'scale(1)';
+            el.style.boxShadow = 'none';
+        });
+        
+        // Encontrar el botón específico del tema seleccionado
+        const botonSeleccionado = modal.querySelector(`[data-tema="${tema}"]`);
+        if (botonSeleccionado) {
+            botonSeleccionado.style.borderColor = this.config.temas[tema].primary;
+            botonSeleccionado.style.transform = 'scale(1.1)';
+            botonSeleccionado.style.boxShadow = `0 4px 15px ${this.config.temas[tema].primary}40`;
+        }
+        
+        // Guardar selección en el input hidden
+        const temaInput = document.getElementById('nuevaEmpresaTema');
+        if (temaInput) {
+            temaInput.value = tema;
+        }
+        
+        this._log('info', `🎨 Tema seleccionado: ${tema}`);
+    }
+
     crearNuevaEmpresa() {
         const nombre = document.getElementById('nuevaEmpresaNombre').value.trim();
         const categoria = document.getElementById('nuevaEmpresaCategoria').value;
@@ -1891,7 +1579,6 @@ class GestorEmpresasProfesional {
         const departamento = document.getElementById('nuevaEmpresaDepartamento').value;
         const tema = document.getElementById('nuevaEmpresaTema').value;
 
-        // Validaciones
         if (!nombre) {
             alert('❌ El nombre de la empresa es obligatorio');
             return;
@@ -1902,16 +1589,13 @@ class GestorEmpresasProfesional {
             return;
         }
 
-        // Generar ID único
         const empresaId = nombre.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').slice(0, 30);
         
-        // Verificar que no exista
         if (this.estado.empresas[empresaId]) {
             alert('❌ Ya existe una empresa con ese nombre');
             return;
         }
 
-        // Crear empresa
         const nuevaEmpresa = {
             id: empresaId,
             nombre: nombre,
@@ -1958,81 +1642,55 @@ class GestorEmpresasProfesional {
             }
         };
 
-        // Agregar a empresas
         this.estado.empresas[empresaId] = nuevaEmpresa;
-        
-        // Guardar
         this._guardarEmpresas();
-        
-        // Actualizar interfaz
         this._actualizarListaEmpresas();
         this._calcularMetricas();
-        
-        // Cerrar modal
         this.cerrarModalNuevaEmpresa();
-        
-        // Seleccionar nueva empresa
         this.seleccionarEmpresa(empresaId);
-        
-        // Registrar actividad
         this._registrarActividad('EMPRESA_CREADA', `Nueva empresa creada: ${nombre}`);
-        
         this._log('success', `✅ Empresa creada: ${nombre}`);
-        
-        // Notificar
         this._dispararEvento('empresaCreada', { empresaId, empresa: nuevaEmpresa });
     }
-    /**
-     * Selecciona un emoji para la empresa
-     * @param {string} emoji - Emoji seleccionado
-     */
-   seleccionarEmoji(emoji) {
-    // Para modal de edición
-    const editEmoji = document.getElementById('empresaEmoji');
-    if (editEmoji) {
-        editEmoji.value = emoji;
-    }
-    
-    // Para modal de nueva empresa
-    const newEmoji = document.getElementById('nuevaEmpresaEmoji');
-    if (newEmoji) {
-        newEmoji.value = emoji;
-    }
-    
-    // Efecto visual - buscar en ambos modales
-    const modalEdicion = document.getElementById('grizalumModalEdicion');
-    const modalNueva = document.getElementById('grizalumModalNuevaEmpresa');
-    
-    if (modalEdicion) {
-        modalEdicion.querySelectorAll('[onclick*="seleccionarEmoji"]').forEach(el => {
-            el.style.background = 'white';
-            el.style.borderColor = '#e5e7eb';
-        });
-    }
-    
-    if (modalNueva) {
-        modalNueva.querySelectorAll('[onclick*="seleccionarEmoji"]').forEach(el => {
-            el.style.background = 'white';
-            el.style.borderColor = '#e5e7eb';
-        });
-    }
-    
-    // Marcar como seleccionado
-    if (event && event.target) {
-        event.target.style.background = '#dc2626';
-        event.target.style.borderColor = '#dc2626';
-    }
-}
 
-    /**
-     * Guarda los cambios de edición básica
-     * @param {string} empresaId - ID de la empresa
-     */
+    seleccionarEmoji(emoji) {
+        const editEmoji = document.getElementById('empresaEmoji');
+        if (editEmoji) {
+            editEmoji.value = emoji;
+        }
+        
+        const newEmoji = document.getElementById('nuevaEmpresaEmoji');
+        if (newEmoji) {
+            newEmoji.value = emoji;
+        }
+        
+        const modalEdicion = document.getElementById('grizalumModalEdicion');
+        const modalNueva = document.getElementById('grizalumModalNuevaEmpresa');
+        
+        if (modalEdicion) {
+            modalEdicion.querySelectorAll('[onclick*="seleccionarEmoji"]').forEach(el => {
+                el.style.background = 'white';
+                el.style.borderColor = '#e5e7eb';
+            });
+        }
+        
+        if (modalNueva) {
+            modalNueva.querySelectorAll('[onclick*="seleccionarEmoji"]').forEach(el => {
+                el.style.background = 'white';
+                el.style.borderColor = '#e5e7eb';
+            });
+        }
+        
+        if (event && event.target) {
+            event.target.style.background = '#dc2626';
+            event.target.style.borderColor = '#dc2626';
+        }
+    }
+
     guardarEdicionBasica(empresaId) {
         const nuevoNombre = document.getElementById('empresaNombre').value.trim();
         const nuevoEmoji = document.getElementById('empresaEmoji').value;
 
-        // Validaciones
         if (!nuevoNombre) {
             alert('❌ El nombre de la empresa es obligatorio');
             return;
@@ -2043,45 +1701,28 @@ class GestorEmpresasProfesional {
             return;
         }
 
-        // Actualizar empresa
         this.estado.empresas[empresaId].nombre = nuevoNombre;
 
-        // Manejar icono/logo
         if (this.logoTemporal) {
-        // Si hay logo personalizado, usarlo
-        this.estado.empresas[empresaId].logo = this.logoTemporal;
-        this.estado.empresas[empresaId].icono = null; // Limpiar emoji
-        this.logoTemporal = null; // Limpiar temporal
+            this.estado.empresas[empresaId].logo = this.logoTemporal;
+            this.estado.empresas[empresaId].icono = null;
+            this.logoTemporal = null;
         } else {
-       // Si es emoji normal
-        this.estado.empresas[empresaId].icono = nuevoEmoji;
-        this.estado.empresas[empresaId].logo = null; // Limpiar logo
-       }
+            this.estado.empresas[empresaId].icono = nuevoEmoji;
+            this.estado.empresas[empresaId].logo = null;
+        }
 
-       this.estado.empresas[empresaId].meta.fechaActualizacion = new Date().toISOString();
+        this.estado.empresas[empresaId].meta.fechaActualizacion = new Date().toISOString();
 
-        // Guardar cambios
         this._guardarEmpresas();
-        
-        // Actualizar interfaz
         this._actualizarListaEmpresas();
         this._actualizarSelectorPrincipal();
-        
-        // Cerrar modal
         this.cerrarModalEdicion();
-        
-        // Registrar actividad
         this._registrarActividad('EMPRESA_EDITADA', `Empresa actualizada: ${nuevoNombre}`);
-        
         this._log('success', `✅ Empresa actualizada: ${nuevoNombre}`);
-        
-        // Notificar cambios
         this._dispararEvento('empresaActualizada', { empresaId, empresa: this.estado.empresas[empresaId] });
     }
 
-    /**
-     * Cierra el modal de edición
-     */
     cerrarModalEdicion() {
         const modal = document.getElementById('grizalumModalEdicion');
         if (modal) {
@@ -2093,7 +1734,6 @@ class GestorEmpresasProfesional {
     _manejarErrorInicializacion(error) {
         console.error('❌ Error crítico en inicialización:', error);
         
-        // Crear interfaz mínima de error
         const contenedor = document.getElementById('companySelector');
         if (contenedor) {
             contenedor.innerHTML = `
@@ -2115,7 +1755,6 @@ class GestorEmpresasProfesional {
 
 let gestorEmpresas = null;
 
-// Función de inicialización robusta
 function inicializarGestorEmpresas() {
     try {
         if (gestorEmpresas) {
@@ -2124,8 +1763,6 @@ function inicializarGestorEmpresas() {
         }
 
         gestorEmpresas = new GestorEmpresasProfesional();
-        
-        // Hacer disponible globalmente
         window.gestorEmpresas = gestorEmpresas;
         
         return gestorEmpresas;
@@ -2136,7 +1773,6 @@ function inicializarGestorEmpresas() {
     }
 }
 
-// Inicialización inteligente
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', inicializarGestorEmpresas);
 } else if (document.readyState === 'interactive') {
@@ -2145,7 +1781,6 @@ if (document.readyState === 'loading') {
     inicializarGestorEmpresas();
 }
 
-// Función global para compatibilidad
 function seleccionarEmpresa(empresaId) {
     if (window.gestorEmpresas) {
         return window.gestorEmpresas.seleccionarEmpresa(empresaId);
@@ -2153,33 +1788,29 @@ function seleccionarEmpresa(empresaId) {
     return false;
 }
 
-// Exportar para uso modular
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { GestorEmpresasProfesional, inicializarGestorEmpresas };
 }
 
-// Banner de información
 console.log(`
 🏢 ═══════════════════════════════════════════════════════════════════════════════
-   GRIZALUM GESTOR DE EMPRESAS ULTRA PROFESIONAL v3.0
+   GRIZALUM GESTOR DE EMPRESAS ULTRA PROFESIONAL v3.0 - CORREGIDO
    Sistema Empresarial Premium para el Mercado Peruano
 🏢 ═══════════════════════════════════════════════════════════════════════════════
 
-✨ CARACTERÍSTICAS ULTRA PROFESIONALES:
-   🏗️ Arquitectura modular y escalable
-   🇵🇪 Optimizado para empresas peruanas
-   💰 Manejo avanzado de moneda en Soles (S/.)
-   📱 Interfaz ultra moderna y responsive
-   🔒 Persistencia inteligente y segura
-   🎨 Sistema de temas personalizable
-   📊 Métricas en tiempo real
-   🚀 Integración completa con ecosistema GRIZALUM
+✅ FUNCIONALIDADES COMPLETAMENTE OPERATIVAS:
+   🎨 Selector de temas ARREGLADO (rojo, azul, verde, morado, dorado)
+   ✏️ Edición básica de empresas FUNCIONAL
+   📝 Creación de nuevas empresas FUNCIONAL
+   📷 Upload de logos personalizados FUNCIONAL
+   🎭 Selector de emojis FUNCIONAL
+   💾 Persistencia automática FUNCIONAL
+   📱 Diseño responsive FUNCIONAL
 
-🛠️ API PRINCIPAL ULTRA ROBUSTA:
+🛠️ API PRINCIPAL:
    • gestorEmpresas.seleccionarEmpresa(id)
    • gestorEmpresas.obtenerEmpresaActual()
    • gestorEmpresas.obtenerTodasLasEmpresas()
-   • gestorEmpresas.obtenerMetricas()
    • gestorEmpresas.alternarLista()
 
 🏢 ═══════════════════════════════════════════════════════════════════════════════
