@@ -980,59 +980,55 @@ Como experto en gestión empresarial, veo que tu pregunta toca aspectos importan
 
     // ======= FUNCIONES DE CONTROL MEJORADAS =======
     toggle() {
-        try {
-            this.log('🎯 Toggle del panel AI ejecutado');
-            
-            let panel = document.getElementById('aiAssistantPanel');
-            if (!panel) {
-                this.log('⚠️ Panel no existe, creándolo...', 'warn');
-                this.createAIInterface();
-                panel = document.getElementById('aiAssistantPanel');
-            }
-            
-            if (!panel) {
-                this.handleError('Error crítico', new Error('No se pudo crear el panel'));
-                return;
-            }
-            
-            this.panelVisible = !this.panelVisible;
-            
-            if (this.panelVisible) {
-                panel.classList.add('show');
-                this.log('✅ Panel AI abierto');
-                
-                // Focus en input después de animación
-                setTimeout(() => {
-                    const input = document.getElementById('aiChatInput');
-                    if (input) input.focus();
-                }, 300);
-                
-            } else {
-                panel.classList.remove('show');
-                this.log('❌ Panel AI cerrado');
-            }
-            
-        } catch (error) {
-            this.handleError('Error en toggle', error);
+    try {
+        this.log('🎯 Toggle del panel AI ejecutado');
+        
+        let panel = document.getElementById('aiAssistantPanel');
+        if (!panel) {
+            this.log('⚠️ Panel no existe, creándolo...', 'warn');
+            this.createAIInterface();
+            panel = document.getElementById('aiAssistantPanel');
         }
-    }
-
-    clearConversation() {
-        try {
-            const container = document.getElementById('aiChatMessages');
-            this.conversationHistory = [];
-            
-            if (container) {
-                container.innerHTML = this.generateWelcomeMessage();
-            }
-            
-            this.saveConversationHistory();
-            this.showNotification('🔄 Nueva conversación iniciada', 'success');
-            
-        } catch (error) {
-            this.handleError('Error limpiando conversación', error);
+        
+        if (!panel) {
+            this.handleError('Error crítico', new Error('No se pudo crear el panel'));
+            return;
         }
+        
+        this.panelVisible = !this.panelVisible;
+        
+        if (this.panelVisible) {
+            // FORZAR VISIBILIDAD TOTAL
+            panel.style.cssText = `
+                position: fixed !important;
+                top: 80px !important;
+                right: 20px !important;
+                width: 450px !important;
+                height: 600px !important;
+                background: white !important;
+                border: 2px solid #007bff !important;
+                border-radius: 15px !important;
+                z-index: 999999 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                transform: none !important;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.3) !important;
+            `;
+            panel.classList.add('show');
+            this.log('✅ Panel AI abierto CON ESTILOS FORZADOS');
+            
+        } else {
+            panel.style.display = 'none !important';
+            panel.classList.remove('show');
+            this.log('❌ Panel AI cerrado');
+        }
+        
+    } catch (error) {
+        this.handleError('Error en toggle', error);
     }
+}
 
     // ======= CONEXIÓN CON BOTÓN EXISTENTE MEJORADA =======
     conectarBotonExistente() {
