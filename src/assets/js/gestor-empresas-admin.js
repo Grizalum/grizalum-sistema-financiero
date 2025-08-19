@@ -1,0 +1,1067 @@
+/**
+ * ╔══════════════════════════════════════════════════════════════════════════════╗
+ * ║                    GRIZALUM PANEL DE GESTIÓN ADMIN                          ║
+ * ║                INTEGRADO CON SISTEMA DE TEMAS EXISTENTE                     ║
+ * ║                          Versión 1.0 - 2025                                 ║
+ * ╚══════════════════════════════════════════════════════════════════════════════╝
+ */
+
+class GestorEmpresasAdmin {
+    constructor(gestorPrincipal) {
+        this.gestor = gestorPrincipal;
+        this.modalActivo = null;
+        this.datosTemporales = {};
+        
+        this._log('info', '👑 Panel Admin inicializado con temas integrados');
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // MÉTODO PRINCIPAL: ABRIR PANEL ADMIN
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    abrirPanelAdmin(empresaId) {
+        const empresa = this.gestor.estado.empresas[empresaId];
+        if (!empresa) {
+            this._mostrarError('Empresa no encontrada');
+            return;
+        }
+
+        this._log('info', `👑 Abriendo panel admin para: ${empresa.nombre}`);
+        this._cerrarModalPrevio();
+        this._crearModalAdmin(empresaId, empresa);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // CREACIÓN DEL MODAL ADMIN ULTRA PROFESIONAL
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    _crearModalAdmin(empresaId, empresa) {
+        const modal = document.createElement('div');
+        modal.id = 'grizalumModalAdmin';
+        modal.className = 'grizalum-modal-overlay';
+        
+        // Aplicar tema de la empresa al modal
+        const mapaTemaCss = {
+            'rojo': 'red', 'azul': 'blue', 'verde': 'green',
+            'morado': 'purple', 'dorado': 'gold'
+        };
+        const temaCss = mapaTemaCss[empresa.tema] || 'gold';
+        modal.setAttribute('data-theme', temaCss);
+        
+        modal.innerHTML = `
+            <div class="grizalum-modal-admin">
+                ${this._generarHeaderAdmin(empresa)}
+                ${this._generarNavegacionAdmin()}
+                <div class="grizalum-admin-content">
+                    ${this._generarContenidoGeneral(empresa)}
+                </div>
+                ${this._generarFooterAdmin(empresaId)}
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+        this.modalActivo = modal;
+        
+        // Mostrar modal con animación
+        setTimeout(() => modal.classList.add('show'), 50);
+        
+        // Configurar eventos
+        this._configurarEventosAdmin(empresaId);
+        
+        // Crear estilos específicos
+        this._crearEstilosAdmin();
+    }
+
+    _generarHeaderAdmin(empresa) {
+        return `
+            <div class="grizalum-admin-header">
+                <div class="admin-header-info">
+                    <div class="admin-empresa-avatar">
+                        ${empresa.logo ? `<img src="${empresa.logo}" alt="${empresa.nombre}">` : empresa.icono}
+                    </div>
+                    <div class="admin-empresa-datos">
+                        <h2>${empresa.nombre}</h2>
+                        <p>Panel de Administración Empresarial</p>
+                        <span class="admin-categoria">${empresa.categoria}</span>
+                    </div>
+                </div>
+                <div class="admin-header-actions">
+                    <button class="admin-btn admin-btn-exportar" onclick="adminEmpresas.exportarDatos('${empresa.id}')">
+                        <i class="fas fa-download"></i> Exportar
+                    </button>
+                    <button class="admin-btn admin-btn-cerrar" onclick="adminEmpresas.cerrarModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    _generarNavegacionAdmin() {
+        return `
+            <div class="grizalum-admin-nav">
+                <button class="admin-nav-btn active" data-seccion="general">
+                    <i class="fas fa-building"></i> General
+                </button>
+                <button class="admin-nav-btn" data-seccion="legal">
+                    <i class="fas fa-gavel"></i> Legal
+                </button>
+                <button class="admin-nav-btn" data-seccion="financiero">
+                    <i class="fas fa-chart-line"></i> Financiero
+                </button>
+                <button class="admin-nav-btn" data-seccion="contacto">
+                    <i class="fas fa-address-book"></i> Contacto
+                </button>
+                <button class="admin-nav-btn" data-seccion="temas">
+                    <i class="fas fa-palette"></i> Temas
+                </button>
+            </div>
+        `;
+    }
+
+    _generarContenidoGeneral(empresa) {
+        return `
+            <!-- SECCIÓN GENERAL -->
+            <div class="admin-seccion active" id="seccion-general">
+                <h3><i class="fas fa-building"></i> Información General</h3>
+                <div class="admin-grid">
+                    <div class="admin-campo">
+                        <label>📝 Nombre de la Empresa</label>
+                        <input type="text" id="admin-nombre" value="${empresa.nombre}" maxlength="100">
+                    </div>
+                    <div class="admin-campo">
+                        <label>📋 Categoría</label>
+                        <select id="admin-categoria">
+                            ${this._generarOpcionesCategorias(empresa.categoria)}
+                        </select>
+                    </div>
+                    <div class="admin-campo">
+                        <label>🎨 Icono/Logo</label>
+                        <div class="admin-iconos">
+                            <input type="text" id="admin-icono" value="${empresa.icono || '🏢'}" readonly>
+                            <button class="admin-btn-icon" onclick="adminEmpresas.cambiarIcono()">Cambiar</button>
+                        </div>
+                    </div>
+                    <div class="admin-campo">
+                        <label>📊 Estado Operativo</label>
+                        <select id="admin-estado">
+                            ${this._generarOpcionesEstado(empresa.estado)}
+                        </select>
+                    </div>
+                    <div class="admin-campo admin-campo-full">
+                        <label>📍 Dirección Completa</label>
+                        <input type="text" id="admin-direccion" value="${empresa.ubicacion?.direccion || ''}" placeholder="Av. Principal 123">
+                    </div>
+                    <div class="admin-campo">
+                        <label>🏘️ Distrito</label>
+                        <input type="text" id="admin-distrito" value="${empresa.ubicacion?.distrito || ''}" placeholder="Lima">
+                    </div>
+                    <div class="admin-campo">
+                        <label>🏛️ Departamento</label>
+                        <select id="admin-departamento">
+                            ${this._generarOpcionesDepartamentos(empresa.ubicacion?.departamento)}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECCIÓN LEGAL -->
+            <div class="admin-seccion" id="seccion-legal">
+                <h3><i class="fas fa-gavel"></i> Información Legal</h3>
+                <div class="admin-grid">
+                    <div class="admin-campo">
+                        <label>🆔 RUC</label>
+                        <input type="text" id="admin-ruc" value="${empresa.legal?.ruc || ''}" maxlength="11" placeholder="20123456789">
+                    </div>
+                    <div class="admin-campo">
+                        <label>🏢 Razón Social</label>
+                        <input type="text" id="admin-razon-social" value="${empresa.legal?.razonSocial || ''}" placeholder="Mi Empresa S.A.C.">
+                    </div>
+                    <div class="admin-campo">
+                        <label>📋 Tipo de Empresa</label>
+                        <select id="admin-tipo-empresa">
+                            ${this._generarOpcionesTipoEmpresa(empresa.legal?.tipoEmpresa)}
+                        </select>
+                    </div>
+                    <div class="admin-campo">
+                        <label>💼 Régimen Tributario</label>
+                        <select id="admin-regimen">
+                            ${this._generarOpcionesRegimen(empresa.legal?.regimen)}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECCIÓN FINANCIERO -->
+            <div class="admin-seccion" id="seccion-financiero">
+                <h3><i class="fas fa-chart-line"></i> Datos Financieros</h3>
+                <div class="admin-grid">
+                    <div class="admin-campo">
+                        <label>💰 Caja Actual (S/.)</label>
+                        <input type="number" id="admin-caja" value="${empresa.finanzas?.caja || 0}" step="0.01">
+                    </div>
+                    <div class="admin-campo">
+                        <label>📈 Ingresos Anuales (S/.)</label>
+                        <input type="number" id="admin-ingresos" value="${empresa.finanzas?.ingresos || 0}" step="0.01">
+                    </div>
+                    <div class="admin-campo">
+                        <label>📉 Gastos Anuales (S/.)</label>
+                        <input type="number" id="admin-gastos" value="${empresa.finanzas?.gastos || 0}" step="0.01">
+                    </div>
+                    <div class="admin-campo">
+                        <label>💎 Utilidad Neta (S/.)</label>
+                        <input type="number" id="admin-utilidad" value="${empresa.finanzas?.utilidadNeta || 0}" step="0.01" readonly>
+                    </div>
+                    <div class="admin-campo">
+                        <label>📊 Margen Neto (%)</label>
+                        <input type="number" id="admin-margen" value="${empresa.finanzas?.margenNeto || 0}" step="0.01" readonly>
+                    </div>
+                    <div class="admin-campo">
+                        <label>🎯 ROI (%)</label>
+                        <input type="number" id="admin-roi" value="${empresa.finanzas?.roi || 0}" step="0.01">
+                    </div>
+                </div>
+                <button class="admin-btn admin-btn-calcular" onclick="adminEmpresas.calcularMetricas()">
+                    <i class="fas fa-calculator"></i> Recalcular Métricas
+                </button>
+            </div>
+
+            <!-- SECCIÓN CONTACTO -->
+            <div class="admin-seccion" id="seccion-contacto">
+                <h3><i class="fas fa-address-book"></i> Información de Contacto</h3>
+                <div class="admin-grid">
+                    <div class="admin-campo">
+                        <label>📞 Teléfono</label>
+                        <input type="tel" id="admin-telefono" value="${empresa.contacto?.telefono || ''}" placeholder="+51 1 234-5678">
+                    </div>
+                    <div class="admin-campo">
+                        <label>📧 Email</label>
+                        <input type="email" id="admin-email" value="${empresa.contacto?.email || ''}" placeholder="contacto@empresa.pe">
+                    </div>
+                    <div class="admin-campo admin-campo-full">
+                        <label>🌐 Sitio Web</label>
+                        <input type="url" id="admin-web" value="${empresa.contacto?.web || ''}" placeholder="www.empresa.pe">
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECCIÓN TEMAS INTEGRADA -->
+            <div class="admin-seccion" id="seccion-temas">
+                <h3><i class="fas fa-palette"></i> Configuración de Temas</h3>
+                <div class="admin-temas-grid">
+                    <div class="admin-config-card">
+                        <h4>🎨 Tema de la Empresa</h4>
+                        <p>Selecciona el tema visual que representa mejor a tu empresa:</p>
+                        <div class="admin-temas-selector">
+                            ${this._generarSelectorTemasAdmin(empresa.tema)}
+                        </div>
+                    </div>
+                    <div class="admin-config-card">
+                        <h4>👁️ Vista Previa</h4>
+                        <div class="admin-preview" id="admin-preview">
+                            <div class="preview-card">
+                                <div class="preview-avatar">${empresa.icono}</div>
+                                <div class="preview-name">${empresa.nombre}</div>
+                                <div class="preview-status">Vista previa del tema</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="admin-config-card">
+                        <h4>🌐 Tema Global del Sistema</h4>
+                        <p>Cambiar el tema de todo el sistema GRIZALUM:</p>
+                        <div class="admin-temas-globales">
+                            ${this._generarTemasGlobales()}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    _generarFooterAdmin(empresaId) {
+        return `
+            <div class="grizalum-admin-footer">
+                <div class="admin-footer-info">
+                    <span>📅 Última actualización: ${new Date().toLocaleDateString()}</span>
+                </div>
+                <div class="admin-footer-actions">
+                    <button class="admin-btn admin-btn-cancelar" onclick="adminEmpresas.cerrarModal()">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button class="admin-btn admin-btn-guardar" onclick="adminEmpresas.guardarCambios('${empresaId}')">
+                        <i class="fas fa-save"></i> Guardar Cambios
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // GENERADORES ESPECÍFICOS PARA TEMAS
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    _generarSelectorTemasAdmin(temaActual) {
+        const temas = [
+            { key: 'rojo', name: 'Rojo Ejecutivo', css: 'red', color: '#dc2626' },
+            { key: 'azul', name: 'Azul Corporativo', css: 'blue', color: '#2563eb' },
+            { key: 'verde', name: 'Verde Naturaleza', css: 'green', color: '#059669' },
+            { key: 'morado', name: 'Púrpura Premium', css: 'purple', color: '#7c3aed' },
+            { key: 'dorado', name: 'Dorado Perú', css: 'gold', color: '#d4af37' }
+        ];
+
+        return temas.map(tema => `
+            <div class="admin-tema-option ${tema.key === temaActual ? 'selected' : ''}" 
+                 data-tema="${tema.key}" 
+                 onclick="adminEmpresas.cambiarTemaEmpresa('${tema.key}')">
+                <div class="tema-color" style="background: linear-gradient(135deg, ${tema.color}, ${tema.color}dd);"></div>
+                <div class="tema-info">
+                    <div class="tema-name">${tema.name}</div>
+                    <div class="tema-key">${tema.key.toUpperCase()}</div>
+                </div>
+                <div class="tema-check">
+                    <i class="fas fa-check"></i>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    _generarTemasGlobales() {
+        const temasGlobales = [
+            { css: 'gold', name: 'Dorado Perú', color: '#d4af37' },
+            { css: 'blue', name: 'Azul Corporativo', color: '#2563eb' },
+            { css: 'green', name: 'Verde Naturaleza', color: '#059669' },
+            { css: 'purple', name: 'Púrpura Premium', color: '#7c3aed' },
+            { css: 'red', name: 'Rojo Ejecutivo', color: '#dc2626' },
+            { css: 'dark', name: 'Modo Oscuro', color: '#1e293b' }
+        ];
+
+        return temasGlobales.map(tema => `
+            <button class="admin-tema-global" 
+                    data-theme="${tema.css}" 
+                    onclick="adminEmpresas.cambiarTemaGlobal('${tema.css}')"
+                    style="background: ${tema.color};">
+                ${tema.name}
+            </button>
+        `).join('');
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // MÉTODOS DE FUNCIONALIDAD DE TEMAS
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    cambiarTemaEmpresa(tema) {
+        // Actualizar visualización en el modal
+        document.querySelectorAll('.admin-tema-option').forEach(option => {
+            option.classList.remove('selected');
+        });
+        document.querySelector(`[data-tema="${tema}"]`).classList.add('selected');
+
+        // Actualizar vista previa
+        const preview = document.getElementById('admin-preview');
+        if (preview) {
+            const mapaTemaCss = {
+                'rojo': 'red', 'azul': 'blue', 'verde': 'green',
+                'morado': 'purple', 'dorado': 'gold'
+            };
+            preview.setAttribute('data-theme', mapaTemaCss[tema]);
+        }
+
+        this._mostrarNotificacion(`🎨 Tema ${tema} seleccionado para la empresa`);
+    }
+
+    cambiarTemaGlobal(temaCss) {
+        // Aplicar tema global inmediatamente usando tu sistema
+        document.documentElement.setAttribute('data-theme', temaCss);
+        
+        // Guardar preferencia
+        localStorage.setItem('grizalum_tema_global', temaCss);
+        
+        this._mostrarNotificacion(`🌐 Tema global cambiado a ${temaCss}`);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // MÉTODOS DE NAVEGACIÓN Y EVENTOS
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    _configurarEventosAdmin(empresaId) {
+        // Navegación entre secciones
+        const botones = document.querySelectorAll('.admin-nav-btn');
+        botones.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const seccion = e.target.dataset.seccion;
+                this._cambiarSeccion(seccion);
+            });
+        });
+
+        // Auto-cálculo de métricas financieras
+        const inputsFinancieros = ['admin-ingresos', 'admin-gastos'];
+        inputsFinancieros.forEach(id => {
+            const input = document.getElementById(id);
+            if (input) {
+                input.addEventListener('input', () => this._autoCalcularMetricas());
+            }
+        });
+
+        // Cerrar con Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.modalActivo) {
+                this.cerrarModal();
+            }
+        });
+    }
+
+    _cambiarSeccion(seccionTarget) {
+        // Remover active de botones y secciones
+        document.querySelectorAll('.admin-nav-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.admin-seccion').forEach(sec => sec.classList.remove('active'));
+        
+        // Activar nueva sección
+        document.querySelector(`[data-seccion="${seccionTarget}"]`).classList.add('active');
+        document.getElementById(`seccion-${seccionTarget}`).classList.add('active');
+        
+        this._log('info', `📂 Sección cambiada a: ${seccionTarget}`);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // MÉTODOS PÚBLICOS DE FUNCIONALIDAD
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    guardarCambios(empresaId) {
+        try {
+            const empresa = this.gestor.estado.empresas[empresaId];
+            if (!empresa) throw new Error('Empresa no encontrada');
+
+            // Recopilar datos del formulario
+            const datosActualizados = this._recopilarDatosFormulario();
+            
+            // Validar datos
+            const validacion = this._validarDatos(datosActualizados);
+            if (!validacion.valido) {
+                this._mostrarError(`Error de validación: ${validacion.errores.join(', ')}`);
+                return;
+            }
+
+            // Actualizar empresa
+            Object.assign(empresa, datosActualizados);
+            empresa.meta.fechaActualizacion = new Date().toISOString();
+
+            // Guardar en gestor principal
+            this.gestor._guardarEmpresas();
+            this.gestor._actualizarListaEmpresas();
+            this.gestor._actualizarSelectorPrincipal();
+            this.gestor._calcularMetricas();
+
+            // Registrar actividad
+            this.gestor._registrarActividad('EMPRESA_ADMIN_EDITADA', `Admin editó empresa: ${empresa.nombre}`);
+
+            this._mostrarExito('✅ Empresa actualizada exitosamente');
+            
+            setTimeout(() => this.cerrarModal(), 1000);
+
+        } catch (error) {
+            this._log('error', 'Error guardando cambios admin:', error);
+            this._mostrarError('Error al guardar cambios');
+        }
+    }
+
+    calcularMetricas() {
+        const ingresos = parseFloat(document.getElementById('admin-ingresos').value) || 0;
+        const gastos = parseFloat(document.getElementById('admin-gastos').value) || 0;
+        
+        const utilidad = ingresos - gastos;
+        const margen = ingresos > 0 ? (utilidad / ingresos) * 100 : 0;
+        
+        document.getElementById('admin-utilidad').value = utilidad.toFixed(2);
+        document.getElementById('admin-margen').value = margen.toFixed(2);
+        
+        this._mostrarNotificacion('📊 Métricas recalculadas');
+    }
+
+    _autoCalcularMetricas() {
+        setTimeout(() => this.calcularMetricas(), 100);
+    }
+
+    cerrarModal() {
+        if (this.modalActivo) {
+            this.modalActivo.classList.remove('show');
+            setTimeout(() => {
+                if (this.modalActivo) {
+                    this.modalActivo.remove();
+                    this.modalActivo = null;
+                }
+            }, 300);
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // MÉTODOS AUXILIARES
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    _recopilarDatosFormulario() {
+        // Recopilar tema seleccionado
+        const temaSeleccionado = document.querySelector('.admin-tema-option.selected');
+        const tema = temaSeleccionado ? temaSeleccionado.dataset.tema : 'dorado';
+
+        return {
+            nombre: document.getElementById('admin-nombre').value.trim(),
+            categoria: document.getElementById('admin-categoria').value,
+            estado: document.getElementById('admin-estado').value,
+            icono: document.getElementById('admin-icono').value,
+            tema: tema, // ← IMPORTANTE: Guardar tema seleccionado
+            
+            ubicacion: {
+                direccion: document.getElementById('admin-direccion').value.trim(),
+                distrito: document.getElementById('admin-distrito').value.trim(),
+                departamento: document.getElementById('admin-departamento').value,
+                provincia: document.getElementById('admin-distrito').value.trim(),
+                codigoPostal: '00000'
+            },
+            
+            legal: {
+                ruc: document.getElementById('admin-ruc').value.trim(),
+                razonSocial: document.getElementById('admin-razon-social').value.trim(),
+                tipoEmpresa: document.getElementById('admin-tipo-empresa').value,
+                regimen: document.getElementById('admin-regimen').value
+            },
+            
+            contacto: {
+                telefono: document.getElementById('admin-telefono').value.trim(),
+                email: document.getElementById('admin-email').value.trim(),
+                web: document.getElementById('admin-web').value.trim()
+            },
+            
+            finanzas: {
+                caja: parseFloat(document.getElementById('admin-caja').value) || 0,
+                ingresos: parseFloat(document.getElementById('admin-ingresos').value) || 0,
+                gastos: parseFloat(document.getElementById('admin-gastos').value) || 0,
+                utilidadNeta: parseFloat(document.getElementById('admin-utilidad').value) || 0,
+                margenNeto: parseFloat(document.getElementById('admin-margen').value) || 0,
+                roi: parseFloat(document.getElementById('admin-roi').value) || 0
+            }
+        };
+    }
+
+    _validarDatos(datos) {
+        const errores = [];
+        
+        if (!datos.nombre) errores.push('Nombre es obligatorio');
+        if (datos.nombre.length < 3) errores.push('Nombre debe tener al menos 3 caracteres');
+        if (datos.legal.ruc && datos.legal.ruc.length !== 11) errores.push('RUC debe tener 11 dígitos');
+        if (datos.contacto.email && !this._validarEmail(datos.contacto.email)) errores.push('Email inválido');
+        
+        return {
+            valido: errores.length === 0,
+            errores
+        };
+    }
+
+    _validarEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // GENERADORES DE OPTIONS Y SELECTORES
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    _generarOpcionesCategorias(seleccionada) {
+        const categorias = ['Manufactura', 'Comercio', 'Servicios', 'Agropecuario', 'Tecnología', 'Salud', 'Educación', 'Restaurante', 'Transporte', 'Construcción'];
+        return categorias.map(cat => 
+            `<option value="${cat}" ${cat === seleccionada ? 'selected' : ''}>${cat}</option>`
+        ).join('');
+    }
+
+    _generarOpcionesEstado(seleccionado) {
+        const estados = ['Operativo', 'Regular', 'Crítico', 'En Preparación', 'Mantenimiento', 'Suspendido', 'Inactivo'];
+        return estados.map(estado => 
+            `<option value="${estado}" ${estado === seleccionado ? 'selected' : ''}>${estado}</option>`
+        ).join('');
+    }
+
+    _generarOpcionesDepartamentos(seleccionado) {
+        const departamentos = ['Lima', 'Arequipa', 'Cusco', 'Trujillo', 'Chiclayo', 'Piura', 'Iquitos', 'Huancayo', 'Tacna'];
+        return departamentos.map(dep => 
+            `<option value="${dep}" ${dep === seleccionado ? 'selected' : ''}>${dep}</option>`
+        ).join('');
+    }
+
+    _generarOpcionesTipoEmpresa(seleccionado) {
+        const tipos = ['S.A.C.', 'S.R.L.', 'E.I.R.L.', 'S.A.', 'Persona Natural'];
+        return tipos.map(tipo => 
+            `<option value="${tipo}" ${tipo === seleccionado ? 'selected' : ''}>${tipo}</option>`
+        ).join('');
+    }
+
+    _generarOpcionesRegimen(seleccionado) {
+        const regimenes = ['General', 'MYPE', 'RUS', 'RER'];
+        return regimenes.map(reg => 
+            `<option value="${reg}" ${reg === seleccionado ? 'selected' : ''}>${reg}</option>`
+        ).join('');
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // MÉTODOS DE UTILIDAD Y NOTIFICACIONES
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    _mostrarExito(mensaje) {
+        this._mostrarNotificacion(mensaje, 'success');
+    }
+
+    _mostrarError(mensaje) {
+        this._mostrarNotificacion(mensaje, 'error');
+    }
+
+    _mostrarNotificacion(mensaje, tipo = 'info') {
+        // Crear notificación toast
+        const toast = document.createElement('div');
+        toast.className = `admin-toast admin-toast-${tipo}`;
+        toast.textContent = mensaje;
+        
+        document.body.appendChild(toast);
+        
+        setTimeout(() => toast.classList.add('show'), 100);
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    _cerrarModalPrevio() {
+        const modalPrevio = document.getElementById('grizalumModalAdmin');
+        if (modalPrevio) modalPrevio.remove();
+    }
+
+    _log(nivel, mensaje, datos = null) {
+        this.gestor._log(nivel, `[ADMIN] ${mensaje}`, datos);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // ESTILOS CSS PARA EL MODAL ADMIN INTEGRADO
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    _crearEstilosAdmin() {
+        const estilosId = 'grizalum-admin-styles';
+        if (document.getElementById(estilosId)) return;
+
+        const estilos = document.createElement('style');
+        estilos.id = estilosId;
+        estilos.textContent = `
+            /* MODAL ADMIN STYLES - INTEGRADO CON TU SISTEMA DE TEMAS */
+            .grizalum-modal-admin {
+                background: white;
+                border-radius: 20px;
+                width: 1000px;
+                max-width: 95vw;
+                max-height: 90vh;
+                overflow: hidden;
+                transform: scale(0.9) translateY(20px);
+                transition: all 0.3s ease;
+                box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            }
+
+            .grizalum-modal-overlay.show .grizalum-modal-admin {
+                transform: scale(1) translateY(0);
+            }
+
+            .grizalum-admin-header {
+                background: var(--theme-gradient);
+                color: white;
+                padding: 2rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .admin-header-info {
+                display: flex;
+                align-items: center;
+                gap: 1.5rem;
+            }
+
+            .admin-empresa-avatar {
+                width: 70px;
+                height: 70px;
+                background: rgba(255,255,255,0.2);
+                border-radius: 15px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 2rem;
+            }
+
+            .admin-empresa-avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 15px;
+            }
+
+            .admin-empresa-datos h2 {
+                margin: 0 0 0.5rem 0;
+                font-size: 1.5rem;
+            }
+
+            .admin-categoria {
+                background: rgba(255,255,255,0.2);
+                padding: 0.25rem 0.75rem;
+                border-radius: 20px;
+                font-size: 0.8rem;
+            }
+
+            .grizalum-admin-nav {
+                background: #f8fafc;
+                padding: 0;
+                display: flex;
+                border-bottom: 1px solid #e5e7eb;
+            }
+
+            .admin-nav-btn {
+                flex: 1;
+                padding: 1rem;
+                border: none;
+                background: transparent;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                font-weight: 600;
+                color: #6b7280;
+                transition: all 0.3s ease;
+                border-bottom: 3px solid transparent;
+            }
+
+            .admin-nav-btn:hover {
+                background: #e5e7eb;
+                color: #374151;
+            }
+
+            .admin-nav-btn.active {
+                color: var(--theme-primary);
+                border-bottom-color: var(--theme-primary);
+                background: white;
+            }
+
+            .grizalum-admin-content {
+                padding: 2rem;
+                max-height: 500px;
+                overflow-y: auto;
+            }
+
+            .admin-seccion {
+                display: none;
+            }
+
+            .admin-seccion.active {
+                display: block;
+            }
+
+            .admin-seccion h3 {
+                margin: 0 0 1.5rem 0;
+                color: #374151;
+                font-size: 1.2rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .admin-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1.5rem;
+                margin-bottom: 2rem;
+            }
+
+            .admin-campo-full {
+                grid-column: 1 / -1;
+            }
+
+            .admin-campo label {
+                display: block;
+                font-weight: 600;
+                color: #374151;
+                margin-bottom: 0.5rem;
+            }
+
+            .admin-campo input,
+            .admin-campo select {
+                width: 100%;
+                padding: 0.75rem;
+                border: 2px solid #e5e7eb;
+                border-radius: 8px;
+                font-size: 1rem;
+                transition: all 0.3s ease;
+            }
+
+            .admin-campo input:focus,
+            .admin-campo select:focus {
+                outline: none;
+                border-color: var(--theme-primary);
+                box-shadow: 0 0 0 3px var(--theme-primary-alpha);
+            }
+
+            .admin-btn {
+                padding: 0.75rem 1.5rem;
+                border: none;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                transition: all 0.3s ease;
+            }
+
+            .admin-btn-guardar {
+                background: var(--theme-gradient);
+                color: white;
+                box-shadow: var(--theme-shadow-light);
+            }
+
+            .admin-btn-cancelar {
+                background: #6b7280;
+                color: white;
+            }
+
+            .admin-btn-calcular {
+                background: var(--theme-gradient);
+                color: white;
+                margin-top: 1rem;
+            }
+
+            /* ESTILOS ESPECÍFICOS PARA TEMAS */
+            .admin-temas-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 2rem;
+            }
+
+            .admin-config-card {
+                background: #f8fafc;
+                padding: 1.5rem;
+                border-radius: 12px;
+                border: 1px solid #e5e7eb;
+            }
+
+            .admin-config-card h4 {
+                margin: 0 0 1rem 0;
+                color: #374151;
+            }
+
+            .admin-temas-selector {
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .admin-tema-option {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                padding: 1rem;
+                border: 2px solid #e5e7eb;
+                border-radius: 10px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                background: white;
+            }
+
+            .admin-tema-option:hover {
+                border-color: var(--theme-primary);
+                transform: translateX(5px);
+            }
+
+            .admin-tema-option.selected {
+                border-color: var(--theme-primary);
+                background: var(--theme-primary-alpha);
+                box-shadow: 0 4px 12px var(--theme-primary-alpha);
+            }
+
+            .tema-color {
+                width: 40px;
+                height: 40px;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            }
+
+            .tema-info {
+                flex: 1;
+            }
+
+            .tema-name {
+                font-weight: 600;
+                color: #374151;
+                margin-bottom: 0.25rem;
+            }
+
+            .tema-key {
+                font-size: 0.8rem;
+                color: #6b7280;
+            }
+
+            .tema-check {
+                color: var(--theme-primary);
+                font-size: 1.2rem;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .admin-tema-option.selected .tema-check {
+                opacity: 1;
+            }
+
+            .admin-preview {
+                padding: 1rem;
+                background: white;
+                border-radius: 8px;
+                border: 1px solid #e5e7eb;
+            }
+
+            .preview-card {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                padding: 1rem;
+                background: var(--theme-gradient);
+                color: white;
+                border-radius: 8px;
+            }
+
+            .preview-avatar {
+                width: 40px;
+                height: 40px;
+                background: rgba(255,255,255,0.2);
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.2rem;
+            }
+
+            .preview-name {
+                font-weight: 600;
+                font-size: 1.1rem;
+            }
+
+            .preview-status {
+                font-size: 0.9rem;
+                opacity: 0.9;
+            }
+
+            .admin-temas-globales {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 0.5rem;
+            }
+
+            .admin-tema-global {
+                padding: 0.75rem;
+                border: none;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .admin-tema-global:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            }
+
+            .grizalum-admin-footer {
+                background: #f8fafc;
+                padding: 1.5rem 2rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-top: 1px solid #e5e7eb;
+            }
+
+            .admin-footer-actions {
+                display: flex;
+                gap: 1rem;
+            }
+
+            .admin-toast {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                z-index: 99999;
+                transform: translateX(100%);
+                transition: all 0.3s ease;
+            }
+
+            .admin-toast.show {
+                transform: translateX(0);
+            }
+
+            .admin-toast-success { background: #059669; }
+            .admin-toast-error { background: #dc2626; }
+            .admin-toast-info { background: #2563eb; }
+
+            @media (max-width: 768px) {
+                .grizalum-modal-admin {
+                    width: 95vw;
+                    height: 95vh;
+                }
+                
+                .admin-grid {
+                    grid-template-columns: 1fr;
+                }
+                
+                .admin-temas-grid {
+                    grid-template-columns: 1fr;
+                }
+                
+                .grizalum-admin-nav {
+                    flex-wrap: wrap;
+                }
+                
+                .admin-nav-btn {
+                    flex: none;
+                    min-width: 80px;
+                    font-size: 0.8rem;
+                }
+            }
+        `;
+
+        document.head.appendChild(estilos);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// INICIALIZACIÓN Y CONEXIÓN CON GESTOR PRINCIPAL
+// ═══════════════════════════════════════════════════════════════════════════
+
+let adminEmpresas = null;
+
+// Inicializar cuando el gestor principal esté listo
+document.addEventListener('gestorEmpresasListo', () => {
+    if (window.gestorEmpresas && !adminEmpresas) {
+        adminEmpresas = new GestorEmpresasAdmin(window.gestorEmpresas);
+        window.adminEmpresas = adminEmpresas;
+        
+        // Conectar con el método del gestor principal
+        window.gestorEmpresas.gestionarEmpresa = function(empresaId) {
+            adminEmpresas.abrirPanelAdmin(empresaId);
+        };
+        
+        console.log('👑 Admin Panel inicializado y conectado con sistema de temas');
+    }
+});
+
+// Asegurar inicialización tardía
+setTimeout(() => {
+    if (window.gestorEmpresas && !adminEmpresas) {
+        adminEmpresas = new GestorEmpresasAdmin(window.gestorEmpresas);
+        window.adminEmpresas = adminEmpresas;
+        
+        window.gestorEmpresas.gestionarEmpresa = function(empresaId) {
+            adminEmpresas.abrirPanelAdmin(empresaId);
+        };
+    }
+}, 2000);
