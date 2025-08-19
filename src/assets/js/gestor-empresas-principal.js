@@ -1809,11 +1809,46 @@ class GestorEmpresasProfesional {
                     <div style="margin: 1.5rem 0;">
                         <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">🎨 Tema de Colores:</label>
                         <div style="display: flex; gap: 1rem;">
-                            <div onclick="gestorEmpresas.seleccionarTema('rojo')" style="width: 60px; height: 40px; background: linear-gradient(135deg, #dc2626, #b91c1c); border-radius: 8px; cursor: pointer; border: 3px solid #dc2626; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem;">ROJO</div>
-                            <div onclick="gestorEmpresas.seleccionarTema('azul')" style="width: 60px; height: 40px; background: linear-gradient(135deg, #2563eb, #1d4ed8); border-radius: 8px; cursor: pointer; border: 3px solid transparent; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem;">AZUL</div>
-                            <div onclick="gestorEmpresas.seleccionarTema('verde')" style="width: 60px; height: 40px; background: linear-gradient(135deg, #059669, #047857); border-radius: 8px; cursor: pointer; border: 3px solid transparent; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem;">VERDE</div>
-                            <div onclick="gestorEmpresas.seleccionarTema('morado')" style="width: 60px; height: 40px; background: linear-gradient(135deg, #7c3aed, #6d28d9); border-radius: 8px; cursor: pointer; border: 3px solid transparent; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem;">MORADO</div>
-                            <div onclick="gestorEmpresas.seleccionarTema('dorado')" style="width: 60px; height: 40px; background: linear-gradient(135deg, #d97706, #b45309); border-radius: 8px; cursor: pointer; border: 3px solid transparent; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem;">DORADO</div>
+                            <div 
+                                data-tema="rojo" 
+                                onclick="gestorEmpresas.seleccionarTema('rojo')" 
+                                style="width: 60px; height: 40px; background: linear-gradient(135deg, #dc2626, #b91c1c); border-radius: 8px; cursor: pointer; border: 3px solid #dc2626; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem; transition: all 0.3s ease;"
+                                onmouseover="this.style.transform='scale(1.05)'" 
+                                onmouseout="this.style.transform='scale(1)'">
+                                ROJO
+                            </div>
+                            <div 
+                                data-tema="azul" 
+                                onclick="gestorEmpresas.seleccionarTema('azul')" 
+                                style="width: 60px; height: 40px; background: linear-gradient(135deg, #2563eb, #1d4ed8); border-radius: 8px; cursor: pointer; border: 3px solid transparent; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem; transition: all 0.3s ease;"
+                                onmouseover="this.style.transform='scale(1.05)'" 
+                                onmouseout="this.style.transform='scale(1)'">
+                                AZUL
+                            </div>
+                            <div 
+                                data-tema="verde" 
+                                onclick="gestorEmpresas.seleccionarTema('verde')" 
+                                style="width: 60px; height: 40px; background: linear-gradient(135deg, #059669, #047857); border-radius: 8px; cursor: pointer; border: 3px solid transparent; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem; transition: all 0.3s ease;"
+                                onmouseover="this.style.transform='scale(1.05)'" 
+                                onmouseout="this.style.transform='scale(1)'">
+                                VERDE
+                            </div>
+                            <div 
+                                data-tema="morado" 
+                                onclick="gestorEmpresas.seleccionarTema('morado')" 
+                                style="width: 60px; height: 40px; background: linear-gradient(135deg, #7c3aed, #6d28d9); border-radius: 8px; cursor: pointer; border: 3px solid transparent; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem; transition: all 0.3s ease;"
+                                onmouseover="this.style.transform='scale(1.05)'" 
+                                onmouseout="this.style.transform='scale(1)'">
+                                MORADO
+                            </div>
+                            <div 
+                                data-tema="dorado" 
+                                onclick="gestorEmpresas.seleccionarTema('dorado')" 
+                                style="width: 60px; height: 40px; background: linear-gradient(135deg, #d97706, #b45309); border-radius: 8px; cursor: pointer; border: 3px solid transparent; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem; transition: all 0.3s ease;"
+                                onmouseover="this.style.transform='scale(1.05)'" 
+                                onmouseout="this.style.transform='scale(1)'">
+                                DORADO
+                            </div>
                         </div>
                         <input type="hidden" id="nuevaEmpresaTema" value="rojo">
                     </div>
@@ -1845,27 +1880,6 @@ class GestorEmpresasProfesional {
      * @param {string} tema - Tema seleccionado
      */
   seleccionarTema(tema) {
-    // Verificar que el modal existe
-    const modal = document.getElementById('grizalumModalNuevaEmpresa');
-    if (!modal) return;
-    
-    // Remover selección previa
-    modal.querySelectorAll('[onclick*="seleccionarTema"]').forEach(el => {
-        el.style.borderColor = 'transparent';
-    });
-    
-    // Marcar como seleccionado
-    if (event && event.target) {
-        event.target.style.borderColor = this.config.temas[tema].primary;
-    }
-    
-    // Guardar selección
-    const temaInput = document.getElementById('nuevaEmpresaTema');
-    if (temaInput) {
-        temaInput.value = tema;
-    }
-}
-
     /**
      * Crea nueva empresa
      */
