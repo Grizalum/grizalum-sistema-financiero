@@ -60,7 +60,56 @@
    ================================================================ 
    Agrega aquí cualquier estilo específico que necesites
    sin modificar los archivos modulares originales
-*/
+
+/* 🤖 ASISTENTE IA - ESTILOS OVERRIDE */
+#aiAssistantPanel {
+    position: fixed !important;
+    top: 100px !important;
+    right: 30px !important;
+    width: 420px !important;
+    height: 550px !important;
+    background: white !important;
+    border: 2px solid var(--primary-color, #d4af37) !important;
+    border-radius: 16px !important;
+    z-index: 999999 !important;
+    display: none !important;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2) !important;
+    overflow: hidden !important;
+    font-family: var(--font-primary, 'Inter') !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+#aiAssistantPanel.show {
+    display: flex !important;
+    flex-direction: column !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+#aiAssistantPanel .ai-panel-header {
+    background: linear-gradient(135deg, var(--primary-color, #d4af37) 0%, var(--secondary-color, #b8860b) 100%) !important;
+    color: white !important;
+    padding: 1rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+}
+
+#aiAssistantPanel .ai-chat-container {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 1rem !important;
+}
+
+#aiAssistantPanel .ai-control-btn {
+    background: rgba(255,255,255,0.2) !important;
+    border: none !important;
+    color: white !important;
+    padding: 0.5rem !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+}
 
 /* Ejemplo de override personalizado */
 /*
