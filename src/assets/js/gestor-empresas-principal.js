@@ -1302,11 +1302,223 @@ class GestorEmpresasProfesional {
         this._crearModalEdicionBasica(empresaId, empresa);
     }
 
-    gestionarEmpresa(empresaId) {
-        this._log('info', `👑 Gestión admin de empresa: ${empresaId}`);
-        console.log('🚀 Panel Admin - Próximamente en Fase 2');
-        this._cerrarLista();
+   gestionarEmpresa(empresaId) {
+    const empresa = this.estado.empresas[empresaId];
+    if (!empresa) {
+        this._log('error', `Empresa no encontrada: ${empresaId}`);
+        return;
     }
+
+    this._log('info', `👑 Abriendo panel admin para: ${empresa.nombre}`);
+    this._cerrarLista();
+    this._crearModalGestionAdmin(empresaId, empresa);
+}
+
+_crearModalGestionAdmin(empresaId, empresa) {
+    const modalPrevio = document.getElementById('grizalumModalAdmin');
+    if (modalPrevio) modalPrevio.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'grizalumModalAdmin';
+    modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999999; display: flex; align-items: center; justify-content: center; overflow-y: auto;';
+    
+    const temaEmpresa = this.config.temas[empresa.tema] || this.config.temas.rojo;
+    
+    modal.innerHTML = `
+        <div style="background: white; border-radius: 16px; width: 900px; max-width: 95vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.3); margin: 20px;">
+            <div style="background: linear-gradient(135deg, ${temaEmpresa.primary}, ${temaEmpresa.secondary}); color: white; padding: 1.5rem; border-radius: 16px 16px 0 0;">
+                <h3 style="margin: 0; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="display: flex; align-items: center; gap: 1rem;">
+                        <span style="font-size: 1.5rem;">${empresa.icono}</span>
+                        👑 Gestión Admin - ${empresa.nombre}
+                    </span>
+                    <span onclick="gestorEmpresas.cerrarModalAdmin()" style="cursor: pointer; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.2); border-radius: 50%; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">✕</span>
+                </h3>
+                <div style="margin-top: 0.5rem; opacity: 0.9; font-size: 0.9rem;">
+                    Gestión completa de ${empresa.nombre} • ${empresa.categoria} • ${empresa.estado}
+                </div>
+            </div>
+            
+            <div style="padding: 2rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <div>
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">🏢 Nombre de la Empresa:</label>
+                            <input type="text" id="adminEmpresaNombre" value="${empresa.nombre}" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;">
+                        </div>
+                        
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">📋 Categoría:</label>
+                            <select id="adminEmpresaCategoria" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;">
+                                <option value="Manufactura" ${empresa.categoria === 'Manufactura' ? 'selected' : ''}>🏭 Manufactura</option>
+                                <option value="Comercio" ${empresa.categoria === 'Comercio' ? 'selected' : ''}>🏪 Comercio</option>
+                                <option value="Servicios" ${empresa.categoria === 'Servicios' ? 'selected' : ''}>🛠️ Servicios</option>
+                                <option value="Agropecuario" ${empresa.categoria === 'Agropecuario' ? 'selected' : ''}>🌱 Agropecuario</option>
+                                <option value="Tecnología" ${empresa.categoria === 'Tecnología' ? 'selected' : ''}>💻 Tecnología</option>
+                                <option value="Salud" ${empresa.categoria === 'Salud' ? 'selected' : ''}>🏥 Salud</option>
+                                <option value="Educación" ${empresa.categoria === 'Educación' ? 'selected' : ''}>🎓 Educación</option>
+                                <option value="Restaurante" ${empresa.categoria === 'Restaurante' ? 'selected' : ''}>🍕 Restaurante</option>
+                                <option value="Transporte" ${empresa.categoria === 'Transporte' ? 'selected' : ''}>🚗 Transporte</option>
+                                <option value="Construcción" ${empresa.categoria === 'Construcción' ? 'selected' : ''}>🏗️ Construcción</option>
+                            </select>
+                        </div>
+                        
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">⚡ Estado Operativo:</label>
+                            <select id="adminEmpresaEstado" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;">
+                                <option value="Operativo" ${empresa.estado === 'Operativo' ? 'selected' : ''}>🟢 Operativo</option>
+                                <option value="Regular" ${empresa.estado === 'Regular' ? 'selected' : ''}>🟡 Regular</option>
+                                <option value="Crítico" ${empresa.estado === 'Crítico' ? 'selected' : ''}>🔴 Crítico</option>
+                                <option value="En Preparación" ${empresa.estado === 'En Preparación' ? 'selected' : ''}>🔵 En Preparación</option>
+                                <option value="Mantenimiento" ${empresa.estado === 'Mantenimiento' ? 'selected' : ''}>🔧 Mantenimiento</option>
+                                <option value="Suspendido" ${empresa.estado === 'Suspendido' ? 'selected' : ''}>⏸️ Suspendido</option>
+                                <option value="Inactivo" ${empresa.estado === 'Inactivo' ? 'selected' : ''}>⚫ Inactivo</option>
+                            </select>
+                        </div>
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">💰 Caja Actual:</label>
+                            <input type="number" id="adminEmpresaCaja" value="${empresa.finanzas?.caja || 0}" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); padding: 1.5rem; border-radius: 12px; border: 1px solid #e5e7eb; margin-bottom: 1rem;">
+                            <h4 style="margin: 0 0 1rem 0; color: #1f2937; display: flex; align-items: center; gap: 0.5rem;">📊 Métricas Rápidas</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div style="text-align: center; padding: 1rem; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                    <div style="font-size: 1.5rem; font-weight: 800; color: #059669;">${this.config.regional.moneda} ${empresa.finanzas?.caja?.toLocaleString() || '0'}</div>
+                                    <div style="font-size: 0.8rem; color: #6b7280; font-weight: 600;">💰 CAJA</div>
+                                </div>
+                                <div style="text-align: center; padding: 1rem; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                    <div style="font-size: 1.5rem; font-weight: 800; color: #2563eb;">${empresa.finanzas?.margenNeto || 0}%</div>
+                                    <div style="font-size: 0.8rem; color: #6b7280; font-weight: 600;">📈 MARGEN</div>
+                                </div>
+                                <div style="text-align: center; padding: 1rem; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                    <div style="font-size: 1.5rem; font-weight: 800; color: #8b5cf6;">${empresa.finanzas?.roi || 0}%</div>
+                                    <div style="font-size: 0.8rem; color: #6b7280; font-weight: 600;">🎯 ROI</div>
+                                </div>
+                                <div style="text-align: center; padding: 1rem; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                    <div style="font-size: 1.2rem; font-weight: 800; color: #dc2626;">${this._calcularDiasActiva(empresa.meta?.fechaCreacion)}</div>
+                                    <div style="font-size: 0.8rem; color: #6b7280; font-weight: 600;">📅 DÍAS</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="padding: 1rem; background: #fef3c7; border-radius: 8px; border: 1px solid #f59e0b;">
+                            <div style="font-weight: 600; color: #92400e; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                ⚠️ Información
+                            </div>
+                            <div style="font-size: 0.9rem; color: #92400e;">
+                                Última actualización: ${new Date(empresa.meta?.fechaActualizacion).toLocaleDateString('es-PE')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="background: #f8fafc; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e5e7eb;">
+                <div style="display: flex; gap: 1rem;">
+                    <button onclick="gestorEmpresas.exportarDatosEmpresa('${empresaId}')" style="background: #3b82f6; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                        📤 Exportar
+                    </button>
+                    <button onclick="gestorEmpresas.duplicarEmpresa('${empresaId}')" style="background: #8b5cf6; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                        📋 Duplicar
+                    </button>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button onclick="gestorEmpresas.cerrarModalAdmin()" style="background: #6b7280; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;">❌ Cancelar</button>
+                    <button onclick="gestorEmpresas.guardarCambiosAdmin('${empresaId}')" style="background: ${temaEmpresa.primary}; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;">💾 Guardar</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+    setTimeout(() => document.getElementById('adminEmpresaNombre')?.focus(), 100);
+    
+    this._log('info', '👑 Modal admin abierto exitosamente');
+}
+
+_calcularDiasActiva(fechaCreacion) {
+    if (!fechaCreacion) return 0;
+    const fechaInicio = new Date(fechaCreacion);
+    const fechaActual = new Date();
+    const diferencia = fechaActual - fechaInicio;
+    return Math.floor(diferencia / (1000 * 60 * 60 * 24));
+}
+
+cerrarModalAdmin() {
+    const modal = document.getElementById('grizalumModalAdmin');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+guardarCambiosAdmin(empresaId) {
+    const nuevoNombre = document.getElementById('adminEmpresaNombre').value.trim();
+    const nuevaCategoria = document.getElementById('adminEmpresaCategoria').value;
+    const nuevoEstado = document.getElementById('adminEmpresaEstado').value;
+    const nuevaCaja = parseFloat(document.getElementById('adminEmpresaCaja').value) || 0;
+
+    if (!nuevoNombre) {
+        alert('❌ El nombre de la empresa es obligatorio');
+        return;
+    }
+
+    this.estado.empresas[empresaId].nombre = nuevoNombre;
+    this.estado.empresas[empresaId].categoria = nuevaCategoria;
+    this.estado.empresas[empresaId].estado = nuevoEstado;
+    this.estado.empresas[empresaId].finanzas.caja = nuevaCaja;
+    this.estado.empresas[empresaId].meta.fechaActualizacion = new Date().toISOString();
+
+    this._guardarEmpresas();
+    this._actualizarListaEmpresas();
+    this._actualizarSelectorPrincipal();
+    this._calcularMetricas();
+    this.cerrarModalAdmin();
+    
+    this._registrarActividad('EMPRESA_ADMIN_EDITADA', `Cambios admin guardados: ${nuevoNombre}`);
+    this._log('success', `✅ Cambios admin guardados: ${nuevoNombre}`);
+    this._dispararEvento('empresaActualizada', { empresaId, empresa: this.estado.empresas[empresaId] });
+}
+
+exportarDatosEmpresa(empresaId) {
+    const empresa = this.estado.empresas[empresaId];
+    if (!empresa) return;
+    
+    const datos = JSON.stringify(empresa, null, 2);
+    const blob = new Blob([datos], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${empresa.nombre}_datos.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    this._log('info', `📤 Datos exportados: ${empresa.nombre}`);
+}
+
+duplicarEmpresa(empresaId) {
+    const empresa = this.estado.empresas[empresaId];
+    if (!empresa) return;
+    
+    const nuevoId = empresa.id + '-copia-' + Date.now();
+    const empresaDuplicada = JSON.parse(JSON.stringify(empresa));
+    
+    empresaDuplicada.id = nuevoId;
+    empresaDuplicada.nombre = empresa.nombre + ' (Copia)';
+    empresaDuplicada.meta.fechaCreacion = new Date().toISOString();
+    empresaDuplicada.meta.fechaActualizacion = new Date().toISOString();
+    
+    this.estado.empresas[nuevoId] = empresaDuplicada;
+    this._guardarEmpresas();
+    this._actualizarListaEmpresas();
+    this._calcularMetricas();
+    this.cerrarModalAdmin();
+    
+    this._log('success', `📋 Empresa duplicada: ${empresaDuplicada.nombre}`);
+}
 
     confirmarEliminarEmpresa(empresaId) {
         this._log('info', `🗑️ Solicitud eliminar empresa: ${empresaId}`);
