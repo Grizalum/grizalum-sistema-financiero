@@ -412,164 +412,601 @@ class GestorEmpresasAdmin {
         `;
     }
 
-    _generarContenidoGeneral(empresa) {
-        return `
-            <!-- SECCIÓN GENERAL -->
-            <div class="admin-seccion active" id="seccion-general">
-                <h3><i class="fas fa-building"></i> Información General</h3>
-                <div class="admin-grid">
-                    <div class="admin-campo">
-                        <label>📝 Nombre de la Empresa</label>
-                        <input type="text" id="admin-nombre" value="${empresa.nombre}" maxlength="100">
-                    </div>
-                    <div class="admin-campo">
-                        <label>📋 Categoría</label>
-                        <select id="admin-categoria">
-                            ${this._generarOpcionesCategorias(empresa.categoria)}
-                        </select>
-                    </div>
-                    <div class="admin-campo">
-                        <label>🎨 Icono/Logo</label>
-                        <div class="admin-iconos">
-                            <input type="text" id="admin-icono" value="${empresa.icono || '🏢'}" readonly>
-                            <button class="admin-btn-icon" onclick="adminEmpresas.cambiarIcono()">Cambiar</button>
+   _generarContenidoGeneral(empresa) {
+    return `
+        <!-- SECCIÓN GENERAL -->
+        <div class="admin-seccion active" id="seccion-general" style="padding: 32px;">
+            
+            <!-- Grid de Información Principal -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px; margin-bottom: 32px;">
+                
+                <!-- Panel Izquierdo: Datos de la Empresa -->
+                <div style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
+                    <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">🏢</div>
+                        Información Empresarial
+                    </h3>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        
+                        <div class="campo-moderno" style="grid-column: 1 / -1;">
+                            <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                📝 Nombre de la Empresa
+                            </label>
+                            <input 
+                                type="text" 
+                                id="admin-nombre" 
+                                value="${empresa.nombre}" 
+                                style="
+                                    width: 100%; 
+                                    padding: 16px 20px; 
+                                    border: 2px solid #e2e8f0; 
+                                    border-radius: 12px; 
+                                    font-size: 16px;
+                                    font-weight: 500;
+                                    background: #ffffff;
+                                    transition: all 0.3s ease;
+                                    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+                                "
+                                onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 4px rgba(59, 130, 246, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
+                                onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
+                            >
                         </div>
-                    </div>
-                    <div class="admin-campo">
-                        <label>📊 Estado Operativo</label>
-                        <select id="admin-estado">
-                            ${this._generarOpcionesEstado(empresa.estado)}
-                        </select>
-                    </div>
-                    <div class="admin-campo admin-campo-full">
-                        <label>📍 Dirección Completa</label>
-                        <input type="text" id="admin-direccion" value="${empresa.ubicacion?.direccion || ''}" placeholder="Av. Principal 123">
-                    </div>
-                    <div class="admin-campo">
-                        <label>🏘️ Distrito</label>
-                        <input type="text" id="admin-distrito" value="${empresa.ubicacion?.distrito || ''}" placeholder="Lima">
-                    </div>
-                    <div class="admin-campo">
-                        <label>🏛️ Departamento</label>
-                        <select id="admin-departamento">
-                            ${this._generarOpcionesDepartamentos(empresa.ubicacion?.departamento)}
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SECCIÓN LEGAL -->
-            <div class="admin-seccion" id="seccion-legal">
-                <h3><i class="fas fa-gavel"></i> Información Legal</h3>
-                <div class="admin-grid">
-                    <div class="admin-campo">
-                        <label>🆔 RUC</label>
-                        <input type="text" id="admin-ruc" value="${empresa.legal?.ruc || ''}" maxlength="11" placeholder="20123456789">
-                    </div>
-                    <div class="admin-campo">
-                        <label>🏢 Razón Social</label>
-                        <input type="text" id="admin-razon-social" value="${empresa.legal?.razonSocial || ''}" placeholder="Mi Empresa S.A.C.">
-                    </div>
-                    <div class="admin-campo">
-                        <label>📋 Tipo de Empresa</label>
-                        <select id="admin-tipo-empresa">
-                            ${this._generarOpcionesTipoEmpresa(empresa.legal?.tipoEmpresa)}
-                        </select>
-                    </div>
-                    <div class="admin-campo">
-                        <label>💼 Régimen Tributario</label>
-                        <select id="admin-regimen">
-                            ${this._generarOpcionesRegimen(empresa.legal?.regimen)}
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SECCIÓN FINANCIERO -->
-            <div class="admin-seccion" id="seccion-financiero">
-                <h3><i class="fas fa-chart-line"></i> Datos Financieros</h3>
-                <div class="admin-grid">
-                    <div class="admin-campo">
-                        <label>💰 Caja Actual (S/.)</label>
-                        <input type="number" id="admin-caja" value="${empresa.finanzas?.caja || 0}" step="0.01">
-                    </div>
-                    <div class="admin-campo">
-                        <label>📈 Ingresos Anuales (S/.)</label>
-                        <input type="number" id="admin-ingresos" value="${empresa.finanzas?.ingresos || 0}" step="0.01">
-                    </div>
-                    <div class="admin-campo">
-                        <label>📉 Gastos Anuales (S/.)</label>
-                        <input type="number" id="admin-gastos" value="${empresa.finanzas?.gastos || 0}" step="0.01">
-                    </div>
-                    <div class="admin-campo">
-                        <label>💎 Utilidad Neta (S/.)</label>
-                        <input type="number" id="admin-utilidad" value="${empresa.finanzas?.utilidadNeta || 0}" step="0.01" readonly>
-                    </div>
-                    <div class="admin-campo">
-                        <label>📊 Margen Neto (%)</label>
-                        <input type="number" id="admin-margen" value="${empresa.finanzas?.margenNeto || 0}" step="0.01" readonly>
-                    </div>
-                    <div class="admin-campo">
-                        <label>🎯 ROI (%)</label>
-                        <input type="number" id="admin-roi" value="${empresa.finanzas?.roi || 0}" step="0.01">
-                    </div>
-                </div>
-                <button class="admin-btn admin-btn-calcular" onclick="adminEmpresas.calcularMetricas()">
-                    <i class="fas fa-calculator"></i> Recalcular Métricas
-                </button>
-            </div>
-
-            <!-- SECCIÓN CONTACTO -->
-            <div class="admin-seccion" id="seccion-contacto">
-                <h3><i class="fas fa-address-book"></i> Información de Contacto</h3>
-                <div class="admin-grid">
-                    <div class="admin-campo">
-                        <label>📞 Teléfono</label>
-                        <input type="tel" id="admin-telefono" value="${empresa.contacto?.telefono || ''}" placeholder="+51 1 234-5678">
-                    </div>
-                    <div class="admin-campo">
-                        <label>📧 Email</label>
-                        <input type="email" id="admin-email" value="${empresa.contacto?.email || ''}" placeholder="contacto@empresa.pe">
-                    </div>
-                    <div class="admin-campo admin-campo-full">
-                        <label>🌐 Sitio Web</label>
-                        <input type="url" id="admin-web" value="${empresa.contacto?.web || ''}" placeholder="www.empresa.pe">
-                    </div>
-                </div>
-            </div>
-
-            <!-- SECCIÓN TEMAS INTEGRADA -->
-            <div class="admin-seccion" id="seccion-temas">
-                <h3><i class="fas fa-palette"></i> Configuración de Temas</h3>
-                <div class="admin-temas-grid">
-                    <div class="admin-config-card">
-                        <h4>🎨 Tema de la Empresa</h4>
-                        <p>Selecciona el tema visual que representa mejor a tu empresa:</p>
-                        <div class="admin-temas-selector">
-                            ${this._generarSelectorTemasAdmin(empresa.tema)}
+                        
+                        <div class="campo-moderno">
+                            <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                📋 Categoría
+                            </label>
+                            <div style="position: relative;">
+                                <select 
+                                    id="admin-categoria" 
+                                    style="
+                                        width: 100%; 
+                                        padding: 16px 20px; 
+                                        border: 2px solid #e2e8f0; 
+                                        border-radius: 12px; 
+                                        font-size: 16px;
+                                        font-weight: 500;
+                                        background: #ffffff;
+                                        cursor: pointer;
+                                        appearance: none;
+                                        transition: all 0.3s ease;
+                                        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+                                    "
+                                    onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 4px rgba(59, 130, 246, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
+                                    onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
+                                >
+                                    ${this._generarOpcionesCategorias(empresa.categoria)}
+                                </select>
+                                <div style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); pointer-events: none; color: #64748b; font-size: 12px;">▼</div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="admin-config-card">
-                        <h4>👁️ Vista Previa</h4>
-                        <div class="admin-preview" id="admin-preview">
-                            <div class="preview-card">
-                                <div class="preview-avatar">${empresa.icono}</div>
-                                <div class="preview-name">${empresa.nombre}</div>
-                                <div class="preview-status">Vista previa del tema</div>
+                        
+                        <div class="campo-moderno">
+                            <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                ⚡ Estado Operativo
+                            </label>
+                            <div style="position: relative;">
+                                <select 
+                                    id="admin-estado" 
+                                    style="
+                                        width: 100%; 
+                                        padding: 16px 20px; 
+                                        border: 2px solid #e2e8f0; 
+                                        border-radius: 12px; 
+                                        font-size: 16px;
+                                        font-weight: 500;
+                                        background: #ffffff;
+                                        cursor: pointer;
+                                        appearance: none;
+                                        transition: all 0.3s ease;
+                                        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+                                    "
+                                    onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 4px rgba(59, 130, 246, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
+                                    onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
+                                >
+                                    ${this._generarOpcionesEstado(empresa.estado)}
+                                </select>
+                                <div style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); pointer-events: none; color: #64748b; font-size: 12px;">▼</div>
+                            </div>
+                        </div>
+                        
+                        <div class="campo-moderno" style="grid-column: 1 / -1;">
+                            <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                🎨 Icono de la Empresa
+                            </label>
+                            <div style="display: flex; gap: 16px; align-items: center;">
+                                <input 
+                                    type="text" 
+                                    id="admin-icono" 
+                                    value="${empresa.icono || '🏢'}" 
+                                    readonly
+                                    style="
+                                        flex: 1;
+                                        padding: 16px 20px; 
+                                        border: 2px solid #e2e8f0; 
+                                        border-radius: 12px; 
+                                        font-size: 16px;
+                                        font-weight: 500;
+                                        background: #f8fafc;
+                                        color: #64748b;
+                                        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+                                    "
+                                >
+                                <button 
+                                    onclick="adminEmpresas.cambiarIcono()" 
+                                    style="
+                                        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); 
+                                        color: white; 
+                                        border: none; 
+                                        padding: 16px 24px; 
+                                        border-radius: 12px; 
+                                        cursor: pointer;
+                                        font-weight: 600;
+                                        font-size: 14px;
+                                        transition: all 0.3s ease;
+                                        box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+                                    "
+                                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(139, 92, 246, 0.4)'"
+                                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(139, 92, 246, 0.3)'"
+                                >
+                                    🎨 Cambiar
+                                </button>
                             </div>
                         </div>
                     </div>
-                    <div class="admin-config-card">
-                        <h4>🌐 Tema Global del Sistema</h4>
-                        <p>Cambiar el tema de todo el sistema GRIZALUM:</p>
-                        <div class="admin-temas-globales">
-                            ${this._generarTemasGlobales()}
+                </div>
+                
+                <!-- Panel Derecho: Métricas y Status -->
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    
+                    <!-- Card de Estado -->
+                    <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 20px; padding: 24px; color: white; position: relative; overflow: hidden; box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);">
+                        <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+                        <div style="position: relative; z-index: 2;">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Estado Actual</div>
+                            <div style="font-size: 24px; font-weight: 800; margin-bottom: 4px;">${empresa.estado}</div>
+                            <div style="font-size: 12px; opacity: 0.8;">Empresa ${empresa.estado.toLowerCase()}</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card de Finanzas -->
+                    <div style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border-radius: 20px; padding: 24px; color: white; position: relative; overflow: hidden; box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);">
+                        <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+                        <div style="position: relative; z-index: 2;">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Caja Actual</div>
+                            <div style="font-size: 24px; font-weight: 800; margin-bottom: 4px;">S/. ${(empresa.finanzas?.caja || 0).toLocaleString()}</div>
+                            <div style="font-size: 12px; opacity: 0.8;">Liquidez disponible</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card de Métricas -->
+                    <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 20px; padding: 24px; color: white; position: relative; overflow: hidden; box-shadow: 0 8px 32px rgba(245, 158, 11, 0.3);">
+                        <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+                        <div style="position: relative; z-index: 2;">
+                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">ROI</div>
+                            <div style="font-size: 24px; font-weight: 800; margin-bottom: 4px;">${empresa.finanzas?.roi || 0}%</div>
+                            <div style="font-size: 12px; opacity: 0.8;">Retorno de inversión</div>
                         </div>
                     </div>
                 </div>
             </div>
-        `;
-    }
+            
+            <!-- Sección de Ubicación -->
+            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
+                <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #ef4444, #dc2626); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">📍</div>
+                    Ubicación y Contacto
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 20px;">
+                    
+                    <div class="campo-moderno">
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+                            🏠 Dirección Completa
+                        </label>
+                        <input 
+                            type="text" 
+                            id="admin-direccion" 
+                            value="${empresa.ubicacion?.direccion || ''}" 
+                            placeholder="Av. Principal 123, Urbanización"
+                            style="
+                                width: 100%; 
+                                padding: 16px 20px; 
+                                border: 2px solid #e2e8f0; 
+                                border-radius: 12px; 
+                                font-size: 16px;
+                                font-weight: 500;
+                                background: #ffffff;
+                                transition: all 0.3s ease;
+                                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+                            "
+                            onfocus="this.style.borderColor='#ef4444'; this.style.boxShadow='0 0 0 4px rgba(239, 68, 68, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
+                            onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
+                        >
+                    </div>
+                    
+                    <div class="campo-moderno">
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+                            🏘️ Distrito
+                        </label>
+                        <input 
+                            type="text" 
+                            id="admin-distrito" 
+                            value="${empresa.ubicacion?.distrito || ''}" 
+                            placeholder="Lima"
+                            style="
+                                width: 100%; 
+                                padding: 16px 20px; 
+                                border: 2px solid #e2e8f0; 
+                                border-radius: 12px; 
+                                font-size: 16px;
+                                font-weight: 500;
+                                background: #ffffff;
+                                transition: all 0.3s ease;
+                                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+                            "
+                            onfocus="this.style.borderColor='#ef4444'; this.style.boxShadow='0 0 0 4px rgba(239, 68, 68, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
+                            onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
+                        >
+                    </div>
+                    
+                    <div class="campo-moderno">
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+                            🏛️ Departamento
+                        </label>
+                        <div style="position: relative;">
+                            <select 
+                                id="admin-departamento" 
+                                style="
+                                    width: 100%; 
+                                    padding: 16px 20px; 
+                                    border: 2px solid #e2e8f0; 
+                                    border-radius: 12px; 
+                                    font-size: 16px;
+                                    font-weight: 500;
+                                    background: #ffffff;
+                                    cursor: pointer;
+                                    appearance: none;
+                                    transition: all 0.3s ease;
+                                    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+                                "
+                                onfocus="this.style.borderColor='#ef4444'; this.style.boxShadow='0 0 0 4px rgba(239, 68, 68, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
+                                onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
+                            >
+                                ${this._generarOpcionesDepartamentos(empresa.ubicacion?.departamento)}
+                            </select>
+                            <div style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); pointer-events: none; color: #64748b; font-size: 12px;">▼</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN LEGAL -->
+        <div class="admin-seccion" id="seccion-legal" style="padding: 32px; display: none;">
+            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
+                <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #7c3aed, #6d28d9); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">⚖️</div>
+                    Información Legal
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="campo-moderno">
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+                            🆔 RUC
+                        </label>
+                        <input 
+                            type="text" 
+                            id="admin-ruc" 
+                            value="${empresa.legal?.ruc || ''}" 
+                            maxlength="11" 
+                            placeholder="20123456789"
+                            style="
+                                width: 100%; 
+                                padding: 16px 20px; 
+                                border: 2px solid #e2e8f0; 
+                                border-radius: 12px; 
+                                font-size: 16px;
+                                font-weight: 500;
+                                background: #ffffff;
+                                transition: all 0.3s ease;
+                                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+                            "
+                            onfocus="this.style.borderColor='#7c3aed'; this.style.boxShadow='0 0 0 4px rgba(124, 58, 237, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
+                            onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
+                        >
+                    </div>
+                    
+                    <div class="campo-moderno">
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+                            🏢 Razón Social
+                        </label>
+                        <input 
+                            type="text" 
+                            id="admin-razon-social" 
+                            value="${empresa.legal?.razonSocial || ''}" 
+                            placeholder="Mi Empresa S.A.C."
+                            style="
+                                width: 100%; 
+                                padding: 16px 20px; 
+                                border: 2px solid #e2e8f0; 
+                                border-radius: 12px; 
+                                font-size: 16px;
+                                font-weight: 500;
+                                background: #ffffff;
+                                transition: all 0.3s ease;
+                                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+                            "
+                            onfocus="this.style.borderColor='#7c3aed'; this.style.boxShadow='0 0 0 4px rgba(124, 58, 237, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
+                            onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
+                        >
+                    </div>
+                    
+                    <div class="campo-moderno">
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+                            📋 Tipo de Empresa
+                        </label>
+                        <div style="position: relative;">
+                            <select 
+                                id="admin-tipo-empresa" 
+                                style="
+                                    width: 100%; 
+                                    padding: 16px 20px; 
+                                    border: 2px solid #e2e8f0; 
+                                    border-radius: 12px; 
+                                    font-size: 16px;
+                                    font-weight: 500;
+                                    background: #ffffff;
+                                    cursor: pointer;
+                                    appearance: none;
+                                    transition: all 0.3s ease;
+                                    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+                                "
+                                onfocus="this.style.borderColor='#7c3aed'; this.style.boxShadow='0 0 0 4px rgba(124, 58, 237, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
+                                onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
+                            >
+                                ${this._generarOpcionesTipoEmpresa(empresa.legal?.tipoEmpresa)}
+                            </select>
+                            <div style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); pointer-events: none; color: #64748b; font-size: 12px;">▼</div>
+                        </div>
+                    </div>
+                    
+                    <div class="campo-moderno">
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+                            💼 Régimen Tributario
+                        </label>
+                        <div style="position: relative;">
+                            <select 
+                                id="admin-regimen" 
+                                style="
+                                    width: 100%; 
+                                    padding: 16px 20px; 
+                                    border: 2px solid #e2e8f0; 
+                                    border-radius: 12px; 
+                                    font-size: 16px;
+                                    font-weight: 500;
+                                    background: #ffffff;
+                                    cursor: pointer;
+                                    appearance: none;
+                                    transition: all 0.3s ease;
+                                    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+                                "
+                                onfocus="this.style.borderColor='#7c3aed'; this.style.boxShadow='0 0 0 4px rgba(124, 58, 237, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
+                                onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
+                            >
+                                ${this._generarOpcionesRegimen(empresa.legal?.regimen)}
+                            </select>
+                            <div style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); pointer-events: none; color: #64748b; font-size: 12px;">▼</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN FINANCIERO -->
+        <div class="admin-seccion" id="seccion-financiero" style="padding: 32px; display: none;">
+            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
+                <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">💰</div>
+                    Datos Financieros
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 24px;">
+                    <div class="campo-moderno">
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+                            💰 Caja Actual (S/.)
+                        </label>
+                        <input 
+                            type="number" 
+                            id="admin-caja" 
+                            value="${empresa.finanzas?.caja || 0}" 
+                            step="0.01"
+                            style="
+                                width: 100%; 
+                                padding: 16px 20px; 
+                                border: 2px solid #e2e8f0; 
+                                border-radius: 12px; 
+                                font-size: 16px;
+                                font-weight: 500;
+                                background: #ffffff;
+                                transition: all 0.3s ease;
+                                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+                            "
+                            onfocus="this.style.borderColor='#10b981'; this.style.boxShadow='0 0 0 4px rgba(16, 185, 129, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
+                            onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
+                        >
+                    </div>
+                    
+                    <div class="campo-moderno">
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+                            📈 Ingresos Anuales (S/.)
+                        </label>
+                        <input 
+                            type="number" 
+                            id="admin-ingresos" 
+                            value="${empresa.finanzas?.ingresos || 0}" 
+                            step="0.01"
+                            style="
+                                width: 100%; 
+                                padding: 16px 20px; 
+                                border: 2px solid #e2e8f0; 
+                                border-radius: 12px; 
+                                font-size: 16px;
+                                font-weight: 500;
+                                background: #ffffff;
+                                transition: all 0.3s ease;
+                                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+                            "
+                            onfocus="this.style.borderColor='#10b981'; this.style.boxShadow='0 0 0 4px rgba(16, 185, 129, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
+                            onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
+                        >
+                    </div>
+                    
+                    <div class="campo-moderno">
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+                            📉 Gastos Anuales (S/.)
+                        </label>
+                        <input 
+                            type="number" 
+                            id="admin-gastos" 
+                            value="${empresa.finanzas?.gastos || 0}" 
+                            step="0.01"
+                            style="
+                                width: 100%; 
+                                padding: 16px 20px; 
+                                border: 2px solid #e2e8f0; 
+                                border-radius: 12px; 
+                                font-size: 16px;
+                                font-weight: 500;
+                                background: #ffffff;
+                                transition: all 0.3s ease;
+                                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+                            "
+                            onfocus="this.style.borderColor='#10b981'; this.style.boxShadow='0 0 0 4px rgba(16, 185, 129, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
+                            onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
+                        >
+                    </div>
+                </div>
+                
+                <button 
+                    onclick="adminEmpresas.calcularMetricas()" 
+                    style="
+                        background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+                        color: white; 
+                        border: none; 
+                        padding: 16px 32px; 
+                        border-radius: 12px; 
+                        cursor: pointer;
+                        font-weight: 700;
+                        font-size: 16px;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                    "
+                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.4)'"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(16, 185, 129, 0.3)'"
+                >
+                    🧮 Recalcular Métricas
+                </button>
+            </div>
+        </div>
+
+        <!-- SECCIÓN CONTACTO -->
+        <div class="admin-seccion" id="seccion-contacto" style="padding: 32px; display: none;">
+            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
+                <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">📞</div>
+                    Información de Contacto
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="campo-moderno">
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+                            📞 Teléfono
+                        </label>
+                        <input 
+                            type="tel" 
+                            id="admin-telefono" 
+                            value="${empresa.contacto?.telefono || ''}" 
+                            placeholder="+51 1 234-5678"
+                            style="
+                                width: 100%; 
+                                padding: 16px 20px; 
+                                border: 2px solid #e2e8f0; 
+                                border-radius: 12px; 
+                                font-size: 16px;
+                                font-weight: 500;
+                                background: #ffffff;
+                                transition: all 0.3s ease;
+                                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+                            "
+                            onfocus="this.style.borderColor='#f59e0b'; this.style.boxShadow='0 0 0 4px rgba(245, 158, 11, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
+                            onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
+                        >
+                    </div>
+                    
+                    <div class="campo-moderno">
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+                            📧 Email
+                        </label>
+                        <input 
+                            type="email" 
+                            id="admin-email" 
+                            value="${empresa.contacto?.email || ''}" 
+                            placeholder="contacto@empresa.pe"
+                            style="
+                                width: 100%; 
+                                padding: 16px 20px; 
+                                border: 2px solid #e2e8f0; 
+                                border-radius: 12px; 
+                                font-size: 16px;
+                                font-weight: 500;
+                                background: #ffffff;
+                                transition: all 0.3s ease;
+                                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+                            "
+                            onfocus="this.style.borderColor='#f59e0b'; this.style.boxShadow='0 0 0 4px rgba(245, 158, 11, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
+                            onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
+                        >
+                    </div>
+                    
+                    <div class="campo-moderno" style="grid-column: 1 / -1;">
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+                            🌐 Sitio Web
+                        </label>
+                        <input 
+                            type="url" 
+                            id="admin-web" 
+                            value="${empresa.contacto?.web || ''}" 
+                            placeholder="www.empresa.pe"
+                            style="
+                                width: 100%; 
+                                padding: 16px 20px; 
+                                border: 2px solid #e2e8f0; 
+                                border-radius: 12px; 
+                                font-size: 16px;
+                                font-weight: 500;
+                                background: #ffffff;
+                                transition: all 0.3s ease;
+                                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+                            "
+                            onfocus="this.style.borderColor='#f59e0b'; this.style.boxShadow='0 0 0 4px rgba(245, 158, 11, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
+                            onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
+                        >
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN TEMAS -->
+        <div class="admin-seccion" id="seccion-temas" style="padding: 32px; display: none;">
+            ${this._generarSeccionTemas(empresa)}
+        </div>
+    `;
+}
 
     _generarFooterAdmin(empresaId) {
         return `
