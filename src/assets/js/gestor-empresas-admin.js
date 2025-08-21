@@ -1395,9 +1395,9 @@ class GestorEmpresasAdmin {
             .grizalum-modal-admin {
                 background: white;
                 border-radius: 20px;
-                width: 1000px;
-                max-width: 95vw;
-                max-height: 90vh;
+                width: 1300px;
+                max-width: 98vw;
+                max-height: 95vh;
                 overflow: hidden;
                 transform: scale(0.9) translateY(20px);
                 transition: all 0.3s ease;
