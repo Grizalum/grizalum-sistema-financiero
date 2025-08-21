@@ -1008,6 +1008,22 @@ class GestorEmpresasAdmin {
     `;
 }
 
+    _generarSeccionTemas(empresa) {
+    return `
+        <div style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
+            <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
+                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #8b5cf6, #7c3aed); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">🎨</div>
+                Configuración de Temas
+            </h3>
+            <div style="text-align: center; padding: 40px; color: #64748b;">
+                <div style="font-size: 48px; margin-bottom: 16px;">🎨</div>
+                <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Sección de Temas</div>
+                <div>Próximamente: Personalización avanzada de colores</div>
+            </div>
+        </div>
+    `;
+}
+    
     _generarFooterAdmin(empresaId) {
         return `
             <div class="grizalum-admin-footer">
