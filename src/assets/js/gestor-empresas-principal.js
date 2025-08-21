@@ -1329,126 +1329,416 @@ _crearModalGestionAdmin(empresaId, empresa) {
 
     const modal = document.createElement('div');
     modal.id = 'grizalumModalAdmin';
-    modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999999; display: flex; align-items: center; justify-content: center; overflow-y: auto;';
+    modal.style.cssText = `
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: 100%; 
+        background: rgba(0,0,0,0.7); 
+        z-index: 999999; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        padding: 20px;
+        backdrop-filter: blur(5px);
+    `;
     
     const temaEmpresa = this.config.temas[empresa.tema] || this.config.temas.rojo;
     
     modal.innerHTML = `
-        <div style="background: white; border-radius: 16px; width: 900px; max-width: 95vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.3); margin: 20px;">
-            <div style="background: linear-gradient(135deg, ${temaEmpresa.primary}, ${temaEmpresa.secondary}); color: white; padding: 1.5rem; border-radius: 16px 16px 0 0;">
-                <h3 style="margin: 0; display: flex; justify-content: space-between; align-items: center;">
-                    <span style="display: flex; align-items: center; gap: 1rem;">
-                        <span style="font-size: 1.5rem;">${empresa.icono}</span>
-                        👑 Gestión Admin - ${empresa.nombre}
-                    </span>
-                    <span onclick="gestorEmpresas.cerrarModalAdmin()" style="cursor: pointer; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.2); border-radius: 50%; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">✕</span>
-                </h3>
-                <div style="margin-top: 0.5rem; opacity: 0.9; font-size: 0.9rem;">
-                    Gestión completa de ${empresa.nombre} • ${empresa.categoria} • ${empresa.estado}
-                </div>
-            </div>
-            
-            <div style="padding: 2rem;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-                    <div>
-                        <div style="margin-bottom: 1.5rem;">
-                            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">🏢 Nombre de la Empresa:</label>
-                            <input type="text" id="adminEmpresaNombre" value="${empresa.nombre}" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;">
+        <div style="
+            background: #ffffff; 
+            border-radius: 20px; 
+            width: 900px; 
+            max-width: 95vw; 
+            max-height: 90vh; 
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        ">
+            <!-- Header Premium -->
+            <div style="
+                background: linear-gradient(135deg, ${temaEmpresa.primary} 0%, ${temaEmpresa.secondary} 100%); 
+                color: white; 
+                padding: 24px; 
+                position: relative;
+                overflow: hidden;
+            ">
+                <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%; transform: translate(30px, -30px);"></div>
+                <div style="position: relative; z-index: 2;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <div style="
+                                width: 56px; 
+                                height: 56px; 
+                                background: rgba(255,255,255,0.2); 
+                                border-radius: 16px; 
+                                display: flex; 
+                                align-items: center; 
+                                justify-content: center; 
+                                font-size: 24px;
+                                backdrop-filter: blur(10px);
+                            ">
+                                ${empresa.icono}
+                            </div>
+                            <div>
+                                <h2 style="margin: 0; font-size: 24px; font-weight: 700;">👑 Gestión Admin</h2>
+                                <div style="opacity: 0.9; font-size: 16px; margin-top: 4px;">${empresa.nombre}</div>
+                            </div>
                         </div>
-                        
-                        <div style="margin-bottom: 1.5rem;">
-                            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">📋 Categoría:</label>
-                            <select id="adminEmpresaCategoria" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;">
-                                <option value="Manufactura" ${empresa.categoria === 'Manufactura' ? 'selected' : ''}>🏭 Manufactura</option>
-                                <option value="Comercio" ${empresa.categoria === 'Comercio' ? 'selected' : ''}>🏪 Comercio</option>
-                                <option value="Servicios" ${empresa.categoria === 'Servicios' ? 'selected' : ''}>🛠️ Servicios</option>
-                                <option value="Agropecuario" ${empresa.categoria === 'Agropecuario' ? 'selected' : ''}>🌱 Agropecuario</option>
-                                <option value="Tecnología" ${empresa.categoria === 'Tecnología' ? 'selected' : ''}>💻 Tecnología</option>
-                                <option value="Salud" ${empresa.categoria === 'Salud' ? 'selected' : ''}>🏥 Salud</option>
-                                <option value="Educación" ${empresa.categoria === 'Educación' ? 'selected' : ''}>🎓 Educación</option>
-                                <option value="Restaurante" ${empresa.categoria === 'Restaurante' ? 'selected' : ''}>🍕 Restaurante</option>
-                                <option value="Transporte" ${empresa.categoria === 'Transporte' ? 'selected' : ''}>🚗 Transporte</option>
-                                <option value="Construcción" ${empresa.categoria === 'Construcción' ? 'selected' : ''}>🏗️ Construcción</option>
-                            </select>
-                        </div>
-                        
-                        <div style="margin-bottom: 1.5rem;">
-                            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">⚡ Estado Operativo:</label>
-                            <select id="adminEmpresaEstado" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;">
-                                <option value="Operativo" ${empresa.estado === 'Operativo' ? 'selected' : ''}>🟢 Operativo</option>
-                                <option value="Regular" ${empresa.estado === 'Regular' ? 'selected' : ''}>🟡 Regular</option>
-                                <option value="Crítico" ${empresa.estado === 'Crítico' ? 'selected' : ''}>🔴 Crítico</option>
-                                <option value="En Preparación" ${empresa.estado === 'En Preparación' ? 'selected' : ''}>🔵 En Preparación</option>
-                                <option value="Mantenimiento" ${empresa.estado === 'Mantenimiento' ? 'selected' : ''}>🔧 Mantenimiento</option>
-                                <option value="Suspendido" ${empresa.estado === 'Suspendido' ? 'selected' : ''}>⏸️ Suspendido</option>
-                                <option value="Inactivo" ${empresa.estado === 'Inactivo' ? 'selected' : ''}>⚫ Inactivo</option>
-                            </select>
-                        </div>
-
-                        <div style="margin-bottom: 1.5rem;">
-                            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">💰 Caja Actual:</label>
-                            <input type="number" id="adminEmpresaCaja" value="${empresa.finanzas?.caja || 0}" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;">
-                        </div>
+                        <button 
+                            onclick="gestorEmpresas.cerrarModalAdmin()" 
+                            style="
+                                width: 40px; 
+                                height: 40px; 
+                                background: rgba(255,255,255,0.2); 
+                                border: none; 
+                                border-radius: 12px; 
+                                color: white; 
+                                cursor: pointer; 
+                                font-size: 18px;
+                                transition: all 0.3s ease;
+                                backdrop-filter: blur(10px);
+                            "
+                            onmouseover="this.style.background='rgba(255,255,255,0.3)'"
+                            onmouseout="this.style.background='rgba(255,255,255,0.2)'"
+                        >✕</button>
                     </div>
-                    
-                    <div>
-                        <div style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); padding: 1.5rem; border-radius: 12px; border: 1px solid #e5e7eb; margin-bottom: 1rem;">
-                            <h4 style="margin: 0 0 1rem 0; color: #1f2937; display: flex; align-items: center; gap: 0.5rem;">📊 Métricas Rápidas</h4>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                                <div style="text-align: center; padding: 1rem; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                                    <div style="font-size: 1.5rem; font-weight: 800; color: #059669;">${this.config.regional.moneda} ${empresa.finanzas?.caja?.toLocaleString() || '0'}</div>
-                                    <div style="font-size: 0.8rem; color: #6b7280; font-weight: 600;">💰 CAJA</div>
-                                </div>
-                                <div style="text-align: center; padding: 1rem; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                                    <div style="font-size: 1.5rem; font-weight: 800; color: #2563eb;">${empresa.finanzas?.margenNeto || 0}%</div>
-                                    <div style="font-size: 0.8rem; color: #6b7280; font-weight: 600;">📈 MARGEN</div>
-                                </div>
-                                <div style="text-align: center; padding: 1rem; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                                    <div style="font-size: 1.5rem; font-weight: 800; color: #8b5cf6;">${empresa.finanzas?.roi || 0}%</div>
-                                    <div style="font-size: 0.8rem; color: #6b7280; font-weight: 600;">🎯 ROI</div>
-                                </div>
-                                <div style="text-align: center; padding: 1rem; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                                    <div style="font-size: 1.2rem; font-weight: 800; color: #dc2626;">${this._calcularDiasActiva(empresa.meta?.fechaCreacion)}</div>
-                                    <div style="font-size: 0.8rem; color: #6b7280; font-weight: 600;">📅 DÍAS</div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div style="padding: 1rem; background: #fef3c7; border-radius: 8px; border: 1px solid #f59e0b;">
-                            <div style="font-weight: 600; color: #92400e; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                                ⚠️ Información
-                            </div>
-                            <div style="font-size: 0.9rem; color: #92400e;">
-                                Última actualización: ${new Date(empresa.meta?.fechaActualizacion).toLocaleDateString('es-PE')}
-                            </div>
-                        </div>
+                    <div style="
+                        opacity: 0.85; 
+                        font-size: 14px; 
+                        display: flex; 
+                        align-items: center; 
+                        gap: 12px;
+                    ">
+                        <span style="background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px;">${empresa.categoria}</span>
+                        <span style="background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px;">${empresa.estado}</span>
+                        <span style="background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px;">${empresa.ubicacion?.departamento || 'Lima'}</span>
                     </div>
                 </div>
             </div>
             
-            <div style="background: #f8fafc; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e5e7eb;">
-                <div style="display: flex; gap: 1rem;">
-                    <button onclick="gestorEmpresas.exportarDatosEmpresa('${empresaId}')" style="background: #3b82f6; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+            <!-- Contenido Principal -->
+            <div style="padding: 0; max-height: calc(90vh - 200px); overflow-y: auto;">
+                
+                <!-- Métricas Top -->
+                <div style="padding: 24px; background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+                        <div style="
+                            background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+                            color: white; 
+                            padding: 20px; 
+                            border-radius: 16px; 
+                            text-align: center;
+                            position: relative;
+                            overflow: hidden;
+                        ">
+                            <div style="position: absolute; top: -10px; right: -10px; width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 50%;"></div>
+                            <div style="font-size: 24px; font-weight: 800; margin-bottom: 4px;">${this.config.regional.moneda} ${empresa.finanzas?.caja?.toLocaleString() || '0'}</div>
+                            <div style="font-size: 12px; opacity: 0.9; font-weight: 600;">💰 CAJA ACTUAL</div>
+                        </div>
+                        
+                        <div style="
+                            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
+                            color: white; 
+                            padding: 20px; 
+                            border-radius: 16px; 
+                            text-align: center;
+                            position: relative;
+                            overflow: hidden;
+                        ">
+                            <div style="position: absolute; top: -10px; right: -10px; width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 50%;"></div>
+                            <div style="font-size: 24px; font-weight: 800; margin-bottom: 4px;">${empresa.finanzas?.margenNeto || 0}%</div>
+                            <div style="font-size: 12px; opacity: 0.9; font-weight: 600;">📈 MARGEN NETO</div>
+                        </div>
+                        
+                        <div style="
+                            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); 
+                            color: white; 
+                            padding: 20px; 
+                            border-radius: 16px; 
+                            text-align: center;
+                            position: relative;
+                            overflow: hidden;
+                        ">
+                            <div style="position: absolute; top: -10px; right: -10px; width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 50%;"></div>
+                            <div style="font-size: 24px; font-weight: 800; margin-bottom: 4px;">${empresa.finanzas?.roi || 0}%</div>
+                            <div style="font-size: 12px; opacity: 0.9; font-weight: 600;">🎯 ROI</div>
+                        </div>
+                        
+                        <div style="
+                            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); 
+                            color: white; 
+                            padding: 20px; 
+                            border-radius: 16px; 
+                            text-align: center;
+                            position: relative;
+                            overflow: hidden;
+                        ">
+                            <div style="position: absolute; top: -10px; right: -10px; width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 50%;"></div>
+                            <div style="font-size: 20px; font-weight: 800; margin-bottom: 4px;">${this._calcularDiasActiva(empresa.meta?.fechaCreacion)}</div>
+                            <div style="font-size: 12px; opacity: 0.9; font-weight: 600;">📅 DÍAS ACTIVA</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Formulario de Edición -->
+                <div style="padding: 32px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+                        
+                        <!-- Columna Izquierda -->
+                        <div style="space-y: 24px;">
+                            <div style="margin-bottom: 24px;">
+                                <label style="
+                                    display: block; 
+                                    font-weight: 600; 
+                                    margin-bottom: 8px; 
+                                    color: #374151;
+                                    font-size: 14px;
+                                ">🏢 Nombre de la Empresa</label>
+                                <input 
+                                    type="text" 
+                                    id="adminEmpresaNombre" 
+                                    value="${empresa.nombre}" 
+                                    style="
+                                        width: 100%; 
+                                        padding: 16px; 
+                                        border: 2px solid #e5e7eb; 
+                                        border-radius: 12px; 
+                                        font-size: 16px;
+                                        transition: all 0.3s ease;
+                                        background: #ffffff;
+                                    "
+                                    onfocus="this.style.borderColor='${temaEmpresa.primary}'; this.style.boxShadow='0 0 0 3px ${temaEmpresa.primary}20'"
+                                    onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'"
+                                >
+                            </div>
+                            
+                            <div style="margin-bottom: 24px;">
+                                <label style="
+                                    display: block; 
+                                    font-weight: 600; 
+                                    margin-bottom: 8px; 
+                                    color: #374151;
+                                    font-size: 14px;
+                                ">📋 Categoría</label>
+                                <select 
+                                    id="adminEmpresaCategoria" 
+                                    style="
+                                        width: 100%; 
+                                        padding: 16px; 
+                                        border: 2px solid #e5e7eb; 
+                                        border-radius: 12px; 
+                                        font-size: 16px;
+                                        background: #ffffff;
+                                        cursor: pointer;
+                                    "
+                                >
+                                    <option value="Manufactura" ${empresa.categoria === 'Manufactura' ? 'selected' : ''}>🏭 Manufactura</option>
+                                    <option value="Comercio" ${empresa.categoria === 'Comercio' ? 'selected' : ''}>🏪 Comercio</option>
+                                    <option value="Servicios" ${empresa.categoria === 'Servicios' ? 'selected' : ''}>🛠️ Servicios</option>
+                                    <option value="Agropecuario" ${empresa.categoria === 'Agropecuario' ? 'selected' : ''}>🌱 Agropecuario</option>
+                                    <option value="Tecnología" ${empresa.categoria === 'Tecnología' ? 'selected' : ''}>💻 Tecnología</option>
+                                    <option value="Salud" ${empresa.categoria === 'Salud' ? 'selected' : ''}>🏥 Salud</option>
+                                    <option value="Educación" ${empresa.categoria === 'Educación' ? 'selected' : ''}>🎓 Educación</option>
+                                    <option value="Restaurante" ${empresa.categoria === 'Restaurante' ? 'selected' : ''}>🍕 Restaurante</option>
+                                    <option value="Transporte" ${empresa.categoria === 'Transporte' ? 'selected' : ''}>🚗 Transporte</option>
+                                    <option value="Construcción" ${empresa.categoria === 'Construcción' ? 'selected' : ''}>🏗️ Construcción</option>
+                                </select>
+                            </div>
+                            
+                            <div style="margin-bottom: 24px;">
+                                <label style="
+                                    display: block; 
+                                    font-weight: 600; 
+                                    margin-bottom: 8px; 
+                                    color: #374151;
+                                    font-size: 14px;
+                                ">⚡ Estado Operativo</label>
+                                <select 
+                                    id="adminEmpresaEstado" 
+                                    style="
+                                        width: 100%; 
+                                        padding: 16px; 
+                                        border: 2px solid #e5e7eb; 
+                                        border-radius: 12px; 
+                                        font-size: 16px;
+                                        background: #ffffff;
+                                        cursor: pointer;
+                                    "
+                                >
+                                    <option value="Operativo" ${empresa.estado === 'Operativo' ? 'selected' : ''}>🟢 Operativo</option>
+                                    <option value="Regular" ${empresa.estado === 'Regular' ? 'selected' : ''}>🟡 Regular</option>
+                                    <option value="Crítico" ${empresa.estado === 'Crítico' ? 'selected' : ''}>🔴 Crítico</option>
+                                    <option value="En Preparación" ${empresa.estado === 'En Preparación' ? 'selected' : ''}>🔵 En Preparación</option>
+                                    <option value="Mantenimiento" ${empresa.estado === 'Mantenimiento' ? 'selected' : ''}>🔧 Mantenimiento</option>
+                                    <option value="Suspendido" ${empresa.estado === 'Suspendido' ? 'selected' : ''}>⏸️ Suspendido</option>
+                                    <option value="Inactivo" ${empresa.estado === 'Inactivo' ? 'selected' : ''}>⚫ Inactivo</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Columna Derecha -->
+                        <div>
+                            <div style="margin-bottom: 24px;">
+                                <label style="
+                                    display: block; 
+                                    font-weight: 600; 
+                                    margin-bottom: 8px; 
+                                    color: #374151;
+                                    font-size: 14px;
+                                ">💰 Caja Actual</label>
+                                <input 
+                                    type="number" 
+                                    id="adminEmpresaCaja" 
+                                    value="${empresa.finanzas?.caja || 0}" 
+                                    style="
+                                        width: 100%; 
+                                        padding: 16px; 
+                                        border: 2px solid #e5e7eb; 
+                                        border-radius: 12px; 
+                                        font-size: 16px;
+                                        background: #ffffff;
+                                    "
+                                    onfocus="this.style.borderColor='${temaEmpresa.primary}'; this.style.boxShadow='0 0 0 3px ${temaEmpresa.primary}20'"
+                                    onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'"
+                                >
+                            </div>
+                            
+                            <!-- Info Card -->
+                            <div style="
+                                background: linear-gradient(135deg, #fef3c7 0%, #fcd34d 20%); 
+                                padding: 20px; 
+                                border-radius: 16px; 
+                                border: 1px solid #f59e0b;
+                                margin-bottom: 20px;
+                            ">
+                                <div style="
+                                    font-weight: 700; 
+                                    color: #92400e; 
+                                    display: flex; 
+                                    align-items: center; 
+                                    gap: 8px; 
+                                    margin-bottom: 8px;
+                                    font-size: 14px;
+                                ">
+                                    ⚠️ Información de la Empresa
+                                </div>
+                                <div style="font-size: 13px; color: #92400e; line-height: 1.5;">
+                                    <strong>Creada:</strong> ${new Date(empresa.meta?.fechaCreacion).toLocaleDateString('es-PE')}<br>
+                                    <strong>Actualizada:</strong> ${new Date(empresa.meta?.fechaActualizacion).toLocaleDateString('es-PE')}<br>
+                                    <strong>ID:</strong> ${empresa.id}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer con Botones -->
+            <div style="
+                background: #f8fafc; 
+                padding: 24px; 
+                display: flex; 
+                justify-content: space-between; 
+                align-items: center; 
+                border-top: 1px solid #e2e8f0;
+            ">
+                <div style="display: flex; gap: 12px;">
+                    <button 
+                        onclick="gestorEmpresas.exportarDatosEmpresa('${empresaId}')" 
+                        style="
+                            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
+                            color: white; 
+                            border: none; 
+                            padding: 12px 20px; 
+                            border-radius: 12px; 
+                            cursor: pointer; 
+                            display: flex; 
+                            align-items: center; 
+                            gap: 8px;
+                            font-weight: 600;
+                            font-size: 14px;
+                            transition: all 0.3s ease;
+                        "
+                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(59, 130, 246, 0.4)'"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'"
+                    >
                         📤 Exportar
                     </button>
-                    <button onclick="gestorEmpresas.duplicarEmpresa('${empresaId}')" style="background: #8b5cf6; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                    <button 
+                        onclick="gestorEmpresas.duplicarEmpresa('${empresaId}')" 
+                        style="
+                            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); 
+                            color: white; 
+                            border: none; 
+                            padding: 12px 20px; 
+                            border-radius: 12px; 
+                            cursor: pointer; 
+                            display: flex; 
+                            align-items: center; 
+                            gap: 8px;
+                            font-weight: 600;
+                            font-size: 14px;
+                            transition: all 0.3s ease;
+                        "
+                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(139, 92, 246, 0.4)'"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'"
+                    >
                         📋 Duplicar
                     </button>
                 </div>
-                <div style="display: flex; gap: 1rem;">
-                    <button onclick="gestorEmpresas.cerrarModalAdmin()" style="background: #6b7280; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;">❌ Cancelar</button>
-                    <button onclick="gestorEmpresas.guardarCambiosAdmin('${empresaId}')" style="background: ${temaEmpresa.primary}; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;">💾 Guardar</button>
+                <div style="display: flex; gap: 12px;">
+                    <button 
+                        onclick="gestorEmpresas.cerrarModalAdmin()" 
+                        style="
+                            background: #6b7280; 
+                            color: white; 
+                            border: none; 
+                            padding: 12px 20px; 
+                            border-radius: 12px; 
+                            cursor: pointer;
+                            font-weight: 600;
+                            font-size: 14px;
+                            transition: all 0.3s ease;
+                        "
+                        onmouseover="this.style.background='#4b5563'"
+                        onmouseout="this.style.background='#6b7280'"
+                    >❌ Cancelar</button>
+                    <button 
+                        onclick="gestorEmpresas.guardarCambiosAdmin('${empresaId}')" 
+                        style="
+                            background: linear-gradient(135deg, ${temaEmpresa.primary} 0%, ${temaEmpresa.secondary} 100%); 
+                            color: white; 
+                            border: none; 
+                            padding: 12px 24px; 
+                            border-radius: 12px; 
+                            cursor: pointer;
+                            font-weight: 700;
+                            font-size: 14px;
+                            transition: all 0.3s ease;
+                        "
+                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px ${temaEmpresa.primary}40'"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'"
+                    >💾 Guardar Cambios</button>
                 </div>
             </div>
         </div>
+        
+        <style>
+            @keyframes modalSlideIn {
+                from { opacity: 0; transform: scale(0.9) translateY(20px); }
+                to { opacity: 1; transform: scale(1) translateY(0); }
+            }
+        </style>
     `;
 
     document.body.appendChild(modal);
     setTimeout(() => document.getElementById('adminEmpresaNombre')?.focus(), 100);
     
-    this._log('info', '👑 Modal admin abierto exitosamente');
+    this._log('info', '👑 Modal admin premium abierto');
 }
-
 _calcularDiasActiva(fechaCreacion) {
     if (!fechaCreacion) return 0;
     const fechaInicio = new Date(fechaCreacion);
