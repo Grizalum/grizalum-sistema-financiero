@@ -1303,8 +1303,17 @@ class GestorEmpresasProfesional {
     }
 
    gestionarEmpresa(empresaId) {
+    console.log('🔍 DEBUG - empresaId recibido:', empresaId);
+    console.log('🔍 DEBUG - tipo de empresaId:', typeof empresaId);
+    console.log('🔍 DEBUG - empresas disponibles:', Object.keys(this.estado.empresas));
+    console.log('🔍 DEBUG - empresa buscada:', this.estado.empresas[empresaId]);
+    console.log('🔍 DEBUG - this.estado completo:', this.estado);
+    
     const empresa = this.estado.empresas[empresaId];
     if (!empresa) {
+        console.error('❌ ERROR: Empresa no encontrada:', empresaId);
+        console.log('📋 Todas las empresas:', this.estado.empresas);
+        alert(`ERROR: No se encontró la empresa con ID: ${empresaId}`);
         this._log('error', `Empresa no encontrada: ${empresaId}`);
         return;
     }
@@ -1313,7 +1322,7 @@ class GestorEmpresasProfesional {
     this._cerrarLista();
     this._crearModalGestionAdmin(empresaId, empresa);
 }
-
+    
 _crearModalGestionAdmin(empresaId, empresa) {
     const modalPrevio = document.getElementById('grizalumModalAdmin');
     if (modalPrevio) modalPrevio.remove();
