@@ -36,42 +36,335 @@ class GestorEmpresasAdmin {
     // ═══════════════════════════════════════════════════════════════════════════
 
     _crearModalAdmin(empresaId, empresa) {
-        const modal = document.createElement('div');
-        modal.id = 'grizalumModalAdmin';
-        modal.className = 'grizalum-modal-overlay';
-        
-        // Aplicar tema de la empresa al modal
-        const mapaTemaCss = {
-            'rojo': 'red', 'azul': 'blue', 'verde': 'green',
-            'morado': 'purple', 'dorado': 'gold'
-        };
-        const temaCss = mapaTemaCss[empresa.tema] || 'gold';
-        modal.setAttribute('data-theme', temaCss);
-        
-        modal.innerHTML = `
-            <div class="grizalum-modal-admin">
-                ${this._generarHeaderAdmin(empresa)}
-                ${this._generarNavegacionAdmin()}
-                <div class="grizalum-admin-content">
-                    ${this._generarContenidoGeneral(empresa)}
+    const modal = document.createElement('div');
+    modal.id = 'grizalumModalAdmin';
+    modal.style.cssText = `
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: 100%; 
+        background: rgba(0,0,0,0.75); 
+        z-index: 999999; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        padding: 20px;
+        backdrop-filter: blur(8px);
+        opacity: 0;
+        transition: all 0.3s ease;
+    `;
+    
+    // Aplicar tema de la empresa
+    const mapaTemaCss = {
+        'rojo': 'red', 'azul': 'blue', 'verde': 'green',
+        'morado': 'purple', 'dorado': 'gold'
+    };
+    const temaCss = mapaTemaCss[empresa.tema] || 'gold';
+    modal.setAttribute('data-theme', temaCss);
+    
+    const temaConfig = this.gestor.config.temas[empresa.tema] || this.gestor.config.temas.dorado;
+    
+    modal.innerHTML = `
+        <div style="
+            background: #ffffff; 
+            border-radius: 24px; 
+            width: 1000px; 
+            max-width: 95vw; 
+            max-height: 90vh; 
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+            transform: scale(0.9) translateY(30px);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        " class="modal-content">
+            
+            <!-- Header Premium con Gradiente -->
+            <div style="
+                background: linear-gradient(135deg, ${temaConfig.primary} 0%, ${temaConfig.secondary} 100%); 
+                color: white; 
+                padding: 32px; 
+                position: relative;
+                overflow: hidden;
+            ">
+                <!-- Efectos visuales de fondo -->
+                <div style="position: absolute; top: -50%; right: -20%; width: 300px; height: 300px; background: rgba(255,255,255,0.1); border-radius: 50%; transform: scale(1.5);"></div>
+                <div style="position: absolute; bottom: -30%; left: -10%; width: 200px; height: 200px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
+                
+                <div style="position: relative; z-index: 2;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+                        <div style="display: flex; align-items: center; gap: 20px;">
+                            <div style="
+                                width: 80px; 
+                                height: 80px; 
+                                background: rgba(255,255,255,0.2); 
+                                border-radius: 20px; 
+                                display: flex; 
+                                align-items: center; 
+                                justify-content: center; 
+                                font-size: 32px;
+                                backdrop-filter: blur(20px);
+                                border: 2px solid rgba(255,255,255,0.3);
+                                box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+                            ">
+                                ${empresa.logo ? `<img src="${empresa.logo}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 18px;">` : empresa.icono}
+                            </div>
+                            <div>
+                                <h1 style="margin: 0; font-size: 28px; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                                    👑 Panel Administrativo
+                                </h1>
+                                <h2 style="margin: 8px 0 0 0; font-size: 20px; font-weight: 600; opacity: 0.95;">
+                                    ${empresa.nombre}
+                                </h2>
+                                <div style="display: flex; gap: 12px; margin-top: 12px;">
+                                    <span style="background: rgba(255,255,255,0.2); padding: 6px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; backdrop-filter: blur(10px);">${empresa.categoria}</span>
+                                    <span style="background: rgba(255,255,255,0.2); padding: 6px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; backdrop-filter: blur(10px);">${empresa.estado}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button 
+                            onclick="adminEmpresas.cerrarModal()" 
+                            style="
+                                width: 48px; 
+                                height: 48px; 
+                                background: rgba(255,255,255,0.15); 
+                                border: 2px solid rgba(255,255,255,0.3); 
+                                border-radius: 16px; 
+                                color: white; 
+                                cursor: pointer; 
+                                font-size: 20px;
+                                transition: all 0.3s ease;
+                                backdrop-filter: blur(20px);
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                font-weight: bold;
+                            "
+                            onmouseover="this.style.background='rgba(255,255,255,0.25)'; this.style.transform='scale(1.05)'"
+                            onmouseout="this.style.background='rgba(255,255,255,0.15)'; this.style.transform='scale(1)'"
+                        >✕</button>
+                    </div>
                 </div>
-                ${this._generarFooterAdmin(empresaId)}
             </div>
-        `;
 
-        document.body.appendChild(modal);
-        this.modalActivo = modal;
-        
-        // Mostrar modal con animación
-        setTimeout(() => modal.classList.add('show'), 50);
-        
-        // Configurar eventos
-        this._configurarEventosAdmin(empresaId);
-        
-        // Crear estilos específicos
-        this._crearEstilosAdmin();
-    }
+            <!-- Navegación con Estilo Premium -->
+            <div style="
+                background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%); 
+                padding: 0; 
+                display: flex; 
+                border-bottom: 1px solid #e2e8f0;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            ">
+                <button class="admin-nav-btn active" data-seccion="general" style="
+                    flex: 1; 
+                    padding: 20px 24px; 
+                    border: none; 
+                    background: white; 
+                    cursor: pointer; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    gap: 8px; 
+                    font-weight: 700; 
+                    color: ${temaConfig.primary}; 
+                    transition: all 0.3s ease;
+                    border-bottom: 4px solid ${temaConfig.primary};
+                    font-size: 15px;
+                ">
+                    <span style="font-size: 18px;">📊</span> General
+                </button>
+                <button class="admin-nav-btn" data-seccion="legal" style="
+                    flex: 1; 
+                    padding: 20px 24px; 
+                    border: none; 
+                    background: transparent; 
+                    cursor: pointer; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    gap: 8px; 
+                    font-weight: 600; 
+                    color: #64748b; 
+                    transition: all 0.3s ease;
+                    border-bottom: 4px solid transparent;
+                    font-size: 15px;
+                ">
+                    <span style="font-size: 18px;">⚖️</span> Legal
+                </button>
+                <button class="admin-nav-btn" data-seccion="financiero" style="
+                    flex: 1; 
+                    padding: 20px 24px; 
+                    border: none; 
+                    background: transparent; 
+                    cursor: pointer; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    gap: 8px; 
+                    font-weight: 600; 
+                    color: #64748b; 
+                    transition: all 0.3s ease;
+                    border-bottom: 4px solid transparent;
+                    font-size: 15px;
+                ">
+                    <span style="font-size: 18px;">💰</span> Finanzas
+                </button>
+                <button class="admin-nav-btn" data-seccion="contacto" style="
+                    flex: 1; 
+                    padding: 20px 24px; 
+                    border: none; 
+                    background: transparent; 
+                    cursor: pointer; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    gap: 8px; 
+                    font-weight: 600; 
+                    color: #64748b; 
+                    transition: all 0.3s ease;
+                    border-bottom: 4px solid transparent;
+                    font-size: 15px;
+                ">
+                    <span style="font-size: 18px;">📞</span> Contacto
+                </button>
+                <button class="admin-nav-btn" data-seccion="temas" style="
+                    flex: 1; 
+                    padding: 20px 24px; 
+                    border: none; 
+                    background: transparent; 
+                    cursor: pointer; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    gap: 8px; 
+                    font-weight: 600; 
+                    color: #64748b; 
+                    transition: all 0.3s ease;
+                    border-bottom: 4px solid transparent;
+                    font-size: 15px;
+                ">
+                    <span style="font-size: 18px;">🎨</span> Temas
+                </button>
+            </div>
 
+            <!-- Contenido Principal -->
+            <div style="
+                padding: 0; 
+                max-height: 400px; 
+                overflow-y: auto;
+                background: #ffffff;
+            " class="grizalum-admin-content">
+                ${this._generarContenidoGeneral(empresa)}
+            </div>
+
+            <!-- Footer Premium -->
+            <div style="
+                background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%); 
+                padding: 24px 32px; 
+                display: flex; 
+                justify-content: space-between; 
+                align-items: center; 
+                border-top: 1px solid #e2e8f0;
+                box-shadow: 0 -4px 6px rgba(0,0,0,0.05);
+            ">
+                <div style="display: flex; gap: 16px;">
+                    <button 
+                        onclick="adminEmpresas.exportarDatos('${empresaId}')" 
+                        style="
+                            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
+                            color: white; 
+                            border: none; 
+                            padding: 12px 24px; 
+                            border-radius: 12px; 
+                            cursor: pointer; 
+                            display: flex; 
+                            align-items: center; 
+                            gap: 8px;
+                            font-weight: 600;
+                            font-size: 14px;
+                            transition: all 0.3s ease;
+                            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+                        "
+                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(59, 130, 246, 0.4)'"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(59, 130, 246, 0.3)'"
+                    >
+                        📤 Exportar Datos
+                    </button>
+                    <button 
+                        onclick="this.style.background='#10b981'; this.textContent='✅ Copiado'; setTimeout(() => { this.style.background='linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)'; this.innerHTML='📋 Duplicar'; }, 1000);" 
+                        style="
+                            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); 
+                            color: white; 
+                            border: none; 
+                            padding: 12px 24px; 
+                            border-radius: 12px; 
+                            cursor: pointer; 
+                            display: flex; 
+                            align-items: center; 
+                            gap: 8px;
+                            font-weight: 600;
+                            font-size: 14px;
+                            transition: all 0.3s ease;
+                            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+                        "
+                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(139, 92, 246, 0.4)'"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(139, 92, 246, 0.3)'"
+                    >
+                        📋 Duplicar
+                    </button>
+                </div>
+                <div style="display: flex; gap: 16px;">
+                    <button 
+                        onclick="adminEmpresas.cerrarModal()" 
+                        style="
+                            background: #64748b; 
+                            color: white; 
+                            border: none; 
+                            padding: 12px 24px; 
+                            border-radius: 12px; 
+                            cursor: pointer;
+                            font-weight: 600;
+                            font-size: 14px;
+                            transition: all 0.3s ease;
+                        "
+                        onmouseover="this.style.background='#475569'; this.style.transform='translateY(-1px)'"
+                        onmouseout="this.style.background='#64748b'; this.style.transform='translateY(0)'"
+                    >❌ Cancelar</button>
+                    <button 
+                        onclick="adminEmpresas.guardarCambios('${empresaId}')" 
+                        style="
+                            background: linear-gradient(135deg, ${temaConfig.primary} 0%, ${temaConfig.secondary} 100%); 
+                            color: white; 
+                            border: none; 
+                            padding: 12px 32px; 
+                            border-radius: 12px; 
+                            cursor: pointer;
+                            font-weight: 700;
+                            font-size: 14px;
+                            transition: all 0.3s ease;
+                            box-shadow: 0 4px 12px ${temaConfig.primary}40;
+                        "
+                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px ${temaConfig.primary}50'"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px ${temaConfig.primary}40'"
+                    >💾 Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+    this.modalActivo = modal;
+    
+    // Animación de entrada suave
+    setTimeout(() => {
+        modal.style.opacity = '1';
+        const content = modal.querySelector('.modal-content');
+        content.style.transform = 'scale(1) translateY(0)';
+    }, 50);
+    
+    // Configurar eventos
+    this._configurarEventosAdmin(empresaId);
+    this._aplicarEstilosResponsivos();
+}
     _generarHeaderAdmin(empresa) {
         return `
             <div class="grizalum-admin-header">
