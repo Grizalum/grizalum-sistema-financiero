@@ -44,133 +44,279 @@ class GestorEmpresasAdmin {
         left: 0; 
         width: 100%; 
         height: 100%; 
-        background: rgba(0,0,0,0.75); 
+        background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(20,20,30,0.9) 100%); 
         z-index: 999999; 
         display: flex; 
         align-items: center; 
         justify-content: center; 
         padding: 20px;
-        backdrop-filter: blur(8px);
+        backdrop-filter: blur(12px);
         opacity: 0;
-        transition: all 0.3s ease;
+        transition: all 0.4s ease;
     `;
-    
-    // Aplicar tema de la empresa
-    const mapaTemaCss = {
-        'rojo': 'red', 'azul': 'blue', 'verde': 'green',
-        'morado': 'purple', 'dorado': 'gold'
-    };
-    const temaCss = mapaTemaCss[empresa.tema] || 'gold';
-    modal.setAttribute('data-theme', temaCss);
     
     const temaConfig = this.gestor.config.temas[empresa.tema] || this.gestor.config.temas.dorado;
     
     modal.innerHTML = `
         <div style="
-            background: #ffffff; 
-            border-radius: 24px; 
-            width: 1000px; 
-            max-width: 95vw; 
-            max-height: 90vh; 
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%); 
+            border-radius: 28px; 
+            width: 1300px; 
+            max-width: 98vw; 
+            max-height: 95vh; 
             overflow: hidden;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.4);
-            transform: scale(0.9) translateY(30px);
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 
+                0 0 0 1px rgba(255,255,255,0.1),
+                0 25px 80px rgba(0,0,0,0.5),
+                0 0 120px rgba(${temaConfig.primary.replace('#', '')}, 0.2);
+            transform: scale(0.8) translateY(40px);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 2px solid rgba(${temaConfig.primary.replace('#', '')}, 0.1);
         " class="modal-content">
             
-            <!-- Header Premium con Gradiente -->
+            <!-- Header Ultra Premium -->
             <div style="
-                background: linear-gradient(135deg, ${temaConfig.primary} 0%, ${temaConfig.secondary} 100%); 
+                background: linear-gradient(135deg, ${temaConfig.primary} 0%, ${temaConfig.secondary} 50%, #1a1a2e 100%); 
                 color: white; 
-                padding: 32px; 
+                padding: 32px 40px; 
                 position: relative;
                 overflow: hidden;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.3);
             ">
-                <!-- Efectos visuales de fondo -->
-                <div style="position: absolute; top: -50%; right: -20%; width: 300px; height: 300px; background: rgba(255,255,255,0.1); border-radius: 50%; transform: scale(1.5);"></div>
-                <div style="position: absolute; bottom: -30%; left: -10%; width: 200px; height: 200px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
+                <!-- Efectos de partículas de fondo -->
+                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><defs><pattern id=\"grid\" width=\"10\" height=\"10\" patternUnits=\"userSpaceOnUse\"><path d=\"M 10 0 L 0 0 0 10\" fill=\"none\" stroke=\"rgba(255,255,255,0.1)\" stroke-width=\"0.5\"/></pattern></defs><rect width=\"100\" height=\"100\" fill=\"url(%23grid)\" /></svg>'); opacity: 0.3;"></div>
                 
-                <div style="position: relative; z-index: 2;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
-                        <div style="display: flex; align-items: center; gap: 20px;">
+                <!-- Elementos decorativos -->
+                <div style="position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%); border-radius: 50%;"></div>
+                <div style="position: absolute; bottom: -50px; left: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%); border-radius: 50%;"></div>
+                
+                <div style="position: relative; z-index: 3;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+                        <div style="display: flex; align-items: center; gap: 24px;">
+                            <!-- Badge ADMIN -->
                             <div style="
-                                width: 80px; 
-                                height: 80px; 
-                                background: rgba(255,255,255,0.2); 
-                                border-radius: 20px; 
+                                background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+                                padding: 8px 20px;
+                                border-radius: 25px;
+                                font-size: 12px;
+                                font-weight: 800;
+                                text-transform: uppercase;
+                                letter-spacing: 1px;
+                                box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+                                border: 1px solid rgba(255,255,255,0.2);
+                            ">
+                                👑 ADMIN PANEL
+                            </div>
+                            
+                            <div style="
+                                width: 90px; 
+                                height: 90px; 
+                                background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 100%); 
+                                border-radius: 24px; 
                                 display: flex; 
                                 align-items: center; 
                                 justify-content: center; 
-                                font-size: 32px;
+                                font-size: 36px;
                                 backdrop-filter: blur(20px);
-                                border: 2px solid rgba(255,255,255,0.3);
-                                box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+                                border: 2px solid rgba(255,255,255,0.2);
+                                box-shadow: 
+                                    inset 0 1px 0 rgba(255,255,255,0.3),
+                                    0 8px 32px rgba(0,0,0,0.2);
+                                position: relative;
+                                overflow: hidden;
                             ">
-                                ${empresa.logo ? `<img src="${empresa.logo}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 18px;">` : empresa.icono}
+                                <div style="position: absolute; top: -50%; right: -50%; width: 100%; height: 200%; background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%); transform: rotate(45deg); animation: shimmer 3s infinite;"></div>
+                                ${empresa.logo ? `<img src="${empresa.logo}" style="width: 70%; height: 70%; object-fit: cover; border-radius: 20px; position: relative; z-index: 2;">` : empresa.icono}
                             </div>
+                            
                             <div>
-                                <h1 style="margin: 0; font-size: 28px; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                                    👑 Panel Administrativo
-                                </h1>
-                                <h2 style="margin: 8px 0 0 0; font-size: 20px; font-weight: 600; opacity: 0.95;">
+                                <div style="
+                                    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 100%);
+                                    padding: 4px 16px;
+                                    border-radius: 20px;
+                                    font-size: 14px;
+                                    font-weight: 600;
+                                    margin-bottom: 12px;
+                                    backdrop-filter: blur(10px);
+                                    border: 1px solid rgba(255,255,255,0.1);
+                                ">CONTROL EMPRESARIAL</div>
+                                <h1 style="margin: 0; font-size: 32px; font-weight: 900; text-shadow: 0 4px 8px rgba(0,0,0,0.3); background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.8) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
                                     ${empresa.nombre}
-                                </h2>
-                                <div style="display: flex; gap: 12px; margin-top: 12px;">
-                                    <span style="background: rgba(255,255,255,0.2); padding: 6px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; backdrop-filter: blur(10px);">${empresa.categoria}</span>
-                                    <span style="background: rgba(255,255,255,0.2); padding: 6px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; backdrop-filter: blur(10px);">${empresa.estado}</span>
+                                </h1>
+                                <div style="display: flex; gap: 16px; margin-top: 16px;">
+                                    <span style="background: rgba(255,255,255,0.2); padding: 8px 20px; border-radius: 25px; font-size: 14px; font-weight: 600; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);">
+                                        📊 ${empresa.categoria}
+                                    </span>
+                                    <span style="background: rgba(255,255,255,0.2); padding: 8px 20px; border-radius: 25px; font-size: 14px; font-weight: 600; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);">
+                                        ⚡ ${empresa.estado}
+                                    </span>
+                                    <span style="background: rgba(255,255,255,0.2); padding: 8px 20px; border-radius: 25px; font-size: 14px; font-weight: 600; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);">
+                                        🏛️ ${empresa.ubicacion?.departamento || 'Lima'}
+                                    </span>
                                 </div>
                             </div>
                         </div>
+                        
+                        <!-- Botón cerrar premium -->
                         <button 
                             onclick="adminEmpresas.cerrarModal()" 
                             style="
-                                width: 48px; 
-                                height: 48px; 
-                                background: rgba(255,255,255,0.15); 
-                                border: 2px solid rgba(255,255,255,0.3); 
-                                border-radius: 16px; 
+                                width: 56px; 
+                                height: 56px; 
+                                background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 100%); 
+                                border: 2px solid rgba(255,255,255,0.2); 
+                                border-radius: 20px; 
                                 color: white; 
                                 cursor: pointer; 
-                                font-size: 20px;
+                                font-size: 24px;
+                                font-weight: bold;
                                 transition: all 0.3s ease;
                                 backdrop-filter: blur(20px);
                                 display: flex;
                                 align-items: center;
                                 justify-content: center;
-                                font-weight: bold;
+                                box-shadow: 0 4px 16px rgba(0,0,0,0.2);
                             "
-                            onmouseover="this.style.background='rgba(255,255,255,0.25)'; this.style.transform='scale(1.05)'"
-                            onmouseout="this.style.background='rgba(255,255,255,0.15)'; this.style.transform='scale(1)'"
-                        >✕</button>
+                            onmouseover="this.style.background='linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 100%)'; this.style.transform='scale(1.05) rotate(90deg)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.3)'"
+                            onmouseout="this.style.background='linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 100%)'; this.style.transform='scale(1) rotate(0deg)'; this.style.boxShadow='0 4px 16px rgba(0,0,0,0.2)'"
+                        >×</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Navegación con Estilo Premium -->
+            <!-- Dashboard de Métricas Premium -->
             <div style="
-                background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%); 
+                background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
+                padding: 32px 40px;
+                border-bottom: 1px solid #e2e8f0;
+            ">
+                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px;">
+                    
+                    <!-- Métrica 1: Caja -->
+                    <div style="
+                        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                        padding: 24px;
+                        border-radius: 20px;
+                        color: white;
+                        position: relative;
+                        overflow: hidden;
+                        box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);
+                        border: 1px solid rgba(255,255,255,0.1);
+                    ">
+                        <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+                        <div style="position: relative; z-index: 2;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">💰</div>
+                            <div style="font-size: 24px; font-weight: 800; margin-bottom: 4px;">S/. ${(empresa.finanzas?.caja || 0).toLocaleString()}</div>
+                            <div style="font-size: 12px; opacity: 0.9; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Caja Actual</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Métrica 2: Ingresos -->
+                    <div style="
+                        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+                        padding: 24px;
+                        border-radius: 20px;
+                        color: white;
+                        position: relative;
+                        overflow: hidden;
+                        box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+                        border: 1px solid rgba(255,255,255,0.1);
+                    ">
+                        <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+                        <div style="position: relative; z-index: 2;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">📈</div>
+                            <div style="font-size: 24px; font-weight: 800; margin-bottom: 4px;">S/. ${(empresa.finanzas?.ingresos || 0).toLocaleString()}</div>
+                            <div style="font-size: 12px; opacity: 0.9; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Ingresos Anuales</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Métrica 3: Utilidad -->
+                    <div style="
+                        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+                        padding: 24px;
+                        border-radius: 20px;
+                        color: white;
+                        position: relative;
+                        overflow: hidden;
+                        box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+                        border: 1px solid rgba(255,255,255,0.1);
+                    ">
+                        <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+                        <div style="position: relative; z-index: 2;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">💎</div>
+                            <div style="font-size: 24px; font-weight: 800; margin-bottom: 4px;">S/. ${(empresa.finanzas?.utilidadNeta || 0).toLocaleString()}</div>
+                            <div style="font-size: 12px; opacity: 0.9; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Utilidad Neta</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Métrica 4: Margen -->
+                    <div style="
+                        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+                        padding: 24px;
+                        border-radius: 20px;
+                        color: white;
+                        position: relative;
+                        overflow: hidden;
+                        box-shadow: 0 8px 32px rgba(245, 158, 11, 0.3);
+                        border: 1px solid rgba(255,255,255,0.1);
+                    ">
+                        <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+                        <div style="position: relative; z-index: 2;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">📊</div>
+                            <div style="font-size: 24px; font-weight: 800; margin-bottom: 4px;">${empresa.finanzas?.margenNeto || 0}%</div>
+                            <div style="font-size: 12px; opacity: 0.9; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Margen Neto</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Métrica 5: Tiempo -->
+                    <div style="
+                        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+                        padding: 24px;
+                        border-radius: 20px;
+                        color: white;
+                        position: relative;
+                        overflow: hidden;
+                        box-shadow: 0 8px 32px rgba(239, 68, 68, 0.3);
+                        border: 1px solid rgba(255,255,255,0.1);
+                    ">
+                        <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+                        <div style="position: relative; z-index: 2;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">⏰</div>
+                            <div style="font-size: 24px; font-weight: 800; margin-bottom: 4px;">${this._calcularDiasActiva(empresa.meta?.fechaCreacion)}</div>
+                            <div style="font-size: 12px; opacity: 0.9; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Días Activa</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navegación Premium con Glassmorphism -->
+            <div style="
+                background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.9) 100%); 
                 padding: 0; 
                 display: flex; 
-                border-bottom: 1px solid #e2e8f0;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+                border-bottom: 1px solid rgba(226,232,240,0.5);
+                backdrop-filter: blur(20px);
+                box-shadow: 0 4px 24px rgba(0,0,0,0.05);
             ">
                 <button class="admin-nav-btn active" data-seccion="general" style="
                     flex: 1; 
                     padding: 20px 24px; 
                     border: none; 
-                    background: white; 
+                    background: linear-gradient(135deg, ${temaConfig.primary} 0%, ${temaConfig.secondary} 100%); 
                     cursor: pointer; 
                     display: flex; 
                     align-items: center; 
                     justify-content: center; 
-                    gap: 8px; 
+                    gap: 12px; 
                     font-weight: 700; 
-                    color: ${temaConfig.primary}; 
+                    color: white; 
                     transition: all 0.3s ease;
-                    border-bottom: 4px solid ${temaConfig.primary};
                     font-size: 15px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    box-shadow: 0 4px 16px ${temaConfig.primary}40;
                 ">
-                    <span style="font-size: 18px;">📊</span> General
+                    <span style="font-size: 20px;">⚙️</span> CONFIGURACIÓN
                 </button>
                 <button class="admin-nav-btn" data-seccion="legal" style="
                     flex: 1; 
@@ -181,14 +327,15 @@ class GestorEmpresasAdmin {
                     display: flex; 
                     align-items: center; 
                     justify-content: center; 
-                    gap: 8px; 
-                    font-weight: 600; 
+                    gap: 12px; 
+                    font-weight: 700; 
                     color: #64748b; 
                     transition: all 0.3s ease;
-                    border-bottom: 4px solid transparent;
                     font-size: 15px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
                 ">
-                    <span style="font-size: 18px;">⚖️</span> Legal
+                    <span style="font-size: 20px;">⚖️</span> LEGAL
                 </button>
                 <button class="admin-nav-btn" data-seccion="financiero" style="
                     flex: 1; 
@@ -199,14 +346,15 @@ class GestorEmpresasAdmin {
                     display: flex; 
                     align-items: center; 
                     justify-content: center; 
-                    gap: 8px; 
-                    font-weight: 600; 
+                    gap: 12px; 
+                    font-weight: 700; 
                     color: #64748b; 
                     transition: all 0.3s ease;
-                    border-bottom: 4px solid transparent;
                     font-size: 15px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
                 ">
-                    <span style="font-size: 18px;">💰</span> Finanzas
+                    <span style="font-size: 20px;">💰</span> FINANZAS
                 </button>
                 <button class="admin-nav-btn" data-seccion="contacto" style="
                     flex: 1; 
@@ -217,16 +365,17 @@ class GestorEmpresasAdmin {
                     display: flex; 
                     align-items: center; 
                     justify-content: center; 
-                    gap: 8px; 
-                    font-weight: 600; 
+                    gap: 12px; 
+                    font-weight: 700; 
                     color: #64748b; 
                     transition: all 0.3s ease;
-                    border-bottom: 4px solid transparent;
                     font-size: 15px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
                 ">
-                    <span style="font-size: 18px;">📞</span> Contacto
+                    <span style="font-size: 20px;">📞</span> CONTACTO
                 </button>
-                <button class="admin-nav-btn" data-seccion="temas" style="
+                <button class="admin-nav-btn" data-seccion="avanzado" style="
                     flex: 1; 
                     padding: 20px 24px; 
                     border: none; 
@@ -235,126 +384,179 @@ class GestorEmpresasAdmin {
                     display: flex; 
                     align-items: center; 
                     justify-content: center; 
-                    gap: 8px; 
-                    font-weight: 600; 
+                    gap: 12px; 
+                    font-weight: 700; 
                     color: #64748b; 
                     transition: all 0.3s ease;
-                    border-bottom: 4px solid transparent;
                     font-size: 15px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
                 ">
-                    <span style="font-size: 18px;">🎨</span> Temas
+                    <span style="font-size: 20px;">🚀</span> AVANZADO
                 </button>
             </div>
 
             <!-- Contenido Principal -->
             <div style="
                 padding: 0; 
-                max-height: 400px; 
+                max-height: 500px; 
                 overflow-y: auto;
-                background: #ffffff;
+                background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
             " class="grizalum-admin-content">
                 ${this._generarContenidoGeneral(empresa)}
             </div>
 
             <!-- Footer Premium -->
             <div style="
-                background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%); 
-                padding: 24px 32px; 
+                background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.95) 100%); 
+                padding: 32px 40px; 
                 display: flex; 
                 justify-content: space-between; 
                 align-items: center; 
-                border-top: 1px solid #e2e8f0;
-                box-shadow: 0 -4px 6px rgba(0,0,0,0.05);
+                border-top: 1px solid rgba(226,232,240,0.5);
+                backdrop-filter: blur(20px);
+                box-shadow: 0 -4px 24px rgba(0,0,0,0.05);
             ">
-                <div style="display: flex; gap: 16px;">
+                <div style="display: flex; gap: 20px; align-items: center;">
                     <button 
                         onclick="adminEmpresas.exportarDatos('${empresaId}')" 
                         style="
                             background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
                             color: white; 
                             border: none; 
-                            padding: 12px 24px; 
-                            border-radius: 12px; 
+                            padding: 16px 32px; 
+                            border-radius: 16px; 
                             cursor: pointer; 
                             display: flex; 
                             align-items: center; 
-                            gap: 8px;
-                            font-weight: 600;
-                            font-size: 14px;
+                            gap: 12px;
+                            font-weight: 700;
+                            font-size: 15px;
+                            text-transform: uppercase;
+                            letter-spacing: 1px;
                             transition: all 0.3s ease;
-                            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+                            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+                            border: 1px solid rgba(255,255,255,0.1);
                         "
-                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(59, 130, 246, 0.4)'"
-                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(59, 130, 246, 0.3)'"
+                        onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 32px rgba(59, 130, 246, 0.4)'"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 24px rgba(59, 130, 246, 0.3)'"
                     >
-                        📤 Exportar Datos
+                        <span style="font-size: 18px;">📤</span> EXPORTAR
                     </button>
                     <button 
-                        onclick="this.style.background='#10b981'; this.textContent='✅ Copiado'; setTimeout(() => { this.style.background='linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)'; this.innerHTML='📋 Duplicar'; }, 1000);" 
+                        onclick="adminEmpresas.duplicarEmpresa('${empresaId}')" 
                         style="
                             background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); 
                             color: white; 
                             border: none; 
-                            padding: 12px 24px; 
-                            border-radius: 12px; 
+                            padding: 16px 32px; 
+                            border-radius: 16px; 
                             cursor: pointer; 
                             display: flex; 
                             align-items: center; 
-                            gap: 8px;
-                            font-weight: 600;
-                            font-size: 14px;
+                            gap: 12px;
+                            font-weight: 700;
+                            font-size: 15px;
+                            text-transform: uppercase;
+                            letter-spacing: 1px;
                             transition: all 0.3s ease;
-                            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+                            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3);
+                            border: 1px solid rgba(255,255,255,0.1);
                         "
-                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(139, 92, 246, 0.4)'"
-                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(139, 92, 246, 0.3)'"
+                        onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 32px rgba(139, 92, 246, 0.4)'"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 24px rgba(139, 92, 246, 0.3)'"
                     >
-                        📋 Duplicar
+                        <span style="font-size: 18px;">📋</span> DUPLICAR
                     </button>
                 </div>
-                <div style="display: flex; gap: 16px;">
+                
+                <div style="text-align: center; flex: 1;">
+                    <div style="
+                        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+                        padding: 12px 24px;
+                        border-radius: 12px;
+                        border: 1px solid rgba(16, 185, 129, 0.2);
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 8px;
+                        color: #065f46;
+                        font-weight: 600;
+                        font-size: 14px;
+                    ">
+                        <span style="font-size: 16px;">🔒</span>
+                        PANEL EXCLUSIVO PARA ADMINISTRADORES
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 20px;">
                     <button 
                         onclick="adminEmpresas.cerrarModal()" 
                         style="
-                            background: #64748b; 
+                            background: linear-gradient(135deg, #64748b 0%, #475569 100%); 
                             color: white; 
                             border: none; 
-                            padding: 12px 24px; 
-                            border-radius: 12px; 
+                            padding: 16px 32px; 
+                            border-radius: 16px; 
                             cursor: pointer;
-                            font-weight: 600;
-                            font-size: 14px;
+                            font-weight: 700;
+                            font-size: 15px;
+                            text-transform: uppercase;
+                            letter-spacing: 1px;
                             transition: all 0.3s ease;
+                            box-shadow: 0 8px 24px rgba(100, 116, 139, 0.3);
                         "
-                        onmouseover="this.style.background='#475569'; this.style.transform='translateY(-1px)'"
-                        onmouseout="this.style.background='#64748b'; this.style.transform='translateY(0)'"
-                    >❌ Cancelar</button>
+                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 32px rgba(100, 116, 139, 0.4)'"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 24px rgba(100, 116, 139, 0.3)'"
+                    >❌ CANCELAR</button>
                     <button 
                         onclick="adminEmpresas.guardarCambios('${empresaId}')" 
                         style="
                             background: linear-gradient(135deg, ${temaConfig.primary} 0%, ${temaConfig.secondary} 100%); 
                             color: white; 
                             border: none; 
-                            padding: 12px 32px; 
-                            border-radius: 12px; 
+                            padding: 16px 40px; 
+                            border-radius: 16px; 
                             cursor: pointer;
-                            font-weight: 700;
-                            font-size: 14px;
+                            font-weight: 800;
+                            font-size: 15px;
+                            text-transform: uppercase;
+                            letter-spacing: 1px;
                             transition: all 0.3s ease;
-                            box-shadow: 0 4px 12px ${temaConfig.primary}40;
+                            box-shadow: 0 8px 24px ${temaConfig.primary}40;
+                            border: 1px solid rgba(255,255,255,0.1);
                         "
-                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px ${temaConfig.primary}50'"
-                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px ${temaConfig.primary}40'"
-                    >💾 Guardar Cambios</button>
+                        onmouseover="this.style.transform='translateY(-4px) scale(1.02)'; this.style.boxShadow='0 16px 40px ${temaConfig.primary}50'"
+                        onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 8px 24px ${temaConfig.primary}40'"
+                    >💾 GUARDAR CAMBIOS</button>
                 </div>
             </div>
         </div>
+        
+        <style>
+            @keyframes shimmer {
+                0% { transform: translateX(-100%) rotate(45deg); }
+                100% { transform: translateX(200%) rotate(45deg); }
+            }
+            
+            .admin-nav-btn:hover {
+                background: linear-gradient(135deg, ${temaConfig.primary}20 0%, ${temaConfig.secondary}20 100%) !important;
+                color: ${temaConfig.primary} !important;
+                transform: translateY(-2px);
+                box-shadow: 0 8px 24px ${temaConfig.primary}30;
+            }
+            
+            .admin-nav-btn.active {
+                background: linear-gradient(135deg, ${temaConfig.primary} 0%, ${temaConfig.secondary} 100%) !important;
+                color: white !important;
+                box-shadow: 0 4px 16px ${temaConfig.primary}40;
+            }
+        </style>
     `;
 
     document.body.appendChild(modal);
     this.modalActivo = modal;
     
-    // Animación de entrada suave
+    // Animación de entrada épica
     setTimeout(() => {
         modal.style.opacity = '1';
         const content = modal.querySelector('.modal-content');
