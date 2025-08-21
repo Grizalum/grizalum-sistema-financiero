@@ -1777,6 +1777,241 @@ class GestorEmpresasAdmin {
 
         document.head.appendChild(estilos);
     }
+    // ═══════════════════════════════════════════════════════════════════════════
+// MÉTODOS FALTANTES PARA FUNCIONALIDAD COMPLETA
+// ═══════════════════════════════════════════════════════════════════════════
+
+cambiarIcono() {
+    const iconosPopulares = ['🏢', '🏭', '🏪', '🏦', '🏨', '🔥', '🐔', '🌟', '💎', '⚡', '🚀', '🛠️', '🌱', '💡', '🎯', '💰', '🍕', '☕', '🚗', '✈️'];
+    
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: 100%; 
+        background: rgba(0,0,0,0.8); 
+        z-index: 9999999; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center;
+    `;
+    
+    modal.innerHTML = `
+        <div style="background: white; border-radius: 20px; padding: 2rem; width: 400px; max-width: 90vw;">
+            <h3 style="margin: 0 0 1.5rem 0; text-align: center; color: #374151;">🎨 Seleccionar Icono</h3>
+            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+                ${iconosPopulares.map(icono => `
+                    <div onclick="adminEmpresas.seleccionarIcono('${icono}')" style="
+                        width: 50px; 
+                        height: 50px; 
+                        display: flex; 
+                        align-items: center; 
+                        justify-content: center; 
+                        background: #f8fafc; 
+                        border: 2px solid #e5e7eb; 
+                        border-radius: 12px; 
+                        cursor: pointer; 
+                        font-size: 1.5rem;
+                        transition: all 0.3s ease;
+                    " onmouseover="this.style.background='#3b82f6'; this.style.borderColor='#3b82f6'; this.style.transform='scale(1.1)'" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#e5e7eb'; this.style.transform='scale(1)'">${icono}</div>
+                `).join('')}
+            </div>
+            <div style="text-align: center;">
+                <button onclick="this.parentElement.parentElement.parentElement.remove()" style="background: #6b7280; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;">Cancelar</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+seleccionarIcono(icono) {
+    document.getElementById('admin-icono').value = icono;
+    document.querySelector('[onclick*="cambiarIcono"]').parentElement.parentElement.parentElement.parentElement.remove();
+    this._mostrarNotificacion(`🎨 Icono cambiado a ${icono}`);
+}
+
+_cambiarSeccion(seccionTarget) {
+    try {
+        // Remover active de botones
+        const botones = document.querySelectorAll('.admin-nav-btn');
+        botones.forEach(btn => {
+            btn.classList.remove('active');
+            btn.style.color = '#64748b';
+            btn.style.borderBottomColor = 'transparent';
+            btn.style.background = 'transparent';
+        });
+        
+        // Remover active de secciones
+        const secciones = document.querySelectorAll('.admin-seccion');
+        secciones.forEach(sec => {
+            sec.classList.remove('active');
+            sec.style.display = 'none';
+        });
+        
+        // Activar nueva sección
+        const botonActivo = document.querySelector(`[data-seccion="${seccionTarget}"]`);
+        const seccionActiva = document.getElementById(`seccion-${seccionTarget}`);
+        
+        if (botonActivo) {
+            botonActivo.classList.add('active');
+            botonActivo.style.color = 'var(--theme-primary, #3b82f6)';
+            botonActivo.style.borderBottomColor = 'var(--theme-primary, #3b82f6)';
+            botonActivo.style.background = 'white';
+        }
+        
+        if (seccionActiva) {
+            seccionActiva.classList.add('active');
+            seccionActiva.style.display = 'block';
+        }
+        
+        this._log('info', `📂 Sección cambiada a: ${seccionTarget}`);
+    } catch (error) {
+        console.error('Error cambiando sección:', error);
+    }
+}
+
+_configurarEventosAdmin(empresaId) {
+    try {
+        // Navegación entre secciones
+        const botones = document.querySelectorAll('.admin-nav-btn');
+        botones.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const seccion = btn.dataset.seccion;
+                if (seccion) {
+                    this._cambiarSeccion(seccion);
+                }
+            });
+        });
+
+        // Auto-cálculo de métricas financieras
+        const inputsFinancieros = ['admin-ingresos', 'admin-gastos'];
+        inputsFinancieros.forEach(id => {
+            const input = document.getElementById(id);
+            if (input) {
+                input.addEventListener('input', () => this._autoCalcularMetricas());
+            }
+        });
+
+        // Cerrar con Escape
+        const handleEscape = (e) => {
+            if (e.key === 'Escape' && this.modalActivo) {
+                this.cerrarModal();
+                document.removeEventListener('keydown', handleEscape);
+            }
+        };
+        document.addEventListener('keydown', handleEscape);
+
+        this._log('info', '🎯 Eventos admin configurados exitosamente');
+    } catch (error) {
+        console.error('Error configurando eventos admin:', error);
+    }
+}
+
+_autoCalcularMetricas() {
+    setTimeout(() => {
+        try {
+            this.calcularMetricas();
+        } catch (error) {
+            console.error('Error auto-calculando métricas:', error);
+        }
+    }, 300);
+}
+
+exportarDatos(empresaId) {
+    try {
+        const empresa = this.gestor.estado.empresas[empresaId];
+        if (!empresa) {
+            this._mostrarError('Empresa no encontrada');
+            return;
+        }
+        
+        const datos = JSON.stringify(empresa, null, 2);
+        const blob = new Blob([datos], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${empresa.nombre.replace(/[^a-zA-Z0-9]/g, '_')}_datos_${new Date().getTime()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        
+        this._mostrarExito(`📤 Datos de ${empresa.nombre} exportados exitosamente`);
+        this._log('info', `📤 Datos exportados: ${empresa.nombre}`);
+    } catch (error) {
+        console.error('Error exportando datos:', error);
+        this._mostrarError('Error al exportar datos');
+    }
+}
+
+duplicarEmpresa(empresaId) {
+    try {
+        const empresa = this.gestor.estado.empresas[empresaId];
+        if (!empresa) {
+            this._mostrarError('Empresa no encontrada');
+            return;
+        }
+        
+        const timestamp = Date.now();
+        const nuevoId = `${empresa.id}-copia-${timestamp}`;
+        const empresaDuplicada = JSON.parse(JSON.stringify(empresa));
+        
+        empresaDuplicada.id = nuevoId;
+        empresaDuplicada.nombre = `${empresa.nombre} (Copia)`;
+        empresaDuplicada.meta = {
+            ...empresaDuplicada.meta,
+            fechaCreacion: new Date().toISOString(),
+            fechaActualizacion: new Date().toISOString(),
+            version: '1.0'
+        };
+        
+        this.gestor.estado.empresas[nuevoId] = empresaDuplicada;
+        this.gestor._guardarEmpresas();
+        this.gestor._actualizarListaEmpresas();
+        this.gestor._calcularMetricas();
+        
+        this._mostrarExito(`📋 Empresa duplicada: ${empresaDuplicada.nombre}`);
+        this._log('success', `📋 Empresa duplicada: ${empresaDuplicada.nombre}`);
+        
+        // Cerrar modal y seleccionar la nueva empresa
+        setTimeout(() => {
+            this.cerrarModal();
+            this.gestor.seleccionarEmpresa(nuevoId);
+        }, 1000);
+        
+    } catch (error) {
+        console.error('Error duplicando empresa:', error);
+        this._mostrarError('Error al duplicar empresa');
+    }
+}
+
+_aplicarEstilosResponsivos() {
+    // Crear estilos responsive si no existen
+    if (!document.getElementById('admin-responsive-styles')) {
+        const estilos = document.createElement('style');
+        estilos.id = 'admin-responsive-styles';
+        estilos.textContent = `
+            @media (max-width: 768px) {
+                .grizalum-modal-admin {
+                    width: 95vw !important;
+                    height: 95vh !important;
+                    margin: 0 !important;
+                }
+                
+                .admin-grid {
+                    grid-template-columns: 1fr !important;
+                }
+                
+                .admin-nav-btn {
+                    font-size: 12px !important;
+                    padding: 16px 8px !important;
+                }
+            }
+        `;
+        document.head.appendChild(estilos);
+    }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
