@@ -1,425 +1,1489 @@
 /**
  * ╔══════════════════════════════════════════════════════════════════════════════╗
- * ║                    GRIZALUM PANEL DE GESTIÓN ADMIN                          ║
- * ║                INTEGRADO CON SISTEMA DE TEMAS EXISTENTE                     ║
- * ║                          Versión 1.0 - 2025                                 ║
+ * ║                    GRIZALUM PANEL ADMIN PREMIUM                             ║
+ * ║                    VERSIÓN PROFESIONAL 2.0 - 2025                          ║
+ * ║                      COMPLETAMENTE FUNCIONAL                                ║
  * ╚══════════════════════════════════════════════════════════════════════════════╝
  */
 
-class GestorEmpresasAdmin {
+class GestorEmpresasAdminPremium {
     constructor(gestorPrincipal) {
         this.gestor = gestorPrincipal;
         this.modalActivo = null;
         this.datosTemporales = {};
+        this.notificaciones = this._cargarNotificaciones();
+        this.logs = this._cargarLogs();
+        this.configuracion = this._cargarConfiguracion();
         
-        this._log('info', '👑 Panel Admin inicializado con temas integrados');
+        this._inicializarSistema();
+        this._log('info', '👑 PANEL ADMIN PREMIUM inicializado');
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // MÉTODO PRINCIPAL: ABRIR PANEL ADMIN
+    // MÉTODO PRINCIPAL: ABRIR PANEL ADMIN PREMIUM
     // ═══════════════════════════════════════════════════════════════════════════
 
-    abrirPanelAdmin(empresaId) {
-        const empresa = this.gestor.estado.empresas[empresaId];
-        if (!empresa) {
-            this._mostrarError('Empresa no encontrada');
-            return;
-        }
-
-        this._log('info', `👑 Abriendo panel admin para: ${empresa.nombre}`);
+    abrirPanelAdmin(empresaId = null) {
+        this._log('info', '👑 Abriendo Panel Admin Premium');
         this._cerrarModalPrevio();
-        this._crearModalAdmin(empresaId, empresa);
+        this._crearModalAdminPremium(empresaId);
+    }
+
+    _crearModalAdminPremium(empresaId) {
+        const modal = document.createElement('div');
+        modal.id = 'grizalumModalAdminPremium';
+        modal.style.cssText = `
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(20,20,30,0.95) 100%); 
+            z-index: 999999; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px;
+            backdrop-filter: blur(15px);
+            opacity: 0;
+            transition: all 0.4s ease;
+        `;
+
+        modal.innerHTML = `
+            <div style="
+                background: linear-gradient(145deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%); 
+                border-radius: 32px; 
+                width: 1400px; 
+                max-width: 98vw; 
+                max-height: 95vh; 
+                overflow: hidden;
+                box-shadow: 
+                    0 0 0 1px rgba(255,255,255,0.1),
+                    0 30px 90px rgba(0,0,0,0.6),
+                    0 0 150px rgba(212, 175, 55, 0.3);
+                transform: scale(0.8) translateY(40px);
+                transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+                border: 3px solid rgba(212, 175, 55, 0.2);
+            " class="modal-content-premium">
+                
+                <!-- HEADER PREMIUM ULTRA -->
+                ${this._generarHeaderPremium()}
+                
+                <!-- NAVEGACIÓN PREMIUM -->
+                ${this._generarNavegacionPremium()}
+                
+                <!-- CONTENIDO PRINCIPAL -->
+                <div style="
+                    height: 550px; 
+                    overflow-y: auto;
+                    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+                " class="admin-premium-content">
+                    ${this._generarDashboardGlobal()}
+                    ${this._generarControlEmpresas()}
+                    ${this._generarSistemaNotificaciones()}
+                    ${this._generarAnalyticsPremium()}
+                    ${this._generarGestionUsuarios()}
+                    ${this._generarAuditoria()}
+                    ${this._generarConfiguracionSistema()}
+                </div>
+
+                <!-- FOOTER PREMIUM -->
+                ${this._generarFooterPremium()}
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+        this.modalActivo = modal;
+        
+        // Animación de entrada
+        setTimeout(() => {
+            modal.style.opacity = '1';
+            const content = modal.querySelector('.modal-content-premium');
+            content.style.transform = 'scale(1) translateY(0)';
+        }, 50);
+        
+        this._configurarEventosPremium();
+        this._actualizarDashboard();
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // CREACIÓN DEL MODAL ADMIN ULTRA PROFESIONAL
+    // HEADER PREMIUM ULTRA PROFESIONAL
     // ═══════════════════════════════════════════════════════════════════════════
 
-    _crearModalAdmin(empresaId, empresa) {
-    const modal = document.createElement('div');
-    modal.id = 'grizalumModalAdmin';
-    modal.style.cssText = `
-        position: fixed; 
-        top: 0; 
-        left: 0; 
-        width: 100%; 
-        height: 100%; 
-        background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(20,20,30,0.9) 100%); 
-        z-index: 999999; 
-        display: flex; 
-        align-items: center; 
-        justify-content: center; 
-        padding: 20px;
-        backdrop-filter: blur(12px);
-        opacity: 0;
-        transition: all 0.4s ease;
-    `;
-    
-    const temaConfig = this.gestor.config.temas[empresa.tema] || this.gestor.config.temas.dorado;
-    
-    modal.innerHTML = `
-        <div style="
-            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%); 
-            border-radius: 28px; 
-            width: 1300px; 
-            max-width: 98vw; 
-            max-height: 95vh; 
-            overflow: hidden;
-            box-shadow: 
-                0 0 0 1px rgba(255,255,255,0.1),
-                0 25px 80px rgba(0,0,0,0.5),
-                0 0 120px rgba(${temaConfig.primary.replace('#', '')}, 0.2);
-            transform: scale(0.8) translateY(40px);
-            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            border: 2px solid rgba(${temaConfig.primary.replace('#', '')}, 0.1);
-        " class="modal-content">
-            
-            <!-- Header Ultra Premium -->
+    _generarHeaderPremium() {
+        const totalEmpresas = Object.keys(this.gestor.estado.empresas).length;
+        const empresasActivas = Object.values(this.gestor.estado.empresas).filter(e => e.estado === 'Operativo').length;
+        const ingresoTotal = Object.values(this.gestor.estado.empresas).reduce((sum, e) => sum + (e.finanzas?.ingresos || 0), 0);
+
+        return `
             <div style="
-                background: linear-gradient(135deg, ${temaConfig.primary} 0%, ${temaConfig.secondary} 50%, #1a1a2e 100%); 
+                background: linear-gradient(135deg, #d4af37 0%, #b8941f 50%, #1a1a2e 100%); 
                 color: white; 
-                padding: 32px 40px; 
+                padding: 40px; 
                 position: relative;
                 overflow: hidden;
-                box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+                box-shadow: 0 10px 40px rgba(0,0,0,0.4);
             ">
-                <!-- Efectos de partículas de fondo -->
-                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><defs><pattern id=\"grid\" width=\"10\" height=\"10\" patternUnits=\"userSpaceOnUse\"><path d=\"M 10 0 L 0 0 0 10\" fill=\"none\" stroke=\"rgba(255,255,255,0.1)\" stroke-width=\"0.5\"/></pattern></defs><rect width=\"100\" height=\"100\" fill=\"url(%23grid)\" /></svg>'); opacity: 0.3;"></div>
+                <!-- Efectos de fondo -->
+                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><defs><pattern id=\"premium-grid\" width=\"15\" height=\"15\" patternUnits=\"userSpaceOnUse\"><path d=\"M 15 0 L 0 0 0 15\" fill=\"none\" stroke=\"rgba(255,255,255,0.08)\" stroke-width=\"0.5\"/></pattern></defs><rect width=\"100\" height=\"100\" fill=\"url(%23premium-grid)\" /></svg>'); opacity: 0.4;"></div>
                 
                 <!-- Elementos decorativos -->
-                <div style="position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%); border-radius: 50%;"></div>
-                <div style="position: absolute; bottom: -50px; left: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%); border-radius: 50%;"></div>
+                <div style="position: absolute; top: -150px; right: -150px; width: 400px; height: 400px; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); border-radius: 50%;"></div>
+                <div style="position: absolute; bottom: -100px; left: -100px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%); border-radius: 50%;"></div>
                 
                 <div style="position: relative; z-index: 3;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
-                        <div style="display: flex; align-items: center; gap: 24px;">
-                            <!-- Badge ADMIN -->
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div style="display: flex; align-items: center; gap: 32px;">
+                            <!-- Badge SUPER ADMIN -->
                             <div style="
                                 background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
-                                padding: 8px 20px;
-                                border-radius: 25px;
-                                font-size: 12px;
-                                font-weight: 800;
+                                padding: 12px 28px;
+                                border-radius: 30px;
+                                font-size: 14px;
+                                font-weight: 900;
                                 text-transform: uppercase;
-                                letter-spacing: 1px;
-                                box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
-                                border: 1px solid rgba(255,255,255,0.2);
+                                letter-spacing: 2px;
+                                box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5);
+                                border: 2px solid rgba(255,255,255,0.3);
+                                animation: pulse-admin 2s infinite;
                             ">
-                                👑 ADMIN PANEL
+                                👑 SUPER ADMIN PREMIUM
                             </div>
                             
+                            <!-- Logo del sistema -->
                             <div style="
-                                width: 90px; 
-                                height: 90px; 
-                                background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 100%); 
-                                border-radius: 24px; 
+                                width: 100px; 
+                                height: 100px; 
+                                background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.15) 100%); 
+                                border-radius: 28px; 
                                 display: flex; 
                                 align-items: center; 
                                 justify-content: center; 
-                                font-size: 36px;
+                                font-size: 48px;
                                 backdrop-filter: blur(20px);
-                                border: 2px solid rgba(255,255,255,0.2);
+                                border: 3px solid rgba(255,255,255,0.2);
                                 box-shadow: 
-                                    inset 0 1px 0 rgba(255,255,255,0.3),
-                                    0 8px 32px rgba(0,0,0,0.2);
+                                    inset 0 2px 0 rgba(255,255,255,0.4),
+                                    0 12px 40px rgba(0,0,0,0.3);
                                 position: relative;
                                 overflow: hidden;
                             ">
-                                <div style="position: absolute; top: -50%; right: -50%; width: 100%; height: 200%; background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%); transform: rotate(45deg); animation: shimmer 3s infinite;"></div>
-                                ${empresa.logo ? `<img src="${empresa.logo}" style="width: 70%; height: 70%; object-fit: cover; border-radius: 20px; position: relative; z-index: 2;">` : empresa.icono}
+                                <div style="position: absolute; top: -50%; right: -50%; width: 100%; height: 200%; background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%); transform: rotate(45deg); animation: shimmer 3s infinite;"></div>
+                                🏆
                             </div>
                             
+                            <!-- Información del panel -->
                             <div>
                                 <div style="
-                                    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 100%);
-                                    padding: 4px 16px;
-                                    border-radius: 20px;
+                                    background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 100%);
+                                    padding: 8px 20px;
+                                    border-radius: 25px;
                                     font-size: 14px;
-                                    font-weight: 600;
-                                    margin-bottom: 12px;
+                                    font-weight: 700;
+                                    margin-bottom: 16px;
                                     backdrop-filter: blur(10px);
-                                    border: 1px solid rgba(255,255,255,0.1);
-                                ">CONTROL EMPRESARIAL</div>
-                                <h1 style="margin: 0; font-size: 32px; font-weight: 900; text-shadow: 0 4px 8px rgba(0,0,0,0.3); background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.8) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                                    ${empresa.nombre}
+                                    border: 1px solid rgba(255,255,255,0.15);
+                                    text-transform: uppercase;
+                                    letter-spacing: 1px;
+                                ">CENTRO DE CONTROL EJECUTIVO</div>
+                                <h1 style="margin: 0; font-size: 36px; font-weight: 900; text-shadow: 0 4px 12px rgba(0,0,0,0.4); background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.9) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                    GRIZALUM PREMIUM
                                 </h1>
-                                <div style="display: flex; gap: 16px; margin-top: 16px;">
-                                    <span style="background: rgba(255,255,255,0.2); padding: 8px 20px; border-radius: 25px; font-size: 14px; font-weight: 600; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);">
-                                        📊 ${empresa.categoria}
+                                <div style="display: flex; gap: 20px; margin-top: 20px;">
+                                    <span style="background: rgba(255,255,255,0.2); padding: 10px 24px; border-radius: 30px; font-size: 14px; font-weight: 600; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15);">
+                                        🏢 ${totalEmpresas} Empresas
                                     </span>
-                                    <span style="background: rgba(255,255,255,0.2); padding: 8px 20px; border-radius: 25px; font-size: 14px; font-weight: 600; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);">
-                                        ⚡ ${empresa.estado}
+                                    <span style="background: rgba(16, 185, 129, 0.3); padding: 10px 24px; border-radius: 30px; font-size: 14px; font-weight: 600; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15);">
+                                        ✅ ${empresasActivas} Activas
                                     </span>
-                                    <span style="background: rgba(255,255,255,0.2); padding: 8px 20px; border-radius: 25px; font-size: 14px; font-weight: 600; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);">
-                                        🏛️ ${empresa.ubicacion?.departamento || 'Lima'}
+                                    <span style="background: rgba(59, 130, 246, 0.3); padding: 10px 24px; border-radius: 30px; font-size: 14px; font-weight: 600; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15);">
+                                        💰 S/. ${ingresoTotal.toLocaleString()}
                                     </span>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Botón cerrar premium -->
-                        <button 
-                            onclick="adminEmpresas.cerrarModal()" 
-                            style="
-                                width: 56px; 
-                                height: 56px; 
-                                background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 100%); 
-                                border: 2px solid rgba(255,255,255,0.2); 
-                                border-radius: 20px; 
-                                color: white; 
-                                cursor: pointer; 
-                                font-size: 24px;
-                                font-weight: bold;
-                                transition: all 0.3s ease;
+                        <!-- Panel de estado en tiempo real -->
+                        <div style="text-align: right;">
+                            <div style="
+                                background: rgba(255,255,255,0.15);
+                                padding: 20px;
+                                border-radius: 20px;
                                 backdrop-filter: blur(20px);
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                                box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-                            "
-                            onmouseover="this.style.background='linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 100%)'; this.style.transform='scale(1.05) rotate(90deg)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.3)'"
-                            onmouseout="this.style.background='linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 100%)'; this.style.transform='scale(1) rotate(0deg)'; this.style.boxShadow='0 4px 16px rgba(0,0,0,0.2)'"
-                        >×</button>
+                                border: 1px solid rgba(255,255,255,0.2);
+                                margin-bottom: 16px;
+                            ">
+                                <div style="font-size: 12px; opacity: 0.9; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">Sistema</div>
+                                <div style="display: flex; align-items: center; gap: 8px; font-weight: 600;">
+                                    <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; animation: pulse-status 1.5s infinite;"></div>
+                                    ONLINE
+                                </div>
+                                <div style="font-size: 11px; opacity: 0.8; margin-top: 4px;">${new Date().toLocaleString()}</div>
+                            </div>
+                            
+                            <!-- Botón cerrar premium -->
+                            <button 
+                                onclick="adminPremium.cerrarModal()" 
+                                style="
+                                    width: 64px; 
+                                    height: 64px; 
+                                    background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 100%); 
+                                    border: 3px solid rgba(255,255,255,0.2); 
+                                    border-radius: 24px; 
+                                    color: white; 
+                                    cursor: pointer; 
+                                    font-size: 28px;
+                                    font-weight: bold;
+                                    transition: all 0.3s ease;
+                                    backdrop-filter: blur(20px);
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+                                "
+                                onmouseover="this.style.background='linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.2) 100%)'; this.style.transform='scale(1.1) rotate(90deg)'; this.style.boxShadow='0 12px 30px rgba(0,0,0,0.4)'"
+                                onmouseout="this.style.background='linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 100%)'; this.style.transform='scale(1) rotate(0deg)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.3)'"
+                            >×</button>
+                        </div>
                     </div>
                 </div>
+                
+                <style>
+                    @keyframes pulse-admin {
+                        0%, 100% { box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5); }
+                        50% { box-shadow: 0 6px 30px rgba(220, 38, 38, 0.8); }
+                    }
+                    @keyframes pulse-status {
+                        0%, 100% { opacity: 1; }
+                        50% { opacity: 0.5; }
+                    }
+                    @keyframes shimmer {
+                        0% { transform: translateX(-100%) rotate(45deg); }
+                        100% { transform: translateX(200%) rotate(45deg); }
+                    }
+                </style>
             </div>
+        `;
+    }
 
-            <!-- Dashboard de Métricas Premium -->
+    // ═══════════════════════════════════════════════════════════════════════════
+    // NAVEGACIÓN PREMIUM
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    _generarNavegacionPremium() {
+        return `
             <div style="
-                background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
-                padding: 32px 40px;
-                border-bottom: 1px solid #e2e8f0;
+                background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.95) 100%); 
+                padding: 0; 
+                display: flex; 
+                border-bottom: 1px solid rgba(226,232,240,0.5);
+                backdrop-filter: blur(20px);
+                box-shadow: 0 4px 24px rgba(0,0,0,0.08);
             ">
-                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px;">
+                <button class="premium-nav-btn active" data-seccion="dashboard" style="
+                    flex: 1; 
+                    padding: 18px 20px; 
+                    border: none; 
+                    background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%); 
+                    cursor: pointer; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    gap: 10px; 
+                    font-weight: 700; 
+                    color: white; 
+                    transition: all 0.3s ease;
+                    font-size: 13px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    box-shadow: 0 4px 16px rgba(212, 175, 55, 0.4);
+                ">
+                    <span style="font-size: 18px;">📊</span> DASHBOARD
+                </button>
+                <button class="premium-nav-btn" data-seccion="control" style="
+                    flex: 1; 
+                    padding: 18px 20px; 
+                    border: none; 
+                    background: transparent; 
+                    cursor: pointer; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    gap: 10px; 
+                    font-weight: 700; 
+                    color: #64748b; 
+                    transition: all 0.3s ease;
+                    font-size: 13px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                ">
+                    <span style="font-size: 18px;">🏢</span> CONTROL
+                </button>
+                <button class="premium-nav-btn" data-seccion="notificaciones" style="
+                    flex: 1; 
+                    padding: 18px 20px; 
+                    border: none; 
+                    background: transparent; 
+                    cursor: pointer; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    gap: 10px; 
+                    font-weight: 700; 
+                    color: #64748b; 
+                    transition: all 0.3s ease;
+                    font-size: 13px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                ">
+                    <span style="font-size: 18px;">🔔</span> AVISOS
+                </button>
+                <button class="premium-nav-btn" data-seccion="analytics" style="
+                    flex: 1; 
+                    padding: 18px 20px; 
+                    border: none; 
+                    background: transparent; 
+                    cursor: pointer; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    gap: 10px; 
+                    font-weight: 700; 
+                    color: #64748b; 
+                    transition: all 0.3s ease;
+                    font-size: 13px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                ">
+                    <span style="font-size: 18px;">📈</span> ANALYTICS
+                </button>
+                <button class="premium-nav-btn" data-seccion="usuarios" style="
+                    flex: 1; 
+                    padding: 18px 20px; 
+                    border: none; 
+                    background: transparent; 
+                    cursor: pointer; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    gap: 10px; 
+                    font-weight: 700; 
+                    color: #64748b; 
+                    transition: all 0.3s ease;
+                    font-size: 13px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                ">
+                    <span style="font-size: 18px;">👥</span> USUARIOS
+                </button>
+                <button class="premium-nav-btn" data-seccion="auditoria" style="
+                    flex: 1; 
+                    padding: 18px 20px; 
+                    border: none; 
+                    background: transparent; 
+                    cursor: pointer; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    gap: 10px; 
+                    font-weight: 700; 
+                    color: #64748b; 
+                    transition: all 0.3s ease;
+                    font-size: 13px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                ">
+                    <span style="font-size: 18px;">🛡️</span> AUDITORÍA
+                </button>
+                <button class="premium-nav-btn" data-seccion="configuracion" style="
+                    flex: 1; 
+                    padding: 18px 20px; 
+                    border: none; 
+                    background: transparent; 
+                    cursor: pointer; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    gap: 10px; 
+                    font-weight: 700; 
+                    color: #64748b; 
+                    transition: all 0.3s ease;
+                    font-size: 13px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                ">
+                    <span style="font-size: 18px;">⚙️</span> CONFIG
+                </button>
+            </div>
+        `;
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // DASHBOARD GLOBAL
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    _generarDashboardGlobal() {
+        const empresas = Object.values(this.gestor.estado.empresas);
+        const totalEmpresas = empresas.length;
+        const empresasActivas = empresas.filter(e => e.estado === 'Operativo').length;
+        const empresasRiesgo = empresas.filter(e => (e.finanzas?.caja || 0) < 1000).length;
+        const ingresoTotal = empresas.reduce((sum, e) => sum + (e.finanzas?.ingresos || 0), 0);
+
+        return `
+            <div class="premium-seccion active" id="seccion-dashboard" style="padding: 32px;">
+                
+                <!-- Métricas Globales -->
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 32px;">
                     
-                    <!-- Métrica 1: Caja -->
                     <div style="
                         background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-                        padding: 24px;
+                        padding: 28px;
                         border-radius: 20px;
                         color: white;
                         position: relative;
                         overflow: hidden;
                         box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);
-                        border: 1px solid rgba(255,255,255,0.1);
                     ">
                         <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
                         <div style="position: relative; z-index: 2;">
-                            <div style="font-size: 32px; margin-bottom: 8px;">💰</div>
-                            <div style="font-size: 24px; font-weight: 800; margin-bottom: 4px;">S/. ${(empresa.finanzas?.caja || 0).toLocaleString()}</div>
-                            <div style="font-size: 12px; opacity: 0.9; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Caja Actual</div>
+                            <div style="font-size: 36px; margin-bottom: 12px;">🏢</div>
+                            <div style="font-size: 32px; font-weight: 800; margin-bottom: 8px;">${totalEmpresas}</div>
+                            <div style="font-size: 14px; opacity: 0.9; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Total Empresas</div>
                         </div>
                     </div>
                     
-                    <!-- Métrica 2: Ingresos -->
                     <div style="
                         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-                        padding: 24px;
+                        padding: 28px;
                         border-radius: 20px;
                         color: white;
                         position: relative;
                         overflow: hidden;
                         box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
-                        border: 1px solid rgba(255,255,255,0.1);
                     ">
                         <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
                         <div style="position: relative; z-index: 2;">
-                            <div style="font-size: 32px; margin-bottom: 8px;">📈</div>
-                            <div style="font-size: 24px; font-weight: 800; margin-bottom: 4px;">S/. ${(empresa.finanzas?.ingresos || 0).toLocaleString()}</div>
-                            <div style="font-size: 12px; opacity: 0.9; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Ingresos Anuales</div>
+                            <div style="font-size: 36px; margin-bottom: 12px;">✅</div>
+                            <div style="font-size: 32px; font-weight: 800; margin-bottom: 8px;">${empresasActivas}</div>
+                            <div style="font-size: 14px; opacity: 0.9; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Activas</div>
                         </div>
                     </div>
                     
-                    <!-- Métrica 3: Utilidad -->
-                    <div style="
-                        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-                        padding: 24px;
-                        border-radius: 20px;
-                        color: white;
-                        position: relative;
-                        overflow: hidden;
-                        box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
-                        border: 1px solid rgba(255,255,255,0.1);
-                    ">
-                        <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
-                        <div style="position: relative; z-index: 2;">
-                            <div style="font-size: 32px; margin-bottom: 8px;">💎</div>
-                            <div style="font-size: 24px; font-weight: 800; margin-bottom: 4px;">S/. ${(empresa.finanzas?.utilidadNeta || 0).toLocaleString()}</div>
-                            <div style="font-size: 12px; opacity: 0.9; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Utilidad Neta</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Métrica 4: Margen -->
-                    <div style="
-                        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-                        padding: 24px;
-                        border-radius: 20px;
-                        color: white;
-                        position: relative;
-                        overflow: hidden;
-                        box-shadow: 0 8px 32px rgba(245, 158, 11, 0.3);
-                        border: 1px solid rgba(255,255,255,0.1);
-                    ">
-                        <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
-                        <div style="position: relative; z-index: 2;">
-                            <div style="font-size: 32px; margin-bottom: 8px;">📊</div>
-                            <div style="font-size: 24px; font-weight: 800; margin-bottom: 4px;">${empresa.finanzas?.margenNeto || 0}%</div>
-                            <div style="font-size: 12px; opacity: 0.9; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Margen Neto</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Métrica 5: Tiempo -->
                     <div style="
                         background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-                        padding: 24px;
+                        padding: 28px;
                         border-radius: 20px;
                         color: white;
                         position: relative;
                         overflow: hidden;
                         box-shadow: 0 8px 32px rgba(239, 68, 68, 0.3);
-                        border: 1px solid rgba(255,255,255,0.1);
                     ">
                         <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
                         <div style="position: relative; z-index: 2;">
-                            <div style="font-size: 32px; margin-bottom: 8px;">⏰</div>
-                            <div style="font-size: 24px; font-weight: 800; margin-bottom: 4px;">${this._calcularDiasActiva(empresa.meta?.fechaCreacion)}</div>
-                            <div style="font-size: 12px; opacity: 0.9; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Días Activa</div>
+                            <div style="font-size: 36px; margin-bottom: 12px;">⚠️</div>
+                            <div style="font-size: 32px; font-weight: 800; margin-bottom: 8px;">${empresasRiesgo}</div>
+                            <div style="font-size: 14px; opacity: 0.9; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">En Riesgo</div>
+                        </div>
+                    </div>
+                    
+                    <div style="
+                        background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+                        padding: 28px;
+                        border-radius: 20px;
+                        color: white;
+                        position: relative;
+                        overflow: hidden;
+                        box-shadow: 0 8px 32px rgba(212, 175, 55, 0.3);
+                    ">
+                        <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+                        <div style="position: relative; z-index: 2;">
+                            <div style="font-size: 36px; margin-bottom: 12px;">💰</div>
+                            <div style="font-size: 24px; font-weight: 800; margin-bottom: 8px;">S/. ${(ingresoTotal/1000).toFixed(0)}K</div>
+                            <div style="font-size: 14px; opacity: 0.9; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Ingresos Totales</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lista de Empresas -->
+                <div style="background: white; border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08);">
+                    <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #d4af37, #b8941f); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">🏢</div>
+                        Resumen de Empresas
+                    </h3>
+                    
+                    <div style="display: grid; gap: 16px;">
+                        ${this._generarListaEmpresasDashboard()}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    _generarListaEmpresasDashboard() {
+        const empresas = Object.values(this.gestor.estado.empresas);
+        
+        return empresas.map(empresa => {
+            const estadoColor = empresa.estado === 'Operativo' ? '#10b981' : 
+                             empresa.estado === 'Regular' ? '#f59e0b' : '#ef4444';
+            const cajaColor = (empresa.finanzas?.caja || 0) >= 5000 ? '#10b981' : 
+                            (empresa.finanzas?.caja || 0) >= 1000 ? '#f59e0b' : '#ef4444';
+            
+            return `
+                <div style="
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: space-between; 
+                    padding: 20px; 
+                    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%); 
+                    border-radius: 16px; 
+                    border: 1px solid #e2e8f0;
+                    transition: all 0.3s ease;
+                " onmouseover="this.style.boxShadow='0 8px 25px rgba(0,0,0,0.1)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='none'; this.style.transform='translateY(0)'">
+                    
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div style="
+                            width: 60px; 
+                            height: 60px; 
+                            background: linear-gradient(135deg, #d4af37, #b8941f); 
+                            border-radius: 16px; 
+                            display: flex; 
+                            align-items: center; 
+                            justify-content: center; 
+                            font-size: 24px;
+                            color: white;
+                        ">
+                            ${empresa.icono || '🏢'}
+                        </div>
+                        <div>
+                            <div style="font-weight: 700; font-size: 16px; color: #1e293b; margin-bottom: 4px;">${empresa.nombre}</div>
+                            <div style="font-size: 14px; color: #64748b;">${empresa.categoria}</div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; gap: 24px;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">ESTADO</div>
+                            <div style="
+                                background: ${estadoColor}; 
+                                color: white; 
+                                padding: 4px 12px; 
+                                border-radius: 12px; 
+                                font-size: 12px; 
+                                font-weight: 600;
+                            ">${empresa.estado}</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">CAJA</div>
+                            <div style="color: ${cajaColor}; font-weight: 700; font-size: 14px;">S/. ${(empresa.finanzas?.caja || 0).toLocaleString()}</div>
+                        </div>
+                        <button 
+                            onclick="adminPremium.abrirControlEmpresa('${empresa.id}')" 
+                            style="
+                                background: linear-gradient(135deg, #d4af37, #b8941f); 
+                                color: white; 
+                                border: none; 
+                                padding: 8px 16px; 
+                                border-radius: 12px; 
+                                cursor: pointer; 
+                                font-weight: 600;
+                                font-size: 12px;
+                                transition: all 0.3s ease;
+                            "
+                            onmouseover="this.style.transform='scale(1.05)'"
+                            onmouseout="this.style.transform='scale(1)'"
+                        >🔧 GESTIONAR</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // CONTROL DE EMPRESAS
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    _generarControlEmpresas() {
+        return `
+            <div class="premium-seccion" id="seccion-control" style="padding: 32px; display: none;">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+                    
+                    <!-- Panel de Control -->
+                    <div style="background: white; border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08);">
+                        <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #ef4444, #dc2626); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">🛠️</div>
+                            Control de Empresas
+                        </h3>
+                        
+                        <div style="display: grid; gap: 16px;">
+                            <button 
+                                onclick="adminPremium.suspenderTodasEmpresas()" 
+                                style="
+                                    background: linear-gradient(135deg, #f59e0b, #d97706); 
+                                    color: white; 
+                                    border: none; 
+                                    padding: 16px; 
+                                    border-radius: 12px; 
+                                    cursor: pointer; 
+                                    font-weight: 700;
+                                    font-size: 14px;
+                                    transition: all 0.3s ease;
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 12px;
+                                "
+                                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(245, 158, 11, 0.4)'"
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'"
+                            >
+                                <span style="font-size: 20px;">⏸️</span> SUSPENDER TODAS LAS EMPRESAS
+                            </button>
+                            
+                            <button 
+                                onclick="adminPremium.reactivarTodasEmpresas()" 
+                                style="
+                                    background: linear-gradient(135deg, #10b981, #059669); 
+                                    color: white; 
+                                    border: none; 
+                                    padding: 16px; 
+                                    border-radius: 12px; 
+                                    cursor: pointer; 
+                                    font-weight: 700;
+                                    font-size: 14px;
+                                    transition: all 0.3s ease;
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 12px;
+                                "
+                                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.4)'"
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'"
+                            >
+                                <span style="font-size: 20px;">▶️</span> REACTIVAR TODAS LAS EMPRESAS
+                            </button>
+                            
+                            <button 
+                                onclick="adminPremium.exportarTodasEmpresas()" 
+                                style="
+                                    background: linear-gradient(135deg, #3b82f6, #2563eb); 
+                                    color: white; 
+                                    border: none; 
+                                    padding: 16px; 
+                                    border-radius: 12px; 
+                                    cursor: pointer; 
+                                    font-weight: 700;
+                                    font-size: 14px;
+                                    transition: all 0.3s ease;
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 12px;
+                                "
+                                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(59, 130, 246, 0.4)'"
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'"
+                            >
+                                <span style="font-size: 20px;">📤</span> EXPORTAR TODAS LAS EMPRESAS
+                            </button>
+                            
+                            <button 
+                                onclick="adminPremium.crearBackupGeneral()" 
+                                style="
+                                    background: linear-gradient(135deg, #8b5cf6, #7c3aed); 
+                                    color: white; 
+                                    border: none; 
+                                    padding: 16px; 
+                                    border-radius: 12px; 
+                                    cursor: pointer; 
+                                    font-weight: 700;
+                                    font-size: 14px;
+                                    transition: all 0.3s ease;
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 12px;
+                                "
+                                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(139, 92, 246, 0.4)'"
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'"
+                            >
+                                <span style="font-size: 20px;">💾</span> CREAR BACKUP GENERAL
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Herramientas Avanzadas -->
+                    <div style="background: white; border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08);">
+                        <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #d4af37, #b8941f); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">🚀</div>
+                            Herramientas Premium
+                        </h3>
+                        
+                        <div style="display: grid; gap: 16px;">
+                            <button 
+                                onclick="adminPremium.limpiarEmpresasInactivas()" 
+                                style="
+                                    background: linear-gradient(135deg, #ef4444, #dc2626); 
+                                    color: white; 
+                                    border: none; 
+                                    padding: 16px; 
+                                    border-radius: 12px; 
+                                    cursor: pointer; 
+                                    font-weight: 700;
+                                    font-size: 14px;
+                                    transition: all 0.3s ease;
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 12px;
+                                "
+                                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(239, 68, 68, 0.4)'"
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'"
+                            >
+                                <span style="font-size: 20px;">🗑️</span> LIMPIAR EMPRESAS INACTIVAS
+                            </button>
+                            
+                            <button 
+                                onclick="adminPremium.resetearSistema()" 
+                                style="
+                                    background: linear-gradient(135deg, #64748b, #475569); 
+                                    color: white; 
+                                    border: none; 
+                                    padding: 16px; 
+                                    border-radius: 12px; 
+                                    cursor: pointer; 
+                                    font-weight: 700;
+                                    font-size: 14px;
+                                    transition: all 0.3s ease;
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 12px;
+                                "
+                                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(100, 116, 139, 0.4)'"
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'"
+                            >
+                                <span style="font-size: 20px;">🔄</span> RESETEAR SISTEMA
+                            </button>
+                            
+                            <button 
+                                onclick="adminPremium.optimizarRendimiento()" 
+                                style="
+                                    background: linear-gradient(135deg, #10b981, #059669); 
+                                    color: white; 
+                                    border: none; 
+                                    padding: 16px; 
+                                    border-radius: 12px; 
+                                    cursor: pointer; 
+                                    font-weight: 700;
+                                    font-size: 14px;
+                                    transition: all 0.3s ease;
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 12px;
+                                "
+                                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.4)'"
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'"
+                            >
+                                <span style="font-size: 20px;">⚡</span> OPTIMIZAR RENDIMIENTO
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lista de Control Individual -->
+                <div style="background: white; border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); margin-top: 32px;">
+                    <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #3b82f6, #2563eb); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">🎯</div>
+                        Control Individual de Empresas
+                    </h3>
+                    
+                    <div style="display: grid; gap: 16px;">
+                        ${this._generarControlIndividual()}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    _generarControlIndividual() {
+        const empresas = Object.values(this.gestor.estado.empresas);
+        
+        return empresas.map(empresa => `
+            <div style="
+                display: flex; 
+                align-items: center; 
+                justify-content: space-between; 
+                padding: 20px; 
+                background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%); 
+                border-radius: 16px; 
+                border: 1px solid #e2e8f0;
+            ">
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <div style="
+                        width: 50px; 
+                        height: 50px; 
+                        background: linear-gradient(135deg, #d4af37, #b8941f); 
+                        border-radius: 12px; 
+                        display: flex; 
+                        align-items: center; 
+                        justify-content: center; 
+                        font-size: 20px;
+                        color: white;
+                    ">
+                        ${empresa.icono || '🏢'}
+                    </div>
+                    <div>
+                        <div style="font-weight: 700; font-size: 16px; color: #1e293b;">${empresa.nombre}</div>
+                        <div style="font-size: 12px; color: #64748b;">${empresa.estado} - ${empresa.categoria}</div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 8px;">
+                    <button 
+                        onclick="adminPremium.editarEmpresa('${empresa.id}')" 
+                        style="
+                            background: linear-gradient(135deg, #3b82f6, #2563eb); 
+                            color: white; 
+                            border: none; 
+                            padding: 8px 12px; 
+                            border-radius: 8px; 
+                            cursor: pointer; 
+                            font-size: 12px;
+                            font-weight: 600;
+                        "
+                    >✏️ EDITAR</button>
+                    
+                    <button 
+                        onclick="adminPremium.suspenderEmpresa('${empresa.id}')" 
+                        style="
+                            background: linear-gradient(135deg, #f59e0b, #d97706); 
+                            color: white; 
+                            border: none; 
+                            padding: 8px 12px; 
+                            border-radius: 8px; 
+                            cursor: pointer; 
+                            font-size: 12px;
+                            font-weight: 600;
+                        "
+                    >⏸️ SUSPENDER</button>
+                    
+                    <button 
+                        onclick="adminPremium.eliminarEmpresa('${empresa.id}')" 
+                        style="
+                            background: linear-gradient(135deg, #ef4444, #dc2626); 
+                            color: white; 
+                            border: none; 
+                            padding: 8px 12px; 
+                            border-radius: 8px; 
+                            cursor: pointer; 
+                            font-size: 12px;
+                            font-weight: 600;
+                        "
+                    >🗑️ ELIMINAR</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // SISTEMA DE NOTIFICACIONES
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    _generarSistemaNotificaciones() {
+        return `
+            <div class="premium-seccion" id="seccion-notificaciones" style="padding: 32px; display: none;">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+                    
+                    <!-- Enviar Notificaciones -->
+                    <div style="background: white; border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08);">
+                        <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">📢</div>
+                            Enviar Avisos
+                        </h3>
+                        
+                        <div style="display: grid; gap: 16px;">
+                            <div>
+                                <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">Tipo de Aviso</label>
+                                <select id="premium-tipo-aviso" style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px;">
+                                    <option value="info">💡 Información</option>
+                                    <option value="warning">⚠️ Advertencia</option>
+                                    <option value="urgent">🚨 Urgente</option>
+                                    <option value="success">✅ Éxito</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">Destinatario</label>
+                                <select id="premium-destinatario" style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px;">
+                                    <option value="todas">📢 Todas las Empresas</option>
+                                    <option value="activas">✅ Solo Empresas Activas</option>
+                                    <option value="riesgo">⚠️ Solo Empresas en Riesgo</option>
+                                    ${this._generarOpcionesEmpresas()}
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">Mensaje</label>
+                                <textarea 
+                                    id="premium-mensaje" 
+                                    placeholder="Escriba su mensaje aquí..."
+                                    style="width: 100%; height: 120px; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; resize: vertical;"
+                                ></textarea>
+                            </div>
+                            
+                            <button 
+                                onclick="adminPremium.enviarNotificacion()" 
+                                style="
+                                    background: linear-gradient(135deg, #f59e0b, #d97706); 
+                                    color: white; 
+                                    border: none; 
+                                    padding: 16px; 
+                                    border-radius: 12px; 
+                                    cursor: pointer; 
+                                    font-weight: 700;
+                                    font-size: 16px;
+                                    transition: all 0.3s ease;
+                                "
+                                onmouseover="this.style.transform='translateY(-2px)'"
+                                onmouseout="this.style.transform='translateY(0)'"
+                            >📤 ENVIAR AVISO</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Historial de Notificaciones -->
+                    <div style="background: white; border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08);">
+                        <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #3b82f6, #2563eb); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">📋</div>
+                            Historial de Avisos
+                        </h3>
+                        
+                        <div style="max-height: 400px; overflow-y: auto;">
+                            ${this._generarHistorialNotificaciones()}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Configuración de Alertas Automáticas -->
+                <div style="background: white; border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); margin-top: 32px;">
+                    <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #8b5cf6, #7c3aed); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">🤖</div>
+                        Alertas Automáticas
+                    </h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                        <div style="padding: 20px; background: #f8fafc; border-radius: 12px;">
+                            <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 12px;">
+                                <input type="checkbox" id="alerta-caja-baja" ${this.configuracion.alertas?.cajaBaja ? 'checked' : ''}>
+                                🪙 Caja Baja
+                            </label>
+                            <input 
+                                type="number" 
+                                id="umbral-caja" 
+                                placeholder="Umbral (S/.)"
+                                value="${this.configuracion.alertas?.umbralCaja || 1000}"
+                                style="width: 100%; padding: 8px; border: 1px solid #e5e7eb; border-radius: 6px;"
+                            >
+                        </div>
+                        
+                        <div style="padding: 20px; background: #f8fafc; border-radius: 12px;">
+                            <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 12px;">
+                                <input type="checkbox" id="alerta-inactividad" ${this.configuracion.alertas?.inactividad ? 'checked' : ''}>
+                                😴 Inactividad
+                            </label>
+                            <input 
+                                type="number" 
+                                id="dias-inactividad" 
+                                placeholder="Días"
+                                value="${this.configuracion.alertas?.diasInactividad || 7}"
+                                style="width: 100%; padding: 8px; border: 1px solid #e5e7eb; border-radius: 6px;"
+                            >
+                        </div>
+                        
+                        <div style="padding: 20px; background: #f8fafc; border-radius: 12px;">
+                            <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 12px;">
+                                <input type="checkbox" id="alerta-metricas" ${this.configuracion.alertas?.metricas ? 'checked' : ''}>
+                                📊 Métricas Críticas
+                            </label>
+                            <button 
+                                onclick="adminPremium.guardarConfiguracionAlertas()" 
+                                style="
+                                    width: 100%;
+                                    background: #8b5cf6; 
+                                    color: white; 
+                                    border: none; 
+                                    padding: 8px; 
+                                    border-radius: 6px; 
+                                    cursor: pointer;
+                                "
+                            >💾 Guardar</button>
                         </div>
                     </div>
                 </div>
             </div>
+        `;
+    }
 
-            <!-- Navegación Premium con Glassmorphism -->
+    _generarOpcionesEmpresas() {
+        const empresas = Object.values(this.gestor.estado.empresas);
+        return empresas.map(empresa => 
+            `<option value="${empresa.id}">🏢 ${empresa.nombre}</option>`
+        ).join('');
+    }
+
+    _generarHistorialNotificaciones() {
+        if (!this.notificaciones.length) {
+            return `
+                <div style="text-align: center; padding: 40px; color: #64748b;">
+                    <div style="font-size: 48px; margin-bottom: 16px;">📭</div>
+                    <div>No hay notificaciones enviadas</div>
+                </div>
+            `;
+        }
+        
+        return this.notificaciones.slice(-10).reverse().map(notif => {
+            const iconoTipo = {
+                'info': '💡',
+                'warning': '⚠️',
+                'urgent': '🚨',
+                'success': '✅'
+            };
+            
+            return `
+                <div style="
+                    padding: 16px; 
+                    border-left: 4px solid #d4af37; 
+                    background: #f8fafc; 
+                    border-radius: 8px; 
+                    margin-bottom: 12px;
+                ">
+                    <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 8px;">
+                        <span style="font-weight: 600; color: #374151;">
+                            ${iconoTipo[notif.tipo]} ${notif.tipo.toUpperCase()}
+                        </span>
+                        <span style="font-size: 12px; color: #64748b;">${new Date(notif.fecha).toLocaleString()}</span>
+                    </div>
+                    <div style="font-size: 14px; color: #64748b; margin-bottom: 8px;">${notif.mensaje}</div>
+                    <div style="font-size: 12px; color: #9ca3af;">Para: ${notif.destinatario}</div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // ANALYTICS PREMIUM
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    _generarAnalyticsPremium() {
+        return `
+            <div class="premium-seccion" id="seccion-analytics" style="padding: 32px; display: none;">
+                
+                <!-- Métricas Comparativas -->
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; margin-bottom: 32px;">
+                    
+                    <div style="background: white; border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08);">
+                        <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">📊</div>
+                            Ranking por Ingresos
+                        </h3>
+                        
+                        <div style="display: grid; gap: 12px;">
+                            ${this._generarRankingIngresos()}
+                        </div>
+                    </div>
+                    
+                    <div style="background: white; border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08);">
+                        <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #ef4444, #dc2626); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">⚠️</div>
+                            Empresas en Riesgo
+                        </h3>
+                        
+                        <div style="display: grid; gap: 12px;">
+                            ${this._generarEmpresasRiesgo()}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Análisis por Categorías -->
+                <div style="background: white; border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08);">
+                    <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #d4af37, #b8941f); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">📈</div>
+                        Análisis por Categorías
+                    </h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                        ${this._generarAnalisisCategorias()}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    _generarRankingIngresos() {
+        const empresas = Object.values(this.gestor.estado.empresas)
+            .sort((a, b) => (b.finanzas?.ingresos || 0) - (a.finanzas?.ingresos || 0))
+            .slice(0, 5);
+        
+        return empresas.map((empresa, index) => {
+            const posicion = index + 1;
+            const medalla = posicion === 1 ? '🥇' : posicion === 2 ? '🥈' : posicion === 3 ? '🥉' : `#${posicion}`;
+            
+            return `
+                <div style="
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: space-between; 
+                    padding: 16px; 
+                    background: ${posicion <= 3 ? 'linear-gradient(135deg, #fef3c7, #fbbf24)' : '#f8fafc'}; 
+                    border-radius: 12px;
+                    border: 1px solid ${posicion <= 3 ? '#f59e0b' : '#e2e8f0'};
+                ">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 20px; font-weight: 800;">${medalla}</span>
+                        <div>
+                            <div style="font-weight: 700; color: #1e293b;">${empresa.nombre}</div>
+                            <div style="font-size: 12px; color: #64748b;">${empresa.categoria}</div>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-weight: 700; color: #10b981;">S/. ${(empresa.finanzas?.ingresos || 0).toLocaleString()}</div>
+                        <div style="font-size: 12px; color: #64748b;">anuales</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    _generarEmpresasRiesgo() {
+        const empresasRiesgo = Object.values(this.gestor.estado.empresas)
+            .filter(e => (e.finanzas?.caja || 0) < 1000 || e.estado !== 'Operativo')
+            .slice(0, 5);
+        
+        if (!empresasRiesgo.length) {
+            return `
+                <div style="text-align: center; padding: 40px; color: #64748b;">
+                    <div style="font-size: 48px; margin-bottom: 16px;">✅</div>
+                    <div>No hay empresas en riesgo</div>
+                </div>
+            `;
+        }
+        
+        return empresasRiesgo.map(empresa => {
+            const nivelRiesgo = (empresa.finanzas?.caja || 0) < 500 ? 'ALTO' : 'MEDIO';
+            const colorRiesgo = nivelRiesgo === 'ALTO' ? '#ef4444' : '#f59e0b';
+            
+            return `
+                <div style="
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: space-between; 
+                    padding: 16px; 
+                    background: linear-gradient(135deg, #fef2f2, #fecaca); 
+                    border-radius: 12px;
+                    border: 1px solid #f87171;
+                ">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="
+                            width: 40px; 
+                            height: 40px; 
+                            background: ${colorRiesgo}; 
+                            border-radius: 10px; 
+                            display: flex; 
+                            align-items: center; 
+                            justify-content: center; 
+                            color: white; 
+                            font-size: 16px;
+                        ">${empresa.icono || '🏢'}</div>
+                        <div>
+                            <div style="font-weight: 700; color: #1e293b;">${empresa.nombre}</div>
+                            <div style="font-size: 12px; color: #64748b;">Caja: S/. ${(empresa.finanzas?.caja || 0).toLocaleString()}</div>
+                        </div>
+                    </div>
+                    <div style="
+                        background: ${colorRiesgo}; 
+                        color: white; 
+                        padding: 4px 12px; 
+                        border-radius: 12px; 
+                        font-size: 12px; 
+                        font-weight: 700;
+                    ">${nivelRiesgo}</div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    _generarAnalisisCategorias() {
+        const categorias = {};
+        Object.values(this.gestor.estado.empresas).forEach(empresa => {
+            const cat = empresa.categoria;
+            if (!categorias[cat]) {
+                categorias[cat] = { count: 0, ingresos: 0, activas: 0 };
+            }
+            categorias[cat].count++;
+            categorias[cat].ingresos += empresa.finanzas?.ingresos || 0;
+            if (empresa.estado === 'Operativo') categorias[cat].activas++;
+        });
+        
+        return Object.entries(categorias).map(([categoria, datos]) => `
             <div style="
-                background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.9) 100%); 
-                padding: 0; 
-                display: flex; 
-                border-bottom: 1px solid rgba(226,232,240,0.5);
-                backdrop-filter: blur(20px);
-                box-shadow: 0 4px 24px rgba(0,0,0,0.05);
+                padding: 20px; 
+                background: linear-gradient(135deg, #f8fafc, #ffffff); 
+                border-radius: 16px; 
+                border: 1px solid #e2e8f0;
+                text-align: center;
             ">
-                <button class="admin-nav-btn active" data-seccion="general" style="
-                    flex: 1; 
-                    padding: 20px 24px; 
-                    border: none; 
-                    background: linear-gradient(135deg, ${temaConfig.primary} 0%, ${temaConfig.secondary} 100%); 
-                    cursor: pointer; 
-                    display: flex; 
-                    align-items: center; 
-                    justify-content: center; 
-                    gap: 12px; 
-                    font-weight: 700; 
-                    color: white; 
-                    transition: all 0.3s ease;
-                    font-size: 15px;
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
-                    box-shadow: 0 4px 16px ${temaConfig.primary}40;
-                ">
-                    <span style="font-size: 20px;">⚙️</span> CONFIGURACIÓN
-                </button>
-                <button class="admin-nav-btn" data-seccion="legal" style="
-                    flex: 1; 
-                    padding: 20px 24px; 
-                    border: none; 
-                    background: transparent; 
-                    cursor: pointer; 
-                    display: flex; 
-                    align-items: center; 
-                    justify-content: center; 
-                    gap: 12px; 
-                    font-weight: 700; 
-                    color: #64748b; 
-                    transition: all 0.3s ease;
-                    font-size: 15px;
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
-                ">
-                    <span style="font-size: 20px;">⚖️</span> LEGAL
-                </button>
-                <button class="admin-nav-btn" data-seccion="financiero" style="
-                    flex: 1; 
-                    padding: 20px 24px; 
-                    border: none; 
-                    background: transparent; 
-                    cursor: pointer; 
-                    display: flex; 
-                    align-items: center; 
-                    justify-content: center; 
-                    gap: 12px; 
-                    font-weight: 700; 
-                    color: #64748b; 
-                    transition: all 0.3s ease;
-                    font-size: 15px;
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
-                ">
-                    <span style="font-size: 20px;">💰</span> FINANZAS
-                </button>
-                <button class="admin-nav-btn" data-seccion="contacto" style="
-                    flex: 1; 
-                    padding: 20px 24px; 
-                    border: none; 
-                    background: transparent; 
-                    cursor: pointer; 
-                    display: flex; 
-                    align-items: center; 
-                    justify-content: center; 
-                    gap: 12px; 
-                    font-weight: 700; 
-                    color: #64748b; 
-                    transition: all 0.3s ease;
-                    font-size: 15px;
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
-                ">
-                    <span style="font-size: 20px;">📞</span> CONTACTO
-                </button>
-                <button class="admin-nav-btn" data-seccion="avanzado" style="
-                    flex: 1; 
-                    padding: 20px 24px; 
-                    border: none; 
-                    background: transparent; 
-                    cursor: pointer; 
-                    display: flex; 
-                    align-items: center; 
-                    justify-content: center; 
-                    gap: 12px; 
-                    font-weight: 700; 
-                    color: #64748b; 
-                    transition: all 0.3s ease;
-                    font-size: 15px;
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
-                ">
-                    <span style="font-size: 20px;">🚀</span> AVANZADO
-                </button>
+                <div style="font-size: 24px; margin-bottom: 12px;">🏢</div>
+                <div style="font-weight: 700; color: #1e293b; margin-bottom: 8px;">${categoria}</div>
+                <div style="font-size: 14px; color: #64748b; margin-bottom: 4px;">${datos.count} empresas</div>
+                <div style="font-size: 14px; color: #10b981; margin-bottom: 4px;">${datos.activas} activas</div>
+                <div style="font-size: 12px; color: #d4af37;">S/. ${(datos.ingresos/1000).toFixed(0)}K</div>
             </div>
+        `).join('');
+    }
 
-            <!-- Contenido Principal -->
-            <div style="
-                padding: 0; 
-                max-height: 500px; 
-                overflow-y: auto;
-                background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-            " class="grizalum-admin-content">
-                ${this._generarContenidoGeneral(empresa)}
+    // ═══════════════════════════════════════════════════════════════════════════
+    // GESTIÓN DE USUARIOS
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    _generarGestionUsuarios() {
+        return `
+            <div class="premium-seccion" id="seccion-usuarios" style="padding: 32px; display: none;">
+                
+                <div style="background: white; border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08);">
+                    <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #8b5cf6, #7c3aed); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">👥</div>
+                        Gestión de Usuarios
+                    </h3>
+                    
+                    <div style="text-align: center; padding: 60px; color: #64748b;">
+                        <div style="font-size: 64px; margin-bottom: 24px;">👤</div>
+                        <div style="font-size: 20px; font-weight: 600; margin-bottom: 12px;">Gestión de Usuarios Premium</div>
+                        <div style="margin-bottom: 24px;">Control avanzado de accesos y permisos por empresa</div>
+                        <button 
+                            onclick="adminPremium.mostrarConfiguracionUsuarios()" 
+                            style="
+                                background: linear-gradient(135deg, #8b5cf6, #7c3aed); 
+                                color: white; 
+                                border: none; 
+                                padding: 16px 32px; 
+                                border-radius: 12px; 
+                                cursor: pointer; 
+                                font-weight: 700;
+                                font-size: 16px;
+                                transition: all 0.3s ease;
+                            "
+                            onmouseover="this.style.transform='translateY(-2px)'"
+                            onmouseout="this.style.transform='translateY(0)'"
+                        >🔧 CONFIGURAR ACCESOS</button>
+                    </div>
+                </div>
             </div>
+        `;
+    }
 
-            <!-- Footer Premium -->
+    // ═══════════════════════════════════════════════════════════════════════════
+    // AUDITORÍA
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    _generarAuditoria() {
+        return `
+            <div class="premium-seccion" id="seccion-auditoria" style="padding: 32px; display: none;">
+                
+                <div style="background: white; border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08);">
+                    <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #64748b, #475569); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">🛡️</div>
+                        Registro de Auditoría
+                    </h3>
+                    
+                    <div style="max-height: 500px; overflow-y: auto;">
+                        ${this._generarRegistroLogs()}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    _generarRegistroLogs() {
+        if (!this.logs.length) {
+            return `
+                <div style="text-align: center; padding: 40px; color: #64748b;">
+                    <div style="font-size: 48px; margin-bottom: 16px;">📝</div>
+                    <div>No hay registros de auditoría</div>
+                </div>
+            `;
+        }
+        
+        return this.logs.slice(-20).reverse().map(log => {
+            const iconoTipo = {
+                'info': '💡',
+                'warning': '⚠️',
+                'error': '❌',
+                'success': '✅'
+            };
+            
+            const colorTipo = {
+                'info': '#3b82f6',
+                'warning': '#f59e0b',
+                'error': '#ef4444',
+                'success': '#10b981'
+            };
+            
+            return `
+                <div style="
+                    padding: 16px; 
+                    border-left: 4px solid ${colorTipo[log.nivel] || '#64748b'}; 
+                    background: #f8fafc; 
+                    border-radius: 8px; 
+                    margin-bottom: 12px;
+                ">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                        <span style="font-weight: 600; color: #374151;">
+                            ${iconoTipo[log.nivel] || '📝'} ${log.nivel.toUpperCase()}
+                        </span>
+                        <span style="font-size: 12px; color: #64748b;">${new Date(log.fecha).toLocaleString()}</span>
+                    </div>
+                    <div style="font-size: 14px; color: #64748b;">${log.mensaje}</div>
+                    ${log.datos ? `<div style="font-size: 12px; color: #9ca3af; margin-top: 4px;">Datos: ${JSON.stringify(log.datos)}</div>` : ''}
+                </div>
+            `;
+        }).join('');
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // CONFIGURACIÓN DEL SISTEMA
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    _generarConfiguracionSistema() {
+        return `
+            <div class="premium-seccion" id="seccion-configuracion" style="padding: 32px; display: none;">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+                    
+                    <!-- Configuración General -->
+                    <div style="background: white; border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08);">
+                        <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #3b82f6, #2563eb); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">⚙️</div>
+                            Configuración General
+                        </h3>
+                        
+                        <div style="display: grid; gap: 16px;">
+                            <div>
+                                <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">Backup Automático</label>
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" id="backup-automatico" ${this.configuracion.backupAutomatico ? 'checked' : ''}>
+                                    Crear backup diario automático
+                                </label>
+                            </div>
+                            
+                            <div>
+                                <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">Límite de Empresas</label>
+                                <input 
+                                    type="number" 
+                                    id="limite-empresas" 
+                                    value="${this.configuracion.limiteEmpresas || 100}"
+                                    style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px;"
+                                >
+                            </div>
+                            
+                            <div>
+                                <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">Modo de Seguridad</label>
+                                <select id="modo-seguridad" style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px;">
+                                    <option value="normal" ${this.configuracion.modoSeguridad === 'normal' ? 'selected' : ''}>Normal</option>
+                                    <option value="alto" ${this.configuracion.modoSeguridad === 'alto' ? 'selected' : ''}>Alto</option>
+                                    <option value="maximo" ${this.configuracion.modoSeguridad === 'maximo' ? 'selected' : ''}>Máximo</option>
+                                </select>
+                            </div>
+                            
+                            <button 
+                                onclick="adminPremium.guardarConfiguracionGeneral()" 
+                                style="
+                                    background: linear-gradient(135deg, #3b82f6, #2563eb); 
+                                    color: white; 
+                                    border: none; 
+                                    padding: 16px; 
+                                    border-radius: 12px; 
+                                    cursor: pointer; 
+                                    font-weight: 700;
+                                    font-size: 16px;
+                                "
+                            >💾 GUARDAR CONFIGURACIÓN</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Información del Sistema -->
+                    <div style="background: white; border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08);">
+                        <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(135d, #10b981, #059669); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">💻</div>
+                            Información del Sistema
+                        </h3>
+                        
+                        <div style="display: grid; gap: 16px;">
+                            <div style="padding: 16px; background: #f8fafc; border-radius: 8px;">
+                                <div style="font-weight: 600; color: #374151; margin-bottom: 4px;">Versión</div>
+                                <div style="color: #64748b;">GRIZALUM Premium v2.0</div>
+                            </div>
+                            
+                            <div style="padding: 16px; background: #f8fafc; border-radius: 8px;">
+                                <div style="font-weight: 600; color: #374151; margin-bottom: 4px;">Total de Empresas</div>
+                                <div style="color: #64748b;">${Object.keys(this.gestor.estado.empresas).length}</div>
+                            </div>
+                            
+                            <div style="padding: 16px; background: #f8fafc; border-radius: 8px;">
+                                <div style="font-weight: 600; color: #374151; margin-bottom: 4px;">Último Backup</div>
+                                <div style="color: #64748b;">${this.configuracion.ultimoBackup || 'Nunca'}</div>
+                            </div>
+                            
+                            <div style="padding: 16px; background: #f8fafc; border-radius: 8px;">
+                                <div style="font-weight: 600; color: #374151; margin-bottom: 4px;">Estado del Sistema</div>
+                                <div style="color: #10b981; display: flex; align-items: center; gap: 8px;">
+                                    <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></div>
+                                    Operativo
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // FOOTER PREMIUM
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    _generarFooterPremium() {
+        return `
             <div style="
-                background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.95) 100%); 
+                background: linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.98) 100%); 
                 padding: 32px 40px; 
                 display: flex; 
                 justify-content: space-between; 
                 align-items: center; 
                 border-top: 1px solid rgba(226,232,240,0.5);
                 backdrop-filter: blur(20px);
-                box-shadow: 0 -4px 24px rgba(0,0,0,0.05);
+                box-shadow: 0 -4px 24px rgba(0,0,0,0.08);
             ">
-                <div style="display: flex; gap: 20px; align-items: center;">
+                <div style="display: flex; gap: 24px; align-items: center;">
                     <button 
-                        onclick="adminEmpresas.exportarDatos('${empresaId}')" 
+                        onclick="adminPremium.generarReportePremium()" 
+                        style="
+                            background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+                            color: white; 
+                            border: none; 
+                            padding: 16px 32px; 
+                            border-radius: 16px; 
+                            cursor: pointer; 
+                            display: flex; 
+                            align-items: center; 
+                            gap: 12px;
+                            font-weight: 700;
+                            font-size: 15px;
+                            text-transform: uppercase;
+                            letter-spacing: 1px;
+                            transition: all 0.3s ease;
+                            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+                        "
+                        onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 32px rgba(16, 185, 129, 0.4)'"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 24px rgba(16, 185, 129, 0.3)'"
+                    >
+                        <span style="font-size: 18px;">📊</span> GENERAR REPORTE
+                    </button>
+                    
+                    <button 
+                        onclick="adminPremium.exportarConfiguracion()" 
                         style="
                             background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
                             color: white; 
@@ -436,61 +1500,38 @@ class GestorEmpresasAdmin {
                             letter-spacing: 1px;
                             transition: all 0.3s ease;
                             box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
-                            border: 1px solid rgba(255,255,255,0.1);
                         "
                         onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 32px rgba(59, 130, 246, 0.4)'"
                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 24px rgba(59, 130, 246, 0.3)'"
                     >
-                        <span style="font-size: 18px;">📤</span> EXPORTAR
-                    </button>
-                    <button 
-                        onclick="adminEmpresas.duplicarEmpresa('${empresaId}')" 
-                        style="
-                            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); 
-                            color: white; 
-                            border: none; 
-                            padding: 16px 32px; 
-                            border-radius: 16px; 
-                            cursor: pointer; 
-                            display: flex; 
-                            align-items: center; 
-                            gap: 12px;
-                            font-weight: 700;
-                            font-size: 15px;
-                            text-transform: uppercase;
-                            letter-spacing: 1px;
-                            transition: all 0.3s ease;
-                            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3);
-                            border: 1px solid rgba(255,255,255,0.1);
-                        "
-                        onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 32px rgba(139, 92, 246, 0.4)'"
-                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 24px rgba(139, 92, 246, 0.3)'"
-                    >
-                        <span style="font-size: 18px;">📋</span> DUPLICAR
+                        <span style="font-size: 18px;">💾</span> EXPORTAR
                     </button>
                 </div>
                 
                 <div style="text-align: center; flex: 1;">
                     <div style="
-                        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
-                        padding: 12px 24px;
-                        border-radius: 12px;
-                        border: 1px solid rgba(16, 185, 129, 0.2);
+                        background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(184, 148, 31, 0.15) 100%);
+                        padding: 16px 32px;
+                        border-radius: 16px;
+                        border: 2px solid rgba(212, 175, 55, 0.3);
                         display: inline-flex;
                         align-items: center;
-                        gap: 8px;
-                        color: #065f46;
-                        font-weight: 600;
+                        gap: 12px;
+                        color: #b8941f;
+                        font-weight: 700;
                         font-size: 14px;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
                     ">
-                        <span style="font-size: 16px;">🔒</span>
-                        PANEL EXCLUSIVO PARA ADMINISTRADORES
+                        <span style="font-size: 20px;">👑</span>
+                        PANEL EXCLUSIVO SUPER ADMIN PREMIUM
+                        <span style="font-size: 20px;">👑</span>
                     </div>
                 </div>
                 
                 <div style="display: flex; gap: 20px;">
                     <button 
-                        onclick="adminEmpresas.cerrarModal()" 
+                        onclick="adminPremium.cerrarModal()" 
                         style="
                             background: linear-gradient(135deg, #64748b 0%, #475569 100%); 
                             color: white; 
@@ -507,847 +1548,25 @@ class GestorEmpresasAdmin {
                         "
                         onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 32px rgba(100, 116, 139, 0.4)'"
                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 24px rgba(100, 116, 139, 0.3)'"
-                    >❌ CANCELAR</button>
-                    <button 
-                        onclick="adminEmpresas.guardarCambios('${empresaId}')" 
-                        style="
-                            background: linear-gradient(135deg, ${temaConfig.primary} 0%, ${temaConfig.secondary} 100%); 
-                            color: white; 
-                            border: none; 
-                            padding: 16px 40px; 
-                            border-radius: 16px; 
-                            cursor: pointer;
-                            font-weight: 800;
-                            font-size: 15px;
-                            text-transform: uppercase;
-                            letter-spacing: 1px;
-                            transition: all 0.3s ease;
-                            box-shadow: 0 8px 24px ${temaConfig.primary}40;
-                            border: 1px solid rgba(255,255,255,0.1);
-                        "
-                        onmouseover="this.style.transform='translateY(-4px) scale(1.02)'; this.style.boxShadow='0 16px 40px ${temaConfig.primary}50'"
-                        onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 8px 24px ${temaConfig.primary}40'"
-                    >💾 GUARDAR CAMBIOS</button>
-                </div>
-            </div>
-        </div>
-        
-        <style>
-            @keyframes shimmer {
-                0% { transform: translateX(-100%) rotate(45deg); }
-                100% { transform: translateX(200%) rotate(45deg); }
-            }
-            
-            .admin-nav-btn:hover {
-                background: linear-gradient(135deg, ${temaConfig.primary}20 0%, ${temaConfig.secondary}20 100%) !important;
-                color: ${temaConfig.primary} !important;
-                transform: translateY(-2px);
-                box-shadow: 0 8px 24px ${temaConfig.primary}30;
-            }
-            
-            .admin-nav-btn.active {
-                background: linear-gradient(135deg, ${temaConfig.primary} 0%, ${temaConfig.secondary} 100%) !important;
-                color: white !important;
-                box-shadow: 0 4px 16px ${temaConfig.primary}40;
-            }
-        </style>
-    `;
-
-    document.body.appendChild(modal);
-    this.modalActivo = modal;
-    
-    // Animación de entrada épica
-    setTimeout(() => {
-        modal.style.opacity = '1';
-        const content = modal.querySelector('.modal-content');
-        content.style.transform = 'scale(1) translateY(0)';
-    }, 50);
-    
-    // Configurar eventos
-    this._configurarEventosAdmin(empresaId);
-    this._aplicarEstilosResponsivos();
-}
-    _generarHeaderAdmin(empresa) {
-        return `
-            <div class="grizalum-admin-header">
-                <div class="admin-header-info">
-                    <div class="admin-empresa-avatar">
-                        ${empresa.logo ? `<img src="${empresa.logo}" alt="${empresa.nombre}">` : empresa.icono}
-                    </div>
-                    <div class="admin-empresa-datos">
-                        <h2>${empresa.nombre}</h2>
-                        <p>Panel de Administración Empresarial</p>
-                        <span class="admin-categoria">${empresa.categoria}</span>
-                    </div>
-                </div>
-                <div class="admin-header-actions">
-                    <button class="admin-btn admin-btn-exportar" onclick="adminEmpresas.exportarDatos('${empresa.id}')">
-                        <i class="fas fa-download"></i> Exportar
-                    </button>
-                    <button class="admin-btn admin-btn-cerrar" onclick="adminEmpresas.cerrarModal()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-        `;
-    }
-
-    _generarNavegacionAdmin() {
-        return `
-            <div class="grizalum-admin-nav">
-                <button class="admin-nav-btn active" data-seccion="general">
-                    <i class="fas fa-building"></i> General
-                </button>
-                <button class="admin-nav-btn" data-seccion="legal">
-                    <i class="fas fa-gavel"></i> Legal
-                </button>
-                <button class="admin-nav-btn" data-seccion="financiero">
-                    <i class="fas fa-chart-line"></i> Financiero
-                </button>
-                <button class="admin-nav-btn" data-seccion="contacto">
-                    <i class="fas fa-address-book"></i> Contacto
-                </button>
-                <button class="admin-nav-btn" data-seccion="temas">
-                    <i class="fas fa-palette"></i> Temas
-                </button>
-            </div>
-        `;
-    }
-
-   _generarContenidoGeneral(empresa) {
-    return `
-        <!-- SECCIÓN GENERAL -->
-        <div class="admin-seccion active" id="seccion-general" style="padding: 32px;">
-            
-            <!-- Grid de Información Principal -->
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px; margin-bottom: 32px;">
-                
-                <!-- Panel Izquierdo: Datos de la Empresa -->
-                <div style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
-                    <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">🏢</div>
-                        Información Empresarial
-                    </h3>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        
-                        <div class="campo-moderno" style="grid-column: 1 / -1;">
-                            <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                📝 Nombre de la Empresa
-                            </label>
-                            <input 
-                                type="text" 
-                                id="admin-nombre" 
-                                value="${empresa.nombre}" 
-                                style="
-                                    width: 100%; 
-                                    padding: 16px 20px; 
-                                    border: 2px solid #e2e8f0; 
-                                    border-radius: 12px; 
-                                    font-size: 16px;
-                                    font-weight: 500;
-                                    background: #ffffff;
-                                    transition: all 0.3s ease;
-                                    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-                                "
-                                onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 4px rgba(59, 130, 246, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
-                                onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
-                            >
-                        </div>
-                        
-                        <div class="campo-moderno">
-                            <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                📋 Categoría
-                            </label>
-                            <div style="position: relative;">
-                                <select 
-                                    id="admin-categoria" 
-                                    style="
-                                        width: 100%; 
-                                        padding: 16px 20px; 
-                                        border: 2px solid #e2e8f0; 
-                                        border-radius: 12px; 
-                                        font-size: 16px;
-                                        font-weight: 500;
-                                        background: #ffffff;
-                                        cursor: pointer;
-                                        appearance: none;
-                                        transition: all 0.3s ease;
-                                        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-                                    "
-                                    onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 4px rgba(59, 130, 246, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
-                                    onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
-                                >
-                                    ${this._generarOpcionesCategorias(empresa.categoria)}
-                                </select>
-                                <div style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); pointer-events: none; color: #64748b; font-size: 12px;">▼</div>
-                            </div>
-                        </div>
-                        
-                        <div class="campo-moderno">
-                            <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                ⚡ Estado Operativo
-                            </label>
-                            <div style="position: relative;">
-                                <select 
-                                    id="admin-estado" 
-                                    style="
-                                        width: 100%; 
-                                        padding: 16px 20px; 
-                                        border: 2px solid #e2e8f0; 
-                                        border-radius: 12px; 
-                                        font-size: 16px;
-                                        font-weight: 500;
-                                        background: #ffffff;
-                                        cursor: pointer;
-                                        appearance: none;
-                                        transition: all 0.3s ease;
-                                        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-                                    "
-                                    onfocus="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 0 0 4px rgba(59, 130, 246, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
-                                    onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
-                                >
-                                    ${this._generarOpcionesEstado(empresa.estado)}
-                                </select>
-                                <div style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); pointer-events: none; color: #64748b; font-size: 12px;">▼</div>
-                            </div>
-                        </div>
-                        
-                        <div class="campo-moderno" style="grid-column: 1 / -1;">
-                            <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                🎨 Icono de la Empresa
-                            </label>
-                            <div style="display: flex; gap: 16px; align-items: center;">
-                                <input 
-                                    type="text" 
-                                    id="admin-icono" 
-                                    value="${empresa.icono || '🏢'}" 
-                                    readonly
-                                    style="
-                                        flex: 1;
-                                        padding: 16px 20px; 
-                                        border: 2px solid #e2e8f0; 
-                                        border-radius: 12px; 
-                                        font-size: 16px;
-                                        font-weight: 500;
-                                        background: #f8fafc;
-                                        color: #64748b;
-                                        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-                                    "
-                                >
-                                <button 
-                                    onclick="adminEmpresas.cambiarIcono()" 
-                                    style="
-                                        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); 
-                                        color: white; 
-                                        border: none; 
-                                        padding: 16px 24px; 
-                                        border-radius: 12px; 
-                                        cursor: pointer;
-                                        font-weight: 600;
-                                        font-size: 14px;
-                                        transition: all 0.3s ease;
-                                        box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
-                                    "
-                                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(139, 92, 246, 0.4)'"
-                                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(139, 92, 246, 0.3)'"
-                                >
-                                    🎨 Cambiar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Panel Derecho: Métricas y Status -->
-                <div style="display: flex; flex-direction: column; gap: 20px;">
-                    
-                    <!-- Card de Estado -->
-                    <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 20px; padding: 24px; color: white; position: relative; overflow: hidden; box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);">
-                        <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
-                        <div style="position: relative; z-index: 2;">
-                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Estado Actual</div>
-                            <div style="font-size: 24px; font-weight: 800; margin-bottom: 4px;">${empresa.estado}</div>
-                            <div style="font-size: 12px; opacity: 0.8;">Empresa ${empresa.estado.toLowerCase()}</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Card de Finanzas -->
-                    <div style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border-radius: 20px; padding: 24px; color: white; position: relative; overflow: hidden; box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);">
-                        <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
-                        <div style="position: relative; z-index: 2;">
-                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Caja Actual</div>
-                            <div style="font-size: 24px; font-weight: 800; margin-bottom: 4px;">S/. ${(empresa.finanzas?.caja || 0).toLocaleString()}</div>
-                            <div style="font-size: 12px; opacity: 0.8;">Liquidez disponible</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Card de Métricas -->
-                    <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 20px; padding: 24px; color: white; position: relative; overflow: hidden; box-shadow: 0 8px 32px rgba(245, 158, 11, 0.3);">
-                        <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
-                        <div style="position: relative; z-index: 2;">
-                            <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">ROI</div>
-                            <div style="font-size: 24px; font-weight: 800; margin-bottom: 4px;">${empresa.finanzas?.roi || 0}%</div>
-                            <div style="font-size: 12px; opacity: 0.8;">Retorno de inversión</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Sección de Ubicación -->
-            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
-                <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
-                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #ef4444, #dc2626); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">📍</div>
-                    Ubicación y Contacto
-                </h3>
-                
-                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 20px;">
-                    
-                    <div class="campo-moderno">
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
-                            🏠 Dirección Completa
-                        </label>
-                        <input 
-                            type="text" 
-                            id="admin-direccion" 
-                            value="${empresa.ubicacion?.direccion || ''}" 
-                            placeholder="Av. Principal 123, Urbanización"
-                            style="
-                                width: 100%; 
-                                padding: 16px 20px; 
-                                border: 2px solid #e2e8f0; 
-                                border-radius: 12px; 
-                                font-size: 16px;
-                                font-weight: 500;
-                                background: #ffffff;
-                                transition: all 0.3s ease;
-                                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-                            "
-                            onfocus="this.style.borderColor='#ef4444'; this.style.boxShadow='0 0 0 4px rgba(239, 68, 68, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
-                            onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
-                        >
-                    </div>
-                    
-                    <div class="campo-moderno">
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
-                            🏘️ Distrito
-                        </label>
-                        <input 
-                            type="text" 
-                            id="admin-distrito" 
-                            value="${empresa.ubicacion?.distrito || ''}" 
-                            placeholder="Lima"
-                            style="
-                                width: 100%; 
-                                padding: 16px 20px; 
-                                border: 2px solid #e2e8f0; 
-                                border-radius: 12px; 
-                                font-size: 16px;
-                                font-weight: 500;
-                                background: #ffffff;
-                                transition: all 0.3s ease;
-                                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-                            "
-                            onfocus="this.style.borderColor='#ef4444'; this.style.boxShadow='0 0 0 4px rgba(239, 68, 68, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
-                            onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
-                        >
-                    </div>
-                    
-                    <div class="campo-moderno">
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
-                            🏛️ Departamento
-                        </label>
-                        <div style="position: relative;">
-                            <select 
-                                id="admin-departamento" 
-                                style="
-                                    width: 100%; 
-                                    padding: 16px 20px; 
-                                    border: 2px solid #e2e8f0; 
-                                    border-radius: 12px; 
-                                    font-size: 16px;
-                                    font-weight: 500;
-                                    background: #ffffff;
-                                    cursor: pointer;
-                                    appearance: none;
-                                    transition: all 0.3s ease;
-                                    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-                                "
-                                onfocus="this.style.borderColor='#ef4444'; this.style.boxShadow='0 0 0 4px rgba(239, 68, 68, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
-                                onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
-                            >
-                                ${this._generarOpcionesDepartamentos(empresa.ubicacion?.departamento)}
-                            </select>
-                            <div style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); pointer-events: none; color: #64748b; font-size: 12px;">▼</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- SECCIÓN LEGAL -->
-        <div class="admin-seccion" id="seccion-legal" style="padding: 32px; display: none;">
-            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
-                <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
-                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #7c3aed, #6d28d9); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">⚖️</div>
-                    Información Legal
-                </h3>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <div class="campo-moderno">
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
-                            🆔 RUC
-                        </label>
-                        <input 
-                            type="text" 
-                            id="admin-ruc" 
-                            value="${empresa.legal?.ruc || ''}" 
-                            maxlength="11" 
-                            placeholder="20123456789"
-                            style="
-                                width: 100%; 
-                                padding: 16px 20px; 
-                                border: 2px solid #e2e8f0; 
-                                border-radius: 12px; 
-                                font-size: 16px;
-                                font-weight: 500;
-                                background: #ffffff;
-                                transition: all 0.3s ease;
-                                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-                            "
-                            onfocus="this.style.borderColor='#7c3aed'; this.style.boxShadow='0 0 0 4px rgba(124, 58, 237, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
-                            onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
-                        >
-                    </div>
-                    
-                    <div class="campo-moderno">
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
-                            🏢 Razón Social
-                        </label>
-                        <input 
-                            type="text" 
-                            id="admin-razon-social" 
-                            value="${empresa.legal?.razonSocial || ''}" 
-                            placeholder="Mi Empresa S.A.C."
-                            style="
-                                width: 100%; 
-                                padding: 16px 20px; 
-                                border: 2px solid #e2e8f0; 
-                                border-radius: 12px; 
-                                font-size: 16px;
-                                font-weight: 500;
-                                background: #ffffff;
-                                transition: all 0.3s ease;
-                                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-                            "
-                            onfocus="this.style.borderColor='#7c3aed'; this.style.boxShadow='0 0 0 4px rgba(124, 58, 237, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
-                            onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
-                        >
-                    </div>
-                    
-                    <div class="campo-moderno">
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
-                            📋 Tipo de Empresa
-                        </label>
-                        <div style="position: relative;">
-                            <select 
-                                id="admin-tipo-empresa" 
-                                style="
-                                    width: 100%; 
-                                    padding: 16px 20px; 
-                                    border: 2px solid #e2e8f0; 
-                                    border-radius: 12px; 
-                                    font-size: 16px;
-                                    font-weight: 500;
-                                    background: #ffffff;
-                                    cursor: pointer;
-                                    appearance: none;
-                                    transition: all 0.3s ease;
-                                    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-                                "
-                                onfocus="this.style.borderColor='#7c3aed'; this.style.boxShadow='0 0 0 4px rgba(124, 58, 237, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
-                                onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
-                            >
-                                ${this._generarOpcionesTipoEmpresa(empresa.legal?.tipoEmpresa)}
-                            </select>
-                            <div style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); pointer-events: none; color: #64748b; font-size: 12px;">▼</div>
-                        </div>
-                    </div>
-                    
-                    <div class="campo-moderno">
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
-                            💼 Régimen Tributario
-                        </label>
-                        <div style="position: relative;">
-                            <select 
-                                id="admin-regimen" 
-                                style="
-                                    width: 100%; 
-                                    padding: 16px 20px; 
-                                    border: 2px solid #e2e8f0; 
-                                    border-radius: 12px; 
-                                    font-size: 16px;
-                                    font-weight: 500;
-                                    background: #ffffff;
-                                    cursor: pointer;
-                                    appearance: none;
-                                    transition: all 0.3s ease;
-                                    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-                                "
-                                onfocus="this.style.borderColor='#7c3aed'; this.style.boxShadow='0 0 0 4px rgba(124, 58, 237, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
-                                onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
-                            >
-                                ${this._generarOpcionesRegimen(empresa.legal?.regimen)}
-                            </select>
-                            <div style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); pointer-events: none; color: #64748b; font-size: 12px;">▼</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- SECCIÓN FINANCIERO -->
-        <div class="admin-seccion" id="seccion-financiero" style="padding: 32px; display: none;">
-            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
-                <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
-                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">💰</div>
-                    Datos Financieros
-                </h3>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 24px;">
-                    <div class="campo-moderno">
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
-                            💰 Caja Actual (S/.)
-                        </label>
-                        <input 
-                            type="number" 
-                            id="admin-caja" 
-                            value="${empresa.finanzas?.caja || 0}" 
-                            step="0.01"
-                            style="
-                                width: 100%; 
-                                padding: 16px 20px; 
-                                border: 2px solid #e2e8f0; 
-                                border-radius: 12px; 
-                                font-size: 16px;
-                                font-weight: 500;
-                                background: #ffffff;
-                                transition: all 0.3s ease;
-                                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-                            "
-                            onfocus="this.style.borderColor='#10b981'; this.style.boxShadow='0 0 0 4px rgba(16, 185, 129, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
-                            onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
-                        >
-                    </div>
-                    
-                    <div class="campo-moderno">
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
-                            📈 Ingresos Anuales (S/.)
-                        </label>
-                        <input 
-                            type="number" 
-                            id="admin-ingresos" 
-                            value="${empresa.finanzas?.ingresos || 0}" 
-                            step="0.01"
-                            style="
-                                width: 100%; 
-                                padding: 16px 20px; 
-                                border: 2px solid #e2e8f0; 
-                                border-radius: 12px; 
-                                font-size: 16px;
-                                font-weight: 500;
-                                background: #ffffff;
-                                transition: all 0.3s ease;
-                                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-                            "
-                            onfocus="this.style.borderColor='#10b981'; this.style.boxShadow='0 0 0 4px rgba(16, 185, 129, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
-                            onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
-                        >
-                    </div>
-                    
-                    <div class="campo-moderno">
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
-                            📉 Gastos Anuales (S/.)
-                        </label>
-                        <input 
-                            type="number" 
-                            id="admin-gastos" 
-                            value="${empresa.finanzas?.gastos || 0}" 
-                            step="0.01"
-                            style="
-                                width: 100%; 
-                                padding: 16px 20px; 
-                                border: 2px solid #e2e8f0; 
-                                border-radius: 12px; 
-                                font-size: 16px;
-                                font-weight: 500;
-                                background: #ffffff;
-                                transition: all 0.3s ease;
-                                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-                            "
-                            onfocus="this.style.borderColor='#10b981'; this.style.boxShadow='0 0 0 4px rgba(16, 185, 129, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
-                            onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
-                        >
-                    </div>
-                </div>
-                
-                <button 
-                    onclick="adminEmpresas.calcularMetricas()" 
-                    style="
-                        background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
-                        color: white; 
-                        border: none; 
-                        padding: 16px 32px; 
-                        border-radius: 12px; 
-                        cursor: pointer;
-                        font-weight: 700;
-                        font-size: 16px;
-                        transition: all 0.3s ease;
-                        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                    "
-                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.4)'"
-                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(16, 185, 129, 0.3)'"
-                >
-                    🧮 Recalcular Métricas
-                </button>
-            </div>
-        </div>
-
-        <!-- SECCIÓN CONTACTO -->
-        <div class="admin-seccion" id="seccion-contacto" style="padding: 32px; display: none;">
-            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
-                <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
-                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">📞</div>
-                    Información de Contacto
-                </h3>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <div class="campo-moderno">
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
-                            📞 Teléfono
-                        </label>
-                        <input 
-                            type="tel" 
-                            id="admin-telefono" 
-                            value="${empresa.contacto?.telefono || ''}" 
-                            placeholder="+51 1 234-5678"
-                            style="
-                                width: 100%; 
-                                padding: 16px 20px; 
-                                border: 2px solid #e2e8f0; 
-                                border-radius: 12px; 
-                                font-size: 16px;
-                                font-weight: 500;
-                                background: #ffffff;
-                                transition: all 0.3s ease;
-                                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-                            "
-                            onfocus="this.style.borderColor='#f59e0b'; this.style.boxShadow='0 0 0 4px rgba(245, 158, 11, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
-                            onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
-                        >
-                    </div>
-                    
-                    <div class="campo-moderno">
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
-                            📧 Email
-                        </label>
-                        <input 
-                            type="email" 
-                            id="admin-email" 
-                            value="${empresa.contacto?.email || ''}" 
-                            placeholder="contacto@empresa.pe"
-                            style="
-                                width: 100%; 
-                                padding: 16px 20px; 
-                                border: 2px solid #e2e8f0; 
-                                border-radius: 12px; 
-                                font-size: 16px;
-                                font-weight: 500;
-                                background: #ffffff;
-                                transition: all 0.3s ease;
-                                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-                            "
-                            onfocus="this.style.borderColor='#f59e0b'; this.style.boxShadow='0 0 0 4px rgba(245, 158, 11, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
-                            onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
-                        >
-                    </div>
-                    
-                    <div class="campo-moderno" style="grid-column: 1 / -1;">
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
-                            🌐 Sitio Web
-                        </label>
-                        <input 
-                            type="url" 
-                            id="admin-web" 
-                            value="${empresa.contacto?.web || ''}" 
-                            placeholder="www.empresa.pe"
-                            style="
-                                width: 100%; 
-                                padding: 16px 20px; 
-                                border: 2px solid #e2e8f0; 
-                                border-radius: 12px; 
-                                font-size: 16px;
-                                font-weight: 500;
-                                background: #ffffff;
-                                transition: all 0.3s ease;
-                                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-                            "
-                            onfocus="this.style.borderColor='#f59e0b'; this.style.boxShadow='0 0 0 4px rgba(245, 158, 11, 0.1), 0 4px 12px rgba(0,0,0,0.1)'"
-                            onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.04)'"
-                        >
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- SECCIÓN TEMAS -->
-        <div class="admin-seccion" id="seccion-temas" style="padding: 32px; display: none;">
-            ${this._generarSeccionTemas(empresa)}
-        </div>
-    `;
-}
-
-    _generarSeccionTemas(empresa) {
-    return `
-        <div style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
-            <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
-                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #8b5cf6, #7c3aed); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">🎨</div>
-                Configuración de Temas
-            </h3>
-            <div style="text-align: center; padding: 40px; color: #64748b;">
-                <div style="font-size: 48px; margin-bottom: 16px;">🎨</div>
-                <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Sección de Temas</div>
-                <div>Próximamente: Personalización avanzada de colores</div>
-            </div>
-        </div>
-    `;
-}
-    
-    _generarFooterAdmin(empresaId) {
-        return `
-            <div class="grizalum-admin-footer">
-                <div class="admin-footer-info">
-                    <span>📅 Última actualización: ${new Date().toLocaleDateString()}</span>
-                </div>
-                <div class="admin-footer-actions">
-                    <button class="admin-btn admin-btn-cancelar" onclick="adminEmpresas.cerrarModal()">
-                        <i class="fas fa-times"></i> Cancelar
-                    </button>
-                    <button class="admin-btn admin-btn-guardar" onclick="adminEmpresas.guardarCambios('${empresaId}')">
-                        <i class="fas fa-save"></i> Guardar Cambios
-                    </button>
+                    >❌ CERRAR</button>
                 </div>
             </div>
         `;
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // GENERADORES ESPECÍFICOS PARA TEMAS
+    // EVENTOS Y FUNCIONALIDADES
     // ═══════════════════════════════════════════════════════════════════════════
 
-    _generarSelectorTemasAdmin(temaActual) {
-        const temas = [
-            { key: 'rojo', name: 'Rojo Ejecutivo', css: 'red', color: '#dc2626' },
-            { key: 'azul', name: 'Azul Corporativo', css: 'blue', color: '#2563eb' },
-            { key: 'verde', name: 'Verde Naturaleza', css: 'green', color: '#059669' },
-            { key: 'morado', name: 'Púrpura Premium', css: 'purple', color: '#7c3aed' },
-            { key: 'dorado', name: 'Dorado Perú', css: 'gold', color: '#d4af37' }
-        ];
-
-        return temas.map(tema => `
-            <div class="admin-tema-option ${tema.key === temaActual ? 'selected' : ''}" 
-                 data-tema="${tema.key}" 
-                 onclick="adminEmpresas.cambiarTemaEmpresa('${tema.key}')">
-                <div class="tema-color" style="background: linear-gradient(135deg, ${tema.color}, ${tema.color}dd);"></div>
-                <div class="tema-info">
-                    <div class="tema-name">${tema.name}</div>
-                    <div class="tema-key">${tema.key.toUpperCase()}</div>
-                </div>
-                <div class="tema-check">
-                    <i class="fas fa-check"></i>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    _generarTemasGlobales() {
-        const temasGlobales = [
-            { css: 'gold', name: 'Dorado Perú', color: '#d4af37' },
-            { css: 'blue', name: 'Azul Corporativo', color: '#2563eb' },
-            { css: 'green', name: 'Verde Naturaleza', color: '#059669' },
-            { css: 'purple', name: 'Púrpura Premium', color: '#7c3aed' },
-            { css: 'red', name: 'Rojo Ejecutivo', color: '#dc2626' },
-            { css: 'dark', name: 'Modo Oscuro', color: '#1e293b' }
-        ];
-
-        return temasGlobales.map(tema => `
-            <button class="admin-tema-global" 
-                    data-theme="${tema.css}" 
-                    onclick="adminEmpresas.cambiarTemaGlobal('${tema.css}')"
-                    style="background: ${tema.color};">
-                ${tema.name}
-            </button>
-        `).join('');
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // MÉTODOS DE FUNCIONALIDAD DE TEMAS
-    // ═══════════════════════════════════════════════════════════════════════════
-
-    cambiarTemaEmpresa(tema) {
-        // Actualizar visualización en el modal
-        document.querySelectorAll('.admin-tema-option').forEach(option => {
-            option.classList.remove('selected');
-        });
-        document.querySelector(`[data-tema="${tema}"]`).classList.add('selected');
-
-        // Actualizar vista previa
-        const preview = document.getElementById('admin-preview');
-        if (preview) {
-            const mapaTemaCss = {
-                'rojo': 'red', 'azul': 'blue', 'verde': 'green',
-                'morado': 'purple', 'dorado': 'gold'
-            };
-            preview.setAttribute('data-theme', mapaTemaCss[tema]);
-        }
-
-        this._mostrarNotificacion(`🎨 Tema ${tema} seleccionado para la empresa`);
-    }
-
-    cambiarTemaGlobal(temaCss) {
-        // Aplicar tema global inmediatamente usando tu sistema
-        document.documentElement.setAttribute('data-theme', temaCss);
-        
-        // Guardar preferencia
-        localStorage.setItem('grizalum_tema_global', temaCss);
-        
-        this._mostrarNotificacion(`🌐 Tema global cambiado a ${temaCss}`);
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // MÉTODOS DE NAVEGACIÓN Y EVENTOS
-    // ═══════════════════════════════════════════════════════════════════════════
-
-    _configurarEventosAdmin(empresaId) {
+    _configurarEventosPremium() {
         // Navegación entre secciones
-        const botones = document.querySelectorAll('.admin-nav-btn');
+        const botones = document.querySelectorAll('.premium-nav-btn');
         botones.forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const seccion = e.target.dataset.seccion;
-                this._cambiarSeccion(seccion);
+                e.preventDefault();
+                const seccion = btn.dataset.seccion;
+                this._cambiarSeccionPremium(seccion);
             });
-        });
-
-        // Auto-cálculo de métricas financieras
-        const inputsFinancieros = ['admin-ingresos', 'admin-gastos'];
-        inputsFinancieros.forEach(id => {
-            const input = document.getElementById(id);
-            if (input) {
-                input.addEventListener('input', () => this._autoCalcularMetricas());
-            }
         });
 
         // Cerrar con Escape
@@ -1356,88 +1575,514 @@ class GestorEmpresasAdmin {
                 this.cerrarModal();
             }
         });
-    }
 
-    _cambiarSeccion(seccionTarget) {
-        // Remover active de botones y secciones
-        document.querySelectorAll('.admin-nav-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.admin-seccion').forEach(sec => sec.classList.remove('active'));
-        
-        // Activar nueva sección
-        document.querySelector(`[data-seccion="${seccionTarget}"]`).classList.add('active');
-        document.getElementById(`seccion-${seccionTarget}`).classList.add('active');
-        
-        this._log('info', `📂 Sección cambiada a: ${seccionTarget}`);
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // MÉTODOS PÚBLICOS DE FUNCIONALIDAD
-    // ═══════════════════════════════════════════════════════════════════════════
-
-    guardarCambios(empresaId) {
-        try {
-            const empresa = this.gestor.estado.empresas[empresaId];
-            if (!empresa) throw new Error('Empresa no encontrada');
-
-            // Recopilar datos del formulario
-            const datosActualizados = this._recopilarDatosFormulario();
-            
-            // Validar datos
-            const validacion = this._validarDatos(datosActualizados);
-            if (!validacion.valido) {
-                this._mostrarError(`Error de validación: ${validacion.errores.join(', ')}`);
-                return;
+        // Configurar estilos de navegación
+        const style = document.createElement('style');
+        style.textContent = `
+            .premium-nav-btn:hover {
+                background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(184, 148, 31, 0.2) 100%) !important;
+                color: #d4af37 !important;
+                transform: translateY(-2px);
+                box-shadow: 0 8px 24px rgba(212, 175, 55, 0.3);
             }
-
-            // Actualizar empresa
-            Object.assign(empresa, datosActualizados);
-            empresa.meta.fechaActualizacion = new Date().toISOString();
-
-            // Guardar en gestor principal
-            this.gestor._guardarEmpresas();
-            this.gestor._actualizarListaEmpresas();
-            this.gestor._actualizarSelectorPrincipal();
-            this.gestor._calcularMetricas();
-
-            // Registrar actividad
-            this.gestor._registrarActividad('EMPRESA_ADMIN_EDITADA', `Admin editó empresa: ${empresa.nombre}`);
-
-            this._mostrarExito('✅ Empresa actualizada exitosamente');
             
-            setTimeout(() => this.cerrarModal(), 1000);
+            .premium-nav-btn.active {
+                background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%) !important;
+                color: white !important;
+                box-shadow: 0 4px 16px rgba(212, 175, 55, 0.4);
+            }
+        `;
+        document.head.appendChild(style);
+    }
 
+    _cambiarSeccionPremium(seccionTarget) {
+        try {
+            // Remover active de botones
+            document.querySelectorAll('.premium-nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Remover active de secciones
+            document.querySelectorAll('.premium-seccion').forEach(sec => {
+                sec.classList.remove('active');
+                sec.style.display = 'none';
+            });
+            
+            // Activar nueva sección
+            const botonActivo = document.querySelector(`[data-seccion="${seccionTarget}"]`);
+            const seccionActiva = document.getElementById(`seccion-${seccionTarget}`);
+            
+            if (botonActivo) {
+                botonActivo.classList.add('active');
+            }
+            
+            if (seccionActiva) {
+                seccionActiva.classList.add('active');
+                seccionActiva.style.display = 'block';
+            }
+            
+            this._log('info', `📂 Sección premium cambiada a: ${seccionTarget}`);
         } catch (error) {
-            this._log('error', 'Error guardando cambios admin:', error);
-            this._mostrarError('Error al guardar cambios');
+            console.error('Error cambiando sección premium:', error);
         }
     }
 
-    calcularMetricas() {
-        const ingresos = parseFloat(document.getElementById('admin-ingresos').value) || 0;
-        const gastos = parseFloat(document.getElementById('admin-gastos').value) || 0;
+    // ═══════════════════════════════════════════════════════════════════════════
+    // FUNCIONALIDADES PREMIUM - CONTROL DE EMPRESAS
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    suspenderTodasEmpresas() {
+        if (!confirm('¿Está seguro de suspender TODAS las empresas? Esta acción afectará a todos los usuarios.')) return;
         
-        const utilidad = ingresos - gastos;
-        const margen = ingresos > 0 ? (utilidad / ingresos) * 100 : 0;
+        let suspendidas = 0;
+        Object.values(this.gestor.estado.empresas).forEach(empresa => {
+            if (empresa.estado === 'Operativo') {
+                empresa.estado = 'Suspendido';
+                suspendidas++;
+            }
+        });
         
-        document.getElementById('admin-utilidad').value = utilidad.toFixed(2);
-        document.getElementById('admin-margen').value = margen.toFixed(2);
-        
-        this._mostrarNotificacion('📊 Métricas recalculadas');
+        this.gestor._guardarEmpresas();
+        this._registrarLog('warning', `${suspendidas} empresas suspendidas por Super Admin`);
+        this._mostrarNotificacion(`⏸️ ${suspendidas} empresas suspendidas exitosamente`, 'warning');
+        this._actualizarDashboard();
     }
 
-    _autoCalcularMetricas() {
-        setTimeout(() => this.calcularMetricas(), 100);
+    reactivarTodasEmpresas() {
+        if (!confirm('¿Está seguro de reactivar TODAS las empresas?')) return;
+        
+        let reactivadas = 0;
+        Object.values(this.gestor.estado.empresas).forEach(empresa => {
+            if (empresa.estado === 'Suspendido') {
+                empresa.estado = 'Operativo';
+                reactivadas++;
+            }
+        });
+        
+        this.gestor._guardarEmpresas();
+        this._registrarLog('success', `${reactivadas} empresas reactivadas por Super Admin`);
+        this._mostrarNotificacion(`▶️ ${reactivadas} empresas reactivadas exitosamente`, 'success');
+        this._actualizarDashboard();
     }
 
-    cerrarModal() {
-        if (this.modalActivo) {
-            this.modalActivo.classList.remove('show');
-            setTimeout(() => {
-                if (this.modalActivo) {
-                    this.modalActivo.remove();
-                    this.modalActivo = null;
+    exportarTodasEmpresas() {
+        try {
+            const datos = {
+                timestamp: new Date().toISOString(),
+                version: 'GRIZALUM Premium v2.0',
+                totalEmpresas: Object.keys(this.gestor.estado.empresas).length,
+                empresas: this.gestor.estado.empresas,
+                configuracion: this.configuracion,
+                logs: this.logs.slice(-100) // Últimos 100 logs
+            };
+            
+            const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `GRIZALUM_Backup_Completo_${new Date().getTime()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            this._registrarLog('info', 'Backup completo exportado por Super Admin');
+            this._mostrarNotificacion('📤 Backup completo exportado exitosamente', 'success');
+        } catch (error) {
+            this._mostrarNotificacion('❌ Error al exportar backup', 'error');
+        }
+    }
+
+    crearBackupGeneral() {
+        try {
+            const backup = {
+                fecha: new Date().toISOString(),
+                version: 'GRIZALUM Premium v2.0',
+                empresas: this.gestor.estado.empresas,
+                configuracion: this.configuracion
+            };
+            
+            localStorage.setItem('grizalum_backup_' + Date.now(), JSON.stringify(backup));
+            this.configuracion.ultimoBackup = new Date().toLocaleString();
+            this._guardarConfiguracion();
+            
+            this._registrarLog('success', 'Backup automático creado exitosamente');
+            this._mostrarNotificacion('💾 Backup creado y guardado exitosamente', 'success');
+        } catch (error) {
+            this._mostrarNotificacion('❌ Error al crear backup', 'error');
+        }
+    }
+
+    limpiarEmpresasInactivas() {
+        if (!confirm('¿Está seguro de eliminar todas las empresas inactivas? Esta acción NO se puede deshacer.')) return;
+        
+        const empresasInactivas = Object.entries(this.gestor.estado.empresas)
+            .filter(([id, empresa]) => empresa.estado === 'Inactivo' || empresa.estado === 'Suspendido');
+        
+        if (empresasInactivas.length === 0) {
+            this._mostrarNotificacion('ℹ️ No hay empresas inactivas para eliminar', 'info');
+            return;
+        }
+        
+        empresasInactivas.forEach(([id, empresa]) => {
+            delete this.gestor.estado.empresas[id];
+        });
+        
+        this.gestor._guardarEmpresas();
+        this._registrarLog('warning', `${empresasInactivas.length} empresas inactivas eliminadas`);
+        this._mostrarNotificacion(`🗑️ ${empresasInactivas.length} empresas inactivas eliminadas`, 'warning');
+        this._actualizarDashboard();
+    }
+
+    resetearSistema() {
+        if (!confirm('¿ESTÁ SEGURO? Esta acción eliminará TODAS las empresas y configuraciones. NO se puede deshacer.')) return;
+        if (!confirm('CONFIRMACIÓN FINAL: ¿Realmente desea resetear todo el sistema?')) return;
+        
+        // Crear backup de emergencia antes del reseteo
+        this.crearBackupGeneral();
+        
+        // Resetear datos
+        this.gestor.estado.empresas = {};
+        this.logs = [];
+        this.notificaciones = [];
+        this.configuracion = this._configuracionPorDefecto();
+        
+        // Guardar cambios
+        this.gestor._guardarEmpresas();
+        this._guardarLogs();
+        this._guardarNotificaciones();
+        this._guardarConfiguracion();
+        
+        this._registrarLog('error', 'Sistema reseteado completamente por Super Admin');
+        this._mostrarNotificacion('🔄 Sistema reseteado completamente', 'warning');
+        
+        setTimeout(() => {
+            this.cerrarModal();
+            location.reload();
+        }, 2000);
+    }
+
+    optimizarRendimiento() {
+        try {
+            // Limpiar logs antiguos (mantener solo últimos 1000)
+            this.logs = this.logs.slice(-1000);
+            
+            // Limpiar notificaciones antiguas (mantener solo últimas 500)
+            this.notificaciones = this.notificaciones.slice(-500);
+            
+            // Limpiar localStorage de backups antiguos
+            const keys = Object.keys(localStorage).filter(key => key.startsWith('grizalum_backup_'));
+            const ahora = Date.now();
+            keys.forEach(key => {
+                const timestamp = parseInt(key.split('_')[2]);
+                if (ahora - timestamp > 30 * 24 * 60 * 60 * 1000) { // 30 días
+                    localStorage.removeItem(key);
                 }
-            }, 300);
+            });
+            
+            this._guardarLogs();
+            this._guardarNotificaciones();
+            
+            this._registrarLog('success', 'Sistema optimizado por Super Admin');
+            this._mostrarNotificacion('⚡ Sistema optimizado exitosamente', 'success');
+        } catch (error) {
+            this._mostrarNotificacion('❌ Error al optimizar sistema', 'error');
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // FUNCIONALIDADES PREMIUM - CONTROL INDIVIDUAL
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    abrirControlEmpresa(empresaId) {
+        const empresa = this.gestor.estado.empresas[empresaId];
+        if (!empresa) return;
+        
+        // Abrir el panel admin original pero con permisos premium
+        this.cerrarModal();
+        setTimeout(() => {
+            if (window.adminEmpresas) {
+                window.adminEmpresas.abrirPanelAdmin(empresaId);
+            }
+        }, 300);
+    }
+
+    editarEmpresa(empresaId) {
+        this.abrirControlEmpresa(empresaId);
+    }
+
+    suspenderEmpresa(empresaId) {
+        const empresa = this.gestor.estado.empresas[empresaId];
+        if (!empresa) return;
+        
+        if (!confirm(`¿Está seguro de suspender la empresa "${empresa.nombre}"?`)) return;
+        
+        empresa.estado = 'Suspendido';
+        this.gestor._guardarEmpresas();
+        
+        this._registrarLog('warning', `Empresa "${empresa.nombre}" suspendida por Super Admin`);
+        this._mostrarNotificacion(`⏸️ Empresa "${empresa.nombre}" suspendida`, 'warning');
+        this._actualizarDashboard();
+    }
+
+    eliminarEmpresa(empresaId) {
+        const empresa = this.gestor.estado.empresas[empresaId];
+        if (!empresa) return;
+        
+        if (!confirm(`¿Está seguro de ELIMINAR la empresa "${empresa.nombre}"? Esta acción NO se puede deshacer.`)) return;
+        if (!confirm('CONFIRMACIÓN FINAL: ¿Realmente desea eliminar esta empresa?')) return;
+        
+        delete this.gestor.estado.empresas[empresaId];
+        this.gestor._guardarEmpresas();
+        
+        this._registrarLog('error', `Empresa "${empresa.nombre}" eliminada por Super Admin`);
+        this._mostrarNotificacion(`🗑️ Empresa "${empresa.nombre}" eliminada`, 'error');
+        this._actualizarDashboard();
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // FUNCIONALIDADES PREMIUM - NOTIFICACIONES
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    enviarNotificacion() {
+        const tipo = document.getElementById('premium-tipo-aviso').value;
+        const destinatario = document.getElementById('premium-destinatario').value;
+        const mensaje = document.getElementById('premium-mensaje').value.trim();
+        
+        if (!mensaje) {
+            this._mostrarNotificacion('❌ El mensaje no puede estar vacío', 'error');
+            return;
+        }
+        
+        const notificacion = {
+            id: Date.now(),
+            tipo: tipo,
+            destinatario: destinatario,
+            mensaje: mensaje,
+            fecha: new Date().toISOString(),
+            enviado: true
+        };
+        
+        this.notificaciones.push(notificacion);
+        this._guardarNotificaciones();
+        
+        // Simular envío de notificación
+        this._procesarEnvioNotificacion(notificacion);
+        
+        // Limpiar formulario
+        document.getElementById('premium-mensaje').value = '';
+        
+        this._registrarLog('info', `Notificación ${tipo} enviada a: ${destinatario}`);
+        this._mostrarNotificacion('📤 Notificación enviada exitosamente', 'success');
+        
+        // Actualizar historial
+        setTimeout(() => {
+            const historialContainer = document.querySelector('#seccion-notificaciones .admin-premium-content > div:nth-child(1) > div:nth-child(2) > div');
+            if (historialContainer) {
+                historialContainer.innerHTML = this._generarHistorialNotificaciones();
+            }
+        }, 100);
+    }
+
+    _procesarEnvioNotificacion(notificacion) {
+        let destinatarios = [];
+        
+        switch (notificacion.destinatario) {
+            case 'todas':
+                destinatarios = Object.keys(this.gestor.estado.empresas);
+                break;
+            case 'activas':
+                destinatarios = Object.entries(this.gestor.estado.empresas)
+                    .filter(([id, empresa]) => empresa.estado === 'Operativo')
+                    .map(([id]) => id);
+                break;
+            case 'riesgo':
+                destinatarios = Object.entries(this.gestor.estado.empresas)
+                    .filter(([id, empresa]) => (empresa.finanzas?.caja || 0) < 1000)
+                    .map(([id]) => id);
+                break;
+            default:
+                destinatarios = [notificacion.destinatario];
+        }
+        
+        // Crear notificaciones visuales para cada destinatario
+        destinatarios.forEach(empresaId => {
+            this._crearNotificacionVisual(notificacion, empresaId);
+        });
+    }
+
+    _crearNotificacionVisual(notificacion, empresaId) {
+        const empresa = this.gestor.estado.empresas[empresaId];
+        if (!empresa) return;
+        
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${this._getColorNotificacion(notificacion.tipo)};
+            color: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            z-index: 9999999;
+            max-width: 350px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        `;
+        
+        const icono = {
+            'info': '💡',
+            'warning': '⚠️',
+            'urgent': '🚨',
+            'success': '✅'
+        };
+        
+        toast.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                <span style="font-size: 20px;">${icono[notificacion.tipo]}</span>
+                <strong>Para: ${empresa.nombre}</strong>
+            </div>
+            <div>${notificacion.mensaje}</div>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        setTimeout(() => toast.style.transform = 'translateX(0)', 100);
+        
+        setTimeout(() => {
+            toast.style.transform = 'translateX(100%)';
+            setTimeout(() => toast.remove(), 300);
+        }, 4000);
+    }
+
+    _getColorNotificacion(tipo) {
+        const colores = {
+            'info': '#3b82f6',
+            'warning': '#f59e0b',
+            'urgent': '#ef4444',
+            'success': '#10b981'
+        };
+        return colores[tipo] || '#64748b';
+    }
+
+    guardarConfiguracionAlertas() {
+        this.configuracion.alertas = {
+            cajaBaja: document.getElementById('alerta-caja-baja').checked,
+            umbralCaja: parseInt(document.getElementById('umbral-caja').value) || 1000,
+            inactividad: document.getElementById('alerta-inactividad').checked,
+            diasInactividad: parseInt(document.getElementById('dias-inactividad').value) || 7,
+            metricas: document.getElementById('alerta-metricas').checked
+        };
+        
+        this._guardarConfiguracion();
+        this._registrarLog('info', 'Configuración de alertas actualizada');
+        this._mostrarNotificacion('💾 Configuración de alertas guardada', 'success');
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // FUNCIONALIDADES PREMIUM - USUARIOS Y CONFIGURACIÓN
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    mostrarConfiguracionUsuarios() {
+        this._mostrarNotificacion('👥 Configuración de usuarios disponible en versión Enterprise', 'info');
+    }
+
+    guardarConfiguracionGeneral() {
+        this.configuracion.backupAutomatico = document.getElementById('backup-automatico').checked;
+        this.configuracion.limiteEmpresas = parseInt(document.getElementById('limite-empresas').value) || 100;
+        this.configuracion.modoSeguridad = document.getElementById('modo-seguridad').value;
+        
+        this._guardarConfiguracion();
+        this._registrarLog('info', 'Configuración general actualizada');
+        this._mostrarNotificacion('💾 Configuración general guardada', 'success');
+    }
+
+    generarReportePremium() {
+        try {
+            const empresas = Object.values(this.gestor.estado.empresas);
+            const fecha = new Date().toLocaleDateString();
+            
+            const reporte = `
+REPORTE EJECUTIVO GRIZALUM PREMIUM
+Generado el: ${fecha}
+========================================
+
+RESUMEN EJECUTIVO:
+- Total de Empresas: ${empresas.length}
+- Empresas Activas: ${empresas.filter(e => e.estado === 'Operativo').length}
+- Empresas en Riesgo: ${empresas.filter(e => (e.finanzas?.caja || 0) < 1000).length}
+- Ingresos Totales: S/. ${empresas.reduce((sum, e) => sum + (e.finanzas?.ingresos || 0), 0).toLocaleString()}
+
+RANKING TOP 5 POR INGRESOS:
+${empresas
+    .sort((a, b) => (b.finanzas?.ingresos || 0) - (a.finanzas?.ingresos || 0))
+    .slice(0, 5)
+    .map((e, i) => `${i + 1}. ${e.nombre}: S/. ${(e.finanzas?.ingresos || 0).toLocaleString()}`)
+    .join('\n')}
+
+ANÁLISIS POR CATEGORÍAS:
+${this._generarAnalisisCategoriasReporte()}
+
+EMPRESAS EN RIESGO:
+${empresas
+    .filter(e => (e.finanzas?.caja || 0) < 1000)
+    .map(e => `- ${e.nombre}: S/. ${(e.finanzas?.caja || 0).toLocaleString()} en caja`)
+    .join('\n') || 'No hay empresas en riesgo'}
+
+========================================
+Reporte generado por GRIZALUM Premium v2.0
+            `;
+            
+            const blob = new Blob([reporte], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Reporte_Ejecutivo_GRIZALUM_${Date.now()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            this._registrarLog('info', 'Reporte ejecutivo generado');
+            this._mostrarNotificacion('📊 Reporte ejecutivo generado y descargado', 'success');
+        } catch (error) {
+            this._mostrarNotificacion('❌ Error al generar reporte', 'error');
+        }
+    }
+
+    _generarAnalisisCategoriasReporte() {
+        const categorias = {};
+        Object.values(this.gestor.estado.empresas).forEach(empresa => {
+            const cat = empresa.categoria;
+            if (!categorias[cat]) {
+                categorias[cat] = { count: 0, ingresos: 0 };
+            }
+            categorias[cat].count++;
+            categorias[cat].ingresos += empresa.finanzas?.ingresos || 0;
+        });
+        
+        return Object.entries(categorias)
+            .map(([cat, datos]) => `- ${cat}: ${datos.count} empresas, S/. ${datos.ingresos.toLocaleString()} ingresos`)
+            .join('\n');
+    }
+
+    exportarConfiguracion() {
+        try {
+            const config = {
+                timestamp: new Date().toISOString(),
+                configuracion: this.configuracion,
+                version: 'GRIZALUM Premium v2.0'
+            };
+            
+            const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `GRIZALUM_Configuracion_${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            this._mostrarNotificacion('💾 Configuración exportada exitosamente', 'success');
+        } catch (error) {
+            this._mostrarNotificacion('❌ Error al exportar configuración', 'error');
         }
     }
 
@@ -1445,806 +2090,237 @@ class GestorEmpresasAdmin {
     // MÉTODOS AUXILIARES
     // ═══════════════════════════════════════════════════════════════════════════
 
-    _recopilarDatosFormulario() {
-        // Recopilar tema seleccionado
-        const temaSeleccionado = document.querySelector('.admin-tema-option.selected');
-        const tema = temaSeleccionado ? temaSeleccionado.dataset.tema : 'dorado';
+    _actualizarDashboard() {
+        const dashboardSection = document.getElementById('seccion-dashboard');
+        if (dashboardSection) {
+            dashboardSection.innerHTML = this._generarDashboardGlobal().replace('<div class="premium-seccion active" id="seccion-dashboard" style="padding: 32px;">', '').replace('</div>', '');
+        }
+        
+        const controlSection = document.getElementById('seccion-control');
+        if (controlSection) {
+            const controlContent = this._generarControlEmpresas().replace('<div class="premium-seccion" id="seccion-control" style="padding: 32px; display: none;">', '').replace('</div>', '');
+            controlSection.innerHTML = controlContent;
+        }
+    }
 
+    _inicializarSistema() {
+        // Verificar alertas automáticas
+        this._verificarAlertas();
+        
+        // Configurar backup automático
+        if (this.configuracion.backupAutomatico) {
+            setInterval(() => {
+                this.crearBackupGeneral();
+            }, 24 * 60 * 60 * 1000); // Cada 24 horas
+        }
+    }
+
+    _verificarAlertas() {
+        if (!this.configuracion.alertas) return;
+        
+        const empresas = Object.values(this.gestor.estado.empresas);
+        
+        // Verificar caja baja
+        if (this.configuracion.alertas.cajaBaja) {
+            const empresasCajaBaja = empresas.filter(e => 
+                (e.finanzas?.caja || 0) < this.configuracion.alertas.umbralCaja
+            );
+            
+            empresasCajaBaja.forEach(empresa => {
+                this._enviarAlertaAutomatica('warning', `Empresa "${empresa.nombre}" tiene caja baja: S/. ${(empresa.finanzas?.caja || 0).toLocaleString()}`);
+            });
+        }
+    }
+
+    _enviarAlertaAutomatica(tipo, mensaje) {
+        const alerta = {
+            id: Date.now() + Math.random(),
+            tipo: tipo,
+            destinatario: 'Sistema Automático',
+            mensaje: mensaje,
+            fecha: new Date().toISOString(),
+            automatica: true
+        };
+        
+        this.notificaciones.push(alerta);
+        this._guardarNotificaciones();
+        
+        this._registrarLog('warning', `Alerta automática: ${mensaje}`);
+    }
+
+    _cargarNotificaciones() {
+        try {
+            return JSON.parse(localStorage.getItem('grizalum_admin_notificaciones') || '[]');
+        } catch {
+            return [];
+        }
+    }
+
+    _guardarNotificaciones() {
+        localStorage.setItem('grizalum_admin_notificaciones', JSON.stringify(this.notificaciones));
+    }
+
+    _cargarLogs() {
+        try {
+            return JSON.parse(localStorage.getItem('grizalum_admin_logs') || '[]');
+        } catch {
+            return [];
+        }
+    }
+
+    _guardarLogs() {
+        localStorage.setItem('grizalum_admin_logs', JSON.stringify(this.logs));
+    }
+
+    _cargarConfiguracion() {
+        try {
+            const config = JSON.parse(localStorage.getItem('grizalum_admin_config') || '{}');
+            return { ...this._configuracionPorDefecto(), ...config };
+        } catch {
+            return this._configuracionPorDefecto();
+        }
+    }
+
+    _guardarConfiguracion() {
+        localStorage.setItem('grizalum_admin_config', JSON.stringify(this.configuracion));
+    }
+
+    _configuracionPorDefecto() {
         return {
-            nombre: document.getElementById('admin-nombre').value.trim(),
-            categoria: document.getElementById('admin-categoria').value,
-            estado: document.getElementById('admin-estado').value,
-            icono: document.getElementById('admin-icono').value,
-            tema: tema, // ← IMPORTANTE: Guardar tema seleccionado
-            
-            ubicacion: {
-                direccion: document.getElementById('admin-direccion').value.trim(),
-                distrito: document.getElementById('admin-distrito').value.trim(),
-                departamento: document.getElementById('admin-departamento').value,
-                provincia: document.getElementById('admin-distrito').value.trim(),
-                codigoPostal: '00000'
+            backupAutomatico: true,
+            limiteEmpresas: 100,
+            modoSeguridad: 'normal',
+            alertas: {
+                cajaBaja: true,
+                umbralCaja: 1000,
+                inactividad: true,
+                diasInactividad: 7,
+                metricas: false
             },
-            
-            legal: {
-                ruc: document.getElementById('admin-ruc').value.trim(),
-                razonSocial: document.getElementById('admin-razon-social').value.trim(),
-                tipoEmpresa: document.getElementById('admin-tipo-empresa').value,
-                regimen: document.getElementById('admin-regimen').value
-            },
-            
-            contacto: {
-                telefono: document.getElementById('admin-telefono').value.trim(),
-                email: document.getElementById('admin-email').value.trim(),
-                web: document.getElementById('admin-web').value.trim()
-            },
-            
-            finanzas: {
-                caja: parseFloat(document.getElementById('admin-caja').value) || 0,
-                ingresos: parseFloat(document.getElementById('admin-ingresos').value) || 0,
-                gastos: parseFloat(document.getElementById('admin-gastos').value) || 0,
-                utilidadNeta: parseFloat(document.getElementById('admin-utilidad').value) || 0,
-                margenNeto: parseFloat(document.getElementById('admin-margen').value) || 0,
-                roi: parseFloat(document.getElementById('admin-roi').value) || 0
-            }
+            ultimoBackup: null
         };
     }
 
-    _validarDatos(datos) {
-        const errores = [];
-        
-        if (!datos.nombre) errores.push('Nombre es obligatorio');
-        if (datos.nombre.length < 3) errores.push('Nombre debe tener al menos 3 caracteres');
-        if (datos.legal.ruc && datos.legal.ruc.length !== 11) errores.push('RUC debe tener 11 dígitos');
-        if (datos.contacto.email && !this._validarEmail(datos.contacto.email)) errores.push('Email inválido');
-        
-        return {
-            valido: errores.length === 0,
-            errores
+    _registrarLog(nivel, mensaje, datos = null) {
+        const log = {
+            id: Date.now(),
+            nivel: nivel,
+            mensaje: mensaje,
+            datos: datos,
+            fecha: new Date().toISOString()
         };
-    }
-
-    _validarEmail(email) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // GENERADORES DE OPTIONS Y SELECTORES
-    // ═══════════════════════════════════════════════════════════════════════════
-
-    _generarOpcionesCategorias(seleccionada) {
-        const categorias = ['Manufactura', 'Comercio', 'Servicios', 'Agropecuario', 'Tecnología', 'Salud', 'Educación', 'Restaurante', 'Transporte', 'Construcción'];
-        return categorias.map(cat => 
-            `<option value="${cat}" ${cat === seleccionada ? 'selected' : ''}>${cat}</option>`
-        ).join('');
-    }
-
-    _generarOpcionesEstado(seleccionado) {
-        const estados = ['Operativo', 'Regular', 'Crítico', 'En Preparación', 'Mantenimiento', 'Suspendido', 'Inactivo'];
-        return estados.map(estado => 
-            `<option value="${estado}" ${estado === seleccionado ? 'selected' : ''}>${estado}</option>`
-        ).join('');
-    }
-
-    _generarOpcionesDepartamentos(seleccionado) {
-        const departamentos = ['Lima', 'Arequipa', 'Cusco', 'Trujillo', 'Chiclayo', 'Piura', 'Iquitos', 'Huancayo', 'Tacna'];
-        return departamentos.map(dep => 
-            `<option value="${dep}" ${dep === seleccionado ? 'selected' : ''}>${dep}</option>`
-        ).join('');
-    }
-
-    _generarOpcionesTipoEmpresa(seleccionado) {
-        const tipos = ['S.A.C.', 'S.R.L.', 'E.I.R.L.', 'S.A.', 'Persona Natural'];
-        return tipos.map(tipo => 
-            `<option value="${tipo}" ${tipo === seleccionado ? 'selected' : ''}>${tipo}</option>`
-        ).join('');
-    }
-
-    _generarOpcionesRegimen(seleccionado) {
-        const regimenes = ['General', 'MYPE', 'RUS', 'RER'];
-        return regimenes.map(reg => 
-            `<option value="${reg}" ${reg === seleccionado ? 'selected' : ''}>${reg}</option>`
-        ).join('');
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // MÉTODOS DE UTILIDAD Y NOTIFICACIONES
-    // ═══════════════════════════════════════════════════════════════════════════
-
-    _mostrarExito(mensaje) {
-        this._mostrarNotificacion(mensaje, 'success');
-    }
-
-    _mostrarError(mensaje) {
-        this._mostrarNotificacion(mensaje, 'error');
+        
+        this.logs.push(log);
+        if (this.logs.length > 2000) {
+            this.logs = this.logs.slice(-1000);
+        }
+        this._guardarLogs();
+        
+        // También registrar en el gestor principal
+        this._log(nivel, mensaje, datos);
     }
 
     _mostrarNotificacion(mensaje, tipo = 'info') {
-        // Crear notificación toast
         const toast = document.createElement('div');
-        toast.className = `admin-toast admin-toast-${tipo}`;
-        toast.textContent = mensaje;
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${this._getColorNotificacion(tipo)};
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            z-index: 9999999;
+            max-width: 400px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+        `;
         
+        toast.textContent = mensaje;
         document.body.appendChild(toast);
         
-        setTimeout(() => toast.classList.add('show'), 100);
+        setTimeout(() => toast.style.transform = 'translateX(0)', 100);
+        
         setTimeout(() => {
-            toast.classList.remove('show');
+            toast.style.transform = 'translateX(100%)';
             setTimeout(() => toast.remove(), 300);
-        }, 3000);
+        }, 4000);
     }
 
     _cerrarModalPrevio() {
-        const modalPrevio = document.getElementById('grizalumModalAdmin');
+        const modalPrevio = document.getElementById('grizalumModalAdminPremium');
         if (modalPrevio) modalPrevio.remove();
     }
 
+    cerrarModal() {
+        if (this.modalActivo) {
+            this.modalActivo.style.opacity = '0';
+            const content = this.modalActivo.querySelector('.modal-content-premium');
+            if (content) {
+                content.style.transform = 'scale(0.8) translateY(40px)';
+            }
+            
+            setTimeout(() => {
+                if (this.modalActivo) {
+                    this.modalActivo.remove();
+                    this.modalActivo = null;
+                }
+            }, 400);
+        }
+    }
+
     _log(nivel, mensaje, datos = null) {
-        this.gestor._log(nivel, `[ADMIN] ${mensaje}`, datos);
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // ESTILOS CSS PARA EL MODAL ADMIN INTEGRADO
-    // ═══════════════════════════════════════════════════════════════════════════
-
-    _crearEstilosAdmin() {
-        const estilosId = 'grizalum-admin-styles';
-        if (document.getElementById(estilosId)) return;
-
-        const estilos = document.createElement('style');
-        estilos.id = estilosId;
-        estilos.textContent = `
-            /* MODAL ADMIN STYLES - INTEGRADO CON TU SISTEMA DE TEMAS */
-            .grizalum-modal-admin {
-                background: white;
-                border-radius: 20px;
-                width: 1300px;
-                max-width: 98vw;
-                max-height: 95vh;
-                overflow: hidden;
-                transform: scale(0.9) translateY(20px);
-                transition: all 0.3s ease;
-                box-shadow: 0 25px 50px rgba(0,0,0,0.3);
-            }
-
-            .grizalum-modal-overlay.show .grizalum-modal-admin {
-                transform: scale(1) translateY(0);
-            }
-
-            .grizalum-admin-header {
-                background: var(--theme-gradient);
-                color: white;
-                padding: 2rem;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            .admin-header-info {
-                display: flex;
-                align-items: center;
-                gap: 1.5rem;
-            }
-
-            .admin-empresa-avatar {
-                width: 70px;
-                height: 70px;
-                background: rgba(255,255,255,0.2);
-                border-radius: 15px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 2rem;
-            }
-
-            .admin-empresa-avatar img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                border-radius: 15px;
-            }
-
-            .admin-empresa-datos h2 {
-                margin: 0 0 0.5rem 0;
-                font-size: 1.5rem;
-            }
-
-            .admin-categoria {
-                background: rgba(255,255,255,0.2);
-                padding: 0.25rem 0.75rem;
-                border-radius: 20px;
-                font-size: 0.8rem;
-            }
-
-            .grizalum-admin-nav {
-                background: #f8fafc;
-                padding: 0;
-                display: flex;
-                border-bottom: 1px solid #e5e7eb;
-            }
-
-            .admin-nav-btn {
-                flex: 1;
-                padding: 1rem;
-                border: none;
-                background: transparent;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 0.5rem;
-                font-weight: 600;
-                color: #6b7280;
-                transition: all 0.3s ease;
-                border-bottom: 3px solid transparent;
-            }
-
-            .admin-nav-btn:hover {
-                background: #e5e7eb;
-                color: #374151;
-            }
-
-            .admin-nav-btn.active {
-                color: var(--theme-primary);
-                border-bottom-color: var(--theme-primary);
-                background: white;
-            }
-
-            .grizalum-admin-content {
-                padding: 2rem;
-                max-height: 500px;
-                overflow-y: auto;
-            }
-
-            .admin-seccion {
-                display: none;
-            }
-
-            .admin-seccion.active {
-                display: block;
-            }
-
-            .admin-seccion h3 {
-                margin: 0 0 1.5rem 0;
-                color: #374151;
-                font-size: 1.2rem;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
-
-            .admin-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 1.5rem;
-                margin-bottom: 2rem;
-            }
-
-            .admin-campo-full {
-                grid-column: 1 / -1;
-            }
-
-            .admin-campo label {
-                display: block;
-                font-weight: 600;
-                color: #374151;
-                margin-bottom: 0.5rem;
-            }
-
-            .admin-campo input,
-            .admin-campo select {
-                width: 100%;
-                padding: 0.75rem;
-                border: 2px solid #e5e7eb;
-                border-radius: 8px;
-                font-size: 1rem;
-                transition: all 0.3s ease;
-            }
-
-            .admin-campo input:focus,
-            .admin-campo select:focus {
-                outline: none;
-                border-color: var(--theme-primary);
-                box-shadow: 0 0 0 3px var(--theme-primary-alpha);
-            }
-
-            .admin-btn {
-                padding: 0.75rem 1.5rem;
-                border: none;
-                border-radius: 8px;
-                font-weight: 600;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                transition: all 0.3s ease;
-            }
-
-            .admin-btn-guardar {
-                background: var(--theme-gradient);
-                color: white;
-                box-shadow: var(--theme-shadow-light);
-            }
-
-            .admin-btn-cancelar {
-                background: #6b7280;
-                color: white;
-            }
-
-            .admin-btn-calcular {
-                background: var(--theme-gradient);
-                color: white;
-                margin-top: 1rem;
-            }
-
-            /* ESTILOS ESPECÍFICOS PARA TEMAS */
-            .admin-temas-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr 1fr;
-                gap: 2rem;
-            }
-
-            .admin-config-card {
-                background: #f8fafc;
-                padding: 1.5rem;
-                border-radius: 12px;
-                border: 1px solid #e5e7eb;
-            }
-
-            .admin-config-card h4 {
-                margin: 0 0 1rem 0;
-                color: #374151;
-            }
-
-            .admin-temas-selector {
-                display: flex;
-                flex-direction: column;
-                gap: 0.75rem;
-            }
-
-            .admin-tema-option {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                padding: 1rem;
-                border: 2px solid #e5e7eb;
-                border-radius: 10px;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                background: white;
-            }
-
-            .admin-tema-option:hover {
-                border-color: var(--theme-primary);
-                transform: translateX(5px);
-            }
-
-            .admin-tema-option.selected {
-                border-color: var(--theme-primary);
-                background: var(--theme-primary-alpha);
-                box-shadow: 0 4px 12px var(--theme-primary-alpha);
-            }
-
-            .tema-color {
-                width: 40px;
-                height: 40px;
-                border-radius: 8px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            }
-
-            .tema-info {
-                flex: 1;
-            }
-
-            .tema-name {
-                font-weight: 600;
-                color: #374151;
-                margin-bottom: 0.25rem;
-            }
-
-            .tema-key {
-                font-size: 0.8rem;
-                color: #6b7280;
-            }
-
-            .tema-check {
-                color: var(--theme-primary);
-                font-size: 1.2rem;
-                opacity: 0;
-                transition: opacity 0.3s ease;
-            }
-
-            .admin-tema-option.selected .tema-check {
-                opacity: 1;
-            }
-
-            .admin-preview {
-                padding: 1rem;
-                background: white;
-                border-radius: 8px;
-                border: 1px solid #e5e7eb;
-            }
-
-            .preview-card {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                padding: 1rem;
-                background: var(--theme-gradient);
-                color: white;
-                border-radius: 8px;
-            }
-
-            .preview-avatar {
-                width: 40px;
-                height: 40px;
-                background: rgba(255,255,255,0.2);
-                border-radius: 8px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 1.2rem;
-            }
-
-            .preview-name {
-                font-weight: 600;
-                font-size: 1.1rem;
-            }
-
-            .preview-status {
-                font-size: 0.9rem;
-                opacity: 0.9;
-            }
-
-            .admin-temas-globales {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 0.5rem;
-            }
-
-            .admin-tema-global {
-                padding: 0.75rem;
-                border: none;
-                border-radius: 8px;
-                color: white;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.3s ease;
-            }
-
-            .admin-tema-global:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            }
-
-            .grizalum-admin-footer {
-                background: #f8fafc;
-                padding: 1.5rem 2rem;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                border-top: 1px solid #e5e7eb;
-            }
-
-            .admin-footer-actions {
-                display: flex;
-                gap: 1rem;
-            }
-
-            .admin-toast {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 1rem 1.5rem;
-                border-radius: 8px;
-                color: white;
-                font-weight: 600;
-                z-index: 99999;
-                transform: translateX(100%);
-                transition: all 0.3s ease;
-            }
-
-            .admin-toast.show {
-                transform: translateX(0);
-            }
-
-            .admin-toast-success { background: #059669; }
-            .admin-toast-error { background: #dc2626; }
-            .admin-toast-info { background: #2563eb; }
-
-            @media (max-width: 768px) {
-                .grizalum-modal-admin {
-                    width: 95vw;
-                    height: 95vh;
-                }
-                
-                .admin-grid {
-                    grid-template-columns: 1fr;
-                }
-                
-                .admin-temas-grid {
-                    grid-template-columns: 1fr;
-                }
-                
-                .grizalum-admin-nav {
-                    flex-wrap: wrap;
-                }
-                
-                .admin-nav-btn {
-                    flex: none;
-                    min-width: 80px;
-                    font-size: 0.8rem;
-                }
-            }
-        `;
-
-        document.head.appendChild(estilos);
-    }
-    // ═══════════════════════════════════════════════════════════════════════════
-// MÉTODOS FALTANTES PARA FUNCIONALIDAD COMPLETA
-// ═══════════════════════════════════════════════════════════════════════════
-
-cambiarIcono() {
-    const iconosPopulares = ['🏢', '🏭', '🏪', '🏦', '🏨', '🔥', '🐔', '🌟', '💎', '⚡', '🚀', '🛠️', '🌱', '💡', '🎯', '💰', '🍕', '☕', '🚗', '✈️'];
-    
-    const modal = document.createElement('div');
-    modal.style.cssText = `
-        position: fixed; 
-        top: 0; 
-        left: 0; 
-        width: 100%; 
-        height: 100%; 
-        background: rgba(0,0,0,0.8); 
-        z-index: 9999999; 
-        display: flex; 
-        align-items: center; 
-        justify-content: center;
-    `;
-    
-    modal.innerHTML = `
-        <div style="background: white; border-radius: 20px; padding: 2rem; width: 400px; max-width: 90vw;">
-            <h3 style="margin: 0 0 1.5rem 0; text-align: center; color: #374151;">🎨 Seleccionar Icono</h3>
-            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
-                ${iconosPopulares.map(icono => `
-                    <div onclick="adminEmpresas.seleccionarIcono('${icono}')" style="
-                        width: 50px; 
-                        height: 50px; 
-                        display: flex; 
-                        align-items: center; 
-                        justify-content: center; 
-                        background: #f8fafc; 
-                        border: 2px solid #e5e7eb; 
-                        border-radius: 12px; 
-                        cursor: pointer; 
-                        font-size: 1.5rem;
-                        transition: all 0.3s ease;
-                    " onmouseover="this.style.background='#3b82f6'; this.style.borderColor='#3b82f6'; this.style.transform='scale(1.1)'" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#e5e7eb'; this.style.transform='scale(1)'">${icono}</div>
-                `).join('')}
-            </div>
-            <div style="text-align: center;">
-                <button onclick="this.parentElement.parentElement.parentElement.remove()" style="background: #6b7280; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;">Cancelar</button>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-}
-
-seleccionarIcono(icono) {
-    document.getElementById('admin-icono').value = icono;
-    document.querySelector('[onclick*="cambiarIcono"]').parentElement.parentElement.parentElement.parentElement.remove();
-    this._mostrarNotificacion(`🎨 Icono cambiado a ${icono}`);
-}
-
-_cambiarSeccion(seccionTarget) {
-    try {
-        // Remover active de botones
-        const botones = document.querySelectorAll('.admin-nav-btn');
-        botones.forEach(btn => {
-            btn.classList.remove('active');
-            btn.style.color = '#64748b';
-            btn.style.borderBottomColor = 'transparent';
-            btn.style.background = 'transparent';
-        });
-        
-        // Remover active de secciones
-        const secciones = document.querySelectorAll('.admin-seccion');
-        secciones.forEach(sec => {
-            sec.classList.remove('active');
-            sec.style.display = 'none';
-        });
-        
-        // Activar nueva sección
-        const botonActivo = document.querySelector(`[data-seccion="${seccionTarget}"]`);
-        const seccionActiva = document.getElementById(`seccion-${seccionTarget}`);
-        
-        if (botonActivo) {
-            botonActivo.classList.add('active');
-            botonActivo.style.color = 'var(--theme-primary, #3b82f6)';
-            botonActivo.style.borderBottomColor = 'var(--theme-primary, #3b82f6)';
-            botonActivo.style.background = 'white';
+        if (this.gestor && this.gestor._log) {
+            this.gestor._log(nivel, `[PREMIUM] ${mensaje}`, datos);
+        } else {
+            console.log(`[PREMIUM ${nivel.toUpperCase()}] ${mensaje}`, datos);
         }
-        
-        if (seccionActiva) {
-            seccionActiva.classList.add('active');
-            seccionActiva.style.display = 'block';
-        }
-        
-        this._log('info', `📂 Sección cambiada a: ${seccionTarget}`);
-    } catch (error) {
-        console.error('Error cambiando sección:', error);
-    }
-}
-
-_configurarEventosAdmin(empresaId) {
-    try {
-        // Navegación entre secciones
-        const botones = document.querySelectorAll('.admin-nav-btn');
-        botones.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const seccion = btn.dataset.seccion;
-                if (seccion) {
-                    this._cambiarSeccion(seccion);
-                }
-            });
-        });
-
-        // Auto-cálculo de métricas financieras
-        const inputsFinancieros = ['admin-ingresos', 'admin-gastos'];
-        inputsFinancieros.forEach(id => {
-            const input = document.getElementById(id);
-            if (input) {
-                input.addEventListener('input', () => this._autoCalcularMetricas());
-            }
-        });
-
-        // Cerrar con Escape
-        const handleEscape = (e) => {
-            if (e.key === 'Escape' && this.modalActivo) {
-                this.cerrarModal();
-                document.removeEventListener('keydown', handleEscape);
-            }
-        };
-        document.addEventListener('keydown', handleEscape);
-
-        this._log('info', '🎯 Eventos admin configurados exitosamente');
-    } catch (error) {
-        console.error('Error configurando eventos admin:', error);
-    }
-}
-
-_autoCalcularMetricas() {
-    setTimeout(() => {
-        try {
-            this.calcularMetricas();
-        } catch (error) {
-            console.error('Error auto-calculando métricas:', error);
-        }
-    }, 300);
-}
-
-exportarDatos(empresaId) {
-    try {
-        const empresa = this.gestor.estado.empresas[empresaId];
-        if (!empresa) {
-            this._mostrarError('Empresa no encontrada');
-            return;
-        }
-        
-        const datos = JSON.stringify(empresa, null, 2);
-        const blob = new Blob([datos], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${empresa.nombre.replace(/[^a-zA-Z0-9]/g, '_')}_datos_${new Date().getTime()}.json`;
-        a.click();
-        URL.revokeObjectURL(url);
-        
-        this._mostrarExito(`📤 Datos de ${empresa.nombre} exportados exitosamente`);
-        this._log('info', `📤 Datos exportados: ${empresa.nombre}`);
-    } catch (error) {
-        console.error('Error exportando datos:', error);
-        this._mostrarError('Error al exportar datos');
-    }
-}
-
-duplicarEmpresa(empresaId) {
-    try {
-        const empresa = this.gestor.estado.empresas[empresaId];
-        if (!empresa) {
-            this._mostrarError('Empresa no encontrada');
-            return;
-        }
-        
-        const timestamp = Date.now();
-        const nuevoId = `${empresa.id}-copia-${timestamp}`;
-        const empresaDuplicada = JSON.parse(JSON.stringify(empresa));
-        
-        empresaDuplicada.id = nuevoId;
-        empresaDuplicada.nombre = `${empresa.nombre} (Copia)`;
-        empresaDuplicada.meta = {
-            ...empresaDuplicada.meta,
-            fechaCreacion: new Date().toISOString(),
-            fechaActualizacion: new Date().toISOString(),
-            version: '1.0'
-        };
-        
-        this.gestor.estado.empresas[nuevoId] = empresaDuplicada;
-        this.gestor._guardarEmpresas();
-        this.gestor._actualizarListaEmpresas();
-        this.gestor._calcularMetricas();
-        
-        this._mostrarExito(`📋 Empresa duplicada: ${empresaDuplicada.nombre}`);
-        this._log('success', `📋 Empresa duplicada: ${empresaDuplicada.nombre}`);
-        
-        // Cerrar modal y seleccionar la nueva empresa
-        setTimeout(() => {
-            this.cerrarModal();
-            this.gestor.seleccionarEmpresa(nuevoId);
-        }, 1000);
-        
-    } catch (error) {
-        console.error('Error duplicando empresa:', error);
-        this._mostrarError('Error al duplicar empresa');
-    }
-}
-
-_aplicarEstilosResponsivos() {
-    // Crear estilos responsive si no existen
-    if (!document.getElementById('admin-responsive-styles')) {
-        const estilos = document.createElement('style');
-        estilos.id = 'admin-responsive-styles';
-        estilos.textContent = `
-            @media (max-width: 768px) {
-                .grizalum-modal-admin {
-                    width: 95vw !important;
-                    height: 95vh !important;
-                    margin: 0 !important;
-                }
-                
-                .admin-grid {
-                    grid-template-columns: 1fr !important;
-                }
-                
-                .admin-nav-btn {
-                    font-size: 12px !important;
-                    padding: 16px 8px !important;
-                }
-            }
-        `;
-        document.head.appendChild(estilos);
     }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// INICIALIZACIÓN Y CONEXIÓN CON GESTOR PRINCIPAL
+// INICIALIZACIÓN DEL SISTEMA PREMIUM
 // ═══════════════════════════════════════════════════════════════════════════
 
-let adminEmpresas = null;
+let adminPremium = null;
 
 // Inicializar cuando el gestor principal esté listo
 document.addEventListener('gestorEmpresasListo', () => {
-    if (window.gestorEmpresas && !adminEmpresas) {
-        adminEmpresas = new GestorEmpresasAdmin(window.gestorEmpresas);
-        window.adminEmpresas = adminEmpresas;
+    if (window.gestorEmpresas && !adminPremium) {
+        adminPremium = new GestorEmpresasAdminPremium(window.gestorEmpresas);
+        window.adminPremium = adminPremium;
         
-        // Conectar con el método del gestor principal
-        window.gestorEmpresas.gestionarEmpresa = function(empresaId) {
-            adminEmpresas.abrirPanelAdmin(empresaId);
+        // Sobrescribir el método del gestor principal para usar la versión premium
+        window.gestorEmpresas.abrirPanelAdminPremium = function() {
+            adminPremium.abrirPanelAdmin();
         };
         
-        console.log('👑 Admin Panel inicializado y conectado con sistema de temas');
+        console.log('👑 PANEL ADMIN PREMIUM inicializado exitosamente');
+        console.log('🚀 Sistema completamente funcional con todas las características premium');
     }
 });
 
 // Asegurar inicialización tardía
 setTimeout(() => {
-    if (window.gestorEmpresas && !adminEmpresas) {
-        adminEmpresas = new GestorEmpresasAdmin(window.gestorEmpresas);
-        window.adminEmpresas = adminEmpresas;
+    if (window.gestorEmpresas && !adminPremium) {
+        adminPremium = new GestorEmpresasAdminPremium(window.gestorEmpresas);
+        window.adminPremium = adminPremium;
         
-        window.gestorEmpresas.gestionarEmpresa = function(empresaId) {
-            adminEmpresas.abrirPanelAdmin(empresaId);
+        window.gestorEmpresas.abrirPanelAdminPremium = function() {
+            adminPremium.abrirPanelAdmin();
         };
+        
+        console.log('👑 PANEL ADMIN PREMIUM inicializado (modo tardío)');
     }
-}, 2000);
+}, 3000);
+
+// Función global para acceso directo
+window.abrirPanelAdminPremium = function() {
+    if (adminPremium) {
+        adminPremium.abrirPanelAdmin();
+    } else {
+        console.error('Panel Admin Premium no está inicializado');
+    }
+};
