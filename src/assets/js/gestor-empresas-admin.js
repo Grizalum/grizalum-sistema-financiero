@@ -1630,8 +1630,102 @@ _generarRecomendaciones(empresa) {
 }
 
 editarEmpresaRapido(empresaId) {
-    this._mostrarNotificacion('✏️ Función de edición rápida próximamente', 'info');
-}
+    const empresa = this.gestor.estado.empresas[empresaId];
+    if (!empresa) return;
+    
+    // Cerrar modal actual
+    document.getElementById('grizalumModalControlEmpresa').remove();
+    
+    // Crear modal de edición rápida
+    const modal = document.createElement('div');
+    modal.id = 'grizalumModalEditarRapido';
+    modal.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+        background: rgba(0,0,0,0.8); z-index: 9999999; display: flex; 
+        align-items: center; justify-content: center; padding: 20px;
+        backdrop-filter: blur(10px); opacity: 0; transition: all 0.3s ease;
+    `;
+
+    modal.innerHTML = `
+        <div style="
+            background: white; border-radius: 20px; width: 600px; max-width: 95vw; 
+            max-height: 90vh; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            transform: scale(0.9); transition: all 0.3s ease;
+        " class="modal-editar-rapido">
+            
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; padding: 20px;">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <h2 style="margin: 0; display: flex; align-items: center; gap: 12px;">
+                        ✏️ Editar: ${empresa.nombre}
+                    </h2>
+                    <button onclick="document.getElementById('grizalumModalEditarRapido').remove()" 
+                            style="width: 35px; height: 35px; background: rgba(255,255,255,0.2); border: none; border-radius: 8px; color: white; cursor: pointer; font-size: 18px;">×</button>
+                </div>
+            </div>
+
+            <!-- Formulario de Edición -->
+            <div style="padding: 24px; max-height: 400px; overflow-y: auto;">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 6px;">💰 Caja Actual (S/.)</label>
+                        <input type="number" id="edit-caja" value="${empresa.finanzas?.caja || 0}" 
+                               style="width: 100%; padding: 10px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 6px;">📈 Ingresos Anuales (S/.)</label>
+                        <input type="number" id="edit-ingresos" value="${empresa.finanzas?.ingresos || 0}" 
+                               style="width: 100%; padding: 10px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 6px;">📉 Gastos Anuales (S/.)</label>
+                        <input type="number" id="edit-gastos" value="${empresa.finanzas?.gastos || 0}" 
+                               style="width: 100%; padding: 10px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 6px;">⚡ Estado</label>
+                        <select id="edit-estado" style="width: 100%; padding: 10px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px;">
+                            <option value="Operativo" ${empresa.estado === 'Operativo' ? 'selected' : ''}>Operativo</option>
+                            <option value="Regular" ${empresa.estado === 'Regular' ? 'selected' : ''}>Regular</option>
+                            <option value="Crítico" ${empresa.estado === 'Crítico' ? 'selected' : ''}>Crítico</option>
+                            <option value="Suspendido" ${empresa.estado === 'Suspendido' ? 'selected' : ''}>Suspendido</option>
+                            <option value="Inactivo" ${empresa.estado === 'Inactivo' ? 'selected' : ''}>Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 6px;">📞 Teléfono</label>
+                        <input type="text" id="edit-telefono" value="${empresa.contacto?.telefono || ''}" 
+                               style="width: 100%; padding: 10px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px;" 
+                               placeholder="+51 1 234-5678">
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 6px;">📧 Email</label>
+                        <input type="email" id="edit-email" value="${empresa.contacto?.email || ''}" 
+                               style="width: 100%; padding: 10px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px;" 
+                               placeholder="contacto@empresa.pe">
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 6px;">🏠 Dirección</label>
+                    <input type="text" id="edit-direccion" value="${empresa.ubicacion?.direccion || ''}" 
+                           style="width: 100%; padding: 10px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px;" 
+                           placeholder="Av. Principal 123, Urbanización">
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div style="background: #f8fafc; padding: 20px; display: flex; justify-content: space-between; border-top: 1px solid #e5e7eb;">
+                <button onclick="document.getElementById('grizalumModalEditarRapido').remove()" 
+                        style="background: #64748b; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                    ❌ Cancelar
+                </button>
+                <button onclick="adminEmpresas.guardarEdicionRapida('${empresaId}')" 
+                        style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600;">
 
 exportarEmpresa(empresaId) {
     const empresa = this.gestor.estado.empresas[empresaId];
