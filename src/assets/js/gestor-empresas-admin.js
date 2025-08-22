@@ -1731,49 +1731,18 @@ exportarEmpresa(empresaId) {
     const empresa = this.gestor.estado.empresas[empresaId];
     if (!empresa) return;
     
-    // Crear HTML simple para PDF
-    const fecha = new Date().toLocaleDateString();
-    const utilidad = (empresa.finanzas?.ingresos || 0) - (empresa.finanzas?.gastos || 0);
+    const datos = JSON.stringify(empresa, null, 2);
+    const blob = new Blob([datos], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${empresa.nombre.replace(/[^a-zA-Z0-9]/g, '_')}_${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
     
-    const contenido = `
-        <html>
-        <head>
-            <title>Reporte - ${empresa.nombre}</title>
-            <style>
-                body { font-family: Arial; padding: 20px; }
-                .header { background: #d4af37; color: white; padding: 20px; border-radius: 10px; }
-                .metric { display: inline-block; margin: 10px; padding: 15px; background: #f0f0f0; border-radius: 8px; }
-            </style>
-        </head>
-        <body>
-            <div class="header">
-                <h1>${empresa.nombre}</h1>
-                <p>${empresa.categoria} - ${empresa.estado}</p>
-                <p>Reporte generado: ${fecha}</p>
-            </div>
-            <br>
-            <div class="metric">
-                <h3>💰 Caja: S/. ${(empresa.finanzas?.caja || 0).toLocaleString()}</h3>
-            </div>
-            <div class="metric">
-                <h3>📈 Ingresos: S/. ${(empresa.finanzas?.ingresos || 0).toLocaleString()}</h3>
-            </div>
-            <div class="metric">
-                <h3>📉 Gastos: S/. ${(empresa.finanzas?.gastos || 0).toLocaleString()}</h3>
-            </div>
-            <div class="metric">
-                <h3>💎 Utilidad: S/. ${utilidad.toLocaleString()}</h3>
-            </div>
-        </body>
-        </html>
-    `;
-    
-    const ventana = window.open();
-    ventana.document.write(contenido);
-    ventana.print();
-    
-    this._mostrarNotificacion(`📄 PDF de ${empresa.nombre} generado`, 'success');
+    this._mostrarNotificacion(`📤 ${empresa.nombre} exportada exitosamente`, 'success');
 }
+
     suspenderEmpresa(empresaId) {
         const empresa = this.gestor.estado.empresas[empresaId];
         if (!empresa) return;
