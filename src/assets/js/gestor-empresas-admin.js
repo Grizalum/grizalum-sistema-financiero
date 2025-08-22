@@ -1731,16 +1731,431 @@ exportarEmpresa(empresaId) {
     const empresa = this.gestor.estado.empresas[empresaId];
     if (!empresa) return;
     
-    const datos = JSON.stringify(empresa, null, 2);
-    const blob = new Blob([datos], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${empresa.nombre.replace(/[^a-zA-Z0-9]/g, '_')}_${Date.now()}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    this._mostrarNotificacion('📊 Generando reporte PDF...', 'info');
     
-    this._mostrarNotificacion(`📤 ${empresa.nombre} exportada exitosamente`, 'success');
+    // Crear contenido HTML para el PDF
+    const fechaActual = new Date().toLocaleDateString('es-PE', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+    
+    const utilidad = (empresa.finanzas?.ingresos || 0) - (empresa.finanzas?.gastos || 0);
+    const margen = empresa.finanzas?.ingresos > 0 ? ((utilidad / empresa.finanzas.ingresos) * 100).toFixed(1) : 0;
+    
+    // Estado financiero
+    let estadoFinanciero = { texto: 'Excelente', color: '#10b981', icono: '😊' };
+    if ((empresa.finanzas?.caja || 0) < 1000) {
+        estadoFinanciero = { texto: 'Crítico', color: '#ef4444', icono: '😰' };
+    } else if ((empresa.finanzas?.caja || 0) < 5000) {
+        estadoFinanciero = { texto: 'Regular', color: '#f59e0b', icono: '😐' };
+    }
+    
+    const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Reporte - ${empresa.nombre}</title>
+            <style>
+                @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+                
+                * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+                
+                body {
+                    font-family: 'Inter', sans-serif;
+                    line-height: 1.6;
+                    color: #1e293b;
+                    background: #ffffff;
+                    padding: 40px;
+                }
+                
+                .header {
+                    background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+                    color: white;
+                    padding: 30px;
+                    border-radius: 20px;
+                    margin-bottom: 30px;
+                    position: relative;
+                    overflow: hidden;
+                }
+                
+                .header::before {
+                    content: '';
+                    position: absolute;
+                    top: -50%;
+                    right: -20px;
+                    width: 200px;
+                    height: 200px;
+                    background: rgba(255,255,255,0.1);
+                    border-radius: 50%;
+                }
+                
+                .header-content {
+                    position: relative;
+                    z-index: 2;
+                    display: flex;
+                    align-items: center;
+                    gap: 20px;
+                }
+                
+                .empresa-icon {
+                    width: 80px;
+                    height: 80px;
+                    background: rgba(255,255,255,0.2);
+                    border-radius: 20px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 36px;
+                    border: 3px solid rgba(255,255,255,0.3);
+                }
+                
+                .empresa-info h1 {
+                    font-size: 32px;
+                    font-weight: 800;
+                    margin-bottom: 8px;
+                    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                }
+                
+                .empresa-info p {
+                    font-size: 16px;
+                    opacity: 0.9;
+                    margin-bottom: 4px;
+                }
+                
+                .premium-badge {
+                    background: linear-gradient(135deg, #dc2626, #991b1b);
+                    padding: 8px 20px;
+                    border-radius: 25px;
+                    font-size: 12px;
+                    font-weight: 800;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    margin-top: 15px;
+                    display: inline-block;
+                    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+                }
+                
+                .report-info {
+                    text-align: right;
+                    color: rgba(255,255,255,0.9);
+                }
+                
+                .metrics-grid {
+                    display: grid;
+                    grid-template-columns: repeat(4, 1fr);
+                    gap: 20px;
+                    margin-bottom: 30px;
+                }
+                
+                .metric-card {
+                    padding: 25px;
+                    border-radius: 16px;
+                    color: white;
+                    text-align: center;
+                    position: relative;
+                    overflow: hidden;
+                    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+                }
+                
+                .metric-card::before {
+                    content: '';
+                    position: absolute;
+                    top: -20px;
+                    right: -20px;
+                    width: 60px;
+                    height: 60px;
+                    background: rgba(255,255,255,0.1);
+                    border-radius: 50%;
+                }
+                
+                .metric-card .icon {
+                    font-size: 32px;
+                    margin-bottom: 12px;
+                }
+                
+                .metric-card .value {
+                    font-size: 24px;
+                    font-weight: 800;
+                    margin-bottom: 8px;
+                }
+                
+                .metric-card .label {
+                    font-size: 12px;
+                    opacity: 0.9;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    font-weight: 600;
+                }
+                
+                .caja { background: linear-gradient(135deg, #10b981, #059669); }
+                .ingresos { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+                .gastos { background: linear-gradient(135deg, #ef4444, #dc2626); }
+                .utilidad { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+                
+                .info-section {
+                    background: #f8fafc;
+                    padding: 25px;
+                    border-radius: 16px;
+                    margin-bottom: 25px;
+                    border-left: 4px solid #d4af37;
+                }
+                
+                .info-section h3 {
+                    color: #1e293b;
+                    font-size: 18px;
+                    font-weight: 700;
+                    margin-bottom: 15px;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                }
+                
+                .info-grid {
+                    display: grid;
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 20px;
+                }
+                
+                .info-item {
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 8px 0;
+                    border-bottom: 1px solid #e2e8f0;
+                }
+                
+                .info-item:last-child {
+                    border-bottom: none;
+                }
+                
+                .info-label {
+                    font-weight: 600;
+                    color: #64748b;
+                }
+                
+                .info-value {
+                    font-weight: 500;
+                    color: #1e293b;
+                }
+                
+                .analysis-section {
+                    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+                    padding: 25px;
+                    border-radius: 16px;
+                    border: 1px solid #e2e8f0;
+                    margin-bottom: 25px;
+                }
+                
+                .status-indicator {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 8px 16px;
+                    border-radius: 20px;
+                    font-weight: 600;
+                    font-size: 14px;
+                }
+                
+                .footer {
+                    text-align: center;
+                    margin-top: 40px;
+                    padding: 20px;
+                    border-top: 2px solid #e2e8f0;
+                    color: #64748b;
+                }
+                
+                .footer-logo {
+                    font-size: 24px;
+                    font-weight: 800;
+                    color: #d4af37;
+                    margin-bottom: 8px;
+                }
+                
+                @media print {
+                    body { padding: 20px; }
+                    .header::before { display: none; }
+                }
+            </style>
+        </head>
+        <body>
+            <!-- Header Premium -->
+            <div class="header">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div class="header-content">
+                        <div class="empresa-icon">${empresa.icono || '🏢'}</div>
+                        <div class="empresa-info">
+                            <h1>${empresa.nombre}</h1>
+                            <p><strong>${empresa.categoria}</strong> • ${empresa.estado}</p>
+                            <p>📍 ${empresa.ubicacion?.distrito || 'No definida'}, ${empresa.ubicacion?.departamento || 'Perú'}</p>
+                            <div class="premium-badge">👑 REPORTE PREMIUM</div>
+                        </div>
+                    </div>
+                    <div class="report-info">
+                        <p><strong>GRIZALUM PREMIUM</strong></p>
+                        <p>Reporte Empresarial</p>
+                        <p>${fechaActual}</p>
+                        <p style="font-size: 12px; margin-top: 10px;">ID: ${empresa.id}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Métricas Financieras -->
+            <div class="metrics-grid">
+                <div class="metric-card caja">
+                    <div class="icon">💰</div>
+                    <div class="value">S/. ${(empresa.finanzas?.caja || 0).toLocaleString()}</div>
+                    <div class="label">Caja Actual</div>
+                </div>
+                <div class="metric-card ingresos">
+                    <div class="icon">📈</div>
+                    <div class="value">S/. ${(empresa.finanzas?.ingresos || 0).toLocaleString()}</div>
+                    <div class="label">Ingresos Anuales</div>
+                </div>
+                <div class="metric-card gastos">
+                    <div class="icon">📉</div>
+                    <div class="value">S/. ${(empresa.finanzas?.gastos || 0).toLocaleString()}</div>
+                    <div class="label">Gastos Anuales</div>
+                </div>
+                <div class="metric-card utilidad">
+                    <div class="icon">💎</div>
+                    <div class="value">S/. ${utilidad.toLocaleString()}</div>
+                    <div class="label">Utilidad Neta</div>
+                </div>
+            </div>
+            
+            <!-- Información General -->
+            <div class="info-section">
+                <h3>🏢 Información Empresarial</h3>
+                <div class="info-grid">
+                    <div>
+                        <div class="info-item">
+                            <span class="info-label">Estado Operativo:</span>
+                            <span class="info-value" style="color: ${empresa.estado === 'Operativo' ? '#10b981' : '#ef4444'}">${empresa.estado}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Categoría:</span>
+                            <span class="info-value">${empresa.categoria}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Fecha de Creación:</span>
+                            <span class="info-value">${empresa.meta?.fechaCreacion ? new Date(empresa.meta.fechaCreacion).toLocaleDateString() : 'No disponible'}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="info-item">
+                            <span class="info-label">Teléfono:</span>
+                            <span class="info-value">${empresa.contacto?.telefono || 'No disponible'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Email:</span>
+                            <span class="info-value">${empresa.contacto?.email || 'No disponible'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Sitio Web:</span>
+                            <span class="info-value">${empresa.contacto?.web || 'No disponible'}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Análisis Financiero -->
+            <div class="analysis-section">
+                <h3 style="color: #1e293b; font-size: 18px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                    📊 Análisis Financiero
+                </h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 8px;">Estado Financiero:</div>
+                        <div class="status-indicator" style="background: ${estadoFinanciero.color}20; color: ${estadoFinanciero.color}; border: 1px solid ${estadoFinanciero.color}40;">
+                            ${estadoFinanciero.icono} ${estadoFinanciero.texto}
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 8px;">Margen de Utilidad:</div>
+                        <div style="font-size: 24px; font-weight: 800; color: ${margen > 20 ? '#10b981' : margen > 0 ? '#f59e0b' : '#ef4444'}">${margen}%</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 8px;">Liquidez:</div>
+                        <div style="font-size: 24px; font-weight: 800; color: ${(empresa.finanzas?.caja || 0) > 10000 ? '#10b981' : (empresa.finanzas?.caja || 0) > 1000 ? '#f59e0b' : '#ef4444'}">
+                            ${(empresa.finanzas?.caja || 0) > 10000 ? 'Alta' : (empresa.finanzas?.caja || 0) > 1000 ? 'Media' : 'Baja'}
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div style="font-weight: 600; margin-bottom: 12px;">📋 Recomendaciones:</div>
+                    <div style="background: white; padding: 16px; border-radius: 8px; border-left: 4px solid #3b82f6;">
+                        ${this._generarRecomendacionesPDF(empresa)}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="footer">
+                <div class="footer-logo">GRIZALUM PREMIUM</div>
+                <p>Reporte generado el ${fechaActual} • Sistema de Gestión Empresarial</p>
+                <p style="font-size: 12px; margin-top: 8px;">© 2025 GRIZALUM - Panel de Control Ejecutivo</p>
+            </div>
+        </body>
+        </html>
+    `;
+    
+    // Crear y descargar el PDF
+    this._descargarPDF(htmlContent, empresa.nombre);
+}
+
+_generarRecomendacionesPDF(empresa) {
+    const caja = empresa.finanzas?.caja || 0;
+    const ingresos = empresa.finanzas?.ingresos || 0;
+    const gastos = empresa.finanzas?.gastos || 0;
+    
+    const recomendaciones = [];
+    
+    if (caja < 1000) {
+        recomendaciones.push('🚨 <strong>Urgente:</strong> Inyectar capital o reducir gastos inmediatamente');
+    }
+    if (gastos > ingresos) {
+        recomendaciones.push('📉 <strong>Revisar:</strong> Estructura de costos y estrategias para aumentar ingresos');
+    }
+    if (caja > 50000) {
+        recomendaciones.push('💡 <strong>Oportunidad:</strong> Considerar inversiones para hacer crecer el negocio');
+    }
+    if (ingresos > gastos && caja > 5000) {
+        recomendaciones.push('✅ <strong>Excelente:</strong> La empresa mantiene un buen estado financiero');
+    }
+    if (recomendaciones.length === 0) {
+        recomendaciones.push('📊 <strong>Análisis:</strong> Revisar estrategias de crecimiento y optimización');
+    }
+    
+    return recomendaciones.join('<br><br>• ');
+}
+
+_descargarPDF(htmlContent, nombreEmpresa) {
+    // Crear ventana temporal para imprimir
+    const ventanaImpresion = window.open('', '_blank', 'width=800,height=600');
+    ventanaImpresion.document.write(htmlContent);
+    ventanaImpresion.document.close();
+    
+    // Esperar a que cargue y luego imprimir
+    ventanaImpresion.onload = function() {
+        setTimeout(() => {
+            ventanaImpresion.focus();
+            ventanaImpresion.print();
+            
+            // Detectar cuando termina la impresión para cerrar la ventana
+            ventanaImpresion.onafterprint = function() {
+                ventanaImpresion.close();
+            };
+        }, 500);
+    };
+    
+    this._registrarLog('info', `PDF generado para empresa: ${nombreEmpresa}`);
+    this._mostrarNotificacion(`📄 Reporte PDF de ${nombreEmpresa} generado exitosamente`, 'success');
 }
 
     suspenderEmpresa(empresaId) {
