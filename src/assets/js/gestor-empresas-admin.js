@@ -2334,42 +2334,59 @@ aplicarCambiosFinancieros(empresaId) {
 }
 limpiarTodosLosModalesForzado() {
     try {
-        // Remover TODOS los modales posibles
+        console.log('🧹 Cerrando modal superior...');
+        
+        // Buscar el modal con z-index más alto (el que está encima)
+        const todosLosModales = Array.from(document.querySelectorAll('div[style*="z-index: 9999999"]'));
+        
+        if (todosLosModales.length > 0) {
+            // Cerrar solo el último modal (el que está encima)
+            const modalSuperior = todosLosModales[todosLosModales.length - 1];
+            modalSuperior.remove();
+            console.log('✅ Modal superior cerrado');
+        } else {
+            // Si no hay modales 9999999, buscar otros
+            const modalFinanciero = document.querySelector('div[style*="EDITOR FINANCIERO"]');
+            const modalAviso = document.querySelector('div[style*="CENTRO DE AVISOS"]');
+            const modalHistorial = document.querySelector('div[style*="HISTORIAL COMPLETO"]');
+            
+            if (modalFinanciero) modalFinanciero.remove();
+            if (modalAviso) modalAviso.remove();
+            if (modalHistorial) modalHistorial.remove();
+        }
+        
+        console.log('✅ Limpieza selectiva completada');
+        
+    } catch (error) {
+        console.error('❌ Error en limpieza selectiva:', error);
+    }
+}
+
+ cerrarTodoCompletamente() {
+    try {
+        console.log('🧹 CERRANDO TODO...');
+        
+        // Remover TODOS los modales
         const selectores = [
             'div[style*="z-index: 9999999"]',
-            'div[style*="z-index: 999999"]', 
+            'div[style*="z-index: 999999"]',
             '#grizalumModalControlEmpresa',
-            '#grizalumModalAdmin',
-            'div[style*="backdrop-filter: blur"]',
-            'div[style*="position: fixed"]'
+            '#grizalumModalAdmin'
         ];
         
         selectores.forEach(selector => {
-            document.querySelectorAll(selector).forEach(el => {
-                if (el.style.background && el.style.background.includes('rgba(0,0,0')) {
-                    el.remove();
-                }
-            });
+            document.querySelectorAll(selector).forEach(el => el.remove());
         });
         
-        // Limpiar body de cualquier overflow oculto
         document.body.style.overflow = 'auto';
-        
-        // Mensaje de confirmación
-        console.log('🧹 LIMPIEZA FORZADA COMPLETADA');
-        
-        setTimeout(() => {
-            alert('✅ Modales limpiados. Puedes continuar.');
-        }, 100);
+        console.log('✅ TODO cerrado completamente');
         
     } catch (error) {
-        console.error('Error en limpieza:', error);
-        // Último recurso: recargar página
-        if (confirm('¿Recargar página para limpiar todo?')) {
-            location.reload();
-        }
+        console.error('❌ Error:', error);
+        location.reload();
     }
 }
+    
 generarReporteEmpresaAvanzado(empresaId) {
     const empresa = this.gestor?.estado?.empresas?.[empresaId];
     if (!empresa) return;
