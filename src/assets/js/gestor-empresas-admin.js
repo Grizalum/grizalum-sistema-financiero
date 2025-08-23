@@ -2242,7 +2242,7 @@ editarFinanzasEmpresaAvanzado(empresaId) {
                         >💾 GUARDAR CAMBIOS</button>
                         
                         <button 
-                            onclick="this.closest('div[style*=\"position: fixed\"]').remove()"    
+                            onclick="this.parentElement.parentElement.parentElement.remove()"   
                             style="
                                 flex: 0.5;
                                 background: linear-gradient(135deg, #64748b, #475569); 
@@ -2643,7 +2643,7 @@ enviarAvisoEmpresaAvanzado(empresaId) {
                     >📤 ENVIAR AVISO</button>
                     
                     <button 
-                        onclick="this.closest('div[style*=\"position: fixed\"]').remove()"
+                        onclick="this.parentElement.parentElement.parentElement.remove()"
                         style="
                             flex: 0.3;
                             background: linear-gradient(135deg, #64748b, #475569); 
@@ -2902,7 +2902,7 @@ verHistorialEmpresaAvanzado(empresaId) {
                     <h3 style="margin: 0 0 8px 0; font-size: 24px; font-weight: 800;">📋 HISTORIAL COMPLETO</h3>
                     <p style="margin: 0; opacity: 0.9; font-size: 16px;">${empresa.nombre} • ${historialCompleto.length} registros</p>
                 </div>
-                <buttononclick="this.closest('div[style*=\"position: fixed\"]').remove()"
+                <button onclick="this.parentElement.parentElement.parentElement.remove()"
                     style="background: rgba(255,255,255,0.2); border: none; color: white; width: 45px; height: 45px; border-radius: 12px; cursor: pointer; font-size: 20px; font-weight: bold;">×</button>
             </div>
             
