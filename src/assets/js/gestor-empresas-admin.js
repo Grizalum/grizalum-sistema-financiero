@@ -1664,7 +1664,7 @@ _crearModalControlEmpresa(empresa) {
                         </div>
                         
                         <button 
-                            onclick="this.parentElement.parentElement.parentElement.parentElement.remove()" 
+                            onclick="adminEmpresas.limpiarTodosLosModalesForzado()" 
                             style="
                                 width: 60px; 
                                 height: 60px; 
@@ -2242,7 +2242,7 @@ editarFinanzasEmpresaAvanzado(empresaId) {
                         >💾 GUARDAR CAMBIOS</button>
                         
                         <button 
-                            onclick="this.parentElement.parentElement.parentElement.parentElement.remove()"
+                            onclick="adminEmpresas.limpiarTodosLosModalesForzado()"
                             style="
                                 flex: 0.5;
                                 background: linear-gradient(135deg, #64748b, #475569); 
@@ -3018,6 +3018,43 @@ configurarAlertasEmpresa(empresaId) {
     this._mostrarNotificacionPremium('🔔 Configurador de alertas próximamente disponible', 'info');
     this._registrarLog('info', `Configuración de alertas solicitada para "${empresa.nombre}"`);
 }
+    limpiarTodosLosModalesForzado() {
+    try {
+        console.log('🧹 Iniciando limpieza forzada...');
+        
+        // Remover TODOS los modales por ID
+        const modalesIds = [
+            'grizalumModalControlEmpresa',
+            'grizalumModalAdmin'
+        ];
+        
+        modalesIds.forEach(id => {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.remove();
+                console.log(`✅ Modal ${id} removido`);
+            }
+        });
+        
+        // Remover por z-index alto
+        const modalesZIndex = document.querySelectorAll('div[style*="z-index: 999999"]');
+        modalesZIndex.forEach(modal => modal.remove());
+        
+        // Remover por backdrop-filter
+        const modalesBackdrop = document.querySelectorAll('div[style*="backdrop-filter: blur"]');
+        modalesBackdrop.forEach(modal => modal.remove());
+        
+        // Restaurar body
+        document.body.style.overflow = 'auto';
+        
+        console.log('✅ Limpieza forzada completada');
+        
+    } catch (error) {
+        console.error('❌ Error en limpieza:', error);
+        // Último recurso
+        location.reload();
+    }
+}
     
     suspenderEmpresa(empresaId) {
         const empresa = this.gestor.estado.empresas[empresaId];
@@ -3495,3 +3532,12 @@ setTimeout(() => {
         `);
     }
 }, 4000);
+
+// TECLA DE EMERGENCIA - ESC para limpiar todo
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        if (window.adminEmpresas && window.adminEmpresas.limpiarTodosLosModalesForzado) {
+            window.adminEmpresas.limpiarTodosLosModalesForzado();
+        }
+    }
+});
