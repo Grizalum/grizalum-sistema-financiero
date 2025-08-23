@@ -2327,6 +2327,39 @@ aplicarCambiosFinancieros(empresaId) {
         this.abrirControlEmpresaReal(empresaId);
     }, 1500);
 }
+ cerrarModalFinanciero() {
+    // Buscar y remover todos los modales financieros
+    const modales = document.querySelectorAll('div[style*="z-index: 9999999"]');
+    modales.forEach(modal => {
+        if (modal.textContent.includes('EDITOR FINANCIERO') || 
+            modal.textContent.includes('CENTRO DE AVISOS')) {
+            modal.style.opacity = '0';
+            modal.style.transform = 'scale(0.8)';
+            setTimeout(() => modal.remove(), 300);
+        }
+    });
+    
+    // Limpiar eventos residuales
+    this._limpiarEventosModales();
+    
+    console.log('✅ Modal financiero cerrado correctamente');
+}
+
+_limpiarEventosModales() {
+    // Remover event listeners residuales
+    document.removeEventListener('keydown', this._handleEscapeKey);
+    
+    // Limpiar referencias
+    if (this.modalFinancieroActivo) {
+        this.modalFinancieroActivo = null;
+    }
+}
+
+_handleEscapeKey = (e) => {
+    if (e.key === 'Escape') {
+        this.cerrarModalFinanciero();
+    }
+}   
 
 generarReporteEmpresaAvanzado(empresaId) {
     const empresa = this.gestor?.estado?.empresas?.[empresaId];
@@ -2602,7 +2635,7 @@ enviarAvisoEmpresaAvanzado(empresaId) {
                     >📤 ENVIAR AVISO</button>
                     
                     <button 
-                        onclick="this.parentElement.parentElement.parentElement.parentElement.remove()"
+                        onclick="adminEmpresas.cerrarModalFinanciero()"
                         style="
                             flex: 0.3;
                             background: linear-gradient(135deg, #64748b, #475569); 
