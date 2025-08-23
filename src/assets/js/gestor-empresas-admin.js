@@ -2333,16 +2333,40 @@ aplicarCambiosFinancieros(empresaId) {
     console.log('✅ Modal cerrado');
 }
 limpiarTodosLosModalesForzado() {
-    // Última opción: usar un selector muy específico
-    const modalFinanciero = document.querySelector('[style*="EDITOR FINANCIERO"]')?.parentElement?.parentElement?.parentElement?.parentElement;
-    
-    if (modalFinanciero) {
-        modalFinanciero.remove();
-        console.log('✅ Modal financiero cerrado');
-        return;
+    try {
+        // Método 1: Buscar modal financiero específico
+        const modalFinanciero = Array.from(document.querySelectorAll('div')).find(div => 
+            div.textContent.includes('EDITOR FINANCIERO PREMIUM')
+        );
+        
+        if (modalFinanciero) {
+            modalFinanciero.remove();
+            console.log('✅ Modal financiero cerrado');
+            return;
+        }
+        
+        // Método 2: Buscar modal de avisos específico  
+        const modalAvisos = Array.from(document.querySelectorAll('div')).find(div => 
+            div.textContent.includes('CENTRO DE AVISOS PREMIUM')
+        );
+        
+        if (modalAvisos) {
+            modalAvisos.remove();
+            console.log('✅ Modal avisos cerrado');
+            return;
+        }
+        
+        // Método 3: Solo cerrar el z-index más alto (último modal abierto)
+        const todosModales = Array.from(document.querySelectorAll('div[style*="z-index: 9999999"]'));
+        if (todosModales.length > 0) {
+            const ultimoModal = todosModales[todosModales.length - 1];
+            ultimoModal.remove();
+            console.log('✅ Último modal cerrado');
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
     }
-    
-    console.log('❌ No se pudo cerrar específicamente');
 }
    
 generarReporteEmpresaAvanzado(empresaId) {
