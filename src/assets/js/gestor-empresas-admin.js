@@ -2333,33 +2333,16 @@ aplicarCambiosFinancieros(empresaId) {
     console.log('✅ Modal cerrado');
 }
 limpiarTodosLosModalesForzado() {
-    try {
-        console.log('🧹 Cerrando modal superior...');
-        
-        // Buscar el modal con z-index más alto (el que está encima)
-        const todosLosModales = Array.from(document.querySelectorAll('div[style*="z-index: 9999999"]'));
-        
-        if (todosLosModales.length > 0) {
-            // Cerrar solo el último modal (el que está encima)
-            const modalSuperior = todosLosModales[todosLosModales.length - 1];
-            modalSuperior.remove();
-            console.log('✅ Modal superior cerrado');
-        } else {
-            // Si no hay modales 9999999, buscar otros
-            const modalFinanciero = document.querySelector('div[style*="EDITOR FINANCIERO"]');
-            const modalAviso = document.querySelector('div[style*="CENTRO DE AVISOS"]');
-            const modalHistorial = document.querySelector('div[style*="HISTORIAL COMPLETO"]');
-            
-            if (modalFinanciero) modalFinanciero.remove();
-            if (modalAviso) modalAviso.remove();
-            if (modalHistorial) modalHistorial.remove();
-        }
-        
-        console.log('✅ Limpieza selectiva completada');
-        
-    } catch (error) {
-        console.error('❌ Error en limpieza selectiva:', error);
+    // Última opción: usar un selector muy específico
+    const modalFinanciero = document.querySelector('[style*="EDITOR FINANCIERO"]')?.parentElement?.parentElement?.parentElement?.parentElement;
+    
+    if (modalFinanciero) {
+        modalFinanciero.remove();
+        console.log('✅ Modal financiero cerrado');
+        return;
     }
+    
+    console.log('❌ No se pudo cerrar específicamente');
 }
    
 generarReporteEmpresaAvanzado(empresaId) {
