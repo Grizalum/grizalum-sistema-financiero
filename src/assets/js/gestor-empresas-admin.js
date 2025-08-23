@@ -1250,42 +1250,97 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
     // ═══════════════════════════════════════════════════════════════════════════
 
     _configurarEventosPremium() {
-        // Navegación entre secciones
-        const botones = document.querySelectorAll('.premium-nav-btn');
-        botones.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const seccion = btn.dataset.seccion;
-                this._cambiarSeccionPremium(seccion);
-            });
+    // Navegación entre secciones
+    const botones = document.querySelectorAll('.premium-nav-btn');
+    botones.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const seccion = btn.dataset.seccion;
+            this._cambiarSeccionPremium(seccion);
         });
+    });
 
-        // Cerrar con Escape
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && this.modalActivo) {
-                this.cerrarModal();
-            }
-        });
-
-        // Configurar estilos de navegación
-        const style = document.createElement('style');
-        style.textContent = `
-            .premium-nav-btn:hover {
-                background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(184, 148, 31, 0.2) 100%) !important;
-                color: #d4af37 !important;
-                transform: translateY(-2px);
-                box-shadow: 0 8px 24px rgba(212, 175, 55, 0.3);
+    // ✅ CONFIGURAR BOTONES GESTIONAR - ESTO ES LO NUEVO
+    setTimeout(() => {
+        // Interceptar TODOS los botones gestionar
+        const botonesGestionar = document.querySelectorAll('button[onclick*="abrirControlEmpresa"], button[onclick*="GESTIONAR"], [onclick*="gestionar"]');
+        
+        console.log(`🔧 Configurando ${botonesGestionar.length} botones gestionar`);
+        
+        botonesGestionar.forEach(boton => {
+            // Extraer empresa ID del onclick
+            const onclickOriginal = boton.getAttribute('onclick');
+            let empresaId = null;
+            
+            if (onclickOriginal) {
+                const match = onclickOriginal.match(/['"]([^'"]+)['"]/);
+                if (match) empresaId = match[1];
             }
             
-            .premium-nav-btn.active {
-                background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%) !important;
-                color: white !important;
-                box-shadow: 0 4px 16px rgba(212, 175, 55, 0.4);
+            // Reemplazar evento click
+            boton.onclick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log(`🚀 Abriendo panel para empresa: ${empresaId}`);
+                this.abrirControlEmpresaReal(empresaId);
+            };
+            
+            // Marcar como premium
+            boton.innerHTML = '👑 GESTIONAR';
+            boton.style.background = 'linear-gradient(135deg, #d4af37, #b8941f)';
+        });
+        
+        // También interceptar botones que se generen dinámicamente
+        document.addEventListener('click', (e) => {
+            if (e.target.textContent.includes('GESTIONAR') || e.target.onclick?.toString().includes('abrirControlEmpresa')) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Extraer empresa ID
+                let empresaId = null;
+                let elemento = e.target;
+                
+                // Buscar ID en el elemento o sus padres
+                while (elemento && !empresaId) {
+                    if (elemento.onclick) {
+                        const match = elemento.onclick.toString().match(/['"]([^'"]+)['"]/);
+                        if (match) empresaId = match[1];
+                    }
+                    elemento = elemento.parentElement;
+                }
+                
+                console.log(`🎯 Click interceptado para empresa: ${empresaId}`);
+                this.abrirControlEmpresaReal(empresaId);
             }
-        `;
-        document.head.appendChild(style);
-    }
+        });
+        
+    }, 500);
 
+    // Cerrar con Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && this.modalActivo) {
+            this.cerrarModal();
+        }
+    });
+
+    // Configurar estilos de navegación
+    const style = document.createElement('style');
+    style.textContent = `
+        .premium-nav-btn:hover {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(184, 148, 31, 0.2) 100%) !important;
+            color: #d4af37 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.3);
+        }
+        
+        .premium-nav-btn.active {
+            background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%) !important;
+            color: white !important;
+            box-shadow: 0 4px 16px rgba(212, 175, 55, 0.4);
+        }
+    `;
+    document.head.appendChild(style);
+}
     _cambiarSeccionPremium(seccionTarget) {
         try {
             // Remover active de botones
@@ -1424,6 +1479,439 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
         this._mostrarNotificacion(`🔧 Gestionando empresa: ${empresa.nombre}`, 'info');
     }
 
+    // ✅ NUEVA FUNCIÓN QUE SÍ FUNCIONA
+abrirControlEmpresaReal(empresaId) {
+    console.log(`🚀 Abriendo control REAL para empresa: ${empresaId}`);
+    
+    // Buscar empresa en el gestor principal
+    const empresa = this.gestor?.estado?.empresas?.[empresaId];
+    
+    if (!empresa) {
+        this._mostrarNotificacion('❌ Empresa no encontrada', 'error');
+        return;
+    }
+    
+    // Crear modal de control específico
+    this._crearModalControlEmpresa(empresa);
+}
+
+_crearModalControlEmpresa(empresa) {
+    // Cerrar modal anterior
+    this._cerrarModalPrevio();
+    
+    const modal = document.createElement('div');
+    modal.id = 'grizalumModalControlEmpresa';
+    modal.style.cssText = `
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: 100%; 
+        background: rgba(0,0,0,0.8); 
+        z-index: 999999; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        padding: 20px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    `;
+
+    modal.innerHTML = `
+        <div style="
+            background: white; 
+            border-radius: 20px; 
+            width: 1000px; 
+            max-width: 95vw; 
+            max-height: 90vh; 
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        " class="control-empresa-content">
+            
+            <!-- Header -->
+            <div style="
+                background: linear-gradient(135deg, #d4af37, #b8941f); 
+                color: white; 
+                padding: 30px; 
+                display: flex; 
+                justify-content: space-between; 
+                align-items: center;
+            ">
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div style="
+                        width: 60px; 
+                        height: 60px; 
+                        background: rgba(255,255,255,0.2); 
+                        border-radius: 15px; 
+                        display: flex; 
+                        align-items: center; 
+                        justify-content: center; 
+                        font-size: 28px;
+                    ">${empresa.icono || '🏢'}</div>
+                    <div>
+                        <h2 style="margin: 0; font-size: 28px;">${empresa.nombre}</h2>
+                        <p style="margin: 5px 0 0 0; opacity: 0.9;">${empresa.categoria} - ${empresa.estado}</p>
+                    </div>
+                </div>
+                <button 
+                    onclick="this.parentElement.parentElement.parentElement.parentElement.remove()" 
+                    style="
+                        background: rgba(255,255,255,0.2); 
+                        border: none; 
+                        color: white; 
+                        width: 40px; 
+                        height: 40px; 
+                        border-radius: 10px; 
+                        cursor: pointer; 
+                        font-size: 20px;
+                    "
+                >×</button>
+            </div>
+            
+            <!-- Contenido -->
+            <div style="padding: 30px; max-height: 500px; overflow-y: auto;">
+                
+                <!-- Información Financiera -->
+                <div style="margin-bottom: 30px;">
+                    <h3 style="margin: 0 0 20px 0; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 20px;">💰</span> Información Financiera
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                        <div style="background: #f8fafc; padding: 20px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: #10b981;">S/. ${(empresa.finanzas?.caja || 0).toLocaleString()}</div>
+                            <div style="color: #64748b; font-size: 14px;">Caja</div>
+                        </div>
+                        <div style="background: #f8fafc; padding: 20px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: #3b82f6;">S/. ${(empresa.finanzas?.ingresos || 0).toLocaleString()}</div>
+                            <div style="color: #64748b; font-size: 14px;">Ingresos</div>
+                        </div>
+                        <div style="background: #f8fafc; padding: 20px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: #ef4444;">S/. ${(empresa.finanzas?.gastos || 0).toLocaleString()}</div>
+                            <div style="color: #64748b; font-size: 14px;">Gastos</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Acciones de Control -->
+                <div style="margin-bottom: 30px;">
+                    <h3 style="margin: 0 0 20px 0; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 20px;">🛠️</span> Acciones de Control
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                        
+                        <button onclick="adminEmpresas.cambiarEstadoEmpresa('${empresa.id}', 'Operativo')" 
+                            style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: 600;">
+                            ✅ Activar Empresa
+                        </button>
+                        
+                        <button onclick="adminEmpresas.cambiarEstadoEmpresa('${empresa.id}', 'Suspendido')" 
+                            style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: 600;">
+                            ⏸️ Suspender Empresa
+                        </button>
+                        
+                        <button onclick="adminEmpresas.editarFinanzasEmpresa('${empresa.id}')" 
+                            style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: 600;">
+                            💰 Editar Finanzas
+                        </button>
+                        
+                        <button onclick="adminEmpresas.generarReporteEmpresa('${empresa.id}')" 
+                            style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: 600;">
+                            📊 Generar Reporte
+                        </button>
+                        
+                        <button onclick="adminEmpresas.enviarAvisoEmpresa('${empresa.id}')" 
+                            style="background: linear-gradient(135deg, #06b6d4, #0891b2); color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: 600;">
+                            📢 Enviar Aviso
+                        </button>
+                        
+                        <button onclick="adminEmpresas.verHistorialEmpresa('${empresa.id}')" 
+                            style="background: linear-gradient(135deg, #64748b, #475569); color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: 600;">
+                            📋 Ver Historial
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Información Adicional -->
+                <div>
+                    <h3 style="margin: 0 0 20px 0; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 20px;">📊</span> Información Adicional
+                    </h3>
+                    <div style="background: #f8fafc; padding: 20px; border-radius: 10px;">
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                            <div><strong>ID:</strong> ${empresa.id}</div>
+                            <div><strong>Estado:</strong> ${empresa.estado}</div>
+                            <div><strong>Categoría:</strong> ${empresa.categoria}</div>
+                            <div><strong>Creada:</strong> ${empresa.fechaCreacion || 'No disponible'}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+    this.modalActivo = modal;
+    
+    // Animación de entrada
+    setTimeout(() => {
+        modal.style.opacity = '1';
+        const content = modal.querySelector('.control-empresa-content');
+        content.style.transform = 'scale(1)';
+    }, 50);
+    
+    // Registrar en logs
+    this._registrarLog('info', `Panel de control abierto para empresa: ${empresa.nombre}`);
+}
+    // ═══════════════════════════════════════════════════════════════════════════
+// FUNCIONES DE ACCIÓN PARA CONTROL DE EMPRESAS
+// ═══════════════════════════════════════════════════════════════════════════
+
+cambiarEstadoEmpresa(empresaId, nuevoEstado) {
+    const empresa = this.gestor?.estado?.empresas?.[empresaId];
+    if (!empresa) {
+        this._mostrarNotificacion('❌ Empresa no encontrada', 'error');
+        return;
+    }
+    
+    const estadoAnterior = empresa.estado;
+    empresa.estado = nuevoEstado;
+    
+    // Guardar cambios
+    this.gestor._guardarEmpresas();
+    
+    // Log del cambio
+    this._registrarLog('info', `Estado de "${empresa.nombre}" cambiado de ${estadoAnterior} a ${nuevoEstado}`);
+    
+    // Notificación
+    const icono = nuevoEstado === 'Operativo' ? '✅' : nuevoEstado === 'Suspendido' ? '⏸️' : '🔄';
+    this._mostrarNotificacion(`${icono} Estado de "${empresa.nombre}" cambiado a ${nuevoEstado}`, 'success');
+    
+    // Actualizar dashboard si está abierto
+    this._actualizarDashboard();
+    
+    // Cerrar modal actual y reabrir con datos actualizados
+    setTimeout(() => {
+        document.getElementById('grizalumModalControlEmpresa')?.remove();
+        this.abrirControlEmpresaReal(empresaId);
+    }, 1000);
+}
+
+editarFinanzasEmpresa(empresaId) {
+    const empresa = this.gestor?.estado?.empresas?.[empresaId];
+    if (!empresa) return;
+    
+    const nuevaCaja = prompt(`💰 Ingrese nueva cantidad de caja para "${empresa.nombre}":`, empresa.finanzas?.caja || 0);
+    if (nuevaCaja === null) return;
+    
+    const nuevosIngresos = prompt(`💵 Ingrese nuevos ingresos para "${empresa.nombre}":`, empresa.finanzas?.ingresos || 0);
+    if (nuevosIngresos === null) return;
+    
+    const nuevosGastos = prompt(`💸 Ingrese nuevos gastos para "${empresa.nombre}":`, empresa.finanzas?.gastos || 0);
+    if (nuevosGastos === null) return;
+    
+    // Actualizar finanzas
+    if (!empresa.finanzas) empresa.finanzas = {};
+    empresa.finanzas.caja = parseFloat(nuevaCaja) || 0;
+    empresa.finanzas.ingresos = parseFloat(nuevosIngresos) || 0;
+    empresa.finanzas.gastos = parseFloat(nuevosGastos) || 0;
+    
+    // Guardar cambios
+    this.gestor._guardarEmpresas();
+    
+    // Log y notificación
+    this._registrarLog('info', `Finanzas actualizadas para "${empresa.nombre}"`);
+    this._mostrarNotificacion(`💰 Finanzas de "${empresa.nombre}" actualizadas exitosamente`, 'success');
+    
+    // Actualizar vista
+    this._actualizarDashboard();
+    setTimeout(() => {
+        document.getElementById('grizalumModalControlEmpresa')?.remove();
+        this.abrirControlEmpresaReal(empresaId);
+    }, 1000);
+}
+
+generarReporteEmpresa(empresaId) {
+    const empresa = this.gestor?.estado?.empresas?.[empresaId];
+    if (!empresa) return;
+    
+    const fecha = new Date().toLocaleDateString();
+    const reporte = `
+REPORTE INDIVIDUAL - ${empresa.nombre.toUpperCase()}
+Generado el: ${fecha}
+═══════════════════════════════════════════════════
+
+INFORMACIÓN GENERAL:
+- Nombre: ${empresa.nombre}
+- ID: ${empresa.id}
+- Categoría: ${empresa.categoria}
+- Estado: ${empresa.estado}
+- Ícono: ${empresa.icono || 'No definido'}
+
+INFORMACIÓN FINANCIERA:
+- Caja: S/. ${(empresa.finanzas?.caja || 0).toLocaleString()}
+- Ingresos: S/. ${(empresa.finanzas?.ingresos || 0).toLocaleString()}
+- Gastos: S/. ${(empresa.finanzas?.gastos || 0).toLocaleString()}
+- Balance: S/. ${((empresa.finanzas?.ingresos || 0) - (empresa.finanzas?.gastos || 0)).toLocaleString()}
+
+ESTADO FINANCIERO:
+${(empresa.finanzas?.caja || 0) >= 5000 ? '✅ EXCELENTE - Caja saludable' : 
+  (empresa.finanzas?.caja || 0) >= 1000 ? '⚠️ REGULAR - Requiere atención' : 
+  '🚨 CRÍTICO - Necesita intervención inmediata'}
+
+═══════════════════════════════════════════════════
+Reporte generado por GRIZALUM PREMIUM v3.0
+    `;
+    
+    // Descargar reporte
+    const blob = new Blob([reporte], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Reporte_${empresa.nombre.replace(/\s+/g, '_')}_${Date.now()}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    this._registrarLog('info', `Reporte generado para "${empresa.nombre}"`);
+    this._mostrarNotificacion(`📊 Reporte de "${empresa.nombre}" generado y descargado`, 'success');
+}
+
+enviarAvisoEmpresa(empresaId) {
+    const empresa = this.gestor?.estado?.empresas?.[empresaId];
+    if (!empresa) return;
+    
+    const mensaje = prompt(`📢 Escriba el aviso para "${empresa.nombre}":`);
+    if (!mensaje || mensaje.trim() === '') return;
+    
+    // Crear aviso
+    const aviso = {
+        id: Date.now(),
+        empresaId: empresaId,
+        empresaNombre: empresa.nombre,
+        mensaje: mensaje.trim(),
+        fecha: new Date().toISOString(),
+        tipo: 'admin'
+    };
+    
+    // Guardar en notificaciones
+    this.notificaciones.push(aviso);
+    this._guardarNotificaciones();
+    
+    // Mostrar aviso visual
+    this._crearAvisoVisual(aviso);
+    
+    this._registrarLog('info', `Aviso enviado a "${empresa.nombre}": ${mensaje.substring(0, 50)}...`);
+    this._mostrarNotificacion(`📢 Aviso enviado a "${empresa.nombre}"`, 'success');
+}
+
+_crearAvisoVisual(aviso) {
+    const avisoElement = document.createElement('div');
+    avisoElement.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+        padding: 20px;
+        border-radius: 15px;
+        font-weight: 600;
+        z-index: 9999999;
+        max-width: 400px;
+        box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4);
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+    `;
+    
+    avisoElement.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+            <span style="font-size: 24px;">📢</span>
+            <strong>Aviso para: ${aviso.empresaNombre}</strong>
+        </div>
+        <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px;">
+            ${aviso.mensaje}
+        </div>
+        <div style="font-size: 12px; opacity: 0.9; margin-top: 10px; text-align: right;">
+            ${new Date(aviso.fecha).toLocaleString()}
+        </div>
+    `;
+    
+    document.body.appendChild(avisoElement);
+    
+    setTimeout(() => avisoElement.style.transform = 'translateX(0)', 100);
+    
+    setTimeout(() => {
+        avisoElement.style.transform = 'translateX(100%)';
+        setTimeout(() => avisoElement.remove(), 300);
+    }, 5000);
+}
+
+verHistorialEmpresa(empresaId) {
+    const empresa = this.gestor?.estado?.empresas?.[empresaId];
+    if (!empresa) return;
+    
+    // Filtrar logs relacionados con esta empresa
+    const historialEmpresa = this.logs.filter(log => 
+        log.mensaje.includes(empresa.nombre) || 
+        log.mensaje.includes(empresaId)
+    ).slice(-20); // Últimos 20 registros
+    
+    if (historialEmpresa.length === 0) {
+        this._mostrarNotificacion(`ℹ️ No hay historial disponible para "${empresa.nombre}"`, 'info');
+        return;
+    }
+    
+    // Crear modal de historial
+    const modalHistorial = document.createElement('div');
+    modalHistorial.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        z-index: 9999999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    `;
+    
+    modalHistorial.innerHTML = `
+        <div style="background: white; border-radius: 20px; width: 800px; max-width: 95vw; max-height: 90vh; overflow: hidden;">
+            <div style="background: linear-gradient(135deg, #64748b, #475569); color: white; padding: 25px; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0;">📋 Historial de ${empresa.nombre}</h3>
+                <button onclick="this.parentElement.parentElement.parentElement.remove()" 
+                    style="background: rgba(255,255,255,0.2); border: none; color: white; width: 35px; height: 35px; border-radius: 8px; cursor: pointer; font-size: 18px;">×</button>
+            </div>
+            <div style="padding: 25px; max-height: 500px; overflow-y: auto;">
+                ${historialEmpresa.map(log => `
+                    <div style="padding: 15px; border-left: 4px solid ${this._getColorLog(log.nivel)}; background: #f8fafc; border-radius: 8px; margin-bottom: 10px;">
+                        <div style="display: flex; justify-content: between; margin-bottom: 5px;">
+                            <strong style="color: #374151;">${log.nivel.toUpperCase()}</strong>
+                            <span style="font-size: 12px; color: #64748b; margin-left: auto;">${new Date(log.fecha).toLocaleString()}</span>
+                        </div>
+                        <div style="color: #64748b;">${log.mensaje}</div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modalHistorial);
+    
+    this._registrarLog('info', `Historial consultado para "${empresa.nombre}"`);
+}
+
+_getColorLog(nivel) {
+    const colores = {
+        'info': '#3b82f6',
+        'success': '#10b981',
+        'warning': '#f59e0b',
+        'error': '#ef4444'
+    };
+    return colores[nivel] || '#64748b';
+}
     suspenderEmpresa(empresaId) {
         const empresa = this.gestor.estado.empresas[empresaId];
         if (!empresa) return;
