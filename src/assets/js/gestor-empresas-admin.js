@@ -2242,7 +2242,7 @@ editarFinanzasEmpresaAvanzado(empresaId) {
                         >💾 GUARDAR CAMBIOS</button>
                         
                         <button 
-                            onclick="this.parentElement.parentElement.parentElement.remove()"   
+                            onclick="this.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.remove()"  
                             style="
                                 flex: 0.5;
                                 background: linear-gradient(135deg, #64748b, #475569); 
