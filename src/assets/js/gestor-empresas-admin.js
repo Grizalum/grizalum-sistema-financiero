@@ -2361,32 +2361,7 @@ limpiarTodosLosModalesForzado() {
         console.error('❌ Error en limpieza selectiva:', error);
     }
 }
-
- cerrarTodoCompletamente() {
-    try {
-        console.log('🧹 CERRANDO TODO...');
-        
-        // Remover TODOS los modales
-        const selectores = [
-            'div[style*="z-index: 9999999"]',
-            'div[style*="z-index: 999999"]',
-            '#grizalumModalControlEmpresa',
-            '#grizalumModalAdmin'
-        ];
-        
-        selectores.forEach(selector => {
-            document.querySelectorAll(selector).forEach(el => el.remove());
-        });
-        
-        document.body.style.overflow = 'auto';
-        console.log('✅ TODO cerrado completamente');
-        
-    } catch (error) {
-        console.error('❌ Error:', error);
-        location.reload();
-    }
-}
-    
+   
 generarReporteEmpresaAvanzado(empresaId) {
     const empresa = this.gestor?.estado?.empresas?.[empresaId];
     if (!empresa) return;
