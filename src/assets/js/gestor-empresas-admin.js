@@ -2328,39 +2328,48 @@ aplicarCambiosFinancieros(empresaId) {
     }, 1500);
 }
  cerrarModalFinanciero() {
-    // Buscar y remover todos los modales financieros
     const modales = document.querySelectorAll('div[style*="z-index: 9999999"]');
-    modales.forEach(modal => {
-        if (modal.textContent.includes('EDITOR FINANCIERO') || 
-            modal.textContent.includes('CENTRO DE AVISOS')) {
-            modal.style.opacity = '0';
-            modal.style.transform = 'scale(0.8)';
-            setTimeout(() => modal.remove(), 300);
+    modales.forEach(modal => modal.remove());
+    console.log('✅ Modal cerrado');
+}
+limpiarTodosLosModalesForzado() {
+    try {
+        // Remover TODOS los modales posibles
+        const selectores = [
+            'div[style*="z-index: 9999999"]',
+            'div[style*="z-index: 999999"]', 
+            '#grizalumModalControlEmpresa',
+            '#grizalumModalAdmin',
+            'div[style*="backdrop-filter: blur"]',
+            'div[style*="position: fixed"]'
+        ];
+        
+        selectores.forEach(selector => {
+            document.querySelectorAll(selector).forEach(el => {
+                if (el.style.background && el.style.background.includes('rgba(0,0,0')) {
+                    el.remove();
+                }
+            });
+        });
+        
+        // Limpiar body de cualquier overflow oculto
+        document.body.style.overflow = 'auto';
+        
+        // Mensaje de confirmación
+        console.log('🧹 LIMPIEZA FORZADA COMPLETADA');
+        
+        setTimeout(() => {
+            alert('✅ Modales limpiados. Puedes continuar.');
+        }, 100);
+        
+    } catch (error) {
+        console.error('Error en limpieza:', error);
+        // Último recurso: recargar página
+        if (confirm('¿Recargar página para limpiar todo?')) {
+            location.reload();
         }
-    });
-    
-    // Limpiar eventos residuales
-    this._limpiarEventosModales();
-    
-    console.log('✅ Modal financiero cerrado correctamente');
-}
-
-_limpiarEventosModales() {
-    // Remover event listeners residuales
-    document.removeEventListener('keydown', this._handleEscapeKey);
-    
-    // Limpiar referencias
-    if (this.modalFinancieroActivo) {
-        this.modalFinancieroActivo = null;
     }
 }
-
-_handleEscapeKey = (e) => {
-    if (e.key === 'Escape') {
-        this.cerrarModalFinanciero();
-    }
-}   
-
 generarReporteEmpresaAvanzado(empresaId) {
     const empresa = this.gestor?.estado?.empresas?.[empresaId];
     if (!empresa) return;
@@ -2894,7 +2903,7 @@ verHistorialEmpresaAvanzado(empresaId) {
                     <h3 style="margin: 0 0 8px 0; font-size: 24px; font-weight: 800;">📋 HISTORIAL COMPLETO</h3>
                     <p style="margin: 0; opacity: 0.9; font-size: 16px;">${empresa.nombre} • ${historialCompleto.length} registros</p>
                 </div>
-                <button onclick="this.parentElement.parentElement.parentElement.remove()" 
+                <button onclick="adminEmpresas.limpiarTodosLosModalesForzado()"
                     style="background: rgba(255,255,255,0.2); border: none; color: white; width: 45px; height: 45px; border-radius: 12px; cursor: pointer; font-size: 20px; font-weight: bold;">×</button>
             </div>
             
