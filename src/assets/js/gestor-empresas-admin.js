@@ -2442,7 +2442,6 @@ Sistema de Gestión Empresarial Avanzado
 ════════════════════════════════════════════════════════════════════════════════
     `;
     
-    // Descargar reporte
    // Verificar que jsPDF esté disponible
 if (typeof window.jsPDF === 'undefined') {
     console.error('jsPDF no está cargado');
