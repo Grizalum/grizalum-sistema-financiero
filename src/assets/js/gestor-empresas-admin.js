@@ -5,17 +5,6 @@
  * ║                         100% FUNCIONAL                                      ║
  * ╚══════════════════════════════════════════════════════════════════════════════╝
  */
-// Verificar y cargar jsPDF si no existe
-if (typeof window.jsPDF === 'undefined') {
-    console.log('Cargando jsPDF manualmente...');
-    const script = document.createElement('script');
-    script.src = 'https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js';
-    script.onload = () => {
-        console.log('jsPDF cargado exitosamente');
-        window.jsPDFLoaded = true;
-    };
-    document.head.appendChild(script);
-}
 
 // PASO 1: SOBRESCRIBIR COMPLETAMENTE LA CLASE ORIGINAL
 window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
@@ -1903,7 +1892,7 @@ _crearModalControlEmpresa(empresa) {
                         <span style="font-size: 28px;">💰</span> EDITAR FINANZAS
                     </button>
                     
-                    <button onclick="(function(empresaId){const empresa=adminEmpresas.gestor?.estado?.empresas?.[empresaId];if(!empresa)return;const script=document.createElement('script');script.src='https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js';script.onload=function(){const{jsPDF}=window;const doc=new jsPDF();doc.setFontSize(16);doc.text('REPORTE GRIZALUM',20,20);doc.text('Empresa: '+empresa.nombre,20,40);doc.text('Caja: S/. '+(empresa.finanzas?.caja||0).toLocaleString(),20,60);doc.text('Ingresos: S/. '+(empresa.finanzas?.ingresos||0).toLocaleString(),20,80);doc.text('Estado: '+empresa.estado,20,100);doc.save('Reporte_'+empresa.nombre+'.pdf');};document.head.appendChild(script);})('${empresa.id}')" 
+                    <button onclick="adminEmpresas.generarReporteEmpresaAvanzado('${empresa.id}')" 
                         style="
                             background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); 
                             color: white; 
@@ -2451,41 +2440,16 @@ Reporte generado por GRIZALUM PREMIUM v3.0
 Sistema de Gestión Empresarial Avanzado
 © ${new Date().getFullYear()} - Todos los derechos reservados
 ════════════════════════════════════════════════════════════════════════════════
-    `;  
-// Generar PDF con jsPDF
-if (typeof window.jsPDF === 'undefined') {
-    this._mostrarNotificacionPremium('Cargando PDF, espera un momento...', 'info');
-    setTimeout(() => this.generarReporteEmpresaAvanzado(empresaId), 2000);
-    return;
-}
-
-const { jsPDF } = window;
-const doc = new jsPDF();
-
-// Título del PDF
-doc.setFillColor(212, 175, 55);
-doc.rect(0, 0, 210, 30, 'F');
-doc.setTextColor(255, 255, 255);
-doc.setFontSize(18);
-doc.text('REPORTE GRIZALUM PREMIUM', 20, 20);
-
-// Datos de empresa
-doc.setTextColor(0, 0, 0);
-doc.setFontSize(14);
-doc.text(`Empresa: ${empresa.nombre}`, 20, 50);
-doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 20, 65);
-
-// Datos financieros
-const caja = empresa.finanzas?.caja || 0;
-const ingresos = empresa.finanzas?.ingresos || 0;
-const gastos = empresa.finanzas?.gastos || 0;
-
-doc.text(`Caja: S/. ${caja.toLocaleString()}`, 20, 85);
-doc.text(`Ingresos: S/. ${ingresos.toLocaleString()}`, 20, 100);
-doc.text(`Gastos: S/. ${gastos.toLocaleString()}`, 20, 115);
-
-// Guardar como PDF
-doc.save(`Reporte_${empresa.nombre}_${Date.now()}.pdf`);
+    `;
+    
+    // Descargar reporte
+    const blob = new Blob([reporte], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `REPORTE_PREMIUM_${empresa.nombre.replace(/\s+/g, '_')}_${fecha.getTime()}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
     
     this._registrarLog('info', `Reporte Premium generado para "${empresa.nombre}"`);
     this._mostrarNotificacionPremium(`📊 Reporte Premium de "${empresa.nombre}" generado y descargado`, 'success');
