@@ -5,6 +5,17 @@
  * ║                         100% FUNCIONAL                                      ║
  * ╚══════════════════════════════════════════════════════════════════════════════╝
  */
+// Verificar y cargar jsPDF si no existe
+if (typeof window.jsPDF === 'undefined') {
+    console.log('Cargando jsPDF manualmente...');
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js';
+    script.onload = () => {
+        console.log('jsPDF cargado exitosamente');
+        window.jsPDFLoaded = true;
+    };
+    document.head.appendChild(script);
+}
 
 // PASO 1: SOBRESCRIBIR COMPLETAMENTE LA CLASE ORIGINAL
 window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
@@ -2443,7 +2454,8 @@ Sistema de Gestión Empresarial Avanzado
     `;  
 // Generar PDF con jsPDF
 if (typeof window.jsPDF === 'undefined') {
-    this._mostrarNotificacionPremium('Error: PDF no disponible', 'error');
+    this._mostrarNotificacionPremium('Cargando PDF, espera un momento...', 'info');
+    setTimeout(() => this.generarReporteEmpresaAvanzado(empresaId), 2000);
     return;
 }
 
