@@ -2443,13 +2443,119 @@ Sistema de Gestión Empresarial Avanzado
     `;
     
     // Descargar reporte
-    const blob = new Blob([reporte], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `REPORTE_PREMIUM_${empresa.nombre.replace(/\s+/g, '_')}_${fecha.getTime()}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
+   // Verificar que jsPDF esté disponible
+if (typeof window.jsPDF === 'undefined') {
+    console.error('jsPDF no está cargado');
+    this._mostrarNotificacionPremium('❌ Error: Librería PDF no disponible', 'error');
+    return;
+}
+
+const { jsPDF } = window;
+const doc = new jsPDF();
+
+// Configurar colores GRIZALUM
+const colorPrimario = [212, 175, 55]; // Dorado
+const colorSecundario = [184, 148, 31]; // Dorado oscuro
+const colorTexto = [33, 37, 41]; // Gris oscuro
+
+// ============ HEADER PREMIUM ============
+doc.setFillColor(...colorPrimario);
+doc.rect(0, 0, 210, 40, 'F');
+
+doc.setTextColor(255, 255, 255);
+doc.setFontSize(24);
+doc.setFont("helvetica", "bold");
+doc.text('GRIZALUM PREMIUM', 20, 20);
+
+doc.setFontSize(14);
+doc.setFont("helvetica", "normal");
+doc.text('Reporte Ejecutivo Empresarial', 20, 30);
+
+// ============ INFORMACIÓN DE LA EMPRESA ============
+doc.setTextColor(...colorTexto);
+doc.setFontSize(18);
+doc.setFont("helvetica", "bold");
+doc.text(`EMPRESA: ${empresa.nombre.toUpperCase()}`, 20, 60);
+
+doc.setFontSize(12);
+doc.setFont("helvetica", "normal");
+doc.text(`Fecha de Reporte: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`, 20, 75);
+doc.text(`ID Empresa: ${empresa.id}`, 20, 85);
+doc.text(`Categoría: ${empresa.categoria}`, 20, 95);
+doc.text(`Estado Actual: ${empresa.estado}`, 20, 105);
+doc.text(`Generado por: Super Admin Premium`, 20, 115);
+
+// ============ ANÁLISIS FINANCIERO ============
+doc.setFillColor(...colorSecundario);
+doc.rect(15, 125, 180, 8, 'F');
+
+doc.setTextColor(255, 255, 255);
+doc.setFontSize(14);
+doc.setFont("helvetica", "bold");
+doc.text('ANÁLISIS FINANCIERO', 20, 131);
+
+// Obtener datos financieros
+const caja = empresa.finanzas?.caja || 0;
+const ingresos = empresa.finanzas?.ingresos || 0;
+const gastos = empresa.finanzas?.gastos || 0;
+const balance = ingresos - gastos;
+
+doc.setTextColor(...colorTexto);
+doc.setFontSize(12);
+doc.setFont("helvetica", "normal");
+
+let yPos = 150;
+doc.text(`💵 CAJA ACTUAL:           S/. ${caja.toLocaleString()}`, 20, yPos);
+yPos += 10;
+doc.text(`📈 INGRESOS TOTALES:      S/. ${ingresos.toLocaleString()}`, 20, yPos);
+yPos += 10;
+doc.text(`📉 GASTOS TOTALES:        S/. ${gastos.toLocaleString()}`, 20, yPos);
+yPos += 10;
+
+// Balance con color
+if (balance >= 0) {
+    doc.setTextColor(16, 185, 129); // Verde
+    doc.text(`⚖️  BALANCE NETO:         S/. ${balance.toLocaleString()} (POSITIVO ✅)`, 20, yPos);
+} else {
+    doc.setTextColor(239, 68, 68); // Rojo
+    doc.text(`⚖️  BALANCE NETO:         S/. ${balance.toLocaleString()} (NEGATIVO ❌)`, 20, yPos);
+}
+
+// ============ SALUD FINANCIERA ============
+yPos += 20;
+doc.setTextColor(...colorTexto);
+doc.setFontSize(14);
+doc.setFont("helvetica", "bold");
+doc.text('SALUD FINANCIERA', 20, yPos);
+
+yPos += 15;
+const saludFinanciera = caja >= 5000 ? 'EXCELENTE 💚' : caja >= 1000 ? 'REGULAR ⚠️' : 'CRÍTICO 🚨';
+doc.setFontSize(12);
+doc.setFont("helvetica", "normal");
+doc.text(`🎯 Estado: ${saludFinanciera}`, 20, yPos);
+
+yPos += 10;
+if (ingresos > 0) {
+    const margen = ((balance / ingresos) * 100).toFixed(1);
+    doc.text(`📊 Margen de Ganancia: ${margen}%`, 20, yPos);
+}
+
+yPos += 10;
+if (gastos > 0 && gastos < caja) {
+    const diasOperacion = Math.floor(caja / (gastos / 30));
+    doc.text(`🏦 Días de Operación: ${diasOperacion} días (aprox)`, 20, yPos);
+}
+
+// ============ PIE DE PÁGINA ============
+doc.setTextColor(...colorSecundario);
+doc.setFontSize(8);
+doc.text('Este reporte es confidencial y para uso interno exclusivo', 20, 280);
+doc.text(`Generado por GRIZALUM Premium v3.0 - ${new Date().toLocaleDateString()}`, 20, 285);
+doc.text('© 2025 GRIZALUM - Sistema de Gestión Empresarial', 20, 290);
+
+// ============ GENERAR Y DESCARGAR PDF ============
+const nombrePDF = `REPORTE_PREMIUM_${empresa.nombre.replace(/\s+/g, '_')}_${Date.now()}.pdf`;
+doc.save(nombrePDF);
     
     this._registrarLog('info', `Reporte Premium generado para "${empresa.nombre}"`);
     this._mostrarNotificacionPremium(`📊 Reporte Premium de "${empresa.nombre}" generado y descargado`, 'success');
