@@ -3173,7 +3173,7 @@ configurarAlertasEmpresa(empresaId) {
 generarReportePremium() {
         try {
             // Incluir jsPDF desde CDN si no existe
-            if (typeof jsPDF === 'undefined') {
+            if (typeof window.jsPDF === 'undefined') {
                 const script = document.createElement('script');
                 script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
                 document.head.appendChild(script);
