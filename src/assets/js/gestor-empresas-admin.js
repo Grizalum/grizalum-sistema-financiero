@@ -3173,18 +3173,32 @@ configurarAlertasEmpresa(empresaId) {
 generarReportePremium() {
         try {
             // Incluir jsPDF desde CDN si no existe
-            if (typeof window.jsPDF === 'undefined') {
-                const script = document.createElement('script');
-                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-                document.head.appendChild(script);
-                
-                script.onload = () => {
-                    setTimeout(() => this.generarReportePremium(), 1000);
-                };
-                
-                this._mostrarNotificacion('📦 Cargando generador de PDF...', 'info');
-                return;
-            }
+          // Cargar jsPDF de forma segura
+if (typeof window.jsPDF === 'undefined') {
+    // Verificar si ya se está cargando
+    if (!window.jsPDF_loading) {
+        window.jsPDF_loading = true;
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+        
+        script.onload = () => {
+            window.jsPDF_loading = false;
+            // Llamar directamente sin setTimeout
+            this.generarReportePremium();
+        };
+        
+        script.onerror = () => {
+            window.jsPDF_loading = false;
+            this._mostrarNotificacion('❌ Error cargando generador PDF. Inténtalo de nuevo.', 'error');
+        };
+        
+        document.head.appendChild(script);
+        this._mostrarNotificacion('📦 Cargando generador de PDF...', 'info');
+    } else {
+        this._mostrarNotificacion('⏳ PDF ya se está cargando, espera un momento...', 'warning');
+    }
+    return;
+}
 
             const { jsPDF } = window;
             const doc = new jsPDF();
