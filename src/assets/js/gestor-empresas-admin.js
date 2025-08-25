@@ -2440,18 +2440,17 @@ Reporte generado por GRIZALUM PREMIUM v3.0
 Sistema de Gestión Empresarial Avanzado
 © ${new Date().getFullYear()} - Todos los derechos reservados
 ════════════════════════════════════════════════════════════════════════════════
-    `;
-    
- // Verificar jsPDF
+    `;  
+// Generar PDF con jsPDF
 if (typeof window.jsPDF === 'undefined') {
-    this._mostrarNotificacionPremium('❌ Error: PDF no disponible', 'error');
+    this._mostrarNotificacionPremium('Error: PDF no disponible', 'error');
     return;
 }
 
 const { jsPDF } = window;
 const doc = new jsPDF();
 
-// Título
+// Título del PDF
 doc.setFillColor(212, 175, 55);
 doc.rect(0, 0, 210, 30, 'F');
 doc.setTextColor(255, 255, 255);
@@ -2473,7 +2472,7 @@ doc.text(`Caja: S/. ${caja.toLocaleString()}`, 20, 85);
 doc.text(`Ingresos: S/. ${ingresos.toLocaleString()}`, 20, 100);
 doc.text(`Gastos: S/. ${gastos.toLocaleString()}`, 20, 115);
 
-// Guardar PDF
+// Guardar como PDF
 doc.save(`Reporte_${empresa.nombre}_${Date.now()}.pdf`);
     
     this._registrarLog('info', `Reporte Premium generado para "${empresa.nombre}"`);
