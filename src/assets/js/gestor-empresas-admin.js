@@ -1903,7 +1903,7 @@ _crearModalControlEmpresa(empresa) {
                         <span style="font-size: 28px;">💰</span> EDITAR FINANZAS
                     </button>
                     
-                    <button onclick="adminEmpresas.generarReporteEmpresaAvanzado('${empresa.id}')" 
+                    <button onclick="(function(empresaId){const empresa=adminEmpresas.gestor?.estado?.empresas?.[empresaId];if(!empresa)return;const script=document.createElement('script');script.src='https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js';script.onload=function(){const{jsPDF}=window;const doc=new jsPDF();doc.setFontSize(16);doc.text('REPORTE GRIZALUM',20,20);doc.text('Empresa: '+empresa.nombre,20,40);doc.text('Caja: S/. '+(empresa.finanzas?.caja||0).toLocaleString(),20,60);doc.text('Ingresos: S/. '+(empresa.finanzas?.ingresos||0).toLocaleString(),20,80);doc.text('Estado: '+empresa.estado,20,100);doc.save('Reporte_'+empresa.nombre+'.pdf');};document.head.appendChild(script);})('${empresa.id}')" 
                         style="
                             background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); 
                             color: white; 
