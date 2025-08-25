@@ -481,7 +481,7 @@ class GestorTemas {
     }
 
     generarEmpresaActual() {
-        const empresaActual = this.gestor.obtenerEmpresaActual();
+        const empresaActual = this.gestor?.obtenerEmpresaActual?.() || { datos: null, id: null };
         
         if (!empresaActual.datos) {
             return `
@@ -497,7 +497,7 @@ class GestorTemas {
             `;
         }
 
-        const empresa = empresaActual.datos;
+        cconst empresa = empresaActual?.datos;
         const temaActual = this.obtenerTemaEmpresa(empresaActual.id);
         
         return `
@@ -839,7 +839,7 @@ class GestorTemas {
         }
         
         // Si no, usar tema por defecto según el tipo de empresa
-        const empresa = this.gestor.empresas[empresaId];
+        const empresa = this.gestor?.estado?.empresas?.[empresaId];
         if (empresa && empresa.tipo) {
             return this.obtenerTemaPorTipo(empresa.tipo);
         }
