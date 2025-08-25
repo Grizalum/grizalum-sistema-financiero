@@ -2442,61 +2442,39 @@ Sistema de Gestión Empresarial Avanzado
 ════════════════════════════════════════════════════════════════════════════════
     `;
     
- // Verificar que jsPDF esté disponible
+ // Verificar jsPDF
 if (typeof window.jsPDF === 'undefined') {
-    console.error('jsPDF no está cargado');
-    this._mostrarNotificacionPremium('❌ Error: Librería PDF no disponible', 'error');
+    this._mostrarNotificacionPremium('❌ Error: PDF no disponible', 'error');
     return;
 }
 
 const { jsPDF } = window;
 const doc = new jsPDF();
 
-// Configurar colores
-const colorPrimario = [212, 175, 55];
-const colorTexto = [33, 37, 41];
-
-// Título del documento
-doc.setFillColor(...colorPrimario);
-doc.rect(0, 0, 210, 40, 'F');
-
+// Título
+doc.setFillColor(212, 175, 55);
+doc.rect(0, 0, 210, 30, 'F');
 doc.setTextColor(255, 255, 255);
-doc.setFontSize(20);
-doc.setFont("helvetica", "bold");
-doc.text('REPORTE PREMIUM GRIZALUM', 20, 25);
+doc.setFontSize(18);
+doc.text('REPORTE GRIZALUM PREMIUM', 20, 20);
 
-// Información de la empresa
-doc.setTextColor(...colorTexto);
-doc.setFontSize(16);
-doc.setFont("helvetica", "bold");
-doc.text(`Empresa: ${empresa.nombre}`, 20, 60);
-
-doc.setFontSize(12);
-doc.setFont("helvetica", "normal");
-doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 20, 75);
-doc.text(`Estado: ${empresa.estado}`, 20, 85);
-doc.text(`Categoría: ${empresa.categoria}`, 20, 95);
+// Datos de empresa
+doc.setTextColor(0, 0, 0);
+doc.setFontSize(14);
+doc.text(`Empresa: ${empresa.nombre}`, 20, 50);
+doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 20, 65);
 
 // Datos financieros
-doc.setFontSize(14);
-doc.setFont("helvetica", "bold");
-doc.text('ANÁLISIS FINANCIERO', 20, 115);
-
 const caja = empresa.finanzas?.caja || 0;
 const ingresos = empresa.finanzas?.ingresos || 0;
 const gastos = empresa.finanzas?.gastos || 0;
-const balance = ingresos - gastos;
 
-doc.setFontSize(12);
-doc.setFont("helvetica", "normal");
-doc.text(`Caja Actual: S/. ${caja.toLocaleString()}`, 20, 130);
-doc.text(`Ingresos: S/. ${ingresos.toLocaleString()}`, 20, 145);
-doc.text(`Gastos: S/. ${gastos.toLocaleString()}`, 20, 160);
-doc.text(`Balance: S/. ${balance.toLocaleString()}`, 20, 175);
+doc.text(`Caja: S/. ${caja.toLocaleString()}`, 20, 85);
+doc.text(`Ingresos: S/. ${ingresos.toLocaleString()}`, 20, 100);
+doc.text(`Gastos: S/. ${gastos.toLocaleString()}`, 20, 115);
 
-// Generar y descargar PDF
-const nombrePDF = `REPORTE_PREMIUM_${empresa.nombre.replace(/\s+/g, '_')}_${Date.now()}.pdf`;
-doc.save(nombrePDF);
+// Guardar PDF
+doc.save(`Reporte_${empresa.nombre}_${Date.now()}.pdf`);
     
     this._registrarLog('info', `Reporte Premium generado para "${empresa.nombre}"`);
     this._mostrarNotificacionPremium(`📊 Reporte Premium de "${empresa.nombre}" generado y descargado`, 'success');
