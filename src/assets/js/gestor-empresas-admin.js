@@ -3958,10 +3958,6 @@ _limpiarRespaldosAutomaticos(empresaId) {
         }
     }
 
-    _log(nivel, mensaje, datos = null) {
-}
-
-
 // ═══════════════════════════════════════════════════════════════════════════
 // PASO 2: REEMPLAZAR COMPLETAMENTE LA INSTANCIA GLOBAL
 // ═══════════════════════════════════════════════════════════════════════════
