@@ -3363,28 +3363,34 @@ cerrarModalAlertas() {
     
 guardarConfiguracionAlertas(empresaId) {
     try {
+        // CAPTURAR SOLO LOS ELEMENTOS QUE EXISTEN
+        const cajaBajaEl = document.getElementById('alerta-caja-baja');
+        const balanceNegativoEl = document.getElementById('alerta-balance-negativo');
+        const empresaSuspendidaEl = document.getElementById('alerta-empresa-suspendida');
+        
         const configuracion = {
-            cajaBaja: document.getElementById('alerta-caja-baja').checked,
-            limiteCaja: parseFloat(document.getElementById('limite-caja').value) || 1000,
-            balanceNegativo: document.getElementById('alerta-balance-negativo').checked,
-            gastosAltos: document.getElementById('alerta-gastos-altos').checked,
-            empresaSuspendida: document.getElementById('alerta-empresa-suspendida').checked,
-            empresaInactiva: document.getElementById('alerta-empresa-inactiva').checked
+            cajaBaja: cajaBajaEl ? cajaBajaEl.checked : false,
+            balanceNegativo: balanceNegativoEl ? balanceNegativoEl.checked : false,
+            empresaSuspendida: empresaSuspendidaEl ? empresaSuspendidaEl.checked : false,
+            fechaConfiguracion: new Date().toISOString()
         };
         
+        // GUARDAR EN LOCALSTORAGE
         localStorage.setItem(`grizalum_alertas_${empresaId}`, JSON.stringify(configuracion));
         
-        // Cerrar modal correctamente
+        // CERRAR MODAL ESPECÍFICO
         const modal = document.querySelector('div[style*="z-index: 99999999"]');
-        if (modal) modal.remove();
+        if (modal && modal.innerHTML.includes('ALERTAS')) {
+            modal.remove();
+        }
         
         const empresa = this.gestor?.estado?.empresas?.[empresaId];
-        this._mostrarNotificacionPremium(`Alertas configuradas para "${empresa.nombre}"`, 'success');
-        this._registrarLog('info', `Alertas configuradas para "${empresa.nombre}"`);
+        this._mostrarNotificacionPremium(`Alertas guardadas para "${empresa.nombre}"`, 'success');
+        this._registrarLog('info', `Alertas guardadas para "${empresa.nombre}"`);
         
     } catch (error) {
         console.error('Error guardando alertas:', error);
-        this._mostrarNotificacionPremium('Error guardando configuración de alertas', 'error');
+        this._mostrarNotificacionPremium('Error guardando alertas: ' + error.message, 'error');
     }
 }
 _verificarAlertasEmpresa(empresa) {
