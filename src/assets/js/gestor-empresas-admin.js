@@ -3942,24 +3942,6 @@ _limpiarRespaldosAutomaticos(empresaId) {
     }
 }
 
-cerrarModalSecundario() {
-    // CERRAR SOLO EL MODAL DE CONTROL DE EMPRESA
-    const modalSecundario = document.getElementById('grizalumModalControlEmpresa');
-    if (modalSecundario) {
-        modalSecundario.style.opacity = '0';
-        const content = modalSecundario.querySelector('.control-empresa-content');
-        if (content) {
-            content.style.transform = 'scale(0.8) translateY(40px)';
-        }
-        
-        setTimeout(() => {
-            modalSecundario.remove();
-        }, 400);
-        
-        console.log('Modal secundario cerrado correctamente');
-    }
-}
-
 // ═══════════════════════════════════════════════════════════════════════════
 // PASO 2: REEMPLAZAR COMPLETAMENTE LA INSTANCIA GLOBAL
 // ═══════════════════════════════════════════════════════════════════════════
