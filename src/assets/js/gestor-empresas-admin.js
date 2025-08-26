@@ -3955,8 +3955,8 @@ _limpiarRespaldosAutomaticos(empresaId) {
             }, 400);
             
             console.log('Modal secundario cerrado correctamente');
-        }
-    }
+     }
+ }
 
 // ═══════════════════════════════════════════════════════════════════════════
 // PASO 2: REEMPLAZAR COMPLETAMENTE LA INSTANCIA GLOBAL
