@@ -3171,289 +3171,158 @@ configurarAlertasEmpresa(empresaId) {
     }
 
 generarReportePremium() {
-        try {
-            // Incluir jsPDF desde CDN si no existe
-          // Cargar jsPDF de forma segura
-if (typeof window.jsPDF === 'undefined') {
-    // Verificar si ya se está cargando
-    if (!window.jsPDF_loading) {
-        window.jsPDF_loading = true;
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-        
-        script.onload = () => {
-            window.jsPDF_loading = false;
-            // Llamar directamente sin setTimeout
-            this.generarReportePremium();
-        };
-        
-        script.onerror = () => {
-            window.jsPDF_loading = false;
-            this._mostrarNotificacion('❌ Error cargando generador PDF. Inténtalo de nuevo.', 'error');
-        };
-        
-        document.head.appendChild(script);
-        this._mostrarNotificacion('📦 Cargando generador de PDF...', 'info');
-    } else {
-        this._mostrarNotificacion('⏳ PDF ya se está cargando, espera un momento...', 'warning');
+    try {
+        // Obtener datos
+        const empresas = Object.values(this.gestor.estado.empresas);
+        const fecha = new Date();
+        const totalEmpresas = empresas.length;
+        const empresasActivas = empresas.filter(e => e.estado === 'Operativo').length;
+        const empresasRiesgo = empresas.filter(e => (e.finanzas?.caja || 0) < 1000).length;
+        const ingresoTotal = empresas.reduce((sum, e) => sum + (e.finanzas?.ingresos || 0), 0);
+        const gastoTotal = empresas.reduce((sum, e) => sum + (e.finanzas?.gastos || 0), 0);
+        const cajaTotal = empresas.reduce((sum, e) => sum + (e.finanzas?.caja || 0), 0);
+
+        // Crear reporte HTML profesional
+        const htmlReporte = this._generarReporteHTML(empresas, {
+            fecha, totalEmpresas, empresasActivas, empresasRiesgo, 
+            ingresoTotal, gastoTotal, cajaTotal
+        });
+
+        // Abrir en nueva ventana y auto-descargar
+        const ventana = window.open('', '_blank');
+        ventana.document.write(htmlReporte);
+        ventana.document.close();
+        ventana.print(); // Auto-abrir diálogo de impresión/guardar como PDF
+
+        this._mostrarNotificacion('📄 Reporte Premium generado exitosamente', 'success');
+        this._registrarLog('success', 'Reporte Premium HTML generado');
+
+    } catch (error) {
+        console.error('Error generando reporte:', error);
+        this._mostrarNotificacion('❌ Error generando reporte', 'error');
     }
-    return;
 }
 
-            const { jsPDF } = window;
-            const doc = new jsPDF();
+_generarReporteHTML(empresas, datos) {
+    return `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>GRIZALUM Premium - Reporte Ejecutivo</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: #f5f5f5; }
+        .header { background: linear-gradient(135deg, #d4af37, #b8941f); color: white; padding: 30px; text-align: center; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+        .content { padding: 30px; }
+        .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 30px 0; }
+        .metric { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; padding: 20px; border-radius: 12px; text-align: center; }
+        .metric.success { background: linear-gradient(135deg, #10b981, #059669); }
+        .metric.warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .metric.danger { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .empresa-card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; margin: 15px 0; }
+        .empresa-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .empresa-financials { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+        .financial-item { text-align: center; }
+        h1 { margin: 0; font-size: 36px; }
+        h2 { color: #1f2937; border-bottom: 3px solid #d4af37; padding-bottom: 10px; }
+        .fecha { opacity: 0.9; margin-top: 10px; }
+        @media print { body { background: white; } .container { box-shadow: none; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏆 GRIZALUM PREMIUM</h1>
+            <div style="font-size: 18px; margin-top: 10px;">Reporte Ejecutivo de Control Financiero</div>
+            <div class="fecha">Generado: ${datos.fecha.toLocaleDateString()} ${datos.fecha.toLocaleTimeString()}</div>
+        </div>
+        
+        <div class="content">
+            <h2>📊 Resumen Ejecutivo</h2>
+            <div class="metrics">
+                <div class="metric">
+                    <h3 style="margin: 0 0 10px 0;">Total Empresas</h3>
+                    <div style="font-size: 32px; font-weight: bold;">${datos.totalEmpresas}</div>
+                </div>
+                <div class="metric success">
+                    <h3 style="margin: 0 0 10px 0;">Empresas Activas</h3>
+                    <div style="font-size: 32px; font-weight: bold;">${datos.empresasActivas}</div>
+                </div>
+                <div class="metric danger">
+                    <h3 style="margin: 0 0 10px 0;">En Riesgo</h3>
+                    <div style="font-size: 32px; font-weight: bold;">${datos.empresasRiesgo}</div>
+                </div>
+            </div>
             
-            // Obtener datos
-            const empresas = Object.values(this.gestor.estado.empresas);
-            const fecha = new Date();
-            const totalEmpresas = empresas.length;
-            const empresasActivas = empresas.filter(e => e.estado === 'Operativo').length;
-            const empresasRiesgo = empresas.filter(e => (e.finanzas?.caja || 0) < 1000).length;
-            const ingresoTotal = empresas.reduce((sum, e) => sum + (e.finanzas?.ingresos || 0), 0);
-            const gastoTotal = empresas.reduce((sum, e) => sum + (e.finanzas?.gastos || 0), 0);
-            const cajaTotal = empresas.reduce((sum, e) => sum + (e.finanzas?.caja || 0), 0);
+            <div class="metrics">
+                <div class="metric success">
+                    <h3 style="margin: 0 0 10px 0;">Ingresos Totales</h3>
+                    <div style="font-size: 24px; font-weight: bold;">S/. ${datos.ingresoTotal.toLocaleString()}</div>
+                </div>
+                <div class="metric warning">
+                    <h3 style="margin: 0 0 10px 0;">Gastos Totales</h3>
+                    <div style="font-size: 24px; font-weight: bold;">S/. ${datos.gastoTotal.toLocaleString()}</div>
+                </div>
+                <div class="metric">
+                    <h3 style="margin: 0 0 10px 0;">Caja Total</h3>
+                    <div style="font-size: 24px; font-weight: bold;">S/. ${datos.cajaTotal.toLocaleString()}</div>
+                </div>
+            </div>
 
-            // CONFIGURACIÓN DE COLORES
-            const colorPrimario = [212, 175, 55]; // Dorado
-            const colorSecundario = [184, 148, 31]; // Dorado oscuro
-            const colorTexto = [33, 37, 41]; // Gris oscuro
-            const colorFondo = [248, 249, 250]; // Gris claro
-
-            // ============ PÁGINA 1: PORTADA ============
-            
-            // Fondo dorado superior
-            doc.setFillColor(...colorPrimario);
-            doc.rect(0, 0, 210, 80, 'F');
-            
-            // Logo/Icono simulado
-            doc.setFillColor(255, 255, 255);
-            doc.circle(30, 40, 15, 'F');
-            doc.setFontSize(24);
-            doc.setTextColor(212, 175, 55);
-            doc.text('🏆', 23, 45);
-            
-            // Título principal
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(28);
-            doc.setFont("helvetica", "bold");
-            doc.text('GRIZALUM PREMIUM', 60, 35);
-            
-            doc.setFontSize(16);
-            doc.setFont("helvetica", "normal");
-            doc.text('Reporte Ejecutivo de Control Financiero', 60, 45);
-            
-            // Fecha y hora
-            doc.setFontSize(12);
-            doc.text(`Generado: ${fecha.toLocaleDateString()} ${fecha.toLocaleTimeString()}`, 60, 60);
-            
-            // Marco decorativo
-            doc.setDrawColor(...colorSecundario);
-            doc.setLineWidth(2);
-            doc.rect(10, 90, 190, 180);
-            
-            // Resumen ejecutivo en portada
-            doc.setTextColor(...colorTexto);
-            doc.setFontSize(18);
-            doc.setFont("helvetica", "bold");
-            doc.text('RESUMEN EJECUTIVO', 20, 110);
-            
-            // Métricas principales en portada
-            const metricas = [
-                { label: 'Total de Empresas:', valor: totalEmpresas, color: [59, 130, 246] },
-                { label: 'Empresas Activas:', valor: empresasActivas, color: [16, 185, 129] },
-                { label: 'Empresas en Riesgo:', valor: empresasRiesgo, color: [239, 68, 68] },
-                { label: 'Ingresos Totales:', valor: `S/. ${ingresoTotal.toLocaleString()}`, color: [16, 185, 129] },
-                { label: 'Gastos Totales:', valor: `S/. ${gastoTotal.toLocaleString()}`, color: [239, 68, 68] },
-                { label: 'Caja Total:', valor: `S/. ${cajaTotal.toLocaleString()}`, color: [59, 130, 246] }
-            ];
-            
-            let yPos = 130;
-            metricas.forEach(metrica => {
-                doc.setFillColor(...metrica.color);
-                doc.rect(20, yPos - 5, 4, 10, 'F');
-                
-                doc.setTextColor(...colorTexto);
-                doc.setFontSize(12);
-                doc.setFont("helvetica", "normal");
-                doc.text(metrica.label, 30, yPos);
-                
-                doc.setFont("helvetica", "bold");
-                doc.text(metrica.valor.toString(), 120, yPos);
-                
-                yPos += 20;
-            });
-            
-            // Pie de página portada
-            doc.setTextColor(...colorSecundario);
-            doc.setFontSize(10);
-            doc.text('© 2025 GRIZALUM Premium - Sistema de Control Empresarial', 20, 280);
-            
-            // ============ PÁGINA 2: ANÁLISIS DETALLADO ============
-            doc.addPage();
-            
-            // Encabezado página 2
-            doc.setFillColor(...colorPrimario);
-            doc.rect(0, 0, 210, 30, 'F');
-            
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(20);
-            doc.setFont("helvetica", "bold");
-            doc.text('ANÁLISIS FINANCIERO DETALLADO', 20, 20);
-            
-            // Análisis por empresa
-            doc.setTextColor(...colorTexto);
-            doc.setFontSize(16);
-            doc.setFont("helvetica", "bold");
-            doc.text('DETALLE POR EMPRESA', 20, 50);
-            
-            let yPosition = 70;
-            
-            empresas.forEach((empresa, index) => {
-                if (yPosition > 250) {
-                    doc.addPage();
-                    yPosition = 30;
-                }
-                
-                // Marco para cada empresa
-                const empresaColor = empresa.estado === 'Operativo' ? [16, 185, 129] : 
-                                   empresa.estado === 'Regular' ? [245, 158, 11] : [239, 68, 68];
-                
-                doc.setDrawColor(...empresaColor);
-                doc.setLineWidth(1);
-                doc.rect(15, yPosition - 5, 180, 35);
-                
-                // Barra lateral de color
-                doc.setFillColor(...empresaColor);
-                doc.rect(15, yPosition - 5, 5, 35, 'F');
-                
-                // Nombre y datos de empresa
-                doc.setTextColor(...colorTexto);
-                doc.setFontSize(14);
-                doc.setFont("helvetica", "bold");
-                doc.text(`${index + 1}. ${empresa.nombre}`, 25, yPosition + 5);
-                
-                doc.setFontSize(10);
-                doc.setFont("helvetica", "normal");
-                doc.text(`Estado: ${empresa.estado}`, 25, yPosition + 12);
-                doc.text(`Categoría: ${empresa.categoria}`, 25, yPosition + 18);
-                
-                // Datos financieros
-                const caja = empresa.finanzas?.caja || 0;
-                const ingresos = empresa.finanzas?.ingresos || 0;
-                const gastos = empresa.finanzas?.gastos || 0;
-                const balance = ingresos - gastos;
-                
-                doc.text(`Caja: S/. ${caja.toLocaleString()}`, 120, yPosition + 5);
-                doc.text(`Ingresos: S/. ${ingresos.toLocaleString()}`, 120, yPosition + 12);
-                doc.text(`Gastos: S/. ${gastos.toLocaleString()}`, 120, yPosition + 18);
-                
-                // Balance con color
-                doc.setTextColor(balance >= 0 ? 16 : 239, balance >= 0 ? 185 : 68, balance >= 0 ? 129 : 68);
-                doc.setFont("helvetica", "bold");
-                doc.text(`Balance: S/. ${balance.toLocaleString()}`, 120, yPosition + 25);
-                
-                yPosition += 45;
-            });
-            
-            // ============ PÁGINA 3: RANKING Y ANÁLISIS ============
-            doc.addPage();
-            
-            // Encabezado página 3
-            doc.setFillColor(...colorPrimario);
-            doc.rect(0, 0, 210, 30, 'F');
-            
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(20);
-            doc.setFont("helvetica", "bold");
-            doc.text('RANKING Y ANÁLISIS PREMIUM', 20, 20);
-            
-            // Top 5 por ingresos
-            doc.setTextColor(...colorTexto);
-            doc.setFontSize(16);
-            doc.setFont("helvetica", "bold");
-            doc.text('🏆 TOP 5 EMPRESAS POR INGRESOS', 20, 50);
-            
-            const topEmpresas = empresas
-                .sort((a, b) => (b.finanzas?.ingresos || 0) - (a.finanzas?.ingresos || 0))
-                .slice(0, 5);
-            
-            let rankingY = 70;
-            topEmpresas.forEach((empresa, index) => {
-                const medallas = ['🥇', '🥈', '🥉', '4°', '5°'];
-                const coloresMedalla = [
-                    [255, 215, 0], // Oro
-                    [192, 192, 192], // Plata  
-                    [205, 127, 50], // Bronce
-                    [100, 116, 139], // 4to
-                    [100, 116, 139]  // 5to
-                ];
-                
-                doc.setFillColor(...coloresMedalla[index]);
-                doc.rect(20, rankingY - 3, 25, 15, 'F');
-                
-                doc.setTextColor(255, 255, 255);
-                doc.setFontSize(12);
-                doc.setFont("helvetica", "bold");
-                doc.text(medallas[index], 27, rankingY + 5);
-                
-                doc.setTextColor(...colorTexto);
-                doc.text(empresa.nombre, 50, rankingY + 5);
-                doc.text(`S/. ${(empresa.finanzas?.ingresos || 0).toLocaleString()}`, 140, rankingY + 5);
-                
-                rankingY += 20;
-            });
-            
-            // Empresas en riesgo
-            if (empresasRiesgo > 0) {
-                doc.setTextColor(...colorTexto);
-                doc.setFontSize(16);
-                doc.setFont("helvetica", "bold");
-                doc.text('⚠️ EMPRESAS EN RIESGO FINANCIERO', 20, rankingY + 30);
-                
-                const empresasEnRiesgo = empresas.filter(e => (e.finanzas?.caja || 0) < 1000);
-                let riesgoY = rankingY + 50;
-                
-                empresasEnRiesgo.forEach(empresa => {
-                    const caja = empresa.finanzas?.caja || 0;
-                    const nivelRiesgo = caja < 500 ? 'CRÍTICO' : 'ALTO';
-                    const colorRiesgo = caja < 500 ? [220, 38, 38] : [245, 158, 11];
-                    
-                    doc.setFillColor(...colorRiesgo);
-                    doc.rect(20, riesgoY - 3, 6, 10, 'F');
-                    
-                    doc.setTextColor(...colorTexto);
-                    doc.setFontSize(12);
-                    doc.text(empresa.nombre, 30, riesgoY + 3);
-                    doc.text(`S/. ${caja.toLocaleString()}`, 120, riesgoY + 3);
-                    
-                    doc.setTextColor(...colorRiesgo);
-                    doc.setFont("helvetica", "bold");
-                    doc.text(nivelRiesgo, 160, riesgoY + 3);
-                    
-                    riesgoY += 15;
-                });
-            }
-            
-            // Pie de página final
-            doc.setTextColor(...colorSecundario);
-            doc.setFontSize(8);
-            doc.text('Este reporte es confidencial y para uso interno exclusivo', 20, 280);
-            doc.text(`Generado por GRIZALUM Premium v3.0 - ${fecha.toLocaleDateString()}`, 20, 285);
-            doc.text('Para soporte técnico contacte al administrador del sistema', 20, 290);
-            
-            // Guardar PDF
-            const nombreArchivo = `GRIZALUM_Reporte_Premium_${fecha.getFullYear()}_${(fecha.getMonth()+1).toString().padStart(2,'0')}_${fecha.getDate().toString().padStart(2,'0')}.pdf`;
-            doc.save(nombreArchivo);
-            
-            this._mostrarNotificacion('📄 Reporte Premium generado y descargado exitosamente', 'success');
-            this._registrarLog('success', `Reporte Premium PDF generado: ${nombreArchivo}`);
-            
-        } catch (error) {
-            console.error('Error generando reporte PDF:', error);
-            this._mostrarNotificacion('❌ Error generando reporte PDF', 'error');
-        }
-    }
-
+            <h2>🏢 Detalle por Empresa</h2>
+            ${empresas.map((empresa, index) => {
+                const balance = (empresa.finanzas?.ingresos || 0) - (empresa.finanzas?.gastos || 0);
+                const estadoColor = empresa.estado === 'Operativo' ? '#10b981' : '#ef4444';
+                return `
+                <div class="empresa-card">
+                    <div class="empresa-header">
+                        <div>
+                            <h3 style="margin: 0; color: #1f2937;">${empresa.icono || '🏢'} ${empresa.nombre}</h3>
+                            <div style="color: ${estadoColor}; font-weight: bold; margin-top: 5px;">
+                                ${empresa.estado} • ${empresa.categoria}
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 12px; color: #6b7280;">Balance</div>
+                            <div style="font-size: 20px; font-weight: bold; color: ${balance >= 0 ? '#10b981' : '#ef4444'};">
+                                S/. ${balance.toLocaleString()}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="empresa-financials">
+                        <div class="financial-item">
+                            <div style="color: #6b7280; font-size: 14px;">Caja</div>
+                            <div style="font-size: 18px; font-weight: bold;">S/. ${(empresa.finanzas?.caja || 0).toLocaleString()}</div>
+                        </div>
+                        <div class="financial-item">
+                            <div style="color: #6b7280; font-size: 14px;">Ingresos</div>
+                            <div style="font-size: 18px; font-weight: bold; color: #10b981;">S/. ${(empresa.finanzas?.ingresos || 0).toLocaleString()}</div>
+                        </div>
+                        <div class="financial-item">
+                            <div style="color: #6b7280; font-size: 14px;">Gastos</div>
+                            <div style="font-size: 18px; font-weight: bold; color: #ef4444;">S/. ${(empresa.finanzas?.gastos || 0).toLocaleString()}</div>
+                        </div>
+                        <div class="financial-item">
+                            <div style="color: #6b7280; font-size: 14px;">Rentabilidad</div>
+                            <div style="font-size: 18px; font-weight: bold;">
+                                ${empresa.finanzas?.ingresos ? ((balance / empresa.finanzas.ingresos) * 100).toFixed(1) + '%' : '0%'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('')}
+        </div>
+        
+        <div style="background: #f9fafb; padding: 20px; text-align: center; color: #6b7280; border-top: 1px solid #e5e7eb;">
+            <div style="font-weight: bold;">© ${new Date().getFullYear()} GRIZALUM Premium - Sistema de Control Empresarial</div>
+            <div style="margin-top: 5px;">Reporte confidencial para uso interno exclusivo</div>
+        </div>
+    </div>
+</body>
+</html>`;
+}
     optimizarSistema() {
         this._mostrarNotificacion('⚡ Sistema optimizado exitosamente', 'success');
         this._registrarLog('info', 'Sistema optimizado por Super Admin');
