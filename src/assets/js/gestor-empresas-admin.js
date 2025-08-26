@@ -3216,47 +3216,146 @@ _organizarRespaldos(empresaId) {
 
 configurarAlertasEmpresa(empresaId) {
     const empresa = this.gestor?.estado?.empresas?.[empresaId];
-    if (!empresa) return;
-    
-    this._mostrarNotificacionPremium('🔔 Configurador de alertas próximamente disponible', 'info');
-    this._registrarLog('info', `Configuración de alertas solicitada para "${empresa.nombre}"`);
-}
-    limpiarTodosLosModalesForzado() {
-    try {
-        console.log('🧹 Iniciando limpieza forzada...');
-        
-        // Remover TODOS los modales por ID
-        const modalesIds = [
-            'grizalumModalControlEmpresa',
-            'grizalumModalAdmin'
-        ];
-        
-        modalesIds.forEach(id => {
-            const modal = document.getElementById(id);
-            if (modal) {
-                modal.remove();
-                console.log(`✅ Modal ${id} removido`);
-            }
-        });
-        
-        // Remover por z-index alto
-        const modalesZIndex = document.querySelectorAll('div[style*="z-index: 999999"]');
-        modalesZIndex.forEach(modal => modal.remove());
-        
-        // Remover por backdrop-filter
-        const modalesBackdrop = document.querySelectorAll('div[style*="backdrop-filter: blur"]');
-        modalesBackdrop.forEach(modal => modal.remove());
-        
-        // Restaurar body
-        document.body.style.overflow = 'auto';
-        
-        console.log('✅ Limpieza forzada completada');
-        
-    } catch (error) {
-        console.error('❌ Error en limpieza:', error);
-        // Último recurso
-        location.reload();
+    if (!empresa) {
+        this._mostrarNotificacionPremium('❌ Empresa no encontrada', 'error');
+        return;
     }
+    
+    // Crear modal de configuración de alertas
+    this._crearModalAlertasPremium(empresa);
+}
+
+_crearModalAlertasPremium(empresa) {
+    const modalAlertas = document.createElement('div');
+    modalAlertas.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.9);
+        z-index: 99999999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        backdrop-filter: blur(15px);
+    `;
+    
+    const alertasActuales = this._obtenerAlertasEmpresa(empresa.id);
+    
+    modalAlertas.innerHTML = `
+        <div style="background: white; border-radius: 24px; width: 800px; max-width: 95vw; max-height: 90vh; overflow: hidden; box-shadow: 0 25px 80px rgba(0,0,0,0.6);">
+            <div style="background: linear-gradient(135deg, #d4af37, #b8941f); color: white; padding: 30px;">
+                <h3 style="margin: 0 0 10px 0; font-size: 24px; font-weight: 800;">🔔 CONFIGURADOR DE ALERTAS PREMIUM</h3>
+                <p style="margin: 0; opacity: 0.9; font-size: 16px;">${empresa.nombre} • ${empresa.categoria}</p>
+            </div>
+            
+            <div style="padding: 30px; max-height: 500px; overflow-y: auto;">
+                
+                <!-- Alertas Financieras -->
+                <div style="margin-bottom: 30px;">
+                    <h4 style="margin: 0 0 20px 0; color: #1f2937; display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 20px;">💰</span> Alertas Financieras
+                    </h4>
+                    
+                    <div style="display: grid; gap: 20px;">
+                        <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e5e7eb;">
+                            <label style="display: flex; align-items: center; gap: 10px; font-weight: 600; margin-bottom: 15px;">
+                                <input type="checkbox" id="alerta-caja-baja" ${alertasActuales.cajaBaja ? 'checked' : ''}>
+                                🚨 Alerta de Caja Baja
+                            </label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <span>Alertar cuando la caja sea menor a:</span>
+                                <input type="number" id="limite-caja" value="1000" style="padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; width: 120px;">
+                                <span>soles</span>
+                            </div>
+                        </div>
+                        
+                        <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e5e7eb;">
+                            <label style="display: flex; align-items: center; gap: 10px; font-weight: 600; margin-bottom: 15px;">
+                                <input type="checkbox" id="alerta-balance-negativo" ${alertasActuales.balanceNegativo ? 'checked' : ''}>
+                                ⚠️ Alerta de Balance Negativo
+                            </label>
+                            <div style="color: #6b7280; font-size: 14px;">Se activará cuando los gastos superen a los ingresos</div>
+                        </div>
+                        
+                        <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e5e7eb;">
+                            <label style="display: flex; align-items: center; gap: 10px; font-weight: 600; margin-bottom: 15px;">
+                                <input type="checkbox" id="alerta-gastos-altos" ${alertasActuales.gastosAltos ? 'checked' : ''}>
+                                📈 Alerta de Gastos Elevados
+                            </label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <span>Alertar cuando los gastos superen el</span>
+                                <input type="number" id="porcentaje-gastos" value="80" style="padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; width: 80px;">
+                                <span>% de los ingresos</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Alertas Operativas -->
+                <div style="margin-bottom: 30px;">
+                    <h4 style="margin: 0 0 20px 0; color: #1f2937; display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 20px;">⚙️</span> Alertas Operativas
+                    </h4>
+                    
+                    <div style="display: grid; gap: 20px;">
+                        <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e5e7eb;">
+                            <label style="display: flex; align-items: center; gap: 10px; font-weight: 600; margin-bottom: 15px;">
+                                <input type="checkbox" id="alerta-empresa-suspendida" ${alertasActuales.empresaSuspendida ? 'checked' : ''}>
+                                ⏸️ Empresa Suspendida por Mucho Tiempo
+                            </label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <span>Alertar si está suspendida por más de</span>
+                                <input type="number" id="dias-suspension" value="7" style="padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; width: 80px;">
+                                <span>días</span>
+                            </div>
+                        </div>
+                        
+                        <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e5e7eb;">
+                            <label style="display: flex; align-items: center; gap: 10px; font-weight: 600;">
+                                <input type="checkbox" id="alerta-empresa-inactiva" ${alertasActuales.empresaInactiva ? 'checked' : ''}>
+                                💤 Empresa Inactiva - Revisar Estado
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Botones -->
+                <div style="display: flex; gap: 15px; margin-top: 30px;">
+                    <button onclick="adminEmpresas.guardarConfiguracionAlertas('${empresa.id}')" 
+                        style="
+                            flex: 1;
+                            background: linear-gradient(135deg, #d4af37, #b8941f); 
+                            color: white; 
+                            border: none; 
+                            padding: 16px; 
+                            border-radius: 12px; 
+                            cursor: pointer; 
+                            font-weight: 700;
+                            font-size: 16px;
+                            text-transform: uppercase;
+                        ">🔔 ACTIVAR ALERTAS</button>
+                    
+                    <button onclick="this.closest('div[style*=\\'z-index: 99999999\\']').remove()" 
+                        style="
+                            flex: 0.3;
+                            background: linear-gradient(135deg, #64748b, #475569); 
+                            color: white; 
+                            border: none; 
+                            padding: 16px; 
+                            border-radius: 12px; 
+                            cursor: pointer; 
+                            font-weight: 700;
+                            font-size: 16px;
+                        ">❌ CANCELAR</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modalAlertas);
 }
     
     suspenderEmpresa(empresaId) {
