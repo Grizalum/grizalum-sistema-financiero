@@ -3291,7 +3291,7 @@ _crearModalAlertasPremium(empresa) {
                             font-size: 16px;
                         ">ACTIVAR ALERTAS</button>
                     
-                    <button onclick="this.closest('div[style*=\\'z-index: 99999999\\']').remove()" 
+                    <button onclick="adminEmpresas.cerrarModalAlertas()"     
                         style="
                             flex: 0.3;
                             background: #64748b; 
@@ -3338,7 +3338,15 @@ activarAlertas(empresaId) {
         };
     }
 }
-
+    
+cerrarModalAlertas() {
+    const modal = document.querySelector('div[style*="z-index: 99999999"]');
+    if (modal) {
+        modal.style.opacity = '0';
+        setTimeout(() => modal.remove(), 300);
+    }
+}
+    
 guardarConfiguracionAlertas(empresaId) {
     try {
         const configuracion = {
@@ -4058,8 +4066,10 @@ setTimeout(() => {
 // TECLA DE EMERGENCIA - ESC para limpiar todo
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
-        if (window.adminEmpresas && window.adminEmpresas.limpiarTodosLosModalesForzado) {
-            window.adminEmpresas.limpiarTodosLosModalesForzado();
+        // Solo limpiar si realmente hay un problema
+        const modales = document.querySelectorAll('div[style*="z-index: 99999999"], div[style*="z-index: 999999"]');
+        if (modales.length > 0) {
+            modales.forEach(modal => modal.remove());
         }
     }
-});
+})
