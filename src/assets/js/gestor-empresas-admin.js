@@ -3270,7 +3270,7 @@ _crearModalAlertasPremium(empresa) {
                     
                     <div style="background: #f8fafc; padding: 20px; border-radius: 12px;">
                         <label style="display: flex; align-items: center; gap: 10px; font-weight: 600; margin-bottom: 10px;">
-                            <input type="checkbox" id="alerta-empresa-suspendida">
+                            <input type="checkbox" id="alerta-empresa-suspendida" checked>
                             Empresa Suspendida
                         </label>
                         <div>Alertar si la empresa está suspendida por más de 7 días</div>
