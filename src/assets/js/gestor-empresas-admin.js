@@ -1989,7 +1989,7 @@ _crearModalControlEmpresa(empresa) {
                         onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 15px 40px rgba(16, 185, 129, 0.4)'"
                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.3)'"
                     >
-                        <span style="font-size: 28px;">💾</span> BACKUP
+                        <span style="font-size: 28px;">🛡️</span> CREAR RESPALDO
                     </button>
                     
                     <button onclick="adminEmpresas.configurarAlertasEmpresa('${empresa.id}')" 
@@ -3100,39 +3100,117 @@ verHistorialEmpresaAvanzado(empresaId) {
 
 crearBackupEmpresa(empresaId) {
     const empresa = this.gestor?.estado?.empresas?.[empresaId];
-    if (!empresa) return;
+    if (!empresa) {
+        this._mostrarNotificacionPremium('❌ Empresa no encontrada', 'error');
+        return;
+    }
+    
+    // Mostrar confirmación profesional
+    if (!confirm(`¿Crear respaldo de seguridad para "${empresa.nombre}"?\n\nEsto guardará el estado actual de la empresa de forma segura.`)) {
+        return;
+    }
     
     try {
-        const backup = {
-            fecha: new Date().toISOString(),
-            version: 'GRIZALUM Premium v3.0',
-            empresa: JSON.parse(JSON.stringify(empresa)), // Deep copy
-            metadatos: {
-                id: empresa.id,
-                nombre: empresa.nombre,
-                backupId: Date.now()
+        const fecha = new Date();
+        const respaldoId = Date.now();
+        
+        const respaldo = {
+            informacion: {
+                id: respaldoId,
+                fechaCreacion: fecha.toISOString(),
+                fechaLegible: fecha.toLocaleDateString() + ' a las ' + fecha.toLocaleTimeString(),
+                version: 'GRIZALUM Premium v3.0',
+                tipoRespaldo: 'Manual - Creado por administrador',
+                empresa: empresa.nombre
+            },
+            
+            datosEmpresa: {
+                identificacion: {
+                    id: empresa.id,
+                    nombre: empresa.nombre,
+                    categoria: empresa.categoria,
+                    icono: empresa.icono || '🏢'
+                },
+                
+                estadoOperativo: {
+                    estado: empresa.estado,
+                    fechaCreacion: empresa.fechaCreacion || 'No registrada',
+                    ultimaModificacion: empresa.ultimaModificacion || fecha.toISOString()
+                },
+                
+                situacionFinanciera: {
+                    cajaDisponible: empresa.finanzas?.caja || 0,
+                    ingresosRegistrados: empresa.finanzas?.ingresos || 0,
+                    gastosRegistrados: empresa.finanzas?.gastos || 0,
+                    balanceNeto: (empresa.finanzas?.ingresos || 0) - (empresa.finanzas?.gastos || 0)
+                }
+            },
+            
+            evaluacion: {
+                nivelSalud: this._evaluarNivelSalud(empresa),
+                observaciones: this._generarObservaciones(empresa),
+                recomendaciones: this._generarSugerencias(empresa)
             }
         };
         
-        // Crear archivo de backup
-        const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `Backup_${empresa.nombre.replace(/\s+/g, '_')}_${Date.now()}.json`;
-        a.click();
-        URL.revokeObjectURL(url);
+        // Guardar respaldo con nombre organizado
+        const claveRespaldo = `grizalum_respaldo_${empresa.id}_${empresa.nombre.replace(/\s+/g, '_')}_${respaldoId}`;
+        localStorage.setItem(claveRespaldo, JSON.stringify(respaldo, null, 2));
         
-        // También guardar en localStorage para recuperación
-        const backupKey = `grizalum_backup_empresa_${empresa.id}_${Date.now()}`;
-        localStorage.setItem(backupKey, JSON.stringify(backup));
+        // Mantener orden en los respaldos
+        this._organizarRespaldos(empresa.id);
         
-        this._registrarLog('success', `Backup creado para "${empresa.nombre}" (ID: ${backup.metadatos.backupId})`);
-        this._mostrarNotificacionPremium(`💾 Backup de "${empresa.nombre}" creado exitosamente`, 'success');
+        this._registrarLog('success', `Respaldo manual creado para "${empresa.nombre}" - ID: ${respaldoId}`);
+        this._mostrarNotificacionPremium(`🛡️ Respaldo de "${empresa.nombre}" creado y guardado con éxito`, 'success');
         
     } catch (error) {
-        this._registrarLog('error', `Error creando backup para "${empresa.nombre}": ${error.message}`);
-        this._mostrarNotificacionPremium('❌ Error al crear el backup', 'error');
+        console.error('Error creando respaldo:', error);
+        this._mostrarNotificacionPremium('❌ Error al crear el respaldo', 'error');
+    }
+}
+
+_evaluarNivelSalud(empresa) {
+    const caja = empresa.finanzas?.caja || 0;
+    return caja >= 5000 ? 'EXCELENTE' : caja >= 1000 ? 'BUENO' : 'REQUIERE ATENCIÓN';
+}
+
+_generarObservaciones(empresa) {
+    const observaciones = [];
+    const caja = empresa.finanzas?.caja || 0;
+    const balance = (empresa.finanzas?.ingresos || 0) - (empresa.finanzas?.gastos || 0);
+    
+    if (empresa.estado !== 'Operativo') observaciones.push('Empresa no está operativa actualmente');
+    if (caja < 1000) observaciones.push('Nivel de caja requiere supervisión');
+    if (balance < 0) observaciones.push('Los gastos superan a los ingresos');
+    
+    return observaciones.length > 0 ? observaciones : ['Empresa en condiciones normales'];
+}
+
+_generarSugerencias(empresa) {
+    const sugerencias = [];
+    const caja = empresa.finanzas?.caja || 0;
+    
+    if (caja >= 5000) sugerencias.push('Evaluar oportunidades de inversión');
+    if (caja < 1000) sugerencias.push('Priorizar incremento de liquidez');
+    
+    return sugerencias.length > 0 ? sugerencias : ['Mantener operaciones actuales'];
+}
+
+_organizarRespaldos(empresaId) {
+    try {
+        const respaldos = Object.keys(localStorage)
+            .filter(clave => clave.startsWith(`grizalum_respaldo_${empresaId}_`))
+            .sort()
+            .reverse();
+        
+        // Mantener solo los últimos 30 respaldos por empresa
+        if (respaldos.length > 30) {
+            respaldos.slice(30).forEach(clave => {
+                localStorage.removeItem(clave);
+            });
+        }
+    } catch (error) {
+        console.warn('Error organizando respaldos:', error);
     }
 }
 
@@ -3526,8 +3604,123 @@ _generarVersionPDF(htmlContent) {
     }
 
     _inicializarSistema() {
-        // Sistema base inicializado
+    // Sistema base inicializado
+    console.log('Iniciando sistema GRIZALUM Premium...');
+    
+    // Iniciar respaldo automático inteligente
+    this._iniciarRespaldoAutomatico();
+    
+    console.log('Sistema completamente inicializado con respaldo automático');
+}
+    _iniciarRespaldoAutomatico() {
+    if (this.intervaloRespaldo) {
+        clearInterval(this.intervaloRespaldo);
     }
+    
+    console.log('Sistema de respaldo automático iniciado - cada 60 segundos');
+    
+    this.intervaloRespaldo = setInterval(() => {
+        this._ejecutarRespaldoInteligente();
+    }, 60000);
+}
+
+_ejecutarRespaldoInteligente() {
+    try {
+        const empresas = Object.values(this.gestor.estado.empresas);
+        let respaldosCreados = 0;
+        
+        empresas.forEach(empresa => {
+            if (this._verificarCambiosEmpresa(empresa)) {
+                this._crearRespaldoSilencioso(empresa);
+                respaldosCreados++;
+            }
+        });
+        
+        if (respaldosCreados > 0) {
+            console.log(`Respaldo automático: ${respaldosCreados} empresas respaldadas`);
+        }
+        
+    } catch (error) {
+        console.error('Error en respaldo automático:', error);
+    }
+}
+
+_verificarCambiosEmpresa(empresa) {
+    const ultimoRespaldo = this._obtenerUltimoRespaldoEmpresa(empresa.id);
+    
+    if (!ultimoRespaldo) return true;
+    
+    const anterior = ultimoRespaldo.datosEmpresa;
+    
+    return (
+        anterior.estadoOperativo.estado !== empresa.estado ||
+        anterior.situacionFinanciera.cajaDisponible !== (empresa.finanzas?.caja || 0) ||
+        anterior.situacionFinanciera.ingresosRegistrados !== (empresa.finanzas?.ingresos || 0) ||
+        anterior.situacionFinanciera.gastosRegistrados !== (empresa.finanzas?.gastos || 0)
+    );
+}
+
+_obtenerUltimoRespaldoEmpresa(empresaId) {
+    try {
+        const claves = Object.keys(localStorage)
+            .filter(clave => clave.startsWith(`grizalum_respaldo_${empresaId}_`))
+            .sort()
+            .reverse();
+        
+        if (claves.length === 0) return null;
+        
+        return JSON.parse(localStorage.getItem(claves[0]));
+    } catch {
+        return null;
+    }
+}
+
+_crearRespaldoSilencioso(empresa) {
+    const fecha = new Date();
+    const respaldoId = Date.now();
+    
+    const respaldo = {
+        informacion: {
+            id: respaldoId,
+            fechaCreacion: fecha.toISOString(),
+            tipo: 'Automático - Sistema inteligente',
+            empresa: empresa.nombre
+        },
+        datosEmpresa: {
+            identificacion: {
+                id: empresa.id,
+                nombre: empresa.nombre,
+                categoria: empresa.categoria
+            },
+            estadoOperativo: {
+                estado: empresa.estado
+            },
+            situacionFinanciera: {
+                cajaDisponible: empresa.finanzas?.caja || 0,
+                ingresosRegistrados: empresa.finanzas?.ingresos || 0,
+                gastosRegistrados: empresa.finanzas?.gastos || 0
+            }
+        }
+    };
+    
+    const claveRespaldo = `grizalum_respaldo_${empresa.id}_auto_${respaldoId}`;
+    localStorage.setItem(claveRespaldo, JSON.stringify(respaldo));
+    
+    this._limpiarRespaldosAutomaticos(empresa.id);
+}
+
+_limpiarRespaldosAutomaticos(empresaId) {
+    const respaldosAuto = Object.keys(localStorage)
+        .filter(clave => clave.startsWith(`grizalum_respaldo_${empresaId}_auto_`))
+        .sort()
+        .reverse();
+    
+    if (respaldosAuto.length > 25) {
+        respaldosAuto.slice(25).forEach(clave => {
+            localStorage.removeItem(clave);
+        });
+    }
+}
 
     _cargarNotificaciones() {
         try {
