@@ -3340,26 +3340,31 @@ activarAlertas(empresaId) {
 }
 
 guardarConfiguracionAlertas(empresaId) {
-    const configuracion = {
-        cajaBaja: document.getElementById('alerta-caja-baja').checked,
-        limiteCaja: parseFloat(document.getElementById('limite-caja').value) || 1000,
-        balanceNegativo: document.getElementById('alerta-balance-negativo').checked,
-        gastosAltos: document.getElementById('alerta-gastos-altos').checked,
-        porcentajeGastos: parseFloat(document.getElementById('porcentaje-gastos').value) || 80,
-        empresaSuspendida: document.getElementById('alerta-empresa-suspendida').checked,
-        diasSuspension: parseFloat(document.getElementById('dias-suspension').value) || 7,
-        empresaInactiva: document.getElementById('alerta-empresa-inactiva').checked
-    };
-    
-    localStorage.setItem(`grizalum_alertas_${empresaId}`, JSON.stringify(configuracion));
-    
-    document.querySelector('div[style*="z-index: 99999999"]').remove();
-    
-    const empresa = this.gestor?.estado?.empresas?.[empresaId];
-    this._mostrarNotificacionPremium(`Alertas configuradas para "${empresa.nombre}"`, 'success');
-    this._registrarLog('info', `Alertas configuradas para "${empresa.nombre}"`);
+    try {
+        const configuracion = {
+            cajaBaja: document.getElementById('alerta-caja-baja').checked,
+            limiteCaja: parseFloat(document.getElementById('limite-caja').value) || 1000,
+            balanceNegativo: document.getElementById('alerta-balance-negativo').checked,
+            gastosAltos: document.getElementById('alerta-gastos-altos').checked,
+            empresaSuspendida: document.getElementById('alerta-empresa-suspendida').checked,
+            empresaInactiva: document.getElementById('alerta-empresa-inactiva').checked
+        };
+        
+        localStorage.setItem(`grizalum_alertas_${empresaId}`, JSON.stringify(configuracion));
+        
+        // Cerrar modal correctamente
+        const modal = document.querySelector('div[style*="z-index: 99999999"]');
+        if (modal) modal.remove();
+        
+        const empresa = this.gestor?.estado?.empresas?.[empresaId];
+        this._mostrarNotificacionPremium(`Alertas configuradas para "${empresa.nombre}"`, 'success');
+        this._registrarLog('info', `Alertas configuradas para "${empresa.nombre}"`);
+        
+    } catch (error) {
+        console.error('Error guardando alertas:', error);
+        this._mostrarNotificacionPremium('Error guardando configuración de alertas', 'error');
+    }
 }
-
 _verificarAlertasEmpresa(empresa) {
     const configuracion = this._obtenerAlertasEmpresa(empresa.id);
     const alertasActivas = [];
