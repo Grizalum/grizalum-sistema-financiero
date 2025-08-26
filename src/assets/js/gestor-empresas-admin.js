@@ -1664,7 +1664,7 @@ _crearModalControlEmpresa(empresa) {
                         </div>
                         
                         <button 
-                            onclick="adminEmpresas.limpiarTodosLosModalesForzado()" 
+                            onclick="adminEmpresas.cerrarModal()"
                             style="
                                 width: 60px; 
                                 height: 60px; 
