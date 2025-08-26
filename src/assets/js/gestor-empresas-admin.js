@@ -3942,6 +3942,9 @@ _limpiarRespaldosAutomaticos(empresaId) {
     }
 }
 
+cerrarModalSecundario() {
+    // CERRAR SOLO EL MODAL...
+}
 // ═══════════════════════════════════════════════════════════════════════════
 // PASO 2: REEMPLAZAR COMPLETAMENTE LA INSTANCIA GLOBAL
 // ═══════════════════════════════════════════════════════════════════════════
