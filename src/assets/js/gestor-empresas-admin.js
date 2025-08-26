@@ -2867,7 +2867,7 @@ _crearAvisoVisualPremium(aviso) {
         padding: 25px;
         border-radius: 20px;
         font-weight: 600;
-        z-index: 99999999;
+        z-index: 9999999;
         max-width: 450px;
         box-shadow: 0 15px 50px rgba(0,0,0,0.4);
         transform: translateX(100%);
@@ -3278,7 +3278,7 @@ _crearModalAlertasPremium(empresa) {
                 </div>
                 
                 <div style="display: flex; gap: 15px; margin-top: 30px;">
-                    <button onclick="adminEmpresas.activarAlertas('${empresa.id}')" 
+                    <button onclick="adminEmpresas.guardarConfiguracionAlertas('${empresa.id}')" 
                         style="
                             flex: 1;
                             background: linear-gradient(135deg, #d4af37, #b8941f); 
@@ -3314,7 +3314,21 @@ activarAlertas(empresaId) {
     const empresa = this.gestor?.estado?.empresas?.[empresaId];
     if (!empresa) return;
     
+    // CAPTURAR VALORES DE LOS CHECKBOXES
+    const configuracion = {
+        cajaBaja: document.getElementById('alerta-caja-baja')?.checked || false,
+        balanceNegativo: document.getElementById('alerta-balance-negativo')?.checked || false,
+        empresaSuspendida: document.getElementById('alerta-empresa-suspendida')?.checked || false,
+        fechaConfiguracion: new Date().toISOString()
+    };
+    
+    // GUARDAR EN LOCALSTORAGE
+    localStorage.setItem(`grizalum_alertas_${empresaId}`, JSON.stringify(configuracion));
+    
+    // CERRAR MODAL
     document.querySelector('div[style*="z-index: 99999999"]').remove();
+    
+    // NOTIFICACIONES
     this._mostrarNotificacionPremium(`Alertas activadas para "${empresa.nombre}"`, 'success');
     this._registrarLog('info', `Sistema de alertas configurado para "${empresa.nombre}"`);
 }
