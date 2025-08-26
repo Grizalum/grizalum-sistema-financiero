@@ -3188,11 +3188,13 @@ generarReportePremium() {
             ingresoTotal, gastoTotal, cajaTotal
         });
 
-        // Abrir en nueva ventana y auto-descargar
+        // Generar tanto HTML descargable como vista previa
+        this._descargarReporteHTML(htmlReporte, empresas);
+
+        // Mostrar vista previa en nueva ventana  
         const ventana = window.open('', '_blank');
         ventana.document.write(htmlReporte);
         ventana.document.close();
-        ventana.print(); // Auto-abrir diálogo de impresión/guardar como PDF
 
         this._mostrarNotificacion('📄 Reporte Premium generado exitosamente', 'success');
         this._registrarLog('success', 'Reporte Premium HTML generado');
@@ -3322,6 +3324,33 @@ _generarReporteHTML(empresas, datos) {
     </div>
 </body>
 </html>`;
+}
+    _descargarReporteHTML(htmlContent, empresas) {
+    // Crear archivo HTML descargable
+    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `GRIZALUM_Reporte_${new Date().getTime()}.html`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    // También crear versión PDF-ready
+    this._generarVersionPDF(htmlContent);
+}
+
+_generarVersionPDF(htmlContent) {
+    // Crear ventana temporal para impresión
+    const ventanaPDF = window.open('', '_blank');
+    ventanaPDF.document.write(htmlContent);
+    ventanaPDF.document.close();
+    
+    // Auto-abrir diálogo de impresión después de cargar
+    ventanaPDF.onload = () => {
+        setTimeout(() => {
+            ventanaPDF.print();
+        }, 1000);
+    };
 }
     optimizarSistema() {
         this._mostrarNotificacion('⚡ Sistema optimizado exitosamente', 'success');
