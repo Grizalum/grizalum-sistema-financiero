@@ -2372,8 +2372,33 @@ limpiarTodosLosModalesForzado() {
 }
 generarReporteEmpresaAvanzado(empresaId) {
     const empresa = this.gestor?.estado?.empresas?.[empresaId];
-    if (!empresa) return;
+    if (!empresa) {
+        this._mostrarNotificacionPremium('❌ Empresa no encontrada', 'error');
+        return;
+    }
     
+    try {
+        // Generar reporte HTML individual profesional
+        const htmlReporte = this._generarReporteEmpresaHTML(empresa);
+        
+        // Descargar automáticamente
+        this._descargarReporteEmpresaHTML(htmlReporte, empresa);
+        
+        // Mostrar vista previa
+        const ventana = window.open('', '_blank');
+        ventana.document.write(htmlReporte);
+        ventana.document.close();
+        
+        this._registrarLog('info', `Reporte individual generado para "${empresa.nombre}"`);
+        this._mostrarNotificacionPremium(`📊 Reporte de "${empresa.nombre}" generado exitosamente`, 'success');
+        
+    } catch (error) {
+        console.error('Error generando reporte individual:', error);
+        this._mostrarNotificacionPremium('❌ Error generando reporte individual', 'error');
+    }
+}
+
+_generarReporteEmpresaHTML(empresa) {
     const fecha = new Date();
     const caja = empresa.finanzas?.caja || 0;
     const ingresos = empresa.finanzas?.ingresos || 0;
@@ -2381,78 +2406,177 @@ generarReporteEmpresaAvanzado(empresaId) {
     const balance = ingresos - gastos;
     
     const saludFinanciera = caja >= 5000 ? 'EXCELENTE' : caja >= 1000 ? 'REGULAR' : 'CRÍTICO';
-    const recomendaciones = this._generarRecomendaciones(empresa);
-    
-    const reporte = `
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                     REPORTE EJECUTIVO PREMIUM                               ║
-║                        ${empresa.nombre.toUpperCase()}                      ║
-╚══════════════════════════════════════════════════════════════════════════════╝
+    const colorSalud = caja >= 5000 ? '#10b981' : caja >= 1000 ? '#f59e0b' : '#ef4444';
+    const iconoSalud = caja >= 5000 ? '💚' : caja >= 1000 ? '⚠️' : '🚨';
 
-📅 FECHA DE REPORTE: ${fecha.toLocaleDateString()} ${fecha.toLocaleTimeString()}
-🏢 EMPRESA: ${empresa.nombre}
-🆔 ID: ${empresa.id}
-📂 CATEGORÍA: ${empresa.categoria}
-📊 ESTADO ACTUAL: ${empresa.estado}
-👤 GENERADO POR: Super Admin Premium
+    return `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>REPORTE INDIVIDUAL - ${empresa.nombre}</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: #f5f5f5; }
+        .header { background: linear-gradient(135deg, #d4af37, #b8941f); color: white; padding: 40px; text-align: center; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+        .content { padding: 40px; }
+        .empresa-card { background: linear-gradient(135deg, #f8fafc, #ffffff); border-radius: 16px; padding: 30px; margin: 20px 0; border: 1px solid #e5e7eb; }
+        .metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin: 30px 0; }
+        .metric { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; padding: 25px; border-radius: 16px; text-align: center; }
+        .metric.success { background: linear-gradient(135deg, #10b981, #059669); }
+        .metric.warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .metric.danger { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .metric.gold { background: linear-gradient(135deg, #d4af37, #b8941f); }
+        .analysis-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; margin: 30px 0; }
+        .analysis-card { background: #f8fafc; padding: 20px; border-radius: 12px; border-left: 4px solid #d4af37; }
+        h1 { margin: 0; font-size: 36px; }
+        h2 { color: #1f2937; border-bottom: 3px solid #d4af37; padding-bottom: 10px; }
+        .fecha { opacity: 0.9; margin-top: 10px; }
+        .salud-badge { display: inline-block; padding: 8px 16px; border-radius: 25px; color: white; font-weight: bold; background: ${colorSalud}; }
+        @media print { body { background: white; } .container { box-shadow: none; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 REPORTE INDIVIDUAL PREMIUM</h1>
+            <div style="font-size: 24px; margin: 15px 0;">${empresa.icono || '🏢'} ${empresa.nombre}</div>
+            <div style="font-size: 16px; opacity: 0.9;">${empresa.categoria}</div>
+            <div class="fecha">Generado: ${fecha.toLocaleDateString()} ${fecha.toLocaleTimeString()}</div>
+        </div>
+        
+        <div class="content">
+            <div class="empresa-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div>
+                        <h2 style="margin: 0; color: #1f2937;">Información General</h2>
+                        <div style="color: #6b7280; margin-top: 5px;">Estado actual de la empresa</div>
+                    </div>
+                    <div class="salud-badge">
+                        ${iconoSalud} ${saludFinanciera}
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 25px;">
+                    <div style="text-align: center; padding: 15px; background: white; border-radius: 12px; border: 1px solid #e5e7eb;">
+                        <div style="color: #6b7280; font-size: 12px; text-transform: uppercase; margin-bottom: 5px;">ID Empresa</div>
+                        <div style="font-weight: 700; color: #1f2937; font-family: monospace;">${empresa.id}</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: white; border-radius: 12px; border: 1px solid #e5e7eb;">
+                        <div style="color: #6b7280; font-size: 12px; text-transform: uppercase; margin-bottom: 5px;">Estado</div>
+                        <div style="font-weight: 700; color: ${empresa.estado === 'Operativo' ? '#10b981' : '#ef4444'};">${empresa.estado}</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: white; border-radius: 12px; border: 1px solid #e5e7eb;">
+                        <div style="color: #6b7280; font-size: 12px; text-transform: uppercase; margin-bottom: 5px;">Categoría</div>
+                        <div style="font-weight: 700; color: #1f2937;">${empresa.categoria}</div>
+                    </div>
+                </div>
+            </div>
 
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                        ANÁLISIS FINANCIERO                                  ║
-╚══════════════════════════════════════════════════════════════════════════════╝
+            <h2>💰 Análisis Financiero Detallado</h2>
+            <div class="metrics">
+                <div class="metric success">
+                    <h3 style="margin: 0 0 15px 0;">💵 Caja Actual</h3>
+                    <div style="font-size: 32px; font-weight: bold;">S/. ${caja.toLocaleString()}</div>
+                    <div style="font-size: 14px; margin-top: 8px; opacity: 0.8;">
+                        ${caja >= 5000 ? 'Situación excelente' : caja >= 1000 ? 'Situación regular' : 'Requiere atención'}
+                    </div>
+                </div>
+                
+                <div class="metric ${balance >= 0 ? 'gold' : 'danger'}">
+                    <h3 style="margin: 0 0 15px 0;">⚖️ Balance Neto</h3>
+                    <div style="font-size: 32px; font-weight: bold;">S/. ${balance.toLocaleString()}</div>
+                    <div style="font-size: 14px; margin-top: 8px; opacity: 0.8;">
+                        ${balance >= 0 ? 'Balance positivo' : 'Balance negativo'}
+                    </div>
+                </div>
+                
+                <div class="metric">
+                    <h3 style="margin: 0 0 15px 0;">📈 Ingresos Totales</h3>
+                    <div style="font-size: 28px; font-weight: bold;">S/. ${ingresos.toLocaleString()}</div>
+                    <div style="font-size: 14px; margin-top: 8px; opacity: 0.8;">
+                        Rentabilidad: ${ingresos > 0 ? ((balance / ingresos) * 100).toFixed(1) + '%' : '0%'}
+                    </div>
+                </div>
+                
+                <div class="metric warning">
+                    <h3 style="margin: 0 0 15px 0;">📉 Gastos Totales</h3>
+                    <div style="font-size: 28px; font-weight: bold;">S/. ${gastos.toLocaleString()}</div>
+                    <div style="font-size: 14px; margin-top: 8px; opacity: 0.8;">
+                        Ratio: ${ingresos > 0 ? ((gastos / ingresos) * 100).toFixed(1) + '%' : '0%'}
+                    </div>
+                </div>
+            </div>
 
-💵 CAJA ACTUAL:           S/. ${caja.toLocaleString()}
-📈 INGRESOS TOTALES:      S/. ${ingresos.toLocaleString()}
-📉 GASTOS TOTALES:        S/. ${gastos.toLocaleString()}
-⚖️  BALANCE NETO:         S/. ${balance.toLocaleString()} ${balance >= 0 ? '(POSITIVO ✅)' : '(NEGATIVO ❌)'}
+            <h2>📊 Análisis y Recomendaciones</h2>
+            <div class="analysis-grid">
+                <div class="analysis-card">
+                    <h4 style="margin: 0 0 10px 0; color: #d4af37;">💡 Liquidez</h4>
+                    <p style="margin: 0; line-height: 1.6; color: #374151;">
+                        ${caja >= 5000 ? 
+                            'La empresa mantiene una excelente posición de liquidez. Considere oportunidades de inversión para crecimiento.' :
+                            caja >= 1000 ?
+                            'Posición de liquidez regular. Monitorear flujo de caja y optimizar gastos.' :
+                            'Situación crítica de liquidez. Se requiere acción inmediata para mejorar la caja.'
+                        }
+                    </p>
+                </div>
+                
+                <div class="analysis-card">
+                    <h4 style="margin: 0 0 10px 0; color: #d4af37;">📈 Rentabilidad</h4>
+                    <p style="margin: 0; line-height: 1.6; color: #374151;">
+                        ${balance >= 0 ?
+                            balance > (ingresos * 0.2) ?
+                                'Excelente rentabilidad. La empresa genera buenos márgenes de ganancia.' :
+                                'Rentabilidad positiva pero moderada. Evaluar estrategias para optimizar ingresos.' :
+                            'Rentabilidad negativa. Revisar estructura de costos y estrategias de ingresos.'
+                        }
+                    </p>
+                </div>
+                
+                <div class="analysis-card">
+                    <h4 style="margin: 0 0 10px 0; color: #d4af37;">🎯 Eficiencia</h4>
+                    <p style="margin: 0; line-height: 1.6; color: #374151;">
+                        ${gastos > 0 && ingresos > 0 ?
+                            (gastos / ingresos) <= 0.7 ?
+                                'Excelente control de gastos. La empresa opera de manera eficiente.' :
+                                'Gastos controlados pero con margen de mejora. Buscar optimizaciones.' :
+                            'Revisar estructura de gastos para mejorar la eficiencia operativa.'
+                        }
+                    </p>
+                </div>
+                
+                <div class="analysis-card">
+                    <h4 style="margin: 0 0 10px 0; color: #d4af37;">🚀 Oportunidades</h4>
+                    <p style="margin: 0; line-height: 1.6; color: #374151;">
+                        ${empresa.estado === 'Operativo' ?
+                            'Empresa activa con potencial de crecimiento. Evaluar expansión o diversificación.' :
+                            'Estado no operativo. Priorizar reactivación y estabilización de operaciones.'
+                        }
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div style="background: #f9fafb; padding: 30px; text-align: center; color: #6b7280; border-top: 1px solid #e5e7eb;">
+            <div style="font-weight: bold; font-size: 16px;">© ${new Date().getFullYear()} GRIZALUM Premium - Reporte Individual</div>
+            <div style="margin-top: 8px;">Reporte confidencial de "${empresa.nombre}"</div>
+            <div style="margin-top: 5px; font-size: 12px;">Generado por Super Admin Premium • ${fecha.toLocaleString()}</div>
+        </div>
+    </div>
+</body>
+</html>`;
+}
 
-🎯 SALUD FINANCIERA:      ${saludFinanciera} ${saludFinanciera === 'EXCELENTE' ? '💚' : saludFinanciera === 'REGULAR' ? '⚠️' : '🚨'}
-
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                        ANÁLISIS DE RENDIMIENTO                              ║
-╚══════════════════════════════════════════════════════════════════════════════╝
-
-📊 MARGEN DE GANANCIA:    ${ingresos > 0 ? ((balance / ingresos) * 100).toFixed(1) : '0.0'}%
-💸 RATIO GASTOS/INGRESOS: ${ingresos > 0 ? ((gastos / ingresos) * 100).toFixed(1) : '0.0'}%
-🏦 DÍAS DE OPERACIÓN:     ${gastos > 0 ? Math.floor(caja / (gastos / 30)) : '∞'} días (aprox)
-
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                        RECOMENDACIONES PREMIUM                              ║
-╚══════════════════════════════════════════════════════════════════════════════╝
-
-${recomendaciones.map(rec => `${rec.icono} ${rec.titulo}:\n   ${rec.descripcion}`).join('\n\n')}
-
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                        HISTORIAL RECIENTE                                   ║
-╚══════════════════════════════════════════════════════════════════════════════╝
-
-${this._obtenerHistorialReciente(empresa, 5)}
-
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                        INFORMACIÓN TÉCNICA                                  ║
-╚══════════════════════════════════════════════════════════════════════════════╝
-
-📅 FECHA CREACIÓN:        ${empresa.fechaCreacion || 'No disponible'}
-🔄 ÚLTIMA MODIFICACIÓN:   ${empresa.ultimaModificacion || 'No disponible'}
-🏷️ ÍCONO:                ${empresa.icono || 'No definido'}
-
-════════════════════════════════════════════════════════════════════════════════
-Reporte generado por GRIZALUM PREMIUM v3.0
-Sistema de Gestión Empresarial Avanzado
-© ${new Date().getFullYear()} - Todos los derechos reservados
-════════════════════════════════════════════════════════════════════════════════
-    `;
-    
-    // Descargar reporte
-    const blob = new Blob([reporte], { type: 'text/plain;charset=utf-8' });
+_descargarReporteEmpresaHTML(htmlContent, empresa) {
+    // Crear archivo HTML descargable
+    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `REPORTE_PREMIUM_${empresa.nombre.replace(/\s+/g, '_')}_${fecha.getTime()}.txt`;
+    a.download = `REPORTE_INDIVIDUAL_${empresa.nombre.replace(/\s+/g, '_')}_${new Date().getTime()}.html`;
     a.click();
     URL.revokeObjectURL(url);
-    
-    this._registrarLog('info', `Reporte Premium generado para "${empresa.nombre}"`);
-    this._mostrarNotificacionPremium(`📊 Reporte Premium de "${empresa.nombre}" generado y descargado`, 'success');
 }
 
 _generarRecomendaciones(empresa) {
