@@ -1664,7 +1664,7 @@ _crearModalControlEmpresa(empresa) {
                         </div>
                         
                         <button 
-                            onclick="document.getElementById('grizalumModalControlEmpresa').remove()"
+                            onclick="adminEmpresas.cerrarModalSecundario()"
                             style="
                                 width: 60px; 
                                 height: 60px; 
