@@ -3933,9 +3933,15 @@ _limpiarRespaldosAutomaticos(empresaId) {
         }
     }
   cerrarModalSecundario() {
-        const modal = document.getElementById('grizalumModalControlEmpresa');
-        if (modal) modal.remove();
+    console.log('EJECUTANDO cerrarModalSecundario - solo debe cerrar modal secundario');
+    const modal = document.getElementById('grizalumModalControlEmpresa');
+    if (modal) {
+        modal.remove();
+        console.log('Modal secundario eliminado');
+    } else {
+        console.log('No se encontró el modal secundario');
     }
+ }
     
     _log(nivel, mensaje, datos = null) {
         if (this.gestor && this.gestor._log) {
