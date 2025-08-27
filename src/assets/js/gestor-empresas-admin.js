@@ -1292,9 +1292,13 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
         
         // También interceptar botones que se generen dinámicamente
         document.addEventListener('click', (e) => {
-            if (e.target.textContent.includes('GESTIONAR') || e.target.onclick?.toString().includes('abrirControlEmpresa')) {
-                e.preventDefault();
-                e.stopPropagation();
+         // Solo interceptar botones GESTIONAR, NO botones de cerrar
+        if (e.target.textContent.includes('GESTIONAR') && 
+           !e.target.textContent.includes('×') && 
+           !e.target.textContent.includes('CERRAR') &&
+           (e.target.onclick?.toString().includes('abrirControlEmpresa'))) {
+            e.preventDefault();
+            e.stopPropagation();
                 
                 // Extraer empresa ID
                 let empresaId = null;
@@ -2055,7 +2059,22 @@ _crearModalControlEmpresa(empresa) {
 
     document.body.appendChild(modal);
     this.modalActivo = modal;
-    
+    // Configurar el botón cerrar específicamente  
+    setTimeout(() => {
+       const botonCerrar = modal.querySelector('button[onclick*="cerrarModalSecundario"]');
+       if (botonCerrar) {
+           // Clonar el botón para eliminar todos los event listeners
+           const nuevoBoton = botonCerrar.cloneNode(true);
+           botonCerrar.parentNode.replaceChild(nuevoBoton, botonCerrar);
+        
+           // Añadir el event listener correcto
+           nuevoBoton.addEventListener('click', (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              this.cerrarModalSecundario();
+          });
+      }
+    }, 100);
     // Animación de entrada
     setTimeout(() => {
         modal.style.opacity = '1';
@@ -3933,6 +3952,7 @@ _limpiarRespaldosAutomaticos(empresaId) {
         }
     }
   cerrarModalSecundario() {
+    console.log('FUNCION EJECUTADA - cerrarModalSecundario');
     console.log('EJECUTANDO cerrarModalSecundario - solo debe cerrar modal secundario');
     const modal = document.getElementById('grizalumModalControlEmpresa');
     if (modal) {
