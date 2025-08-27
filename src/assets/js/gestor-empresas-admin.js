@@ -3932,7 +3932,11 @@ _limpiarRespaldosAutomaticos(empresaId) {
             }, 400);
         }
     }
-
+  cerrarModalSecundario() {
+        const modal = document.getElementById('grizalumModalControlEmpresa');
+        if (modal) modal.remove();
+    }
+    
     _log(nivel, mensaje, datos = null) {
         if (this.gestor && this.gestor._log) {
             this.gestor._log(nivel, `[PREMIUM] ${mensaje}`, datos);
