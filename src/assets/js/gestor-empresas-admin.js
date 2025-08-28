@@ -12,6 +12,7 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
         this.gestor = gestorPrincipal;
         this.modalActivo = null;
         this.datosTemporales = {};
+        this.pilaModales = [];
         this.notificaciones = this._cargarNotificaciones();
         this.logs = this._cargarLogs();
         this.configuracion = this._cargarConfiguracion();
@@ -91,6 +92,7 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
 
         document.body.appendChild(modal);
         this.modalActivo = modal;
+        this._gestionarPilaModales('agregar', 'grizalumModalAdmin');
         
         // Animación de entrada
         setTimeout(() => {
@@ -2038,6 +2040,8 @@ _crearModalControlEmpresa(empresa) {
 
     document.body.appendChild(modal);
     this.modalActivo = modal;
+    this._gestionarPilaModales('agregar', 'grizalumModalControlEmpresa');
+    
     // Configurar el botón cerrar específicamente  
     setTimeout(() => {
        const botonCerrar = modal.querySelector('button[onclick*="cerrarModalSecundario"]');
@@ -3956,47 +3960,23 @@ _limpiarRespaldosAutomaticos(empresaId) {
         }
     }
 cerrarModalSecundario() {
-    console.log('FUNCIÓN EJECUTADA - cerrarModalSecundario');
+console.log('FUNCIÓN EJECUTADA - cerrarModalSecundario');
     
-    // 1. Encontrar y cerrar el modal secundario con animación
+    // Usar el sistema de pila para gestionar el cierre
+    this._gestionarPilaModales('remover', 'grizalumModalControlEmpresa');
+    
     const modalSecundario = document.getElementById('grizalumModalControlEmpresa');
     if (modalSecundario) {
-        // Animación de salida
         modalSecundario.style.opacity = '0';
         const content = modalSecundario.querySelector('.control-empresa-content');
         if (content) {
             content.style.transform = 'scale(0.85) translateY(40px)';
         }
         
-        // Remover después de la animación
         setTimeout(() => {
             modalSecundario.remove();
-            console.log('✅ Modal secundario cerrado con animación');
-            
-            // 2. CLAVE: Reactiva el modal principal si existe
-            const modalPrincipal = document.getElementById('grizalumModalAdmin');
-            if (modalPrincipal) {
-                // Restaurar el modal principal
-                modalPrincipal.style.display = 'flex';
-                modalPrincipal.style.opacity = '1';
-                modalPrincipal.style.pointerEvents = 'auto';
-                console.log('✅ Modal principal reactivado');
-            }
+            console.log('✅ Modal secundario cerrado y pila gestionada');
         }, 400);
-        
-    } else {
-        console.log('⚠️ No se encontró el modal secundario');
-        
-        // Si no hay modal secundario, verificar si hay otros modales que cerrar
-        const otrosModales = document.querySelectorAll('div[style*="z-index: 9999999"]');
-        if (otrosModales.length > 0) {
-            otrosModales.forEach(modal => {
-                if (modal.innerHTML.includes('FINANCIERO') || modal.innerHTML.includes('ALERTAS')) {
-                    modal.style.opacity = '0';
-                    setTimeout(() => modal.remove(), 300);
-                }
-            });
-        }
     }
 }
     
