@@ -1222,7 +1222,7 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
                 
                 <div style="display: flex; gap: 20px;">
                     <button 
-                        onclick="adminEmpresas.cerrarModalSecundario()"
+                        onclick="adminEmpresas.cerrarModal()"
                         style="
                             background: linear-gradient(135deg, #64748b 0%, #475569 100%); 
                             color: white; 
