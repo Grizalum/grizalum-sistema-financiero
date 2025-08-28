@@ -1296,7 +1296,6 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
         if (e.target.textContent.includes('GESTIONAR') && 
            !e.target.textContent.includes('×') && 
            !e.target.textContent.includes('CERRAR') &&
-           !e.target.closest('#grizalumModalControlEmpresa') &&
            (e.target.onclick?.toString().includes('abrirControlEmpresa'))) {
             e.preventDefault();
             e.stopPropagation();
