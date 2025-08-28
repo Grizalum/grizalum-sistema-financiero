@@ -1480,7 +1480,14 @@ abrirControlEmpresaReal(empresaId) {
 
 _crearModalControlEmpresa(empresa) {
     // Cerrar modal anterior
-    this._cerrarModalPrevio();
+    // Ocultar modal anterior en lugar de eliminarlo
+const modalPrincipal = document.getElementById('grizalumModalAdmin');
+if (modalPrincipal) {
+    modalPrincipal.style.display = 'none';
+    modalPrincipal.style.opacity = '0';
+    modalPrincipal.style.pointerEvents = 'none';
+    console.log('Modal principal ocultado (no eliminado)');
+}
     
     const modal = document.createElement('div');
     modal.id = 'grizalumModalControlEmpresa';
