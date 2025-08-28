@@ -1668,7 +1668,7 @@ _crearModalControlEmpresa(empresa) {
                         </div>
                         
                         <button 
-                            onclick="adminEmpresas.cerrarModalSecundario(); event.stopPropagation();"
+                            onclick="adminEmpresas.cerrarModalSecundario()"
                             style="
                                 width: 60px; 
                                 height: 60px; 
@@ -2059,7 +2059,22 @@ _crearModalControlEmpresa(empresa) {
 
     document.body.appendChild(modal);
     this.modalActivo = modal;
-   
+    // Configurar el botón cerrar específicamente  
+    setTimeout(() => {
+       const botonCerrar = modal.querySelector('button[onclick*="cerrarModalSecundario"]');
+       if (botonCerrar) {
+           // Clonar el botón para eliminar todos los event listeners
+           const nuevoBoton = botonCerrar.cloneNode(true);
+           botonCerrar.parentNode.replaceChild(nuevoBoton, botonCerrar);
+        
+           // Añadir el event listener correcto
+           nuevoBoton.addEventListener('click', (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              this.cerrarModalSecundario();
+          });
+      }
+    }, 100);
     // Animación de entrada
     setTimeout(() => {
         modal.style.opacity = '1';
@@ -2332,9 +2347,9 @@ aplicarCambiosFinancieros(empresaId) {
     }, 1500);
 }
  cerrarModalFinanciero() {
-    const modales = document.querySelectorAll('div[style*="z-index: 9999999"]:not(#grizalumModalAdmin):not(#grizalumModalControlEmpresa)');
+    const modales = document.querySelectorAll('div[style*="z-index: 9999999"]');
     modales.forEach(modal => modal.remove());
-    console.log('✅ Modal de edición cerrado');
+    console.log('✅ Modal cerrado');
 }
 limpiarTodosLosModalesForzado() {
     try {
@@ -3937,11 +3952,25 @@ _limpiarRespaldosAutomaticos(empresaId) {
         }
     }
   cerrarModalSecundario() {
+    console.log('FUNCION EJECUTADA - cerrarModalSecundario');
+    console.log('EJECUTANDO cerrarModalSecundario - solo debe cerrar modal secundario');
     const modal = document.getElementById('grizalumModalControlEmpresa');
     if (modal) {
         modal.remove();
+        console.log('Modal secundario eliminado');
+    } else {
+        console.log('No se encontró el modal secundario');
     }
-}
+ }
+    
+    _log(nivel, mensaje, datos = null) {
+        if (this.gestor && this.gestor._log) {
+            this.gestor._log(nivel, `[PREMIUM] ${mensaje}`, datos);
+        } else {
+            console.log(`[PREMIUM ${nivel.toUpperCase()}] ${mensaje}`, datos);
+        }
+    }
+ }
 
 // ═══════════════════════════════════════════════════════════════════════════
 // PASO 2: REEMPLAZAR COMPLETAMENTE LA INSTANCIA GLOBAL
