@@ -1254,71 +1254,19 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
     const botones = document.querySelectorAll('.premium-nav-btn');
     botones.forEach(btn => {
         btn.addEventListener('click', (e) => {
-            e.preventDefault();
+            e.preventDefault();    
             const seccion = btn.dataset.seccion;
             this._cambiarSeccionPremium(seccion);
         });
     });
-
-    // ✅ CONFIGURAR BOTONES GESTIONAR - ESTO ES LO NUEVO
+        
+// Limpiar eventos anteriores para evitar duplicados
+    this._limpiarEventosAnteriores();
+    
+    // Configurar botones gestionar una sola vez
     setTimeout(() => {
-        // Interceptar TODOS los botones gestionar
-        const botonesGestionar = document.querySelectorAll('button[onclick*="abrirControlEmpresa"], button[onclick*="GESTIONAR"], [onclick*="gestionar"]');
-        
-        console.log(`🔧 Configurando ${botonesGestionar.length} botones gestionar`);
-        
-        botonesGestionar.forEach(boton => {
-            // Extraer empresa ID del onclick
-            const onclickOriginal = boton.getAttribute('onclick');
-            let empresaId = null;
-            
-            if (onclickOriginal) {
-                const match = onclickOriginal.match(/['"]([^'"]+)['"]/);
-                if (match) empresaId = match[1];
-            }
-            
-            // Reemplazar evento click
-            boton.onclick = (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log(`🚀 Abriendo panel para empresa: ${empresaId}`);
-                this.abrirControlEmpresaReal(empresaId);
-            };
-            
-            // Marcar como premium
-            boton.innerHTML = '👑 GESTIONAR';
-            boton.style.background = 'linear-gradient(135deg, #d4af37, #b8941f)';
-        });
-        
-        // También interceptar botones que se generen dinámicamente
-        document.addEventListener('click', (e) => {
-         // Solo interceptar botones GESTIONAR, NO botones de cerrar
-        if (e.target.textContent.includes('GESTIONAR') && 
-           !e.target.textContent.includes('×') && 
-           !e.target.textContent.includes('CERRAR') &&
-           (e.target.onclick?.toString().includes('abrirControlEmpresa'))) {
-            e.preventDefault();
-            e.stopPropagation();
-                
-                // Extraer empresa ID
-                let empresaId = null;
-                let elemento = e.target;
-                
-                // Buscar ID en el elemento o sus padres
-                while (elemento && !empresaId) {
-                    if (elemento.onclick) {
-                        const match = elemento.onclick.toString().match(/['"]([^'"]+)['"]/);
-                        if (match) empresaId = match[1];
-                    }
-                    elemento = elemento.parentElement;
-                }
-                
-                console.log(`🎯 Click interceptado para empresa: ${empresaId}`);
-                this.abrirControlEmpresaReal(empresaId);
-            }
-        });
-        
-    }, 500);
+        this._configurarBotonesGestionar();
+    }, 100);
 
     // Cerrar con Escape
     document.addEventListener('keydown', (e) => {
@@ -1344,6 +1292,37 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
         }
     `;
     document.head.appendChild(style);
+}
+    _limpiarEventosAnteriores() {
+    const botonesConfigurados = document.querySelectorAll('[data-premium-configured]');
+    botonesConfigurados.forEach(boton => {
+        const nuevoBoton = boton.cloneNode(true);
+        boton.parentNode.replaceChild(nuevoBoton, boton);
+    });
+}
+
+_configurarBotonesGestionar() {
+    const botonesGestionar = document.querySelectorAll('button[onclick*="abrirControlEmpresa"], button[onclick*="GESTIONAR"]');
+    
+    botonesGestionar.forEach(boton => {
+        if (!boton.dataset.premiumConfigured) {
+            boton.dataset.premiumConfigured = 'true';
+            
+            const onclickOriginal = boton.getAttribute('onclick');
+            let empresaId = null;
+            
+            if (onclickOriginal) {
+                const match = onclickOriginal.match(/['"]([^'"]+)['"]/);
+                if (match) empresaId = match[1];
+            }
+            
+            boton.onclick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.abrirControlEmpresaReal(empresaId);
+            };
+        }
+    });
 }
     _cambiarSeccionPremium(seccionTarget) {
         try {
