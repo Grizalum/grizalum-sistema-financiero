@@ -2347,48 +2347,73 @@ aplicarCambiosFinancieros(empresaId) {
     }, 1500);
 }
  cerrarModalFinanciero() {
-    const modales = document.querySelectorAll('div[style*="z-index: 9999999"]');
-    modales.forEach(modal => modal.remove());
-    console.log('✅ Modal cerrado');
-}
-limpiarTodosLosModalesForzado() {
-    try {
-        // Remover TODOS los modales posibles
-        const selectores = [
-            'div[style*="z-index: 9999999"]',
-            'div[style*="z-index: 999999"]', 
-            '#grizalumModalControlEmpresa',
-            '#grizalumModalAdmin',
-            'div[style*="backdrop-filter: blur"]',
-            'div[style*="position: fixed"]'
-        ];
-        
-        selectores.forEach(selector => {
-            document.querySelectorAll(selector).forEach(el => {
-                if (el.style.background && el.style.background.includes('rgba(0,0,0')) {
-                    el.remove();
-                }
-            });
-        });
-        
-        // Limpiar body de cualquier overflow oculto
-        document.body.style.overflow = 'auto';
-        
-        // Mensaje de confirmación
-        console.log('🧹 LIMPIEZA FORZADA COMPLETADA');
-        
-        setTimeout(() => {
-            alert('✅ Modales limpiados. Puedes continuar.');
-        }, 100);
-        
-    } catch (error) {
-        console.error('Error en limpieza:', error);
-        // Último recurso: recargar página
-        if (confirm('¿Recargar página para limpiar todo?')) {
-            location.reload();
+    // Cerrar modales financieros específicos manteniendo orden
+    const modalesFinancieros = document.querySelectorAll('div[style*="z-index: 9999999"]');
+    
+    modalesFinancieros.forEach(modal => {
+        // Solo cerrar si es un modal financiero/alertas
+        if (modal.innerHTML.includes('FINANCIERO') || 
+            modal.innerHTML.includes('ALERTAS') || 
+            modal.innerHTML.includes('EDITOR FINANCIERO')) {
+            
+            // Animación de salida
+            modal.style.opacity = '0';
+            setTimeout(() => {
+                modal.remove();
+                console.log('✅ Modal financiero cerrado');
+            }, 300);
         }
+    });
+    
+    // Verificar si hay que volver al modal de control de empresa
+    setTimeout(() => {
+        const modalControl = document.getElementById('grizalumModalControlEmpresa');
+        if (modalControl) {
+            modalControl.style.display = 'flex';
+            modalControl.style.opacity = '1';
+        }
+    }, 350);
+}
+
+    // NUEVO: Sistema de gestión de pila de modales
+_gestionarPilaModales(accion, modalId = null) {
+    if (!this.pilaModales) this.pilaModales = [];
+    
+    switch(accion) {
+        case 'agregar':
+            if (modalId && !this.pilaModales.includes(modalId)) {
+                this.pilaModales.push(modalId);
+                console.log(`📚 Modal agregado a pila: ${modalId}`);
+            }
+            break;
+            
+        case 'remover':
+            if (modalId) {
+                this.pilaModales = this.pilaModales.filter(id => id !== modalId);
+                console.log(`📚 Modal removido de pila: ${modalId}`);
+            } else {
+                this.pilaModales.pop(); // Remover el último
+            }
+            
+            // Activar el modal anterior si existe
+            if (this.pilaModales.length > 0) {
+                const modalAnterior = document.getElementById(this.pilaModales[this.pilaModales.length - 1]);
+                if (modalAnterior) {
+                    modalAnterior.style.display = 'flex';
+                    modalAnterior.style.opacity = '1';
+                    modalAnterior.style.pointerEvents = 'auto';
+                    console.log(`🔄 Modal anterior reactivado: ${this.pilaModales[this.pilaModales.length - 1]}`);
+                }
+            }
+            break;
+            
+        case 'limpiar':
+            this.pilaModales = [];
+            console.log('🧹 Pila de modales limpiada');
+            break;
     }
 }
+    
 generarReporteEmpresaAvanzado(empresaId) {
     const empresa = this.gestor?.estado?.empresas?.[empresaId];
     if (!empresa) {
@@ -3951,17 +3976,50 @@ _limpiarRespaldosAutomaticos(empresaId) {
             }, 400);
         }
     }
-  cerrarModalSecundario() {
-    console.log('FUNCION EJECUTADA - cerrarModalSecundario');
-    console.log('EJECUTANDO cerrarModalSecundario - solo debe cerrar modal secundario');
-    const modal = document.getElementById('grizalumModalControlEmpresa');
-    if (modal) {
-        modal.remove();
-        console.log('Modal secundario eliminado');
+cerrarModalSecundario() {
+    console.log('FUNCIÓN EJECUTADA - cerrarModalSecundario');
+    
+    // 1. Encontrar y cerrar el modal secundario con animación
+    const modalSecundario = document.getElementById('grizalumModalControlEmpresa');
+    if (modalSecundario) {
+        // Animación de salida
+        modalSecundario.style.opacity = '0';
+        const content = modalSecundario.querySelector('.control-empresa-content');
+        if (content) {
+            content.style.transform = 'scale(0.85) translateY(40px)';
+        }
+        
+        // Remover después de la animación
+        setTimeout(() => {
+            modalSecundario.remove();
+            console.log('✅ Modal secundario cerrado con animación');
+            
+            // 2. CLAVE: Reactiva el modal principal si existe
+            const modalPrincipal = document.getElementById('grizalumModalAdmin');
+            if (modalPrincipal) {
+                // Restaurar el modal principal
+                modalPrincipal.style.display = 'flex';
+                modalPrincipal.style.opacity = '1';
+                modalPrincipal.style.pointerEvents = 'auto';
+                console.log('✅ Modal principal reactivado');
+            }
+        }, 400);
+        
     } else {
-        console.log('No se encontró el modal secundario');
+        console.log('⚠️ No se encontró el modal secundario');
+        
+        // Si no hay modal secundario, verificar si hay otros modales que cerrar
+        const otrosModales = document.querySelectorAll('div[style*="z-index: 9999999"]');
+        if (otrosModales.length > 0) {
+            otrosModales.forEach(modal => {
+                if (modal.innerHTML.includes('FINANCIERO') || modal.innerHTML.includes('ALERTAS')) {
+                    modal.style.opacity = '0';
+                    setTimeout(() => modal.remove(), 300);
+                }
+            });
+        }
     }
- }
+}
     
     _log(nivel, mensaje, datos = null) {
         if (this.gestor && this.gestor._log) {
