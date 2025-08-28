@@ -12,7 +12,6 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
         this.gestor = gestorPrincipal;
         this.modalActivo = null;
         this.datosTemporales = {};
-        this.pilaModales = [];
         this.notificaciones = this._cargarNotificaciones();
         this.logs = this._cargarLogs();
         this.configuracion = this._cargarConfiguracion();
@@ -92,7 +91,6 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
 
         document.body.appendChild(modal);
         this.modalActivo = modal;
-        this._gestionarPilaModales('agregar', 'grizalumModalAdmin');
         
         // Animación de entrada
         setTimeout(() => {
@@ -2040,7 +2038,6 @@ _crearModalControlEmpresa(empresa) {
 
     document.body.appendChild(modal);
     this.modalActivo = modal;
-    this._gestionarPilaModales('agregar', 'grizalumModalControlEmpresa');
     
     // Configurar el botón cerrar específicamente  
     setTimeout(() => {
