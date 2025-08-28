@@ -3987,6 +3987,7 @@ cerrarModalSecundario() {
                 modalPrincipal.style.pointerEvents = 'auto';
                 modalPrincipal.style.visibility = 'visible';
                 console.log('✅ Modal principal restaurado');
+                this.modalActivo = modalPrincipal;
             } else {
                 console.log('❌ No se encontró modal principal');
             }
