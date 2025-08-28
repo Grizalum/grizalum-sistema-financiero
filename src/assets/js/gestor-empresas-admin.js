@@ -1296,6 +1296,7 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
         if (e.target.textContent.includes('GESTIONAR') && 
            !e.target.textContent.includes('×') && 
            !e.target.textContent.includes('CERRAR') &&
+           !e.target.closest('#grizalumModalControlEmpresa') &&
            (e.target.onclick?.toString().includes('abrirControlEmpresa'))) {
             e.preventDefault();
             e.stopPropagation();
@@ -1668,7 +1669,7 @@ _crearModalControlEmpresa(empresa) {
                         </div>
                         
                         <button 
-                            onclick="document.getElementById('grizalumModalControlEmpresa').remove()"
+                            onclick="adminEmpresas.cerrarModalSecundario(); event.stopPropagation();"
                             style="
                                 width: 60px; 
                                 height: 60px; 
@@ -2332,9 +2333,9 @@ aplicarCambiosFinancieros(empresaId) {
     }, 1500);
 }
  cerrarModalFinanciero() {
-    const modales = document.querySelectorAll('div[style*="z-index: 9999999"]');
+    const modales = document.querySelectorAll('div[style*="z-index: 9999999"]:not(#grizalumModalAdmin):not(#grizalumModalControlEmpresa)');
     modales.forEach(modal => modal.remove());
-    console.log('✅ Modal cerrado');
+    console.log('✅ Modal de edición cerrado');
 }
 limpiarTodosLosModalesForzado() {
     try {
