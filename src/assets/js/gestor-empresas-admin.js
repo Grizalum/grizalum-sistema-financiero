@@ -3960,13 +3960,11 @@ _limpiarRespaldosAutomaticos(empresaId) {
         }
     }
 cerrarModalSecundario() {
-console.log('FUNCIÓN EJECUTADA - cerrarModalSecundario');
-    
-    // Usar el sistema de pila para gestionar el cierre
-    this._gestionarPilaModales('remover', 'grizalumModalControlEmpresa');
+    console.log('FUNCIÓN EJECUTADA - cerrarModalSecundario');
     
     const modalSecundario = document.getElementById('grizalumModalControlEmpresa');
     if (modalSecundario) {
+        // Animación de salida
         modalSecundario.style.opacity = '0';
         const content = modalSecundario.querySelector('.control-empresa-content');
         if (content) {
@@ -3975,7 +3973,19 @@ console.log('FUNCIÓN EJECUTADA - cerrarModalSecundario');
         
         setTimeout(() => {
             modalSecundario.remove();
-            console.log('✅ Modal secundario cerrado y pila gestionada');
+            console.log('✅ Modal secundario eliminado');
+            
+            // DIRECTAMENTE mostrar el modal principal
+            const modalPrincipal = document.getElementById('grizalumModalAdmin');
+            if (modalPrincipal) {
+                modalPrincipal.style.display = 'flex';
+                modalPrincipal.style.opacity = '1';
+                modalPrincipal.style.pointerEvents = 'auto';
+                modalPrincipal.style.visibility = 'visible';
+                console.log('✅ Modal principal restaurado');
+            } else {
+                console.log('❌ No se encontró modal principal');
+            }
         }, 400);
     }
 }
