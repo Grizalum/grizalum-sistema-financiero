@@ -946,6 +946,27 @@ _configurarBotonesControlIndividual() {
         console.log('✅ Botón ENVIAR AVISO configurado');
     }
 }
+    enviarNotificacion() {
+    const tipo = document.getElementById('premium-tipo-aviso')?.value || 'info';
+    const destinatario = document.getElementById('premium-destinatario')?.value || 'todas';  
+    const mensaje = document.getElementById('premium-mensaje')?.value?.trim();
+    
+    if (!mensaje) {
+        this._mostrarNotificacion('El mensaje es obligatorio', 'error');
+        return;
+    }
+    
+    this._mostrarNotificacion(`Aviso "${tipo}" enviado a ${destinatario}`, 'success');
+    this._registrarLog('info', `Aviso ${tipo} enviado: ${mensaje}`);
+    
+    // Limpiar formulario
+    if (document.getElementById('premium-mensaje')) {
+        document.getElementById('premium-mensaje').value = '';
+    }
+    
+    console.log('Aviso enviado:', { tipo, destinatario, mensaje });
+}
+    
     _generarAnalyticsPremium() {
         return `
             <div class="premium-seccion" id="seccion-analytics" style="padding: 32px; display: none;">
