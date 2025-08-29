@@ -2047,21 +2047,6 @@ if (modalPrincipal) {
     this.modalActivo = modal;
     
     // Configurar el botón cerrar específicamente  
-    setTimeout(() => {
-       const botonCerrar = modal.querySelector('button[onclick*="cerrarModalSecundario"]');
-       if (botonCerrar) {
-           // Clonar el botón para eliminar todos los event listeners
-           const nuevoBoton = botonCerrar.cloneNode(true);
-           botonCerrar.parentNode.replaceChild(nuevoBoton, botonCerrar);
-        
-           // Añadir el event listener correcto
-           nuevoBoton.addEventListener('click', (e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              this.cerrarModalSecundario();
-          });
-      }
-    }, 100);
     // Animación de entrada
     setTimeout(() => {
         modal.style.opacity = '1';
