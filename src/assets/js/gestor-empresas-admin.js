@@ -913,27 +913,30 @@ _configurarBotonesControlIndividual() {
         }
     });
 }
-    _actualizarVistaEmpresa(empresaId) {
-    // Forzar actualización del contenido actual
-    const seccionActual = document.querySelector('.premium-seccion.active');
-    if (seccionActual) {
-        const seccionId = seccionActual.id.replace('seccion-', '');
-        // Actualizar la sección actual para reflejar los cambios
-        setTimeout(() => {
-            this._cambiarSeccionPremium(seccionId);
-        }, 100);
+   _actualizarVistaEmpresa(empresaId) {
+    // Actualizar inmediatamente todas las vistas donde aparezca la empresa
+    
+    // 1. Actualizar en el dashboard principal si está visible
+    const dashboardSection = document.getElementById('seccion-dashboard');
+    if (dashboardSection && dashboardSection.style.display !== 'none') {
+        dashboardSection.innerHTML = this._generarDashboardGlobal().replace('<div class="premium-seccion active" id="seccion-dashboard" style="padding: 32px;">', '').replace('</div>', '');
     }
     
-    // También actualizar si estamos en el modal de control individual
-    const modalControl = document.getElementById('grizalumModalControlEmpresa');
-    if (modalControl) {
-        // Reconfigurar los botones después del cambio
-        setTimeout(() => {
-            this._configurarBotonesControlIndividual();
-        }, 200);
+    // 2. Actualizar en control si está visible
+    const controlSection = document.getElementById('seccion-control');
+    if (controlSection && controlSection.style.display !== 'none') {
+        const controlContent = this._generarControlEmpresas().replace('<div class="premium-seccion" id="seccion-control" style="padding: 32px; display: none;">', '').replace('</div>', '');
+        controlSection.innerHTML = controlContent;
     }
+    
+    // 3. Reconfigurar botones después de la actualización
+    setTimeout(() => {
+        this._configurarBotonesControlIndividual();
+    }, 100);
+    
+    console.log('Vista actualizada para empresa:', empresaId);
 }
-
+    
     _generarAnalyticsPremium() {
         return `
             <div class="premium-seccion" id="seccion-analytics" style="padding: 32px; display: none;">
