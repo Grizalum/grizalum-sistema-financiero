@@ -868,6 +868,8 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
     this.gestor._guardarEmpresas();
     this._mostrarNotificacion(`"${empresa.nombre}" suspendida`, 'warning');
     console.log('Empresa suspendida:', empresa.nombre);
+    // Actualizar la vista inmediatamente
+    this._actualizarVistaEmpresa(empresaId);    
 }
 
 eliminarEmpresa(empresaId) {
