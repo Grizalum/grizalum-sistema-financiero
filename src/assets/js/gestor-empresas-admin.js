@@ -2052,7 +2052,7 @@ if (modalPrincipal) {
         modal.style.opacity = '1';
         const content = modal.querySelector('.control-empresa-content');
         content.style.transform = 'scale(1) translateY(0)';
-    }, 50);
+    }, 100);
     
     // Registrar en logs
     this._registrarLog('info', `Panel de control Premium abierto para: ${empresa.nombre}`);
