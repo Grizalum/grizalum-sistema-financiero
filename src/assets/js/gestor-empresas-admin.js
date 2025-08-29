@@ -3965,7 +3965,13 @@ _limpiarRespaldosAutomaticos(empresaId) {
     }
 cerrarModalSecundario() {
     console.log('FUNCIÓN EJECUTADA - cerrarModalSecundario');
-    
+
+      // Si no hay modal secundario, cerrar el principal directamente
+  const modalSecundario = document.getElementById('grizalumModalControlEmpresa');
+  if (!modalSecundario) {
+      this.cerrarModal();
+      return;
+  }
     const modalSecundario = document.getElementById('grizalumModalControlEmpresa');
     if (modalSecundario) {
         // Animación de salida
