@@ -912,6 +912,26 @@ _configurarBotonesControlIndividual() {
         }
     });
 }
+    _actualizarVistaEmpresa(empresaId) {
+    // Forzar actualización del contenido actual
+    const seccionActual = document.querySelector('.premium-seccion.active');
+    if (seccionActual) {
+        const seccionId = seccionActual.id.replace('seccion-', '');
+        // Actualizar la sección actual para reflejar los cambios
+        setTimeout(() => {
+            this._cambiarSeccionPremium(seccionId);
+        }, 100);
+    }
+    
+    // También actualizar si estamos en el modal de control individual
+    const modalControl = document.getElementById('grizalumModalControlEmpresa');
+    if (modalControl) {
+        // Reconfigurar los botones después del cambio
+        setTimeout(() => {
+            this._configurarBotonesControlIndividual();
+        }, 200);
+    }
+}
 
     _generarAnalyticsPremium() {
         return `
