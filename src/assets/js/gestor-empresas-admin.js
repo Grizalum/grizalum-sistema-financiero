@@ -936,7 +936,16 @@ _configurarBotonesControlIndividual() {
     
     console.log('Vista actualizada para empresa:', empresaId);
 }
-    
+    _configurarBotonesAvisos() {
+    const botonEnviar = document.querySelector('button[onclick*="enviarNotificacion"]');
+    if (botonEnviar) {
+        botonEnviar.onclick = (e) => {
+            e.preventDefault();
+            this.enviarNotificacion();
+        };
+        console.log('✅ Botón ENVIAR AVISO configurado');
+    }
+}
     _generarAnalyticsPremium() {
         return `
             <div class="premium-seccion" id="seccion-analytics" style="padding: 32px; display: none;">
@@ -1435,6 +1444,12 @@ _configurarBotonesGestionar() {
             }
             
             this._log('info', `📂 Sección premium cambiada a: ${seccionTarget}`);
+            // Configurar botones específicos de cada sección
+           if (seccionTarget === 'avisos') {
+              setTimeout(() => {
+                this._configurarBotonesAvisos();
+             }, 200);
+        }
         } catch (error) {
             console.error('Error cambiando sección premium:', error);
         }
