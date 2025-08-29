@@ -2052,6 +2052,8 @@ if (modalPrincipal) {
         modal.style.opacity = '1';
         const content = modal.querySelector('.control-empresa-content');
         content.style.transform = 'scale(1) translateY(0)';
+        // Configurar botones de control individual
+        this._configurarBotonesControlIndividual();
     }, 100);
     
     // Registrar en logs
