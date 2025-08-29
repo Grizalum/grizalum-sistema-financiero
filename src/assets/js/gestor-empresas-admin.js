@@ -3988,13 +3988,27 @@ cerrarModalSecundario() {
                 modalPrincipal.style.visibility = 'visible';
                 console.log('✅ Modal principal restaurado');
                 this.modalActivo = modalPrincipal;
+                // Reconfigurar event listeners del modal restaurado
+                setTimeout(() => {
+                this._reconfigurarEventListeners();
+                 }, 100);
             } else {
                 console.log('❌ No se encontró modal principal');
             }
         }, 400);
     }
 }
-    
+    _reconfigurarEventListeners() {
+    // Reconfigurar botón CERRAR del modal principal
+    const botonCerrar = document.querySelector('button[onclick*="cerrarModalSecundario"]');
+    if (botonCerrar) {
+        botonCerrar.onclick = (e) => {
+            e.preventDefault();
+            this.cerrarModal();
+        };
+        console.log('✅ Botón CERRAR reconfigurado');
+    }
+}
     _log(nivel, mensaje, datos = null) {
         if (this.gestor && this.gestor._log) {
             this.gestor._log(nivel, `[PREMIUM] ${mensaje}`, datos);
