@@ -4024,6 +4024,65 @@ cerrarModalSecundario() {
     }
  }
 
+// FUNCIONES DE CONTROL INDIVIDUAL DE EMPRESAS
+suspenderEmpresa(empresaId) {
+    const empresa = this.gestor?.estado?.empresas?.[empresaId];
+    if (!empresa) {
+        this._mostrarNotificacion('❌ Empresa no encontrada', 'error');
+        return;
+    }
+    
+    if (empresa.estado === 'Suspendido') {
+        this._mostrarNotificacion('ℹ️ La empresa ya está suspendida', 'info');
+        return;
+    }
+    
+    empresa.estado = 'Suspendido';
+    empresa.ultimaModificacion = new Date().toISOString();
+    
+    this.gestor._guardarEmpresas();
+    this._registrarLog('warning', `Empresa "${empresa.nombre}" suspendida por admin`);
+    this._mostrarNotificacion(`⏸️ "${empresa.nombre}" suspendida`, 'warning');
+    this._actualizarDashboard();
+}
+
+eliminarEmpresa(empresaId) {
+    const empresa = this.gestor?.estado?.empresas?.[empresaId];
+    if (!empresa) {
+        this._mostrarNotificacion('❌ Empresa no encontrada', 'error');
+        return;
+    }
+    
+    if (!confirm(`¿Eliminar permanentemente "${empresa.nombre}"?\n\nEsta acción NO se puede deshacer.`)) {
+        return;
+    }
+    
+    delete this.gestor.estado.empresas[empresaId];
+    this.gestor._guardarEmpresas();
+    this._registrarLog('error', `Empresa "${empresa.nombre}" eliminada por admin`);
+    this._mostrarNotificacion(`🗑️ "${empresa.nombre}" eliminada`, 'error');
+    this._actualizarDashboard();
+}
+
+enviarNotificacion() {
+    const tipo = document.getElementById('premium-tipo-aviso')?.value || 'info';
+    const destinatario = document.getElementById('premium-destinatario')?.value || 'todas';
+    const mensaje = document.getElementById('premium-mensaje')?.value?.trim();
+    
+    if (!mensaje) {
+        this._mostrarNotificacion('❌ El mensaje es obligatorio', 'error');
+        return;
+    }
+    
+    this._mostrarNotificacion(`📢 Aviso "${tipo}" enviado a ${destinatario}`, 'success');
+    this._registrarLog('info', `Aviso ${tipo} enviado: ${mensaje}`);
+    
+    // Limpiar formulario
+    if (document.getElementById('premium-mensaje')) {
+        document.getElementById('premium-mensaje').value = '';
+    }
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
 // PASO 2: REEMPLAZAR COMPLETAMENTE LA INSTANCIA GLOBAL
 // ═══════════════════════════════════════════════════════════════════════════
