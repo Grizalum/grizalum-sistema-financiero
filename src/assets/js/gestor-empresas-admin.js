@@ -887,6 +887,7 @@ eliminarEmpresa(empresaId) {
     this.gestor._guardarEmpresas();
     this._mostrarNotificacion(`"${empresa.nombre}" eliminada`, 'error');
     console.log('Empresa eliminada:', empresa.nombre);
+    this._actualizarVistaEmpresa(empresaId);
 }
 
 _configurarBotonesControlIndividual() {
