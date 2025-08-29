@@ -946,7 +946,7 @@ _configurarBotonesControlIndividual() {
         console.log('✅ Botón ENVIAR AVISO configurado');
     }
 }
-    enviarNotificacion() {
+   enviarNotificacion() {
     const tipo = document.getElementById('premium-tipo-aviso')?.value || 'info';
     const destinatario = document.getElementById('premium-destinatario')?.value || 'todas';  
     const mensaje = document.getElementById('premium-mensaje')?.value?.trim();
@@ -956,6 +956,28 @@ _configurarBotonesControlIndividual() {
         return;
     }
     
+    // Crear la notificación
+    const notificacion = {
+        id: Date.now().toString(),
+        tipo: tipo,
+        titulo: `Aviso ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`,
+        mensaje: mensaje,
+        fecha: new Date().toISOString(),
+        leida: false,
+        remitente: 'Super Admin Premium'
+    };
+    
+    // Añadir a las empresas correspondientes
+    if (destinatario === 'todas') {
+        // Añadir a todas las empresas
+        Object.keys(this.gestor.estado.empresas).forEach(empresaId => {
+            this._añadirNotificacionEmpresa(empresaId, notificacion);
+        });
+    } else {
+        // Añadir solo a la empresa específica
+        this._añadirNotificacionEmpresa(destinatario, notificacion);
+    }
+    
     this._mostrarNotificacion(`Aviso "${tipo}" enviado a ${destinatario}`, 'success');
     this._registrarLog('info', `Aviso ${tipo} enviado: ${mensaje}`);
     
@@ -963,8 +985,29 @@ _configurarBotonesControlIndividual() {
     if (document.getElementById('premium-mensaje')) {
         document.getElementById('premium-mensaje').value = '';
     }
+}
+
+_añadirNotificacionEmpresa(empresaId, notificacion) {
+    const empresa = this.gestor.estado.empresas[empresaId];
+    if (!empresa) return;
     
-    console.log('Aviso enviado:', { tipo, destinatario, mensaje });
+    if (!empresa.notificaciones) {
+        empresa.notificaciones = [];
+    }
+    
+    empresa.notificaciones.push(notificacion);
+    
+    // Guardar cambios
+    this.gestor._guardarEmpresas();
+    
+    // Actualizar contador de notificaciones si la empresa está activa
+    this._actualizarContadorNotificaciones(empresaId);
+}
+
+_actualizarContadorNotificaciones(empresaId) {
+    // Esto actualizaría la campana de notificaciones de la empresa específica
+    // Depende de cómo esté implementado tu sistema de notificaciones
+    console.log(`Notificación añadida para empresa: ${empresaId}`);
 }
     
     _generarAnalyticsPremium() {
