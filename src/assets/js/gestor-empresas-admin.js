@@ -3972,7 +3972,7 @@ cerrarModalSecundario() {
       this.cerrarModal();
       return;
   }
-    const modalSecundario = document.getElementById('grizalumModalControlEmpresa');
+
     if (modalSecundario) {
         // Animación de salida
         modalSecundario.style.opacity = '0';
