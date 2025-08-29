@@ -852,6 +852,64 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
             </div>
         `;
     }
+    suspenderEmpresa(empresaId) {
+    const empresa = this.gestor?.estado?.empresas?.[empresaId];
+    if (!empresa) {
+        this._mostrarNotificacion('Empresa no encontrada', 'error');
+        return;
+    }
+    
+    if (empresa.estado === 'Suspendido') {
+        this._mostrarNotificacion('La empresa ya está suspendida', 'info');
+        return;
+    }
+    
+    empresa.estado = 'Suspendido';
+    this.gestor._guardarEmpresas();
+    this._mostrarNotificacion(`"${empresa.nombre}" suspendida`, 'warning');
+    console.log('Empresa suspendida:', empresa.nombre);
+}
+
+eliminarEmpresa(empresaId) {
+    const empresa = this.gestor?.estado?.empresas?.[empresaId];
+    if (!empresa) {
+        this._mostrarNotificacion('Empresa no encontrada', 'error');
+        return;
+    }
+    
+    if (!confirm(`¿Eliminar "${empresa.nombre}"? Esta acción no se puede deshacer.`)) {
+        return;
+    }
+    
+    delete this.gestor.estado.empresas[empresaId];
+    this.gestor._guardarEmpresas();
+    this._mostrarNotificacion(`"${empresa.nombre}" eliminada`, 'error');
+    console.log('Empresa eliminada:', empresa.nombre);
+}
+
+_configurarBotonesControlIndividual() {
+    document.querySelectorAll('button[onclick*="suspenderEmpresa"]').forEach(boton => {
+        const match = boton.getAttribute('onclick').match(/['"]([^'"]+)['"]/);
+        if (match) {
+            const empresaId = match[1];
+            boton.onclick = (e) => {
+                e.preventDefault();
+                this.suspenderEmpresa(empresaId);
+            };
+        }
+    });
+    
+    document.querySelectorAll('button[onclick*="eliminarEmpresa"]').forEach(boton => {
+        const match = boton.getAttribute('onclick').match(/['"]([^'"]+)['"]/);
+        if (match) {
+            const empresaId = match[1];
+            boton.onclick = (e) => {
+                e.preventDefault();
+                this.eliminarEmpresa(empresaId);
+            };
+        }
+    });
+}
 
     _generarAnalyticsPremium() {
         return `
