@@ -1516,14 +1516,36 @@ function actualizarContadorCampana() {
  * Mostrar panel de notificaciones del admin
  */
 function mostrarNotificacionesAdmin() {
-    const notificaciones = obtenerNotificacionesAdmin();
+    console.log('=== EJECUTANDO mostrarNotificacionesAdmin ===');
     
-    if (notificaciones.length === 0) {
+    // Buscar notificaciones directamente donde se guardan
+    let todasLasNotificaciones = [];
+    
+    if (window.adminEmpresas && window.adminEmpresas.gestor) {
+        const empresas = window.adminEmpresas.gestor.estado.empresas || {};
+        console.log('Empresas encontradas:', Object.keys(empresas));
+        
+        Object.keys(empresas).forEach(empresaId => {
+            const empresa = empresas[empresaId];
+            if (empresa.notificaciones) {
+                empresa.notificaciones.forEach(notif => {
+                    if (notif.remitente === 'Super Admin Premium') {
+                        todasLasNotificaciones.push(notif);
+                        console.log('Notificación encontrada:', notif);
+                    }
+                });
+            }
+        });
+    }
+    
+    console.log('Total notificaciones admin:', todasLasNotificaciones.length);
+    
+    if (todasLasNotificaciones.length === 0) {
         mostrarNotificacion('No hay notificaciones del administrador', 'info');
         return;
     }
     
-    // Crear panel de notificaciones
+    // Crear panel con las notificaciones encontradas
     let panel = document.getElementById('panel-notificaciones-admin');
     if (!panel) {
         panel = document.createElement('div');
@@ -1535,19 +1557,13 @@ function mostrarNotificacionesAdmin() {
             </div>
             <div class="notif-panel-body"></div>
         `;
-        panel.style.cssText = `
-            position: fixed; top: 70px; right: 20px; width: 350px; 
-            background: var(--theme-surface, #1e293b); border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 999999;
-            color: var(--theme-text-primary, white); max-height: 400px; overflow-y: auto;
-        `;
         document.body.appendChild(panel);
     }
     
     const cuerpo = panel.querySelector('.notif-panel-body');
     cuerpo.innerHTML = '';
     
-    notificaciones.forEach(notif => {
+    todasLasNotificaciones.forEach(notif => {
         const item = document.createElement('div');
         item.className = `notif-item ${notif.leida ? 'leida' : 'no-leida'}`;
         item.innerHTML = `
@@ -1557,10 +1573,6 @@ function mostrarNotificacionesAdmin() {
                 <small>${new Date(notif.fecha).toLocaleString()}</small>
             </div>
             ${!notif.leida ? `<button onclick="marcarLeida('${notif.id}')" class="btn-marcar">✓</button>` : ''}
-        `;
-        item.style.cssText = `
-            padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);
-            ${!notif.leida ? 'background: rgba(59,130,246,0.1);' : ''}
         `;
         cuerpo.appendChild(item);
     });
