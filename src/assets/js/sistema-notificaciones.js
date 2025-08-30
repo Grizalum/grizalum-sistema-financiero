@@ -1431,15 +1431,41 @@ window.notificacionInfo = notificacionInfo;
  * Obtener notificaciones del admin para la empresa actual
  */
 function obtenerNotificacionesAdmin() {
-    const gestorPrincipal = window.gestorEmpresas || window.gestor;
-    if (!gestorPrincipal?.estado?.empresaActual) return [];
+    console.log('=== DEBUG NOTIFICACIONES ===');
+    console.log('window.gestorEmpresas:', window.gestorEmpresas);
+    console.log('window.gestor:', window.gestor);
+    console.log('window.adminEmpresas:', window.adminEmpresas);
+    
+    const gestorPrincipal = window.gestorEmpresas || window.gestor || window.adminEmpresas;
+    console.log('gestorPrincipal encontrado:', gestorPrincipal);
+    
+    if (!gestorPrincipal) {
+        console.log('❌ No se encontró ningún gestor');
+        return [];
+    }
+    
+    console.log('Estado del gestor:', gestorPrincipal.estado);
+    
+    if (!gestorPrincipal?.estado?.empresaActual) {
+        console.log('❌ No hay empresa actual');
+        return [];
+    }
     
     const empresaActual = gestorPrincipal.estado.empresaActual;
+    console.log('empresaActual:', empresaActual);
+    
     const empresa = gestorPrincipal.estado.empresas?.[empresaActual];
+    console.log('datos empresa:', empresa);
+    
     if (!empresa) return [];
     
     const notificaciones = empresa.notificaciones || [];
-    return notificaciones.filter(n => n.remitente === 'Super Admin Premium');
+    console.log('todas las notificaciones:', notificaciones);
+    
+    const notifAdmin = notificaciones.filter(n => n.remitente === 'Super Admin Premium');
+    console.log('notificaciones admin:', notifAdmin);
+    
+    return notifAdmin;
 }
 
 /**
