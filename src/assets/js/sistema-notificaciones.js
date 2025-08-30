@@ -1433,41 +1433,39 @@ window.notificacionInfo = notificacionInfo;
 function obtenerNotificacionesAdmin() {
     console.log('=== DEBUG NOTIFICACIONES ===');
     console.log('window.gestorEmpresas:', window.gestorEmpresas);
-    console.log('window.gestor:', window.gestor);
     console.log('window.adminEmpresas:', window.adminEmpresas);
     
-    const gestorPrincipal = window.gestorEmpresas || window.gestor || window.adminEmpresas;
-    console.log('gestorPrincipal encontrado:', gestorPrincipal);
+    // Buscar el gestor correcto
+    const gestorPrincipal = window.gestorEmpresas || window.adminEmpresas?.gestor;
+    console.log('gestorPrincipal:', gestorPrincipal);
     
     if (!gestorPrincipal) {
-        console.log('❌ No se encontró ningún gestor');
+        console.log('❌ No se encontró gestor');
         return [];
     }
     
-    console.log('Estado del gestor:', gestorPrincipal.estado);
+    console.log('Estado completo:', gestorPrincipal.estado);
+    console.log('Empresas disponibles:', Object.keys(gestorPrincipal.estado.empresas || {}));
     
-    if (!gestorPrincipal?.estado?.empresaActual) {
-        console.log('❌ No hay empresa actual');
-        return [];
-    }
+    // Buscar notificaciones en todas las empresas
+    const todasLasNotificaciones = [];
+    const empresas = gestorPrincipal.estado.empresas || {};
     
-    const empresaActual = gestorPrincipal.estado.empresaActual;
-    console.log('empresaActual:', empresaActual);
+    Object.keys(empresas).forEach(empresaId => {
+        const empresa = empresas[empresaId];
+        if (empresa.notificaciones) {
+            console.log(`Empresa ${empresaId} tiene ${empresa.notificaciones.length} notificaciones:`, empresa.notificaciones);
+            empresa.notificaciones.forEach(notif => {
+                if (notif.remitente === 'Super Admin Premium') {
+                    todasLasNotificaciones.push(notif);
+                }
+            });
+        }
+    });
     
-    const empresa = gestorPrincipal.estado.empresas?.[empresaActual];
-    console.log('datos empresa:', empresa);
-    
-    if (!empresa) return [];
-    
-    const notificaciones = empresa.notificaciones || [];
-    console.log('todas las notificaciones:', notificaciones);
-    
-    const notifAdmin = notificaciones.filter(n => n.remitente === 'Super Admin Premium');
-    console.log('notificaciones admin:', notifAdmin);
-    
-    return notifAdmin;
+    console.log('Total notificaciones admin encontradas:', todasLasNotificaciones);
+    return todasLasNotificaciones;
 }
-
 /**
  * Contar notificaciones no leídas del admin
  */
