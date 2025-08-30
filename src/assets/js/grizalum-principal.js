@@ -449,6 +449,9 @@ document.addEventListener('grizalumCompanyChanged', function(evento) {
     }
 });
 
+// Actualizar contador de notificaciones
+    actualizarNotificacionesEmpresa();
+
 // Escuchar cambios de período
 document.addEventListener('grizalumPeriodoCambiado', function(evento) {
     console.log(`📅 Período cambiado en el sistema: ${evento.detail.periodo}`);
