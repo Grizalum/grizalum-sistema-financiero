@@ -167,7 +167,13 @@ function changePeriod(periodo, boton) {
  */
 function showNotifications() {
     console.log('🔔 Abriendo centro de notificaciones');
-    mostrarNotificacion('📢 Centro de notificaciones próximamente', 'info');
+    mostrarNotificacionesAdmin();
+}
+// Actualizar contador al cambiar empresa
+function actualizarNotificacionesEmpresa() {
+    if (typeof actualizarContadorCampana === 'function') {
+        actualizarContadorCampana();
+    }
 }
 
 /**
