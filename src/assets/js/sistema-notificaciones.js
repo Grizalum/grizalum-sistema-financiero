@@ -1424,6 +1424,143 @@ window.notificacionError = notificacionError;
 window.notificacionAdvertencia = notificacionAdvertencia;
 window.notificacionInfo = notificacionInfo;
 
+
+// ======= NOTIFICACIONES PERSISTENTES DEL ADMIN =======
+
+/**
+ * Obtener notificaciones del admin para la empresa actual
+ */
+function obtenerNotificacionesAdmin() {
+    const gestorPrincipal = window.gestorEmpresas || window.gestor;
+    if (!gestorPrincipal?.estado?.empresaActual) return [];
+    
+    const empresaActual = gestorPrincipal.estado.empresaActual;
+    const empresa = gestorPrincipal.estado.empresas?.[empresaActual];
+    if (!empresa) return [];
+    
+    const notificaciones = empresa.notificaciones || [];
+    return notificaciones.filter(n => n.remitente === 'Super Admin Premium');
+}
+
+/**
+ * Contar notificaciones no leídas del admin
+ */
+function contarNotificacionesNoLeidas() {
+    const notificacionesAdmin = obtenerNotificacionesAdmin();
+    return notificacionesAdmin.filter(n => !n.leida).length;
+}
+
+/**
+ * Marcar notificación como leída
+ */
+function marcarNotificacionLeida(notifId) {
+    const gestorPrincipal = window.gestorEmpresas || window.gestor;
+    if (!gestorPrincipal?.estado?.empresaActual) return;
+    
+    const empresaActual = gestorPrincipal.estado.empresaActual;
+    const empresa = gestorPrincipal.estado.empresas?.[empresaActual];
+    if (!empresa) return;
+    
+    const notificaciones = empresa.notificaciones || [];
+    const notif = notificaciones.find(n => n.id === notifId);
+    if (notif) {
+        notif.leida = true;
+        gestorPrincipal._guardarEmpresas?.();
+        actualizarContadorCampana();
+    }
+}
+
+/**
+ * Actualizar contador visual de la campana
+ */
+function actualizarContadorCampana() {
+    const contador = contarNotificacionesNoLeidas();
+    
+    // Buscar elementos de contador de notificaciones
+    const badges = document.querySelectorAll('[data-notification-count], .notification-badge, .campana-contador');
+    badges.forEach(badge => {
+        if (contador > 0) {
+            badge.textContent = contador;
+            badge.style.display = 'block';
+        } else {
+            badge.style.display = 'none';
+        }
+    });
+}
+
+/**
+ * Mostrar panel de notificaciones del admin
+ */
+function mostrarNotificacionesAdmin() {
+    const notificaciones = obtenerNotificacionesAdmin();
+    
+    if (notificaciones.length === 0) {
+        mostrarNotificacion('No hay notificaciones del administrador', 'info');
+        return;
+    }
+    
+    // Crear panel de notificaciones
+    let panel = document.getElementById('panel-notificaciones-admin');
+    if (!panel) {
+        panel = document.createElement('div');
+        panel.id = 'panel-notificaciones-admin';
+        panel.innerHTML = `
+            <div class="notif-panel-header">
+                <h3>Notificaciones del Administrador</h3>
+                <button onclick="cerrarPanelNotificaciones()" class="btn-cerrar">×</button>
+            </div>
+            <div class="notif-panel-body"></div>
+        `;
+        panel.style.cssText = `
+            position: fixed; top: 70px; right: 20px; width: 350px; 
+            background: var(--theme-surface, #1e293b); border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 999999;
+            color: var(--theme-text-primary, white); max-height: 400px; overflow-y: auto;
+        `;
+        document.body.appendChild(panel);
+    }
+    
+    const cuerpo = panel.querySelector('.notif-panel-body');
+    cuerpo.innerHTML = '';
+    
+    notificaciones.forEach(notif => {
+        const item = document.createElement('div');
+        item.className = `notif-item ${notif.leida ? 'leida' : 'no-leida'}`;
+        item.innerHTML = `
+            <div class="notif-content">
+                <h4>${notif.titulo}</h4>
+                <p>${notif.mensaje}</p>
+                <small>${new Date(notif.fecha).toLocaleString()}</small>
+            </div>
+            ${!notif.leida ? `<button onclick="marcarLeida('${notif.id}')" class="btn-marcar">✓</button>` : ''}
+        `;
+        item.style.cssText = `
+            padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);
+            ${!notif.leida ? 'background: rgba(59,130,246,0.1);' : ''}
+        `;
+        cuerpo.appendChild(item);
+    });
+    
+    panel.style.display = 'block';
+}
+
+function cerrarPanelNotificaciones() {
+    const panel = document.getElementById('panel-notificaciones-admin');
+    if (panel) panel.style.display = 'none';
+}
+
+function marcarLeida(notifId) {
+    marcarNotificacionLeida(notifId);
+    mostrarNotificacionesAdmin(); // Refrescar panel
+}
+
+// Hacer funciones disponibles globalmente
+window.obtenerNotificacionesAdmin = obtenerNotificacionesAdmin;
+window.contarNotificacionesNoLeidas = contarNotificacionesNoLeidas;
+window.marcarNotificacionLeida = marcarNotificacionLeida;
+window.actualizarContadorCampana = actualizarContadorCampana;
+window.mostrarNotificacionesAdmin = mostrarNotificacionesAdmin;
+
 console.log('🔔 GRIZALUM Notification System v2.0 cargado');
 console.log('✨ Funcionalidades principales:');
 console.log('  • 🎯 4 tipos de notificaciones con estilos dinámicos por tema');
