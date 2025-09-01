@@ -4238,7 +4238,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Sobrescribir cualquier evento click que pueda llamar al admin original
     setTimeout(() => {
         const elementos = document.querySelectorAll('[onclick*="gestionarEmpresa"], [onclick*="abrirPanelAdmin"]');
-        elementos.forEach(elemento => {
+        const elementosFiltrados = Array.from(elementos).filter(el => 
+        !el.classList.contains('grizalum-notif-btn') && 
+        !el.classList.contains('notification-center') &&
+         el.id !== 'grizalumNotifBtn'
+       );
+        elementosFiltrados.forEach(elemento => {
             const onclickOriginal = elemento.getAttribute('onclick');
             if (onclickOriginal) {
                 // Reemplazar llamadas al admin original
@@ -4268,7 +4273,8 @@ const interceptorAdmin = {
 
 // Aplicar el proxy interceptor
 if (typeof Proxy !== 'undefined') {
-    window = new Proxy(window, interceptorAdmin);
+   // COMENTAR ESTA LÍNEA COMPLETAMENTE:
+// window = new Proxy(window, interceptorAdmin);
 }
 
 // PASO 6: VERIFICACIÓN FINAL Y FORZADO
