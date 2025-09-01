@@ -368,6 +368,29 @@ function aplicarTemaEmpresa(empresaId) {
 function generarCSSTema(tema) {
     return `
         /* === TEMA DINÁMICO GRIZALUM === */
+        /* BOTÓN NOTIFICACIONES CON TEMA */
+.notification-center {
+    background: linear-gradient(135deg, ${tema.primary} 0%, ${tema.secondary} 100%) !important;
+    border: none !important;
+    border-radius: 12px !important;
+    width: 48px !important;
+    height: 48px !important;
+    color: white !important;
+    font-size: 18px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.3s ease !important;
+}
+
+.notification-center:hover {
+    background: linear-gradient(135deg, ${tema.secondary} 0%, ${tema.primary} 100%) !important;
+    transform: translateY(-2px) scale(1.05) !important;
+}
+
+.notification-center i {
+    color: white !important;
+}
         
         /* Sidebar con colores de la empresa */
         .sidebar {
