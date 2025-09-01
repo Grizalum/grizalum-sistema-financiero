@@ -1081,6 +1081,29 @@ class ControladorCabeceraGRIZALUM {
     generarCSSPersonalizado() {
         return `
             /* GRIZALUM Header Dynamic Styles v2.0 */
+            /* BOTON NOTIFICACIONES DORADO */
+.notification-center {
+    background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%) !important;
+    border: none !important;
+    border-radius: 12px !important;
+    width: 48px !important;
+    height: 48px !important;
+    color: white !important;
+    font-size: 18px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.3s ease !important;
+}
+
+.notification-center:hover {
+    background: linear-gradient(135deg, #e4c06a 0%, #d4af37 100%) !important;
+    transform: translateY(-2px) scale(1.05) !important;
+}
+
+.notification-center i {
+    color: white !important;
+}
             
             .grizalum-notifications-panel {
                 background: linear-gradient(135deg, var(--theme-surface, #1e293b) 0%, var(--theme-elevated, #334155) 100%) !important;
