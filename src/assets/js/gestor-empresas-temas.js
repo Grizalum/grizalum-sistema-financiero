@@ -497,7 +497,7 @@ class GestorTemas {
             `;
         }
 
-        cconst empresa = empresaActual?.datos;
+        const empresa = empresaActual?.datos;  
         const temaActual = this.obtenerTemaEmpresa(empresaActual.id);
         
         return `
@@ -889,7 +889,7 @@ class GestorTemas {
             const empresaActual = this.gestor.obtenerEmpresaActual();
             if (empresaActual.id) {
                 const tema = this.obtenerTemaEmpresa(empresaActual.id);
-                this.aplicarTema(tema.primario, tema.secundario);
+               this.aplicarTemaConExclusiones(tema.primario, tema.secundario);
             }
         }, 500);
     }
