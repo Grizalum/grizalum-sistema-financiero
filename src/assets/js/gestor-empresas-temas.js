@@ -889,7 +889,7 @@ class GestorTemas {
             const empresaActual = this.gestor.obtenerEmpresaActual();
             if (empresaActual.id) {
                 const tema = this.obtenerTemaEmpresa(empresaActual.id);
-               this.aplicarTemaConExclusiones(tema.primario, tema.secundario);
+               this.aplicarTema(tema.primario, tema.secundario);
             }
         }, 500);
     }
