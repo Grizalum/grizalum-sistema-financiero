@@ -899,7 +899,7 @@ class SistemaNotificacionesGRIZALUM {
 
     // ======= ESTILOS DINÁMICOS =======
     
-    aplicarEstilosDinamicos() {
+   // aplicarEstilosDinamicos(); // DESACTIVADO PARA USAR CSS DE ARCHIVOS
         const idEstilo = 'grizalum-notifications-dynamic-styles';
         let estiloExistente = document.getElementById(idEstilo);
         
