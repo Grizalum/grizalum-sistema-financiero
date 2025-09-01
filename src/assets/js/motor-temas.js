@@ -137,12 +137,12 @@ class MotorTemas {
             }
             
             /* Transiciones globales suaves */
-            * {
-                transition: background-color var(--grizalum-transition) ease,
-                           border-color var(--grizalum-transition) ease,
-                           color var(--grizalum-transition) ease,
-                           box-shadow var(--grizalum-transition) ease !important;
-            }
+            *:not(.grizalum-notif-btn):not(#grizalumNotifBtn) {
+                 transition: background-color var(--grizalum-transition) ease,
+                    border-color var(--grizalum-transition) ease,
+                    color var(--grizalum-transition) ease,
+                    box-shadow var(--grizalum-transition) ease !important;
+             }
             
             /* Base futurista oscura */
             body {
