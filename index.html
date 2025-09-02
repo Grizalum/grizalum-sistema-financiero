@@ -460,5 +460,16 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 
+    <script>
+setTimeout(() => {
+    if (typeof mostrarNotificacion === 'function') {
+        mostrarNotificacion('Prueba: Sistema funcionando', 'success');
+        console.log('Sistema de notificaciones OK');
+    } else {
+        console.log('Sistema de notificaciones no cargado');
+    }
+}, 3000);
+</script>
+
 </body>
 </html>
