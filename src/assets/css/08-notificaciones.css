@@ -555,3 +555,32 @@
 .notification-center:hover i {
     transform: rotate(-10deg) scale(1.1);
 }
+/* BOTÓN NOTIFICACIONES - MÁXIMA PRIORIDAD */
+#grizalumNotifBtn.grizalum-notif-btn.custom-gold-button,
+html body .grizalum-notif-btn#grizalumNotifBtn,
+.grizalum-notif-btn[id="grizalumNotifBtn"] {
+    background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%) !important;
+    border: none !important;
+    border-radius: 12px !important;
+    width: 48px !important;
+    height: 48px !important;
+    color: white !important;
+    font-size: 18px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25) !important;
+}
+
+#grizalumNotifBtn.grizalum-notif-btn:hover,
+html body .grizalum-notif-btn#grizalumNotifBtn:hover {
+    background: linear-gradient(135deg, #e4c06a 0%, #d4af37 100%) !important;
+    transform: translateY(-2px) scale(1.05) !important;
+    box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4) !important;
+}
+
+#grizalumNotifBtn i,
+.grizalum-notif-btn#grizalumNotifBtn i {
+    color: white !important;
+}
