@@ -225,10 +225,10 @@
                      <button class="period-btn" onclick="changePeriod('año', this)">Año</button>
                  </div>
         
-              <button id="grizalumNotifBtn" class="grizalum-notif-btn custom-gold-button" onclick="showNotifications()" style="background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%) !important; border: 2px solid #d4af37 !important; color: white !important; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25) !important;">
+             <div id="botonNotifNuevo" onclick="showNotifications()" style="background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%); border: 2px solid #d4af37; color: white; padding: 12px; border-radius: 12px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; font-size: 18px; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25); transition: all 0.3s ease; position: relative;">
                <i class="fas fa-bell"></i>
-               <span class="grizalum-notif-badge">3</span>
-            </button>
+               <span style="position: absolute; top: -5px; right: -5px; background: #dc2626; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold;">3</span>
+              </div>
         
                 <!-- BOTÓN IA EN HEADER -->
              <button class="ai-header-button" onclick="toggleAIAssistant()">
