@@ -370,7 +370,8 @@ function generarCSSTema(tema) {
         /* === TEMA DINÁMICO GRIZALUM === */
       // POR ESTO:
 /* BOTÓN NOTIFICACIONES DORADO FIJO */
-.notification-center:not(.custom-gold-button) {
+.notification-center:not(.custom-gold-button),
+.grizalum-notif-btn:not(.custom-gold-button) {
     background: linear-gradient(135deg, ${tema.primary} 0%, ${tema.secondary} 100%) !important;
     border: none !important;
     border-radius: 12px !important;
