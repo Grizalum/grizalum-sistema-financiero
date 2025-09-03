@@ -219,8 +219,9 @@
 }
 
 /* ===== CENTRO DE NOTIFICACIONES PREMIUM ===== */
-button.notification-center,
-.notification-center {
+.header-controls button.notification-center,
+.header-controls .notification-center,
+button#btnNotificaciones {
     position: relative !important;
     background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%) !important;
     border: none !important;
@@ -240,39 +241,6 @@ button.notification-center,
     z-index: 100 !important;
     margin-left: 16px !important;
 }
-
-button.notification-center:hover,
-.notification-center:hover {
-    background: linear-gradient(135deg, #e4c06a 0%, #d4af37 100%) !important;
-    transform: translateY(-2px) scale(1.05) !important;
-    box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4) !important;
-}
-
-button.notification-center i,
-.notification-center i {
-    transition: all 0.3s ease !important;
-    color: white !important;
-}
-
-.notification-badge {
-    position: absolute !important;
-    top: -8px !important;
-    right: -8px !important;
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
-    color: white !important;
-    font-size: 11px !important;
-    font-weight: 800 !important;
-    border-radius: 12px !important;
-    min-width: 22px !important;
-    height: 22px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    border: 3px solid white !important;
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4) !important;
-    z-index: 2 !important;
-}
-
 /* ===== BOTÓN IA ASSISTANT ===== */
 .ai-header-button {
     background: var(--gradient-purple);
