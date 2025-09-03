@@ -238,6 +238,7 @@ button.notification-center,
     box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25) !important;
     overflow: visible !important;
     z-index: 100 !important;
+    margin-left: 16px !important;
 }
 
 button.notification-center:hover,
@@ -247,21 +248,10 @@ button.notification-center:hover,
     box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4) !important;
 }
 
-button.notification-center.active,
-.notification-center.active {
-    background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%) !important;
-    transform: translateY(-1px) !important;
-}
-
 button.notification-center i,
 .notification-center i {
     transition: all 0.3s ease !important;
     color: white !important;
-}
-
-button.notification-center:hover i,
-.notification-center:hover i {
-    transform: rotate(-10deg) scale(1.1) !important;
 }
 
 .notification-badge {
@@ -282,6 +272,7 @@ button.notification-center:hover i,
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4) !important;
     z-index: 2 !important;
 }
+
 /* ===== BOTÓN IA ASSISTANT ===== */
 .ai-header-button {
     background: var(--gradient-purple);
