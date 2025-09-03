@@ -205,11 +205,6 @@
     color: var(--theme-primary) !important;
 }
 
-.ai-header-button {
-    background: var(--theme-gradient) !important;
-    box-shadow: var(--theme-shadow-light) !important;
-}
-
 /* Gráficos con tema */
 .chart-header::after {
     background: var(--theme-gradient) !important;
