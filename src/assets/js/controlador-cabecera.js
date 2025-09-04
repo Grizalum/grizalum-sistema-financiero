@@ -100,7 +100,6 @@ class ControladorCabeceraGRIZALUM {
             this.configurarAccesibilidad();
             
             // Aplicar estilos dinámicos
-            this.aplicarEstilosDinamicos();
             
             this.inicializado = true;
             this.log('✅ Controlador del header inicializado correctamente', 'success');
