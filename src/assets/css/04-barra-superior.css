@@ -548,3 +548,19 @@ button#btnNotificaciones {
 .executive-header[data-theme] .ai-insights {
     transition: all var(--transition-normal);
 }
+
+/* FUERZA MÁXIMA PARA BOTÓN DORADO */
+html body div.header-controls button#btnNotificaciones.notification-center,
+html body button#btnNotificaciones[id="btnNotificaciones"],
+#btnNotificaciones.notification-center[onclick*="showNotifications"] {
+    background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%) !important;
+    border: 2px solid #d4af37 !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25) !important;
+}
+
+html body div.header-controls button#btnNotificaciones.notification-center:hover {
+    background: linear-gradient(135deg, #e4c06a 0%, #d4af37 100%) !important;
+    transform: translateY(-2px) scale(1.05) !important;
+    box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4) !important;
+}
