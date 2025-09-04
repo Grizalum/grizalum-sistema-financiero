@@ -677,3 +677,9 @@ html body button#btnNotificaciones.notification-center i,
     background: lime !important;
 }
 */
+/* FUERZA BRUTA FINAL */
+[id="btnNotificaciones"] {
+    background: #d4af37 !important;
+    background-color: #d4af37 !important;
+    background-image: linear-gradient(135deg, #d4af37 0%, #b8941f 100%) !important;
+}
