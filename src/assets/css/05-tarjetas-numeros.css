@@ -3,22 +3,22 @@
    Todo lo relacionado con las tarjetas de números del dashboard
    ================================================================ */
 
-/* ===== GRID DE MÉTRICAS ===== */
+/* ===== GRID DE MÉTRICAS - CORREGIDO ===== */
 .metrics-grid {
-    display: grid;
+    display: grid !important;
     grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
-    margin-bottom: 20px;
+    gap: var(--cards-gap);
+    margin-bottom: var(--cards-bottom-margin);
     align-items: stretch;
-    grid-auto-rows: 1fr;
     width: 100%;
+    /* Removido: grid-auto-rows que causaba problemas de altura */
 }
 
-/* ===== TARJETA DE MÉTRICA BASE ===== */
+/* ===== TARJETA DE MÉTRICA BASE - OPTIMIZADA ===== */
 .metric-card {
     background: linear-gradient(135deg, 
         rgba(255, 255, 255, 0.95) 0%, 
-        rgba(255, 255, 255, 0.8) 100%);
+        rgba(255, 255, 255, 0.85) 100%);
     backdrop-filter: var(--backdrop-blur);
     border-radius: 16px;
     box-shadow: var(--shadow-lg);
@@ -28,8 +28,8 @@
     transition: all var(--transition-normal);
     padding: var(--spacing-xl);
     min-height: 160px;
-    display: flex;
-    flex-direction: column;
+    display: flex !important;
+    flex-direction: column !important;
     justify-content: space-between;
     will-change: transform;
     contain: layout style paint;
@@ -45,23 +45,16 @@
     height: 4px;
     background: var(--gradient-gold);
     transition: all var(--transition-normal);
+    z-index: 1;
 }
 
 /* Colores específicos por tipo de métrica */
-.metric-card.revenue::before { 
-    background: var(--gradient-primary); 
-}
-.metric-card.expenses::before { 
-    background: var(--gradient-warning); 
-}
-.metric-card.profit::before { 
-    background: var(--gradient-success); 
-}
-.metric-card.growth::before { 
-    background: var(--gradient-purple); 
-}
+.metric-card.revenue::before { background: var(--gradient-primary); }
+.metric-card.expenses::before { background: var(--gradient-warning); }
+.metric-card.profit::before { background: var(--gradient-success); }
+.metric-card.growth::before { background: var(--gradient-purple); }
 
-/* ===== EFECTOS HOVER ===== */
+/* ===== EFECTOS HOVER - SIMPLIFICADOS ===== */
 .metric-card:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-2xl);
@@ -80,6 +73,7 @@
     align-items: flex-start;
     margin-bottom: var(--spacing-lg);
     gap: var(--spacing-md);
+    flex-shrink: 0;
 }
 
 .metric-title {
@@ -90,6 +84,9 @@
     letter-spacing: 0.5px;
     line-height: 1.2;
     flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* ===== ICONOS DE MÉTRICAS ===== */
@@ -110,18 +107,10 @@
 }
 
 /* Colores específicos de iconos */
-.metric-icon.revenue { 
-    background: var(--gradient-primary); 
-}
-.metric-icon.expenses { 
-    background: var(--gradient-warning); 
-}
-.metric-icon.profit { 
-    background: var(--gradient-success); 
-}
-.metric-icon.growth { 
-    background: var(--gradient-purple); 
-}
+.metric-icon.revenue { background: var(--gradient-primary); }
+.metric-icon.expenses { background: var(--gradient-warning); }
+.metric-icon.profit { background: var(--gradient-success); }
+.metric-icon.growth { background: var(--gradient-purple); }
 
 /* Efecto hover en iconos */
 .metric-card:hover .metric-icon {
@@ -158,6 +147,12 @@
     letter-spacing: -0.02em;
     font-variant-numeric: tabular-nums;
     transition: all var(--transition-normal);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
 }
 
 .metric-card:hover .metric-value {
@@ -178,6 +173,8 @@
     backdrop-filter: var(--backdrop-blur);
     border: 1px solid var(--glass-border);
     transition: all var(--transition-normal);
+    flex-shrink: 0;
+    margin-top: auto;
 }
 
 .metric-change.positive { 
@@ -212,6 +209,13 @@
     animation: bounceDown 0.6s ease;
 }
 
+.metric-change span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 120px;
+}
+
 @keyframes bounceUp {
     0%, 100% { transform: translateY(-2px); }
     50% { transform: translateY(-4px); }
@@ -244,8 +248,6 @@
 }
 
 /* ===== ESTADOS ESPECIALES ===== */
-
-/* Tarjeta actualizándose */
 .metric-card.kpi-updating {
     position: relative;
     overflow: hidden;
@@ -263,6 +265,7 @@
         rgba(212, 175, 55, 0.2), 
         transparent);
     animation: updating 1s infinite;
+    z-index: 2;
 }
 
 @keyframes updating {
@@ -270,7 +273,6 @@
     100% { left: 100%; }
 }
 
-/* Estados de aumentos y disminuciones */
 .metric-card.kpi-increase {
     animation: kpiIncrease 1s ease;
 }
@@ -299,22 +301,41 @@
     100% { transform: scale(1); }
 }
 
-/* ===== RESPONSIVE TABLET ===== */
-@media (max-width: 1200px) {
+/* ===== RESPONSIVE OPTIMIZADO ===== */
+
+/* Desktop grande */
+@media (max-width: 1400px) {
     .metrics-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 1rem !important;
+        gap: var(--spacing-md);
+    }
+    
+    .metric-card {
+        padding: var(--spacing-lg);
+        min-height: 150px;
     }
 }
 
-@media (max-width: 991px) {
+/* Tablet */
+@media (max-width: 1200px) {
     .metrics-grid {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: var(--spacing-lg);
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: var(--spacing-lg) !important;
     }
     
     .metric-card {
         min-height: 140px;
+    }
+}
+
+/* Tablet pequeño */
+@media (max-width: 991px) {
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md);
+    }
+    
+    .metric-card {
+        min-height: 130px;
         padding: var(--spacing-lg);
     }
     
@@ -329,11 +350,12 @@
     }
 }
 
-/* ===== RESPONSIVE MÓVIL ===== */
+/* Móvil */
 @media (max-width: 768px) {
     .metrics-grid {
         grid-template-columns: 1fr !important;
-        gap: 0.75rem !important;
+        gap: var(--cards-gap-mobile) !important;
+        margin-bottom: var(--spacing-lg);
     }
     
     .metric-card {
@@ -367,10 +389,10 @@
     }
 }
 
-/* ===== MÓVIL PEQUEÑO ===== */
+/* Móvil pequeño */
 @media (max-width: 575px) {
     .metric-card {
-        min-height: 100px;
+        min-height: 110px;
         padding: var(--spacing-sm);
     }
     
@@ -394,10 +416,10 @@
     }
 }
 
-/* ===== MÓVIL MUY PEQUEÑO ===== */
+/* Móvil muy pequeño */
 @media (max-width: 375px) {
     .metric-card {
-        min-height: 90px;
+        min-height: 100px;
         padding: var(--spacing-xs);
     }
     
@@ -414,6 +436,39 @@
         height: 28px;
         font-size: 12px;
     }
+}
+
+/* ===== LOADING SKELETON ===== */
+.metric-card.loading {
+    pointer-events: none;
+}
+
+.metric-card.loading .metric-value,
+.metric-card.loading .metric-title,
+.metric-card.loading .metric-change {
+    background: linear-gradient(90deg, 
+        var(--gray-200) 25%, 
+        var(--gray-300) 50%, 
+        var(--gray-200) 75%);
+    background-size: 200% 100%;
+    animation: skeleton 1.5s infinite;
+    color: transparent;
+    border-radius: 4px;
+}
+
+@keyframes skeleton {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ===== ACCESIBILIDAD ===== */
+.metric-card:focus {
+    outline: 2px solid var(--peru-gold);
+    outline-offset: 2px;
+}
+
+.metric-card[aria-label] {
+    cursor: pointer;
 }
 
 /* ===== PRINT STYLES ===== */
@@ -444,24 +499,6 @@
     }
 }
 
-/* ===== ACCESIBILIDAD ===== */
-.metric-card:focus {
-    outline: 2px solid var(--peru-gold);
-    outline-offset: 2px;
-}
-
-/* Mejoras para lectores de pantalla */
-.metric-card[aria-label] {
-    cursor: pointer;
-}
-
-.metric-value::after {
-    content: attr(data-currency) attr(data-unit);
-    font-size: var(--text-sm);
-    color: var(--gray-500);
-    margin-left: var(--spacing-xs);
-}
-
 /* ===== HIGH CONTRAST MODE ===== */
 @media (prefers-contrast: high) {
     .metric-card {
@@ -469,21 +506,10 @@
         border: 2px solid black;
     }
     
-    .metric-card.revenue {
-        border-left: 5px solid blue;
-    }
-    
-    .metric-card.expenses {
-        border-left: 5px solid orange;
-    }
-    
-    .metric-card.profit {
-        border-left: 5px solid green;
-    }
-    
-    .metric-card.growth {
-        border-left: 5px solid purple;
-    }
+    .metric-card.revenue { border-left: 5px solid blue; }
+    .metric-card.expenses { border-left: 5px solid orange; }
+    .metric-card.profit { border-left: 5px solid green; }
+    .metric-card.growth { border-left: 5px solid purple; }
     
     .metric-value {
         color: black;
@@ -510,70 +536,4 @@
     .metric-card:hover {
         transform: none !important;
     }
-}
-
-/* ===== TEMA DINÁMICO BASE ===== */
-.metric-card[data-theme] {
-    transition: all var(--transition-slow);
-}
-
-.metric-card[data-theme]::before {
-    transition: all var(--transition-normal);
-}
-
-.metric-card[data-theme] .metric-icon {
-    transition: all var(--transition-normal);
-}
-
-/* ===== LOADING SKELETON ===== */
-.metric-card.loading {
-    pointer-events: none;
-}
-
-.metric-card.loading .metric-value,
-.metric-card.loading .metric-title,
-.metric-card.loading .metric-change {
-    background: linear-gradient(90deg, 
-        var(--gray-200) 25%, 
-        var(--gray-300) 50%, 
-        var(--gray-200) 75%);
-    background-size: 200% 100%;
-    animation: skeleton 1.5s infinite;
-    color: transparent;
-    border-radius: 4px;
-}
-
-@keyframes skeleton {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-}
-
-/* ===== UTILIDADES ESPECÍFICAS ===== */
-
-/* Forzar visibilidad */
-.metric-card {
-    display: flex !important;
-    flex-direction: column !important;
-    min-height: 160px !important;
-}
-
-/* Grid forzado */
-.metrics-grid {
-    display: grid !important;
-    width: 100% !important;
-}
-
-/* Prevenir texto overflow */
-.metric-title,
-.metric-value {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.metric-change span {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 120px;
 }
