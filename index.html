@@ -80,6 +80,94 @@
     <link rel="preload" href="./src/assets/css/grizalum-principal.css" as="style">
     <link rel="preload" href="./src/assets/js/principal.js" as="script">
 
+    <!-- ================================================================
+         🔧 CORRECCIONES CSS INTEGRADAS
+         ================================================================ -->
+    <style>
+        /* CORRECCIONES CRÍTICAS PARA LAYOUT */
+        .metrics-grid {
+            display: grid !important;
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 20px !important;
+            margin: 0 auto 30px auto !important;
+            width: 100% !important;
+            max-width: 1200px !important;
+            align-items: stretch !important;
+        }
+
+        .metric-card {
+            height: 160px !important;
+            min-height: 160px !important;
+            max-height: 160px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+            padding: 20px !important;
+            box-sizing: border-box !important;
+        }
+
+        .dashboard-content {
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 20px !important;
+            margin: 0 auto !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+        }
+
+        .charts-section {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 20px !important;
+            width: 100% !important;
+            max-width: 1200px !important;
+            margin: 0 auto !important;
+        }
+
+        .chart-card {
+            height: 300px !important;
+            min-height: 300px !important;
+            max-height: 300px !important;
+        }
+
+        .chart-card.main-chart {
+            grid-column: 1 / -1 !important;
+            height: 350px !important;
+            min-height: 350px !important;
+            max-height: 350px !important;
+        }
+
+        /* RESPONSIVE FIXES */
+        @media (max-width: 1200px) {
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            .charts-section {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: 1fr !important;
+            }
+            .charts-section {
+                grid-template-columns: 1fr !important;
+            }
+            .metric-card {
+                height: 140px !important;
+                min-height: 140px !important;
+                max-height: 140px !important;
+            }
+            .chart-card {
+                height: 280px !important;
+                min-height: 280px !important;
+                max-height: 280px !important;
+            }
+        }
+    </style>
+
 </head>
 <body>
    <!-- ================================================================
@@ -224,23 +312,22 @@
                      <button class="period-btn" onclick="changePeriod('año', this)">Año</button>
                  </div>
 
-            <button id="btnNotificaciones" class="notification-center" onclick="showNotifications()">
-              <i class="fas fa-bell"></i>
-              <span class="notification-badge">3</span>
-            </button>
-        
-                <!-- BOTÓN IA EN HEADER -->
-             <button class="ai-header-button" onclick="toggleAIAssistant()">
-             <i class="fas fa-brain"></i>
-             <span>IA Assistant</span>
-            </button>
+                <button id="btnNotificaciones" class="notification-center" onclick="showNotifications()">
+                  <i class="fas fa-bell"></i>
+                  <span class="notification-badge">3</span>
+                </button>
+            
+                    <!-- BOTÓN IA EN HEADER -->
+                 <button class="ai-header-button" onclick="toggleAIAssistant()">
+                 <i class="fas fa-brain"></i>
+                 <span>IA Assistant</span>
+                </button>
 
-              <!-- SELECTOR DE EMPRESAS -->
-              <div class="company-selector" id="companySelector">
-                  <!-- Se genera automáticamente por gestor-empresas-principal.js -->
-                   </div>
-                    </div>
-                </div>
+                  <!-- SELECTOR DE EMPRESAS -->
+                  <div class="company-selector" id="companySelector">
+                      <!-- Se genera automáticamente por gestor-empresas-principal.js -->
+                  </div>
+               </div>
            </header>
 
            <!-- ================================================================
@@ -249,75 +336,73 @@
            <div id="dashboardContent" class="dashboard-content active">
                
                <!-- ================================================================
-                    📈 MÉTRICAS PRINCIPALES (KPIs)
+                    📈 MÉTRICAS PRINCIPALES (KPIs) - CORREGIDAS
                     ================================================================ -->
-        
-<section class="metrics-grid">
-    <!-- CARD 1: GASTOS OPERATIVOS -->
-    <div class="metric-card expenses">
-        <div class="metric-header">
-            <span class="metric-title">Gastos Operativos</span>
-            <div class="metric-icon expenses">
-                <i class="fas fa-receipt"></i>
-            </div>
-        </div>
-        <div class="metric-value" id="expensesValue">S/. 28,700</div>
-        <div class="metric-change negative">
-            <i class="fas fa-arrow-up"></i>
-            <span>+3.2% vs mes anterior</span>
-        </div>
-    </div>
+                <section class="metrics-grid">
+                    <!-- CARD 1: GASTOS OPERATIVOS -->
+                    <div class="metric-card expenses">
+                        <div class="metric-header">
+                            <span class="metric-title">Gastos Operativos</span>
+                            <div class="metric-icon expenses">
+                                <i class="fas fa-receipt"></i>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="expensesValue">S/. 28,700</div>
+                        <div class="metric-change negative">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+3.2% vs mes anterior</span>
+                        </div>
+                    </div>
 
-    <!-- CARD 2: UTILIDAD NETA -->
-    <div class="metric-card profit">
-        <div class="metric-header">
-            <span class="metric-title">Utilidad Neta</span>
-            <div class="metric-icon profit">
-                <i class="fas fa-coins"></i>
-            </div>
-        </div>
-        <div class="metric-value" id="profitValue">S/. 16,500</div>
-        <div class="metric-change positive">
-            <i class="fas fa-arrow-up"></i>
-            <span>+18.7% vs mes anterior</span>
-        </div>
-    </div>
+                    <!-- CARD 2: UTILIDAD NETA -->
+                    <div class="metric-card profit">
+                        <div class="metric-header">
+                            <span class="metric-title">Utilidad Neta</span>
+                            <div class="metric-icon profit">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="profitValue">S/. 16,500</div>
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+18.7% vs mes anterior</span>
+                        </div>
+                    </div>
 
-    <!-- CARD 3: CRECIMIENTO -->
-    <div class="metric-card growth">
-        <div class="metric-header">
-            <span class="metric-title">Crecimiento</span>
-            <div class="metric-icon growth">
-                <i class="fas fa-chart-area"></i>
-            </div>
-        </div>
-        <div class="metric-value" id="growthValue">+24.8%</div>
-        <div class="metric-change positive">
-            <i class="fas fa-arrow-up"></i>
-            <span>Meta anual: 20%</span>
-        </div>
-    </div>
+                    <!-- CARD 3: CRECIMIENTO -->
+                    <div class="metric-card growth">
+                        <div class="metric-header">
+                            <span class="metric-title">Crecimiento</span>
+                            <div class="metric-icon growth">
+                                <i class="fas fa-chart-area"></i>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="growthValue">+24.8%</div>
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>Meta anual: 20%</span>
+                        </div>
+                    </div>
 
-    <!-- CARD 4: INGRESOS TOTALES -->
-    <div class="metric-card revenue">
-        <div class="metric-header">
-            <span class="metric-title">Ingresos Totales</span>
-            <div class="metric-icon revenue">
-                <i class="fas fa-arrow-trend-up"></i>
-            </div>
-        </div>
-        <div class="metric-value" id="revenueValue">S/. 2,847,293</div>
-        <div class="metric-change positive">
-            <i class="fas fa-arrow-up"></i>
-            <span>+12.5% vs mes anterior</span>
-        </div>
-    </div>
-</section>
-               
-<style>               
-              <!-- ================================================================
-                   📊 GRÁFICOS Y VISUALIZACIONES
-                   ================================================================ -->
+                    <!-- CARD 4: INGRESOS TOTALES -->
+                    <div class="metric-card revenue">
+                        <div class="metric-header">
+                            <span class="metric-title">Ingresos Totales</span>
+                            <div class="metric-icon revenue">
+                                <i class="fas fa-arrow-trend-up"></i>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="revenueValue">S/. 2,847,293</div>
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+12.5% vs mes anterior</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================================================================
+                     📊 GRÁFICOS Y VISUALIZACIONES - CORREGIDOS
+                     ================================================================ -->
                 <section class="charts-section">
                     <!-- Gráfico Principal de Flujo de Caja -->
                     <div class="chart-card main-chart">
@@ -371,16 +456,14 @@
                         </div>
                         <div class="chart-container">
                             <canvas id="cashFlowDetailChart"></canvas>
-                                 </div>
-                              </div>
-                          </section>
+                        </div>
+                    </div>
+                </section>
            </div>
 
            <!-- ================================================================
                 📄 OTRAS SECCIONES (CASH FLOW, REPORTS, ETC.)
-                ================================================================ 
-                Aquí irían las demás secciones cuando las desarrolles
-                -->
+                ================================================================ -->
 
        </main>
    </div>
@@ -439,16 +522,6 @@
 <script src="./src/assets/js/principal.js" defer></script>
 
 <!-- ================================================================
-     ✨ SISTEMA COMPLETAMENTE MODULAR Y ORGANIZADO ✨
-     - 11 archivos CSS especializados
-     - 15 archivos JS especializados con nombres en español
-     - Cada archivo tiene UNA responsabilidad específica
-     - Fácil mantenimiento y debugging
-     - Perfecto para trabajo en equipo
-     - Totalmente escalable para empresas peruanas
-     ================================================================ -->
-
-<!-- ================================================================
      🔧 SERVICE WORKER PARA PWA (OPCIONAL)
      ================================================================ -->
 <script>
@@ -461,7 +534,7 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 
-    <script>
+<script>
 setTimeout(() => {
     if (typeof mostrarNotificacion === 'function') {
         mostrarNotificacion('Prueba: Sistema funcionando', 'success');
