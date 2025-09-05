@@ -1,5 +1,5 @@
 // ================================================================
-// 📊 GRIZALUM CHARTS MANAGER - VERSIÓN PROFESIONAL v2.1
+// 📊 GRIZALUM CHARTS MANAGER - VERSIÓN PROFESIONAL v2.2 CORREGIDA
 // Sistema avanzado de gráficos financieros para empresas peruanas
 // ================================================================
 
@@ -17,14 +17,23 @@ class GrizalumChartsManager {
         this.currentTheme = 'gold';
         this.config = null;
         this.dataGenerator = new FinancialDataGenerator();
+        this.retryCount = 0;
+        this.maxRetries = 5;
         
-        console.log('📊 Inicializando GRIZALUM Charts Manager v2.1...');
+        console.log('📊 Inicializando GRIZALUM Charts Manager v2.2...');
     }
 
-    // ======= INICIALIZACIÓN =======
+    // ======= INICIALIZACIÓN MEJORADA =======
     async initialize(initialData = null) {
         // Verificar dependencias
         if (!this.checkDependencies()) {
+            console.log('⏳ Esperando dependencias...');
+            if (this.retryCount < this.maxRetries) {
+                this.retryCount++;
+                setTimeout(() => this.initialize(initialData), 1000);
+                return false;
+            }
+            console.error('❌ No se pudieron cargar las dependencias después de múltiples intentos');
             return false;
         }
 
@@ -42,6 +51,13 @@ class GrizalumChartsManager {
                 this.dataGenerator.setBaseData(initialData);
             }
             
+            // Verificar que los contenedores existan
+            if (!this.checkContainers()) {
+                console.log('⏳ Esperando contenedores del DOM...');
+                setTimeout(() => this.initialize(initialData), 500);
+                return false;
+            }
+            
             // Crear todos los gráficos
             await this.initializeAllCharts();
             
@@ -51,21 +67,53 @@ class GrizalumChartsManager {
             this.isInitialized = true;
             console.log('✅ Sistema de gráficos inicializado correctamente');
             
+            // Mostrar notificación de éxito
+            if (window.mostrarNotificacion) {
+                window.mostrarNotificacion('Gráficos cargados correctamente', 'success');
+            }
+            
             return true;
             
         } catch (error) {
             console.error('❌ Error inicializando Charts Manager:', error);
+            
+            // Mostrar notificación de error
+            if (window.mostrarNotificacion) {
+                window.mostrarNotificacion('Error cargando gráficos', 'error');
+            }
+            
             return false;
         }
     }
 
     checkDependencies() {
         if (typeof Chart === 'undefined') {
-            console.error('❌ Chart.js no está disponible');
+            console.log('⚠️ Chart.js no está disponible aún');
             return false;
         }
         
         console.log('✅ Chart.js disponible:', Chart.version);
+        return true;
+    }
+
+    checkContainers() {
+        const requiredContainers = [
+            'cashFlowChart',
+            'expensesChart', 
+            'revenueChart',
+            'agingChart',
+            'cashFlowDetailChart'
+        ];
+        
+        for (const containerId of requiredContainers) {
+            const container = document.getElementById(containerId);
+            if (!container) {
+                console.log(`⚠️ Contenedor no encontrado: ${containerId}`);
+                return false;
+            }
+        }
+        
+        console.log('✅ Todos los contenedores están disponibles');
         return true;
     }
 
@@ -104,18 +152,21 @@ class GrizalumChartsManager {
         console.log('🎨 Configuración global de Chart.js aplicada');
     }
 
-    // ======= GESTIÓN DE GRÁFICOS =======
+    // ======= GESTIÓN DE GRÁFICOS MEJORADA =======
     async initializeAllCharts() {
         console.log('🏗️ Creando gráficos financieros...');
         
         // Destruir gráficos existentes primero
         this.destroyAll();
         
+        let successCount = 0;
+        
         // Crear gráficos de forma secuencial para mejor rendimiento
         for (const chartType of this.config.enabled) {
             try {
                 await this.createChart(chartType);
                 console.log(`✅ Gráfico ${chartType} creado exitosamente`);
+                successCount++;
                 
                 // Pequeña pausa para evitar bloqueo del UI
                 await this.delay(100);
@@ -125,7 +176,13 @@ class GrizalumChartsManager {
             }
         }
         
-        console.log('📊 Todos los gráficos inicializados');
+        console.log(`📊 ${successCount}/${this.config.enabled.length} gráficos inicializados`);
+        
+        // Si no se creó ningún gráfico, intentar de nuevo
+        if (successCount === 0) {
+            console.log('🔄 Reintentando creación de gráficos en 2 segundos...');
+            setTimeout(() => this.initializeAllCharts(), 2000);
+        }
     }
 
     async createChart(type) {
@@ -134,6 +191,11 @@ class GrizalumChartsManager {
 
         if (!ctx) {
             throw new Error(`Contenedor no encontrado: ${containerId}`);
+        }
+
+        // Verificar que el contenedor sea un canvas
+        if (ctx.tagName.toLowerCase() !== 'canvas') {
+            throw new Error(`El elemento ${containerId} no es un canvas`);
         }
 
         // Limpiar canvas si ya existe un gráfico
@@ -150,11 +212,21 @@ class GrizalumChartsManager {
         // Aplicar tema actual
         this.applyThemeToConfig(chartConfig);
 
-        const chart = new Chart(ctx, chartConfig);
-        this.charts.set(type, chart);
-
-        // Animación de entrada personalizada
-        this.animateChartEntry(chart, type);
+        // Crear el gráfico con manejo de errores
+        let chart;
+        try {
+            chart = new Chart(ctx, chartConfig);
+            this.charts.set(type, chart);
+            
+            // Animación de entrada personalizada
+            this.animateChartEntry(chart, type);
+            
+            console.log(`📈 Gráfico ${type} renderizado en ${containerId}`);
+            
+        } catch (renderError) {
+            console.error(`Error renderizando gráfico ${type}:`, renderError);
+            throw renderError;
+        }
 
         return chart;
     }
@@ -171,7 +243,7 @@ class GrizalumChartsManager {
         return configs[type] || null;
     }
 
-    // ======= CONFIGURACIONES ESPECÍFICAS DE GRÁFICOS =======
+    // ======= CONFIGURACIONES ESPECÍFICAS DE GRÁFICOS (Mismas que antes) =======
     getCashFlowConfig() {
         const data = this.dataGenerator.getCashFlowData(this.currentPeriod);
         
@@ -513,7 +585,7 @@ class GrizalumChartsManager {
         };
     }
 
-    // ======= GESTIÓN DE TEMAS =======
+    // ======= GESTIÓN DE TEMAS (Igual que antes) =======
     getThemeColor(colorType) {
         const themes = {
             gold: {
@@ -556,14 +628,11 @@ class GrizalumChartsManager {
 
     applyThemeToConfig(config) {
         // Esta función se puede expandir para aplicar temas más complejos
-        // Por ahora, los colores se aplican dinámicamente en cada configuración
     }
 
     updateTheme(newTheme) {
         this.currentTheme = newTheme;
         console.log(`🎨 Aplicando tema: ${newTheme}`);
-        
-        // Recrear gráficos con el nuevo tema
         this.refreshAllCharts();
     }
 
@@ -571,8 +640,6 @@ class GrizalumChartsManager {
     updateForPeriod(period) {
         this.currentPeriod = period;
         console.log(`📅 Actualizando gráficos para período: ${period}`);
-        
-        // Actualizar datos en todos los gráficos
         this.refreshAllCharts();
     }
 
@@ -585,7 +652,6 @@ class GrizalumChartsManager {
             try {
                 const newConfig = this.getChartConfig(type);
                 if (newConfig) {
-                    // Actualizar datos con animación suave
                     chart.data = newConfig.data;
                     chart.update('active');
                 }
@@ -595,7 +661,7 @@ class GrizalumChartsManager {
         }
     }
 
-    // ======= UTILIDADES =======
+    // ======= UTILIDADES (Iguales que antes) =======
     formatCurrency(value, abbreviated = false) {
         if (abbreviated && value >= 1000000) {
             return `S/. ${(value / 1000000).toFixed(1)}M`;
@@ -615,7 +681,6 @@ class GrizalumChartsManager {
     }
 
     animateChartEntry(chart, type) {
-        // Animación personalizada de entrada
         const container = chart.canvas.parentElement;
         if (container) {
             container.style.opacity = '0';
@@ -631,17 +696,14 @@ class GrizalumChartsManager {
 
     // ======= EVENTOS =======
     bindEvents() {
-        // Escuchar cambios de tema
         document.addEventListener('themeChanged', (e) => {
             this.updateTheme(e.detail.theme);
         });
         
-        // Escuchar cambios de período
         document.addEventListener('periodChanged', (e) => {
             this.updateForPeriod(e.detail.period);
         });
         
-        // Redimensionar gráficos en cambio de tamaño
         window.addEventListener('resize', this.debounce(() => {
             this.charts.forEach(chart => chart.resize());
         }, 250));
@@ -659,7 +721,7 @@ class GrizalumChartsManager {
         };
     }
 
-    // ======= API PÚBLICA =======
+    // ======= API PÚBLICA (Iguales que antes) =======
     getChart(type) {
         return this.charts.get(type);
     }
@@ -684,13 +746,11 @@ class GrizalumChartsManager {
     destroyAll() {
         this.charts.forEach((chart, type) => {
             chart.destroy();
-            console.log(`🗑️ Gráfico ${type} destruido`);
         });
         this.charts.clear();
         this.isInitialized = false;
     }
 
-    // ======= INFORMACIÓN DE ESTADO =======
     getStatus() {
         return {
             isInitialized: this.isInitialized,
@@ -702,7 +762,7 @@ class GrizalumChartsManager {
     }
 }
 
-// ======= GENERADOR DE DATOS FINANCIEROS =======
+// ======= GENERADOR DE DATOS FINANCIEROS (Igual que antes) =======
 class FinancialDataGenerator {
     constructor() {
         this.baseData = null;
@@ -755,7 +815,7 @@ class FinancialDataGenerator {
     getRevenueComparisonData(period) {
         const data = this.getCashFlowData(period);
         return {
-            labels: data.labels.slice(-6), // Últimos 6 períodos
+            labels: data.labels.slice(-6),
             ingresos: data.ingresos.slice(-6),
             gastos: data.gastos.slice(-6)
         };
@@ -781,6 +841,14 @@ class FinancialDataGenerator {
             'mes': {
                 labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
                 values: [580000, 645000, 720000, 824500]
+            },
+            'trimestre': {
+                labels: ['Ene', 'Feb', 'Mar'],
+                values: [1200000, 1450000, 1680000]
+            },
+            'año': {
+                labels: ['2023', '2024'],
+                values: [8500000, 9200000]
             }
         };
 
@@ -798,32 +866,58 @@ function initializeCharts() {
     return grizalumChartsManager.initialize();
 }
 
-// Auto-inicialización inteligente
+// Función específica para forzar inicialización
+function forceInitializeCharts() {
+    console.log('🔥 Forzando inicialización de gráficos...');
+    return grizalumChartsManager.initialize();
+}
+
+// Auto-inicialización inteligente mejorada
 document.addEventListener('DOMContentLoaded', () => {
-    // Esperar a que Chart.js y la configuración estén disponibles
+    console.log('📄 DOM cargado, iniciando verificación de gráficos...');
+    
     const checkAndInit = () => {
         if (typeof Chart !== 'undefined') {
+            console.log('✅ Chart.js detectado, esperando 1 segundo para asegurar DOM completo...');
             setTimeout(() => {
                 grizalumChartsManager.initialize();
-            }, 800); // Delay para asegurar que el DOM esté completamente listo
+            }, 1000);
         } else {
-            setTimeout(checkAndInit, 200);
+            console.log('⏳ Esperando Chart.js...');
+            setTimeout(checkAndInit, 300);
         }
     };
     
     checkAndInit();
 });
 
+// Inicialización adicional cuando la ventana está completamente cargada
+window.addEventListener('load', () => {
+    console.log('🚀 Ventana completamente cargada');
+    
+    // Si los gráficos aún no están inicializados, intentar de nuevo
+    setTimeout(() => {
+        if (!grizalumChartsManager.isInitialized) {
+            console.log('🔄 Reintentando inicialización después de window.load...');
+            grizalumChartsManager.initialize();
+        }
+    }, 500);
+});
+
 // Exportar globalmente
 window.GrizalumCharts = grizalumChartsManager;
-window.GrizalumChartsManager = grizalumChartsManager; // Alias
+window.GrizalumChartsManager = grizalumChartsManager;
+window.forceInitializeCharts = forceInitializeCharts;
 
-console.log('📈 GRIZALUM Charts Manager v2.1 cargado');
-console.log('✨ Características:');
+console.log('📈 GRIZALUM Charts Manager v2.2 CORREGIDO cargado');
+console.log('✨ Mejoras:');
+console.log('  • 🔍 Verificación de contenedores mejorada');
+console.log('  • ⏳ Sistema de reintentos inteligente');
+console.log('  • 🎯 Manejo de errores robusto');
 console.log('  • 📊 5 tipos de gráficos financieros');
 console.log('  • 🎨 Sistema de temas integrado');
 console.log('  • 📅 Datos dinámicos por período');
 console.log('  • 💰 Formato de moneda peruana');
 console.log('  • ⚡ Animaciones optimizadas');
 console.log('  • 📱 Totalmente responsivo');
-console.log('🚀 Sistema de gráficos listo para empresas peruanas');
+console.log('🚀 Sistema listo para empresas peruanas');
