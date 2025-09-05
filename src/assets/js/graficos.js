@@ -888,7 +888,7 @@ window.addEventListener('load', () => {
         intentos++;
         console.log(`Intento ${intentos}: Verificando dependencias...`);
         
-        if (typeof Chart !== 'undefined' && 
+        if (typeof Chart !== 'undefined') { 
             document.getElementById('cashFlowChart') &&
             document.getElementById('expensesChart')) {
             
@@ -925,3 +925,11 @@ console.log('  • 💰 Formato de moneda peruana');
 console.log('  • ⚡ Animaciones optimizadas');
 console.log('  • 📱 Totalmente responsivo');
 console.log('🚀 Sistema listo para empresas peruanas');
+
+// DIAGNÓSTICO DE CONTENEDORES
+console.log('🔍 Verificando contenedores:');
+console.log('cashFlowChart:', document.getElementById('cashFlowChart'));
+console.log('expensesChart:', document.getElementById('expensesChart'));
+console.log('revenueChart:', document.getElementById('revenueChart'));
+console.log('agingChart:', document.getElementById('agingChart'));
+console.log('cashFlowDetailChart:', document.getElementById('cashFlowDetailChart'));
