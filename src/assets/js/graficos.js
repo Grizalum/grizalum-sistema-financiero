@@ -873,35 +873,39 @@ function forceInitializeCharts() {
 }
 
 // Auto-inicialización inteligente mejorada
+// NUEVA INICIALIZACIÓN ROBUSTA
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('📄 DOM cargado, iniciando verificación de gráficos...');
+    console.log('DOM cargado, esperando sistema completo...');
+});
+
+window.addEventListener('load', () => {
+    console.log('Window load - iniciando verificación de gráficos...');
     
-    const checkAndInit = () => {
-        if (typeof Chart !== 'undefined') {
-            console.log('✅ Chart.js detectado, esperando 1 segundo para asegurar DOM completo...');
-            setTimeout(() => {
-                grizalumChartsManager.initialize();
-            }, 1000);
+    let intentos = 0;
+    const maxIntentos = 10;
+    
+    const verificarEInicializar = () => {
+        intentos++;
+        console.log(`Intento ${intentos}: Verificando dependencias...`);
+        
+        if (typeof Chart !== 'undefined' && 
+            document.getElementById('cashFlowChart') &&
+            document.getElementById('expensesChart')) {
+            
+            console.log('✅ Todas las dependencias listas. Inicializando gráficos...');
+            grizalumChartsManager.initialize();
+            return;
+        }
+        
+        if (intentos < maxIntentos) {
+            console.log('⏳ Dependencias no listas, reintentando en 500ms...');
+            setTimeout(verificarEInicializar, 500);
         } else {
-            console.log('⏳ Esperando Chart.js...');
-            setTimeout(checkAndInit, 300);
+            console.error('❌ No se pudieron cargar los gráficos después de 10 intentos');
         }
     };
     
-    checkAndInit();
-});
-
-// Inicialización adicional cuando la ventana está completamente cargada
-window.addEventListener('load', () => {
-    console.log('🚀 Ventana completamente cargada');
-    
-    // Si los gráficos aún no están inicializados, intentar de nuevo
-    setTimeout(() => {
-        if (!grizalumChartsManager.isInitialized) {
-            console.log('🔄 Reintentando inicialización después de window.load...');
-            grizalumChartsManager.initialize();
-        }
-    }, 500);
+    setTimeout(verificarEInicializar, 1000);
 });
 
 // Exportar globalmente
