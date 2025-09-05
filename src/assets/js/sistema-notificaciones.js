@@ -1289,3 +1289,8 @@ console.log(`
 
 🔔 ===================================================
 `);
+
+// HACER FUNCIÓN GLOBALMENTE DISPONIBLE
+window.mostrarNotificacion = mostrarNotificacion;
+window.GrizalumNotifications = { mostrarNotificacion };
+console.log('Sistema de notificaciones disponible globalmente');
