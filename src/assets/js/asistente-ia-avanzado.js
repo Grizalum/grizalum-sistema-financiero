@@ -1234,17 +1234,7 @@ ${this.addConversationContext()}`;
             this.handleError('Error conectando botón existente', error);
         }
     }
-
-    showNotification(mensaje, tipo = 'info') {
-        if (window.notificationSystem) {
-            const metodo = tipo === 'error' ? 'error' : 
-                          tipo === 'success' ? 'exito' : 'informacion';
-            window.notificationSystem[metodo](mensaje);
-        } else {
-            this.log(mensaje, tipo);
-        }
-    }
-
+    
     saveConversationHistory() {
         try {
             localStorage.setItem('grizalum_ai_conversation', JSON.stringify(this.conversationHistory));
