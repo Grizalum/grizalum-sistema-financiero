@@ -9,60 +9,59 @@
     min-height: 100vh;
     width: 100%;
     position: relative;
+    overflow-x: hidden; /* Evita scroll horizontal */
 }
 
 /* ===== MAIN CONTENT CONTAINER ===== */
 .main-content {
     flex: 1;
     margin-left: var(--sidebar-width);
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-    overflow-y: auto;
-    background: transparent;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     transition: all var(--transition-normal);
+    background: transparent;
+    /* Removido: margin-top y padding-top innecesarios */
+    /* Removido: overflow-y auto que causaba problemas */
 }
 
-/* ===== DASHBOARD CONTENT ===== */
+/* ===== DASHBOARD CONTENT - SIMPLIFICADO ===== */
 .dashboard-content {
     flex: 1;
-    padding: 4px 14px;
-    padding-top: 2px;
+    padding: var(--dashboard-padding);
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: var(--dashboard-gap);
     max-width: 100%;
     overflow-x: hidden;
+    /* Removido: padding personalizado que causaba inconsistencias */
 }
 
-/* Forzar visibilidad del dashboard por defecto */
+/* CORRECCIÓN: Solo una regla para #dashboardContent */
 #dashboardContent {
     display: flex !important;
     flex-direction: column !important;
-    gap: 1.5rem !important;
-    padding: 1rem !important;
+    gap: var(--dashboard-gap) !important;
+    padding: var(--dashboard-padding) !important;
 }
 
-/* ===== SISTEMA DE SECCIONES ===== */
+/* ===== SISTEMA DE SECCIONES - MEJORADO ===== */
 .dashboard-content:not(.active) {
     display: none;
 }
 
 .dashboard-content.active {
     display: flex;
+    flex-direction: column;
+    gap: var(--dashboard-gap);
 }
 
 /* ===== CONTAINERS ESPECIALIZADOS ===== */
-
-/* Container para métricas */
 .metrics-container {
     width: 100%;
     margin-bottom: var(--cards-bottom-margin);
 }
 
-/* Container para gráficos */
 .charts-container {
     width: 100%;
     display: flex;
@@ -70,7 +69,6 @@
     gap: var(--spacing-xl);
 }
 
-/* Container para modales */
 .modal-container {
     position: fixed;
     top: 0;
@@ -85,14 +83,13 @@
     pointer-events: all;
 }
 
-/* ===== COMPANY SELECTOR CONTAINER ===== */
+/* ===== COMPANY SELECTOR - SIMPLIFICADO ===== */
 .company-selector {
     position: relative;
     z-index: 1000;
     min-width: 200px;
 }
 
-/* Forzar visibilidad del selector de empresas */
 #companySelector {
     display: block !important;
     visibility: visible !important;
@@ -129,7 +126,7 @@
     box-shadow: var(--shadow-sm);
 }
 
-/* Estilos para contenido del selector */
+/* ===== ICONOS Y ELEMENTOS VISUALES ===== */
 .grizalum-company-icon {
     color: var(--peru-gold) !important;
     font-size: 24px !important;
@@ -233,6 +230,7 @@
     gap: var(--spacing-md);
 }
 
+/* CORRECCIÓN: Iconos de empresa mejorados */
 .grizalum-company-item-icon {
     width: 42px !important;
     height: 42px !important;
@@ -241,7 +239,6 @@
     justify-content: center !important;
     font-size: 24px !important;
     line-height: 1 !important;
-    overflow: hidden !important;
     text-align: center !important;
     border-radius: 12px !important;
     flex-shrink: 0 !important;
@@ -250,7 +247,6 @@
     border: 1px solid var(--gray-200);
 }
 
-/* Eliminar pseudoelementos que interfieren */
 .grizalum-company-item-icon:before,
 .grizalum-company-item-icon:after {
     display: none !important;
@@ -296,6 +292,7 @@
     color: #dc2626;
 }
 
+/* ===== FOOTER Y BOTONES DEL DROPDOWN ===== */
 .grizalum-dropdown-footer {
     padding: var(--spacing-md);
     border-top: 1px solid var(--gray-200);
@@ -390,7 +387,6 @@
     contain: layout style paint;
 }
 
-/* ===== STICKY ELEMENTS ===== */
 .sticky-header {
     position: sticky;
     top: 0;
@@ -399,115 +395,40 @@
     backdrop-filter: var(--backdrop-blur);
 }
 
-/* ===== FLEX UTILITIES ===== */
-.flex {
-    display: flex;
-}
+/* ===== UTILITIES FLEXBOX ===== */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.flex-row { flex-direction: row; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.flex-1 { flex: 1; }
+.flex-none { flex: none; }
 
-.flex-col {
-    flex-direction: column;
-}
+/* ===== UTILITIES GRID ===== */
+.grid { display: grid; }
+.grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+.grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 
-.flex-row {
-    flex-direction: row;
-}
+.gap-sm { gap: var(--spacing-sm); }
+.gap-md { gap: var(--spacing-md); }
+.gap-lg { gap: var(--spacing-lg); }
+.gap-xl { gap: var(--spacing-xl); }
 
-.items-center {
-    align-items: center;
-}
+/* ===== UTILITIES POSITION ===== */
+.relative { position: relative; }
+.absolute { position: absolute; }
+.fixed { position: fixed; }
+.sticky { position: sticky; }
 
-.justify-center {
-    justify-content: center;
-}
+/* ===== UTILITIES OVERFLOW ===== */
+.overflow-hidden { overflow: hidden; }
+.overflow-y-auto { overflow-y: auto; }
+.overflow-x-hidden { overflow-x: hidden; }
 
-.justify-between {
-    justify-content: space-between;
-}
-
-.flex-1 {
-    flex: 1;
-}
-
-.flex-none {
-    flex: none;
-}
-
-/* ===== GRID UTILITIES ===== */
-.grid {
-    display: grid;
-}
-
-.grid-cols-1 {
-    grid-template-columns: repeat(1, minmax(0, 1fr));
-}
-
-.grid-cols-2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.grid-cols-3 {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.grid-cols-4 {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.gap-sm {
-    gap: var(--spacing-sm);
-}
-
-.gap-md {
-    gap: var(--spacing-md);
-}
-
-.gap-lg {
-    gap: var(--spacing-lg);
-}
-
-.gap-xl {
-    gap: var(--spacing-xl);
-}
-
-/* ===== POSITION UTILITIES ===== */
-.relative {
-    position: relative;
-}
-
-.absolute {
-    position: absolute;
-}
-
-.fixed {
-    position: fixed;
-}
-
-.sticky {
-    position: sticky;
-}
-
-/* ===== OVERFLOW UTILITIES ===== */
-.overflow-hidden {
-    overflow: hidden;
-}
-
-.overflow-y-auto {
-    overflow-y: auto;
-}
-
-.overflow-x-hidden {
-    overflow-x: hidden;
-}
-
-/* ===== WIDTH/HEIGHT UTILITIES ===== */
-.w-full {
-    width: 100%;
-}
-
-.h-full {
-    height: 100%;
-}
-
-.min-h-screen {
-    min-height: 100vh;
-}
+/* ===== UTILITIES SIZE ===== */
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+.min-h-screen { min-height: 100vh; }
