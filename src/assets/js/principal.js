@@ -1,5 +1,5 @@
 // ================================================================
-// 🧠 GRIZALUM - CONTROLADOR PRINCIPAL v2.0
+// 🧠 GRIZALUM - CONTROLADOR PRINCIPAL v2.1 CORREGIDO
 // Sistema Financiero Empresarial Premium para Empresas Peruanas
 // ================================================================
 
@@ -19,6 +19,16 @@ class GrizalumApp {
         this.config = window.GRIZALUM_CONFIG || this.getDefaultConfig();
         this.startTime = Date.now();
         
+        // DATOS FINANCIEROS CONSISTENTES
+        this.financialData = {
+            ingresos: 2847293,
+            gastos: 28700,
+            utilidad: 16500,
+            crecimiento: 24.8,
+            flujo_caja: 24500,
+            moneda: 'PEN'
+        };
+        
         console.log(`🚀 Inicializando ${this.config.name || 'GRIZALUM'} v${this.config.version}`);
         this.init();
     }
@@ -26,7 +36,7 @@ class GrizalumApp {
     // Configuración de respaldo si config.js no carga
     getDefaultConfig() {
         return {
-            version: '2.0.0',
+            version: '2.1.0',
             name: 'GRIZALUM',
             locale: 'es-PE',
             currency: 'PEN',
@@ -49,7 +59,7 @@ class GrizalumApp {
             // 2. 🔧 Verificar dependencias críticas
             await this.checkDependencies();
             
-            // 3. 📦 Inicializar módulos en orden
+            // 3. 📦 Inicializar módulos en orden - NO FORZAR GRÁFICOS AQUÍ
             await this.initializeModules();
             
             // 4. 🎨 Configurar interfaz y eventos
@@ -59,7 +69,7 @@ class GrizalumApp {
             // 5. 👤 Cargar preferencias del usuario
             this.loadUserPreferences();
             
-            // 6. 📊 Inicializar datos financieros
+            // 6. 📊 Inicializar datos financieros PRIMERO
             this.initializeFinancialData();
             
             // 7. ✅ Finalizar carga
@@ -77,8 +87,7 @@ class GrizalumApp {
     async checkDependencies() {
         const dependencies = [
             { name: 'Chart.js', check: () => typeof Chart !== 'undefined' },
-            { name: 'FontAwesome', check: () => document.querySelector('.fas, .far, .fab') !== null },
-            { name: 'Config', check: () => window.GRIZALUM_CONFIG !== undefined }
+            { name: 'FontAwesome', check: () => document.querySelector('.fas, .far, .fab') !== null }
         ];
 
         const missing = [];
@@ -92,57 +101,32 @@ class GrizalumApp {
 
         if (missing.length > 0) {
             console.warn(`⚠️ Dependencias faltantes: ${missing.join(', ')}`);
-            // La aplicación puede continuar sin algunas dependencias
         }
 
         console.log('✅ Verificación de dependencias completada');
     }
 
-    // ======= INICIALIZACIÓN DE MÓDULOS =======
+    // ======= INICIALIZACIÓN DE MÓDULOS - CORREGIDA =======
     async initializeModules() {
         console.log('📦 Inicializando módulos especializados...');
         
-        // Módulos críticos primero
-        await this.waitForModule('GrizalumUtils', 3000);
-        await this.waitForModule('GrizalumCharts', 3000);
-        await this.waitForModule('GrizalumMetrics', 3000);
+        // NO FORZAR INICIALIZACIÓN DE GRÁFICOS AQUÍ
+        // Dejar que cada módulo se inicialice por su cuenta
         
-        // Módulos opcionales
-        this.waitForModule('CompanyManager', 2000, false);
-        this.waitForModule('AIAssistant', 2000, false);
-        this.waitForModule('ThemeManager', 2000, false);
+        // Solo verificar disponibilidad sin forzar
+        setTimeout(() => {
+            if (window.GrizalumCharts) {
+                this.modules.GrizalumCharts = window.GrizalumCharts;
+                console.log('✅ Módulo GrizalumCharts detectado');
+            }
+            
+            if (window.GrizalumMetrics) {
+                this.modules.GrizalumMetrics = window.GrizalumMetrics;
+                console.log('✅ Módulo GrizalumMetrics detectado');
+            }
+        }, 1000);
         
-        console.log('✅ Módulos inicializados');
-    }
-
-    async waitForModule(moduleName, timeout = 5000, critical = true) {
-        return new Promise((resolve) => {
-            let attempts = 0;
-            const maxAttempts = timeout / 100;
-            
-            const checkModule = () => {
-                if (window[moduleName]) {
-                    this.modules[moduleName] = window[moduleName];
-                    console.log(`✅ Módulo ${moduleName} cargado`);
-                    resolve(true);
-                    return;
-                }
-                
-                attempts++;
-                if (attempts < maxAttempts) {
-                    setTimeout(checkModule, 100);
-                } else {
-                    if (critical) {
-                        console.error(`❌ Módulo crítico ${moduleName} no cargó en ${timeout}ms`);
-                    } else {
-                        console.warn(`⚠️ Módulo opcional ${moduleName} no disponible`);
-                    }
-                    resolve(false);
-                }
-            };
-            
-            checkModule();
-        });
+        console.log('✅ Módulos verificados');
     }
 
     // ======= GESTIÓN DE PANTALLA DE CARGA =======
@@ -293,7 +277,7 @@ class GrizalumApp {
         document.dispatchEvent(event);
     }
 
-    // ======= GESTIÓN DE PERÍODOS FINANCIEROS =======
+    // ======= GESTIÓN DE PERÍODOS FINANCIEROS - CORREGIDA =======
     changePeriod(period, buttonElement) {
         console.log(`📅 Cambiando período financiero a: ${period}`);
         
@@ -309,33 +293,50 @@ class GrizalumApp {
         // Actualizar datos para el nuevo período
         this.updateDataForPeriod(period);
         
-        // Notificar cambio
-        this.showNotification(
-            `📅 Período cambiado a: ${this.capitalizeFirst(period)}`,
-            'info',
-            2000
-        );
+        // Notificar cambio usando sistema correcto
+        if (window.mostrarNotificacion) {
+            window.mostrarNotificacion(`Período cambiado a: ${this.capitalizeFirst(period)}`, 'info');
+        }
     }
 
     updateDataForPeriod(period) {
-        // Mostrar indicador de carga
-        this.showLoadingOverlay('Actualizando datos financieros...');
+        // Generar datos consistentes según el período
+        const periodData = this.generateDataForPeriod(period);
         
-        // Simular carga de datos (aquí conectarías con tu API)
-        setTimeout(() => {
-            // Actualizar métricas si el módulo está disponible
-            if (this.modules.GrizalumMetrics) {
-                this.modules.GrizalumMetrics.updateForPeriod(period);
-            }
-            
-            // Actualizar gráficos si están disponibles
-            if (this.modules.GrizalumCharts) {
-                this.modules.GrizalumCharts.updateForPeriod(period);
-            }
-            
-            this.hideLoadingOverlay();
-            console.log(`📊 Datos actualizados para período: ${period}`);
-        }, 1000);
+        // Actualizar métricas usando los datos consistentes
+        this.updateFinancialMetrics(periodData);
+        
+        // Disparar evento para que otros módulos se actualicen
+        const event = new CustomEvent('periodChanged', {
+            detail: { period, data: periodData, timestamp: Date.now() }
+        });
+        document.dispatchEvent(event);
+        
+        console.log(`📊 Datos actualizados para período: ${period}`, periodData);
+    }
+
+    generateDataForPeriod(period) {
+        // Usar datos base consistentes
+        const baseData = { ...this.financialData };
+        
+        const multipliers = {
+            'hoy': 0.03,      // Datos del día
+            'semana': 0.2,    // Datos de la semana
+            'mes': 1.0,       // Base mensual (datos actuales)
+            'trimestre': 3.2,  // Datos trimestrales
+            'año': 12.5       // Datos anuales
+        };
+        
+        const multiplier = multipliers[period] || 1.0;
+        
+        return {
+            ingresos: Math.round(baseData.ingresos * multiplier),
+            gastos: Math.round(baseData.gastos * multiplier),
+            utilidad: Math.round(baseData.utilidad * multiplier),
+            crecimiento: baseData.crecimiento + (Math.random() * 10 - 5), // Variación ±5%
+            flujo_caja: Math.round(baseData.flujo_caja * multiplier),
+            moneda: baseData.moneda
+        };
     }
 
     // ======= SIDEBAR RESPONSIVO =======
@@ -381,133 +382,35 @@ class GrizalumApp {
         }
     }
 
-    // ======= SISTEMA DE NOTIFICACIONES INTEGRADO =======
+    // ======= SISTEMA DE NOTIFICACIONES - CORREGIDO =======
     showNotifications() {
         console.log('🔔 Mostrando centro de notificaciones');
         
-        // Simular notificaciones financieras realistas
-        const notifications = [
-            { 
-                type: 'info', 
-                title: 'Reporte Mensual',
-                message: 'Nuevo reporte financiero disponible', 
-                time: '5 min',
-                action: () => this.showSection('reports')
-            },
-            { 
-                type: 'warning', 
-                title: 'Factura Pendiente',
-                message: 'Factura #001234 próxima a vencer', 
-                time: '1 hora',
-                action: () => this.showSection('accounts-receivable')
-            },
-            { 
-                type: 'success', 
-                title: 'Pago Procesado',
-                message: 'Pago de S/. 15,000 recibido exitosamente', 
-                time: '2 horas',
-                action: () => this.showSection('cash-flow')
-            }
-        ];
-        
-        notifications.forEach((notif, index) => {
-            setTimeout(() => {
-                this.showNotification(
-                    `${notif.title}: ${notif.message} (${notif.time})`,
-                    notif.type,
-                    4000,
-                    notif.action
-                );
-            }, index * 500);
-        });
-    }
-
-    showNotification(message, type = 'info', duration = 3000, action = null) {
-        const container = document.getElementById('notificationContainer') || this.createNotificationContainer();
-        
-        const notification = document.createElement('div');
-        notification.className = `notification notification-${type}`;
-        notification.innerHTML = `
-            <div class="notification-icon">
-                <i class="fas fa-${this.getNotificationIcon(type)}"></i>
-            </div>
-            <div class="notification-content">
-                <p>${message}</p>
-                ${action ? '<button class="notification-action">Ver detalles</button>' : ''}
-            </div>
-            <button class="notification-close">
-                <i class="fas fa-times"></i>
-            </button>
-        `;
-        
-        // Event listeners
-        if (action) {
-            notification.querySelector('.notification-action').addEventListener('click', action);
-        }
-        
-        notification.querySelector('.notification-close').addEventListener('click', () => {
-            this.removeNotification(notification);
-        });
-        
-        container.appendChild(notification);
-        
-        // Animar entrada
-        setTimeout(() => notification.classList.add('show'), 100);
-        
-        // Auto-remover si tiene duración
-        if (duration > 0) {
-            setTimeout(() => this.removeNotification(notification), duration);
+        // Usar sistema de notificaciones existente si está disponible
+        if (window.mostrarNotificacion) {
+            const notifications = [
+                'Reporte Mensual: Nuevo reporte financiero disponible',
+                'Factura Pendiente: Factura #001234 próxima a vencer',
+                'Pago Procesado: Pago de S/. 15,000 recibido exitosamente'
+            ];
+            
+            notifications.forEach((message, index) => {
+                setTimeout(() => {
+                    const types = ['info', 'warning', 'success'];
+                    window.mostrarNotificacion(message, types[index] || 'info');
+                }, index * 500);
+            });
         }
     }
 
-    createNotificationContainer() {
-        const container = document.createElement('div');
-        container.id = 'notificationContainer';
-        container.className = 'notification-container';
-        document.body.appendChild(container);
-        return container;
-    }
-
-    removeNotification(notification) {
-        notification.classList.add('removing');
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
-            }
-        }, 300);
-    }
-
-    getNotificationIcon(type) {
-        const icons = {
-            info: 'info-circle',
-            success: 'check-circle',
-            warning: 'exclamation-triangle',
-            error: 'times-circle'
-        };
-        return icons[type] || 'info-circle';
-    }
-
-    // ======= DATOS FINANCIEROS =======
+    // ======= DATOS FINANCIEROS - CORREGIDOS =======
     initializeFinancialData() {
-        console.log('💰 Inicializando datos financieros...');
+        console.log('💰 Inicializando datos financieros consistentes...');
         
-        // Datos ejemplo realistas para empresas peruanas
-        const defaultData = {
-            ingresos: 2847293,
-            gastos: 1847293,
-            utilidad: 1000000,
-            crecimiento: 24.8,
-            flujo_caja: 524500,
-            moneda: 'PEN'
-        };
+        // Usar datos consistentes que coincidan con el HTML
+        this.updateFinancialMetrics(this.financialData);
         
-        // Actualizar métricas en dashboard
-        this.updateFinancialMetrics(defaultData);
-        
-        // Inicializar gráficos si Chart.js está disponible
-        if (typeof Chart !== 'undefined' && this.modules.GrizalumCharts) {
-            this.modules.GrizalumCharts.initialize(defaultData);
-        }
+        console.log('📊 Datos iniciales aplicados:', this.financialData);
     }
 
     updateFinancialMetrics(datos) {
@@ -517,27 +420,23 @@ class GrizalumApp {
             minimumFractionDigits: 0
         });
         
-        // Actualizar valores con animación
-        this.animateValue('revenueValue', formatter.format(datos.ingresos));
-        this.animateValue('expensesValue', formatter.format(datos.gastos));
-        this.animateValue('profitValue', formatter.format(datos.utilidad));
-        this.animateValue('growthValue', `+${datos.crecimiento}%`);
+        // Actualizar valores sin animación para evitar conflictos
+        this.updateValue('revenueValue', formatter.format(datos.ingresos));
+        this.updateValue('expensesValue', formatter.format(datos.gastos));
+        this.updateValue('profitValue', formatter.format(datos.utilidad));
+        this.updateValue('growthValue', `+${datos.crecimiento.toFixed(1)}%`);
         
-        // Actualizar sidebar
-        this.animateValue('sidebarCashFlow', formatter.format(datos.flujo_caja));
-        this.animateValue('sidebarProfit', formatter.format(datos.utilidad));
+        // Actualizar sidebar con los mismos datos
+        this.updateValue('sidebarCashFlow', formatter.format(datos.flujo_caja));
+        this.updateValue('sidebarProfit', formatter.format(datos.utilidad));
+        
+        console.log('📊 Métricas actualizadas con datos consistentes');
     }
 
-    animateValue(elementId, newValue) {
+    updateValue(elementId, newValue) {
         const element = document.getElementById(elementId);
         if (element) {
-            element.style.transform = 'scale(1.05)';
-            element.style.transition = 'transform 0.2s ease';
-            
-            setTimeout(() => {
-                element.textContent = newValue;
-                element.style.transform = 'scale(1)';
-            }, 100);
+            element.textContent = newValue;
         }
     }
 
@@ -557,11 +456,15 @@ class GrizalumApp {
         
         // Eventos de conectividad
         window.addEventListener('online', () => {
-            this.showNotification('🌐 Conexión restaurada', 'success', 3000);
+            if (window.mostrarNotificacion) {
+                window.mostrarNotificacion('Conexión restaurada', 'success');
+            }
         });
         
         window.addEventListener('offline', () => {
-            this.showNotification('📡 Trabajando sin conexión', 'warning', 5000);
+            if (window.mostrarNotificacion) {
+                window.mostrarNotificacion('Trabajando sin conexión', 'warning');
+            }
         });
         
         // Click fuera para cerrar elementos
@@ -622,19 +525,27 @@ class GrizalumApp {
             currency: 'PEN'
         };
         
-        const saved = localStorage.getItem('grizalum_preferences');
-        const preferences = saved ? JSON.parse(saved) : defaultPreferences;
-        
-        this.applyPreferences(preferences);
-        console.log('👤 Preferencias cargadas');
+        try {
+            const saved = localStorage.getItem('grizalum_preferences');
+            const preferences = saved ? JSON.parse(saved) : defaultPreferences;
+            this.applyPreferences(preferences);
+            console.log('👤 Preferencias cargadas');
+        } catch (error) {
+            console.warn('⚠️ Error cargando preferencias, usando valores por defecto');
+            this.applyPreferences(defaultPreferences);
+        }
     }
 
     saveUserPreference(key, value) {
-        const saved = localStorage.getItem('grizalum_preferences');
-        const preferences = saved ? JSON.parse(saved) : {};
-        
-        preferences[key] = value;
-        localStorage.setItem('grizalum_preferences', JSON.stringify(preferences));
+        try {
+            const saved = localStorage.getItem('grizalum_preferences');
+            const preferences = saved ? JSON.parse(saved) : {};
+            
+            preferences[key] = value;
+            localStorage.setItem('grizalum_preferences', JSON.stringify(preferences));
+        } catch (error) {
+            console.warn('⚠️ Error guardando preferencia');
+        }
     }
 
     applyPreferences(preferences) {
@@ -667,23 +578,6 @@ class GrizalumApp {
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
-    showLoadingOverlay(message = 'Cargando...') {
-        const overlay = document.createElement('div');
-        overlay.className = 'loading-overlay';
-        overlay.innerHTML = `
-            <div class="loading-spinner"></div>
-            <p>${message}</p>
-        `;
-        document.body.appendChild(overlay);
-    }
-
-    hideLoadingOverlay() {
-        const overlay = document.querySelector('.loading-overlay');
-        if (overlay) {
-            overlay.remove();
-        }
-    }
-
     showErrorState(error) {
         console.error('💥 Estado de error:', error);
         
@@ -712,12 +606,10 @@ class GrizalumApp {
         const loadTime = Date.now() - this.startTime;
         console.log(`🎉 GRIZALUM inicializado en ${loadTime}ms`);
         
-        // Mostrar mensaje de bienvenida
-        this.showNotification(
-            `¡Bienvenido a ${this.config.name}! Sistema financiero listo.`,
-            'success',
-            3000
-        );
+        // Mostrar mensaje de bienvenida usando sistema correcto
+        if (window.mostrarNotificacion) {
+            window.mostrarNotificacion(`¡Bienvenido a ${this.config.name}! Sistema financiero listo.`, 'success');
+        }
         
         // Trigger evento de app lista
         const readyEvent = new CustomEvent('grizalumReady', {
@@ -754,14 +646,18 @@ class GrizalumApp {
 
     toggleAIAssistant() {
         console.log('🧠 Activando asistente IA...');
-        if (this.modules.AIAssistant) {
-            this.modules.AIAssistant.toggle();
+        
+        // Verificar múltiples posibles nombres del asistente
+        if (window.assistantAI && typeof window.assistantAI.toggle === 'function') {
+            window.assistantAI.toggle();
+        } else if (window.advancedAI && typeof window.advancedAI.toggle === 'function') {
+            window.advancedAI.toggle();
+        } else if (window.AIAssistant && typeof window.AIAssistant.toggle === 'function') {
+            window.AIAssistant.toggle();
         } else {
-            this.showNotification(
-                '🧠 Asistente IA próximamente disponible',
-                'info',
-                3000
-            );
+            if (window.mostrarNotificacion) {
+                window.mostrarNotificacion('Asistente IA próximamente disponible', 'info');
+            }
         }
     }
 }
@@ -836,59 +732,22 @@ document.addEventListener('DOMContentLoaded', function() {
 // ======= INFORMACIÓN DEL SISTEMA =======
 window.getGrizalumInfo = function() {
     return {
-        version: grizalumApp?.config?.version || '2.0.0',
+        version: grizalumApp?.config?.version || '2.1.0',
         name: grizalumApp?.config?.name || 'GRIZALUM',
         isInitialized: grizalumApp?.isInitialized || false,
         currentSection: grizalumApp?.currentSection || null,
         modules: grizalumApp?.modules || {},
         loadTime: grizalumApp ? Date.now() - grizalumApp.startTime : 0,
+        financialData: grizalumApp?.financialData || {},
         timestamp: new Date().toISOString()
     };
 };
 
-console.log('🎯 GRIZALUM Principal Controller cargado y listo');
-console.log('✨ Funcionalidades integradas:');
-console.log('  • 🧠 Coordinación inteligente de módulos');
-console.log('  • 📊 Gestión financiera profesional');
-console.log('  • 🎨 Interfaz responsiva premium');
-console.log('  • 🔔 Sistema de notificaciones integrado');
-console.log('  • ⚡ Eventos y shortcuts optimizados');
-console.log('  • 💾 Persistencia de preferencias');
-console.log('  • 🛡️ Manejo robusto de errores');
-console.log('🚀 Controlador principal listo para empresas peruanas');
-
-/**
- * ===================================================
- * CONECTROR PARA IA ASSISTANT - GRIZALUM v4.0
- * Conecta el botón del header con el asistente IA
- * ===================================================
- */
-function toggleAIAssistant() {
-    console.log('🎯 Botón IA Assistant clickeado desde header');
-    
-    // Verificar si el asistente está inicializado
-    if (window.assistantAI && typeof window.assistantAI.toggle === 'function') {
-        console.log('✅ Conectando con assistantAI.toggle()');
-        window.assistantAI.toggle();
-        
-        // Asegurar visibilidad del panel
-        setTimeout(() => {
-            const panel = document.getElementById('aiAssistantPanel');
-            if (panel && panel.classList.contains('show')) {
-                panel.style.zIndex = '999999'; // Encima de sidebar (z-index: 1000)
-                console.log('🔝 Z-index del panel ajustado');
-            }
-        }, 100);
-        
-    } else if (window.advancedAI && typeof window.advancedAI.toggle === 'function') {
-        console.log('✅ Conectando con advancedAI.toggle()');
-        window.advancedAI.toggle();
-        
-    } else {
-        console.error('❌ Asistente IA no encontrado');
-        // Mostrar notificación usando tu sistema
-        if (typeof mostrarNotificacion === 'function') {
-            mostrarNotificacion('Asistente IA no disponible', 'error');
-        }
-    }
-}
+console.log('🎯 GRIZALUM Principal Controller v2.1 CORREGIDO cargado y listo');
+console.log('✨ Correcciones aplicadas:');
+console.log('  • 📊 Datos financieros consistentes entre sidebar y dashboard');
+console.log('  • 🔧 Eliminada inicialización forzada de gráficos que causaba conflictos');
+console.log('  • 🔔 Integración correcta con sistema de notificaciones existente');
+console.log('  • 📅 Generación de datos coherentes por período');
+console.log('  • 🛡️ Manejo robusto de errores mejorado');
+console.log('🚀 Controlador principal optimizado para empresas peruanas');
