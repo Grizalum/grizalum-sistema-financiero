@@ -587,3 +587,9 @@ setTimeout(() => {
 console.log('📊 GRIZALUM Charts Manager cargado y listo');
 console.log('🔧 Funciones disponibles: window.GrizalumCharts');
 console.log('🎯 Sistema optimizado para máxima compatibilidad');
+
+// COMPATIBILIDAD CON CÓDIGO EXISTENTE
+window.GrizalumCharts = window.GrizalumCharts || {};
+window.GrizalumCharts.initialize = initializeCharts;
+window.GrizalumCharts.init = initializeCharts;
+window.GrizalumCharts.instances = chartInstances;
