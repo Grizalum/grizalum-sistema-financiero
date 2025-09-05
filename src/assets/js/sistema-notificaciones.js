@@ -765,3 +765,8 @@ setTimeout(() => {
     integrarNotificacionesConSistema();
     generarNotificacionesDesdeActividad();
 }, 2000);
+
+// HACER TODAS LAS FUNCIONES DISPONIBLES GLOBALMENTE
+window.obtenerNotificacionesAdmin = obtenerNotificacionesAdmin;
+window.generarNotificacionesDesdeActividad = generarNotificacionesDesdeActividad;
+window.integrarNotificacionesConSistema = integrarNotificacionesConSistema;
