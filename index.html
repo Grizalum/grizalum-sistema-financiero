@@ -545,5 +545,20 @@ setTimeout(() => {
 }, 3000);
 </script>
 
+ <script>
+// FORZAR INICIALIZACIÓN DE GRÁFICOS
+window.addEventListener('load', function() {
+    setTimeout(() => {
+        console.log('Forzando inicialización de gráficos...');
+        if (window.forceInitializeCharts) {
+            window.forceInitializeCharts();
+        }
+        if (window.GrizalumCharts && window.GrizalumCharts.initialize) {
+            window.GrizalumCharts.initialize();
+        }
+    }, 2000);
+});
+</script>
+    
 </body>
 </html>
