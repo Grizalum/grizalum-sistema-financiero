@@ -1673,7 +1673,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Crear instancia global con retraso para asegurar que otros módulos estén listos
         setTimeout(() => {
             inteligenciaArtificialGrizalum = new InteligenciaArtificialGRIZALUM();
-            inteligenciaArtificialGrizalum.inicializar();
+           
             
             // Alias globales
             window.aiSystem = inteligenciaArtificialGrizalum;
