@@ -104,13 +104,6 @@ class InteligenciaArtificialGRIZALUM {
             
             // Mostrar notificación de bienvenida
             if (this.sistemaNotificaciones) {
-                setTimeout(() => {
-                    this.sistemaNotificaciones.informacion('🤖 Sistema de IA inicializado', {
-                        titulo: 'Inteligencia Artificial',
-                        duracion: 3000
-                    });
-                }, 1000);
-            }
             
         } catch (error) {
             this.log(`❌ Error inicializando sistema de IA: ${error.message}`, 'error');
