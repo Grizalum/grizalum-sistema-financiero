@@ -180,7 +180,7 @@ function getBaseChartOptions() {
 // 📈 CREADORES DE GRÁFICOS
 // ================================================================
 function createCashFlowChart() {
-    const canvas = document.getElementById('cashFlowChart');
+    const canvas = document.getElementById('mainCashFlowChart');
     if (!canvas) return null;
     
     const ctx = canvas.getContext('2d');
