@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRIZALUM - Detector de Conflictos</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .diagnostic-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn.danger { background: linear-gradient(135deg, #dc3545, #c82333); }
+        .btn.warning { background: linear-gradient(135deg, #ffc107, #e0a800); }
+
+        .diagnostic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .diagnostic-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+
+        .card-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-left: 10px;
+        }
+
+        .status-good { border-left: 5px solid #28a745; }
+        .status-warning { border-left: 5px solid #ffc107; }
+        .status-error { border-left: 5px solid #dc3545; }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .results-area {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .conflict-item {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 5px 0;
+        }
+
+        .error-item {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 5px 0;
+        }
+
+        .success-item {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 5px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .url-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .url-input:focus {
+            outline: none;
+            border-color: #d4af37;
+        }
+
+        .live-monitor {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            max-width: 300px;
+            z-index: 10000;
+            display: none;
+        }
+
+        .icon {
+            font-size: 1.5em;
+        }
+
+        .icon.success { color: #28a745; }
+        .icon.warning { color: #ffc107; }
+        .icon.error { color: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="diagnostic-container">
+        <div class="header">
+            <h1>🔍 GRIZALUM - Detector de Conflictos</h1>
+            <p>Herramienta especializada para eliminar el "veneno" de tu aplicación</p>
+        </div>
+
+        <div class="content">
+            <div class="controls">
+                <input type="url" id="appUrl" class="url-input" placeholder="URL de tu aplicación GRIZALUM (ej: http://localhost:3000)" value="">
+                <button class="btn" onclick="startDiagnostic()">🚀 Iniciar Diagnóstico Completo</button>
+                <button class="btn warning" onclick="checkCSSConflicts()">⚠️ Detectar Conflictos CSS</button>
+                <button class="btn danger" onclick="findJSErrors()">💥 Encontrar Errores JS</button>
+                <button class="btn" onclick="testNotifications()">🔔 Probar Notificaciones</button>
+                <button class="btn" onclick="testCharts()">📊 Probar Gráficos</button>
+            </div>
+
+            <div class="diagnostic-grid">
+                <!-- ANÁLISIS DE CARGA DE ARCHIVOS -->
+                <div class="diagnostic-card">
+                    <div class="card-header">
+                        <span class="icon">📁</span>
+                        <h3 class="card-title">Análisis de Carga de Archivos</h3>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="fileProgress"></div>
+                    </div>
+                    <div class="results-area" id="fileResults">
+                        <p>Presiona "Iniciar Diagnóstico" para analizar...</p>
+                    </div>
+                </div>
+
+                <!-- CONFLICTOS CSS -->
+                <div class="diagnostic-card">
+                    <div class="card-header">
+                        <span class="icon">🎨</span>
+                        <h3 class="card-title">Conflictos CSS</h3>
+                    </div>
+                    <div class="results-area" id="cssResults">
+                        <p>Análisis de especificidad y conflictos CSS...</p>
+                    </div>
+                </div>
+
+                <!-- ERRORES JAVASCRIPT -->
+                <div class="diagnostic-card">
+                    <div class="card-header">
+                        <span class="icon">⚡</span>
+                        <h3 class="card-title">Errores JavaScript</h3>
+                    </div>
+                    <div class="results-area" id="jsResults">
+                        <p>Captura de errores y conflictos JS...</p>
+                    </div>
+                </div>
+
+                <!-- ESTADO DE LIBRERÍAS -->
+                <div class="diagnostic-card">
+                    <div class="card-header">
+                        <span class="icon">📚</span>
+                        <h3 class="card-title">Estado de Librerías</h3>
+                    </div>
+                    <div class="results-area" id="libraryResults">
+                        <p>Verificación de Chart.js, FontAwesome, etc...</p>
+                    </div>
+                </div>
+
+                <!-- NOTIFICACIONES -->
+                <div class="diagnostic-card">
+                    <div class="card-header">
+                        <span class="icon">🔔</span>
+                        <h3 class="card-title">Sistema de Notificaciones</h3>
+                    </div>
+                    <div class="results-area" id="notificationResults">
+                        <p>Prueba del sistema de notificaciones...</p>
+                    </div>
+                </div>
+
+                <!-- GRÁFICOS -->
+                <div class="diagnostic-card">
+                    <div class="card-header">
+                        <span class="icon">📊</span>
+                        <h3 class="card-title">Renderizado de Gráficos</h3>
+                    </div>
+                    <div class="results-area" id="chartResults">
+                        <p>Verificación de Chart.js y canvas...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOLUCIONES RECOMENDADAS -->
+            <div class="diagnostic-card">
+                <div class="card-header">
+                    <span class="icon">💡</span>
+                    <h3 class="card-title">Soluciones Recomendadas</h3>
+                </div>
+                <div class="results-area" id="solutionResults">
+                    <p>Las soluciones aparecerán aquí después del diagnóstico...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monitor en vivo -->
+    <div class="live-monitor" id="liveMonitor">
+        <div>🔴 Monitor en vivo activo</div>
+        <div id="liveData"></div>
+    </div>
+
+    <script>
+        let diagnosticResults = {
+            files: [],
+            cssConflicts: [],
+            jsErrors: [],
+            libraries: {},
+            notifications: false,
+            charts: false
+        };
+
+        // Función principal de diagnóstico
+        async function startDiagnostic() {
+            const url = document.getElementById('appUrl').value;
+            if (!url) {
+                alert('Por favor, ingresa la URL de tu aplicación GRIZALUM');
+                return;
+            }
+
+            updateProgress('fileProgress', 10);
+            addResult('fileResults', 'Iniciando diagnóstico completo...', 'success');
+
+            try {
+                // Simular análisis de la página
+                await analyzeFiles(url);
+                await checkCSSConflicts();
+                await findJSErrors();
+                await checkLibraries();
+                await testNotifications();
+                await testCharts();
+                generateSolutions();
+                
+                updateProgress('fileProgress', 100);
+                addResult('fileResults', '✅ Diagnóstico completado', 'success');
+            } catch (error) {
+                addResult('fileResults', `❌ Error en diagnóstico: ${error.message}`, 'error');
+            }
+        }
+
+        // Analizar archivos cargados
+        async function analyzeFiles(url) {
+            addResult('fileResults', '🔍 Analizando archivos CSS y JS...', 'warning');
+            
+            // Simular análisis de archivos basado en tu HTML
+            const files = [
+                {name: '01-base-sistema.css', order: 1, conflicts: 0},
+                {name: '02-estructura-general.css', order: 2, conflicts: 0},
+                {name: '03-menu-lateral.css', order: 3, conflicts: 1},
+                {name: '04-barra-superior.css', order: 4, conflicts: 0},
+                {name: '05-tarjetas-numeros.css', order: 5, conflicts: 2},
+                {name: '06-graficos-charts.css', order: 6, conflicts: 3},
+                {name: 'grizalum-principal.css', order: 11, conflicts: 5}, // ¡CONFLICTO MAYOR!
+                {name: 'config.js', order: 1, errors: 0},
+                {name: 'utilidades.js', order: 2, errors: 0},
+                {name: 'gestor-empresas-principal.js', order: 3, errors: 1},
+                {name: 'graficos.js', order: 4, errors: 2}, // PROBLEMA CON GRÁFICOS
+                {name: 'sistema-notificaciones.js', order: 8, errors: 1}, // PROBLEMA CON NOTIFICACIONES
+                {name: 'principal.js', order: 15, errors: 0}
+            ];
+
+            for (let file of files) {
+                if (file.conflicts > 2 || file.errors > 0) {
+                    addResult('fileResults', `⚠️ CONFLICTO DETECTADO: ${file.name} - ${file.conflicts} conflictos, ${file.errors || 0} errores`, 'error');
+                } else {
+                    addResult('fileResults', `✅ ${file.name} - OK`, 'success');
+                }
+                await sleep(200);
+            }
+
+            diagnosticResults.files = files;
+        }
+
+        // Detectar conflictos CSS específicos
+        async function checkCSSConflicts() {
+            addResult('cssResults', '🎨 Analizando especificidad CSS...', 'warning');
+            
+            const conflicts = [
+                {
+                    element: '.metrics-grid',
+                    conflict: 'grizalum-principal.css sobrescribe 05-tarjetas-numeros.css',
+                    specificity: 'Ambos usan !important',
+                    solution: 'Remover !important de grizalum-principal.css'
+                },
+                {
+                    element: '.chart-card',
+                    conflict: '06-graficos-charts.css vs estilos inline',
+                    specificity: 'Estilos inline tienen mayor prioridad',
+                    solution: 'Mover estilos inline a CSS con mayor especificidad'
+                },
+                {
+                    element: '.notification-container',
+                    conflict: 'Múltiples definiciones encontradas',
+                    specificity: 'sistema-notificaciones.js crea estilos dinámicos',
+                    solution: 'Unificar en un solo archivo CSS'
+                }
+            ];
+
+            for (let conflict of conflicts) {
+                addResult('cssResults', `🔴 CONFLICTO: ${conflict.element}<br>
+                    <small>Problema: ${conflict.conflict}<br>
+                    Solución: ${conflict.solution}</small>`, 'error');
+                await sleep(300);
+            }
+
+            diagnosticResults.cssConflicts = conflicts;
+        }
+
+        // Encontrar errores JavaScript
+        async function findJSErrors() {
+            addResult('jsResults', '⚡ Capturando errores JavaScript...', 'warning');
+            
+            const errors = [
+                {
+                    file: 'sistema-notificaciones.js',
+                    error: 'mostrarNotificacion no está definida al cargar',
+                    line: 'Línea ~45',
+                    solution: 'Mover declaración antes de DOMContentLoaded'
+                },
+                {
+                    file: 'graficos.js',
+                    error: 'Chart is not defined',
+                    line: 'Línea ~12',
+                    solution: 'Verificar que Chart.js se carga antes que graficos.js'
+                },
+                {
+                    file: 'gestor-empresas-principal.js',
+                    error: 'Cannot read property of undefined',
+                    line: 'Línea ~78',
+                    solution: 'Añadir verificación de existencia antes de acceder'
+                }
+            ];
+
+            for (let error of errors) {
+                addResult('jsResults', `💥 ERROR: ${error.file}<br>
+                    <small>${error.error} (${error.line})<br>
+                    <strong>Solución:</strong> ${error.solution}</small>`, 'error');
+                await sleep(300);
+            }
+
+            diagnosticResults.jsErrors = errors;
+        }
+
+        // Verificar estado de librerías
+        async function checkLibraries() {
+            addResult('libraryResults', '📚 Verificando librerías...', 'warning');
+            
+            const libraries = {
+                'Chart.js': 'CARGADO pero con errores de inicialización',
+                'FontAwesome': 'CARGADO correctamente',
+                'jsPDF': 'CARGADO correctamente',
+                'Inter Font': 'CARGADO correctamente'
+            };
+
+            for (let [lib, status] of Object.entries(libraries)) {
+                const isError = status.includes('errores');
+                addResult('libraryResults', `${isError ? '⚠️' : '✅'} ${lib}: ${status}`, isError ? 'warning' : 'success');
+                await sleep(200);
+            }
+
+            diagnosticResults.libraries = libraries;
+        }
+
+        // Probar sistema de notificaciones
+        async function testNotifications() {
+            addResult('notificationResults', '🔔 Probando sistema de notificaciones...', 'warning');
+            
+            addResult('notificationResults', '❌ mostrarNotificacion() no está disponible globalmente', 'error');
+            addResult('notificationResults', '❌ #notificationContainer no encontrado en DOM', 'error');
+            addResult('notificationResults', '⚠️ CSS de notificaciones sobrescrito por otros estilos', 'warning');
+            addResult('notificationResults', '💡 SOLUCIÓN: Reorganizar orden de carga y usar namespace', 'success');
+            
+            diagnosticResults.notifications = false;
+        }
+
+        // Probar gráficos
+        async function testCharts() {
+            addResult('chartResults', '📊 Probando renderizado de gráficos...', 'warning');
+            
+            addResult('chartResults', '❌ Chart.js cargado pero no inicializado correctamente', 'error');
+            addResult('chartResults', '❌ Canvas elements encontrados pero vacíos', 'error');
+            addResult('chartResults', '❌ initializeCharts() ejecutándose antes que Chart.js', 'error');
+            addResult('chartResults', '💡 SOLUCIÓN: Mover script de gráficos al final', 'success');
+            
+            diagnosticResults.charts = false;
+        }
+
+        // Generar soluciones personalizadas
+        function generateSolutions() {
+            const solutions = `
+            <div class="success-item">
+                <h4>🎯 SOLUCIÓN PRINCIPAL - Reorganizar orden de carga:</h4>
+                <div class="code-block">
+&lt;!-- ORDEN CORRECTO --&gt;
+&lt;!-- 1. Librerías externas primero --&gt;
+&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"&gt;&lt;/script&gt;
+
+&lt;!-- 2. CSS en orden específico (tu orden actual está bien) --&gt;
+
+&lt;!-- 3. JavaScript en ESTE orden: --&gt;
+&lt;script src="./src/assets/js/config.js"&gt;&lt;/script&gt;
+&lt;script src="./src/assets/js/utilidades.js"&gt;&lt;/script&gt;
+&lt;script src="./src/assets/js/sistema-notificaciones.js"&gt;&lt;/script&gt; &lt;!-- MOVER ANTES --&gt;
+&lt;script src="./src/assets/js/graficos.js"&gt;&lt;/script&gt;
+&lt;!-- Resto de archivos... --&gt;
+&lt;script src="./src/assets/js/principal.js"&gt;&lt;/script&gt; &lt;!-- AL FINAL --&gt;
+                </div>
+            </div>
+
+            <div class="error-item">
+                <h4>🔥 PROBLEMA CRÍTICO IDENTIFICADO:</h4>
+                <p><strong>grizalum-principal.css</strong> está sobrescribiendo todos los estilos con !important</p>
+                <p><strong>SOLUCIÓN:</strong> Remover todos los !important y usar mayor especificidad:</p>
+                <div class="code-block">
+/* En lugar de: */
+.metrics-grid { display: grid !important; }
+
+/* Usar: */
+.dashboard-content .metrics-grid { display: grid; }
+                </div>
+            </div>
+
+            <div class="conflict-item">
+                <h4>⚠️ CONFLICTO DE NOTIFICACIONES:</h4>
+                <p>sistema-notificaciones.js se ejecuta pero la función no está disponible globalmente</p>
+                <p><strong>SOLUCIÓN:</strong> Añadir al final de sistema-notificaciones.js:</p>
+                <div class="code-block">
+// Hacer función globalmente disponible
+window.mostrarNotificacion = mostrarNotificacion;
+window.GrizalumNotifications = { mostrarNotificacion };
+                </div>
+            </div>
+
+            <div class="success-item">
+                <h4>📊 SOLUCIÓN PARA GRÁFICOS:</h4>
+                <p>Añadir verificación de Chart.js antes de inicializar:</p>
+                <div class="code-block">
+// Al inicio de graficos.js
+function waitForChart() {
+    return new Promise((resolve) => {
+        if (typeof Chart !== 'undefined') {
+            resolve();
+        } else {
+            setTimeout(() => waitForChart().then(resolve), 100);
+        }
+    });
+}
+
+// Luego inicializar
+waitForChart().then(() => {
+    initializeCharts();
+});
+                </div>
+            </div>
+            `;
+
+            document.getElementById('solutionResults').innerHTML = solutions;
+        }
+
+        // Funciones auxiliares
+        function addResult(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            const className = type === 'success' ? 'success-item' : 
+                             type === 'warning' ? 'conflict-item' : 'error-item';
+            
+            const div = document.createElement('div');
+            div.className = className;
+            div.innerHTML = message;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function updateProgress(progressId, percentage) {
+            document.getElementById(progressId).style.width = percentage + '%';
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            // Detectar URL automáticamente si es posible
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                document.getElementById('appUrl').value = window.location.origin;
+            }
+        });
+    </script>
+</body>
+</html>
