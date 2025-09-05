@@ -1,5 +1,5 @@
 // ================================================================
-// 📊 GRIZALUM ACTUALIZADOR DE MÉTRICAS - VERSIÓN OPTIMIZADA 2.0
+// 📊 GRIZALUM ACTUALIZADOR DE MÉTRICAS - VERSIÓN OPTIMIZADA 2.1
 // Sistema eficiente y liviano para actualización de KPIs financieros
 // ================================================================
 
@@ -15,15 +15,19 @@ class GrizalumMetricsUpdater {
         this.config = null;
         this.elements = new Map();
         this.animations = new Map();
+        this.defaultData = null;
         
-        console.log('📊 Inicializando Actualizador de Métricas v2.0...');
+        console.log('📊 Inicializando Actualizador de Métricas v2.1...');
     }
 
-    // ======= INICIALIZACIÓN =======
+    // ======= INICIALIZACIÓN MEJORADA =======
     initialize() {
         try {
             // Cargar configuración
             this.loadConfiguration();
+            
+            // Cargar datos por defecto
+            this.loadDefaultData();
             
             // Mapear elementos del DOM
             this.mapDOMElements();
@@ -33,6 +37,9 @@ class GrizalumMetricsUpdater {
             
             // Configurar eventos
             this.bindEvents();
+            
+            // Inicializar con datos por defecto
+            this.initializeWithDefaults();
             
             this.isInitialized = true;
             console.log('✅ Actualizador de Métricas inicializado');
@@ -46,7 +53,6 @@ class GrizalumMetricsUpdater {
     }
 
     loadConfiguration() {
-        // Usar configuración global o valores por defecto
         this.config = {
             currency: window.GRIZALUM_CONFIG?.currency || 'PEN',
             locale: window.GRIZALUM_CONFIG?.locale || 'es-PE',
@@ -66,60 +72,109 @@ class GrizalumMetricsUpdater {
         console.log('⚙️ Configuración de métricas cargada');
     }
 
+    loadDefaultData() {
+        // Datos por defecto para inicialización
+        this.defaultData = {
+            ingresos: 2847293,
+            gastos: 28700,
+            utilidad: 16500,
+            crecimiento: 24.8,
+            flujoCaja: 24500
+        };
+        
+        console.log('💾 Datos por defecto cargados');
+    }
+
     mapDOMElements() {
         // Definir elementos de métricas principales
         const metricsMap = [
-            { id: 'revenueValue', type: 'currency', label: 'Ingresos Totales' },
-            { id: 'expensesValue', type: 'currency', label: 'Gastos Operativos' },
-            { id: 'profitValue', type: 'currency', label: 'Utilidad Neta' },
-            { id: 'growthValue', type: 'percentage', label: 'Crecimiento' },
-            { id: 'sidebarCashFlow', type: 'currency', label: 'Flujo de Caja' },
-            { id: 'sidebarProfit', type: 'currency', label: 'Utilidad Sidebar' }
+            { id: 'revenueValue', type: 'currency', label: 'Ingresos Totales', defaultKey: 'ingresos' },
+            { id: 'expensesValue', type: 'currency', label: 'Gastos Operativos', defaultKey: 'gastos' },
+            { id: 'profitValue', type: 'currency', label: 'Utilidad Neta', defaultKey: 'utilidad' },
+            { id: 'growthValue', type: 'percentage', label: 'Crecimiento', defaultKey: 'crecimiento' },
+            { id: 'sidebarCashFlow', type: 'currency', label: 'Flujo de Caja', defaultKey: 'flujoCaja' },
+            { id: 'sidebarProfit', type: 'currency', label: 'Utilidad Sidebar', defaultKey: 'utilidad' }
         ];
 
         let found = 0;
-        metricsMap.forEach(({ id, type, label }) => {
+        let missing = [];
+        
+        metricsMap.forEach(({ id, type, label, defaultKey }) => {
             const element = document.getElementById(id);
             if (element) {
                 this.elements.set(id, {
                     element,
                     type,
                     label,
+                    defaultKey,
                     currentValue: this.extractNumericValue(element.textContent),
                     previousValue: 0
                 });
                 found++;
+                console.log(`✅ Elemento encontrado: ${id} = ${element.textContent}`);
+            } else {
+                missing.push(id);
+                console.warn(`⚠️ Elemento no encontrado: ${id}`);
             }
         });
         
-        console.log(`📍 Elementos de métricas mapeados: ${found}/${metricsMap.length}`);
+        console.log(`📍 Elementos mapeados: ${found}/${metricsMap.length}`);
+        if (missing.length > 0) {
+            console.log(`❌ Elementos faltantes: ${missing.join(', ')}`);
+        }
     }
 
-    // ======= API PRINCIPAL =======
+    initializeWithDefaults() {
+        if (!this.defaultData) return;
+        
+        console.log('🔄 Inicializando con datos por defecto...');
+        
+        // Aplicar datos por defecto sin animación
+        this.elements.forEach((metric, elementId) => {
+            if (metric.defaultKey && this.defaultData[metric.defaultKey] !== undefined) {
+                const value = this.defaultData[metric.defaultKey];
+                metric.element.textContent = this.formatValue(value, metric.type);
+                metric.currentValue = value;
+                console.log(`📊 ${elementId}: ${this.formatValue(value, metric.type)}`);
+            }
+        });
+    }
+
+    // ======= API PRINCIPAL MEJORADA =======
     updateMetrics(data) {
         if (!this.isInitialized || !data) {
             console.warn('⚠️ Actualizador no inicializado o datos inválidos');
             return false;
         }
 
-        console.log('📊 Actualizando métricas financieras...');
+        console.log('📊 Actualizando métricas financieras...', data);
 
-        // Mapeo de propiedades de datos a elementos
+        // Mapeo ampliado de propiedades
         const dataMap = {
             // Datos en español
             ingresos: 'revenueValue',
+            ingresosTotales: 'revenueValue',
             gastos: 'expensesValue',
+            gastosOperativos: 'expensesValue',
             utilidad: 'profitValue',
+            utilidadNeta: 'profitValue',
             crecimiento: 'growthValue',
             flujo_caja: 'sidebarCashFlow',
             flujoCaja: 'sidebarCashFlow',
             
             // Datos en inglés (compatibilidad)
             revenue: 'revenueValue',
+            totalRevenue: 'revenueValue',
             expenses: 'expensesValue',
+            operatingExpenses: 'expensesValue',
             profit: 'profitValue',
+            netProfit: 'profitValue',
             growth: 'growthValue',
-            cashFlow: 'sidebarCashFlow'
+            cashFlow: 'sidebarCashFlow',
+            
+            // Mapeos adicionales
+            ingreso: 'revenueValue',
+            gasto: 'expensesValue'
         };
 
         let updated = 0;
@@ -131,16 +186,26 @@ class GrizalumMetricsUpdater {
             if (this.elements.has(elementId)) {
                 this.updateSingleMetric(elementId, value);
                 updated++;
+                console.log(`✅ Actualizado ${elementId}: ${value}`);
+            } else {
+                console.log(`⚠️ No se encontró elemento para: ${key} -> ${elementId}`);
             }
         });
 
         // Actualizar sidebar profit si hay datos de utilidad
-        if (data.profit !== undefined || data.utilidad !== undefined) {
-            const profitValue = data.profit || data.utilidad;
-            this.updateSingleMetric('sidebarProfit', profitValue);
+        if (data.profit !== undefined || data.utilidad !== undefined || data.utilidadNeta !== undefined) {
+            const profitValue = data.profit || data.utilidad || data.utilidadNeta;
+            if (this.elements.has('sidebarProfit')) {
+                this.updateSingleMetric('sidebarProfit', profitValue);
+                updated++;
+            }
         }
 
-        console.log(`✅ ${updated} métricas actualizadas`);
+        console.log(`✅ ${updated} métricas actualizadas exitosamente`);
+        
+        // Disparar evento de actualización global
+        this.triggerGlobalUpdateEvent(data, updated);
+        
         return true;
     }
 
@@ -165,7 +230,7 @@ class GrizalumMetricsUpdater {
         }
     }
 
-    // ======= ANIMACIONES =======
+    // ======= ANIMACIONES (Mejoradas) =======
     animateMetricChange(elementId, fromValue, toValue, type) {
         const metric = this.elements.get(elementId);
         if (!metric) return;
@@ -257,7 +322,7 @@ class GrizalumMetricsUpdater {
         }, 1500);
     }
 
-    // ======= FORMATEO =======
+    // ======= FORMATEO (Igual que antes) =======
     formatValue(value, type, abbreviated = false) {
         if (typeof value !== 'number') {
             value = this.extractNumericValue(value);
@@ -319,18 +384,42 @@ class GrizalumMetricsUpdater {
         return isNaN(number) ? 0 : number;
     }
 
-    // ======= UTILIDADES =======
+    // ======= UTILIDADES MEJORADAS =======
     updateForPeriod(period) {
         console.log(`📅 Métricas actualizadas para período: ${period}`);
         
-        // Aquí podrías implementar lógica específica por período
-        // Por ejemplo, cargar datos diferentes según el período
+        // Generar datos diferentes según el período
+        const periodData = this.generateDataForPeriod(period);
+        this.updateMetrics(periodData);
         
         // Disparar evento para notificar a otros módulos
         const event = new CustomEvent('metricsUpdatedForPeriod', {
-            detail: { period, timestamp: Date.now() }
+            detail: { period, data: periodData, timestamp: Date.now() }
         });
         document.dispatchEvent(event);
+    }
+
+    generateDataForPeriod(period) {
+        // Generar datos realistas según el período
+        const baseData = { ...this.defaultData };
+        
+        const multipliers = {
+            'hoy': 0.03,      // Datos del día
+            'semana': 0.2,    // Datos de la semana
+            'mes': 1.0,       // Base mensual
+            'trimestre': 3.2,  // Datos trimestrales
+            'año': 12.5       // Datos anuales
+        };
+        
+        const multiplier = multipliers[period] || 1.0;
+        
+        return {
+            ingresos: Math.round(baseData.ingresos * multiplier),
+            gastos: Math.round(baseData.gastos * multiplier),
+            utilidad: Math.round(baseData.utilidad * multiplier),
+            crecimiento: baseData.crecimiento + (Math.random() * 10 - 5), // Variación ±5%
+            flujoCaja: Math.round(baseData.flujoCaja * multiplier)
+        };
     }
 
     getCurrentMetrics() {
@@ -347,7 +436,7 @@ class GrizalumMetricsUpdater {
         return metrics;
     }
 
-    // ======= EVENTOS =======
+    // ======= EVENTOS MEJORADOS =======
     bindEvents() {
         // Escuchar cambios de período
         document.addEventListener('periodChanged', (e) => {
@@ -373,6 +462,18 @@ class GrizalumMetricsUpdater {
                 oldValue,
                 newValue,
                 change: newValue - oldValue,
+                timestamp: Date.now()
+            }
+        });
+        document.dispatchEvent(event);
+    }
+
+    triggerGlobalUpdateEvent(data, updatedCount) {
+        const event = new CustomEvent('allMetricsUpdated', {
+            detail: {
+                data,
+                updatedCount,
+                totalElements: this.elements.size,
                 timestamp: Date.now()
             }
         });
@@ -413,6 +514,7 @@ class GrizalumMetricsUpdater {
                 gap: 4px;
                 transition: all 0.3s ease;
                 pointer-events: none;
+                z-index: 9999;
             }
             
             .metric-change-indicator.positive {
@@ -446,15 +548,34 @@ class GrizalumMetricsUpdater {
             isInitialized: this.isInitialized,
             elementsCount: this.elements.size,
             activeAnimations: this.animations.size,
-            config: this.config
+            config: this.config,
+            elements: Array.from(this.elements.keys())
         };
+    }
+
+    // ======= FUNCIONES DE DEBUGGING =======
+    debugElements() {
+        console.log('🔍 Debug de elementos de métricas:');
+        this.elements.forEach((metric, id) => {
+            console.log(`  ${id}:`, {
+                exists: !!metric.element,
+                currentValue: metric.currentValue,
+                textContent: metric.element?.textContent,
+                type: metric.type
+            });
+        });
+    }
+
+    forceUpdate() {
+        console.log('🔄 Forzando actualización con datos por defecto...');
+        this.updateMetrics(this.defaultData);
     }
 }
 
 // ======= INSTANCIA GLOBAL =======
 const grizalumMetricsUpdater = new GrizalumMetricsUpdater();
 
-// ======= FUNCIONES DE COMPATIBILIDAD =======
+// ======= FUNCIONES DE COMPATIBILIDAD MEJORADAS =======
 
 /**
  * Función principal para actualizar métricas (compatibilidad)
@@ -478,12 +599,37 @@ function actualizarSidebar(data) {
     return grizalumMetricsUpdater.updateMetrics(sidebarData);
 }
 
-// ======= INICIALIZACIÓN =======
+/**
+ * Función para forzar actualización (debugging)
+ */
+function forzarActualizacionMetricas() {
+    return grizalumMetricsUpdater.forceUpdate();
+}
+
+// ======= INICIALIZACIÓN MEJORADA =======
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('📄 DOM cargado, iniciando métricas...');
+    
     // Inicialización con retraso para asegurar que el DOM esté listo
     setTimeout(() => {
-        grizalumMetricsUpdater.initialize();
-    }, 600);
+        const success = grizalumMetricsUpdater.initialize();
+        if (success) {
+            console.log('✅ Métricas inicializadas correctamente');
+            
+            // Debug de elementos encontrados
+            grizalumMetricsUpdater.debugElements();
+            
+            // Mostrar notificación de éxito si está disponible
+            if (window.mostrarNotificacion) {
+                window.mostrarNotificacion('Métricas cargadas correctamente', 'success');
+            }
+        } else {
+            console.error('❌ Error inicializando métricas');
+            if (window.mostrarNotificacion) {
+                window.mostrarNotificacion('Error cargando métricas', 'error');
+            }
+        }
+    }, 800);
 });
 
 // ======= EXPORTACIÓN GLOBAL =======
@@ -494,13 +640,17 @@ window.GrizalumMetrics = grizalumMetricsUpdater;
 // Funciones de compatibilidad
 window.actualizarMetricas = actualizarMetricas;
 window.actualizarSidebar = actualizarSidebar;
+window.forzarActualizacionMetricas = forzarActualizacionMetricas;
 
 // Alias para compatibilidad con código existente
 window.actualizarKPIs = actualizarMetricas;
 
-console.log('📊 GRIZALUM Metrics Updater v2.0 cargado');
-console.log('✨ Funcionalidades:');
-console.log('  • 📊 Actualización animada de métricas');
+console.log('📊 GRIZALUM Metrics Updater v2.1 CORREGIDO cargado');
+console.log('✨ Mejoras v2.1:');
+console.log('  • 🔍 Debug avanzado de elementos');
+console.log('  • 📊 Datos por defecto integrados');
+console.log('  • 🔄 Función de forzar actualización');
+console.log('  • 📅 Generación de datos por período');
 console.log('  • 💰 Formato de moneda peruana optimizado');
 console.log('  • 📈 Indicadores visuales de cambios');
 console.log('  • ⚡ Animaciones suaves y profesionales');
