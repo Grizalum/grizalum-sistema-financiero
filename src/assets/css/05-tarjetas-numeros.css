@@ -1,38 +1,45 @@
 /* ================================================================
-   05-TARJETAS-NUMEROS.css - MÉTRICAS Y KPIs GRIZALUM
-   Todo lo relacionado con las tarjetas de números del dashboard
+   CORRECCIÓN FINAL GRIZALUM - REEMPLAZA TODO EN 05-tarjetas-numeros.css
    ================================================================ */
 
-/* ===== GRID DE MÉTRICAS - CORREGIDO ===== */
+/* ===== GRID DE MÉTRICAS CORREGIDO ===== */
 .metrics-grid {
     display: grid !important;
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--cards-gap);
-    margin-bottom: var(--cards-bottom-margin);
-    align-items: stretch;
-    width: 100%;
-    height: auto;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 16px !important;
+    margin-bottom: 24px !important;
+    width: 100% !important;
+    align-items: stretch !important;
 }
 
-/* ===== TARJETA DE MÉTRICA BASE - OPTIMIZADA ===== */
+/* ===== TARJETA DE MÉTRICA PERFECTA ===== */
 .metric-card {
     background: linear-gradient(135deg, 
         rgba(255, 255, 255, 0.95) 0%, 
-        rgba(255, 255, 255, 0.85) 100%);
-    backdrop-filter: var(--backdrop-blur);
+        rgba(255, 255, 255, 0.8) 100%);
+    backdrop-filter: blur(20px);
     border-radius: 16px;
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--glass-border);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     position: relative;
     overflow: hidden;
-    transition: all var(--transition-normal);
-    padding: var(--spacing-xl);
-    min-height: 140px;
+    transition: all 0.3s ease;
+    
+    /* DIMENSIONES FORZADAS */
+    height: 140px !important;
+    min-height: 140px !important;
+    max-height: 140px !important;
+    
+    /* LAYOUT INTERNO */
     display: flex !important;
     flex-direction: column !important;
-    justify-content: space-between;
-    will-change: transform;
-    contain: layout style paint;
+    justify-content: space-between !important;
+    padding: 20px !important;
+    box-sizing: border-box !important;
+    
+    /* VISIBILIDAD FORZADA */
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 /* Barra superior de color */
@@ -43,540 +50,100 @@
     left: 0;
     right: 0;
     height: 4px;
-    background: var(--gradient-gold);
-    transition: all var(--transition-normal);
-    z-index: 1;
+    background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+    transition: all 0.3s ease;
 }
 
-/* Colores específicos por tipo de métrica */
-.metric-card.revenue::before { background: var(--gradient-primary); }
-.metric-card.expenses::before { background: var(--gradient-warning); }
-.metric-card.profit::before { background: var(--gradient-success); }
-.metric-card.growth::before { background: var(--gradient-purple); }
+/* Colores específicos */
+.metric-card.revenue::before { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.metric-card.expenses::before { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+.metric-card.profit::before { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+.metric-card.growth::before { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
 
-/* ===== EFECTOS HOVER - SIMPLIFICADOS ===== */
+/* ===== HOVER SUTIL ===== */
 .metric-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-2xl);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     border-color: rgba(212, 175, 55, 0.3);
-}
-
-.metric-card:hover::before {
-    height: 6px;
-    box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
 }
 
 /* ===== HEADER DE LA TARJETA ===== */
 .metric-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: var(--spacing-lg);
-    gap: var(--spacing-md);
-    flex-shrink: 0;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    margin-bottom: 12px !important;
+    gap: 12px !important;
+    flex-shrink: 0 !important;
 }
 
 .metric-title {
-    font-size: var(--text-sm);
-    color: var(--gray-600);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    line-height: 1.2;
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    font-size: 12px !important;
+    color: #64748b !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    line-height: 1.2 !important;
+    flex: 1 !important;
+    margin: 0 !important;
 }
 
 /* ===== ICONOS DE MÉTRICAS ===== */
 .metric-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: var(--text-lg);
-    color: white;
-    flex-shrink: 0;
-    box-shadow: var(--shadow-md);
-    transition: all var(--transition-normal);
-    position: relative;
-    overflow: hidden;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 16px !important;
+    color: white !important;
+    flex-shrink: 0 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Colores específicos de iconos */
-.metric-icon.revenue { background: var(--gradient-primary); }
-.metric-icon.expenses { background: var(--gradient-warning); }
-.metric-icon.profit { background: var(--gradient-success); }
-.metric-icon.growth { background: var(--gradient-purple); }
-
-/* Efecto hover en iconos */
-.metric-card:hover .metric-icon {
-    transform: scale(1.1) rotate(5deg);
-    box-shadow: var(--shadow-xl);
-}
-
-/* Brillo sutil en los iconos */
-.metric-icon::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, 
-        transparent, 
-        rgba(255, 255, 255, 0.3), 
-        transparent);
-    transition: left 0.5s ease;
-}
-
-.metric-card:hover .metric-icon::after {
-    left: 100%;
-}
+.metric-icon.revenue { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.metric-icon.expenses { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+.metric-icon.profit { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+.metric-icon.growth { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
 
 /* ===== VALOR PRINCIPAL ===== */
 .metric-value {
-    font-size: var(--text-3xl);
-    font-weight: 900;
-    color: var(--gray-800);
-    margin-bottom: var(--spacing-md);
-    line-height: 0.9;
-    letter-spacing: -0.02em;
-    font-variant-numeric: tabular-nums;
-    transition: all var(--transition-normal);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-}
-
-.metric-card:hover .metric-value {
-    color: var(--peru-gold);
-    transform: scale(1.02);
+    font-size: 24px !important;
+    font-weight: 900 !important;
+    color: #1e293b !important;
+    margin: 8px 0 !important;
+    line-height: 1 !important;
+    letter-spacing: -0.02em !important;
+    flex-grow: 1 !important;
+    display: flex !important;
+    align-items: center !important;
 }
 
 /* ===== INDICADOR DE CAMBIO ===== */
 .metric-change {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-xs);
-    font-size: var(--text-sm);
-    font-weight: 600;
-    padding: var(--spacing-xs) var(--spacing-sm);
-    border-radius: 6px;
-    background: var(--glass-effect);
-    backdrop-filter: var(--backdrop-blur);
-    border: 1px solid var(--glass-border);
-    transition: all var(--transition-normal);
-    flex-shrink: 0;
-    margin-top: auto;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
+    flex-shrink: 0 !important;
+    margin-top: auto !important;
 }
 
 .metric-change.positive { 
-    color: #059669; 
-    background: rgba(16, 185, 129, 0.1);
-    border-color: rgba(16, 185, 129, 0.2);
+    color: #059669 !important; 
+    background: rgba(16, 185, 129, 0.1) !important;
 }
 
 .metric-change.negative { 
-    color: #dc2626; 
-    background: rgba(239, 68, 68, 0.1);
-    border-color: rgba(239, 68, 68, 0.2);
+    color: #dc2626 !important; 
+    background: rgba(239, 68, 68, 0.1) !important;
 }
 
-.metric-change:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-sm);
-}
-
-/* Iconos de cambio con animación */
-.metric-change i {
-    transition: transform var(--transition-normal);
-}
-
-.metric-change.positive:hover i {
-    transform: translateY(-2px);
-    animation: bounceUp 0.6s ease;
-}
-
-.metric-change.negative:hover i {
-    transform: translateY(2px);
-    animation: bounceDown 0.6s ease;
-}
-
-.metric-change span {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 120px;
-}
-
-@keyframes bounceUp {
-    0%, 100% { transform: translateY(-2px); }
-    50% { transform: translateY(-4px); }
-}
-
-@keyframes bounceDown {
-    0%, 100% { transform: translateY(2px); }
-    50% { transform: translateY(4px); }
-}
-
-/* ===== ANIMACIONES DE ENTRADA ===== */
-.metric-card {
-    animation: fadeInUp 0.6s var(--transition-normal) both;
-}
-
-.metric-card:nth-child(1) { animation-delay: 0.1s; }
-.metric-card:nth-child(2) { animation-delay: 0.2s; }
-.metric-card:nth-child(3) { animation-delay: 0.3s; }
-.metric-card:nth-child(4) { animation-delay: 0.4s; }
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* ===== ESTADOS ESPECIALES ===== */
-.metric-card.kpi-updating {
-    position: relative;
-    overflow: hidden;
-}
-
-.metric-card.kpi-updating::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, 
-        transparent, 
-        rgba(212, 175, 55, 0.2), 
-        transparent);
-    animation: updating 1s infinite;
-    z-index: 2;
-}
-
-@keyframes updating {
-    0% { left: -100%; }
-    100% { left: 100%; }
-}
-
-.metric-card.kpi-increase {
-    animation: kpiIncrease 1s ease;
-}
-
-.metric-card.kpi-decrease {
-    animation: kpiDecrease 1s ease;
-}
-
-@keyframes kpiIncrease {
-    0% { transform: scale(1); }
-    50% { 
-        transform: scale(1.05); 
-        box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
-        border-color: rgba(16, 185, 129, 0.6);
-    }
-    100% { transform: scale(1); }
-}
-
-@keyframes kpiDecrease {
-    0% { transform: scale(1); }
-    50% { 
-        transform: scale(1.05); 
-        box-shadow: 0 0 30px rgba(239, 68, 68, 0.4);
-        border-color: rgba(239, 68, 68, 0.6);
-    }
-    100% { transform: scale(1); }
-}
-
-/* ===== RESPONSIVE OPTIMIZADO ===== */
-
-/* Desktop grande */
-@media (max-width: 1400px) {
-    .metrics-grid {
-        gap: var(--spacing-md);
-    }
-    
-    .metric-card {
-        padding: var(--spacing-lg);
-        min-height: 150px;
-    }
-}
-
-/* Tablet */
-@media (max-width: 1200px) {
-    .metrics-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: var(--cards-gap) !important;
-    }
-    
-    .metric-card {
-        min-height: 140px;
-    }
-}
-
-/* Tablet pequeño */
-@media (max-width: 991px) {
-    .metrics-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--spacing-md);
-    }
-    
-    .metric-card {
-        min-height: 130px;
-        padding: var(--spacing-lg);
-    }
-    
-    .metric-value {
-        font-size: var(--text-2xl);
-    }
-    
-    .metric-icon {
-        width: 42px;
-        height: 42px;
-        font-size: var(--text-base);
-    }
-}
-
-/* Móvil */
-@media (max-width: 768px) {
-    .metrics-grid {
-        grid-template-columns: 1fr !important;
-        gap: var(--cards-gap-mobile) !important;
-        margin-bottom: var(--spacing-lg);
-    }
-    
-    .metric-card {
-        min-height: 120px;
-        padding: var(--spacing-md);
-    }
-    
-    .metric-header {
-        margin-bottom: var(--spacing-md);
-        gap: var(--spacing-sm);
-    }
-    
-    .metric-title {
-        font-size: var(--text-xs);
-    }
-    
-    .metric-value {
-        font-size: var(--text-xl);
-        margin-bottom: var(--spacing-sm);
-    }
-    
-    .metric-icon {
-        width: 36px;
-        height: 36px;
-        font-size: var(--text-sm);
-    }
-    
-    .metric-change {
-        font-size: var(--text-xs);
-        padding: var(--spacing-xs);
-    }
-}
-
-/* Móvil pequeño */
-@media (max-width: 575px) {
-    .metric-card {
-        min-height: 110px;
-        padding: var(--spacing-sm);
-    }
-    
-    .metric-value {
-        font-size: var(--text-lg);
-    }
-    
-    .metric-icon {
-        width: 32px;
-        height: 32px;
-        font-size: var(--text-sm);
-    }
-    
-    .metric-header {
-        gap: var(--spacing-xs);
-    }
-    
-    .metric-change {
-        font-size: 10px;
-        padding: 2px 6px;
-    }
-}
-
-/* Móvil muy pequeño */
-@media (max-width: 375px) {
-    .metric-card {
-        min-height: 100px;
-        padding: var(--spacing-xs);
-    }
-    
-    .metric-value {
-        font-size: var(--text-base);
-    }
-    
-    .metric-title {
-        font-size: 10px;
-    }
-    
-    .metric-icon {
-        width: 28px;
-        height: 28px;
-        font-size: 12px;
-    }
-}
-
-/* ===== LOADING SKELETON ===== */
-.metric-card.loading {
-    pointer-events: none;
-}
-
-.metric-card.loading .metric-value,
-.metric-card.loading .metric-title,
-.metric-card.loading .metric-change {
-    background: linear-gradient(90deg, 
-        var(--gray-200) 25%, 
-        var(--gray-300) 50%, 
-        var(--gray-200) 75%);
-    background-size: 200% 100%;
-    animation: skeleton 1.5s infinite;
-    color: transparent;
-    border-radius: 4px;
-}
-
-@keyframes skeleton {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-}
-
-/* ===== ACCESIBILIDAD ===== */
-.metric-card:focus {
-    outline: 2px solid var(--peru-gold);
-    outline-offset: 2px;
-}
-
-.metric-card[aria-label] {
-    cursor: pointer;
-}
-
-/* ===== PRINT STYLES ===== */
-@media print {
-    .metric-card {
-        break-inside: avoid;
-        box-shadow: none !important;
-        border: 1px solid var(--gray-300) !important;
-        background: white !important;
-        backdrop-filter: none !important;
-    }
-    
-    .metric-card::before {
-        display: none !important;
-    }
-    
-    .metric-value {
-        color: black !important;
-    }
-    
-    .metric-icon {
-        background: var(--gray-200) !important;
-        color: black !important;
-    }
-    
-    .metrics-grid {
-        gap: 10px !important;
-    }
-}
-
-/* ===== HIGH CONTRAST MODE ===== */
-@media (prefers-contrast: high) {
-    .metric-card {
-        background: white;
-        border: 2px solid black;
-    }
-    
-    .metric-card.revenue { border-left: 5px solid blue; }
-    .metric-card.expenses { border-left: 5px solid orange; }
-    .metric-card.profit { border-left: 5px solid green; }
-    .metric-card.growth { border-left: 5px solid purple; }
-    
-    .metric-value {
-        color: black;
-    }
-    
-    .metric-icon {
-        background: black !important;
-        color: white !important;
-    }
-}
-
-/* ===== REDUCIR MOVIMIENTO ===== */
-@media (prefers-reduced-motion: reduce) {
-    .metric-card,
-    .metric-card *,
-    .metric-icon,
-    .metric-value,
-    .metric-change {
-        animation: none !important;
-        transition: none !important;
-        transform: none !important;
-    }
-    
-    .metric-card:hover {
-        transform: none !important;
-    }
-}
-
-/* CORRECCIÓN FORZADA PARA UNIFORMIDAD */
-.metric-card {
-    box-sizing: border-box !important;
-    height: 140px !important;
-}
-
-.metrics-grid {
-    display: grid !important;
-    grid-template-rows: repeat(1, 140px) !important;
-}
-
-/* ================================================================
-   SOLUCIÓN COMPLETA GRIZALUM - COPIA Y PEGA ESTO AL FINAL DE TU CSS
-   ================================================================ */
-
-/* FORZAR CORRECCIÓN DE MÉTRICAS */
-.metrics-grid {
-    display: grid !important;
-    grid-template-columns: repeat(4, 1fr) !important;
-    gap: 14px !important;
-    margin-bottom: 20px !important;
-    height: 160px !important;
-    align-items: stretch !important;
-    width: 100% !important;
-}
-
-.metric-card {
-    display: flex !important;
-    flex-direction: column !important;
-    height: 160px !important;
-    min-height: 160px !important;
-    max-height: 160px !important;
-    padding: 20px !important;
-    box-sizing: border-box !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-
-/* FORZAR PRIMERA TARJETA */
+/* ===== CORRECCIÓN ESPECÍFICA PARA LA PRIMERA TARJETA ===== */
 .metric-card.revenue {
     display: flex !important;
     visibility: visible !important;
@@ -584,57 +151,99 @@
     order: 1 !important;
 }
 
-/* FORZAR GRÁFICOS CORRECTOS */
-.charts-section {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
-    gap: 20px !important;
-    margin-top: 20px !important;
+/* ===== RESPONSIVE TABLET ===== */
+@media (max-width: 1200px) {
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 16px !important;
+    }
 }
 
-.chart-card {
-    height: 280px !important;
-    min-height: 280px !important;
-    max-height: 280px !important;
-    padding: 16px !important;
-}
-
-.chart-card.main-chart {
-    height: 320px !important;
-    min-height: 320px !important;
-    max-height: 320px !important;
-    grid-column: 1 / -1 !important;
-}
-
-.chart-container {
-    height: calc(100% - 80px) !important;
-    min-height: 180px !important;
-    max-height: 220px !important;
-}
-
-/* RESPONSIVE MÓVIL FORZADO */
+/* ===== RESPONSIVE MÓVIL ===== */
 @media (max-width: 768px) {
     .metrics-grid {
         grid-template-columns: 1fr !important;
-        height: auto !important;
+        gap: 12px !important;
+        margin-bottom: 20px !important;
     }
     
     .metric-card {
         height: 120px !important;
         min-height: 120px !important;
         max-height: 120px !important;
-        margin-bottom: 10px !important;
+        padding: 16px !important;
     }
     
+    .metric-value {
+        font-size: 20px !important;
+    }
+    
+    .metric-icon {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 14px !important;
+    }
+}
+
+/* ===== CORRECCIÓN DE GRÁFICOS ===== */
+.charts-section {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+    gap: 20px !important;
+    margin-top: 20px !important;
+}
+
+.chart-card {
+    height: 300px !important;
+    min-height: 300px !important;
+    max-height: 300px !important;
+    padding: 20px !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.chart-card.main-chart {
+    grid-column: 1 / -1 !important;
+    height: 350px !important;
+    min-height: 350px !important;
+    max-height: 350px !important;
+}
+
+.chart-container {
+    flex: 1 !important;
+    height: calc(100% - 60px) !important;
+    min-height: 200px !important;
+    position: relative !important;
+}
+
+.chart-header {
+    flex-shrink: 0 !important;
+    margin-bottom: 16px !important;
+    padding-bottom: 12px !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+}
+
+/* ===== FORZAR VISIBILIDAD CANVAS ===== */
+.chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: none !important;
+}
+
+/* ===== MOBILE GRÁFICOS ===== */
+@media (max-width: 768px) {
     .chart-card {
-        height: 250px !important;
-        min-height: 250px !important;
-        max-height: 250px !important;
-    }
-    
-    .chart-card.main-chart {
         height: 280px !important;
         min-height: 280px !important;
         max-height: 280px !important;
+    }
+    
+    .chart-card.main-chart {
+        height: 320px !important;
+        min-height: 320px !important;
+        max-height: 320px !important;
     }
 }
