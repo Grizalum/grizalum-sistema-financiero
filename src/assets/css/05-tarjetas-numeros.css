@@ -11,7 +11,7 @@
     margin-bottom: var(--cards-bottom-margin);
     align-items: stretch;
     width: 100%;
-    /* Removido: grid-auto-rows que causaba problemas de altura */
+    height: auto;
 }
 
 /* ===== TARJETA DE MÉTRICA BASE - OPTIMIZADA ===== */
@@ -27,7 +27,7 @@
     overflow: hidden;
     transition: all var(--transition-normal);
     padding: var(--spacing-xl);
-    min-height: 160px;
+    min-height: 140px;
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-between;
@@ -319,7 +319,7 @@
 @media (max-width: 1200px) {
     .metrics-grid {
         grid-template-columns: repeat(2, 1fr) !important;
-        gap: var(--spacing-lg) !important;
+        gap: var(--cards-gap) !important;
     }
     
     .metric-card {
@@ -536,4 +536,15 @@
     .metric-card:hover {
         transform: none !important;
     }
+}
+
+/* CORRECCIÓN FORZADA PARA UNIFORMIDAD */
+.metric-card {
+    box-sizing: border-box !important;
+    height: 140px !important;
+}
+
+.metrics-grid {
+    display: grid !important;
+    grid-template-rows: repeat(1, 140px) !important;
 }
