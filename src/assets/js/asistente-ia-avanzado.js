@@ -55,7 +55,11 @@ class AsistenteIAInteligente {
             this.initialized = true;
             this.log('✅ GRIZALUM AI v3.0 inicializado correctamente');
             
-            this.showNotification('🧠 IA Súper Inteligente lista', 'success');
+          if (window.mostrarNotificacion) {
+             window.mostrarNotificacion('🧠 IA Súper Inteligente lista', 'success');
+           } else {
+              console.log('✅ IA Súper Inteligente lista');
+        }
             
         } catch (error) {
             this.handleError('Error finalizando inicialización', error);
@@ -1017,6 +1021,18 @@ ${this.addConversationContext()}`;
             this.hideThinkingIndicator();
             this.handleError('Error enviando mensaje', error);
             this.addAIMessage('❌ Lo siento, hubo un error procesando tu consulta. Por favor, intenta nuevamente.');
+        }
+    }
+    
+    showNotification(message, type = 'info') {
+        try {
+            if (window.mostrarNotificacion) {
+                window.mostrarNotificacion(message, type);
+            } else {
+                console.log(`[${type.toUpperCase()}] ${message}`);
+            }
+        } catch (error) {
+            console.log(`[${type.toUpperCase()}] ${message}`);
         }
     }
 
