@@ -939,34 +939,56 @@ console.log('cashFlowDetailChart:', document.getElementById('cashFlowDetailChart
 setTimeout(() => {
     console.log('🚀 Iniciando gráficos modo simple...');
     
-    if (typeof Chart !== 'undefined') {
-        console.log('✅ Chart.js disponible');
-        
-        // Crear gráfico de prueba
-        const ctx = document.getElementById('cashFlowChart');
-        if (ctx) {
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
-                    datasets: [{
-                        label: 'Flujo de Caja',
-                        data: [12, 19, 3, 5, 2, 3],
-                        borderColor: '#d4af37',
-                        backgroundColor: 'rgba(212, 175, 55, 0.2)',
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-            console.log('✅ Gráfico creado exitosamente');
+   // ARREGLO PARA GRÁFICOS - REEMPLAZAR LÍNEAS 942-958
+function waitForChart() {
+    return new Promise((resolve) => {
+        if (typeof Chart !== 'undefined') {
+            console.log('✅ Chart.js está disponible');
+            resolve();
         } else {
-            console.error('❌ No se encontró el contenedor cashFlowChart');
+            console.log('⏳ Esperando Chart.js...');
+            setTimeout(() => waitForChart().then(resolve), 100);
         }
+    });
+}
+
+// INICIALIZACIÓN FORZADA CON VERIFICACIÓN
+waitForChart().then(() => {
+    console.log('🚀 Iniciando gráficos con Chart.js verificado');
+    
+    // Verificar que los canvas existen
+    const canvasElements = [
+        'cashFlowChart',
+        'expensesChart', 
+        'revenueChart',
+        'agingChart',
+        'cashFlowDetailChart'
+    ];
+    
+    canvasElements.forEach(canvasId => {
+        const canvas = document.getElementById(canvasId);
+        if (canvas) {
+            console.log(`✅ Canvas ${canvasId} encontrado`);
+        } else {
+            console.error(`❌ Canvas ${canvasId} NO encontrado`);
+        }
+    });
+    
+    // Ejecutar inicialización
+    if (typeof initializeCharts === 'function') {
+        initializeCharts();
+        console.log('📊 Gráficos inicializados');
     } else {
-        console.error('❌ Chart.js no disponible');
+        console.error('❌ Función initializeCharts no encontrada');
     }
-}, 5000);
+});
+
+// TAMBIÉN INTENTAR EN WINDOW LOAD COMO RESPALDO
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        if (typeof Chart !== 'undefined' && typeof initializeCharts === 'function') {
+            console.log('🔄 Respaldo: Intentando inicializar gráficos nuevamente');
+            initializeCharts();
+        }
+    }, 2000);
+});
