@@ -449,3 +449,20 @@
     padding-left: 20px !important;
     padding-right: 20px !important;
 }
+
+.dashboard-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 20px !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+}
+
+.metrics-grid,
+.charts-section {
+    width: 100% !important;
+    max-width: 1400px !important;
+    margin: 0 auto !important;
+}
