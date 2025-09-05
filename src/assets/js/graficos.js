@@ -933,3 +933,40 @@ console.log('expensesChart:', document.getElementById('expensesChart'));
 console.log('revenueChart:', document.getElementById('revenueChart'));
 console.log('agingChart:', document.getElementById('agingChart'));
 console.log('cashFlowDetailChart:', document.getElementById('cashFlowDetailChart'));
+    console.log('cashFlowDetailChart:', document.getElementById('cashFlowDetailChart'));
+
+// INICIALIZACIÓN ULTRA-SIMPLE
+setTimeout(() => {
+    console.log('🚀 Iniciando gráficos modo simple...');
+    
+    if (typeof Chart !== 'undefined') {
+        console.log('✅ Chart.js disponible');
+        
+        // Crear gráfico de prueba
+        const ctx = document.getElementById('cashFlowChart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Flujo de Caja',
+                        data: [12, 19, 3, 5, 2, 3],
+                        borderColor: '#d4af37',
+                        backgroundColor: 'rgba(212, 175, 55, 0.2)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+            console.log('✅ Gráfico creado exitosamente');
+        } else {
+            console.error('❌ No se encontró el contenedor cashFlowChart');
+        }
+    } else {
+        console.error('❌ Chart.js no disponible');
+    }
+}, 5000);
