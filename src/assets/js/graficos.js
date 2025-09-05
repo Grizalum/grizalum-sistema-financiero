@@ -36,7 +36,7 @@ function waitForDependencies() {
             }
             
             // Verificar contenedores
-            const containers = ['cashFlowChart', 'expensesChart', 'revenueChart', 'agingChart', 'cashFlowDetailChart'];
+            const containers = ['mainCashFlowChart', 'expensesChart', 'revenueChart', 'agingChart', 'cashFlowDetailChart'];
             const missingContainers = containers.filter(id => !document.getElementById(id));
             
             if (missingContainers.length > 0) {
