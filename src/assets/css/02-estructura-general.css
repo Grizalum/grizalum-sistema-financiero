@@ -432,3 +432,20 @@
 .w-full { width: 100%; }
 .h-full { height: 100%; }
 .min-h-screen { min-height: 100vh; }
+
+/* CENTRAR CONTENIDO CUANDO FALTAN ELEMENTOS */
+.metrics-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    justify-content: center !important;
+    align-content: center !important;
+    place-items: stretch !important;
+}
+
+/* ASEGURAR QUE EL DASHBOARD ESTÉ CENTRADO */
+.dashboard-content {
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+}
