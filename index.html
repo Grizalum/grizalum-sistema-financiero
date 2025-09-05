@@ -67,7 +67,7 @@
          📈 LIBRERÍAS EXTERNAS OPTIMIZADAS
          ================================================================ -->
     <!-- Chart.js para gráficos -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
     
     <!-- FontAwesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -546,18 +546,26 @@ setTimeout(() => {
 </script>
 
  <script>
-// FORZAR INICIALIZACIÓN DE GRÁFICOS
-window.addEventListener('load', function() {
-    setTimeout(() => {
-        console.log('Forzando inicialización de gráficos...');
+// FORZAR CARGA DE GRÁFICOS - VERSIÓN CORREGIDA
+setTimeout(() => {
+    console.log('Verificando Chart.js:', typeof Chart);
+    if (typeof Chart !== 'undefined') {
+        console.log('Chart.js disponible, iniciando gráficos...');
+        
+        // Forzar inicialización múltiple
+        if (window.GrizalumCharts) {
+            window.GrizalumCharts.initialize();
+        }
         if (window.forceInitializeCharts) {
             window.forceInitializeCharts();
         }
-        if (window.GrizalumCharts && window.GrizalumCharts.initialize) {
-            window.GrizalumCharts.initialize();
+        if (window.initializeCharts) {
+            window.initializeCharts();
         }
-    }, 2000);
-});
+    } else {
+        console.error('Chart.js no está disponible');
+    }
+}, 3000);
 </script>
     
 </body>
