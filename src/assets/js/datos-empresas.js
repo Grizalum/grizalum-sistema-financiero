@@ -308,7 +308,44 @@ function cambiarPeriodoActivo(periodo) {
 }
 
 function obtenerDatosActuales() {
-    return obtenerDatosEmpresa(empresaActiva, periodoActivo);
+    // SOLO usar datos del gestor de empresas real, no los de ejemplo
+    if (window.gestorEmpresas && window.gestorEmpresas.estado.empresaActual) {
+        const empresaId = window.gestorEmpresas.estado.empresaActual;
+        const empresaReal = window.gestorEmpresas.estado.empresas[empresaId];
+        
+        if (empresaReal) {
+            return {
+                info: {
+                    nombre: empresaReal.nombre,
+                    emoji: empresaReal.icono,
+                    ubicacion: empresaReal.ubicacion?.distrito || 'Lima'
+                },
+                financiero: {
+                    ingresos: empresaReal.finanzas?.ingresos || 0,
+                    gastos: empresaReal.finanzas?.gastos || 0,
+                    utilidad: empresaReal.finanzas?.utilidadNeta || 0,
+                    crecimiento: empresaReal.finanzas?.roi || 0,
+                    flujoCaja: empresaReal.finanzas?.caja || 0,
+                    margen: empresaReal.finanzas?.margenNeto || 0
+                },
+                graficos: {
+                    flujoMeses: [0, 0, 0, 0, 0, empresaReal.finanzas?.caja || 0],
+                    gastosDistribucion: [0, 0, 0, 0, 0],
+                    ingresosVsGastos: [
+                        empresaReal.finanzas?.ingresos || 0,
+                        empresaReal.finanzas?.gastos || 0,
+                        empresaReal.finanzas?.utilidadNeta || 0
+                    ]
+                }
+            };
+        }
+    }
+    
+    // Fallback con datos en cero
+    return {
+        financiero: { ingresos: 0, gastos: 0, utilidad: 0, crecimiento: 0, flujoCaja: 0, margen: 0 },
+        graficos: { flujoMeses: [0,0,0,0,0,0], gastosDistribucion: [0,0,0,0,0], ingresosVsGastos: [0,0,0] }
+    };
 }
 
 function obtenerListaEmpresas() {
