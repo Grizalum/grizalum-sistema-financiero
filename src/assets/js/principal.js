@@ -63,7 +63,6 @@ class GrizalumApp {
             await this.initializeModules();
             
             // 4. 🎨 Configurar interfaz y eventos
-            this.initializeInterface();
             this.bindGlobalEvents();
             
             // 5. 👤 Cargar preferencias del usuario
