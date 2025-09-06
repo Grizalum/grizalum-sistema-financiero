@@ -1114,7 +1114,10 @@ console.log(`
 FormularioEmpresas.prototype.editarEmpresa = function(empresaId) {
     console.log('✏️ Editando empresa:', empresaId);
     
+    console.log('🔍 DEBUG - empresaId:', empresaId);
+    console.log('🔍 DEBUG - empresas disponibles:', Object.keys(this.gestor.empresas));
     const empresa = this.gestor.empresas[empresaId];
+    console.log('🔍 DEBUG - empresa encontrada:', empresa);
     if (!empresa) {
         this.mostrarError('Empresa no encontrada');
         return;
