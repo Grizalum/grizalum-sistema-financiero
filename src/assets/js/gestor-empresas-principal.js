@@ -943,37 +943,45 @@ class GestorEmpresasProfesional {
     // API PÚBLICA PRINCIPAL
     // ═══════════════════════════════════════════════════════════════════════════
     seleccionarEmpresa(empresaId) {
-        if (!this.estado.empresas[empresaId]) {
-            this._log('error', `Empresa no encontrada: ${empresaId}`);
-            return false;
-        }
-
-        const empresaAnterior = this.estado.empresaActual;
-        this.estado.empresaActual = empresaId;
-        
-        // Actualizar interfaz
-        this._actualizarSelectorPrincipal();
-        this._actualizarTarjetasActivas();
-        this._cerrarLista();
-        
-        // Registrar actividad
-        const empresa = this.estado.empresas[empresaId];
-        this._registrarActividad('EMPRESA_SELECCIONADA', `Empresa seleccionada: ${empresa.nombre}`);
-        
-        // Notificar a otros módulos
-        this._dispararEvento('empresaSeleccionada', {
-            empresaId,
-            empresa,
-            empresaAnterior,
-            timestamp: Date.now()
-        });
-        
-        // Actualizar métricas
-        this._calcularMetricas();
-        
-        this._log('info', `🏢 Empresa seleccionada: ${empresa.nombre}`);
-        return true;
+    if (!this.estado.empresas[empresaId]) {
+        this._log('error', `Empresa no encontrada: ${empresaId}`);
+        return false;
     }
+
+    const empresaAnterior = this.estado.empresaActual;
+    this.estado.empresaActual = empresaId;
+    
+    // Actualizar interfaz
+    this._actualizarSelectorPrincipal();
+    this._actualizarTarjetasActivas();
+    this._cerrarLista();
+    
+    // NUEVA CONEXIÓN: Cambiar empresa en el sistema de datos
+    if (window.changeCompany) {
+        window.changeCompany(empresaId);
+    }
+    
+    // NUEVA CONEXIÓN: Actualizar interfaz completa
+    if (window.actualizarInterfazCompleta) {
+        window.actualizarInterfazCompleta();
+    }
+    
+    // Registrar actividad
+    const empresa = this.estado.empresas[empresaId];
+    this._registrarActividad('EMPRESA_SELECCIONADA', `Empresa seleccionada: ${empresa.nombre}`);
+    
+    // Notificar a otros módulos
+    this._dispararEvento('empresaSeleccionada', {
+        empresaId,
+        empresa,
+        empresaAnterior,
+        timestamp: Date.now()
+    });
+    
+    this._calcularMetricas();
+    this._log('info', `Empresa seleccionada: ${empresa.nombre}`);
+    return true;
+}
 
     alternarLista() {
         this.estado.listaAbierta = !this.estado.listaAbierta;
@@ -2415,6 +2423,22 @@ function seleccionarEmpresa(empresaId) {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { GestorEmpresasProfesional, inicializarGestorEmpresas };
 }
+// CONEXIÓN CON SISTEMA DE DATOS DINÁMICOS
+window.addEventListener('empresaSeleccionada', (event) => {
+    if (window.actualizarMetricas) {
+        setTimeout(() => window.actualizarMetricas(), 100);
+    }
+    if (window.actualizarGraficos) {
+        setTimeout(() => window.actualizarGraficos(), 200);
+    }
+});
+
+// CONEXIÓN GLOBAL PARA CAMBIO DE EMPRESA
+window.changeCompany = function(empresaId) {
+    if (window.cambiarEmpresaActiva) {
+        window.cambiarEmpresaActiva(empresaId);
+    }
+};
 
 console.log(`
 🏢 ═══════════════════════════════════════════════════════════════════════════════
