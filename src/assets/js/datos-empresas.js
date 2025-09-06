@@ -381,7 +381,18 @@ function obtenerIconoTendencia(valor) {
 }
 
 // FUNCIONES PARA EVENTOS DE UI
+// Variable global para prevenir doble click
+let isUpdating = false;
+
 function changePeriod(periodo, elemento) {
+    // Prevenir doble click
+    if (isUpdating) {
+        console.log('Actualización en progreso, ignorando click');
+        return;
+    }
+    
+    isUpdating = true;
+    
     if (window.cambiarPeriodoActivo) {
         window.cambiarPeriodoActivo(periodo);
     }
@@ -400,6 +411,10 @@ function changePeriod(periodo, elemento) {
         if (window.actualizarInterfazCompleta) {
             window.actualizarInterfazCompleta();
         }
+        // Liberar el lock después de actualizar
+        setTimeout(() => {
+            isUpdating = false;
+        }, 500);
     }, 100);
 }
 
