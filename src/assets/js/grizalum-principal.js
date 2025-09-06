@@ -250,67 +250,14 @@ function mostrarNotificacion(mensaje, tipo = 'info', duracion = 5000) {
  * @param {Object} datos - Objeto con revenue, expenses, profit, growth
  */
 function actualizarKPIs(datos) {
-    if (!datos) {
-        console.warn('⚠️ No se recibieron datos para actualizar KPIs');
-        return;
-    }
-    
-    try {
-        // Elementos que vamos a actualizar
-        const elementos = {
-            revenueValue: datos.revenue,
-            expensesValue: datos.expenses,
-            profitValue: datos.profit,
-            growthValue: datos.growth || '+24.8%'
-        };
-        
-        // Actualizar cada elemento
-        Object.entries(elementos).forEach(([id, valor]) => {
-            const elemento = document.getElementById(id);
-            if (elemento) {
-                if (typeof valor === 'number') {
-                    elemento.textContent = `S/. ${valor.toLocaleString()}`;
-                } else {
-                    elemento.textContent = valor;
-                }
-                console.log(`📊 KPI actualizado: ${id} = ${valor}`);
-            } else {
-                console.warn(`⚠️ No se encontró elemento: ${id}`);
-            }
-        });
-        
-        console.log('✅ Todos los KPIs actualizados correctamente');
-        
-    } catch (error) {
-        console.error('❌ Error actualizando KPIs:', error);
-        mostrarNotificacion('❌ Error actualizando datos del dashboard', 'error');
-    }
-}
+     return;
 
 /**
  * Actualizar resumen financiero en el sidebar
  * @param {Object} datos - Objeto con cashFlow y profit
  */
 function actualizarSidebar(datos) {
-    if (!datos) return;
-    
-    try {
-        const elementoCashFlow = document.getElementById('sidebarCashFlow');
-        const elementoProfit = document.getElementById('sidebarProfit');
-        
-        if (elementoCashFlow && datos.cashFlow) {
-            elementoCashFlow.textContent = `S/. ${datos.cashFlow.toLocaleString()}`;
-        }
-        
-        if (elementoProfit && datos.profit) {
-            elementoProfit.textContent = `S/. ${datos.profit.toLocaleString()}`;
-        }
-        
-        console.log('💰 Sidebar financiero actualizado');
-        
-    } catch (error) {
-        console.error('❌ Error actualizando sidebar:', error);
-    }
+     return;
 }
 
 // ================================================================
@@ -455,9 +402,6 @@ document.addEventListener('grizalumCompanyChanged', function(evento) {
     const { companyId, company } = evento.detail;
     console.log(`🏢 Empresa cambiada en sistema principal: ${company.name}`);
     
-    // Actualizar datos en el dashboard
-    actualizarKPIs(company.data);
-    actualizarSidebar(company.data);
     
     // Aplicar tema si existe
     if (company.theme) {
