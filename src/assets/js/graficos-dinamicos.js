@@ -144,7 +144,7 @@ class GraficosExtension {
         const chart = Chart.getChart(canvas);
         if (!chart) {
             // Si no existe, crear uno nuevo
-            this.crearGraficoNuevo(canvasId, nuevosData, tipoGrafico);
+            this.crearGraficoNuevo(canvasId, nuevosdatos, tipoGrafico);
             return;
         }
 
