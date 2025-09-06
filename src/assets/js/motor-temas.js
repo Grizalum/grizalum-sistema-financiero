@@ -1,15 +1,16 @@
 // ================================================================
-// MOTOR DE TEMAS GRIZALUM V2.0 - MEJORADO Y OPTIMIZADO
+// MOTOR DE TEMAS GRIZALUM V2.1 - CORREGIDO PARA COLORES POR EMPRESA
 // Sistema profesional de temas con efectos modernos
+// SOLUCIÓN: Cada empresa mantiene colores únicos e independientes
 // ================================================================
 
-console.log('🎨 Cargando Motor de Temas GRIZALUM v2.0...');
+console.log('🎨 Cargando Motor de Temas GRIZALUM v2.1 - CORREGIDO...');
 
 // ================================================================
 // CONFIGURACIÓN GLOBAL DEL MOTOR
 // ================================================================
 const GRIZALUM_THEME_CONFIG = {
-    version: '2.0.0',
+    version: '2.1.0',
     defaultTheme: 'gold',
     transitionDuration: '0.4s',
     enableAnimations: true,
@@ -25,6 +26,7 @@ class GrizalumThemeEngine {
     constructor() {
         this.currentTheme = null;
         this.currentCompany = null;
+        this.companyThemes = new Map(); // NUEVO: Temas específicos por empresa
         this.isInitialized = false;
         this.transitionInProgress = false;
         
@@ -93,7 +95,6 @@ class GrizalumThemeEngine {
         };
         
         this.customThemes = new Map();
-        this.companyThemes = new Map();
     }
 
     // ================================================================
@@ -105,7 +106,7 @@ class GrizalumThemeEngine {
             return;
         }
 
-        console.log('🚀 Inicializando Motor de Temas v2.0...');
+        console.log('🚀 Inicializando Motor de Temas v2.1...');
         
         this.createBaseStyles();
         this.setupEventListeners();
@@ -138,7 +139,7 @@ class GrizalumThemeEngine {
         const style = document.createElement('style');
         style.id = styleId;
         style.textContent = `
-            /* ===== GRIZALUM THEME ENGINE V2.0 BASE STYLES ===== */
+            /* ===== GRIZALUM THEME ENGINE V2.1 BASE STYLES ===== */
             
             :root {
                 --theme-transition: ${GRIZALUM_THEME_CONFIG.transitionDuration};
@@ -240,7 +241,7 @@ class GrizalumThemeEngine {
     }
 
     // ================================================================
-    // FUNCIÓN PRINCIPAL DE CAMBIO DE TEMA
+    // FUNCIÓN PRINCIPAL DE CAMBIO DE TEMA (MEJORADA)
     // ================================================================
     changeTheme(themeName, options = {}) {
         if (this.transitionInProgress) {
@@ -283,7 +284,320 @@ class GrizalumThemeEngine {
     }
 
     // ================================================================
-    // APLICACIÓN DE TEMA COMPLETA
+    // NUEVA FUNCIÓN: CAMBIO DE TEMA POR EMPRESA ESPECÍFICA
+    // ================================================================
+    changeThemeForCompany(themeName, companyId, options = {}) {
+        console.log(`🎨 Aplicando tema específico para empresa: ${companyId} → ${themeName}`);
+        
+        const theme = this.themeMap[themeName];
+        if (!theme) {
+            console.error(`Tema "${themeName}" no encontrado`);
+            return;
+        }
+
+        // Guardar tema específico de la empresa
+        this.companyThemes.set(companyId, themeName);
+        this.currentCompany = companyId;
+        
+        // Aplicar tema específico de la empresa
+        this.applyCompanyTheme(theme, companyId, options);
+        
+        // Marcar empresa actual en el body
+        document.body.setAttribute('data-company', companyId);
+        
+        // Guardar preferencia específica
+        this.saveCompanyThemePreference(companyId, themeName);
+        
+        console.log(`✅ Tema ${theme.name} aplicado a empresa: ${companyId}`);
+    }
+
+    // ================================================================
+    // APLICACIÓN DE TEMA ESPECÍFICO POR EMPRESA
+    // ================================================================
+    applyCompanyTheme(theme, companyId, options = {}) {
+        // Generar CSS específico para la empresa
+        this.generateCompanyCSS(theme, companyId, options);
+        
+        // Actualizar variables CSS específicas de la empresa
+        this.updateCompanyCSSVariables(theme, companyId);
+        
+        // Aplicar efectos especiales si están habilitados
+        if (GRIZALUM_THEME_CONFIG.enableAnimations) {
+            this.applyAnimationEffects(theme);
+        }
+        
+        console.log(`✅ Tema ${theme.name} aplicado a empresa ${companyId}`);
+    }
+
+    // ================================================================
+    // GENERACIÓN DE CSS ESPECÍFICO POR EMPRESA
+    // ================================================================
+    generateCompanyCSS(theme, companyId, options = {}) {
+        const styleId = `grizalum-theme-company-${companyId}`;
+        
+        // Eliminar CSS anterior de esta empresa
+        const existing = document.getElementById(styleId);
+        if (existing) existing.remove();
+
+        const style = document.createElement('style');
+        style.id = styleId;
+        style.textContent = this.buildCompanyThemeCSS(theme, companyId, options);
+        document.head.appendChild(style);
+        
+        console.log(`🎨 CSS específico generado para empresa: ${companyId}`);
+    }
+
+    buildCompanyThemeCSS(theme, companyId, options) {
+        const { primary, primaryDark, primaryLight, secondary, accent } = theme;
+        const companyName = options.companyName || '';
+        
+        return `
+            /* ===== TEMA EMPRESA ESPECÍFICO: ${theme.name.toUpperCase()} - ${companyId.toUpperCase()} ===== */
+            
+            /* Variables dinámicas específicas de la empresa */
+            [data-company="${companyId}"] {
+                --theme-primary: ${primary};
+                --theme-primary-dark: ${primaryDark};
+                --theme-primary-light: ${primaryLight};
+                --theme-secondary: ${secondary};
+                --theme-accent: ${accent};
+                --theme-primary-alpha: ${this.hexToRgba(primary, 0.12)};
+                --theme-primary-glow: ${this.hexToRgba(primary, 0.25)};
+                --theme-gradient: linear-gradient(135deg, ${primary} 0%, ${primaryDark} 100%);
+                --theme-gradient-soft: linear-gradient(135deg, ${primaryLight} 20%, ${primary} 80%);
+                --theme-gradient-radial: radial-gradient(circle at center, ${primary} 0%, ${primaryDark} 100%);
+            }
+            
+            /* ===== SIDEBAR ESPECÍFICO DE LA EMPRESA ===== */
+            [data-company="${companyId}"] .sidebar {
+                background: linear-gradient(180deg, 
+                    ${this.hexToRgba(primary, 0.95)} 0%, 
+                    ${this.hexToRgba(primaryDark, 0.9)} 50%, 
+                    ${this.hexToRgba(primary, 0.95)} 100%) !important;
+                border-right: 1px solid ${this.hexToRgba(primary, 0.3)} !important;
+                box-shadow: 
+                    4px 0 30px ${this.hexToRgba(primary, 0.2)},
+                    inset -1px 0 0 ${this.hexToRgba('#ffffff', 0.1)} !important;
+            }
+            
+            [data-company="${companyId}"] .sidebar-header {
+                background: linear-gradient(135deg, 
+                    ${this.hexToRgba('#000000', 0.4)} 0%, 
+                    ${this.hexToRgba('#000000', 0.2)} 100%) !important;
+                border-bottom: 2px solid ${this.hexToRgba(primary, 0.5)} !important;
+            }
+            
+            [data-company="${companyId}"] .company-brand .brand-text h1 {
+                color: #ffffff !important;
+                text-shadow: 0 0 15px ${this.hexToRgba(primary, 0.6)} !important;
+            }
+            
+            /* ===== HEADER ESPECÍFICO DE LA EMPRESA ===== */
+            [data-company="${companyId}"] .executive-header {
+                border-bottom: 3px solid ${primary} !important;
+                box-shadow: 
+                    0 8px 40px ${this.hexToRgba('#000000', 0.3)},
+                    0 2px 0 ${this.hexToRgba(primary, 0.5)} !important;
+            }
+            
+            [data-company="${companyId}"] .page-title {
+                background: linear-gradient(135deg, #ffffff 0%, ${primaryLight} 100%) !important;
+                -webkit-background-clip: text !important;
+                -webkit-text-fill-color: transparent !important;
+            }
+            
+            [data-company="${companyId}"] .ai-insights {
+                background: linear-gradient(90deg, 
+                    ${this.hexToRgba(primary, 0.15)} 0%, 
+                    transparent 100%) !important;
+                color: ${primaryLight} !important;
+                border: 1px solid ${this.hexToRgba(primary, 0.3)} !important;
+            }
+            
+            /* ===== TARJETAS MÉTRICAS ESPECÍFICAS ===== */
+            [data-company="${companyId}"] .metric-card {
+                border-top: 4px solid ${primary} !important;
+                border: 1px solid ${this.hexToRgba(primary, 0.2)} !important;
+            }
+            
+            [data-company="${companyId}"] .metric-card::before {
+                background: linear-gradient(90deg, 
+                    ${primary} 0%, 
+                    ${primaryLight} 50%, 
+                    ${primary} 100%);
+            }
+            
+            [data-company="${companyId}"] .metric-card:hover {
+                box-shadow: 
+                    0 20px 60px ${this.hexToRgba('#000000', 0.4)},
+                    0 0 30px ${this.hexToRgba(primary, 0.3)} !important;
+                border-color: ${this.hexToRgba(primary, 0.6)} !important;
+            }
+            
+            [data-company="${companyId}"] .metric-card:hover .metric-value {
+                color: ${primaryLight} !important;
+                text-shadow: 0 0 15px ${this.hexToRgba(primary, 0.8)} !important;
+            }
+            
+            /* ===== ICONOS ESPECÍFICOS ===== */
+            [data-company="${companyId}"] .metric-icon {
+                background: linear-gradient(135deg, 
+                    ${primary} 0%, 
+                    ${primaryDark} 100%) !important;
+                box-shadow: 
+                    0 8px 25px ${this.hexToRgba(primary, 0.4)},
+                    inset 0 1px 0 ${this.hexToRgba('#ffffff', 0.2)} !important;
+            }
+            
+            [data-company="${companyId}"] .metric-icon:hover {
+                box-shadow: 
+                    0 12px 35px ${this.hexToRgba(primary, 0.6)},
+                    0 0 25px ${this.hexToRgba(primary, 0.4)} !important;
+            }
+            
+            /* ===== NAVEGACIÓN ESPECÍFICA ===== */
+            [data-company="${companyId}"] .nav-link.active {
+                background: linear-gradient(135deg, 
+                    ${this.hexToRgba('#ffffff', 0.2)} 0%, 
+                    ${this.hexToRgba('#ffffff', 0.1)} 100%) !important;
+                border: 1px solid ${this.hexToRgba('#ffffff', 0.15)} !important;
+            }
+            
+            [data-company="${companyId}"] .nav-link.active::before {
+                background: linear-gradient(180deg, ${primary}, ${primaryLight});
+                box-shadow: 0 0 10px ${this.hexToRgba(primary, 0.8)};
+            }
+            
+            [data-company="${companyId}"] .nav-link:hover:not(.active) {
+                background: ${this.hexToRgba(primary, 0.1)} !important;
+                color: ${primaryLight} !important;
+                border-left: 3px solid ${primary} !important;
+                text-shadow: 0 0 8px ${this.hexToRgba(primary, 0.6)} !important;
+            }
+            
+            /* ===== BOTONES ESPECÍFICOS ===== */
+            [data-company="${companyId}"] .period-btn.active {
+                background: linear-gradient(135deg, ${primary} 0%, ${primaryDark} 100%) !important;
+                box-shadow: 
+                    0 8px 25px ${this.hexToRgba(primary, 0.4)},
+                    0 0 20px ${this.hexToRgba(primary, 0.3)} !important;
+            }
+            
+            [data-company="${companyId}"] .period-btn:hover:not(.active) {
+                border-color: ${this.hexToRgba(primary, 0.6)} !important;
+                color: ${primaryLight} !important;
+                background: ${this.hexToRgba(primary, 0.1)} !important;
+            }
+            
+            [data-company="${companyId}"] .ai-header-button {
+                background: linear-gradient(135deg, ${primary} 0%, ${primaryDark} 100%) !important;
+                box-shadow: 
+                    0 8px 25px ${this.hexToRgba(primary, 0.4)},
+                    0 0 20px ${this.hexToRgba(primary, 0.3)} !important;
+            }
+            
+            [data-company="${companyId}"] .ai-header-button:hover {
+                box-shadow: 
+                    0 15px 40px ${this.hexToRgba(primary, 0.5)},
+                    0 0 30px ${this.hexToRgba(primary, 0.4)} !important;
+            }
+            
+            /* ===== GRÁFICOS ESPECÍFICOS ===== */
+            [data-company="${companyId}"] .chart-card {
+                border-top: 4px solid ${primary} !important;
+                border: 1px solid ${this.hexToRgba(primary, 0.2)} !important;
+            }
+            
+            [data-company="${companyId}"] .chart-card:hover {
+                box-shadow: 
+                    0 15px 50px ${this.hexToRgba('#000000', 0.4)},
+                    0 0 25px ${this.hexToRgba(primary, 0.2)} !important;
+                border-color: ${this.hexToRgba(primary, 0.4)} !important;
+            }
+            
+            [data-company="${companyId}"] .chart-title {
+                text-shadow: 0 0 10px ${this.hexToRgba(primary, 0.5)} !important;
+            }
+            
+            [data-company="${companyId}"] .filter-btn.active {
+                background: ${primary} !important;
+                box-shadow: 0 6px 20px ${this.hexToRgba(primary, 0.4)} !important;
+            }
+            
+            /* ===== NOTIFICACIONES ESPECÍFICAS ===== */
+            [data-company="${companyId}"] .grizalum-notification {
+                border-left: 4px solid ${primary} !important;
+                box-shadow: 
+                    0 10px 40px ${this.hexToRgba('#000000', 0.3)},
+                    0 0 20px ${this.hexToRgba(primary, 0.2)} !important;
+            }
+            
+            [data-company="${companyId}"] .notification-badge {
+                background: linear-gradient(135deg, ${primary}, ${primaryDark}) !important;
+                box-shadow: 0 0 15px ${this.hexToRgba(primary, 0.6)} !important;
+            }
+            
+            /* ===== SCROLLBAR ESPECÍFICO ===== */
+            [data-company="${companyId}"] ::-webkit-scrollbar-thumb {
+                background: linear-gradient(135deg, ${primary}, ${primaryDark}) !important;
+                box-shadow: 0 0 10px ${this.hexToRgba(primary, 0.5)} !important;
+            }
+            
+            [data-company="${companyId}"] ::-webkit-scrollbar-thumb:hover {
+                background: linear-gradient(135deg, ${primaryLight}, ${primary}) !important;
+                box-shadow: 0 0 15px ${this.hexToRgba(primary, 0.8)} !important;
+            }
+            
+            /* ===== EFECTOS ESPECIALES POR EMPRESA ===== */
+            ${companyName ? `
+            [data-company="${companyId}"] .company-brand .brand-text h1::after {
+                content: ' • ${companyName}';
+                font-size: 0.6em;
+                color: ${primaryLight};
+                opacity: 0.9;
+                font-weight: 400;
+            }
+            ` : ''}
+        `;
+    }
+
+    // ================================================================
+    // UTILIDADES Y HELPERS
+    // ================================================================
+    hexToRgba(hex, alpha) {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    updateCompanyCSSVariables(theme, companyId) {
+        // Solo actualizar variables específicas si la empresa actual coincide
+        if (this.currentCompany === companyId) {
+            const root = document.documentElement;
+            root.style.setProperty('--theme-primary', theme.primary);
+            root.style.setProperty('--theme-primary-dark', theme.primaryDark);
+            root.style.setProperty('--theme-primary-light', theme.primaryLight);
+            root.style.setProperty('--theme-secondary', theme.secondary);
+            root.style.setProperty('--theme-accent', theme.accent);
+            root.style.setProperty('--theme-primary-alpha', this.hexToRgba(theme.primary, 0.12));
+            root.style.setProperty('--theme-primary-glow', this.hexToRgba(theme.primary, 0.25));
+        }
+    }
+
+    updateCSSVariables(theme) {
+        const root = document.documentElement;
+        root.style.setProperty('--theme-primary', theme.primary);
+        root.style.setProperty('--theme-primary-dark', theme.primaryDark);
+        root.style.setProperty('--theme-primary-light', theme.primaryLight);
+        root.style.setProperty('--theme-secondary', theme.secondary);
+        root.style.setProperty('--theme-accent', theme.accent);
+        root.style.setProperty('--theme-primary-alpha', this.hexToRgba(theme.primary, 0.12));
+        root.style.setProperty('--theme-primary-glow', this.hexToRgba(theme.primary, 0.25));
+    }
+
+    // ================================================================
+    // APLICACIÓN DE TEMA COMPLETA (VERSIÓN ORIGINAL)
     // ================================================================
     applyTheme(theme, options = {}) {
         // Aplicar atributo data-theme para CSS existente
@@ -304,44 +618,27 @@ class GrizalumThemeEngine {
     }
 
     // ================================================================
-    // GENERACIÓN DE CSS DINÁMICO AVANZADO
+    // GENERACIÓN DE CSS DINÁMICO AVANZADO (VERSIÓN ORIGINAL)
     // ================================================================
-    // ✅ NUEVA FUNCIÓN: CSS por empresa específica
-generateCompanyCSS(theme, companyId, options = {}) {
-    const styleId = `grizalum-theme-${companyId}`;  // ← ID ÚNICO POR EMPRESA
-    
-    // Eliminar CSS anterior de ESTA empresa solamente
-    const existing = document.getElementById(styleId);
-    if (existing) existing.remove();
-
-    const style = document.createElement('style');
-    style.id = styleId;
-    style.textContent = this.buildCompanyThemeCSS(theme, companyId, options);
-    document.head.appendChild(style);
-}
-
-buildCompanyThemeCSS(theme, companyId, options) {
-    return `
-        /* CSS SOLO para empresa: ${companyId} */
-        [data-company="${companyId}"] {
-            --theme-primary: ${theme.primary};
-            --theme-primary-dark: ${theme.primaryDark};
-            /* ... resto de variables */
-        }
+    generateDynamicCSS(theme, options = {}) {
+        const styleId = 'grizalum-dynamic-theme-global';
         
-        [data-company="${companyId}"] .metric-card {
-            border-top-color: ${theme.primary} !important;
-            /* ... estilos específicos */
-        }
-    `;
-}
+        // Eliminar CSS anterior
+        const existing = document.getElementById(styleId);
+        if (existing) existing.remove();
+
+        const style = document.createElement('style');
+        style.id = styleId;
+        style.textContent = this.buildAdvancedThemeCSS(theme, options);
+        document.head.appendChild(style);
+    }
 
     buildAdvancedThemeCSS(theme, options) {
         const { primary, primaryDark, primaryLight, secondary, accent } = theme;
         const companyName = options.companyName || '';
         
         return `
-            /* ===== TEMA DINÁMICO: ${theme.name.toUpperCase()} ===== */
+            /* ===== TEMA DINÁMICO GLOBAL: ${theme.name.toUpperCase()} ===== */
             
             /* Variables dinámicas del tema */
             :root {
@@ -355,315 +652,6 @@ buildCompanyThemeCSS(theme, companyId, options) {
                 --theme-gradient: linear-gradient(135deg, ${primary} 0%, ${primaryDark} 100%);
                 --theme-gradient-soft: linear-gradient(135deg, ${primaryLight} 20%, ${primary} 80%);
                 --theme-gradient-radial: radial-gradient(circle at center, ${primary} 0%, ${primaryDark} 100%);
-            }
-            
-            /* ===== SIDEBAR FUTURISTA MEJORADA ===== */
-            .sidebar {
-                background: linear-gradient(180deg, 
-                    ${this.hexToRgba(primary, 0.95)} 0%, 
-                    ${this.hexToRgba(primaryDark, 0.9)} 50%, 
-                    ${this.hexToRgba(primary, 0.95)} 100%) !important;
-                border-right: 1px solid ${this.hexToRgba(primary, 0.3)} !important;
-                box-shadow: 
-                    4px 0 30px ${this.hexToRgba(primary, 0.2)},
-                    inset -1px 0 0 ${this.hexToRgba('#ffffff', 0.1)} !important;
-                backdrop-filter: blur(20px) saturate(180%) !important;
-            }
-            
-            .sidebar-header {
-                background: linear-gradient(135deg, 
-                    ${this.hexToRgba('#000000', 0.4)} 0%, 
-                    ${this.hexToRgba('#000000', 0.2)} 100%) !important;
-                border-bottom: 2px solid ${this.hexToRgba(primary, 0.5)} !important;
-                backdrop-filter: blur(15px) !important;
-                position: relative;
-                overflow: hidden;
-            }
-            
-            .sidebar-header::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(90deg, 
-                    transparent, 
-                    ${this.hexToRgba('#ffffff', 0.1)}, 
-                    transparent);
-                animation: shimmer 4s infinite;
-            }
-            
-            .company-brand .brand-text h1 {
-                color: #ffffff !important;
-                text-shadow: 0 0 15px ${this.hexToRgba(primary, 0.6)} !important;
-                font-weight: 700 !important;
-            }
-            
-            /* ===== HEADER EJECUTIVO PREMIUM ===== */
-            .executive-header {
-                background: linear-gradient(135deg, 
-                    ${this.hexToRgba('#1a1f2e', 0.95)} 0%, 
-                    ${this.hexToRgba('#2d3748', 0.9)} 50%, 
-                    ${this.hexToRgba('#1a1f2e', 0.95)} 100%) !important;
-                border-bottom: 3px solid ${primary} !important;
-                box-shadow: 
-                    0 8px 40px ${this.hexToRgba('#000000', 0.3)},
-                    0 2px 0 ${this.hexToRgba(primary, 0.5)} !important;
-                backdrop-filter: blur(25px) saturate(180%) !important;
-                position: relative;
-            }
-            
-            .executive-header::after {
-                content: '';
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                height: 1px;
-                background: linear-gradient(90deg, 
-                    transparent, 
-                    ${primary}, 
-                    transparent);
-                box-shadow: 0 0 10px ${this.hexToRgba(primary, 0.8)};
-            }
-            
-            .page-title {
-                background: linear-gradient(135deg, #ffffff 0%, ${primaryLight} 100%) !important;
-                -webkit-background-clip: text !important;
-                -webkit-text-fill-color: transparent !important;
-                text-shadow: none !important;
-                font-weight: 800 !important;
-            }
-            
-            .ai-insights {
-                background: linear-gradient(90deg, 
-                    ${this.hexToRgba(primary, 0.15)} 0%, 
-                    transparent 100%) !important;
-                color: ${primaryLight} !important;
-                border: 1px solid ${this.hexToRgba(primary, 0.3)} !important;
-                border-radius: 8px !important;
-                backdrop-filter: blur(10px) !important;
-            }
-            
-            /* ===== TARJETAS MÉTRICAS FUTURISTAS ===== */
-            .metric-card {
-                background: linear-gradient(135deg, 
-                    ${this.hexToRgba('#1e293b', 0.9)} 0%, 
-                    ${this.hexToRgba('#334155', 0.8)} 100%) !important;
-                border: 1px solid ${this.hexToRgba(primary, 0.2)} !important;
-                border-top: 4px solid ${primary} !important;
-                border-radius: 20px !important;
-                box-shadow: 
-                    0 10px 40px ${this.hexToRgba('#000000', 0.3)},
-                    inset 0 1px 0 ${this.hexToRgba('#ffffff', 0.1)} !important;
-                backdrop-filter: blur(15px) saturate(150%) !important;
-                position: relative;
-                overflow: hidden;
-                color: #ffffff !important;
-            }
-            
-            .metric-card::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 4px;
-                background: linear-gradient(90deg, 
-                    ${primary} 0%, 
-                    ${primaryLight} 50%, 
-                    ${primary} 100%);
-                background-size: 200% 100%;
-                animation: gradientFlow 3s ease-in-out infinite;
-            }
-            
-            .metric-card::after {
-                content: '';
-                position: absolute;
-                top: -50%;
-                left: -50%;
-                width: 200%;
-                height: 200%;
-                background: radial-gradient(circle, 
-                    ${this.hexToRgba(primary, 0.1)} 0%, 
-                    transparent 70%);
-                opacity: 0;
-                transition: opacity 0.4s ease;
-            }
-            
-            .metric-card:hover {
-                transform: translateY(-8px) scale(1.02) !important;
-                box-shadow: 
-                    0 20px 60px ${this.hexToRgba('#000000', 0.4)},
-                    0 0 30px ${this.hexToRgba(primary, 0.3)} !important;
-                border-color: ${this.hexToRgba(primary, 0.6)} !important;
-            }
-            
-            .metric-card:hover::after {
-                opacity: 1;
-            }
-            
-            .metric-card:hover .metric-value {
-                color: ${primaryLight} !important;
-                text-shadow: 0 0 15px ${this.hexToRgba(primary, 0.8)} !important;
-                transform: scale(1.05) !important;
-            }
-            
-            .metric-value {
-                font-weight: 800 !important;
-                font-size: 2rem !important;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            }
-            
-            /* ===== ICONOS CON EFECTOS PREMIUM ===== */
-            .metric-icon {
-                background: linear-gradient(135deg, 
-                    ${primary} 0%, 
-                    ${primaryDark} 100%) !important;
-                color: #ffffff !important;
-                box-shadow: 
-                    0 8px 25px ${this.hexToRgba(primary, 0.4)},
-                    inset 0 1px 0 ${this.hexToRgba('#ffffff', 0.2)} !important;
-                border: 1px solid ${this.hexToRgba('#ffffff', 0.1)} !important;
-                border-radius: 16px !important;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            }
-            
-            .metric-icon:hover {
-                transform: scale(1.15) rotate(5deg) !important;
-                box-shadow: 
-                    0 12px 35px ${this.hexToRgba(primary, 0.6)},
-                    0 0 25px ${this.hexToRgba(primary, 0.4)} !important;
-            }
-            
-            /* ===== NAVEGACIÓN AVANZADA ===== */
-            .nav-link {
-                border-radius: 14px !important;
-                margin: 6px 12px !important;
-                position: relative !important;
-                overflow: hidden !important;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            }
-            
-            .nav-link.active {
-                background: linear-gradient(135deg, 
-                    ${this.hexToRgba('#ffffff', 0.2)} 0%, 
-                    ${this.hexToRgba('#ffffff', 0.1)} 100%) !important;
-                color: #ffffff !important;
-                box-shadow: 
-                    0 8px 25px ${this.hexToRgba('#000000', 0.3)},
-                    inset 0 1px 0 ${this.hexToRgba('#ffffff', 0.2)} !important;
-                border: 1px solid ${this.hexToRgba('#ffffff', 0.15)} !important;
-                transform: translateX(8px) !important;
-            }
-            
-            .nav-link.active::before {
-                content: '';
-                position: absolute;
-                left: 0;
-                top: 20%;
-                bottom: 20%;
-                width: 4px;
-                background: linear-gradient(180deg, ${primary}, ${primaryLight});
-                border-radius: 0 4px 4px 0;
-                box-shadow: 0 0 10px ${this.hexToRgba(primary, 0.8)};
-            }
-            
-            .nav-link:hover:not(.active) {
-                background: ${this.hexToRgba(primary, 0.1)} !important;
-                color: ${primaryLight} !important;
-                transform: translateX(6px) !important;
-                border-left: 3px solid ${primary} !important;
-                text-shadow: 0 0 8px ${this.hexToRgba(primary, 0.6)} !important;
-            }
-            
-            /* ===== BOTONES INTERACTIVOS ===== */
-            .period-btn.active {
-                background: linear-gradient(135deg, ${primary} 0%, ${primaryDark} 100%) !important;
-                color: #ffffff !important;
-                box-shadow: 
-                    0 8px 25px ${this.hexToRgba(primary, 0.4)},
-                    0 0 20px ${this.hexToRgba(primary, 0.3)} !important;
-                transform: scale(1.05) !important;
-                border: none !important;
-            }
-            
-            .period-btn:hover:not(.active) {
-                border-color: ${this.hexToRgba(primary, 0.6)} !important;
-                color: ${primaryLight} !important;
-                background: ${this.hexToRgba(primary, 0.1)} !important;
-                transform: translateY(-2px) !important;
-            }
-            
-            .ai-header-button {
-                background: linear-gradient(135deg, ${primary} 0%, ${primaryDark} 100%) !important;
-                color: #ffffff !important;
-                border: 1px solid ${this.hexToRgba('#ffffff', 0.2)} !important;
-                box-shadow: 
-                    0 8px 25px ${this.hexToRgba(primary, 0.4)},
-                    0 0 20px ${this.hexToRgba(primary, 0.3)} !important;
-                border-radius: 12px !important;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            }
-            
-            .ai-header-button:hover {
-                transform: translateY(-3px) scale(1.05) !important;
-                box-shadow: 
-                    0 15px 40px ${this.hexToRgba(primary, 0.5)},
-                    0 0 30px ${this.hexToRgba(primary, 0.4)} !important;
-            }
-            
-            /* ===== GRÁFICOS Y VISUALIZACIONES ===== */
-            .chart-card {
-                background: linear-gradient(135deg, 
-                    ${this.hexToRgba('#1e293b', 0.9)} 0%, 
-                    ${this.hexToRgba('#334155', 0.8)} 100%) !important;
-                border: 1px solid ${this.hexToRgba(primary, 0.2)} !important;
-                border-top: 4px solid ${primary} !important;
-                border-radius: 20px !important;
-                box-shadow: 
-                    0 10px 40px ${this.hexToRgba('#000000', 0.3)},
-                    inset 0 1px 0 ${this.hexToRgba('#ffffff', 0.1)} !important;
-                backdrop-filter: blur(15px) saturate(150%) !important;
-                color: #ffffff !important;
-                overflow: hidden !important;
-                position: relative !important;
-            }
-            
-            .chart-card::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: 
-                    radial-gradient(circle at 20% 80%, ${this.hexToRgba(primary, 0.05)} 0%, transparent 50%),
-                    radial-gradient(circle at 80% 20%, ${this.hexToRgba(primaryLight, 0.05)} 0%, transparent 50%);
-                pointer-events: none;
-            }
-            
-            .chart-card:hover {
-                transform: translateY(-5px) !important;
-                box-shadow: 
-                    0 15px 50px ${this.hexToRgba('#000000', 0.4)},
-                    0 0 25px ${this.hexToRgba(primary, 0.2)} !important;
-                border-color: ${this.hexToRgba(primary, 0.4)} !important;
-            }
-            
-            .chart-title {
-                color: #ffffff !important;
-                text-shadow: 0 0 10px ${this.hexToRgba(primary, 0.5)} !important;
-                font-weight: 600 !important;
-            }
-            
-            .filter-btn.active {
-                background: ${primary} !important;
-                color: #ffffff !important;
-                border: none !important;
-                box-shadow: 0 6px 20px ${this.hexToRgba(primary, 0.4)} !important;
-                transform: scale(1.05) !important;
             }
             
             /* ===== SELECTOR DE TEMAS MEJORADO ===== */
@@ -691,34 +679,6 @@ buildCompanyThemeCSS(theme, companyId, options) {
                 transform: scale(1.15) !important;
             }
             
-            /* ===== NOTIFICACIONES TEMÁTICAS ===== */
-            .grizalum-notification {
-                background: ${this.hexToRgba('#1e293b', 0.95)} !important;
-                backdrop-filter: blur(20px) saturate(180%) !important;
-                border-left: 4px solid ${primary} !important;
-                box-shadow: 
-                    0 10px 40px ${this.hexToRgba('#000000', 0.3)},
-                    0 0 20px ${this.hexToRgba(primary, 0.2)} !important;
-                color: #ffffff !important;
-            }
-            
-            .notification-badge {
-                background: linear-gradient(135deg, ${primary}, ${primaryDark}) !important;
-                box-shadow: 0 0 15px ${this.hexToRgba(primary, 0.6)} !important;
-            }
-            
-            /* ===== SCROLLBAR TEMÁTICO ===== */
-            ::-webkit-scrollbar-thumb {
-                background: linear-gradient(135deg, ${primary}, ${primaryDark}) !important;
-                border-radius: 10px !important;
-                box-shadow: 0 0 10px ${this.hexToRgba(primary, 0.5)} !important;
-            }
-            
-            ::-webkit-scrollbar-thumb:hover {
-                background: linear-gradient(135deg, ${primaryLight}, ${primary}) !important;
-                box-shadow: 0 0 15px ${this.hexToRgba(primary, 0.8)} !important;
-            }
-            
             /* ===== ANIMACIONES ESPECIALES ===== */
             @keyframes shimmer {
                 0% { transform: translateX(-100%); }
@@ -738,54 +698,7 @@ buildCompanyThemeCSS(theme, companyId, options) {
                     box-shadow: 0 0 40px ${this.hexToRgba(primary, 0.6)};
                 }
             }
-            
-            /* ===== EFECTOS ESPECIALES POR EMPRESA ===== */
-            ${companyName ? `
-            .company-brand .brand-text h1::after {
-                content: ' • ${companyName}';
-                font-size: 0.6em;
-                color: ${primaryLight};
-                opacity: 0.9;
-                font-weight: 400;
-            }
-            ` : ''}
-            
-            /* ===== RESPONSIVE AVANZADO ===== */
-            @media (max-width: 768px) {
-                .metric-card {
-                    border-radius: 16px !important;
-                }
-                
-                .chart-card {
-                    border-radius: 16px !important;
-                }
-                
-                .nav-link {
-                    margin: 4px 8px !important;
-                }
-            }
         `;
-    }
-
-    // ================================================================
-    // UTILIDADES Y HELPERS
-    // ================================================================
-    hexToRgba(hex, alpha) {
-        const r = parseInt(hex.slice(1, 3), 16);
-        const g = parseInt(hex.slice(3, 5), 16);
-        const b = parseInt(hex.slice(5, 7), 16);
-        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-    }
-
-    updateCSSVariables(theme) {
-        const root = document.documentElement;
-        root.style.setProperty('--theme-primary', theme.primary);
-        root.style.setProperty('--theme-primary-dark', theme.primaryDark);
-        root.style.setProperty('--theme-primary-light', theme.primaryLight);
-        root.style.setProperty('--theme-secondary', theme.secondary);
-        root.style.setProperty('--theme-accent', theme.accent);
-        root.style.setProperty('--theme-primary-alpha', this.hexToRgba(theme.primary, 0.12));
-        root.style.setProperty('--theme-primary-glow', this.hexToRgba(theme.primary, 0.25));
     }
 
     // ================================================================
@@ -848,9 +761,9 @@ buildCompanyThemeCSS(theme, companyId, options) {
     // ================================================================
     setupEventListeners() {
         // Escuchar cambios de empresa
-        document.addEventListener('grizalumCompanyChanged', (event) => {
-            const { companyId, company } = event.detail;
-            this.applyCompanyTheme(companyId, company);
+        document.addEventListener('empresaSeleccionada', (event) => {
+            const { empresaId, empresa } = event.detail;
+            this.handleCompanyChange(empresaId, empresa);
         });
 
         // Escuchar comandos de tema personalizados
@@ -860,6 +773,28 @@ buildCompanyThemeCSS(theme, companyId, options) {
         });
 
         console.log('Event listeners configurados');
+    }
+
+    handleCompanyChange(empresaId, empresa) {
+        console.log(`🏢 Cambio de empresa detectado: ${empresaId}`);
+        
+        if (empresa && empresa.tema) {
+            // Mapear tema del gestor a tema del motor
+            const temaMap = {
+                'rojo': 'red',
+                'azul': 'blue',
+                'verde': 'green',
+                'morado': 'purple',
+                'dorado': 'gold'
+            };
+            
+            const temaCss = temaMap[empresa.tema] || 'gold';
+            
+            // Aplicar tema específico de la empresa
+            this.changeThemeForCompany(temaCss, empresaId, {
+                companyName: empresa.nombre
+            });
+        }
     }
 
     dispatchEvent(eventName, detail) {
@@ -873,8 +808,7 @@ buildCompanyThemeCSS(theme, companyId, options) {
     // ================================================================
     // TEMAS DE EMPRESA
     // ================================================================
-    this.currentCompany = companyId;
-       document.body.setAttribute('data-company', companyId);
+    applyCompanyTheme(companyId, company) {
         if (!company || !company.theme) {
             console.warn(`No se encontró tema para empresa: ${companyId}`);
             return;
@@ -937,6 +871,13 @@ buildCompanyThemeCSS(theme, companyId, options) {
         }
     }
 
+    saveCompanyThemePreference(companyId, themeName) {
+        if (GRIZALUM_THEME_CONFIG.autoSave) {
+            localStorage.setItem(`grizalum_company_theme_${companyId}`, themeName);
+            localStorage.setItem(`grizalum_company_theme_timestamp_${companyId}`, Date.now().toString());
+        }
+    }
+
     loadSavedPreferences() {
         const savedTheme = localStorage.getItem('grizalum_current_theme');
         if (savedTheme && this.themeMap[savedTheme]) {
@@ -944,6 +885,15 @@ buildCompanyThemeCSS(theme, companyId, options) {
             return savedTheme;
         }
         return GRIZALUM_THEME_CONFIG.defaultTheme;
+    }
+
+    loadCompanyThemePreference(companyId) {
+        const savedTheme = localStorage.getItem(`grizalum_company_theme_${companyId}`);
+        if (savedTheme && this.themeMap[savedTheme]) {
+            console.log(`Cargando tema guardado para empresa ${companyId}: ${savedTheme}`);
+            return savedTheme;
+        }
+        return null;
     }
 
     applyDefaultTheme() {
@@ -967,6 +917,10 @@ buildCompanyThemeCSS(theme, companyId, options) {
         return this.currentTheme;
     }
 
+    getCompanyTheme(companyId) {
+        return this.companyThemes.get(companyId);
+    }
+
     createCustomTheme(config) {
         const themeId = `custom-${Date.now()}`;
         const theme = {
@@ -982,6 +936,23 @@ buildCompanyThemeCSS(theme, companyId, options) {
 
         this.customThemes.set(themeId, theme);
         return themeId;
+    }
+
+    // ================================================================
+    // FUNCIÓN PARA LIMPIAR TEMAS DE EMPRESAS
+    // ================================================================
+    cleanupCompanyTheme(companyId) {
+        const styleElement = document.getElementById(`grizalum-theme-company-${companyId}`);
+        if (styleElement) {
+            styleElement.remove();
+            console.log(`🧹 CSS de empresa ${companyId} eliminado`);
+        }
+    }
+
+    cleanupAllCompanyThemes() {
+        const companyStyles = document.querySelectorAll('[id^="grizalum-theme-company-"]');
+        companyStyles.forEach(style => style.remove());
+        console.log('🧹 Todos los CSS de empresas eliminados');
     }
 }
 
@@ -999,12 +970,33 @@ function changeTheme(themeName) {
     }
 }
 
+// NUEVA: Función para cambiar tema específico de empresa
+function changeThemeForCompany(themeName, companyId) {
+    if (grizalumThemeEngine) {
+        grizalumThemeEngine.changeThemeForCompany(themeName, companyId);
+    } else {
+        console.warn('Motor de temas no inicializado');
+    }
+}
+
 // Funciones de compatibilidad
 function aplicarTemaEmpresa(empresaId) {
-    if (window.grizalumCompanyManager && grizalumThemeEngine) {
-        const empresa = window.grizalumCompanyManager.companies[empresaId];
+    if (window.gestorEmpresas && grizalumThemeEngine) {
+        const empresa = window.gestorEmpresas.estado.empresas[empresaId];
         if (empresa) {
-            grizalumThemeEngine.applyCompanyTheme(empresaId, empresa);
+            // Mapear tema del gestor al motor
+            const temaMap = {
+                'rojo': 'red',
+                'azul': 'blue', 
+                'verde': 'green',
+                'morado': 'purple',
+                'dorado': 'gold'
+            };
+            
+            const temaCss = temaMap[empresa.tema] || 'gold';
+            grizalumThemeEngine.changeThemeForCompany(temaCss, empresaId, {
+                companyName: empresa.nombre
+            });
         }
     }
 }
@@ -1019,7 +1011,7 @@ function aplicarTema(temaId) {
 // INICIALIZACIÓN AUTOMÁTICA
 // ================================================================
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Inicializando Motor de Temas GRIZALUM v2.0...');
+    console.log('Inicializando Motor de Temas GRIZALUM v2.1...');
     
     grizalumThemeEngine = new GrizalumThemeEngine();
     grizalumThemeEngine.initialize();
@@ -1029,6 +1021,7 @@ document.addEventListener('DOMContentLoaded', function() {
         version: GRIZALUM_THEME_CONFIG.version,
         engine: grizalumThemeEngine,
         changeTheme: changeTheme,
+        changeThemeForCompany: changeThemeForCompany,
         aplicarTemaEmpresa: aplicarTemaEmpresa,
         getAvailableThemes: () => grizalumThemeEngine.getAvailableThemes(),
         getCurrentTheme: () => grizalumThemeEngine.getCurrentTheme(),
@@ -1037,6 +1030,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Funciones globales para compatibilidad
     window.changeTheme = changeTheme;
+    window.changeThemeForCompany = changeThemeForCompany;
     window.aplicarTemaEmpresa = aplicarTemaEmpresa;
     window.aplicarTema = aplicarTema;
 });
@@ -1046,37 +1040,34 @@ document.addEventListener('DOMContentLoaded', function() {
 // ================================================================
 console.log(`
 🎨 =====================================================
-   MOTOR DE TEMAS GRIZALUM V2.0 - CARGADO
+   MOTOR DE TEMAS GRIZALUM V2.1 - CORREGIDO
 🎨 =====================================================
 
-✨ CARACTERÍSTICAS PRINCIPALES:
-   • 6 temas profesionales premium
-   • Efectos de cristal y glassmorphism avanzados  
-   • Transiciones suaves con cubic-bezier
-   • Soporte completo para temas de empresa
-   • Compatibilidad total con HTML existente
-   • API pública completa
-   • Persistencia automática de preferencias
+✨ SOLUCIÓN IMPLEMENTADA:
+   🏢 Colores independientes por empresa
+   🎯 CSS específico con [data-company="id"]
+   💾 Persistencia por empresa individual
+   🔄 Transiciones suaves entre empresas
+   🧹 Limpieza automática de temas
 
-🎯 TEMAS DISPONIBLES:
-   • gold - Goldman Executive (dorado premium)
-   • blue - Corporate Blue (azul corporativo)
-   • green - Growth Green (verde crecimiento)
-   • purple - Innovation Purple (púrpura innovación)
-   • red - Energy Orange (naranja energía)
-   • dark - Professional Dark (modo oscuro)
+🎯 FUNCIONES NUEVAS:
+   • changeThemeForCompany(theme, companyId)
+   • aplicarTemaEmpresa(empresaId)
+   • cleanupCompanyTheme(companyId)
+   • loadCompanyThemePreference(companyId)
 
-🔧 FUNCIONES GLOBALES:
-   • changeTheme(themeName) - Compatible con botones HTML
-   • aplicarTemaEmpresa(empresaId) - Para sistema de empresas
-   • GRIZALUM_THEMES.* - API completa
+🔧 MAPEO DE TEMAS:
+   • rojo → red
+   • azul → blue
+   • verde → green
+   • morado → purple
+   • dorado → gold
 
-⚡ MEJORAS V2.0:
-   • Mapeo correcto con nombres del HTML
-   • Efectos visuales premium optimizados
-   • Transiciones más suaves y elegantes
-   • Mejor rendimiento y menos conflictos
+⚡ MEJORAS V2.1:
+   • Cada empresa mantiene colores únicos
+   • Sin interferencia entre empresas
    • Sistema de eventos mejorado
+   • Mejor rendimiento y limpieza
 
 🎨 =====================================================
 `);
