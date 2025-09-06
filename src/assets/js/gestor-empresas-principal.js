@@ -2447,7 +2447,13 @@ window.changeCompany = function(empresaId) {
 // Función corregida para el botón editar
 function editarEmpresaActual() {
     // Obtener empresa actualmente seleccionada
-    const empresaActiva = window.gestorEmpresas?.empresaActual || window.gestorEmpresas?.currentCompanyId;
+   // Detectar empresa actualmente seleccionada del DOM
+   const selectorEmpresa = document.querySelector('.grizalum-selected-company');
+   const empresaActiva = selectorEmpresa ? { 
+    id: selectorEmpresa.getAttribute('data-company-id') || 
+        selectorEmpresa.querySelector('.company-name')?.textContent?.toLowerCase().replace(/\s+/g, '-') ||
+        'empresa-actual'
+    } : null;
     
     if (empresaActiva) {
         window.formularioEmpresas.editarEmpresa(empresaActiva.id);
