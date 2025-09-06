@@ -306,18 +306,35 @@ class GrizalumThemeEngine {
     // ================================================================
     // GENERACIÓN DE CSS DINÁMICO AVANZADO
     // ================================================================
-    generateDynamicCSS(theme, options = {}) {
-        const styleId = 'grizalum-dynamic-theme';
-        
-        // Eliminar CSS anterior
-        const existing = document.getElementById(styleId);
-        if (existing) existing.remove();
+    // ✅ NUEVA FUNCIÓN: CSS por empresa específica
+generateCompanyCSS(theme, companyId, options = {}) {
+    const styleId = `grizalum-theme-${companyId}`;  // ← ID ÚNICO POR EMPRESA
+    
+    // Eliminar CSS anterior de ESTA empresa solamente
+    const existing = document.getElementById(styleId);
+    if (existing) existing.remove();
 
-        const style = document.createElement('style');
-        style.id = styleId;
-        style.textContent = this.buildAdvancedThemeCSS(theme, options);
-        document.head.appendChild(style);
-    }
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = this.buildCompanyThemeCSS(theme, companyId, options);
+    document.head.appendChild(style);
+}
+
+buildCompanyThemeCSS(theme, companyId, options) {
+    return `
+        /* CSS SOLO para empresa: ${companyId} */
+        [data-company="${companyId}"] {
+            --theme-primary: ${theme.primary};
+            --theme-primary-dark: ${theme.primaryDark};
+            /* ... resto de variables */
+        }
+        
+        [data-company="${companyId}"] .metric-card {
+            border-top-color: ${theme.primary} !important;
+            /* ... estilos específicos */
+        }
+    `;
+}
 
     buildAdvancedThemeCSS(theme, options) {
         const { primary, primaryDark, primaryLight, secondary, accent } = theme;
