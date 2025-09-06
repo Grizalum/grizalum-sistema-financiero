@@ -528,63 +528,7 @@
 <!-- ================================================================
      🔧 SERVICE WORKER PARA PWA (OPCIONAL)
      ================================================================ -->
-<script>
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-            .then(registration => console.log('SW registrado'))
-            .catch(error => console.log('SW error:', error));
-    });
-}
-</script>
 
-<script>
-setTimeout(() => {
-    if (typeof mostrarNotificacion === 'function') {
-        mostrarNotificacion('Prueba: Sistema funcionando', 'success');
-        console.log('Sistema de notificaciones OK');
-    } else {
-        console.log('Sistema de notificaciones no cargado');
-    }
-}, 3000);
-</script>
-
- <script>
-// FORZAR CARGA DE GRÁFICOS - VERSIÓN CORREGIDA
-setTimeout(() => {
-    console.log('Verificando Chart.js:', typeof Chart);
-    if (typeof Chart !== 'undefined') {
-        console.log('Chart.js disponible, iniciando gráficos...');
-        
-        // Forzar inicialización múltiple
-        if (window.GrizalumCharts) {
-            window.GrizalumCharts.initialize();
-        }
-        if (window.forceInitializeCharts) {
-            window.forceInitializeCharts();
-        }
-        if (window.initializeCharts) {
-            window.initializeCharts();
-        }
-    } else {
-        console.error('Chart.js no está disponible');
-    }
-}, 3000);
-</script>
-    
-<script>
-// Función de conexión para el botón editar
-function editarEmpresaActual(empresaId) {
-    console.log('Conectando con el customizador de colores para empresa:', empresaId);
-    
-    // Verificar que el formulario esté disponible
-    if (window.formularioEmpresas && typeof window.formularioEmpresas.editarEmpresa === 'function') {
-        window.formularioEmpresas.editarEmpresa(empresaId);
-    } else {
-        console.error('FormularioEmpresas no está disponible');
-        alert('El sistema de edición no está listo. Recarga la página.');
-    }
-}
 </script>
     
 </body>
