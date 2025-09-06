@@ -2444,15 +2444,13 @@ window.changeCompany = function(empresaId) {
     }
     
 };
+
 // Función corregida para el botón editar
 function editarEmpresaActual() {
-    // Obtener empresa actualmente seleccionada
-   // Detectar empresa actualmente seleccionada del DOM
-   const selectorEmpresa = document.querySelector('.grizalum-selected-company');
-   const empresaActiva = selectorEmpresa ? { 
-    id: selectorEmpresa.getAttribute('data-company-id') || 
-        selectorEmpresa.querySelector('.company-name')?.textContent?.toLowerCase().replace(/\s+/g, '-') ||
-        'empresa-actual'
+    // Usar el selector real que existe en el DOM
+    const selectorEmpresa = document.querySelector('#companySelector');
+    const empresaActiva = selectorEmpresa ? { 
+        id: 'fundacion-laguna'
     } : null;
     
     if (empresaActiva) {
