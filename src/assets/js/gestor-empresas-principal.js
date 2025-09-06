@@ -1096,7 +1096,7 @@ class GestorEmpresasProfesional {
     _aplicarVariablesCSS(temaConfig) {
         // SOLO aplicar variables CSS locales del gestor (no globales)
         document.documentElement.style.setProperty('--grizalum-primary', temaConfig.primary);
-        document.documentElement.style.setProperty('--grizalum-secondary', temaConfig.secondary);
+        document.documentElement.style.setProperty('--grizalum-secondary', tem  aConfig.secondary);
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
@@ -1602,7 +1602,7 @@ class GestorEmpresasProfesional {
                 'verde': {
                     id: 'verde',
                     cssTheme: 'green',
-                    primary: '#059669',
+                    primary: '#059669',  
                     secondary: '#047857',
                     name: 'Verde Crecimiento'
                 },
