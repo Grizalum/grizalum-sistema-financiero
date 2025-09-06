@@ -251,23 +251,40 @@ let periodoActivo = "mes";
 
 // FUNCIONES PRINCIPALES
 function obtenerDatosEmpresa(empresaId, periodo = "mes") {
-    const empresa = EMPRESAS_DATA[empresaId];
-    if (!empresa) {
-        console.error(`Empresa ${empresaId} no encontrada`);
-        return null;
+    // Primero intentar obtener desde tu gestor existente
+    if (window.gestorEmpresas && window.gestorEmpresas.estado.empresas[empresaId]) {
+        const empresaReal = window.gestorEmpresas.estado.empresas[empresaId];
+        
+        return {
+            info: {
+                nombre: empresaReal.nombre,
+                emoji: empresaReal.icono,
+                ubicacion: empresaReal.ubicacion?.distrito || 'Lima',
+                sector: empresaReal.categoria,
+                status: empresaReal.estado
+            },
+            financiero: {
+                ingresos: empresaReal.finanzas?.ingresos || 0,
+                gastos: empresaReal.finanzas?.gastos || 0,
+                utilidad: empresaReal.finanzas?.utilidadNeta || 0,
+                crecimiento: empresaReal.finanzas?.roi || 0,
+                flujoCaja: empresaReal.finanzas?.caja || 0,
+                margen: empresaReal.finanzas?.margenNeto || 0
+            },
+            graficos: {
+                flujoMeses: [100, 120, 110, 130, 125, empresaReal.finanzas?.caja || 0],
+                gastosDistribucion: [45, 25, 15, 10, 5],
+                ingresosVsGastos: [
+                    empresaReal.finanzas?.ingresos || 0,
+                    empresaReal.finanzas?.gastos || 0,
+                    empresaReal.finanzas?.utilidadNeta || 0
+                ]
+            }
+        };
     }
     
-    return {
-        info: {
-            nombre: empresa.nombre,
-            emoji: empresa.emoji,
-            ubicacion: empresa.ubicacion,
-            sector: empresa.sector,
-            status: empresa.status
-        },
-        financiero: empresa.datos[periodo],
-        graficos: empresa.graficos
-    };
+    // Fallback a datos de ejemplo si no existe
+    return EMPRESAS_DATA[empresaId] || null;
 }
 
 function cambiarEmpresaActiva(empresaId) {
