@@ -125,8 +125,26 @@ class GrizalumMetricsUpdater {
     }
 
     initializeWithDefaults() {
-        return;
-   }
+        // CORREGIDO: Función que estaba incompleta
+        console.log('🔄 Inicializando con datos por defecto...');
+        
+        try {
+            // Aplicar datos por defecto a elementos encontrados
+            this.elements.forEach((metric, id) => {
+                const defaultValue = this.defaultData[metric.defaultKey];
+                if (defaultValue !== undefined) {
+                    const formattedValue = this.formatValue(defaultValue, metric.type);
+                    metric.element.textContent = formattedValue;
+                    metric.currentValue = defaultValue;
+                    console.log(`📊 ${id} inicializado con: ${formattedValue}`);
+                }
+            });
+            
+            console.log('✅ Inicialización con datos por defecto completada');
+        } catch (error) {
+            console.error('❌ Error en inicialización por defecto:', error);
+        }
+    }
 
     // ======= API PRINCIPAL MEJORADA =======
     updateMetrics(data) {
@@ -310,7 +328,7 @@ class GrizalumMetricsUpdater {
         }, 1500);
     }
 
-    // ======= FORMATEO (Igual que antes) =======
+    // ======= FORMATEO =======
     formatValue(value, type, abbreviated = false) {
         if (typeof value !== 'number') {
             value = this.extractNumericValue(value);
@@ -374,8 +392,23 @@ class GrizalumMetricsUpdater {
 
     // ======= UTILIDADES MEJORADAS =======
     updateForPeriod(period) {
-        console.log(`📅 Métricas actualizadas para período: ${period}`);
-        return;
+        // CORREGIDO: Función que estaba incompleta
+        console.log(`📅 Actualizando métricas para período: ${period}`);
+        
+        try {
+            // Generar datos para el período
+            const periodData = this.generateDataForPeriod(period);
+            
+            // Actualizar métricas con los nuevos datos
+            this.updateMetrics(periodData);
+            
+            console.log(`✅ Métricas actualizadas para período: ${period}`, periodData);
+            return true;
+        } catch (error) {
+            console.error(`❌ Error actualizando para período ${period}:`, error);
+            return false;
+        }
+    }
 
     generateDataForPeriod(period) {
         // Generar datos realistas según el período
@@ -418,15 +451,22 @@ class GrizalumMetricsUpdater {
     bindEvents() {
         // Escuchar cambios de período
         document.addEventListener('periodChanged', (e) => {
-            if (e.detail?.period) {
+            if (e.detail && e.detail.period) {
                 this.updateForPeriod(e.detail.period);
             }
         });
 
         // Escuchar cambios de empresa
         document.addEventListener('companyChanged', (e) => {
-            if (e.detail?.data) {
+            if (e.detail && e.detail.data) {
                 this.updateMetrics(e.detail.data);
+            }
+        });
+
+        // Escuchar eventos específicos de GRIZALUM
+        document.addEventListener('grizalumPeriodoCambiado', (e) => {
+            if (e.detail && e.detail.periodo) {
+                this.updateForPeriod(e.detail.periodo);
             }
         });
 
@@ -559,7 +599,12 @@ const grizalumMetricsUpdater = new GrizalumMetricsUpdater();
  * Función principal para actualizar métricas (compatibilidad)
  */
 function actualizarMetricas(data) {
-    return false;
+    if (!data) {
+        console.warn('⚠️ Datos nulos para actualizar métricas');
+        return false;
+    }
+    
+    return grizalumMetricsUpdater.updateMetrics(data);
 }
 
 /**
