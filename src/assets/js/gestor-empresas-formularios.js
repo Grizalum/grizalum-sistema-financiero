@@ -1130,7 +1130,7 @@ FormularioEmpresas.prototype.editarEmpresa = function(empresaId) {
     }
     
     console.log('🔍 DEBUG - empresaId:', empresaId);
-    console.log('🔍 DEBUG - empresas disponibles:', Object.keys(this.gestor.empresas));
+   console.log('🔍 DEBUG - empresas disponibles:', this.gestor?.empresas ? Object.keys(this.gestor.empresas) : 'No hay empresas');
     const empresa = window.gestorEmpresas?.empresas?.[empresaId] || { nombre: 'Empresa Test', icono: '🏢' };
     console.log('🔍 DEBUG - empresa encontrada:', empresa);
     if (!empresa) {
