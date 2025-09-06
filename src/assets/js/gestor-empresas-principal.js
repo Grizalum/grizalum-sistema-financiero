@@ -944,11 +944,11 @@ class GestorEmpresasProfesional {
     // ═══════════════════════════════════════════════════════════════════════════
     seleccionarEmpresa(empresaId) {
     if (!this.estado.empresas[empresaId]) {
-        this._log('error', `Empresa no encontrada: ${empresaId}`);
-         // AGREGAR ESTAS 3 LÍNEAS AL FINAL (antes del return true):
-    window.empresaActual = { id: empresaId, nombre: empresa.nombre };
-    const event = new CustomEvent('empresaCambiada', { detail: { empresaId } });
-    document.dispatchEvent(event);
+         this._log('error', `Empresa no encontrada: ${empresaId}`);
+      // AGREGAR ESTAS 3 LÍNEAS AL FINAL (antes del return true):
+         window.empresaActual = { id: empresaId, nombre: empresa.nombre };
+         const event = new CustomEvent('empresaCambiada', { detail: { empresaId } });
+         document.dispatchEvent(event);
         return false;
     }
 
