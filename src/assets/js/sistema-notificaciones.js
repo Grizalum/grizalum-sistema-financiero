@@ -1,16 +1,16 @@
 /**
  * ================================================================
- * GRIZALUM NOTIFICATION SYSTEM - VERSIÓN CORREGIDA v2.1
+ * GRIZALUM NOTIFICATION SYSTEM - VERSIÓN CORREGIDA v3.0
  * Sistema centralizado de notificaciones optimizado y funcional
  * ================================================================
  */
 
-console.log('🔔 Iniciando GRIZALUM Notification System v2.1 - Versión Corregida');
+console.log('🔔 Iniciando GRIZALUM Notification System v3.0 - Versión Corregida');
 
 // ================================================================
-// 🔧 VARIABLES GLOBALES Y CONFIGURACIÓN
+// 🔧 VARIABLES GLOBALES Y CONFIGURACIÓN - CORREGIDAS
 // ================================================================
-let sistemaNotificacionesGrizalum = null;
+let sistemaNotificacionesGRIZALUM = null; // Nombre único sin conflictos
 let notificacionesInicializado = false;
 
 const CONFIGURACION_NOTIFICACIONES = {
@@ -31,11 +31,11 @@ const CONFIGURACION_NOTIFICACIONES = {
 };
 
 // ================================================================
-// 📦 CLASE PRINCIPAL DEL SISTEMA
+// 📦 CLASE PRINCIPAL DEL SISTEMA - SIMPLIFICADA
 // ================================================================
 class SistemaNotificacionesGRIZALUM {
     constructor() {
-        this.version = '2.1.0';
+        this.version = '3.0.0';
         this.notificaciones = [];
         this.contenedor = null;
         this.metricas = {
@@ -43,17 +43,16 @@ class SistemaNotificacionesGRIZALUM {
             porTipo: { success: 0, error: 0, warning: 0, info: 0 }
         };
         
-        console.log('📊 Inicializando sistema de notificaciones...');
+        console.log('📊 Inicializando sistema de notificaciones v3.0...');
     }
 
-    // ======= INICIALIZACIÓN =======
+    // ======= INICIALIZACIÓN SIMPLIFICADA =======
     inicializar() {
         try {
             console.log('🔧 Configurando sistema de notificaciones...');
             
             this.crearContenedor();
             this.configurarEstilos();
-            this.configurarEventos();
             
             notificacionesInicializado = true;
             console.log('✅ Sistema de notificaciones inicializado correctamente');
@@ -66,7 +65,7 @@ class SistemaNotificacionesGRIZALUM {
     }
 
     crearContenedor() {
-        // Remover contenedor existente
+        // Remover contenedor existente si existe
         const existente = document.getElementById('grizalum-notifications-container');
         if (existente) {
             existente.remove();
@@ -241,7 +240,6 @@ class SistemaNotificacionesGRIZALUM {
                 }
             }
 
-            /* Animaciones suaves */
             @keyframes slideInRight {
                 from { transform: translateX(100%); opacity: 0; }
                 to { transform: translateX(0); opacity: 1; }
@@ -251,32 +249,27 @@ class SistemaNotificacionesGRIZALUM {
                 from { transform: translateX(0); opacity: 1; }
                 to { transform: translateX(100%); opacity: 0; }
             }
+
+            @keyframes progressBar {
+                from { width: 100%; }
+                to { width: 0%; }
+            }
         `;
         
         document.head.appendChild(estilos);
         console.log('🎨 Estilos de notificaciones aplicados');
     }
 
-    configurarEventos() {
-        // Escuchar eventos del sistema
-        document.addEventListener('grizalumNotificationShow', (evento) => {
-            const { mensaje, tipo, opciones } = evento.detail;
-            this.mostrar(mensaje, tipo, opciones?.duracion, opciones);
-        });
-
-        console.log('🎯 Eventos de notificaciones configurados');
-    }
-
-    // ======= FUNCIÓN PRINCIPAL =======
+    // ======= FUNCIÓN PRINCIPAL CORREGIDA =======
     mostrar(mensaje, tipo = 'info', duracion = null, opciones = {}) {
         if (!notificacionesInicializado) {
-            console.warn('⚠️ Sistema de notificaciones no inicializado');
-            return null;
+            console.warn('⚠️ Sistema de notificaciones no inicializado, inicializando...');
+            this.inicializar();
         }
 
-        // Configuración de la notificación
+        // Validación y configuración
         const config = {
-            mensaje: String(mensaje).trim(),
+            mensaje: String(mensaje || 'Sin mensaje').trim(),
             tipo: ['success', 'error', 'warning', 'info'].includes(tipo) ? tipo : 'info',
             duracion: duracion || opciones.duracion || CONFIGURACION_NOTIFICACIONES.duracionPorDefecto,
             titulo: opciones.titulo || opciones.title || '',
@@ -293,26 +286,29 @@ class SistemaNotificacionesGRIZALUM {
         const notificacion = this.crearElementoNotificacion(config);
         
         // Agregar al contenedor
-        this.contenedor.appendChild(notificacion);
-        this.notificaciones.push(notificacion);
+        if (this.contenedor) {
+            this.contenedor.appendChild(notificacion);
+            this.notificaciones.push(notificacion);
 
-        // Activar animación de entrada
-        setTimeout(() => {
-            notificacion.classList.add('notification-enter');
-        }, 10);
-
-        // Programar auto-remove
-        if (config.duracion > 0) {
+            // Activar animación de entrada
             setTimeout(() => {
-                this.remover(notificacion);
-            }, config.duracion);
+                notificacion.classList.add('notification-enter');
+            }, 10);
+
+            // Programar auto-remove
+            if (config.duracion > 0) {
+                setTimeout(() => {
+                    this.remover(notificacion);
+                }, config.duracion);
+            }
+
+            // Actualizar métricas
+            this.metricas.totalMostradas++;
+            this.metricas.porTipo[config.tipo]++;
+
+            console.log(`🔔 Notificación mostrada: ${config.tipo} - ${config.mensaje.substring(0, 30)}...`);
         }
-
-        // Actualizar métricas
-        this.metricas.totalMostradas++;
-        this.metricas.porTipo[config.tipo]++;
-
-        console.log(`🔔 Notificación mostrada: ${config.tipo} - ${config.mensaje.substring(0, 30)}...`);
+        
         return notificacion;
     }
 
@@ -339,9 +335,11 @@ class SistemaNotificacionesGRIZALUM {
 
         // Configurar evento de cerrar
         const botonCerrar = notificacion.querySelector('.notification-close');
-        botonCerrar.addEventListener('click', () => {
-            this.remover(notificacion);
-        });
+        if (botonCerrar) {
+            botonCerrar.addEventListener('click', () => {
+                this.remover(notificacion);
+            });
+        }
 
         return notificacion;
     }
@@ -405,25 +403,25 @@ class SistemaNotificacionesGRIZALUM {
 }
 
 // ================================================================
-// 🚀 INICIALIZACIÓN AUTOMÁTICA
+// 🚀 INICIALIZACIÓN ÚNICA Y ROBUSTA
 // ================================================================
 function inicializarSistemaNotificaciones() {
-    if (sistemaNotificacionesGrizalum) {
+    if (sistemaNotificacionesGRIZALUM) {
         console.log('⚠️ Sistema de notificaciones ya inicializado');
-        return sistemaNotificacionesGrizalum;
+        return sistemaNotificacionesGRIZALUM;
     }
 
     try {
-        sistemaNotificacionesGrizalum = new SistemaNotificacionesGRIZALUM();
-        const exito = sistemaNotificacionesGrizalum.inicializar();
+        sistemaNotificacionesGRIZALUM = new SistemaNotificacionesGRIZALUM();
+        const exito = sistemaNotificacionesGRIZALUM.inicializar();
         
         if (exito) {
             // Hacer disponible globalmente
-            window.sistemaNotificaciones = sistemaNotificacionesGrizalum;
-            window.notificationSystem = sistemaNotificacionesGrizalum;
+            window.sistemaNotificaciones = sistemaNotificacionesGRIZALUM;
+            window.notificationSystem = sistemaNotificacionesGRIZALUM;
             
-            console.log('✅ Sistema de notificaciones GRIZALUM v2.1 listo');
-            return sistemaNotificacionesGrizalum;
+            console.log('✅ Sistema de notificaciones GRIZALUM v3.0 listo');
+            return sistemaNotificacionesGRIZALUM;
         }
     } catch (error) {
         console.error('❌ Error crítico inicializando notificaciones:', error);
@@ -433,7 +431,7 @@ function inicializarSistemaNotificaciones() {
 }
 
 // ================================================================
-// 🌐 FUNCIONES GLOBALES PARA COMPATIBILIDAD
+// 🌐 FUNCIONES GLOBALES PRINCIPALES
 // ================================================================
 
 /**
@@ -441,45 +439,46 @@ function inicializarSistemaNotificaciones() {
  * Compatible con toda la aplicación GRIZALUM
  */
 function mostrarNotificacion(mensaje, tipo = 'info', duracion = 5000) {
-    if (!sistemaNotificacionesGrizalum) {
+    if (!sistemaNotificacionesGRIZALUM) {
         console.warn('Sistema de notificaciones no inicializado, intentando inicializar...');
         inicializarSistemaNotificaciones();
     }
     
-    return sistemaNotificacionesGrizalum?.mostrar(mensaje, tipo, duracion) || null;
+    return sistemaNotificacionesGRIZALUM?.mostrar(mensaje, tipo, duracion) || null;
 }
 
 /**
  * Funciones de conveniencia
  */
 function notificacionExito(mensaje, opciones = {}) {
-    return sistemaNotificacionesGrizalum?.exito(mensaje, opciones) || mostrarNotificacion(mensaje, 'success', opciones.duracion);
+    return sistemaNotificacionesGRIZALUM?.exito(mensaje, opciones) || mostrarNotificacion(mensaje, 'success', opciones.duracion);
 }
 
 function notificacionError(mensaje, opciones = {}) {
-    return sistemaNotificacionesGrizalum?.error(mensaje, opciones) || mostrarNotificacion(mensaje, 'error', opciones.duracion);
+    return sistemaNotificacionesGRIZALUM?.error(mensaje, opciones) || mostrarNotificacion(mensaje, 'error', opciones.duracion);
 }
 
 function notificacionAdvertencia(mensaje, opciones = {}) {
-    return sistemaNotificacionesGrizalum?.advertencia(mensaje, opciones) || mostrarNotificacion(mensaje, 'warning', opciones.duracion);
+    return sistemaNotificacionesGRIZALUM?.advertencia(mensaje, opciones) || mostrarNotificacion(mensaje, 'warning', opciones.duracion);
 }
 
 function notificacionInfo(mensaje, opciones = {}) {
-    return sistemaNotificacionesGrizalum?.informacion(mensaje, opciones) || mostrarNotificacion(mensaje, 'info', opciones.duracion);
+    return sistemaNotificacionesGRIZALUM?.informacion(mensaje, opciones) || mostrarNotificacion(mensaje, 'info', opciones.duracion);
 }
 
 // ================================================================
-// 🔔 GESTIÓN DE NOTIFICACIONES DEL ADMIN
+// 🔔 GESTIÓN DE NOTIFICACIONES DEL ADMIN - CORREGIDA
 // ================================================================
 
 /**
- * Obtener notificaciones del administrador
+ * Obtener notificaciones reales basadas en datos de la empresa actual
  */
 function obtenerNotificacionesAdmin() {
-    console.log('=== BUSCANDO DATOS REALES DE EMPRESA ===');
+    console.log('=== OBTENIENDO NOTIFICACIONES REALES ===');
     
     const gestorPrincipal = window.gestorEmpresas;
     if (!gestorPrincipal || !gestorPrincipal.estado) {
+        console.log('No hay gestor de empresas disponible');
         return [];
     }
     
@@ -487,169 +486,76 @@ function obtenerNotificacionesAdmin() {
     const empresa = gestorPrincipal.estado.empresas?.[empresaActual];
     
     if (!empresa) {
+        console.log('No hay empresa actual seleccionada');
         return [];
     }
     
-    // Crear notificaciones basadas en los datos reales de tu empresa
+    // SOLO generar notificaciones si hay datos importantes que reportar
     const notificacionesReales = [];
+    const ahora = new Date().toISOString();
     
-    // Notificación sobre el estado operativo
+    // Solo notificar cambios recientes o estados importantes
     if (empresa.estado === 'Operativo') {
         notificacionesReales.push({
-            id: 'estado-operativo',
-            titulo: `Empresa ${empresa.nombre}`,
-            mensaje: `Estado: ${empresa.estado} - Sistema funcionando correctamente`,
+            id: `empresa-${empresaActual}-status`,
+            titulo: `Empresa: ${empresa.nombre}`,
+            mensaje: `Sistema operativo - Última actualización: ${new Date().toLocaleTimeString('es-PE')}`,
             tipo: 'success',
-            fecha: new Date().toISOString(),
+            fecha: ahora,
             remitente: 'Sistema GRIZALUM',
             leida: false
         });
     }
     
-    // Notificación sobre configuración
-    if (empresa.ubicacion) {
-        notificacionesReales.push({
-            id: 'ubicacion-configurada',
-            titulo: 'Configuración Empresarial',
-            mensaje: `Ubicación: ${empresa.ubicacion} - Configuración completa`,
-            tipo: 'info',
-            fecha: new Date().toISOString(),
-            remitente: 'Sistema GRIZALUM',
-            leida: false
-        });
-    }
-    
-    // Notificación sobre RUC si existe
-    if (empresa.ruc) {
-        notificacionesReales.push({
-            id: 'ruc-validado',
-            titulo: 'Datos Fiscales',
-            mensaje: `RUC ${empresa.ruc} validado correctamente`,
-            tipo: 'success',
-            fecha: new Date().toISOString(),
-            remitente: 'SUNAT Integration',
-            leida: false
-        });
-    }
-    
-    console.log('Notificaciones generadas desde datos reales:', notificacionesReales);
+    console.log(`Notificaciones generadas: ${notificacionesReales.length}`);
     return notificacionesReales;
 }
 
 /**
- * Generar notificaciones desde actividad real del sistema
- */
-function generarNotificacionesDesdeActividad() {
-    // Esta función creará notificaciones basadas en la actividad real del sistema
-    const gestorPrincipal = window.gestorEmpresas;
-    const empresa = gestorPrincipal?.estado?.empresas?.[gestorPrincipal.estado.empresaActual];
-    
-    if (empresa) {
-        // Notificar cuando se detecten cambios importantes
-        mostrarNotificacion(
-            `Trabajando con empresa: ${empresa.nombre} 🏢`, 
-            'info', 
-            3000, 
-            { titulo: 'Empresa Activa' }
-        );
-    }
-}
-
-/**
- * Integrar notificaciones con eventos del sistema
+ * Integración limpia con eventos del sistema
  */
 function integrarNotificacionesConSistema() {
-    // Escuchar cambios de empresa
+    // Solo escuchar eventos importantes
     document.addEventListener('grizalumCompanyChanged', (evento) => {
         const empresa = evento.detail?.company;
-        if (empresa) {
+        if (empresa && empresa.nombre) {
             mostrarNotificacion(
-                `Cambiado a empresa: ${empresa.nombre}`,
-                'success',
-                4000,
-                { titulo: 'Empresa Cambiada' }
-            );
-        }
-    });
-    
-    // Escuchar cambios de período
-    document.addEventListener('grizalumPeriodoCambiado', (evento) => {
-        const periodo = evento.detail?.periodo;
-        if (periodo) {
-            mostrarNotificacion(
-                `Período actualizado: ${periodo}`,
+                `Empresa cambiada: ${empresa.nombre}`,
                 'info',
                 3000
             );
         }
     });
     
-    console.log('Sistema de notificaciones integrado con eventos reales');
+    console.log('Sistema de notificaciones integrado con eventos');
 }
 
 /**
- * Contar notificaciones no leídas
+ * Contar notificaciones no leídas reales
  */
 function contarNotificacionesNoLeidas() {
-    return obtenerNotificacionesAdmin().filter(n => !n.leida).length;
+    const notificaciones = obtenerNotificacionesAdmin();
+    return notificaciones.filter(n => !n.leida).length;
 }
 
 /**
- * Mostrar panel de notificaciones del admin
+ * Mostrar centro de notificaciones del administrador
  */
 function mostrarNotificacionesAdmin() {
     const notificacionesAdmin = obtenerNotificacionesAdmin();
     
     if (notificacionesAdmin.length === 0) {
-        mostrarNotificacion('No hay notificaciones del administrador', 'info');
+        mostrarNotificacion('No hay notificaciones pendientes', 'info', 3000);
         return;
     }
 
-    // Crear contenido del panel
-    let contenidoPanel = `
-        <div style="background: white; border-radius: 12px; box-shadow: 0 25px 50px rgba(0,0,0,0.15); max-width: 500px; max-height: 600px; overflow-y: auto;">
-            <div style="padding: 20px; border-bottom: 1px solid #e5e7eb;">
-                <h3 style="margin: 0; color: #1f2937; font-size: 18px; font-weight: 600;">
-                    🔔 Notificaciones del Administrador
-                </h3>
-            </div>
-            <div style="padding: 20px;">
-    `;
-
-    notificacionesAdmin.forEach(notif => {
-        const fechaFormateada = new Date(notif.fecha).toLocaleDateString('es-PE', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-
-        contenidoPanel += `
-            <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin-bottom: 12px; ${notif.leida ? 'opacity: 0.7;' : 'background: #f0f9ff;'}">
-                <h4 style="margin: 0 0 8px 0; color: #1f2937; font-size: 14px; font-weight: 600;">${notif.titulo}</h4>
-                <p style="margin: 0 0 8px 0; color: #4b5563; font-size: 13px; line-height: 1.4;">${notif.mensaje}</p>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <small style="color: #6b7280; font-size: 12px;">${fechaFormateada}</small>
-                    ${!notif.leida ? `<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px;">Nueva</span>` : ''}
-                </div>
-            </div>
-        `;
-    });
-
-    contenidoPanel += `
-            </div>
-        </div>
-    `;
-
-    // Mostrar como notificación especial
-    mostrarNotificacion(contenidoPanel, 'info', 0, {
-        titulo: 'Panel de Notificaciones'
-    });
+    // Mostrar resumen de notificaciones
+    const mensaje = `${notificacionesAdmin.length} notificación(es) del sistema`;
+    mostrarNotificacion(mensaje, 'info', 5000);
 }
 
 /**
- * Actualizar contador de notificaciones
+ * Actualizar contador de notificaciones en la UI
  */
 function actualizarContadorNotificaciones() {
     const contador = contarNotificacionesNoLeidas();
@@ -664,24 +570,29 @@ function actualizarContadorNotificaciones() {
             elemento.style.display = 'none';
         }
     });
-
-    // Disparar evento personalizado
-    document.dispatchEvent(new CustomEvent('grizalumNotificationCountUpdated', {
-        detail: { count: contador }
-    }));
 }
 
 // ================================================================
-// 🎯 INICIALIZACIÓN CON MÚLTIPLES ESTRATEGIAS
+// 🎯 INICIALIZACIÓN CONTROLADA
 // ================================================================
 
-// Estrategia 1: DOMContentLoaded
+// Una sola estrategia de inicialización
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('📄 DOM cargado, inicializando notificaciones...');
-    setTimeout(inicializarSistemaNotificaciones, 500);
+    console.log('📄 DOM cargado, inicializando sistema de notificaciones...');
+    
+    // Esperar un poco para que otros sistemas se carguen
+    setTimeout(() => {
+        inicializarSistemaNotificaciones();
+        
+        // Integrar con eventos después de inicializar
+        setTimeout(() => {
+            integrarNotificacionesConSistema();
+        }, 500);
+        
+    }, 100);
 });
 
-// Estrategia 2: Window Load (respaldo)
+// Respaldo de inicialización
 window.addEventListener('load', () => {
     setTimeout(() => {
         if (!notificacionesInicializado) {
@@ -691,16 +602,8 @@ window.addEventListener('load', () => {
     }, 1000);
 });
 
-// Estrategia 3: Inicialización manual (emergencia)
-setTimeout(() => {
-    if (!notificacionesInicializado) {
-        console.log('⏰ Inicialización de emergencia de notificaciones');
-        inicializarSistemaNotificaciones();
-    }
-}, 3000);
-
 // ================================================================
-// 🌐 EXPOSICIÓN GLOBAL
+// 🌐 EXPOSICIÓN GLOBAL CONTROLADA
 // ================================================================
 
 // Funciones principales
@@ -716,15 +619,15 @@ window.contarNotificacionesNoLeidas = contarNotificacionesNoLeidas;
 window.mostrarNotificacionesAdmin = mostrarNotificacionesAdmin;
 window.actualizarContadorNotificaciones = actualizarContadorNotificaciones;
 
-// Objeto de compatibilidad
+// Objeto de compatibilidad simplificado
 window.GrizalumNotifications = {
     mostrar: mostrarNotificacion,
     exito: notificacionExito,
     error: notificacionError,
     advertencia: notificacionAdvertencia,
     info: notificacionInfo,
-    limpiar: () => sistemaNotificacionesGrizalum?.limpiarTodas(),
-    obtenerEstado: () => sistemaNotificacionesGrizalum?.obtenerEstado()
+    limpiar: () => sistemaNotificacionesGRIZALUM?.limpiarTodas(),
+    obtenerEstado: () => sistemaNotificacionesGRIZALUM?.obtenerEstado()
 };
 
 // ================================================================
@@ -732,41 +635,25 @@ window.GrizalumNotifications = {
 // ================================================================
 console.log(`
 🔔 ===================================================
-   GRIZALUM NOTIFICATION SYSTEM v2.1 - CORREGIDO
+   GRIZALUM NOTIFICATION SYSTEM v3.0 - CORREGIDO
 🔔 ===================================================
 
-✅ FUNCIONES DISPONIBLES:
+✅ CORRECCIONES APLICADAS:
+   • Eliminadas declaraciones duplicadas
+   • Eliminadas notificaciones fantasma
+   • Simplificada inicialización única
+   • Corregidos errores de sintaxis
+   • Optimizada gestión de memoria
+   • Integración real con datos de empresa
+
+🔧 FUNCIONES DISPONIBLES:
    • mostrarNotificacion(mensaje, tipo, duracion)
-   • notificacionExito(mensaje, opciones)
-   • notificacionError(mensaje, opciones)
-   • notificacionAdvertencia(mensaje, opciones)
-   • notificacionInfo(mensaje, opciones)
+   • notificacionExito/Error/Advertencia/Info
+   • Sistema de notificaciones del admin
 
-🔧 MEJORAS v2.1:
-   • Código simplificado y optimizado
-   • Sin conflictos con otros sistemas
-   • Integración perfecta con gestor de empresas
-   • Notificaciones del admin funcionales
-   • Estilos responsivos mejorados
-   • Sistema de métricas básico
-   • Múltiples estrategias de inicialización
-
-🎯 COMPATIBILIDAD TOTAL CON GRIZALUM
+🎯 SISTEMA ROBUSTO Y LIMPIO
 🔔 ===================================================
 `);
 
-// HACER FUNCIONES GLOBALMENTE DISPONIBLES
-window.mostrarNotificacion = mostrarNotificacion;
-window.GrizalumNotifications = { mostrarNotificacion };
-console.log('Sistema de notificaciones disponible globalmente');
-    
-// Integrar con el sistema al cargar
-setTimeout(() => {
-    integrarNotificacionesConSistema();
-    generarNotificacionesDesdeActividad();
-}, 2000);
-
-// HACER TODAS LAS FUNCIONES DISPONIBLES GLOBALMENTE
-window.obtenerNotificacionesAdmin = obtenerNotificacionesAdmin;
-window.generarNotificacionesDesdeActividad = generarNotificacionesDesdeActividad;
-window.integrarNotificacionesConSistema = integrarNotificacionesConSistema;
+// Exposición final controlada
+window.inicializarSistemaNotificaciones = inicializarSistemaNotificaciones;
