@@ -2442,8 +2442,19 @@ window.changeCompany = function(empresaId) {
     if (window.cambiarEmpresaActiva) {
         window.cambiarEmpresaActiva(empresaId);
     }
+    
 };
-
+// Función corregida para el botón editar
+function editarEmpresaActual() {
+    // Obtener empresa actualmente seleccionada
+    const empresaActiva = window.gestorEmpresas?.empresaActual || window.gestorEmpresas?.currentCompanyId;
+    
+    if (empresaActiva) {
+        window.formularioEmpresas.editarEmpresa(empresaActiva.id);
+    } else {
+        alert('Selecciona una empresa primero');
+    }
+}
 console.log(`
 🏢 ═══════════════════════════════════════════════════════════════════════════════
    GRIZALUM GESTOR DE EMPRESAS ULTRA PROFESIONAL v3.0 - CORREGIDO
