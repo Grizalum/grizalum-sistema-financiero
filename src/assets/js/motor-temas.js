@@ -873,7 +873,8 @@ buildCompanyThemeCSS(theme, companyId, options) {
     // ================================================================
     // TEMAS DE EMPRESA
     // ================================================================
-    applyCompanyTheme(companyId, company) {
+    this.currentCompany = companyId;
+       document.body.setAttribute('data-company', companyId);
         if (!company || !company.theme) {
             console.warn(`No se encontró tema para empresa: ${companyId}`);
             return;
