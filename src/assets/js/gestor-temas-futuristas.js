@@ -18,6 +18,8 @@ class GrizalumFuturisticThemes {
         this.companyThemes = new Map(); // Almacena temas personalizados por empresa
         this.initialize();
     }
+      // Crear instancia global inmediatamente
+     window.grizalumFuturisticThemes = new GrizalumFuturisticThemes();
 
     initialize() {
         this.createFuturisticThemeSelector();
@@ -682,8 +684,6 @@ const customizerStyles = `
 /* ===== INICIALIZACIÓN ===== */
 document.head.insertAdjacentHTML('beforeend', customizerStyles);
 
-// Crear instancia global
-window.grizalumFuturisticThemes = new GrizalumFuturisticThemes();
 
 // Exportar para compatibilidad con módulos existentes
 if (typeof module !== 'undefined' && module.exports) {
