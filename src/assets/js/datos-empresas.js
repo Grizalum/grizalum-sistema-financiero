@@ -362,19 +362,12 @@ function obtenerListaEmpresas() {
 // FUNCIÓN PARA ACTUALIZAR TODA LA INTERFAZ
 function actualizarInterfazCompleta() {
     try {
-        // Actualizar métricas
-        if (window.actualizarMetricas) {
-            window.actualizarMetricas();
-        }
+        // NO actualizar métricas desde datos de ejemplo
+        console.log('Interfaz actualizada con datos reales únicamente');
         
-        // Actualizar gráficos
+        // Solo actualizar gráficos si es necesario
         if (window.actualizarGraficos) {
             window.actualizarGraficos();
-        }
-        
-        // Actualizar sidebar
-        if (window.actualizarSidebar) {
-            window.actualizarSidebar();
         }
         
         // Actualizar selector de empresas
@@ -382,16 +375,10 @@ function actualizarInterfazCompleta() {
             window.actualizarSelectorEmpresas();
         }
         
-        // Actualizar botones de período
-        actualizarBotonPeriodo();
-        
-        console.log(`Interfaz actualizada: ${EMPRESAS_DATA[empresaActiva].nombre} - ${PERIODOS_CONFIG[periodoActivo].label}`);
-        
     } catch (error) {
         console.error('Error actualizando interfaz:', error);
     }
 }
-
 function actualizarBotonPeriodo() {
     // Actualizar botones de período
     document.querySelectorAll('.period-btn').forEach(btn => {
