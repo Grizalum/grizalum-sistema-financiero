@@ -1076,7 +1076,15 @@ let formularioEmpresas = null;
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         if (window.gestorEmpresas) {
-            formularioEmpresas = new FormularioEmpresas(window.gestorEmpresas);
+            setTimeout(() => {
+    if (window.gestorEmpresas) {
+        formularioEmpresas = new FormularioEmpresas(window.gestorEmpresas);
+        window.formularioEmpresas = formularioEmpresas;
+        console.log('✅ FormularioEmpresas conectado correctamente');
+    } else {
+        console.error('❌ gestorEmpresas no disponible al intentar conectar');
+    }
+}, 1000);
             window.formularioEmpresas = formularioEmpresas;
             
             // Conectar con el gestor principal
