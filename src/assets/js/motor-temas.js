@@ -842,3 +842,14 @@ console.log(`
 
 🎨 ===================================================
 `);
+
+function changeTheme(themeName) {
+    // Si existe el sistema futurista, usarlo
+    if (window.grizalumFuturisticThemes) {
+        window.grizalumFuturisticThemes.changeTheme(themeName);
+    } else {
+        // Fallback al sistema original
+        document.documentElement.setAttribute('data-theme', themeName);
+        // Tu código original aquí...
+    }
+}
