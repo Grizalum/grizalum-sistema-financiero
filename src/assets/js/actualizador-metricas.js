@@ -387,17 +387,7 @@ class GrizalumMetricsUpdater {
     // ======= UTILIDADES MEJORADAS =======
     updateForPeriod(period) {
         console.log(`📅 Métricas actualizadas para período: ${period}`);
-        
-        // Generar datos diferentes según el período
-        const periodData = this.generateDataForPeriod(period);
-        this.updateMetrics(periodData);
-        
-        // Disparar evento para notificar a otros módulos
-        const event = new CustomEvent('metricsUpdatedForPeriod', {
-            detail: { period, data: periodData, timestamp: Date.now() }
-        });
-        document.dispatchEvent(event);
-    }
+        return;
 
     generateDataForPeriod(period) {
         // Generar datos realistas según el período
