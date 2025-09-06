@@ -55,11 +55,11 @@ class AsistenteIAInteligente {
             this.initialized = true;
             this.log('✅ GRIZALUM AI v3.0 inicializado correctamente');
             
-          if (window.mostrarNotificacion) {
-             window.mostrarNotificacion('🧠 IA Súper Inteligente lista', 'success');
-           } else {
-              console.log('✅ IA Súper Inteligente lista');
-        }
+            if (window.mostrarNotificacion) {
+                window.mostrarNotificacion('🧠 IA Súper Inteligente lista', 'success');
+            } else {
+                console.log('✅ IA Súper Inteligente lista');
+            }
             
         } catch (error) {
             this.handleError('Error finalizando inicialización', error);
@@ -1310,7 +1310,7 @@ ${this.addConversationContext()}`;
         };
     }
 
-    // Funciones auxiliares para las nuevas características
+    // ======= FUNCIONES AUXILIARES PARA RESPUESTAS INTELIGENTES =======
     generateCommandHelp() {
         return `⚡ **COMANDOS ESPECIALES DISPONIBLES**
 
@@ -1359,7 +1359,7 @@ ${this.addConversationContext()}`;
 **🚀 ESTADO:** Completamente operativo`;
     }
 
-    // Funciones auxiliares de predicción
+    // Funciones auxiliares simplificadas
     getOptimisticGrowth() { return 25; }
     getRealisticGrowth() { return 15; }
     getConservativeGrowth() { return 8; }
@@ -1473,7 +1473,6 @@ Basándome en tus datos reales y el contexto de tu pregunta, te sugiero enfocart
 • **Eficiencia:** ${this.calculateCostEfficiency()}
 
 **🎯 OPORTUNIDADES IDENTIFICADAS:**
-
 ${this.generateCostOptimizationPlan(gastos, margen)}
 
 **📈 IMPACTO PROYECTADO:**
@@ -1714,7 +1713,7 @@ if (document.readyState === 'loading') {
 
 // Compatibilidad con función anterior
 window.generateAIReport = function() {
-    if (window.assistantAI?.initialized) {
+    if (window.assistantAI && window.assistantAI.initialized) {
         return window.assistantAI.generateExecutiveReport();
     } else {
         console.warn('⚠️ Asistente IA v3.0 no inicializado');
