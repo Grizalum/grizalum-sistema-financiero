@@ -1051,3 +1051,28 @@ console.log('  • ⚡ Optimización de eventos y rendimiento');
 console.log('  • 🌐 Peticiones HTTP con timeout');
 console.log('  • 🔧 Manipulación avanzada del DOM');
 console.log('🚀 ¡Sistema de utilidades listo para empresas peruanas!');
+
+// CONEXIÓN CON SISTEMA DE DATOS DINÁMICOS GRIZALUM
+window.addEventListener('grizalumUtilsReady', () => {
+    // Registrar funciones de utilidades para el sistema de datos
+    if (window.formatearMoneda && !window.formatearMonedaConfig) {
+        window.formatearMonedaConfig = (valor) => utilidadesGrizalum.formatearMoneda(valor);
+    }
+    
+    if (window.formatearPorcentaje && !window.formatearPorcentajeConfig) {
+        window.formatearPorcentajeConfig = (valor) => utilidadesGrizalum.formatearPorcentaje(valor);
+    }
+    
+    // Conectar sistema de notificaciones existente
+    if (!window.mostrarNotificacion) {
+        window.mostrarNotificacion = (mensaje, tipo, duracion) => {
+            return utilidadesGrizalum.mostrarNotificacion(mensaje, tipo, duracion);
+        };
+    }
+    
+    utilidadesGrizalum.log('🔗 Utilidades conectadas con sistema de datos dinámicos', 'success');
+});
+
+// Asegurar compatibilidad con funciones globales esperadas
+window.formatearMoneda = window.formatearMoneda || ((valor) => utilidadesGrizalum.formatearMoneda(valor));
+window.formatearPorcentaje = window.formatearPorcentaje || ((valor) => utilidadesGrizalum.formatearPorcentaje(valor));
