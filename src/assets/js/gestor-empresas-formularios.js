@@ -1104,3 +1104,338 @@ console.log(`
 
 📝 ===================================================
 `);
+
+// ================================================================
+// EXTENSIÓN PARA EDITAR EMPRESAS CON CUSTOMIZADOR DE COLORES
+// Agregar después de la línea del console.log final
+// ================================================================
+
+// Extender la clase FormularioEmpresas con funcionalidad de edición
+FormularioEmpresas.prototype.editarEmpresa = function(empresaId) {
+    console.log('✏️ Editando empresa:', empresaId);
+    
+    const empresa = this.gestor.empresas[empresaId];
+    if (!empresa) {
+        this.mostrarError('Empresa no encontrada');
+        return;
+    }
+    
+    // Configurar modo edición
+    this.modoEdicion = true;
+    this.empresaEditando = empresaId;
+    this.cargarDatosEmpresaExistente(empresa);
+    
+    const modal = this.crearModalEdicion(empresa);
+    document.body.appendChild(modal);
+    
+    setTimeout(() => {
+        modal.classList.add('mostrar');
+    }, 100);
+};
+
+FormularioEmpresas.prototype.cargarDatosEmpresaExistente = function(empresa) {
+    this.datosFormulario = {
+        nombre: empresa.nombre,
+        ruc: empresa.ruc || '',
+        tipo: empresa.tipo || 'servicios',
+        icono: empresa.icono || '🏢'
+    };
+    this.emojiSeleccionado = empresa.icono || '🏢';
+};
+
+FormularioEmpresas.prototype.crearModalEdicion = function(empresa) {
+    const modal = document.createElement('div');
+    modal.className = 'modal-formulario';
+    modal.id = 'modalEditarEmpresa';
+    
+    modal.innerHTML = `
+        <div class="contenido-modal">
+            <div class="cabecera-modal">
+                <h2 class="titulo-modal">
+                    <span>✏️</span>
+                    <span>Editar ${empresa.nombre}</span>
+                </h2>
+                <button class="boton-cerrar-modal" onclick="formularioEmpresas.cerrarFormularioEdicion()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="cuerpo-modal">
+                ${this.generarFormularioEdicion(empresa)}
+            </div>
+            
+            <div class="pie-modal">
+                <button class="boton-anterior" onclick="formularioEmpresas.cerrarFormularioEdicion()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="boton-crear" onclick="formularioEmpresas.guardarCambiosEmpresa()">
+                    <i class="fas fa-save"></i> Guardar Cambios
+                </button>
+            </div>
+        </div>
+    `;
+    
+    return modal;
+};
+
+FormularioEmpresas.prototype.generarFormularioEdicion = function(empresa) {
+    return `
+        <div class="contenido-edicion">
+            <h3 class="titulo-paso">📝 Información Básica</h3>
+            
+            <div class="grupo-campo">
+                <label class="etiqueta-campo">Nombre de la Empresa</label>
+                <input type="text" id="editNombreEmpresa" class="input-texto" 
+                       value="${empresa.nombre}" maxlength="100">
+            </div>
+            
+            <div class="grupo-campo">
+                <label class="etiqueta-campo">RUC</label>
+                <input type="text" id="editRucEmpresa" class="input-texto" 
+                       value="${empresa.ruc || ''}" maxlength="11">
+            </div>
+            
+            <div class="grupo-campo">
+                <label class="etiqueta-campo">Icono</label>
+                <div class="selector-emoji" onclick="formularioEmpresas.mostrarSelectorEmojiEdicion()">
+                    <div class="emoji-mostrar" id="editEmojiMostrar">${empresa.icono || '🏢'}</div>
+                    <span class="texto-emoji">Cambiar icono</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+            
+            <h3 class="titulo-paso" style="margin-top: 2rem;">🎨 Personalización de Colores</h3>
+            <p class="descripcion-paso">Personaliza los colores de las métricas para esta empresa</p>
+            
+            <div class="grupo-campo">
+                <label class="etiqueta-campo">Color Principal (Ingresos)</label>
+                <div class="color-picker-group">
+                    <input type="color" id="colorIngresos" value="#d4af37" class="color-picker">
+                    <input type="text" id="colorIngresosHex" value="#d4af37" class="color-input">
+                </div>
+            </div>
+            
+            <div class="grupo-campo">
+                <label class="etiqueta-campo">Color de Gastos</label>
+                <div class="color-picker-group">
+                    <input type="color" id="colorGastos" value="#ff6b35" class="color-picker">
+                    <input type="text" id="colorGastosHex" value="#ff6b35" class="color-input">
+                </div>
+            </div>
+            
+            <div class="grupo-campo">
+                <label class="etiqueta-campo">Color de Utilidad</label>
+                <div class="color-picker-group">
+                    <input type="color" id="colorUtilidad" value="#2ecc71" class="color-picker">
+                    <input type="text" id="colorUtilidadHex" value="#2ecc71" class="color-input">
+                </div>
+            </div>
+            
+            <div class="grupo-campo">
+                <label class="etiqueta-campo">Color de Crecimiento</label>
+                <div class="color-picker-group">
+                    <input type="color" id="colorCrecimiento" value="#9b59b6" class="color-picker">
+                    <input type="text" id="colorCrecimientoHex" value="#9b59b6" class="color-input">
+                </div>
+            </div>
+            
+            <div class="grupo-campo">
+                <h4>Vista Previa</h4>
+                <div class="preview-metricas-edit">
+                    <div class="preview-metric-mini ingresos-preview">
+                        <span>Ingresos</span>
+                        <strong>S/. 125,000</strong>
+                    </div>
+                    <div class="preview-metric-mini gastos-preview">
+                        <span>Gastos</span>
+                        <strong>S/. 75,000</strong>
+                    </div>
+                    <div class="preview-metric-mini utilidad-preview">
+                        <span>Utilidad</span>
+                        <strong>S/. 50,000</strong>
+                    </div>
+                    <div class="preview-metric-mini crecimiento-preview">
+                        <span>Crecimiento</span>
+                        <strong>+24.8%</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+};
+
+FormularioEmpresas.prototype.mostrarSelectorEmojiEdicion = function() {
+    const emojisComunes = ['🏢', '🏭', '🏪', '🏬', '🏦', '🏥', '🚚', '🍽️', '💻', '🔥', '⚙️', '🌾', '🐄', '🐟', '⛏️', '🏗️'];
+    const emojiActual = prompt('Selecciona un emoji:\n\n' + emojisComunes.join(' '), this.emojiSeleccionado);
+    
+    if (emojiActual && emojisComunes.includes(emojiActual)) {
+        this.emojiSeleccionado = emojiActual;
+        document.getElementById('editEmojiMostrar').textContent = emojiActual;
+    }
+};
+
+FormularioEmpresas.prototype.guardarCambiosEmpresa = function() {
+    const empresaId = this.empresaEditando;
+    const empresa = this.gestor.empresas[empresaId];
+    
+    if (!empresa) {
+        this.mostrarError('Error al guardar los cambios');
+        return;
+    }
+    
+    // Actualizar datos básicos
+    empresa.nombre = document.getElementById('editNombreEmpresa').value.trim();
+    empresa.ruc = document.getElementById('editRucEmpresa').value.trim();
+    empresa.icono = this.emojiSeleccionado;
+    
+    // Guardar colores personalizados
+    const coloresPersonalizados = {
+        ingresos: document.getElementById('colorIngresos').value,
+        gastos: document.getElementById('colorGastos').value,
+        utilidad: document.getElementById('colorUtilidad').value,
+        crecimiento: document.getElementById('colorCrecimiento').value
+    };
+    
+    empresa.coloresPersonalizados = coloresPersonalizados;
+    
+    // Guardar en localStorage
+    this.gestor.guardarEmpresas();
+    
+    // Aplicar los nuevos colores inmediatamente
+    this.aplicarColoresEmpresa(coloresPersonalizados);
+    
+    // Actualizar UI
+    this.gestor.actualizarListaEmpresas();
+    
+    // Cerrar modal
+    this.cerrarFormularioEdicion();
+    
+    // Notificación
+    alert('✅ Empresa actualizada correctamente');
+    console.log('✅ Empresa actualizada:', empresa.nombre);
+};
+
+FormularioEmpresas.prototype.aplicarColoresEmpresa = function(colores) {
+    // Aplicar colores a las métricas inmediatamente
+    const metricCards = document.querySelectorAll('.metric-card');
+    
+    metricCards.forEach(card => {
+        if (card.classList.contains('revenue')) {
+            this.aplicarColorACard(card, colores.ingresos);
+        } else if (card.classList.contains('expenses')) {
+            this.aplicarColorACard(card, colores.gastos);
+        } else if (card.classList.contains('profit')) {
+            this.aplicarColorACard(card, colores.utilidad);
+        } else if (card.classList.contains('growth')) {
+            this.aplicarColorACard(card, colores.crecimiento);
+        }
+    });
+};
+
+FormularioEmpresas.prototype.aplicarColorACard = function(card, color) {
+    const rgb = this.hexToRgb(color);
+    const colorOscuro = this.darkenColor(color, 20);
+    
+    card.style.setProperty('--metric-primary-color', color);
+    card.style.setProperty('--metric-secondary-color', colorOscuro);
+    card.style.setProperty('--metric-background-color', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.1)`);
+    
+    const icon = card.querySelector('.metric-icon');
+    if (icon) {
+        icon.style.background = `linear-gradient(135deg, ${color} 0%, ${colorOscuro} 100%)`;
+    }
+    
+    const value = card.querySelector('.metric-value');
+    if (value) {
+        value.style.color = color;
+    }
+};
+
+FormularioEmpresas.prototype.hexToRgb = function(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : { r: 212, g: 175, b: 55 };
+};
+
+FormularioEmpresas.prototype.darkenColor = function(hex, percent) {
+    const num = parseInt(hex.replace("#", ""), 16);
+    const amt = Math.round(2.55 * percent);
+    const R = (num >> 16) - amt;
+    const G = (num >> 8 & 0x00FF) - amt;
+    const B = (num & 0x0000FF) - amt;
+    return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+        (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+        (B < 255 ? B < 1 ? 0 : B : 255))
+        .toString(16).slice(1);
+};
+
+FormularioEmpresas.prototype.cerrarFormularioEdicion = function() {
+    const modal = document.getElementById('modalEditarEmpresa');
+    if (modal) {
+        modal.classList.remove('mostrar');
+        setTimeout(() => {
+            modal.remove();
+        }, 300);
+    }
+    this.modoEdicion = false;
+    this.empresaEditando = null;
+};
+
+// Agregar estilos para el editor de colores
+const estilosEditor = document.createElement('style');
+estilosEditor.textContent = `
+    .color-picker-group {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+    
+    .color-picker {
+        width: 50px;
+        height: 40px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+    
+    .color-input {
+        flex: 1;
+        padding: 10px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-family: monospace;
+    }
+    
+    .preview-metricas-edit {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-top: 10px;
+    }
+    
+    .preview-metric-mini {
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        border: 2px solid var(--preview-color, #ddd);
+        background: var(--preview-background, rgba(0,0,0,0.05));
+    }
+    
+    .preview-metric-mini span {
+        display: block;
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 5px;
+    }
+    
+    .preview-metric-mini strong {
+        color: var(--preview-color, #333);
+        font-size: 16px;
+    }
+`;
+document.head.appendChild(estilosEditor);
+
+console.log('✏️ Extensión de edición de empresas cargada');
