@@ -151,11 +151,10 @@ class GraficosExtension {
         // Actualizar datos del gráfico existente
         try {
             if (tipoGrafico === 'line' || tipoGrafico === 'bar') {
-                // Para gráficos de línea y barras
-                chart.data.datasets[0].data = nuevosData;
+               chart.data.datasets[0].data = nuevosdatos;
             } else if (tipoGrafico === 'doughnut' || tipoGrafico === 'pie') {
                 // Para gráficos circulares
-                chart.data.datasets[0].data = nuevosData;
+                chart.data.datasets[0].data = nuevosdatos;
             }
 
             chart.update('active');
