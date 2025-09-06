@@ -1096,7 +1096,7 @@ class GestorEmpresasProfesional {
     _aplicarVariablesCSS(temaConfig) {
         // SOLO aplicar variables CSS locales del gestor (no globales)
         document.documentElement.style.setProperty('--grizalum-primary', temaConfig.primary);
-        document.documentElement.style.setProperty('--grizalum-secondary', tem  aConfig.secondary);
+        document.documentElement.style.setProperty('--grizalum-secondary', temaConfig.secondary);
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
