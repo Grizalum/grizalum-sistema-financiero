@@ -1,756 +1,4 @@
-/**
- * ================================================================
- * GRIZALUM AI INTELLIGENCE MODULE - ULTRA PROFESSIONAL EDITION v2.0
- * Sistema avanzado de inteligencia artificial y análisis predictivo
- * Integrado con ecosistema completo GRIZALUM
- * ================================================================
- */
-
-class InteligenciaArtificialGRIZALUM {
-    constructor() {
-        this.version = '2.0.0';
-        this.utilidades = null;
-        this.sistemaNotificaciones = null;
-        this.gestorTemas = null;
-        this.cache = new Map();
-        this.inicializado = false;
-        
-        // Componentes especializados
-        this.predictor = null;
-        this.analizador = null;
-        this.recomendador = null;
-        this.sistemaAlertas = null;
-        this.generadorReportes = null;
-        
-        // Configuración avanzada
-        this.configuracion = {
-            precision: 0.85,
-            tasaAprendizaje: 0.01,
-            modelos: {
-                flujoCaja: 'regresion_lineal',
-                ventas: 'regresion_polinomial',
-                gastos: 'promedio_movil',
-                clientes: 'clustering'
-            },
-            intervaloActualizacion: 300000, // 5 minutos
-            retencionDatos: 30, // días
-            cache: {
-                habilitado: true,
-                tiempoVida: 900000, // 15 minutos
-                maxEntradas: 100
-            },
-            alertas: {
-                habilitadas: true,
-                intervalMonitoreo: 60000, // 1 minuto
-                notificarCambios: true
-            },
-            persistencia: {
-                guardarModelos: true,
-                guardarHistorial: true,
-                cacheKey: 'grizalum_ai_data'
-            }
-        };
-        
-        // Métricas del sistema de IA
-        this.metricas = {
-            analisisRealizados: 0,
-            prediccionesGeneradas: 0,
-            recomendacionesCreadas: 0,
-            alertasActivadas: 0,
-            reportesGenerados: 0,
-            tiemposEjecucion: [],
-            precisiones: [],
-            tiempoUsoTotal: 0
-        };
-        
-        this.log('🚀 Inicializando GRIZALUM AI Intelligence Module v2.0...');
-    }
-
-    // ======= INICIALIZACIÓN AVANZADA =======
-    
-    inicializar() {
-        try {
-            this.log('🤖 Inicializando sistema de inteligencia artificial...', 'info');
-            
-            // Detectar dependencias
-            this.detectarDependencias();
-            
-            // Cargar configuración global
-            this.cargarConfiguracionGlobal();
-            
-            // Cargar datos persistentes
-            this.cargarDatosPersistentes();
-            
-            // Inicializar componentes especializados
-            this.inicializarComponentes();
-            
-            // Configurar eventos
-            this.configurarEventos();
-            
-            // Iniciar monitoreo automático
-            this.iniciarMonitoreoAutomatico();
-            
-            this.inicializado = true;
-            this.metricas.tiempoInicializacion = Date.now();
-            
-            this.log('✅ Sistema de inteligencia artificial inicializado correctamente', 'success');
-            
-            // Disparar evento de inicialización
-            this.dispararEvento('aiSystemReady', {
-                version: this.version,
-                configuracion: this.configuracion,
-                componentes: this.obtenerEstadoComponentes()
-            });
-            
-            // Mostrar notificación de bienvenida
-            if (this.sistemaNotificaciones) {
-            
-        } catch (error) {
-            this.log(`❌ Error inicializando sistema de IA: ${error.message}`, 'error');
-            if (this.sistemaNotificaciones) {
-                this.sistemaNotificaciones.error('Error inicializando sistema de IA');
-            }
-        }
-    }
-
-    detectarDependencias() {
-        // Detectar utilidades GRIZALUM
-        this.utilidades = window.GrizalumUtils || null;
-        if (this.utilidades) {
-            this.log('🔗 Sistema de utilidades GRIZALUM detectado', 'success');
-        }
-        
-        // Detectar sistema de notificaciones
-        this.sistemaNotificaciones = window.notificationSystem || null;
-        if (this.sistemaNotificaciones) {
-            this.log('🔔 Sistema de notificaciones GRIZALUM detectado', 'success');
-        }
-        
-        // Detectar gestor de temas
-        this.gestorTemas = window.themeManager || window.gestorTemas || null;
-        if (this.gestorTemas) {
-            this.log('🎨 Gestor de temas GRIZALUM detectado', 'success');
-        }
-    }
-
-    cargarConfiguracionGlobal() {
-        const config = window.GRIZALUM_CONFIG || {};
-        
-        // Fusionar configuración de IA
-        if (config.ai) {
-            this.configuracion = this.fusionarConfiguracion(this.configuracion, config.ai);
-        }
-        
-        // Aplicar configuración de rendimiento global
-        if (config.performance) {
-            this.configuracion.cache.habilitado = config.performance.enableCache !== false;
-            this.configuracion.cache.tiempoVida = config.performance.cacheTimeout || this.configuracion.cache.tiempoVida;
-        }
-        
-        this.log('⚙️ Configuración global de IA cargada', 'info');
-    }
-
-    cargarDatosPersistentes() {
-        if (!this.configuracion.persistencia.guardarModelos) return;
-        
-        const cacheKey = this.configuracion.persistencia.cacheKey;
-        let datosPersistentes = null;
-        
-        if (this.utilidades) {
-            datosPersistentes = this.utilidades.cargarDeStorage(cacheKey);
-        } else {
-            try {
-                const guardados = localStorage.getItem(cacheKey);
-                datosPersistentes = guardados ? JSON.parse(guardados) : null;
-            } catch (error) {
-                this.log(`Error cargando datos persistentes: ${error.message}`, 'warn');
-            }
-        }
-        
-        if (datosPersistentes) {
-            // Restaurar métricas históricas
-            if (datosPersistentes.metricas) {
-                this.metricas = { ...this.metricas, ...datosPersistentes.metricas };
-            }
-            
-            // Restaurar configuración personalizada
-            if (datosPersistentes.configuracion) {
-                this.configuracion = this.fusionarConfiguracion(this.configuracion, datosPersistentes.configuracion);
-            }
-            
-            this.log('📂 Datos persistentes de IA cargados', 'info');
-        }
-    }
-
-    guardarDatosPersistentes() {
-        if (!this.configuracion.persistencia.guardarModelos) return;
-        
-        const datosParaGuardar = {
-            version: this.version,
-            configuracion: {
-                precision: this.configuracion.precision,
-                modelos: this.configuracion.modelos,
-                alertas: this.configuracion.alertas
-            },
-            metricas: this.metricas,
-            timestamp: Date.now()
-        };
-        
-        const cacheKey = this.configuracion.persistencia.cacheKey;
-        
-        if (this.utilidades) {
-            this.utilidades.guardarEnStorage(cacheKey, datosParaGuardar);
-        } else {
-            try {
-                localStorage.setItem(cacheKey, JSON.stringify(datosParaGuardar));
-            } catch (error) {
-                this.log(`Error guardando datos persistentes: ${error.message}`, 'warn');
-            }
-        }
-    }
-
-    fusionarConfiguracion(destino, origen) {
-        const resultado = { ...destino };
-        
-        Object.keys(origen).forEach(clave => {
-            if (typeof origen[clave] === 'object' && !Array.isArray(origen[clave])) {
-                resultado[clave] = { ...resultado[clave], ...origen[clave] };
-            } else {
-                resultado[clave] = origen[clave];
-            }
-        });
-        
-        return resultado;
-    }
-
-    log(mensaje, tipo = 'info') {
-        if (this.utilidades) {
-            this.utilidades.log(`[AI] ${mensaje}`, tipo);
-        } else {
-            const timestamp = new Date().toLocaleTimeString('es-PE');
-            const prefijo = `[GRIZALUM-AI ${timestamp}]`;
-            
-            switch (tipo) {
-                case 'error':
-                    console.error(`${prefijo} ❌`, mensaje);
-                    break;
-                case 'warn':
-                    console.warn(`${prefijo} ⚠️`, mensaje);
-                    break;
-                case 'success':
-                    console.log(`${prefijo} ✅`, mensaje);
-                    break;
-                default:
-                    console.log(`${prefijo} ℹ️`, mensaje);
-            }
-        }
-    }
-
-    inicializarComponentes() {
-        this.predictor = new PredictorFinancieroGRIZALUM(this);
-        this.analizador = new AnalizadorInteligente(this);
-        this.recomendador = new MotorRecomendaciones(this);
-        this.sistemaAlertas = new SistemaAlertasInteligentes(this);
-        this.generadorReportes = new GeneradorReportesIA(this);
-        
-        this.log('🔧 Componentes especializados de IA inicializados', 'info');
-    }
-
-    // ======= API PRINCIPAL =======
-    
-    /**
-     * Análisis rápido de datos financieros
-     */
-    analisisRapido(datos) {
-        if (!this.validarDatos(datos)) {
-            this.log('❌ Datos inválidos para análisis rápido', 'error');
-            return null;
-        }
-
-        const cacheKey = `analisis_${this.generarHashDatos(datos)}`;
-        
-        // Verificar cache
-        if (this.configuracion.cache.habilitado && this.cache.has(cacheKey)) {
-            const datosCache = this.cache.get(cacheKey);
-            if (Date.now() - datosCache.timestamp < this.configuracion.cache.tiempoVida) {
-                this.log('🚀 Análisis servido desde cache', 'info');
-                return datosCache.resultado;
-            }
-        }
-
-        try {
-            const inicioTiempo = performance.now();
-            
-            const resultado = this.analizador.analizarDatosFinancieros(datos);
-            
-            const tiempoEjecucion = performance.now() - inicioTiempo;
-            this.metricas.tiemposEjecucion.push(tiempoEjecucion);
-            this.metricas.analisisRealizados++;
-            
-            // Guardar en cache
-            if (this.configuracion.cache.habilitado) {
-                this.cache.set(cacheKey, {
-                    resultado,
-                    timestamp: Date.now()
-                });
-                this.limpiarCacheAntiguo();
-            }
-            
-            this.log(`📊 Análisis rápido completado en ${tiempoEjecucion.toFixed(2)}ms`, 'success');
-            
-            return resultado;
-            
-        } catch (error) {
-            this.log(`❌ Error en análisis rápido: ${error.message}`, 'error');
-            if (this.sistemaNotificaciones) {
-                this.sistemaNotificaciones.error('Error en análisis de IA');
-            }
-            return null;
-        }
-    }
-
-    /**
-     * Generar predicciones financieras
-     */
-    generarPredicciones(datos, periodos = 6) {
-        if (!this.validarDatos(datos)) {
-            this.log('❌ Datos inválidos para predicciones', 'error');
-            return null;
-        }
-
-        try {
-            const predicciones = this.predictor.generarPredicciones(datos, periodos);
-            this.metricas.prediccionesGeneradas++;
-            
-            this.log(`🔮 Predicciones generadas para ${periodos} períodos`, 'success');
-            
-            return predicciones;
-            
-        } catch (error) {
-            this.log(`❌ Error generando predicciones: ${error.message}`, 'error');
-            return null;
-        }
-    }
-
-    /**
-     * Obtener recomendaciones inteligentes
-     */
-    obtenerRecomendaciones(datos) {
-        if (!this.validarDatos(datos)) {
-            this.log('❌ Datos inválidos para recomendaciones', 'error');
-            return [];
-        }
-
-        try {
-            const recomendaciones = this.recomendador.generarRecomendaciones(datos);
-            this.metricas.recomendacionesCreadas += recomendaciones.length;
-            
-            this.log(`💡 ${recomendaciones.length} recomendaciones generadas`, 'success');
-            
-            return recomendaciones;
-            
-        } catch (error) {
-            this.log(`❌ Error generando recomendaciones: ${error.message}`, 'error');
-            return [];
-        }
-    }
-
-    /**
-     * Generar reporte completo de IA
-     */
-    generarReporteCompleto(datos) {
-        if (!this.validarDatos(datos)) {
-            this.log('❌ Datos inválidos para reporte completo', 'error');
-            return null;
-        }
-
-        try {
-            const inicioTiempo = performance.now();
-            
-            const reporte = this.generadorReportes.generarReporteCompleto(datos);
-            
-            const tiempoEjecucion = performance.now() - inicioTiempo;
-            this.metricas.reportesGenerados++;
-            this.metricas.tiemposEjecucion.push(tiempoEjecucion);
-            
-            this.log(`📋 Reporte completo generado en ${tiempoEjecucion.toFixed(2)}ms`, 'success');
-            
-            // Notificar finalización si está disponible
-            if (this.sistemaNotificaciones) {
-                this.sistemaNotificaciones.exito('🤖 Reporte de IA generado exitosamente', {
-                    titulo: 'Análisis Completado',
-                    duracion: 4000
-                });
-            }
-            
-            return reporte;
-            
-        } catch (error) {
-            this.log(`❌ Error generando reporte completo: ${error.message}`, 'error');
-            if (this.sistemaNotificaciones) {
-                this.sistemaNotificaciones.error('Error generando reporte de IA');
-            }
-            return null;
-        }
-    }
-
-    /**
-     * Obtener insights en tiempo real
-     */
-    obtenerInsightsEnTiempoReal() {
-        // Datos de muestra para demostración
-        const datosMuestra = {
-            flujoCaja: [15000, 18500, 22000, 17800, 21500, 19800, 24500],
-            ingresos: [35000, 38000, 42000, 39000, 44000, 40300, 45200],
-            gastos: [28000, 29500, 31000, 30200, 32500, 30200, 28700]
-        };
-        
-        return this.analisisRapido(datosMuestra);
-    }
-
-    // ======= VALIDACIÓN Y UTILIDADES =======
-    
-    validarDatos(datos) {
-        if (!datos || typeof datos !== 'object') {
-            return false;
-        }
-        
-        // Verificar que al menos tenga un array de datos financieros
-        const camposRequeridos = ['flujoCaja', 'ingresos', 'gastos', 'cashFlow', 'revenue', 'expenses'];
-        const tieneDatos = camposRequeridos.some(campo => 
-            Array.isArray(datos[campo]) && datos[campo].length > 0
-        );
-        
-        if (!tieneDatos) {
-            this.log('⚠️ Los datos no contienen arrays financieros válidos', 'warn');
-            return false;
-        }
-        
-        return true;
-    }
-
-    generarHashDatos(datos) {
-        // Generar hash simple para cache
-        return btoa(JSON.stringify(datos)).slice(0, 16);
-    }
-
-    limpiarCacheAntiguo() {
-        if (this.cache.size <= this.configuracion.cache.maxEntradas) return;
-        
-        // Remover entradas más antiguas
-        const entradas = Array.from(this.cache.entries());
-        entradas.sort((a, b) => a[1].timestamp - b[1].timestamp);
-        
-        const aRemover = entradas.slice(0, entradas.length - this.configuracion.cache.maxEntradas);
-        aRemover.forEach(([clave]) => this.cache.delete(clave));
-        
-        this.log(`🧹 Cache limpiado: ${aRemover.length} entradas removidas`, 'info');
-    }
-
-    // ======= EVENTOS Y MONITOREO =======
-    
-    configurarEventos() {
-        // Escuchar cambios de datos financieros
-        document.addEventListener('grizalumDatosFinancierosActualizados', (evento) => {
-            const { datos } = evento.detail;
-            if (this.configuracion.alertas.habilitadas) {
-                this.verificarAlertasEnDatos(datos);
-            }
-        });
-
-        // Escuchar cambios de empresa
-        document.addEventListener('grizalumCompanyChanged', (evento) => {
-            this.limpiarCache();
-            this.log('🏢 Cache limpiado por cambio de empresa', 'info');
-        });
-
-        // Escuchar cambios de período
-        document.addEventListener('grizalumPeriodoCambiado', (evento) => {
-            this.limpiarCache();
-        });
-
-        this.log('🔗 Eventos de IA configurados', 'info');
-    }
-
-    iniciarMonitoreoAutomatico() {
-        if (!this.configuracion.alertas.habilitadas) return;
-        
-        // Monitoreo periódico
-        setInterval(() => {
-            if (this.inicializado) {
-                this.verificarEstadoSistema();
-            }
-        }, this.configuracion.alertas.intervalMonitoreo);
-        
-        this.log('🔍 Monitoreo automático iniciado', 'info');
-    }
-
-    verificarAlertasEnDatos(datos) {
-        try {
-            const alertas = this.sistemaAlertas.verificarAlertas(datos);
-            
-            if (alertas.length > 0 && this.configuracion.alertas.notificarCambios) {
-                alertas.forEach(alerta => {
-                    if (this.sistemaNotificaciones) {
-                        const tipo = alerta.severidad === 'critica' ? 'error' : 'warning';
-                        this.sistemaNotificaciones.mostrar(alerta.descripcion, tipo, 6000, {
-                            titulo: `Alerta IA: ${alerta.titulo}`
-                        });
-                    }
-                });
-                
-                this.metricas.alertasActivadas += alertas.length;
-            }
-            
-        } catch (error) {
-            this.log(`❌ Error verificando alertas: ${error.message}`, 'error');
-        }
-    }
-
-    verificarEstadoSistema() {
-        // Verificar uso de memoria del cache
-        if (this.cache.size > this.configuracion.cache.maxEntradas * 0.9) {
-            this.limpiarCacheAntiguo();
-        }
-        
-        // Guardar datos periódicamente
-        this.guardarDatosPersistentes();
-    }
-
-    dispararEvento(nombreEvento, detalle = {}) {
-        const evento = new CustomEvent(nombreEvento, {
-            detail: {
-                ...detalle,
-                aiVersion: this.version,
-                timestamp: Date.now()
-            }
-        });
-        document.dispatchEvent(evento);
-    }
-
-    // ======= MÉTRICAS Y ANALÍTICAS =======
-    
-    obtenerEstadisticas() {
-        const tiempoPromedioEjecucion = this.metricas.tiemposEjecucion.length > 0
-            ? this.metricas.tiemposEjecucion.reduce((a, b) => a + b, 0) / this.metricas.tiemposEjecucion.length
-            : 0;
-
-        return {
-            version: this.version,
-            inicializado: this.inicializado,
-            rendimiento: {
-                analisisRealizados: this.metricas.analisisRealizados,
-                prediccionesGeneradas: this.metricas.prediccionesGeneradas,
-                recomendacionesCreadas: this.metricas.recomendacionesCreadas,
-                reportesGenerados: this.metricas.reportesGenerados,
-                alertasActivadas: this.metricas.alertasActivadas,
-                tiempoPromedioEjecucion: Math.round(tiempoPromedioEjecucion),
-                precisionPromedio: this.calcularPrecisionPromedio()
-            },
-            cache: {
-                entradas: this.cache.size,
-                habilitado: this.configuracion.cache.habilitado,
-                maxEntradas: this.configuracion.cache.maxEntradas
-            },
-            configuracion: { ...this.configuracion }
-        };
-    }
-
-    calcularPrecisionPromedio() {
-        return this.metricas.precisiones.length > 0
-            ? this.metricas.precisiones.reduce((a, b) => a + b, 0) / this.metricas.precisiones.length
-            : this.configuracion.precision;
-    }
-
-    obtenerEstadoComponentes() {
-        return {
-            predictor: !!this.predictor,
-            analizador: !!this.analizador,
-            recomendador: !!this.recomendador,
-            sistemaAlertas: !!this.sistemaAlertas,
-            generadorReportes: !!this.generadorReportes
-        };
-    }
-
-    reiniciarMetricas() {
-        this.metricas = {
-            analisisRealizados: 0,
-            prediccionesGeneradas: 0,
-            recomendacionesCreadas: 0,
-            alertasActivadas: 0,
-            reportesGenerados: 0,
-            tiemposEjecucion: [],
-            precisiones: [],
-            tiempoUsoTotal: 0
-        };
-        
-        this.log('📊 Métricas de IA reiniciadas', 'info');
-    }
-
-    limpiarCache() {
-        const entradas = this.cache.size;
-        this.cache.clear();
-        this.log(`🧹 Cache de IA limpiado: ${entradas} entradas eliminadas`, 'info');
-    }
-
-    // ======= API PÚBLICA =======
-    
-    obtenerEstado() {
-        return {
-            version: this.version,
-            inicializado: this.inicializado,
-            componentesActivos: this.obtenerEstadoComponentes(),
-            metricas: this.metricas,
-            configuracion: { ...this.configuracion }
-        };
-    }
-}
-
-// ======= PREDICTOR FINANCIERO AVANZADO =======
-
-class PredictorFinancieroGRIZALUM {
-    constructor(sistemaIA) {
-        this.sistemaIA = sistemaIA;
-        this.modelos = {};
-    }
-
-    // Modelo de regresión lineal mejorado
-    regresionLineal(datos) {
-        if (!Array.isArray(datos) || datos.length < 2) {
-            throw new Error('Datos insuficientes para regresión lineal');
-        }
-
-        const n = datos.length;
-        const sumX = datos.reduce((sum, _, i) => sum + i, 0);
-        const sumY = datos.reduce((sum, val) => sum + val, 0);
-        const sumXY = datos.reduce((sum, val, i) => sum + (i * val), 0);
-        const sumXX = datos.reduce((sum, _, i) => sum + (i * i), 0);
-
-        const denominador = n * sumXX - sumX * sumX;
-        if (denominador === 0) {
-            throw new Error('Error matemático en regresión lineal');
-        }
-
-        const pendiente = (n * sumXY - sumX * sumY) / denominador;
-        const intercepto = (sumY - pendiente * sumX) / n;
-
-        // Calcular R²
-        const mediaY = sumY / n;
-        const ssTotal = datos.reduce((sum, val) => sum + Math.pow(val - mediaY, 2), 0);
-        const ssRes = datos.reduce((sum, val, i) => {
-            const prediccion = pendiente * i + intercepto;
-            return sum + Math.pow(val - prediccion, 2);
-        }, 0);
-        
-        const rCuadrado = ssTotal > 0 ? 1 - (ssRes / ssTotal) : 0;
-
-        return { pendiente, intercepto, rCuadrado };
-    }
-
-    // Predicción de flujo de caja con intervalos de confianza
-    predecirFlujoCaja(datosHistoricos, periodos = 6) {
-        try {
-            const { pendiente, intercepto, rCuadrado } = this.regresionLineal(datosHistoricos);
-            const predicciones = [];
-            const volatilidad = this.calcularVolatilidad(datosHistoricos);
-            
-            for (let i = 0; i < periodos; i++) {
-                const siguientePeriodo = datosHistoricos.length + i;
-                const prediccionBase = pendiente * siguientePeriodo + intercepto;
-                
-                // Agregar incertidumbre realista
-                const factorIncertidumbre = 1 + (i * 0.1); // Aumenta incertidumbre con el tiempo
-                const ruido = (Math.random() - 0.5) * volatilidad * 0.1 * factorIncertidumbre;
-                
-                const prediccion = Math.max(0, Math.round(prediccionBase + ruido));
-                
-                // Calcular intervalos de confianza
-                const margenError = volatilidad * factorIncertidumbre;
-                const intervaloInferior = Math.max(0, Math.round(prediccion - margenError));
-                const intervaloSuperior = Math.round(prediccion + margenError);
-                
-                predicciones.push({
-                    valor: prediccion,
-                    intervaloInferior,
-                    intervaloSuperior,
-                    confianza: Math.max(0.5, rCuadrado * (1 - i * 0.1))
-                });
-            }
-            
-            return predicciones;
-            
-        } catch (error) {
-            this.sistemaIA.log(`❌ Error prediciendo flujo de caja: ${error.message}`, 'error');
-            return [];
-        }
-    }
-
-    // Predicción de ventas con detección de estacionalidad mejorada
-    predecirVentas(datosHistoricos, periodos = 6) {
-        try {
-            const estacionalidad = this.detectarEstacionalidad(datosHistoricos);
-            const tendencia = this.regresionLineal(datosHistoricos);
-            const predicciones = [];
-            
-            for (let i = 0; i < periodos; i++) {
-                const siguientePeriodo = datosHistoricos.length + i;
-                const prediccionBase = tendencia.pendiente * siguientePeriodo + tendencia.intercepto;
-                const factorEstacional = estacionalidad[i % estacionalidad.length];
-                
-                const prediccion = Math.round(prediccionBase * factorEstacional);
-                
-                predicciones.push({
-                    valor: Math.max(0, prediccion),
-                    factorEstacional,
-                    confianza: tendencia.rCuadrado
-                });
-            }
-            
-            return predicciones;
-            
-        } catch (error) {
-            this.sistemaIA.log(`❌ Error prediciendo ventas: ${error.message}`, 'error');
-            return [];
-        }
-    }
-
-    // Detectar patrones estacionales
-    detectarEstacionalidad(datos, longitudEstacion = 12) {
-        try {
-            const estaciones = [];
-            
-            for (let i = 0; i < longitudEstacion; i++) {
-                const valoresEstacionales = [];
-                for (let j = i; j < datos.length; j += longitudEstacion) {
-                    if (datos[j] !== undefined) {
-                        valoresEstacionales.push(datos[j]);
-                    }
-                }
-                
-                if (valoresEstacionales.length > 0) {
-                    const promedio = valoresEstacionales.reduce((a, b) => a + b, 0) / valoresEstacionales.length;
-                    const promedioGeneral = datos.reduce((a, b) => a + b, 0) / datos.length;
-                    
-                    estaciones.push(promedioGeneral > 0 ? promedio / promedioGeneral : 1);
-                } else {
-                    estaciones.push(1);
-                }
-            }
-            
-            return estaciones;
-            
-        } catch (error) {
-            this.sistemaIA.log(`❌ Error detectando estacionalidad: ${error.message}`, 'error');
-            return Array(12).fill(1); // Retornar valores neutros
-        }
-    }
-
-    // Calcular volatilidad de los datos
-    calcularVolatilidad(datos) {
-        if (datos.length < 2) return 0;
-        
-        const media = datos.reduce((a, b) => a + b, 0) / datos.length;
-        const varianza = datos.reduce((sum, val) => sum + Math.pow(val - media, 2), 0) / datos.length;
+const varianza = datos.reduce((sum, val) => sum + Math.pow(val - media, 2), 0) / datos.length;
         return Math.sqrt(varianza);
     }
 
@@ -1673,7 +921,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Crear instancia global con retraso para asegurar que otros módulos estén listos
         setTimeout(() => {
             inteligenciaArtificialGrizalum = new InteligenciaArtificialGRIZALUM();
-           
+            inteligenciaArtificialGrizalum.inicializar();
             
             // Alias globales
             window.aiSystem = inteligenciaArtificialGrizalum;
@@ -1690,7 +938,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Funciones específicas para la UI del sistema (compatibilidad total)
 window.generateAIReport = function() {
-    if (!window.aiSystem?.inicializado) {
+    if (!window.aiSystem || !window.aiSystem.inicializado) {
         console.warn('⚠️ Sistema de IA no inicializado');
         return null;
     }
@@ -1723,8 +971,9 @@ window.generateAIReport = function() {
         }
         
         // Usar sistema de notificaciones si está disponible
-        if (window.notificationSystem) {
-            window.notificationSystem.exito('🤖 Análisis de IA completado exitosamente', {
+        if (window.notificationSystem || window.sistemaNotificaciones) {
+            const notificationSys = window.notificationSystem || window.sistemaNotificaciones;
+            notificationSys.exito('🤖 Análisis de IA completado exitosamente', {
                 titulo: 'Reporte Generado',
                 duracion: 4000
             });
@@ -1735,8 +984,9 @@ window.generateAIReport = function() {
     } catch (error) {
         console.error('❌ Error generando reporte de IA:', error);
         
-        if (window.notificationSystem) {
-            window.notificationSystem.error('Error generando reporte de IA');
+        if (window.notificationSystem || window.sistemaNotificaciones) {
+            const notificationSys = window.notificationSystem || window.sistemaNotificaciones;
+            notificationSys.error('Error generando reporte de IA');
         }
         
         return null;
@@ -1746,22 +996,22 @@ window.generateAIReport = function() {
 // Utilidades de IA para compatibilidad
 window.aiUtilities = {
     // Análisis rápido
-    quickAnalysis: (datos) => window.aiSystem?.analisisRapido(datos),
+    quickAnalysis: (datos) => window.aiSystem && window.aiSystem.analisisRapido(datos),
     
     // Obtener recomendaciones
-    getRecommendations: (datos) => window.aiSystem?.obtenerRecomendaciones(datos),
+    getRecommendations: (datos) => window.aiSystem && window.aiSystem.obtenerRecomendaciones(datos),
     
     // Generar reporte completo
-    generateReport: (datos) => window.aiSystem?.generarReporteCompleto(datos),
+    generateReport: (datos) => window.aiSystem && window.aiSystem.generarReporteCompleto(datos),
     
     // Obtener insights en tiempo real
-    getRealTimeInsights: () => window.aiSystem?.obtenerInsightsEnTiempoReal(),
+    getRealTimeInsights: () => window.aiSystem && window.aiSystem.obtenerInsightsEnTiempoReal(),
     
     // Generar predicciones
-    generatePredictions: (datos, periodos) => window.aiSystem?.generarPredicciones(datos, periodos),
+    generatePredictions: (datos, periodos) => window.aiSystem && window.aiSystem.generarPredicciones(datos, periodos),
     
     // Obtener estadísticas del sistema
-    getSystemStats: () => window.aiSystem?.obtenerEstadisticas()
+    getSystemStats: () => window.aiSystem && window.aiSystem.obtenerEstadisticas()
 };
 
 // ======= API PÚBLICA DEL SISTEMA DE IA =======
@@ -1769,20 +1019,20 @@ window.GRIZALUM_AI = {
     version: '2.0.0',
     
     // Métodos principales
-    analisisRapido: (datos) => window.aiSystem?.analisisRapido(datos),
-    generarPredicciones: (datos, periodos) => window.aiSystem?.generarPredicciones(datos, periodos),
-    obtenerRecomendaciones: (datos) => window.aiSystem?.obtenerRecomendaciones(datos),
-    generarReporteCompleto: (datos) => window.aiSystem?.generarReporteCompleto(datos),
-    obtenerInsightsEnTiempoReal: () => window.aiSystem?.obtenerInsightsEnTiempoReal(),
+    analisisRapido: (datos) => window.aiSystem && window.aiSystem.analisisRapido(datos),
+    generarPredicciones: (datos, periodos) => window.aiSystem && window.aiSystem.generarPredicciones(datos, periodos),
+    obtenerRecomendaciones: (datos) => window.aiSystem && window.aiSystem.obtenerRecomendaciones(datos),
+    generarReporteCompleto: (datos) => window.aiSystem && window.aiSystem.generarReporteCompleto(datos),
+    obtenerInsightsEnTiempoReal: () => window.aiSystem && window.aiSystem.obtenerInsightsEnTiempoReal(),
     
     // Estado y configuración
-    obtenerEstado: () => window.aiSystem?.obtenerEstado(),
-    obtenerEstadisticas: () => window.aiSystem?.obtenerEstadisticas(),
-    limpiarCache: () => window.aiSystem?.limpiarCache(),
-    reiniciarMetricas: () => window.aiSystem?.reiniciarMetricas(),
+    obtenerEstado: () => window.aiSystem && window.aiSystem.obtenerEstado(),
+    obtenerEstadisticas: () => window.aiSystem && window.aiSystem.obtenerEstadisticas(),
+    limpiarCache: () => window.aiSystem && window.aiSystem.limpiarCache(),
+    reiniciarMetricas: () => window.aiSystem && window.aiSystem.reiniciarMetricas(),
     
     // Utilidades
-    estaInicializado: () => window.aiSystem?.inicializado || false
+    estaInicializado: () => window.aiSystem && window.aiSystem.inicializado || false
 };
 
 console.log('🤖 GRIZALUM AI Intelligence Module v2.0 cargado');
@@ -1829,4 +1079,761 @@ console.log(`
    • GeneradorReportesIA - Reportes ejecutivos
 
 🤖 ===================================================
-`);
+`);/**
+ * ================================================================
+ * GRIZALUM AI INTELLIGENCE MODULE - ULTRA PROFESSIONAL EDITION v2.0
+ * Sistema avanzado de inteligencia artificial y análisis predictivo
+ * Integrado con ecosistema completo GRIZALUM
+ * ================================================================
+ */
+
+class InteligenciaArtificialGRIZALUM {
+    constructor() {
+        this.version = '2.0.0';
+        this.utilidades = null;
+        this.sistemaNotificaciones = null;
+        this.gestorTemas = null;
+        this.cache = new Map();
+        this.inicializado = false;
+        
+        // Componentes especializados
+        this.predictor = null;
+        this.analizador = null;
+        this.recomendador = null;
+        this.sistemaAlertas = null;
+        this.generadorReportes = null;
+        
+        // Configuración avanzada
+        this.configuracion = {
+            precision: 0.85,
+            tasaAprendizaje: 0.01,
+            modelos: {
+                flujoCaja: 'regresion_lineal',
+                ventas: 'regresion_polinomial',
+                gastos: 'promedio_movil',
+                clientes: 'clustering'
+            },
+            intervaloActualizacion: 300000, // 5 minutos
+            retencionDatos: 30, // días
+            cache: {
+                habilitado: true,
+                tiempoVida: 900000, // 15 minutos
+                maxEntradas: 100
+            },
+            alertas: {
+                habilitadas: true,
+                intervalMonitoreo: 60000, // 1 minuto
+                notificarCambios: true
+            },
+            persistencia: {
+                guardarModelos: true,
+                guardarHistorial: true,
+                cacheKey: 'grizalum_ai_data'
+            }
+        };
+        
+        // Métricas del sistema de IA
+        this.metricas = {
+            analisisRealizados: 0,
+            prediccionesGeneradas: 0,
+            recomendacionesCreadas: 0,
+            alertasActivadas: 0,
+            reportesGenerados: 0,
+            tiemposEjecucion: [],
+            precisiones: [],
+            tiempoUsoTotal: 0
+        };
+        
+        this.log('🚀 Inicializando GRIZALUM AI Intelligence Module v2.0...');
+    }
+
+    // ======= INICIALIZACIÓN AVANZADA =======
+    
+    inicializar() {
+        try {
+            this.log('🤖 Inicializando sistema de inteligencia artificial...', 'info');
+            
+            // Detectar dependencias
+            this.detectarDependencias();
+            
+            // Cargar configuración global
+            this.cargarConfiguracionGlobal();
+            
+            // Cargar datos persistentes
+            this.cargarDatosPersistentes();
+            
+            // Inicializar componentes especializados
+            this.inicializarComponentes();
+            
+            // Configurar eventos
+            this.configurarEventos();
+            
+            // Iniciar monitoreo automático
+            this.iniciarMonitoreoAutomatico();
+            
+            this.inicializado = true;
+            this.metricas.tiempoInicializacion = Date.now();
+            
+            this.log('✅ Sistema de inteligencia artificial inicializado correctamente', 'success');
+            
+            // Disparar evento de inicialización
+            this.dispararEvento('aiSystemReady', {
+                version: this.version,
+                configuracion: this.configuracion,
+                componentes: this.obtenerEstadoComponentes()
+            });
+            
+            // Mostrar notificación de bienvenida - CORREGIDO
+            if (this.sistemaNotificaciones) {
+                this.sistemaNotificaciones.exito('🤖 Sistema de IA Ultra Professional v2.0 inicializado', {
+                    titulo: 'AI Intelligence Ready',
+                    duracion: 3000
+                });
+            }
+            
+        } catch (error) {
+            this.log(`❌ Error inicializando sistema de IA: ${error.message}`, 'error');
+            if (this.sistemaNotificaciones) {
+                this.sistemaNotificaciones.error('Error inicializando sistema de IA');
+            }
+        }
+    }
+
+    detectarDependencias() {
+        // Detectar utilidades GRIZALUM
+        this.utilidades = window.GrizalumUtils || null;
+        if (this.utilidades) {
+            this.log('🔗 Sistema de utilidades GRIZALUM detectado', 'success');
+        }
+        
+        // Detectar sistema de notificaciones
+        this.sistemaNotificaciones = window.notificationSystem || window.sistemaNotificaciones || null;
+        if (this.sistemaNotificaciones) {
+            this.log('🔔 Sistema de notificaciones GRIZALUM detectado', 'success');
+        }
+        
+        // Detectar gestor de temas
+        this.gestorTemas = window.themeManager || window.gestorTemas || null;
+        if (this.gestorTemas) {
+            this.log('🎨 Gestor de temas GRIZALUM detectado', 'success');
+        }
+    }
+
+    cargarConfiguracionGlobal() {
+        const config = window.GRIZALUM_CONFIG || {};
+        
+        // Fusionar configuración de IA
+        if (config.ai) {
+            this.configuracion = this.fusionarConfiguracion(this.configuracion, config.ai);
+        }
+        
+        // Aplicar configuración de rendimiento global
+        if (config.performance) {
+            this.configuracion.cache.habilitado = config.performance.enableCache !== false;
+            this.configuracion.cache.tiempoVida = config.performance.cacheTimeout || this.configuracion.cache.tiempoVida;
+        }
+        
+        this.log('⚙️ Configuración global de IA cargada', 'info');
+    }
+
+    cargarDatosPersistentes() {
+        if (!this.configuracion.persistencia.guardarModelos) return;
+        
+        const cacheKey = this.configuracion.persistencia.cacheKey;
+        let datosPersistentes = null;
+        
+        if (this.utilidades) {
+            datosPersistentes = this.utilidades.cargarDeStorage(cacheKey);
+        } else {
+            try {
+                const guardados = localStorage.getItem(cacheKey);
+                datosPersistentes = guardados ? JSON.parse(guardados) : null;
+            } catch (error) {
+                this.log(`Error cargando datos persistentes: ${error.message}`, 'warn');
+            }
+        }
+        
+        if (datosPersistentes) {
+            // Restaurar métricas históricas
+            if (datosPersistentes.metricas) {
+                this.metricas = { ...this.metricas, ...datosPersistentes.metricas };
+            }
+            
+            // Restaurar configuración personalizada
+            if (datosPersistentes.configuracion) {
+                this.configuracion = this.fusionarConfiguracion(this.configuracion, datosPersistentes.configuracion);
+            }
+            
+            this.log('📂 Datos persistentes de IA cargados', 'info');
+        }
+    }
+
+    guardarDatosPersistentes() {
+        if (!this.configuracion.persistencia.guardarModelos) return;
+        
+        const datosParaGuardar = {
+            version: this.version,
+            configuracion: {
+                precision: this.configuracion.precision,
+                modelos: this.configuracion.modelos,
+                alertas: this.configuracion.alertas
+            },
+            metricas: this.metricas,
+            timestamp: Date.now()
+        };
+        
+        const cacheKey = this.configuracion.persistencia.cacheKey;
+        
+        if (this.utilidades) {
+            this.utilidades.guardarEnStorage(cacheKey, datosParaGuardar);
+        } else {
+            try {
+                localStorage.setItem(cacheKey, JSON.stringify(datosParaGuardar));
+            } catch (error) {
+                this.log(`Error guardando datos persistentes: ${error.message}`, 'warn');
+            }
+        }
+    }
+
+    fusionarConfiguracion(destino, origen) {
+        const resultado = { ...destino };
+        
+        Object.keys(origen).forEach(clave => {
+            if (typeof origen[clave] === 'object' && !Array.isArray(origen[clave])) {
+                resultado[clave] = { ...resultado[clave], ...origen[clave] };
+            } else {
+                resultado[clave] = origen[clave];
+            }
+        });
+        
+        return resultado;
+    }
+
+    log(mensaje, tipo = 'info') {
+        if (this.utilidades) {
+            this.utilidades.log(`[AI] ${mensaje}`, tipo);
+        } else {
+            const timestamp = new Date().toLocaleTimeString('es-PE');
+            const prefijo = `[GRIZALUM-AI ${timestamp}]`;
+            
+            switch (tipo) {
+                case 'error':
+                    console.error(`${prefijo} ❌`, mensaje);
+                    break;
+                case 'warn':
+                    console.warn(`${prefijo} ⚠️`, mensaje);
+                    break;
+                case 'success':
+                    console.log(`${prefijo} ✅`, mensaje);
+                    break;
+                default:
+                    console.log(`${prefijo} ℹ️`, mensaje);
+            }
+        }
+    }
+
+    inicializarComponentes() {
+        this.predictor = new PredictorFinancieroGRIZALUM(this);
+        this.analizador = new AnalizadorInteligente(this);
+        this.recomendador = new MotorRecomendaciones(this);
+        this.sistemaAlertas = new SistemaAlertasInteligentes(this);
+        this.generadorReportes = new GeneradorReportesIA(this);
+        
+        this.log('🔧 Componentes especializados de IA inicializados', 'info');
+    }
+
+    // ======= API PRINCIPAL =======
+    
+    /**
+     * Análisis rápido de datos financieros
+     */
+    analisisRapido(datos) {
+        if (!this.validarDatos(datos)) {
+            this.log('❌ Datos inválidos para análisis rápido', 'error');
+            return null;
+        }
+
+        const cacheKey = `analisis_${this.generarHashDatos(datos)}`;
+        
+        // Verificar cache
+        if (this.configuracion.cache.habilitado && this.cache.has(cacheKey)) {
+            const datosCache = this.cache.get(cacheKey);
+            if (Date.now() - datosCache.timestamp < this.configuracion.cache.tiempoVida) {
+                this.log('🚀 Análisis servido desde cache', 'info');
+                return datosCache.resultado;
+            }
+        }
+
+        try {
+            const inicioTiempo = performance.now();
+            
+            const resultado = this.analizador.analizarDatosFinancieros(datos);
+            
+            const tiempoEjecucion = performance.now() - inicioTiempo;
+            this.metricas.tiemposEjecucion.push(tiempoEjecucion);
+            this.metricas.analisisRealizados++;
+            
+            // Guardar en cache
+            if (this.configuracion.cache.habilitado) {
+                this.cache.set(cacheKey, {
+                    resultado,
+                    timestamp: Date.now()
+                });
+                this.limpiarCacheAntiguo();
+            }
+            
+            this.log(`📊 Análisis rápido completado en ${tiempoEjecucion.toFixed(2)}ms`, 'success');
+            
+            return resultado;
+            
+        } catch (error) {
+            this.log(`❌ Error en análisis rápido: ${error.message}`, 'error');
+            if (this.sistemaNotificaciones) {
+                this.sistemaNotificaciones.error('Error en análisis de IA');
+            }
+            return null;
+        }
+    }
+
+    /**
+     * Generar predicciones financieras
+     */
+    generarPredicciones(datos, periodos = 6) {
+        if (!this.validarDatos(datos)) {
+            this.log('❌ Datos inválidos para predicciones', 'error');
+            return null;
+        }
+
+        try {
+            const predicciones = this.predictor.generarPredicciones(datos, periodos);
+            this.metricas.prediccionesGeneradas++;
+            
+            this.log(`🔮 Predicciones generadas para ${periodos} períodos`, 'success');
+            
+            return predicciones;
+            
+        } catch (error) {
+            this.log(`❌ Error generando predicciones: ${error.message}`, 'error');
+            return null;
+        }
+    }
+
+    /**
+     * Obtener recomendaciones inteligentes
+     */
+    obtenerRecomendaciones(datos) {
+        if (!this.validarDatos(datos)) {
+            this.log('❌ Datos inválidos para recomendaciones', 'error');
+            return [];
+        }
+
+        try {
+            const recomendaciones = this.recomendador.generarRecomendaciones(datos);
+            this.metricas.recomendacionesCreadas += recomendaciones.length;
+            
+            this.log(`💡 ${recomendaciones.length} recomendaciones generadas`, 'success');
+            
+            return recomendaciones;
+            
+        } catch (error) {
+            this.log(`❌ Error generando recomendaciones: ${error.message}`, 'error');
+            return [];
+        }
+    }
+
+    /**
+     * Generar reporte completo de IA
+     */
+    generarReporteCompleto(datos) {
+        if (!this.validarDatos(datos)) {
+            this.log('❌ Datos inválidos para reporte completo', 'error');
+            return null;
+        }
+
+        try {
+            const inicioTiempo = performance.now();
+            
+            const reporte = this.generadorReportes.generarReporteCompleto(datos);
+            
+            const tiempoEjecucion = performance.now() - inicioTiempo;
+            this.metricas.reportesGenerados++;
+            this.metricas.tiemposEjecucion.push(tiempoEjecucion);
+            
+            this.log(`📋 Reporte completo generado en ${tiempoEjecucion.toFixed(2)}ms`, 'success');
+            
+            // Notificar finalización si está disponible
+            if (this.sistemaNotificaciones) {
+                this.sistemaNotificaciones.exito('🤖 Reporte de IA generado exitosamente', {
+                    titulo: 'Análisis Completado',
+                    duracion: 4000
+                });
+            }
+            
+            return reporte;
+            
+        } catch (error) {
+            this.log(`❌ Error generando reporte completo: ${error.message}`, 'error');
+            if (this.sistemaNotificaciones) {
+                this.sistemaNotificaciones.error('Error generando reporte de IA');
+            }
+            return null;
+        }
+    }
+
+    /**
+     * Obtener insights en tiempo real
+     */
+    obtenerInsightsEnTiempoReal() {
+        // Datos de muestra para demostración
+        const datosMuestra = {
+            flujoCaja: [15000, 18500, 22000, 17800, 21500, 19800, 24500],
+            ingresos: [35000, 38000, 42000, 39000, 44000, 40300, 45200],
+            gastos: [28000, 29500, 31000, 30200, 32500, 30200, 28700]
+        };
+        
+        return this.analisisRapido(datosMuestra);
+    }
+
+    // ======= VALIDACIÓN Y UTILIDADES =======
+    
+    validarDatos(datos) {
+        if (!datos || typeof datos !== 'object') {
+            return false;
+        }
+        
+        // Verificar que al menos tenga un array de datos financieros
+        const camposRequeridos = ['flujoCaja', 'ingresos', 'gastos', 'cashFlow', 'revenue', 'expenses'];
+        const tieneDatos = camposRequeridos.some(campo => 
+            Array.isArray(datos[campo]) && datos[campo].length > 0
+        );
+        
+        if (!tieneDatos) {
+            this.log('⚠️ Los datos no contienen arrays financieros válidos', 'warn');
+            return false;
+        }
+        
+        return true;
+    }
+
+    generarHashDatos(datos) {
+        // Generar hash simple para cache
+        return btoa(JSON.stringify(datos)).slice(0, 16);
+    }
+
+    limpiarCacheAntiguo() {
+        if (this.cache.size <= this.configuracion.cache.maxEntradas) return;
+        
+        // Remover entradas más antiguas
+        const entradas = Array.from(this.cache.entries());
+        entradas.sort((a, b) => a[1].timestamp - b[1].timestamp);
+        
+        const aRemover = entradas.slice(0, entradas.length - this.configuracion.cache.maxEntradas);
+        aRemover.forEach(([clave]) => this.cache.delete(clave));
+        
+        this.log(`🧹 Cache limpiado: ${aRemover.length} entradas removidas`, 'info');
+    }
+
+    // ======= EVENTOS Y MONITOREO =======
+    
+    configurarEventos() {
+        // Escuchar cambios de datos financieros
+        document.addEventListener('grizalumDatosFinancierosActualizados', (evento) => {
+            const { datos } = evento.detail;
+            if (this.configuracion.alertas.habilitadas) {
+                this.verificarAlertasEnDatos(datos);
+            }
+        });
+
+        // Escuchar cambios de empresa
+        document.addEventListener('grizalumCompanyChanged', (evento) => {
+            this.limpiarCache();
+            this.log('🏢 Cache limpiado por cambio de empresa', 'info');
+        });
+
+        // Escuchar cambios de período
+        document.addEventListener('grizalumPeriodoCambiado', (evento) => {
+            this.limpiarCache();
+        });
+
+        this.log('🔗 Eventos de IA configurados', 'info');
+    }
+
+    iniciarMonitoreoAutomatico() {
+        if (!this.configuracion.alertas.habilitadas) return;
+        
+        // Monitoreo periódico
+        setInterval(() => {
+            if (this.inicializado) {
+                this.verificarEstadoSistema();
+            }
+        }, this.configuracion.alertas.intervalMonitoreo);
+        
+        this.log('🔍 Monitoreo automático iniciado', 'info');
+    }
+
+    verificarAlertasEnDatos(datos) {
+        try {
+            const alertas = this.sistemaAlertas.verificarAlertas(datos);
+            
+            if (alertas.length > 0 && this.configuracion.alertas.notificarCambios) {
+                alertas.forEach(alerta => {
+                    if (this.sistemaNotificaciones) {
+                        const tipo = alerta.severidad === 'critica' ? 'error' : 'warning';
+                        this.sistemaNotificaciones.mostrar(alerta.descripcion, tipo, 6000, {
+                            titulo: `Alerta IA: ${alerta.titulo}`
+                        });
+                    }
+                });
+                
+                this.metricas.alertasActivadas += alertas.length;
+            }
+            
+        } catch (error) {
+            this.log(`❌ Error verificando alertas: ${error.message}`, 'error');
+        }
+    }
+
+    verificarEstadoSistema() {
+        // Verificar uso de memoria del cache
+        if (this.cache.size > this.configuracion.cache.maxEntradas * 0.9) {
+            this.limpiarCacheAntiguo();
+        }
+        
+        // Guardar datos periódicamente
+        this.guardarDatosPersistentes();
+    }
+
+    dispararEvento(nombreEvento, detalle = {}) {
+        const evento = new CustomEvent(nombreEvento, {
+            detail: {
+                ...detalle,
+                aiVersion: this.version,
+                timestamp: Date.now()
+            }
+        });
+        document.dispatchEvent(evento);
+    }
+
+    // ======= MÉTRICAS Y ANALÍTICAS =======
+    
+    obtenerEstadisticas() {
+        const tiempoPromedioEjecucion = this.metricas.tiemposEjecucion.length > 0
+            ? this.metricas.tiemposEjecucion.reduce((a, b) => a + b, 0) / this.metricas.tiemposEjecucion.length
+            : 0;
+
+        return {
+            version: this.version,
+            inicializado: this.inicializado,
+            rendimiento: {
+                analisisRealizados: this.metricas.analisisRealizados,
+                prediccionesGeneradas: this.metricas.prediccionesGeneradas,
+                recomendacionesCreadas: this.metricas.recomendacionesCreadas,
+                reportesGenerados: this.metricas.reportesGenerados,
+                alertasActivadas: this.metricas.alertasActivadas,
+                tiempoPromedioEjecucion: Math.round(tiempoPromedioEjecucion),
+                precisionPromedio: this.calcularPrecisionPromedio()
+            },
+            cache: {
+                entradas: this.cache.size,
+                habilitado: this.configuracion.cache.habilitado,
+                maxEntradas: this.configuracion.cache.maxEntradas
+            },
+            configuracion: { ...this.configuracion }
+        };
+    }
+
+    calcularPrecisionPromedio() {
+        return this.metricas.precisiones.length > 0
+            ? this.metricas.precisiones.reduce((a, b) => a + b, 0) / this.metricas.precisiones.length
+            : this.configuracion.precision;
+    }
+
+    obtenerEstadoComponentes() {
+        return {
+            predictor: !!this.predictor,
+            analizador: !!this.analizador,
+            recomendador: !!this.recomendador,
+            sistemaAlertas: !!this.sistemaAlertas,
+            generadorReportes: !!this.generadorReportes
+        };
+    }
+
+    reiniciarMetricas() {
+        this.metricas = {
+            analisisRealizados: 0,
+            prediccionesGeneradas: 0,
+            recomendacionesCreadas: 0,
+            alertasActivadas: 0,
+            reportesGenerados: 0,
+            tiemposEjecucion: [],
+            precisiones: [],
+            tiempoUsoTotal: 0
+        };
+        
+        this.log('📊 Métricas de IA reiniciadas', 'info');
+    }
+
+    limpiarCache() {
+        const entradas = this.cache.size;
+        this.cache.clear();
+        this.log(`🧹 Cache de IA limpiado: ${entradas} entradas eliminadas`, 'info');
+    }
+
+    // ======= API PÚBLICA =======
+    
+    obtenerEstado() {
+        return {
+            version: this.version,
+            inicializado: this.inicializado,
+            componentesActivos: this.obtenerEstadoComponentes(),
+            metricas: this.metricas,
+            configuracion: { ...this.configuracion }
+        };
+    }
+}
+
+// ======= PREDICTOR FINANCIERO AVANZADO =======
+
+class PredictorFinancieroGRIZALUM {
+    constructor(sistemaIA) {
+        this.sistemaIA = sistemaIA;
+        this.modelos = {};
+    }
+
+    // Modelo de regresión lineal mejorado
+    regresionLineal(datos) {
+        if (!Array.isArray(datos) || datos.length < 2) {
+            throw new Error('Datos insuficientes para regresión lineal');
+        }
+
+        const n = datos.length;
+        const sumX = datos.reduce((sum, _, i) => sum + i, 0);
+        const sumY = datos.reduce((sum, val) => sum + val, 0);
+        const sumXY = datos.reduce((sum, val, i) => sum + (i * val), 0);
+        const sumXX = datos.reduce((sum, _, i) => sum + (i * i), 0);
+
+        const denominador = n * sumXX - sumX * sumX;
+        if (denominador === 0) {
+            throw new Error('Error matemático en regresión lineal');
+        }
+
+        const pendiente = (n * sumXY - sumX * sumY) / denominador;
+        const intercepto = (sumY - pendiente * sumX) / n;
+
+        // Calcular R²
+        const mediaY = sumY / n;
+        const ssTotal = datos.reduce((sum, val) => sum + Math.pow(val - mediaY, 2), 0);
+        const ssRes = datos.reduce((sum, val, i) => {
+            const prediccion = pendiente * i + intercepto;
+            return sum + Math.pow(val - prediccion, 2);
+        }, 0);
+        
+        const rCuadrado = ssTotal > 0 ? 1 - (ssRes / ssTotal) : 0;
+
+        return { pendiente, intercepto, rCuadrado };
+    }
+
+    // Predicción de flujo de caja con intervalos de confianza
+    predecirFlujoCaja(datosHistoricos, periodos = 6) {
+        try {
+            const { pendiente, intercepto, rCuadrado } = this.regresionLineal(datosHistoricos);
+            const predicciones = [];
+            const volatilidad = this.calcularVolatilidad(datosHistoricos);
+            
+            for (let i = 0; i < periodos; i++) {
+                const siguientePeriodo = datosHistoricos.length + i;
+                const prediccionBase = pendiente * siguientePeriodo + intercepto;
+                
+                // Agregar incertidumbre realista
+                const factorIncertidumbre = 1 + (i * 0.1); // Aumenta incertidumbre con el tiempo
+                const ruido = (Math.random() - 0.5) * volatilidad * 0.1 * factorIncertidumbre;
+                
+                const prediccion = Math.max(0, Math.round(prediccionBase + ruido));
+                
+                // Calcular intervalos de confianza
+                const margenError = volatilidad * factorIncertidumbre;
+                const intervaloInferior = Math.max(0, Math.round(prediccion - margenError));
+                const intervaloSuperior = Math.round(prediccion + margenError);
+                
+                predicciones.push({
+                    valor: prediccion,
+                    intervaloInferior,
+                    intervaloSuperior,
+                    confianza: Math.max(0.5, rCuadrado * (1 - i * 0.1))
+                });
+            }
+            
+            return predicciones;
+            
+        } catch (error) {
+            this.sistemaIA.log(`❌ Error prediciendo flujo de caja: ${error.message}`, 'error');
+            return [];
+        }
+    }
+
+    // Predicción de ventas con detección de estacionalidad mejorada
+    predecirVentas(datosHistoricos, periodos = 6) {
+        try {
+            const estacionalidad = this.detectarEstacionalidad(datosHistoricos);
+            const tendencia = this.regresionLineal(datosHistoricos);
+            const predicciones = [];
+            
+            for (let i = 0; i < periodos; i++) {
+                const siguientePeriodo = datosHistoricos.length + i;
+                const prediccionBase = tendencia.pendiente * siguientePeriodo + tendencia.intercepto;
+                const factorEstacional = estacionalidad[i % estacionalidad.length];
+                
+                const prediccion = Math.round(prediccionBase * factorEstacional);
+                
+                predicciones.push({
+                    valor: Math.max(0, prediccion),
+                    factorEstacional,
+                    confianza: tendencia.rCuadrado
+                });
+            }
+            
+            return predicciones;
+            
+        } catch (error) {
+            this.sistemaIA.log(`❌ Error prediciendo ventas: ${error.message}`, 'error');
+            return [];
+        }
+    }
+
+    // Detectar patrones estacionales
+    detectarEstacionalidad(datos, longitudEstacion = 12) {
+        try {
+            const estaciones = [];
+            
+            for (let i = 0; i < longitudEstacion; i++) {
+                const valoresEstacionales = [];
+                for (let j = i; j < datos.length; j += longitudEstacion) {
+                    if (datos[j] !== undefined) {
+                        valoresEstacionales.push(datos[j]);
+                    }
+                }
+                
+                if (valoresEstacionales.length > 0) {
+                    const promedio = valoresEstacionales.reduce((a, b) => a + b, 0) / valoresEstacionales.length;
+                    const promedioGeneral = datos.reduce((a, b) => a + b, 0) / datos.length;
+                    
+                    estaciones.push(promedioGeneral > 0 ? promedio / promedioGeneral : 1);
+                } else {
+                    estaciones.push(1);
+                }
+            }
+            
+            return estaciones;
+            
+        } catch (error) {
+            this.sistemaIA.log(`❌ Error detectando estacionalidad: ${error.message}`, 'error');
+            return Array(12).fill(1); // Retornar valores neutros
+        }
+    }
+
+    // Calcular volatilidad de los datos
+    calcularVolatilidad(datos) {
+        if (datos.length < 2) return 0;
+        
+        const media = datos.reduce((a, b) => a + b, 0) / datos.length;
+        const varianza = datos.reduce((sum, val) => sum + Math.pow(val - media, 2), 0
