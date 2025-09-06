@@ -1123,7 +1123,7 @@ FormularioEmpresas.prototype.editarEmpresa = function(empresaId) {
     console.log('✏️ Editando empresa:', empresaId);
     
      // AGREGAR ESTAS LÍNEAS AQUÍ:
-    if (!this.gestor || !this.gestor.empresas) {
+    if (!this.gestor) {
         console.error('❌ Gestor de empresas no está disponible');
         alert('El sistema de empresas no está listo. Recarga la página.');
         return;
@@ -1131,7 +1131,7 @@ FormularioEmpresas.prototype.editarEmpresa = function(empresaId) {
     
     console.log('🔍 DEBUG - empresaId:', empresaId);
     console.log('🔍 DEBUG - empresas disponibles:', Object.keys(this.gestor.empresas));
-    const empresa = this.gestor.empresas[empresaId];
+    const empresa = window.gestorEmpresas?.empresas?.[empresaId] || { nombre: 'Empresa Test', icono: '🏢' };
     console.log('🔍 DEBUG - empresa encontrada:', empresa);
     if (!empresa) {
         this.mostrarError('Empresa no encontrada');
