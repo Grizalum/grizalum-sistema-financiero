@@ -659,7 +659,7 @@ const customizerStyles = `
 }
 
 .theme-custom {
-    background: conic-gradient(from 0deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7, #dda0dd, #98d8c8, #ff6b6b);
+    background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7, #dda0dd);
     display: flex;
     align-items: center;
     justify-content: center;
