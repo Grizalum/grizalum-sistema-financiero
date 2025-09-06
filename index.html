@@ -574,5 +574,20 @@ setTimeout(() => {
 }, 3000);
 </script>
     
+<script>
+// Función de conexión para el botón editar
+function editarEmpresaActual(empresaId) {
+    console.log('Conectando con el customizador de colores para empresa:', empresaId);
+    
+    // Verificar que el formulario esté disponible
+    if (window.formularioEmpresas && typeof window.formularioEmpresas.editarEmpresa === 'function') {
+        window.formularioEmpresas.editarEmpresa(empresaId);
+    } else {
+        console.error('FormularioEmpresas no está disponible');
+        alert('El sistema de edición no está listo. Recarga la página.');
+    }
+}
+</script>
+    
 </body>
 </html>
