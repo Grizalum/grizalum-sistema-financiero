@@ -877,7 +877,7 @@ class ControladorCabeceraGRIZALUM {
         return true;
         
     } catch (error) {
-        this.log('❌ Error abriendo IA Assistant: ${error.message}', 'error');
+        this.log(`❌ Error abriendo IA Assistant: ${error.message}`, 'error');
         return false;
     }
 }
