@@ -61,3 +61,14 @@ window.GRIZALUM_CONFIG = {
 
 // 🚀 Inicializar configuración
 console.log('⚙️ Configuración GRIZALUM cargada:', window.GRIZALUM_CONFIG.version);
+// Al final de tu config.js, después de la línea del console.log, agrega:
+
+// 🔗 CONEXIÓN CON SISTEMA DE DATOS DINÁMICOS
+window.addEventListener('DOMContentLoaded', () => {
+    // Conectar configuración con sistema de empresas cuando esté listo
+    setTimeout(() => {
+        if (window.EMPRESAS_DATA && window.GRIZALUM_CONFIG) {
+            console.log('🔗 Configuración conectada con sistema de datos');
+        }
+    }, 1000);
+});
