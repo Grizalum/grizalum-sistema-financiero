@@ -365,7 +365,9 @@ function obtenerIconoTendencia(valor) {
 
 // FUNCIONES PARA EVENTOS DE UI
 function changePeriod(periodo, elemento) {
-    cambiarPeriodoActivo(periodo);
+    if (window.cambiarPeriodoActivo) {
+        window.cambiarPeriodoActivo(periodo);
+    }
     
     // Actualizar botones activos
     document.querySelectorAll('.period-btn').forEach(btn => {
@@ -374,6 +376,14 @@ function changePeriod(periodo, elemento) {
     if (elemento) {
         elemento.classList.add('active');
     }
+    
+    // Evitar múltiples actualizaciones
+    clearTimeout(window.updateTimeout);
+    window.updateTimeout = setTimeout(() => {
+        if (window.actualizarInterfazCompleta) {
+            window.actualizarInterfazCompleta();
+        }
+    }, 100);
 }
 
 function changeCompany(empresaId) {
