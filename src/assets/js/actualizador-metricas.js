@@ -125,20 +125,8 @@ class GrizalumMetricsUpdater {
     }
 
     initializeWithDefaults() {
-        if (!this.defaultData) return;
-        
-        console.log('🔄 Inicializando con datos por defecto...');
-        
-        // Aplicar datos por defecto sin animación
-        this.elements.forEach((metric, elementId) => {
-            if (metric.defaultKey && this.defaultData[metric.defaultKey] !== undefined) {
-                const value = this.defaultData[metric.defaultKey];
-                metric.element.textContent = this.formatValue(value, metric.type);
-                metric.currentValue = value;
-                console.log(`📊 ${elementId}: ${this.formatValue(value, metric.type)}`);
-            }
-        });
-    }
+        return;
+   }
 
     // ======= API PRINCIPAL MEJORADA =======
     updateMetrics(data) {
@@ -571,7 +559,7 @@ const grizalumMetricsUpdater = new GrizalumMetricsUpdater();
  * Función principal para actualizar métricas (compatibilidad)
  */
 function actualizarMetricas(data) {
-    return grizalumMetricsUpdater.updateMetrics(data);
+    return false;
 }
 
 /**
