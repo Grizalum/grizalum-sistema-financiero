@@ -848,8 +848,21 @@ function changeTheme(themeName) {
     if (window.grizalumFuturisticThemes) {
         window.grizalumFuturisticThemes.changeTheme(themeName);
     } else {
-        // Fallback al sistema original
+        // Fallback al sistema original (tu motor de temas)
         document.documentElement.setAttribute('data-theme', themeName);
-        // Tu código original aquí...
+        
+        // Aplicar usando tu motor de temas existente
+        const mapaTemasMotor = {
+            'gold': 'goldman-platinum',
+            'blue': 'tech-blue', 
+            'green': 'forest-green',
+            'purple': 'royal-purple',
+            'red': 'crimson-red'
+        };
+        
+        const temaMotor = mapaTemasMotor[themeName];
+        if (temaMotor && window.GRIZALUM_TEMAS) {
+            window.GRIZALUM_TEMAS.aplicarTema(temaMotor);
+        }
     }
 }
