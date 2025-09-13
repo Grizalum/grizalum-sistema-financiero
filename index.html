@@ -67,26 +67,26 @@
          📈 LIBRERÍAS EXTERNAS OPTIMIZADAS
          ================================================================ -->
   
-      <!-- Línea 70: FontAwesome para iconos -->
+    <!-- FontAwesome para iconos -->
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-   <!-- NUEVA LÍNEA 71: CHART.JS AQUÍ -->
+   <!-- CHART.JS -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
 
-   <!-- Línea 72: jsPDF para generar PDFs -->
+   <!-- jsPDF para generar PDFs -->
   <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
 
     <!-- ================================================================
-         ⚡ PRELOAD CRÍTICO - ACTUALIZADO
+         ⚡ PRELOAD CRÍTICO
          ================================================================ -->
     <link rel="preload" href="src/assets/css/grizalum-principal.css" as="style">
     <link rel="preload" href="src/assets/js/principal.js" as="script">
 
     <!-- ================================================================
-         🔧 CORRECCIONES CSS INTEGRADAS
+         🔧 LAYOUT CSS INTEGRADO (SOLO ESTRUCTURA)
          ================================================================ -->
     <style>
-        /* CORRECCIONES CRÍTICAS PARA LAYOUT */
+        /* ESTRUCTURA BÁSICA DEL LAYOUT */
         .metrics-grid {
             display: grid !important;
             grid-template-columns: repeat(4, 1fr) !important;
@@ -140,7 +140,7 @@
             max-height: 350px !important;
         }
 
-        /* RESPONSIVE FIXES */
+        /* RESPONSIVE */
         @media (max-width: 1200px) {
             .metrics-grid {
                 grid-template-columns: repeat(2, 1fr) !important;
@@ -212,11 +212,11 @@
                <div class="financial-summary">
                    <div class="summary-item">
                        <span class="summary-label">Flujo de Caja</span>
-                       <span class="summary-value" id="sidebarCashFlow">S/. 24,500</span>
+                       <span class="summary-value" id="sidebarCashFlow">S/. 0</span>
                    </div>
                    <div class="summary-item">
                        <span class="summary-label">Utilidad Neta</span>
-                       <span class="summary-value" id="sidebarProfit">S/. 16,500</span>
+                       <span class="summary-value" id="sidebarProfit">S/. 0</span>
                    </div>
                </div>
            </div>
@@ -314,12 +314,7 @@
                      <button class="period-btn" onclick="changePeriod('año', this)">Año</button>
                  </div>
 
-                <button id="btnNotificaciones" class="notification-center" onclick="showNotifications()">
-                  <i class="fas fa-bell"></i>
-                  <span class="notification-badge">3</span>
-                </button>
-            
-                    <!-- BOTÓN IA EN HEADER -->
+                 <!-- BOTÓN IA EN HEADER -->
                  <button class="ai-header-button" onclick="toggleAIAssistant()">
                  <i class="fas fa-brain"></i>
                  <span>IA Assistant</span>
@@ -338,7 +333,7 @@
            <div id="dashboardContent" class="dashboard-content active">
                
                <!-- ================================================================
-                    📈 MÉTRICAS PRINCIPALES (KPIs) - CORREGIDAS
+                    📈 MÉTRICAS PRINCIPALES (KPIs)
                     ================================================================ -->
                 <section class="metrics-grid">
                     <!-- CARD 1: GASTOS OPERATIVOS -->
@@ -349,7 +344,7 @@
                                 <i class="fas fa-receipt"></i>
                             </div>
                         </div>
-                        <div class="metric-value" id="expensesValue">S/. 28,700</div>
+                        <div class="metric-value" id="expensesValue">S/. 0</div>
                         <div class="metric-change negative">
                             <i class="fas fa-arrow-up"></i>
                             <span>+3.2% vs mes anterior</span>
@@ -364,7 +359,7 @@
                                 <i class="fas fa-coins"></i>
                             </div>
                         </div>
-                        <div class="metric-value" id="profitValue">S/. 16,500</div>
+                        <div class="metric-value" id="profitValue">S/. 0</div>
                         <div class="metric-change positive">
                             <i class="fas fa-arrow-up"></i>
                             <span>+18.7% vs mes anterior</span>
@@ -379,7 +374,7 @@
                                 <i class="fas fa-chart-area"></i>
                             </div>
                         </div>
-                        <div class="metric-value" id="growthValue">+24.8%</div>
+                        <div class="metric-value" id="growthValue">+0%</div>
                         <div class="metric-change positive">
                             <i class="fas fa-arrow-up"></i>
                             <span>Meta anual: 20%</span>
@@ -394,7 +389,7 @@
                                 <i class="fas fa-arrow-trend-up"></i>
                             </div>
                         </div>
-                        <div class="metric-value" id="revenueValue">S/. 2,847,293</div>
+                        <div class="metric-value" id="revenueValue">S/. 0</div>
                         <div class="metric-change positive">
                             <i class="fas fa-arrow-up"></i>
                             <span>+12.5% vs mes anterior</span>
@@ -403,7 +398,7 @@
                 </section>
 
                 <!-- ================================================================
-                     📊 GRÁFICOS Y VISUALIZACIONES - CORREGIDOS
+                     📊 GRÁFICOS Y VISUALIZACIONES
                      ================================================================ -->
                 <section class="charts-section">
                     <!-- Gráfico Principal de Flujo de Caja -->
@@ -464,7 +459,7 @@
            </div>
 
            <!-- ================================================================
-                📄 OTRAS SECCIONES (CASH FLOW, REPORTS, ETC.)
+                📄 OTRAS SECCIONES (SE CARGAN DINÁMICAMENTE)
                 ================================================================ -->
 
        </main>
@@ -482,15 +477,8 @@
        <div class="theme-option" data-theme="dark" onclick="window.grizalumFuturisticThemes?.changeTheme('dark') || changeTheme('dark')"></div>
    </div>
 
-   <!-- ================================================================
-        📦 CONTENEDOR PARA NOTIFICACIONES
-        ================================================================ -->
-   <div class="notification-container" id="notificationContainer">
-       <!-- Las notificaciones se generan dinámicamente por JavaScript -->
-   </div>
-
 <!-- ================================================================
-     🚀 SISTEMA JAVASCRIPT MODULAR GRIZALUM v4.0 - ACTUALIZADO
+     🚀 SISTEMA JAVASCRIPT MODULAR GRIZALUM v4.0 - SOLO RAMAS
      ================================================================ -->
 
 <!-- 📦 CONFIGURACIÓN Y UTILIDADES (cargar primero) -->
@@ -514,22 +502,13 @@
 
 <!-- 🧠 MÓDULOS DEL SISTEMA (orden específico) -->
 <script src="src/assets/js/manejo-sidebar.js" defer></script>
-<!-- <script src="src/assets/js/sistema-notificaciones.js" defer></script> -->
- <script src="src/assets/js/actualizador-metricas.js" defer></script> 
-<!-- <script src="src/assets/js/controlador-cabecera.js" defer></script> -->
-<!-- <script src="src/assets/js/motor-temas.js" defer></script> -->
+<script src="src/assets/js/actualizador-metricas.js" defer></script> 
 
 <!-- 🤖 INTELIGENCIA ARTIFICIAL -->
-<!-- <script src="src/assets/js/inteligencia-artificial.js" defer></script> -->
 <script src="src/assets/js/asistente-ia-avanzado.js" defer></script>
 
 <!-- 🚀 CONTROLADOR PRINCIPAL (cargar al final) -->
 <script src="src/assets/js/principal.js" defer></script>
-<!-- ================================================================
-     🔧 SERVICE WORKER PARA PWA (OPCIONAL)
-     ================================================================ -->
-
-</script>
     
 </body>
 </html>
