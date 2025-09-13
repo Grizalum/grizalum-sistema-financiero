@@ -12,7 +12,7 @@ class UtilidadesGRIZALUM {
         this.inicializado = false;
         this.configuracion = this.cargarConfiguracion();
         this.cache = new Map();
-        this.sistemaNotificaciones = null;
+        
         
         this.inicializar();
     }
@@ -25,7 +25,6 @@ class UtilidadesGRIZALUM {
             this.configurarErrorHandler();
             this.verificarCompatibilidad();
             this.inyectarEstilos();
-            this.inicializarSistemaNotificaciones();
             
             this.inicializado = true;
             this.log('✅ Sistema de Utilidades inicializado correctamente');
@@ -982,11 +981,6 @@ window.GrizalumUtils = utilidadesGrizalum;
 window.formatCurrency = (amount, includeSymbol) => utilidadesGrizalum.formatearMoneda(amount, includeSymbol);
 window.formatPercentage = (value, decimals) => utilidadesGrizalum.formatearPorcentaje(value, decimals);
 window.formatDate = (date, format) => utilidadesGrizalum.formatearFecha(date, format);
-window.showNotification = (...args) => utilidadesGrizalum.mostrarNotificacion(...args);
-window.showSuccessNotification = (message, duration) => utilidadesGrizalum.mostrarExito(message, duration);
-window.showErrorNotification = (message, duration) => utilidadesGrizalum.mostrarError(message, duration);
-window.showWarningNotification = (message, duration) => utilidadesGrizalum.mostrarAdvertencia(message, duration);
-window.showInfoNotification = (message, duration) => utilidadesGrizalum.mostrarInfo(message, duration);
 
 // Compatibilidad con código existente
 window.debounce = (...args) => utilidadesGrizalum.debounce(...args);
