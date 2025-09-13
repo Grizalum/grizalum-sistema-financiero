@@ -75,12 +75,12 @@ class GrizalumMetricsUpdater {
     loadDefaultData() {
         // Datos por defecto para inicialización
         this.defaultData = {
-            ingresos: 2847293,
-            gastos: 28700,
-            utilidad: 16500,
-            crecimiento: 24.8,
-            flujoCaja: 24500
-        };
+       ingresos: 0,
+       gastos: 0,
+       utilidad: 0,
+       crecimiento: 0,
+       flujoCaja: 0
+    };
         
         console.log('💾 Datos por defecto cargados');
     }
@@ -412,7 +412,7 @@ class GrizalumMetricsUpdater {
 
     generateDataForPeriod(period) {
         // Generar datos realistas según el período
-        const baseData = { ...this.defaultData };
+        const baseData = { ingresos: 0, gastos: 0, utilidad: 0, crecimiento: 0, flujoCaja: 0 };
         
         const multipliers = {
             'hoy': 0.03,      // Datos del día
