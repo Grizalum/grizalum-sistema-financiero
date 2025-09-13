@@ -292,10 +292,8 @@ class GrizalumApp {
         // Actualizar datos para el nuevo período
         this.updateDataForPeriod(period);
         
-        // Notificar cambio usando sistema correcto
-        if (window.mostrarNotificacion) {
-            window.mostrarNotificacion(`Período cambiado a: ${this.capitalizeFirst(period)}`, 'info');
-        }
+        // NOTIFICACIÓN CORREGIDA - usar sistema seguro
+        this.mostrarNotificacionSegura(`Período cambiado a: ${this.capitalizeFirst(period)}`, 'info');
     }
 
     updateDataForPeriod(period) {
@@ -385,20 +383,49 @@ class GrizalumApp {
     showNotifications() {
         console.log('🔔 Mostrando centro de notificaciones');
         
-        // Usar sistema de notificaciones existente si está disponible
-        if (window.mostrarNotificacion) {
-            const notifications = [
-                'Reporte Mensual: Nuevo reporte financiero disponible',
-                'Factura Pendiente: Factura #001234 próxima a vencer',
-                'Pago Procesado: Pago de S/. 15,000 recibido exitosamente'
-            ];
-            
-            notifications.forEach((message, index) => {
-                setTimeout(() => {
-                    const types = ['info', 'warning', 'success'];
-                    window.mostrarNotificacion(message, types[index] || 'info');
-                }, index * 500);
-            });
+        // CORREGIDO - usar sistema de notificaciones unificado
+        const notifications = [
+            'Reporte Mensual: Nuevo reporte financiero disponible',
+            'Factura Pendiente: Factura #001234 próxima a vencer',
+            'Pago Procesado: Pago de S/. 15,000 recibido exitosamente'
+        ];
+        
+        notifications.forEach((message, index) => {
+            setTimeout(() => {
+                const types = ['info', 'warning', 'success'];
+                this.mostrarNotificacionSegura(message, types[index] || 'info');
+            }, index * 500);
+        });
+    }
+
+    // ======= NUEVO: SISTEMA DE NOTIFICACIONES UNIFICADO =======
+    mostrarNotificacionSegura(mensaje, tipo = 'info', duracion = 5000) {
+        // Intentar múltiples sistemas en orden de prioridad
+        try {
+            if (window.sistemaNotificaciones && window.sistemaNotificaciones.mostrar) {
+                return window.sistemaNotificaciones.mostrar(mensaje, tipo, duracion);
+            } else if (window.mostrarNotificacion && typeof window.mostrarNotificacion === 'function') {
+                return window.mostrarNotificacion(mensaje, tipo, duracion);
+            } else if (window.GrizalumNotifications && window.GrizalumNotifications.mostrar) {
+                return window.GrizalumNotifications.mostrar(mensaje, tipo, duracion);
+            } else if (window.notificacionExito && tipo === 'success') {
+                return window.notificacionExito(mensaje, { duracion });
+            } else if (window.notificacionError && tipo === 'error') {
+                return window.notificacionError(mensaje, { duracion });
+            } else if (window.notificacionAdvertencia && tipo === 'warning') {
+                return window.notificacionAdvertencia(mensaje, { duracion });
+            } else if (window.notificacionInfo && tipo === 'info') {
+                return window.notificacionInfo(mensaje, { duracion });
+            } else {
+                // Fallback: mostrar en consola con estilo
+                const emoji = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+                console.log(`${emoji[tipo] || 'ℹ️'} [${tipo.toUpperCase()}] ${mensaje}`);
+                return null;
+            }
+        } catch (error) {
+            console.warn('Error mostrando notificación:', error);
+            console.log(`[${tipo.toUpperCase()}] ${mensaje}`);
+            return null;
         }
     }
 
@@ -439,7 +466,7 @@ class GrizalumApp {
         }
     }
 
-    // ======= EVENTOS GLOBALES =======
+    // ======= EVENTOS GLOBALES - CORREGIDOS =======
     bindGlobalEvents() {
         console.log('🔗 Configurando eventos globales...');
         
@@ -453,17 +480,13 @@ class GrizalumApp {
             this.handleKeyboardShortcuts(e);
         });
         
-        // Eventos de conectividad
+        // Eventos de conectividad - CORREGIDOS
         window.addEventListener('online', () => {
-            if (window.mostrarNotificacion) {
-                window.mostrarNotificacion('Conexión restaurada', 'success');
-            }
+            this.mostrarNotificacionSegura('Conexión restaurada', 'success');
         });
         
         window.addEventListener('offline', () => {
-            if (window.mostrarNotificacion) {
-                window.mostrarNotificacion('Trabajando sin conexión', 'warning');
-            }
+            this.mostrarNotificacionSegura('Trabajando sin conexión', 'warning');
         });
         
         // Click fuera para cerrar elementos
@@ -597,7 +620,7 @@ class GrizalumApp {
         document.body.appendChild(errorContainer);
     }
 
-    // ======= FINALIZACIÓN =======
+    // ======= FINALIZACIÓN - CORREGIDA =======
     finalizeInitialization() {
         this.hideLoadingScreen();
         this.isInitialized = true;
@@ -605,10 +628,8 @@ class GrizalumApp {
         const loadTime = Date.now() - this.startTime;
         console.log(`🎉 GRIZALUM inicializado en ${loadTime}ms`);
         
-        // Mostrar mensaje de bienvenida usando sistema correcto
-        if (window.mostrarNotificacion) {
-            window.mostrarNotificacion(`¡Bienvenido a ${this.config.name}! Sistema financiero listo.`, 'success');
-        }
+        // CORREGIDO - mostrar mensaje de bienvenida
+        this.mostrarNotificacionSegura(`¡Bienvenido a ${this.config.name}! Sistema financiero listo.`, 'success');
         
         // Trigger evento de app lista
         const readyEvent = new CustomEvent('grizalumReady', {
@@ -654,9 +675,7 @@ class GrizalumApp {
         } else if (window.AIAssistant && typeof window.AIAssistant.toggle === 'function') {
             window.AIAssistant.toggle();
         } else {
-            if (window.mostrarNotificacion) {
-                window.mostrarNotificacion('Asistente IA próximamente disponible', 'info');
-            }
+            this.mostrarNotificacionSegura('Asistente IA próximamente disponible', 'info');
         }
     }
 }
@@ -746,7 +765,8 @@ console.log('🎯 GRIZALUM Principal Controller v2.1 CORREGIDO cargado y listo')
 console.log('✨ Correcciones aplicadas:');
 console.log('  • 📊 Datos financieros consistentes entre sidebar y dashboard');
 console.log('  • 🔧 Eliminada inicialización forzada de gráficos que causaba conflictos');
-console.log('  • 🔔 Integración correcta con sistema de notificaciones existente');
+console.log('  • 🔔 Sistema de notificaciones unificado y robusto');
 console.log('  • 📅 Generación de datos coherentes por período');
 console.log('  • 🛡️ Manejo robusto de errores mejorado');
+console.log('  • ✅ Sistema de fallback para notificaciones');
 console.log('🚀 Controlador principal optimizado para empresas peruanas');
