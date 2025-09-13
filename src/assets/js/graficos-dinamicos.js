@@ -1,6 +1,6 @@
 /**
  * ================================================================
- * GRIZALUM EXTENSIÓN DE GRÁFICOS DINÁMICOS v1.0
+ * GRIZALUM EXTENSIÓN DE GRÁFICOS DINÁMICOS v1.1 - CORREGIDA
  * Complemento que extiende el sistema de gráficos existente
  * NO MODIFICA EL ARCHIVO GRAFICOS.JS ORIGINAL
  * ================================================================
@@ -8,7 +8,7 @@
 
 class GraficosExtension {
     constructor() {
-        this.version = '1.0.0';
+        this.version = '1.1.0';
         this.initialized = false;
         this.chartExtensions = {};
         
@@ -50,6 +50,15 @@ class GraficosExtension {
         };
         
         checkSistema();
+        // Crear función obtener datos si no existe
+        this.crearFuncionObtenerDatos();
+    }
+
+    crearFuncionObtenerDatos() {
+        if (!window.obtenerDatosActuales) {
+            window.obtenerDatosActuales = () => this.obtenerDatosDesdeMetricas();
+            console.log('[GRÁFICOS-EXT] Función obtenerDatosActuales creada');
+        }
     }
 
     extenderSistemaExistente() {
@@ -116,7 +125,7 @@ class GraficosExtension {
 
     actualizarTodosLosGraficos() {
         try {
-            const datos = window.obtenerDatosActuales();
+            const datos = window.obtenerDatosActuales() || this.obtenerDatosDesdeMetricas();
             if (!datos) {
                 console.warn('[GRÁFICOS-EXT] No hay datos disponibles');
                 return;
@@ -177,6 +186,43 @@ class GraficosExtension {
         } catch (error) {
             console.error(`[GRÁFICOS-EXT] Error creando ${canvasId}:`, error);
         }
+    }
+
+    obtenerDatosDesdeMetricas() {
+        // Conectar con el actualizador de métricas existente
+        const metricas = window.GrizalumMetrics ? window.GrizalumMetrics.getCurrentMetrics() : null;
+        
+        if (!metricas) {
+            // Datos por defecto si no hay métricas
+            return this.generarDatosPorDefecto();
+        }
+
+        // Convertir métricas a formato de gráficos
+        return {
+            graficos: {
+                flujoMeses: [0, 0, 0, 0, 0, 0],
+                gastosDistribucion: [0, 0, 0, 0, 0],
+                ingresosVsGastos: [
+                    metricas.revenueValue?.value || 0,
+                    metricas.expensesValue?.value || 0,
+                    metricas.profitValue?.value || 0
+                ],
+                antiguedadCuentas: [0, 0, 0, 0],
+                flujoDiario: [0, 0, 0, 0, 0, 0, 0]
+            }
+        };
+    }
+
+    generarDatosPorDefecto() {
+        return {
+            graficos: {
+                flujoMeses: [0, 0, 0, 0, 0, 0],
+                gastosDistribucion: [0, 0, 0, 0, 0],
+                ingresosVsGastos: [0, 0, 0],
+                antiguedadCuentas: [0, 0, 0, 0],
+                flujoDiario: [0, 0, 0, 0, 0, 0, 0]
+            }
+        };
     }
 
     obtenerConfiguracionGrafico(canvasId, datos, tipo) {
@@ -308,7 +354,7 @@ function inicializarExtensionGraficos() {
         window.graficosExtension = graficosExtension;
         window.forzarActualizacionGraficos = () => graficosExtension.forzarActualizacion();
         
-        console.log('✅ EXTENSIÓN DE GRÁFICOS DINÁMICOS INICIALIZADA');
+        console.log('✅ EXTENSIÓN DE GRÁFICOS DINÁMICOS INICIALIZADA v1.1');
         
     } catch (error) {
         console.error('❌ Error inicializando extensión de gráficos:', error);
@@ -326,4 +372,4 @@ setTimeout(() => {
     }
 }, 500);
 
-console.log('📊 Extensión de gráficos dinámicos cargada (no interfiere con original)');
+console.log('📊 Extensión de gráficos dinámicos v1.1 CORREGIDA cargada');
