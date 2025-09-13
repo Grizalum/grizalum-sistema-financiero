@@ -548,31 +548,6 @@ class UtilidadesGRIZALUM {
         };
     }
 
-    // ======= SISTEMA DE NOTIFICACIONES =======
-
-    inicializarSistemaNotificaciones() {
-        this.sistemaNotificaciones = new SistemaNotificacionesGRIZALUM(this.configuracion.notificaciones);
-    }
-
-    mostrarNotificacion(mensaje, tipo = 'info', duracion = null, acciones = []) {
-        return this.sistemaNotificaciones.mostrar(mensaje, tipo, duracion, acciones);
-    }
-
-    mostrarExito(mensaje, duracion = 3000) {
-        return this.mostrarNotificacion(mensaje, 'success', duracion);
-    }
-
-    mostrarError(mensaje, duracion = 5000) {
-        return this.mostrarNotificacion(mensaje, 'error', duracion);
-    }
-
-    mostrarAdvertencia(mensaje, duracion = 4000) {
-        return this.mostrarNotificacion(mensaje, 'warning', duracion);
-    }
-
-    mostrarInfo(mensaje, duracion = 3000) {
-        return this.mostrarNotificacion(mensaje, 'info', duracion);
-    }
 
     // ======= SISTEMA DE CARGA =======
 
