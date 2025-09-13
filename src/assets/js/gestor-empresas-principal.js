@@ -175,12 +175,12 @@ class GestorEmpresasProfesional {
                 
                 // Métricas financieras
                 finanzas: {
-                    caja: 124500,
-                    ingresos: 2847293,
-                    gastos: 1892847,
-                    utilidadNeta: 954446,
-                    margenNeto: 33.5,
-                    roi: 24.8
+                 caja: 0,
+                 ingresos: 0,
+                 gastos: 0,
+                 utilidadNeta: 0,
+                 margenNeto: 0,
+                  roi: 0
                 },
                 
                 // Metadatos
@@ -222,13 +222,13 @@ class GestorEmpresasProfesional {
                 },
                 
                 finanzas: {
-                    caja: 89300,
-                    ingresos: 1850000,
-                    gastos: 1200000,
-                    utilidadNeta: 650000,
-                    margenNeto: 35.1,
-                    roi: 28.9
-                },
+               caja: 0,
+               ingresos: 0,
+               gastos: 0,
+               utilidadNeta: 0,
+               margenNeto: 0,
+               roi: 0
+               },
                 
                 meta: {
                     fechaCreacion: new Date().toISOString(),
@@ -267,14 +267,14 @@ class GestorEmpresasProfesional {
                     web: 'www.comerciallima.pe'
                 },
                 
-                finanzas: {
-                    caja: 45200,
-                    ingresos: 950000,
-                    gastos: 780000,
-                    utilidadNeta: 170000,
-                    margenNeto: 17.9,
-                    roi: 12.4
-                },
+                 finanzas: {
+               caja: 0,
+               ingresos: 0,
+               gastos: 0,
+               utilidadNeta: 0,
+               margenNeto: 0,
+               roi: 0
+               },
                 
                 meta: {
                     fechaCreacion: new Date().toISOString(),
