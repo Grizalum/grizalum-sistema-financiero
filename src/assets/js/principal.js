@@ -21,13 +21,13 @@ class GrizalumApp {
         
         // DATOS FINANCIEROS CONSISTENTES
         this.financialData = {
-            ingresos: 2847293,
-            gastos: 28700,
-            utilidad: 16500,
-            crecimiento: 24.8,
-            flujo_caja: 24500,
-            moneda: 'PEN'
-        };
+          ingresos: 0,
+          gastos: 0,
+          utilidad: 0,
+         crecimiento: 0,
+         flujo_caja: 0,
+         moneda: 'PEN'
+      };
         
         console.log(`🚀 Inicializando ${this.config.name || 'GRIZALUM'} v${this.config.version}`);
         this.init();
