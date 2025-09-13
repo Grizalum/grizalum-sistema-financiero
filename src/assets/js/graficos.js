@@ -97,25 +97,25 @@ function getThemeColor(colorType) {
 const FINANCIAL_DATA = {
     cashFlow: {
         labels: ['Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre', 'Enero'],
-        ingresos: [2200000, 2350000, 2180000, 2420000, 2650000, 2847293],
-        gastos: [1800000, 1850000, 1780000, 1920000, 1850000, 1892847]
+        ingresos: [0, 0, 0, 0, 0,0],
+        gastos: [0, 0, 0, 0, 0, 0]
     },
     expenses: {
         labels: ['Personal', 'Marketing', 'Operaciones', 'Tecnología', 'Otros'],
-        values: [12000, 8500, 15200, 6800, 4200]
+        values: [0, 0, 0, 0, 0]
     },
     revenue: {
         labels: ['Q1', 'Q2', 'Q3', 'Q4'],
-        ingresos: [850000, 920000, 780000, 1100000],
-        gastos: [720000, 800000, 650000, 950000]
+        ingresos: [0, 0, 0, 0],
+        gastos: [0, 0, 0, 0]
     },
     aging: {
         labels: ['0-30 días', '31-60 días', '61-90 días', '+90 días'],
-        values: [182000, 98000, 32000, 16000]
+        values: [0, 0, 0,0]
     },
     dailyCashFlow: {
         labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
-        values: [150000, 185000, 220000, 178000, 215000, 198000, 245000]
+        values: [0, 0, 0, 0, 0, 0, 0]
     }
 };
 
@@ -593,3 +593,53 @@ window.GrizalumCharts = window.GrizalumCharts || {};
 window.GrizalumCharts.initialize = initializeCharts;
 window.GrizalumCharts.init = initializeCharts;
 window.GrizalumCharts.instances = chartInstances;
+
+// ================================================================
+// 🔄 CONEXIÓN AUTOMÁTICA CON SISTEMA DE MÉTRICAS
+// ================================================================
+
+// Escuchar eventos del actualizador de métricas
+document.addEventListener('grizalumMetricsUpdated', (e) => {
+    const { data } = e.detail;
+    updateChartsWithRealData(data);
+});
+
+// Función para actualizar gráficos con datos reales
+function updateChartsWithRealData(data) {
+    if (!chartsInitialized) return;
+    
+    console.log('🔄 Actualizando gráficos con datos reales:', data);
+    
+    // Actualizar datos de flujo de caja principal
+    if (chartInstances.cashFlow && data.ingresos !== undefined) {
+        const chart = chartInstances.cashFlow;
+        // Mantener las etiquetas, actualizar solo el último valor
+        const lastIndex = chart.data.datasets[0].data.length - 1;
+        chart.data.datasets[0].data[lastIndex] = data.ingresos || 0;
+        chart.data.datasets[1].data[lastIndex] = data.gastos || 0;
+        chart.update();
+    }
+    
+    // Actualizar gráfico de ingresos vs gastos
+    if (chartInstances.revenue && data.ingresos !== undefined) {
+        const chart = chartInstances.revenue;
+        chart.data.datasets[0].data = [data.ingresos || 0];
+        chart.data.datasets[1].data = [data.gastos || 0];
+        chart.data.labels = ['Actual'];
+        chart.update();
+    }
+}
+
+// También cambiar los datos por defecto a 0
+function resetFinancialDataToZero() {
+    FINANCIAL_DATA.cashFlow.ingresos = [0, 0, 0, 0, 0, 0];
+    FINANCIAL_DATA.cashFlow.gastos = [0, 0, 0, 0, 0, 0];
+    FINANCIAL_DATA.revenue.ingresos = [0, 0, 0, 0];
+    FINANCIAL_DATA.revenue.gastos = [0, 0, 0, 0];
+    FINANCIAL_DATA.expenses.values = [0, 0, 0, 0, 0];
+    FINANCIAL_DATA.aging.values = [0, 0, 0, 0];
+    FINANCIAL_DATA.dailyCashFlow.values = [0, 0, 0, 0, 0, 0, 0];
+}
+
+// Aplicar datos en 0 al cargar
+resetFinancialDataToZero();
