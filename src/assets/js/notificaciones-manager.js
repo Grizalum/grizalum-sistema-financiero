@@ -368,11 +368,14 @@ class GrizalumNotificacionesPremium {
             .header-controls {
                 display: flex;
                 gap: 8px;
+                align-items: center;
+                justify-content: flex-end;
+                min-width: 40px;
             }
 
             .control-btn {
-                width: 32px;
-                height: 32px;
+                width: 36px;
+                height: 36px;
                 background: rgba(255, 255, 255, 0.2);
                 border: none;
                 border-radius: 8px;
@@ -382,6 +385,8 @@ class GrizalumNotificacionesPremium {
                 align-items: center;
                 justify-content: center;
                 transition: background 0.2s ease;
+                font-size: 14px;
+                flex-shrink: 0;
             }
 
             .control-btn:hover {
