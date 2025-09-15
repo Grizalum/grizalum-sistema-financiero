@@ -1,50 +1,22 @@
 /**
  * ================================================================
- * GRIZALUM SISTEMA DE NOTIFICACIONES PREMIUM v2.1 - CORREGIDO
- * Sistema inteligente de notificaciones financieras por empresa
- * SIN botones innecesarios - SOLO lo esencial
+ * GRIZALUM NOTIFICACIONES PREMIUM - VERSIÓN FINAL LIMPIA
+ * Con eliminación individual por notificación
  * ================================================================
  */
 
 class GrizalumNotificacionesPremium {
     constructor() {
-        this.version = '2.1.0';
+        this.version = '2.2.0';
         this.empresaActual = null;
         this.notificaciones = new Map();
-        this.configuracion = {
-            maxNotificaciones: 50,
-            tiempoLimpieza: 7 * 24 * 60 * 60 * 1000, // 7 días
-            sonidoActivado: true,
-            animacionesActivadas: true
-        };
         this.categorias = {
-            FINANCIERO: {
-                color: '#d4af37',
-                icono: 'fas fa-coins',
-                prioridad: 'alta'
-            },
-            VENCIMIENTO: {
-                color: '#e74c3c',
-                icono: 'fas fa-exclamation-triangle',
-                prioridad: 'critica'
-            },
-            OPORTUNIDAD: {
-                color: '#27ae60',
-                icono: 'fas fa-chart-line',
-                prioridad: 'media'
-            },
-            SISTEMA: {
-                color: '#3498db',
-                icono: 'fas fa-cog',
-                prioridad: 'baja'
-            },
-            RECORDATORIO: {
-                color: '#9b59b6',
-                icono: 'fas fa-bell',
-                prioridad: 'media'
-            }
+            FINANCIERO: { color: '#d4af37', icono: 'fas fa-coins' },
+            VENCIMIENTO: { color: '#e74c3c', icono: 'fas fa-exclamation-triangle' },
+            OPORTUNIDAD: { color: '#27ae60', icono: 'fas fa-chart-line' },
+            SISTEMA: { color: '#3498db', icono: 'fas fa-cog' },
+            RECORDATORIO: { color: '#9b59b6', icono: 'fas fa-bell' }
         };
-        
         this.init();
     }
 
@@ -57,108 +29,44 @@ class GrizalumNotificacionesPremium {
     }
 
     inicializar() {
-        this.cargarConfiguracion();
-        this.configurarMonitoreoFinanciero();
-        this.crearInterfazPremium();
-        this.conectarConSistema();
+        this.crearBoton();
+        this.crearPanel();
+        this.inyectarEstilos();
+        this.conectarSistema();
         this.crearAPI();
-        this.iniciarVerificacionesPeriodicas();
-        
-        console.log('✨ GRIZALUM Notificaciones Premium v2.1 inicializado');
+        this.generarEjemplo();
+        console.log('✨ GRIZALUM Notificaciones v2.2 - LIMPIO');
     }
 
-    cargarConfiguracion() {
-        // Configuración inteligente basada en empresa
-        this.reglasNotificacion = {
-            cashFlowBajo: {
-                umbral: 0.3, // 30% de gastos mensuales
-                frecuencia: 'diaria',
-                activa: true
-            },
-            facturasVencimiento: {
-                diasAnticipacion: [30, 15, 7, 1],
-                activa: true
-            },
-            metasAlcanzadas: {
-                umbrales: [50, 75, 100, 125],
-                activa: true
-            },
-            gastosElevados: {
-                incrementoAlerta: 0.2, // 20% más que promedio
-                activa: true
-            }
-        };
-    }
+    crearBoton() {
+        // Eliminar botón existente si hay uno
+        const existente = document.getElementById('grizalumNotificationBtn');
+        if (existente) existente.remove();
 
-    configurarMonitoreoFinanciero() {
-        // Monitoreo inteligente de métricas financieras
-        this.monitores = {
-            flujoCaja: new FinancialMonitor('cashFlow', this.reglasNotificacion.cashFlowBajo),
-            gastos: new FinancialMonitor('expenses', this.reglasNotificacion.gastosElevados),
-            ingresos: new FinancialMonitor('revenue', {}),
-            crecimiento: new FinancialMonitor('growth', this.reglasNotificacion.metasAlcanzadas)
-        };
-    }
-
-    crearInterfazPremium() {
-        this.crearBotonPremium();
-        this.crearPanelPremium();
-        this.inyectarEstilosPremium();
-    }
-
-    crearBotonPremium() {
-        const botonExistente = document.getElementById('grizalumNotificationBtn');
-        if (botonExistente) botonExistente.remove();
-
-        const contenedor = document.createElement('div');
-        contenedor.id = 'grizalumNotificationContainer';
-        contenedor.innerHTML = `
-            <button id="grizalumNotificationBtn" class="grizalum-notification-btn-premium">
-                <div class="notification-icon-container">
-                    <i class="fas fa-bell"></i>
-                    <div class="notification-pulse"></div>
-                </div>
-                <span class="notification-count-premium" id="notificationCount">0</span>
-                <div class="notification-priorities" id="notificationPriorities">
-                    <div class="priority-indicator critical" title="Críticas"></div>
-                    <div class="priority-indicator high" title="Altas"></div>
-                    <div class="priority-indicator medium" title="Medias"></div>
-                </div>
-            </button>
+        const boton = document.createElement('button');
+        boton.id = 'grizalumNotificationBtn';
+        boton.innerHTML = `
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge" id="notificationBadge">0</span>
         `;
-
-        document.body.appendChild(contenedor);
         
-        document.getElementById('grizalumNotificationBtn').addEventListener('click', () => {
-            this.togglePanel();
-        });
+        document.body.appendChild(boton);
+        boton.addEventListener('click', () => this.togglePanel());
     }
 
-    crearPanelPremium() {
-        const panelExistente = document.getElementById('grizalumNotificationPanel');
-        if (panelExistente) panelExistente.remove();
+    crearPanel() {
+        // Eliminar panel existente si hay uno
+        const existente = document.getElementById('grizalumNotificationPanel');
+        if (existente) existente.remove();
 
         const panel = document.createElement('div');
         panel.id = 'grizalumNotificationPanel';
-        panel.className = 'grizalum-notification-panel-premium';
         panel.innerHTML = `
-            <div class="notification-header-premium">
-                <div class="header-left">
-                    <div class="header-icon">
-                        <i class="fas fa-bell"></i>
-                    </div>
-                    <div class="header-text">
-                        <h3>Centro de Notificaciones</h3>
-                        <span id="empresaActualDisplay">GRIZALUM Premium</span>
-                    </div>
-                </div>
-                <div class="header-controls">
-                    <button id="clearAllNotifications" class="control-btn" title="Limpiar todo">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
+            <div class="notification-header">
+                <h3>Centro de Notificaciones</h3>
+                <span id="empresaDisplay">GRIZALUM</span>
             </div>
-
+            
             <div class="notification-filters">
                 <button class="filter-btn active" data-filter="todas">Todas</button>
                 <button class="filter-btn" data-filter="critica">Críticas</button>
@@ -167,57 +75,51 @@ class GrizalumNotificacionesPremium {
             </div>
 
             <div class="notification-stats">
-                <div class="stat-item">
+                <div class="stat">
                     <span class="stat-number" id="statCriticas">0</span>
                     <span class="stat-label">Críticas</span>
                 </div>
-                <div class="stat-item">
+                <div class="stat">
                     <span class="stat-number" id="statImportantes">0</span>
                     <span class="stat-label">Importantes</span>
                 </div>
-                <div class="stat-item">
+                <div class="stat">
                     <span class="stat-number" id="statTotal">0</span>
                     <span class="stat-label">Total</span>
                 </div>
             </div>
 
-            <div class="notification-content">
-                <div class="notification-list" id="notificationList">
-                    <!-- Notificaciones se cargan aquí -->
-                </div>
+            <div class="notification-list" id="notificationList">
+                <!-- Notificaciones aquí -->
             </div>
 
-            <div class="notification-footer-premium">
-                <button id="markAllReadBtn" class="footer-btn primary">
+            <div class="notification-footer">
+                <button id="markAllReadBtn">
                     <i class="fas fa-check-double"></i>
                     Marcar todas como leídas
-                </button>
-                <button id="clearAllNotifications" class="footer-btn secondary">
-                    <i class="fas fa-trash"></i>
-                    Limpiar todo
                 </button>
             </div>
         `;
 
         document.body.appendChild(panel);
-        this.configurarEventosPanel();
+        this.configurarEventos();
     }
 
-    inyectarEstilosPremium() {
-        const styleId = 'grizalum-notifications-premium-styles';
+    inyectarEstilos() {
+        const styleId = 'grizalum-notifications-styles';
         if (document.getElementById(styleId)) return;
 
         const styles = document.createElement('style');
         styles.id = styleId;
         styles.textContent = `
-            /* Botón Premium */
-            .grizalum-notification-btn-premium {
+            /* BOTÓN PRINCIPAL */
+            #grizalumNotificationBtn {
                 position: fixed;
                 top: 120px;
                 right: 20px;
-                width: 65px;
-                height: 65px;
-                background: linear-gradient(135deg, #d4af37 0%, #f1c40f 50%, #d4af37 100%);
+                width: 60px;
+                height: 60px;
+                background: linear-gradient(135deg, #d4af37, #f1c40f);
                 border: none;
                 border-radius: 50%;
                 box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
@@ -226,189 +128,88 @@ class GrizalumNotificacionesPremium {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                overflow: visible;
+                transition: all 0.3s ease;
             }
 
-            .grizalum-notification-btn-premium:hover {
-                transform: scale(1.1) rotateZ(5deg);
+            #grizalumNotificationBtn:hover {
+                transform: scale(1.1);
                 box-shadow: 0 12px 35px rgba(212, 175, 55, 0.6);
             }
 
-            .notification-icon-container {
-                position: relative;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .notification-icon-container i {
+            #grizalumNotificationBtn i {
                 color: white;
-                font-size: 22px;
-                z-index: 2;
+                font-size: 20px;
             }
 
-            .notification-pulse {
+            .notification-badge {
                 position: absolute;
-                width: 100%;
-                height: 100%;
-                border-radius: 50%;
-                background: rgba(255, 255, 255, 0.3);
-                animation: notificationPulse 2s infinite;
-            }
-
-            .notification-count-premium {
-                position: absolute;
-                top: -8px;
-                right: -8px;
-                background: linear-gradient(135deg, #e74c3c, #c0392b);
+                top: -5px;
+                right: -5px;
+                background: #e74c3c;
                 color: white;
                 border-radius: 50%;
-                width: 28px;
-                height: 28px;
-                font-size: 12px;
+                width: 24px;
+                height: 24px;
+                font-size: 11px;
                 font-weight: 700;
-                display: flex;
+                display: none;
                 align-items: center;
                 justify-content: center;
-                box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
-                transform: scale(0);
-                transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             }
 
-            .notification-count-premium.active {
-                transform: scale(1);
-            }
-
-            .notification-priorities {
-                position: absolute;
-                bottom: -12px;
-                left: 50%;
-                transform: translateX(-50%);
+            .notification-badge.active {
                 display: flex;
-                gap: 3px;
             }
 
-            .priority-indicator {
-                width: 8px;
-                height: 8px;
-                border-radius: 50%;
-                opacity: 0;
-                transition: opacity 0.3s ease;
-            }
-
-            .priority-indicator.critical { background: #e74c3c; }
-            .priority-indicator.high { background: #f39c12; }
-            .priority-indicator.medium { background: #3498db; }
-
-            .priority-indicator.active {
-                opacity: 1;
-                animation: priorityGlow 1.5s infinite alternate;
-            }
-
-            /* Panel Premium */
-            .grizalum-notification-panel-premium {
+            /* PANEL PRINCIPAL */
+            #grizalumNotificationPanel {
                 position: fixed;
                 top: 80px;
                 right: 20px;
-                width: 420px;
+                width: 400px;
                 max-height: 600px;
-                background: rgba(255, 255, 255, 0.98);
-                backdrop-filter: blur(20px);
+                background: white;
                 border-radius: 20px;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1);
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
                 z-index: 9998;
                 display: none;
                 flex-direction: column;
                 overflow: hidden;
                 transform: translateY(-20px) scale(0.95);
                 opacity: 0;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all 0.3s ease;
             }
 
-            .grizalum-notification-panel-premium.active {
+            #grizalumNotificationPanel.active {
                 display: flex;
                 transform: translateY(0) scale(1);
                 opacity: 1;
             }
 
-            .notification-header-premium {
+            /* HEADER */
+            .notification-header {
                 background: linear-gradient(135deg, #d4af37, #f1c40f);
                 padding: 20px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
                 color: white;
             }
 
-            .header-left {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-            }
-
-            .header-icon {
-                width: 40px;
-                height: 40px;
-                background: rgba(255, 255, 255, 0.2);
-                border-radius: 10px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 18px;
-            }
-
-            .header-text h3 {
-                margin: 0;
-                font-size: 14px;
+            .notification-header h3 {
+                margin: 0 0 5px 0;
+                font-size: 16px;
                 font-weight: 600;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
             }
 
-            .header-text span {
-                font-size: 11px;
+            .notification-header span {
+                font-size: 12px;
                 opacity: 0.9;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
             }
 
-            .header-controls {
-                display: flex;
-                gap: 8px;
-                align-items: center;
-                justify-content: flex-end;
-                min-width: 40px;
-            }
-
-            .control-btn {
-                width: 36px;
-                height: 36px;
-                background: rgba(255, 255, 255, 0.2);
-                border: none;
-                border-radius: 8px;
-                color: white;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: background 0.2s ease;
-                font-size: 14px;
-                flex-shrink: 0;
-            }
-
-            .control-btn:hover {
-                background: rgba(255, 255, 255, 0.3);
-            }
-
+            /* FILTROS */
             .notification-filters {
                 padding: 16px 20px;
                 display: flex;
                 gap: 8px;
                 background: #f8f9fa;
-                border-bottom: 1px solid #e9ecef;
             }
 
             .filter-btn {
@@ -428,20 +229,22 @@ class GrizalumNotificacionesPremium {
                 color: white;
             }
 
+            /* ESTADÍSTICAS */
             .notification-stats {
                 padding: 16px 20px;
                 display: flex;
                 justify-content: space-around;
-                background: linear-gradient(135deg, #f8f9fa, #ffffff);
+                background: #f8f9fa;
+                border-bottom: 1px solid #e9ecef;
             }
 
-            .stat-item {
+            .stat {
                 text-align: center;
             }
 
             .stat-number {
                 display: block;
-                font-size: 20px;
+                font-size: 18px;
                 font-weight: 700;
                 color: #d4af37;
             }
@@ -450,48 +253,39 @@ class GrizalumNotificacionesPremium {
                 font-size: 11px;
                 color: #6c757d;
                 text-transform: uppercase;
-                letter-spacing: 0.5px;
             }
 
-            .notification-content {
+            /* LISTA DE NOTIFICACIONES */
+            .notification-list {
                 flex: 1;
                 overflow-y: auto;
                 max-height: 300px;
             }
 
-            .notification-list {
-                padding: 0;
-            }
-
-            .notification-item-premium {
+            .notification-item {
                 padding: 16px 20px;
                 border-bottom: 1px solid #f1f3f4;
+                display: flex;
+                gap: 12px;
+                position: relative;
                 cursor: pointer;
                 transition: all 0.2s ease;
-                position: relative;
-                background: white;
             }
 
-            .notification-item-premium:hover {
+            .notification-item:hover {
                 background: #f8f9fa;
-                transform: translateX(4px);
             }
 
-            .notification-item-premium.unread {
+            .notification-item.unread {
                 border-left: 4px solid #d4af37;
-                background: linear-gradient(90deg, rgba(212, 175, 55, 0.05), transparent);
+                background: rgba(212, 175, 55, 0.05);
             }
 
-            .notification-item-premium.critical {
+            .notification-item.critical {
                 border-left-color: #e74c3c;
             }
 
-            .notification-item-content {
-                display: flex;
-                gap: 12px;
-            }
-
-            .notification-category-icon {
+            .notification-icon {
                 width: 40px;
                 height: 40px;
                 border-radius: 10px;
@@ -503,8 +297,10 @@ class GrizalumNotificacionesPremium {
                 flex-shrink: 0;
             }
 
-            .notification-text {
+            .notification-content {
                 flex: 1;
+                min-width: 0;
+                padding-right: 30px;
             }
 
             .notification-title {
@@ -533,9 +329,9 @@ class GrizalumNotificacionesPremium {
             }
 
             .notification-priority {
-                padding: 2px 8px;
-                border-radius: 12px;
-                font-size: 10px;
+                padding: 2px 6px;
+                border-radius: 10px;
+                font-size: 9px;
                 font-weight: 600;
                 text-transform: uppercase;
             }
@@ -545,16 +341,46 @@ class GrizalumNotificacionesPremium {
             .priority-media { background: #e3f2fd; color: #1565c0; }
             .priority-baja { background: #f3e5f5; color: #7b1fa2; }
 
-            .notification-footer-premium {
-                padding: 16px 20px;
-                background: #f8f9fa;
+            /* BOTÓN ELIMINAR INDIVIDUAL */
+            .delete-btn {
+                position: absolute;
+                top: 12px;
+                right: 12px;
+                width: 20px;
+                height: 20px;
+                background: rgba(239, 68, 68, 0.1);
+                border: none;
+                border-radius: 50%;
+                color: #e74c3c;
+                cursor: pointer;
                 display: flex;
-                gap: 12px;
+                align-items: center;
+                justify-content: center;
+                font-size: 10px;
+                opacity: 0;
+                transition: all 0.2s ease;
             }
 
-            .footer-btn {
-                flex: 1;
-                padding: 10px 16px;
+            .notification-item:hover .delete-btn {
+                opacity: 1;
+            }
+
+            .delete-btn:hover {
+                background: rgba(239, 68, 68, 0.2);
+                transform: scale(1.1);
+            }
+
+            /* FOOTER */
+            .notification-footer {
+                padding: 16px 20px;
+                background: #f8f9fa;
+            }
+
+            .notification-footer button {
+                width: 100%;
+                padding: 12px;
+                background: #d4af37;
+                color: white;
                 border: none;
                 border-radius: 8px;
                 font-size: 13px;
@@ -567,64 +393,42 @@ class GrizalumNotificacionesPremium {
                 transition: all 0.2s ease;
             }
 
-            .footer-btn.primary {
-                background: #d4af37;
-                color: white;
-            }
-
-            .footer-btn.primary:hover {
+            .notification-footer button:hover {
                 background: #b8941f;
                 transform: translateY(-1px);
             }
 
-            .empty-notifications {
-                padding: 60px 40px;
+            /* ESTADO VACÍO */
+            .empty-state {
+                padding: 40px 20px;
                 text-align: center;
                 color: #95a5a6;
             }
 
-            .empty-notifications i {
-                font-size: 48px;
-                margin-bottom: 16px;
+            .empty-state i {
+                font-size: 36px;
+                margin-bottom: 12px;
                 opacity: 0.5;
             }
 
-            .empty-notifications h4 {
-                margin: 0 0 8px 0;
-                font-size: 16px;
+            .empty-state h4 {
+                margin: 0 0 6px 0;
+                font-size: 14px;
                 color: #7f8c8d;
             }
 
-            .empty-notifications p {
-                margin: 0;
-                font-size: 13px;
-            }
-
-            /* Animaciones */
-            @keyframes notificationPulse {
-                0% { transform: scale(1); opacity: 0.8; }
-                50% { transform: scale(1.2); opacity: 0.4; }
-                100% { transform: scale(1); opacity: 0.8; }
-            }
-
-            @keyframes priorityGlow {
-                0% { box-shadow: 0 0 5px currentColor; }
-                100% { box-shadow: 0 0 15px currentColor; }
-            }
-
-            /* Responsive */
+            /* RESPONSIVE */
             @media (max-width: 768px) {
-                .grizalum-notification-panel-premium {
+                #grizalumNotificationPanel {
                     right: 10px;
                     left: 10px;
                     width: auto;
-                    max-height: 80vh;
                 }
                 
-                .grizalum-notification-btn-premium {
+                #grizalumNotificationBtn {
                     right: 15px;
-                    width: 55px;
-                    height: 55px;
+                    width: 50px;
+                    height: 50px;
                 }
             }
         `;
@@ -632,586 +436,286 @@ class GrizalumNotificacionesPremium {
         document.head.appendChild(styles);
     }
 
-    configurarEventosPanel() {
+    configurarEventos() {
         // Filtros
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                this.filtrarNotificaciones(btn.dataset.filter);
+                this.renderizar(btn.dataset.filter);
             });
         });
 
         // Marcar todas como leídas
         document.getElementById('markAllReadBtn').addEventListener('click', () => {
-            this.marcarTodasComoLeidas();
+            this.marcarTodasLeidas();
         });
     }
 
-    conectarConSistema() {
-        // Observar cambios de empresa
-        this.observarCambioEmpresa();
+    conectarSistema() {
+        // Detectar empresa actual
+        setTimeout(() => this.detectarEmpresa(), 1000);
         
-        // Conectar con métricas financieras
-        document.addEventListener('allMetricsUpdated', (e) => {
-            this.analizarMetricas(e.detail);
-        });
-
-        // Conectar con cambios de período
-        document.addEventListener('periodChanged', (e) => {
-            this.actualizarParaPeriodo(e.detail.period);
-        });
-    }
-
-    observarCambioEmpresa() {
-        const observer = new MutationObserver(() => {
-            this.detectarEmpresaActual();
-        });
-
+        // Observar cambios
+        const observer = new MutationObserver(() => this.detectarEmpresa());
         const selector = document.getElementById('companySelector');
         if (selector) {
             observer.observe(selector, { childList: true, subtree: true });
         }
-
-        // Detectar empresa inicial
-        setTimeout(() => this.detectarEmpresaActual(), 1000);
     }
 
-    detectarEmpresaActual() {
+    detectarEmpresa() {
         const selector = document.getElementById('companySelector');
         if (!selector) return;
 
-        const empresaActiva = selector.querySelector('.active, [data-selected="true"], .selected');
-        if (empresaActiva) {
-            const nuevaEmpresa = empresaActiva.dataset.empresaId || 
-                                empresaActiva.dataset.id || 
-                                this.extraerIdEmpresa(empresaActiva.textContent);
-
-            if (nuevaEmpresa !== this.empresaActual) {
-                this.empresaActual = nuevaEmpresa;
-                this.actualizarInterfazParaEmpresa();
-                this.cargarNotificacionesEmpresa();
+        const activa = selector.querySelector('.active, [data-selected="true"], .selected');
+        if (activa) {
+            const empresa = activa.textContent?.toLowerCase().replace(/\s+/g, '-') || 'empresa-001';
+            if (empresa !== this.empresaActual) {
+                this.empresaActual = empresa;
+                this.actualizarDisplay();
+                this.cargarNotificaciones();
             }
         }
     }
 
-    extraerIdEmpresa(texto) {
-        return texto.toLowerCase()
-                  .replace(/\s+/g, '-')
-                  .replace(/[^a-z0-9\-]/g, '');
-    }
-
-    actualizarInterfazParaEmpresa() {
-        const display = document.getElementById('empresaActualDisplay');
+    actualizarDisplay() {
+        const display = document.getElementById('empresaDisplay');
         if (display && this.empresaActual) {
-            display.textContent = this.formatearNombreEmpresa(this.empresaActual);
-        }
-    }
-
-    formatearNombreEmpresa(empresaId) {
-        return empresaId.split('-')
-                      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                      .join(' ');
-    }
-
-    analizarMetricas(datos) {
-        if (!this.empresaActual || !datos) return;
-        this.verificarAlertas(datos);
-    }
-
-    verificarAlertas(datos) {
-        const metricas = window.GrizalumMetrics?.getCurrentMetrics();
-        if (!metricas) return;
-
-        this.verificarFlujoCajaBajo(metricas);
-        this.verificarGastosElevados(metricas);
-        this.verificarOportunidades(metricas);
-    }
-
-    verificarFlujoCajaBajo(metricas) {
-        const cashFlow = metricas.sidebarCashFlow?.value || 0;
-        const gastos = metricas.expensesValue?.value || 0;
-
-        if (gastos > 0 && cashFlow < (gastos * this.reglasNotificacion.cashFlowBajo.umbral)) {
-            this.crearNotificacion({
-                categoria: 'FINANCIERO',
-                prioridad: 'critica',
-                titulo: 'Flujo de Caja Crítico',
-                mensaje: `Tu flujo de caja (S/. ${this.formatearMonto(cashFlow)}) está por debajo del 30% de tus gastos mensuales`
-            });
-        }
-    }
-
-    verificarGastosElevados(metricas) {
-        const gastos = metricas.expensesValue?.value || 0;
-        const promedioHistorico = this.obtenerPromedioGastos();
-
-        if (promedioHistorico > 0 && gastos > (promedioHistorico * 1.2)) {
-            this.crearNotificacion({
-                categoria: 'FINANCIERO',
-                prioridad: 'alta',
-                titulo: 'Gastos Elevados Detectados',
-                mensaje: `Tus gastos actuales superan en 20% el promedio histórico`
-            });
-        }
-    }
-
-    verificarOportunidades(metricas) {
-        const crecimiento = metricas.growthValue?.value || 0;
-        
-        if (crecimiento >= 15) {
-            this.crearNotificacion({
-                categoria: 'OPORTUNIDAD',
-                prioridad: 'media',
-                titulo: 'Excelente Crecimiento',
-                mensaje: `¡Felicitaciones! Tu empresa está creciendo un ${crecimiento}%`
-            });
+            display.textContent = this.empresaActual.split('-').map(w => 
+                w.charAt(0).toUpperCase() + w.slice(1)
+            ).join(' ');
         }
     }
 
     crearNotificacion(config) {
         if (!this.empresaActual) return;
 
-        if (this.existeNotificacionReciente(config.titulo)) return;
-
-        const notificacion = {
-            id: `not-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        const notif = {
+            id: `not-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
             categoria: config.categoria || 'SISTEMA',
             prioridad: config.prioridad || 'media',
             titulo: config.titulo,
             mensaje: config.mensaje,
             fecha: new Date().toISOString(),
-            leida: false,
-            empresaId: this.empresaActual
+            leida: false
         };
 
-        const notificacionesEmpresa = this.notificaciones.get(this.empresaActual) || [];
-        notificacionesEmpresa.unshift(notificacion);
-
-        if (notificacionesEmpresa.length > this.configuracion.maxNotificaciones) {
-            notificacionesEmpresa.splice(this.configuracion.maxNotificaciones);
-        }
-
-        this.notificaciones.set(this.empresaActual, notificacionesEmpresa);
+        const notifs = this.notificaciones.get(this.empresaActual) || [];
+        notifs.unshift(notif);
+        this.notificaciones.set(this.empresaActual, notifs);
         
         this.actualizarContador();
-        this.renderizarNotificaciones();
-        this.mostrarEfectoNuevaNotificacion(notificacion);
-
-        return notificacion.id;
+        this.renderizar();
+        
+        return notif.id;
     }
 
-    existeNotificacionReciente(titulo) {
-        const notificaciones = this.notificaciones.get(this.empresaActual) || [];
-        const tiempoLimite = Date.now() - (5 * 60 * 1000);
+    eliminarNotificacion(id) {
+        if (!this.empresaActual) return;
+
+        const notifs = this.notificaciones.get(this.empresaActual) || [];
+        const filtradas = notifs.filter(n => n.id !== id);
+        this.notificaciones.set(this.empresaActual, filtradas);
         
-        return notificaciones.some(n => 
-            n.titulo === titulo && 
-            new Date(n.fecha).getTime() > tiempoLimite
-        );
+        this.actualizarContador();
+        this.renderizar();
+    }
+
+    marcarLeida(id) {
+        if (!this.empresaActual) return;
+
+        const notifs = this.notificaciones.get(this.empresaActual) || [];
+        const notif = notifs.find(n => n.id === id);
+        if (notif) {
+            notif.leida = true;
+            this.actualizarContador();
+            this.renderizar();
+        }
+    }
+
+    marcarTodasLeidas() {
+        if (!this.empresaActual) return;
+
+        const notifs = this.notificaciones.get(this.empresaActual) || [];
+        notifs.forEach(n => n.leida = true);
+        this.actualizarContador();
+        this.renderizar();
     }
 
     actualizarContador() {
-        const notificaciones = this.notificaciones.get(this.empresaActual) || [];
-        const noLeidas = notificaciones.filter(n => !n.leida);
-        const contador = document.getElementById('notificationCount');
+        const notifs = this.notificaciones.get(this.empresaActual) || [];
+        const noLeidas = notifs.filter(n => !n.leida).length;
         
-        if (contador) {
-            contador.textContent = noLeidas.length;
-            contador.classList.toggle('active', noLeidas.length > 0);
+        const badge = document.getElementById('notificationBadge');
+        if (badge) {
+            badge.textContent = noLeidas;
+            badge.classList.toggle('active', noLeidas > 0);
         }
 
-        this.actualizarIndicadoresPrioridad(noLeidas);
-        this.actualizarEstadisticas(notificaciones);
+        this.actualizarEstadisticas(notifs);
     }
 
-    actualizarIndicadoresPrioridad(notificaciones) {
-        const indicadores = document.getElementById('notificationPriorities');
-        if (!indicadores) return;
-
-        const criticas = notificaciones.filter(n => n.prioridad === 'critica').length;
-        const altas = notificaciones.filter(n => n.prioridad === 'alta').length;
-        const medias = notificaciones.filter(n => n.prioridad === 'media').length;
-
-        indicadores.querySelector('.critical').classList.toggle('active', criticas > 0);
-        indicadores.querySelector('.high').classList.toggle('active', altas > 0);
-        indicadores.querySelector('.medium').classList.toggle('active', medias > 0);
+    actualizarEstadisticas(notifs) {
+        const criticas = notifs.filter(n => n.prioridad === 'critica').length;
+        const importantes = notifs.filter(n => n.prioridad === 'alta').length;
+        
+        document.getElementById('statCriticas').textContent = criticas;
+        document.getElementById('statImportantes').textContent = importantes;
+        document.getElementById('statTotal').textContent = notifs.length;
     }
 
-    actualizarEstadisticas(notificaciones) {
-        const statCriticas = document.getElementById('statCriticas');
-        const statImportantes = document.getElementById('statImportantes');
-        const statTotal = document.getElementById('statTotal');
-
-        if (statCriticas) {
-            statCriticas.textContent = notificaciones.filter(n => n.prioridad === 'critica').length;
-        }
-        if (statImportantes) {
-            statImportantes.textContent = notificaciones.filter(n => n.prioridad === 'alta').length;
-        }
-        if (statTotal) {
-            statTotal.textContent = notificaciones.length;
-        }
-    }
-
-    renderizarNotificaciones(filtro = 'todas') {
+    renderizar(filtro = 'todas') {
         const lista = document.getElementById('notificationList');
         if (!lista) return;
 
-        const notificaciones = this.notificaciones.get(this.empresaActual) || [];
-        let notificacionesFiltradas = this.filtrarPorTipo(notificaciones, filtro);
+        const notifs = this.notificaciones.get(this.empresaActual) || [];
+        let filtradas = notifs;
 
-        if (notificacionesFiltradas.length === 0) {
-            lista.innerHTML = this.renderizarEstadoVacio(filtro);
+        if (filtro !== 'todas') {
+            filtradas = notifs.filter(n => n.prioridad === filtro);
+        }
+
+        if (filtradas.length === 0) {
+            lista.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-bell-slash"></i>
+                    <h4>No hay notificaciones</h4>
+                    <p>Todo está al día</p>
+                </div>
+            `;
             return;
         }
 
-        lista.innerHTML = notificacionesFiltradas.map(notif => 
-            this.renderizarNotificacion(notif)
-        ).join('');
-
-        this.agregarEventosNotificaciones();
+        lista.innerHTML = filtradas.map(notif => this.renderizarItem(notif)).join('');
+        this.agregarEventosItems();
     }
 
-    filtrarPorTipo(notificaciones, filtro) {
-        switch (filtro) {
-            case 'critica':
-                return notificaciones.filter(n => n.prioridad === 'critica');
-            case 'alta':
-                return notificaciones.filter(n => n.prioridad === 'alta');
-            case 'media':
-                return notificaciones.filter(n => n.prioridad === 'media');
-            default:
-                return notificaciones;
-        }
-    }
-
-    renderizarNotificacion(notif) {
+    renderizarItem(notif) {
         const categoria = this.categorias[notif.categoria] || this.categorias.SISTEMA;
-        const claseNoLeida = !notif.leida ? 'unread' : '';
-        const clasePrioridad = notif.prioridad === 'critica' ? 'critical' : '';
-
+        const tiempo = this.formatearTiempo(notif.fecha);
+        
         return `
-            <div class="notification-item-premium ${claseNoLeida} ${clasePrioridad}" 
-                 data-id="${notif.id}" 
-                 data-categoria="${notif.categoria}"
-                 data-prioridad="${notif.prioridad}">
-                <div class="notification-item-content">
-                    <div class="notification-category-icon" style="background: ${categoria.color}">
-                        <i class="${categoria.icono}"></i>
-                    </div>
-                    <div class="notification-text">
-                        <div class="notification-title">${notif.titulo}</div>
-                        <div class="notification-message">${notif.mensaje}</div>
-                        <div class="notification-meta">
-                            <div class="notification-time">${this.formatearTiempo(notif.fecha)}</div>
-                            <div class="notification-priority priority-${notif.prioridad}">
-                                ${notif.prioridad}
-                            </div>
+            <div class="notification-item ${!notif.leida ? 'unread' : ''} ${notif.prioridad === 'critica' ? 'critical' : ''}" 
+                 data-id="${notif.id}">
+                <div class="notification-icon" style="background: ${categoria.color}">
+                    <i class="${categoria.icono}"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">${notif.titulo}</div>
+                    <div class="notification-message">${notif.mensaje}</div>
+                    <div class="notification-meta">
+                        <div class="notification-time">${tiempo}</div>
+                        <div class="notification-priority priority-${notif.prioridad}">
+                            ${notif.prioridad}
                         </div>
                     </div>
                 </div>
+                <button class="delete-btn" data-delete="${notif.id}" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
             </div>
         `;
     }
 
-    renderizarEstadoVacio(filtro) {
-        const mensajes = {
-            'todas': 'No tienes notificaciones',
-            'critica': 'No tienes notificaciones críticas',
-            'alta': 'No tienes notificaciones importantes',
-            'media': 'No tienes notificaciones generales'
-        };
+    agregarEventosItems() {
+        // Click en notificación para marcar como leída
+        document.querySelectorAll('.notification-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                if (!e.target.closest('.delete-btn')) {
+                    this.marcarLeida(item.dataset.id);
+                }
+            });
+        });
 
-        return `
-            <div class="empty-notifications">
-                <i class="fas fa-bell-slash"></i>
-                <h4>${mensajes[filtro]}</h4>
-                <p>Cuando tengas nuevas notificaciones aparecerán aquí</p>
-            </div>
-        `;
-    }
-
-    agregarEventosNotificaciones() {
-        document.querySelectorAll('.notification-item-premium').forEach(item => {
-            item.addEventListener('click', () => {
-                this.marcarComoLeida(item.dataset.id);
+        // Click en botón eliminar
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.eliminarNotificacion(btn.dataset.delete);
             });
         });
     }
 
     formatearTiempo(fecha) {
-        const ahora = new Date();
-        const fechaNotif = new Date(fecha);
-        const diff = ahora - fechaNotif;
-
+        const diff = Date.now() - new Date(fecha).getTime();
         if (diff < 60000) return 'Ahora';
         if (diff < 3600000) return `${Math.floor(diff / 60000)}m`;
         if (diff < 86400000) return `${Math.floor(diff / 3600000)}h`;
-        if (diff < 604800000) return `${Math.floor(diff / 86400000)}d`;
-        
-        return fechaNotif.toLocaleDateString('es-PE', { 
-            day: 'numeric', 
-            month: 'short' 
-        });
-    }
-
-    formatearMonto(valor) {
-        return new Intl.NumberFormat('es-PE', {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0
-        }).format(valor);
-    }
-
-    obtenerPromedioGastos() {
-        // Simulación - en producción conectar con datos históricos
-        return 25000;
-    }
-
-    mostrarEfectoNuevaNotificacion(notificacion) {
-        const boton = document.getElementById('grizalumNotificationBtn');
-        if (boton) {
-            boton.style.animation = 'none';
-            setTimeout(() => {
-                boton.style.animation = 'notificationPulse 0.6s ease-out';
-            }, 10);
-        }
+        return `${Math.floor(diff / 86400000)}d`;
     }
 
     togglePanel() {
         const panel = document.getElementById('grizalumNotificationPanel');
         if (!panel) return;
 
-        const isActive = panel.classList.contains('active');
-        
-        if (isActive) {
-            this.cerrarPanel();
-        } else {
-            this.abrirPanel();
-        }
-    }
-
-    abrirPanel() {
-        const panel = document.getElementById('grizalumNotificationPanel');
-        if (panel) {
-            panel.classList.add('active');
-            this.cargarNotificacionesEmpresa();
-        }
-    }
-
-    cerrarPanel() {
-        const panel = document.getElementById('grizalumNotificationPanel');
-        if (panel) {
+        if (panel.classList.contains('active')) {
             panel.classList.remove('active');
+        } else {
+            panel.classList.add('active');
+            this.cargarNotificaciones();
         }
     }
 
-    cargarNotificacionesEmpresa() {
-        if (!this.empresaActual) {
-            this.generarNotificacionesEjemplo();
-        }
-        
-        this.renderizarNotificaciones();
+    cargarNotificaciones() {
         this.actualizarContador();
+        this.renderizar();
     }
 
-    generarNotificacionesEjemplo() {
+    generarEjemplo() {
         if (!this.empresaActual) return;
 
-        const notificacionesEjemplo = [
+        const ejemplos = [
             {
                 categoria: 'FINANCIERO',
                 prioridad: 'alta',
                 titulo: 'Revisión de Flujo de Caja',
-                mensaje: 'Es recomendable revisar tu flujo de caja para el próximo trimestre'
+                mensaje: 'Recomendable revisar flujo de caja para el próximo trimestre'
             },
             {
                 categoria: 'OPORTUNIDAD',
                 prioridad: 'media',
                 titulo: 'Oportunidad de Crecimiento',
-                mensaje: 'Tus métricas muestran potencial para expandir operaciones'
+                mensaje: 'Tus métricas muestran potencial para expandir'
             }
         ];
 
-        notificacionesEjemplo.forEach(config => {
-            this.crearNotificacion(config);
-        });
-    }
-
-    marcarComoLeida(notificacionId) {
-        if (!this.empresaActual) return;
-
-        const notificaciones = this.notificaciones.get(this.empresaActual) || [];
-        const notificacion = notificaciones.find(n => n.id === notificacionId);
-        
-        if (notificacion && !notificacion.leida) {
-            notificacion.leida = true;
-            this.actualizarContador();
-            this.renderizarNotificaciones();
-        }
-    }
-
-    marcarTodasComoLeidas() {
-        if (!this.empresaActual) return;
-
-        const notificaciones = this.notificaciones.get(this.empresaActual) || [];
-        notificaciones.forEach(n => n.leida = true);
-        
-        this.actualizarContador();
-        this.renderizarNotificaciones();
-    }
-
-    limpiarTodasLasNotificaciones() {
-        if (!this.empresaActual) return;
-
-        this.notificaciones.set(this.empresaActual, []);
-        this.actualizarContador();
-        this.renderizarNotificaciones();
-    }
-
-    filtrarNotificaciones(filtro) {
-        this.renderizarNotificaciones(filtro);
-    }
-
-    iniciarVerificacionesPeriodicas() {
-        setInterval(() => {
-            this.ejecutarVerificacionesAutomaticas();
-        }, 5 * 60 * 1000);
-
-        setInterval(() => {
-            this.limpiarNotificacionesAntiguas();
-        }, 24 * 60 * 60 * 1000);
-    }
-
-    ejecutarVerificacionesAutomaticas() {
-        if (!this.empresaActual) return;
-
-        const notificaciones = this.notificaciones.get(this.empresaActual) || [];
-        const criticasRecientes = notificaciones.filter(n => 
-            n.prioridad === 'critica' && 
-            Date.now() - new Date(n.fecha).getTime() < 30 * 60 * 1000
-        );
-
-        if (criticasRecientes.length === 0) {
-            const metricas = window.GrizalumMetrics?.getCurrentMetrics();
-            if (metricas) {
-                this.verificarAlertas({ data: metricas });
-            }
-        }
-    }
-
-    limpiarNotificacionesAntiguas() {
-        this.notificaciones.forEach((notificaciones, empresaId) => {
-            const limite = Date.now() - this.configuracion.tiempoLimpieza;
-            const notificacionesLimpias = notificaciones.filter(n => 
-                new Date(n.fecha).getTime() > limite
-            );
-            
-            if (notificacionesLimpias.length !== notificaciones.length) {
-                this.notificaciones.set(empresaId, notificacionesLimpias);
-            }
-        });
+        ejemplos.forEach(config => this.crearNotificacion(config));
     }
 
     crearAPI() {
-        // API PARA RECIBIR NOTIFICACIONES DEL ADMIN
         window.GrizalumNotificacionesPremium = {
             crear: (config) => this.crearNotificacion(config),
             obtener: () => this.notificaciones.get(this.empresaActual) || [],
-            marcarLeida: (id) => this.marcarComoLeida(id),
-            limpiar: () => this.limpiarTodasLasNotificaciones(),
-            estado: () => ({
-                empresa: this.empresaActual,
-                total: (this.notificaciones.get(this.empresaActual) || []).length,
-                noLeidas: (this.notificaciones.get(this.empresaActual) || []).filter(n => !n.leida).length
-            }),
-            // FUNCIÓN ESPECIAL PARA NOTIFICACIONES DEL ADMIN
+            eliminar: (id) => this.eliminarNotificacion(id),
+            marcarLeida: (id) => this.marcarLeida(id),
             recibirDelAdmin: (empresaId, titulo, mensaje, tipo = 'info') => {
-                const categorias = {
-                    'admin': 'SISTEMA',
-                    'alerta': 'VENCIMIENTO',
-                    'info': 'RECORDATORIO',
-                    'success': 'OPORTUNIDAD',
-                    'warning': 'FINANCIERO'
-                };
-
-                const prioridades = {
-                    'admin': 'alta',
-                    'alerta': 'critica', 
-                    'info': 'media',
-                    'success': 'media',
-                    'warning': 'alta'
-                };
-
-                return this.crearNotificacion({
-                    categoria: categorias[tipo] || 'SISTEMA',
-                    prioridad: prioridades[tipo] || 'media',
-                    titulo: titulo,
-                    mensaje: mensaje
+                const old = this.empresaActual;
+                this.empresaActual = empresaId;
+                const id = this.crearNotificacion({
+                    categoria: tipo === 'admin' ? 'SISTEMA' : 'RECORDATORIO',
+                    prioridad: tipo === 'admin' ? 'alta' : 'media',
+                    titulo, mensaje
                 });
+                this.empresaActual = old;
+                return id;
             }
         };
 
-        // Compatibilidad con API anterior
         window.mostrarNotificacion = (mensaje, tipo = 'info') => {
-            const categorias = {
-                'error': 'FINANCIERO',
-                'warning': 'VENCIMIENTO', 
-                'success': 'OPORTUNIDAD',
-                'info': 'SISTEMA'
-            };
-
-            const prioridades = {
-                'error': 'critica',
-                'warning': 'alta',
-                'success': 'media',
-                'info': 'baja'
-            };
-
+            const cats = { error: 'FINANCIERO', warning: 'VENCIMIENTO', success: 'OPORTUNIDAD', info: 'SISTEMA' };
+            const prios = { error: 'critica', warning: 'alta', success: 'media', info: 'baja' };
             return this.crearNotificacion({
-                categoria: categorias[tipo] || 'SISTEMA',
-                prioridad: prioridades[tipo] || 'media',
-                titulo: tipo === 'error' ? 'Alerta' : tipo === 'warning' ? 'Atención' : 
-                       tipo === 'success' ? 'Éxito' : 'Información',
-                mensaje: mensaje
+                categoria: cats[tipo] || 'SISTEMA',
+                prioridad: prios[tipo] || 'media',
+                titulo: tipo === 'error' ? 'Alerta' : 'Información',
+                mensaje
             });
         };
     }
 }
 
-// Clase auxiliar para monitoreo financiero
-class FinancialMonitor {
-    constructor(metrica, reglas) {
-        this.metrica = metrica;
-        this.reglas = reglas;
-        this.historial = [];
-    }
-
-    actualizar(valor) {
-        this.historial.push({
-            valor: valor,
-            fecha: new Date().toISOString()
-        });
-
-        if (this.historial.length > 30) {
-            this.historial = this.historial.slice(-30);
-        }
-    }
-
-    obtenerPromedio() {
-        if (this.historial.length === 0) return 0;
-        const suma = this.historial.reduce((acc, item) => acc + item.valor, 0);
-        return suma / this.historial.length;
-    }
-}
-
 // Inicialización
-const grizalumNotificacionesPremium = new GrizalumNotificacionesPremium();
+new GrizalumNotificacionesPremium();
 
-console.log('✨ GRIZALUM Notificaciones Premium v2.1 - LIMPIO');
-console.log('🎯 Características:');
-console.log('  • 🎨 Interfaz limpia sin botones innecesarios');
-console.log('  • 🧠 Análisis inteligente de métricas financieras');
-console.log('  • 🔔 Conectado para recibir notificaciones del admin');
-console.log('  • 📊 Panel se cierra automáticamente');
-console.log('  • 🔄 Sin notificaciones spam del sistema');
+console.log('✨ Sistema de Notificaciones Premium - FINAL LIMPIO');
