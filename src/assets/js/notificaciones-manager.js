@@ -356,13 +356,19 @@ class GrizalumNotificacionesPremium {
 
             .header-text h3 {
                 margin: 0;
-                font-size: 16px;
+                font-size: 14px;
                 font-weight: 600;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
 
             .header-text span {
-                font-size: 12px;
+                font-size: 11px;
                 opacity: 0.9;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
 
             .header-controls {
