@@ -1,13 +1,14 @@
 /**
  * ================================================================
- * GRIZALUM SISTEMA DE NOTIFICACIONES PREMIUM v2.0
+ * GRIZALUM SISTEMA DE NOTIFICACIONES PREMIUM v2.1 - CORREGIDO
  * Sistema inteligente de notificaciones financieras por empresa
+ * SIN botones innecesarios - SOLO lo esencial
  * ================================================================
  */
 
 class GrizalumNotificacionesPremium {
     constructor() {
-        this.version = '2.0.0';
+        this.version = '2.1.0';
         this.empresaActual = null;
         this.notificaciones = new Map();
         this.configuracion = {
@@ -63,7 +64,7 @@ class GrizalumNotificacionesPremium {
         this.crearAPI();
         this.iniciarVerificacionesPeriodicas();
         
-        console.log('✨ GRIZALUM Notificaciones Premium v2.0 inicializado');
+        console.log('✨ GRIZALUM Notificaciones Premium v2.1 inicializado');
     }
 
     cargarConfiguracion() {
@@ -152,12 +153,8 @@ class GrizalumNotificacionesPremium {
                     </div>
                 </div>
                 <div class="header-controls">
-                        <i class="fas fa-cog"></i>
-                    </button>
                     <button id="clearAllNotifications" class="control-btn" title="Limpiar todo">
                         <i class="fas fa-trash"></i>
-                    </button>
-                        <i class="fas fa-times"></i>
                     </button>
                 </div>
             </div>
@@ -194,9 +191,6 @@ class GrizalumNotificacionesPremium {
                 <button id="markAllReadBtn" class="footer-btn primary">
                     <i class="fas fa-check-double"></i>
                     Marcar todas como leídas
-                </button>
-                    <i class="fas fa-download"></i>
-                    Exportar
                 </button>
             </div>
         `;
@@ -568,16 +562,6 @@ class GrizalumNotificacionesPremium {
                 transform: translateY(-1px);
             }
 
-            .footer-btn.secondary {
-                background: white;
-                color: #6c757d;
-                border: 1px solid #dee2e6;
-            }
-
-            .footer-btn.secondary:hover {
-                background: #f8f9fa;
-            }
-
             .empty-notifications {
                 padding: 60px 40px;
                 text-align: center;
@@ -613,21 +597,6 @@ class GrizalumNotificacionesPremium {
                 100% { box-shadow: 0 0 15px currentColor; }
             }
 
-            @keyframes slideInNotification {
-                from { 
-                    transform: translateX(100%); 
-                    opacity: 0; 
-                }
-                to { 
-                    transform: translateX(0); 
-                    opacity: 1; 
-                }
-            }
-
-            .notification-item-premium.new {
-                animation: slideInNotification 0.3s ease-out;
-            }
-
             /* Responsive */
             @media (max-width: 768px) {
                 .grizalum-notification-panel-premium {
@@ -649,10 +618,6 @@ class GrizalumNotificacionesPremium {
     }
 
     configurarEventosPanel() {
-        // Cerrar panel
-            this.cerrarPanel();
-        });
-
         // Filtros
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -670,10 +635,6 @@ class GrizalumNotificacionesPremium {
         // Limpiar todas
         document.getElementById('clearAllNotifications').addEventListener('click', () => {
             this.limpiarTodasLasNotificaciones();
-        });
-
-        // Exportar
-            this.exportarNotificaciones();
         });
     }
 
@@ -745,8 +706,6 @@ class GrizalumNotificacionesPremium {
 
     analizarMetricas(datos) {
         if (!this.empresaActual || !datos) return;
-
-        // Análisis inteligente de métricas
         this.verificarAlertas(datos);
     }
 
@@ -754,13 +713,8 @@ class GrizalumNotificacionesPremium {
         const metricas = window.GrizalumMetrics?.getCurrentMetrics();
         if (!metricas) return;
 
-        // Verificar flujo de caja bajo
         this.verificarFlujoCajaBajo(metricas);
-        
-        // Verificar gastos elevados
         this.verificarGastosElevados(metricas);
-        
-        // Verificar oportunidades de crecimiento
         this.verificarOportunidades(metricas);
     }
 
@@ -773,11 +727,7 @@ class GrizalumNotificacionesPremium {
                 categoria: 'FINANCIERO',
                 prioridad: 'critica',
                 titulo: 'Flujo de Caja Crítico',
-                mensaje: `Tu flujo de caja (S/. ${this.formatearMonto(cashFlow)}) está por debajo del 30% de tus gastos mensuales`,
-                acciones: [
-                    { texto: 'Ver Detalles', accion: 'verFlujoCaja' },
-                    { texto: 'Generar Reporte', accion: 'generarReporte' }
-                ]
+                mensaje: `Tu flujo de caja (S/. ${this.formatearMonto(cashFlow)}) está por debajo del 30% de tus gastos mensuales`
             });
         }
     }
@@ -791,10 +741,7 @@ class GrizalumNotificacionesPremium {
                 categoria: 'FINANCIERO',
                 prioridad: 'alta',
                 titulo: 'Gastos Elevados Detectados',
-                mensaje: `Tus gastos actuales superan en 20% el promedio histórico`,
-                acciones: [
-                    { texto: 'Analizar Gastos', accion: 'analizarGastos' }
-                ]
+                mensaje: `Tus gastos actuales superan en 20% el promedio histórico`
             });
         }
     }
@@ -807,10 +754,7 @@ class GrizalumNotificacionesPremium {
                 categoria: 'OPORTUNIDAD',
                 prioridad: 'media',
                 titulo: 'Excelente Crecimiento',
-                mensaje: `¡Felicitaciones! Tu empresa está creciendo un ${crecimiento}%`,
-                acciones: [
-                    { texto: 'Ver Tendencias', accion: 'verTendencias' }
-                ]
+                mensaje: `¡Felicitaciones! Tu empresa está creciendo un ${crecimiento}%`
             });
         }
     }
@@ -818,7 +762,6 @@ class GrizalumNotificacionesPremium {
     crearNotificacion(config) {
         if (!this.empresaActual) return;
 
-        // Evitar duplicados recientes
         if (this.existeNotificacionReciente(config.titulo)) return;
 
         const notificacion = {
@@ -827,28 +770,22 @@ class GrizalumNotificacionesPremium {
             prioridad: config.prioridad || 'media',
             titulo: config.titulo,
             mensaje: config.mensaje,
-            acciones: config.acciones || [],
             fecha: new Date().toISOString(),
             leida: false,
             empresaId: this.empresaActual
         };
 
-        // Agregar a la empresa actual
         const notificacionesEmpresa = this.notificaciones.get(this.empresaActual) || [];
         notificacionesEmpresa.unshift(notificacion);
 
-        // Limitar número de notificaciones
         if (notificacionesEmpresa.length > this.configuracion.maxNotificaciones) {
             notificacionesEmpresa.splice(this.configuracion.maxNotificaciones);
         }
 
         this.notificaciones.set(this.empresaActual, notificacionesEmpresa);
         
-        // Actualizar interfaz
         this.actualizarContador();
         this.renderizarNotificaciones();
-        
-        // Efecto de nueva notificación
         this.mostrarEfectoNuevaNotificacion(notificacion);
 
         return notificacion.id;
@@ -856,7 +793,7 @@ class GrizalumNotificacionesPremium {
 
     existeNotificacionReciente(titulo) {
         const notificaciones = this.notificaciones.get(this.empresaActual) || [];
-        const tiempoLimite = Date.now() - (5 * 60 * 1000); // 5 minutos
+        const tiempoLimite = Date.now() - (5 * 60 * 1000);
         
         return notificaciones.some(n => 
             n.titulo === titulo && 
@@ -874,10 +811,7 @@ class GrizalumNotificacionesPremium {
             contador.classList.toggle('active', noLeidas.length > 0);
         }
 
-        // Actualizar indicadores de prioridad
         this.actualizarIndicadoresPrioridad(noLeidas);
-        
-        // Actualizar estadísticas
         this.actualizarEstadisticas(notificaciones);
     }
 
@@ -926,7 +860,6 @@ class GrizalumNotificacionesPremium {
             this.renderizarNotificacion(notif)
         ).join('');
 
-        // Agregar eventos a las notificaciones
         this.agregarEventosNotificaciones();
     }
 
@@ -966,32 +899,8 @@ class GrizalumNotificacionesPremium {
                                 ${notif.prioridad}
                             </div>
                         </div>
-                        ${this.renderizarAcciones(notif.acciones)}
                     </div>
                 </div>
-            </div>
-        `;
-    }
-
-    renderizarAcciones(acciones) {
-        if (!acciones || acciones.length === 0) return '';
-
-        return `
-            <div class="notification-actions" style="margin-top: 8px; display: flex; gap: 6px;">
-                ${acciones.map(accion => `
-                    <button class="action-btn" data-accion="${accion.accion}" style="
-                        padding: 4px 8px;
-                        background: rgba(212, 175, 55, 0.1);
-                        border: 1px solid rgba(212, 175, 55, 0.3);
-                        border-radius: 4px;
-                        font-size: 11px;
-                        color: #d4af37;
-                        cursor: pointer;
-                        transition: all 0.2s ease;
-                    ">
-                        ${accion.texto}
-                    </button>
-                `).join('')}
             </div>
         `;
     }
@@ -1014,18 +923,9 @@ class GrizalumNotificacionesPremium {
     }
 
     agregarEventosNotificaciones() {
-        // Click en notificación para marcar como leída
         document.querySelectorAll('.notification-item-premium').forEach(item => {
             item.addEventListener('click', () => {
                 this.marcarComoLeida(item.dataset.id);
-            });
-        });
-
-        // Click en acciones
-        document.querySelectorAll('.action-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.ejecutarAccion(btn.dataset.accion);
             });
         });
     }
@@ -1059,7 +959,6 @@ class GrizalumNotificacionesPremium {
     }
 
     mostrarEfectoNuevaNotificacion(notificacion) {
-        // Efecto visual en el botón
         const boton = document.getElementById('grizalumNotificationBtn');
         if (boton) {
             boton.style.animation = 'none';
@@ -1067,30 +966,6 @@ class GrizalumNotificacionesPremium {
                 boton.style.animation = 'notificationPulse 0.6s ease-out';
             }, 10);
         }
-
-        // Sonido de notificación (opcional)
-        if (this.configuracion.sonidoActivado && notificacion.prioridad === 'critica') {
-            this.reproducirSonidoNotificacion();
-        }
-    }
-
-    reproducirSonidoNotificacion() {
-        // Sonido sutil para notificaciones críticas
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-
-        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-        oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
-        
-        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.2);
     }
 
     togglePanel() {
@@ -1111,11 +986,6 @@ class GrizalumNotificacionesPremium {
         if (panel) {
             panel.classList.add('active');
             this.cargarNotificacionesEmpresa();
-            
-            // Marcar notificaciones como vistas (no leídas, pero vistas)
-            setTimeout(() => {
-                this.marcarNotificacionesComoVistas();
-            }, 1000);
         }
     }
 
@@ -1143,19 +1013,13 @@ class GrizalumNotificacionesPremium {
                 categoria: 'FINANCIERO',
                 prioridad: 'alta',
                 titulo: 'Revisión de Flujo de Caja',
-                mensaje: 'Es recomendable revisar tu flujo de caja para el próximo trimestre',
-                acciones: [
-                    { texto: 'Ver Reporte', accion: 'verReporte' }
-                ]
+                mensaje: 'Es recomendable revisar tu flujo de caja para el próximo trimestre'
             },
             {
                 categoria: 'OPORTUNIDAD',
                 prioridad: 'media',
                 titulo: 'Oportunidad de Crecimiento',
-                mensaje: 'Tus métricas muestran potencial para expandir operaciones',
-                acciones: [
-                    { texto: 'Analizar', accion: 'analizar' }
-                ]
+                mensaje: 'Tus métricas muestran potencial para expandir operaciones'
             }
         ];
 
@@ -1199,51 +1063,11 @@ class GrizalumNotificacionesPremium {
         this.renderizarNotificaciones(filtro);
     }
 
-    ejecutarAccion(accion) {
-        switch (accion) {
-            case 'verFlujoCaja':
-                console.log('Navegando a flujo de caja...');
-                // Aquí conectar con tu sistema de navegación
-                break;
-            case 'generarReporte':
-                console.log('Generando reporte...');
-                // Aquí conectar con tu sistema de reportes
-                break;
-            case 'analizarGastos':
-                console.log('Analizando gastos...');
-                break;
-            default:
-                console.log('Acción:', accion);
-        }
-    }
-
-    exportarNotificaciones() {
-        const notificaciones = this.notificaciones.get(this.empresaActual) || [];
-        const datos = {
-            empresa: this.empresaActual,
-            fecha: new Date().toISOString(),
-            notificaciones: notificaciones
-        };
-
-        const blob = new Blob([JSON.stringify(datos, null, 2)], 
-            { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `notificaciones-${this.empresaActual}-${new Date().toISOString().split('T')[0]}.json`;
-        a.click();
-        
-        URL.revokeObjectURL(url);
-    }
-
     iniciarVerificacionesPeriodicas() {
-        // Verificaciones cada 5 minutos
         setInterval(() => {
             this.ejecutarVerificacionesAutomaticas();
         }, 5 * 60 * 1000);
 
-        // Limpieza diaria
         setInterval(() => {
             this.limpiarNotificacionesAntiguas();
         }, 24 * 60 * 60 * 1000);
@@ -1252,11 +1076,10 @@ class GrizalumNotificacionesPremium {
     ejecutarVerificacionesAutomaticas() {
         if (!this.empresaActual) return;
 
-        // Solo ejecutar verificaciones si no hay notificaciones críticas recientes
         const notificaciones = this.notificaciones.get(this.empresaActual) || [];
         const criticasRecientes = notificaciones.filter(n => 
             n.prioridad === 'critica' && 
-            Date.now() - new Date(n.fecha).getTime() < 30 * 60 * 1000 // 30 minutos
+            Date.now() - new Date(n.fecha).getTime() < 30 * 60 * 1000
         );
 
         if (criticasRecientes.length === 0) {
@@ -1281,6 +1104,7 @@ class GrizalumNotificacionesPremium {
     }
 
     crearAPI() {
+        // API PARA RECIBIR NOTIFICACIONES DEL ADMIN
         window.GrizalumNotificacionesPremium = {
             crear: (config) => this.crearNotificacion(config),
             obtener: () => this.notificaciones.get(this.empresaActual) || [],
@@ -1290,7 +1114,32 @@ class GrizalumNotificacionesPremium {
                 empresa: this.empresaActual,
                 total: (this.notificaciones.get(this.empresaActual) || []).length,
                 noLeidas: (this.notificaciones.get(this.empresaActual) || []).filter(n => !n.leida).length
-            })
+            }),
+            // FUNCIÓN ESPECIAL PARA NOTIFICACIONES DEL ADMIN
+            recibirDelAdmin: (empresaId, titulo, mensaje, tipo = 'info') => {
+                const categorias = {
+                    'admin': 'SISTEMA',
+                    'alerta': 'VENCIMIENTO',
+                    'info': 'RECORDATORIO',
+                    'success': 'OPORTUNIDAD',
+                    'warning': 'FINANCIERO'
+                };
+
+                const prioridades = {
+                    'admin': 'alta',
+                    'alerta': 'critica', 
+                    'info': 'media',
+                    'success': 'media',
+                    'warning': 'alta'
+                };
+
+                return this.crearNotificacion({
+                    categoria: categorias[tipo] || 'SISTEMA',
+                    prioridad: prioridades[tipo] || 'media',
+                    titulo: titulo,
+                    mensaje: mensaje
+                });
+            }
         };
 
         // Compatibilidad con API anterior
@@ -1334,7 +1183,6 @@ class FinancialMonitor {
             fecha: new Date().toISOString()
         });
 
-        // Mantener solo últimos 30 valores
         if (this.historial.length > 30) {
             this.historial = this.historial.slice(-30);
         }
@@ -1345,35 +1193,15 @@ class FinancialMonitor {
         const suma = this.historial.reduce((acc, item) => acc + item.valor, 0);
         return suma / this.historial.length;
     }
-
-    detectarTendencia() {
-        if (this.historial.length < 5) return 'estable';
-        
-        const ultimos5 = this.historial.slice(-5);
-        const primeros3 = ultimos5.slice(0, 3);
-        const ultimos2 = ultimos5.slice(-2);
-        
-        const promedioInicial = primeros3.reduce((acc, item) => acc + item.valor, 0) / 3;
-        const promedioFinal = ultimos2.reduce((acc, item) => acc + item.valor, 0) / 2;
-        
-        const diferencia = (promedioFinal - promedioInicial) / promedioInicial;
-        
-        if (diferencia > 0.1) return 'creciente';
-        if (diferencia < -0.1) return 'decreciente';
-        return 'estable';
-    }
 }
 
 // Inicialización
 const grizalumNotificacionesPremium = new GrizalumNotificacionesPremium();
 
-console.log('✨ GRIZALUM Notificaciones Premium v2.0 cargado');
-console.log('🎯 Características Premium:');
-console.log('  • 🎨 Interfaz premium con animaciones suaves');
+console.log('✨ GRIZALUM Notificaciones Premium v2.1 - LIMPIO');
+console.log('🎯 Características:');
+console.log('  • 🎨 Interfaz limpia sin botones innecesarios');
 console.log('  • 🧠 Análisis inteligente de métricas financieras');
-console.log('  • 🔔 Notificaciones por categorías y prioridades');
-console.log('  • 📊 Estadísticas y filtros avanzados');
-console.log('  • 🎵 Efectos sonoros para alertas críticas');
-console.log('  • 📁 Exportación de notificaciones');
-console.log('  • 🔄 Verificaciones automáticas periódicas');
-console.log('  • 📱 Diseño completamente responsive');
+console.log('  • 🔔 Conectado para recibir notificaciones del admin');
+console.log('  • 📊 Panel se cierra automáticamente');
+console.log('  • 🔄 Sin notificaciones spam del sistema');
