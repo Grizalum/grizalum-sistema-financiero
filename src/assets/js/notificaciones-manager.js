@@ -192,6 +192,10 @@ class GrizalumNotificacionesPremium {
                     <i class="fas fa-check-double"></i>
                     Marcar todas como leídas
                 </button>
+                <button id="clearAllNotifications" class="footer-btn secondary">
+                    <i class="fas fa-trash"></i>
+                    Limpiar todo
+                </button>
             </div>
         `;
 
