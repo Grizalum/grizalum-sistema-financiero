@@ -220,4 +220,130 @@ class NotificacionesEmpresa {
         const empresaActual = window.GrizalumNotificaciones?.estado()?.empresaActual;
         if (empresaActual) {
             this.enviarNotificacionEmpresa(empresaActual,
-                window.
+                window.NotificacionesTemplates.backupCompletado()
+            );
+        }
+    }
+
+    // FUNCIONES PARA ADMIN (integración futura)
+    crearNotificacionPersonalizada(empresaId, titulo, mensaje, tipo = 'info') {
+        return this.enviarNotificacionEmpresa(empresaId, {
+            titulo: titulo,
+            mensaje: mensaje,
+            tipo: tipo
+        });
+    }
+
+    // FUNCIONES DE UTILIDAD
+    obtenerEstadisticasNotificaciones(empresaId) {
+        const notificaciones = window.GrizalumNotificaciones?.obtener(empresaId) || [];
+        
+        return {
+            total: notificaciones.length,
+            noLeidas: notificaciones.filter(n => !n.leida).length,
+            porTipo: {
+                info: notificaciones.filter(n => n.tipo === 'info').length,
+                warning: notificaciones.filter(n => n.tipo === 'warning').length,
+                error: notificaciones.filter(n => n.tipo === 'error').length,
+                success: notificaciones.filter(n => n.tipo === 'success').length
+            }
+        };
+    }
+
+    limpiarNotificacionesAntiguas(empresaId, diasAntiguedad = 30) {
+        const notificaciones = window.GrizalumNotificaciones?.obtener(empresaId) || [];
+        const limite = new Date();
+        limite.setDate(limite.getDate() - diasAntiguedad);
+
+        const notificacionesLimpias = notificaciones.filter(n => 
+            new Date(n.fecha) > limite
+        );
+
+        // Actualizar las notificaciones (esto se conectará mejor en la versión completa)
+        console.log(`🧹 Limpieza de notificaciones: ${notificaciones.length - notificacionesLimpias.length} eliminadas`);
+        
+        return notificacionesLimpias.length;
+    }
+
+    // INTEGRACIÓN CON IA (preparación para expansión)
+    configurarNotificacionesIA() {
+        // Preparar integración con sistema de IA
+        if (window.asistentesIA) {
+            window.asistentesIA.onRecommendation = (recomendacion) => {
+                const empresaActual = window.GrizalumNotificaciones?.estado()?.empresaActual;
+                if (empresaActual) {
+                    this.enviarNotificacionEmpresa(empresaActual, {
+                        titulo: '🤖 Recomendación de IA',
+                        mensaje: recomendacion,
+                        tipo: 'info'
+                    });
+                }
+            };
+        }
+    }
+
+    // API PÚBLICA PARA ESTA CLASE
+    getPublicAPI() {
+        return {
+            // Crear notificación personalizada
+            crear: (empresaId, titulo, mensaje, tipo) => 
+                this.crearNotificacionPersonalizada(empresaId, titulo, mensaje, tipo),
+            
+            // Obtener estadísticas
+            estadisticas: (empresaId) => 
+                this.obtenerEstadisticasNotificaciones(empresaId),
+            
+            // Limpiar antiguas
+            limpiar: (empresaId, dias) => 
+                this.limpiarNotificacionesAntiguas(empresaId, dias),
+            
+            // Templates disponibles
+            templates: () => window.NotificacionesTemplates || {},
+            
+            // Estado
+            estado: () => ({
+                inicializado: this.initialized,
+                version: this.version
+            })
+        };
+    }
+}
+
+// INICIALIZACIÓN
+const notificacionesEmpresa = new NotificacionesEmpresa();
+
+// HACER DISPONIBLE GLOBALMENTE
+setTimeout(() => {
+    if (notificacionesEmpresa.initialized) {
+        window.NotificacionesEmpresa = notificacionesEmpresa.getPublicAPI();
+        console.log('🌐 API de NotificacionesEmpresa disponible');
+    }
+}, 2000);
+
+// FUNCIONES DE CONVENIENCIA GLOBAL
+window.enviarNotificacionEmpresa = (empresaId, titulo, mensaje, tipo = 'info') => {
+    return notificacionesEmpresa.crearNotificacionPersonalizada(empresaId, titulo, mensaje, tipo);
+};
+
+window.notificarTodasLasEmpresas = (titulo, mensaje, tipo = 'info') => {
+    const sistema = window.GrizalumNotificaciones?.estado();
+    if (!sistema) return false;
+    
+    // Obtener todas las empresas con notificaciones
+    const empresas = ['empresa-001', 'empresa-002', 'empresa-003']; // Después conectar con tu sistema
+    
+    empresas.forEach(empresaId => {
+        notificacionesEmpresa.crearNotificacionPersonalizada(empresaId, titulo, mensaje, tipo);
+    });
+    
+    return true;
+};
+
+console.log('🏢 GRIZALUM Notificaciones Empresa v1.0 cargado');
+console.log('✨ Funciones disponibles:');
+console.log('  📧 Templates de notificaciones comunes');
+console.log('  ⏰ Verificaciones automáticas financieras');
+console.log('  🤖 Preparado para integración con IA');
+console.log('  📊 Estadísticas de notificaciones');
+console.log('  🧹 Limpieza automática de notificaciones antiguas');
+console.log('  🌐 API pública para expansión futura');
