@@ -152,13 +152,11 @@ class GrizalumNotificacionesPremium {
                     </div>
                 </div>
                 <div class="header-controls">
-                    <button id="notificationSettings" class="control-btn" title="Configuración">
                         <i class="fas fa-cog"></i>
                     </button>
                     <button id="clearAllNotifications" class="control-btn" title="Limpiar todo">
                         <i class="fas fa-trash"></i>
                     </button>
-                    <button id="closeNotificationPanel" class="control-btn close-btn">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
@@ -197,7 +195,6 @@ class GrizalumNotificacionesPremium {
                     <i class="fas fa-check-double"></i>
                     Marcar todas como leídas
                 </button>
-                <button id="exportNotificationsBtn" class="footer-btn secondary">
                     <i class="fas fa-download"></i>
                     Exportar
                 </button>
@@ -653,7 +650,6 @@ class GrizalumNotificacionesPremium {
 
     configurarEventosPanel() {
         // Cerrar panel
-        document.getElementById('closeNotificationPanel').addEventListener('click', () => {
             this.cerrarPanel();
         });
 
@@ -677,7 +673,6 @@ class GrizalumNotificacionesPremium {
         });
 
         // Exportar
-        document.getElementById('exportNotificationsBtn').addEventListener('click', () => {
             this.exportarNotificaciones();
         });
     }
