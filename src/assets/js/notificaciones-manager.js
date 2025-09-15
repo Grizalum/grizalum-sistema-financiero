@@ -646,11 +646,6 @@ class GrizalumNotificacionesPremium {
         document.getElementById('markAllReadBtn').addEventListener('click', () => {
             this.marcarTodasComoLeidas();
         });
-
-        // Limpiar todas
-        document.getElementById('clearAllNotifications').addEventListener('click', () => {
-            this.limpiarTodasLasNotificaciones();
-        });
     }
 
     conectarConSistema() {
