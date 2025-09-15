@@ -246,11 +246,6 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
                     @keyframes shimmer {
                         0% { transform: translateX(-100%) rotate(45deg); }
                         100% { transform: translateX(200%) rotate(45deg); }
-                   }
-                   @keyframes pulse {
-                       0% { transform: scale(1); }
-                       50% { transform: scale(1.1); }
-                       100% { transform: scale(1); }
                     }
                 </style>
             </div>
@@ -2996,90 +2991,22 @@ procesarAvisoAvanzado(empresaId) {
         return;
     }
     
-    // ===== ENVIAR AL SISTEMA DE NOTIFICACIONES DEL MANAGER =====
-    // Crear notificación compatible con el sistema del manager
-    const notificacionManager = {
-        id: Date.now().toString(),
+    // Crear aviso avanzado
+    const aviso = {
+        id: Date.now(),
+        empresaId: empresaId,
+        empresaNombre: empresa.nombre,
         tipo: tipo,
         titulo: titulo,
         mensaje: mensaje,
         fecha: new Date().toISOString(),
-        leida: false,
         remitente: 'Super Admin Premium',
-        prioridad: this._mapearPrioridadManager(tipo)
+        leido: false
     };
     
-    // Añadir directamente a la empresa en el formato que espera el manager
-    if (!empresa.notificaciones) {
-        empresa.notificaciones = [];
-    }
-    
-    empresa.notificaciones.unshift(notificacionManager);
-    
-    // Guardar en el sistema principal
-    this.gestor._guardarEmpresas();
-    
-    // ===== ACTIVAR NOTIFICACIÓN VISUAL EN EL MANAGER =====
-    // Disparar evento para que el manager actualice su contador
-    this._activarNotificacionEnManager(empresaId, notificacionManager);
-    
-    // Cerrar modal y mostrar confirmación
-    document.querySelector('div[style*="z-index: 9999999"]').remove();
-    this._mostrarNotificacionPremium(`📢 Aviso enviado exitosamente a "${empresa.nombre}"`, 'success');
-    this._registrarLog('info', `Aviso enviado al manager de "${empresa.nombre}": ${titulo}`);
-}
-
-// Nueva función para mapear prioridades
-_mapearPrioridadManager(tipo) {
-    const mapeo = {
-        'info': 'normal',
-        'warning': 'importante', 
-        'urgent': 'critica',
-        'success': 'normal',
-        'financial': 'importante',
-        'maintenance': 'normal'
-    };
-    return mapeo[tipo] || 'normal';
-}
-
-// Nueva función para activar notificación en el manager
-_activarNotificacionEnManager(empresaId, notificacion) {
-    // Buscar el botón de notificaciones del manager
-    const botonNotif = document.querySelector('#grizalumNotifBtn, .notification-center, [class*="notification"], [id*="notif"]');
-    
-    if (botonNotif) {
-        // Crear evento personalizado para notificar al manager
-        const evento = new CustomEvent('nuevaNotificacionAdmin', {
-            detail: {
-                empresaId: empresaId,
-                notificacion: notificacion
-            }
-        });
-        
-        document.dispatchEvent(evento);
-        
-        // Actualizar contador visual si existe
-        const contador = botonNotif.querySelector('.notification-count, .badge, [class*="count"]');
-        if (contador) {
-            const actual = parseInt(contador.textContent) || 0;
-            contador.textContent = actual + 1;
-            contador.style.display = 'block';
-        }
-        
-        // Efecto visual en el botón
-        botonNotif.style.animation = 'pulse 0.5s ease-in-out';
-        setTimeout(() => {
-            botonNotif.style.animation = '';
-        }, 500);
-    }
-    
-    // También intentar llamar a la función del manager si existe
-    if (window.mostrarNotificacion) {
-        window.mostrarNotificacion(notificacion.mensaje, notificacion.tipo);
-    }
-    
-    console.log(`📨 Notificación enviada al manager para empresa: ${empresaId}`);
-}
+    // Guardar aviso
+    this.notificaciones.push(aviso);
+    this._guardarNotificaciones();
     
     // Cerrar modal
     document.querySelector('div[style*="z-index: 9999999"]').remove();
