@@ -461,31 +461,27 @@ class GrizalumNotificacionesPremium {
     }
 
     detectarEmpresa() {
+    // Múltiples métodos de detección
     let nombreEmpresa = null;
     
-    // Debug: ver qué encuentra
+    // Método 1: Buscar en selector principal
     const selector = document.getElementById('companySelector');
-    console.log('🔍 Buscando empresa en selector:', selector);
-    
     if (selector) {
-        const activa = selector.querySelector('.active, [data-selected="true"], .selected, [style*="background"]');
-        console.log('🎯 Elemento activo encontrado:', activa);
-        if (activa && activa.textContent) {
-            nombreEmpresa = activa.textContent.trim();
-            console.log('📝 Texto del elemento:', nombreEmpresa);
-        }
+        const activa = selector.querySelector('.active, [data-selected="true"], .selected');
+        if (activa) nombreEmpresa = activa.textContent?.trim();
     }
     
-    if (!nombreEmpresa && selector) {
-        const spans = selector.querySelectorAll('span, div');
-        for (let span of spans) {
-            const texto = span.textContent?.trim();
-            if (texto && texto !== 'Seleccionar empresa' && texto.length > 2) {
-                nombreEmpresa = texto;
-                console.log('📝 Encontrado en span:', nombreEmpresa);
-                break;
-            }
-        }
+    // Método 2: Buscar en título de página o header
+    if (!nombreEmpresa) {
+        const pageTitle = document.querySelector('h1, .page-title, .company-name');
+        if (pageTitle) nombreEmpresa = pageTitle.textContent?.trim();
+    }
+    
+    // Método 3: Buscar en URL
+    if (!nombreEmpresa) {
+        const url = window.location.href;
+        const match = url.match(/empresa=([^&]+)/);
+        if (match) nombreEmpresa = decodeURIComponent(match[1]);
     }
     
     if (nombreEmpresa && nombreEmpresa.length > 0) {
@@ -495,19 +491,13 @@ class GrizalumNotificacionesPremium {
             .replace(/[^a-z0-9-]/g, '')
             .substring(0, 50);
             
-        console.log('🔑 Empresa key generada:', empresaKey);
-        console.log('🔑 Empresa actual antes:', this.empresaActual);
-            
         if (empresaKey !== this.empresaActual) {
-            console.log(`🔄 Empresa cambiada a: ${empresaKey}`);
             this.empresaActual = empresaKey;
             this.actualizarDisplay();
             this.cargarNotificaciones();
+            console.log(`🏢 Empresa cambiada a: ${empresaKey}`);
         }
-    } else {
-        console.log('❌ No se detectó ninguna empresa');
     }
-  }
 }
     actualizarDisplay() {
         const display = document.getElementById('empresaDisplay');
