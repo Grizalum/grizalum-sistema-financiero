@@ -713,53 +713,50 @@ class GrizalumNotificacionesPremium {
             marcarLeida: (id) => instanciaNotificaciones.marcarLeida(id),
             
             recibirDelAdmin: (empresaId, titulo, mensaje, tipo = 'info') => {
-                try {
-                    console.log(`📨 Recibiendo del admin para empresa: ${empresaId}`);
-                    
-                    const empresaOriginal = instanciaNotificaciones.empresaActual;
-                    instanciaNotificaciones.empresaActual = empresaId;
-                    
-                    const mapeoCategoria = {
-                        'admin': 'SISTEMA',
-                        'info': 'SISTEMA',
-                        'warning': 'VENCIMIENTO',
-                        'urgent': 'FINANCIERO',
-                        'success': 'OPORTUNIDAD'
-                    };
-                    
-                    const mapeoPrioridad = {
-                        'admin': 'alta',
-                        'info': 'media',
-                        'warning': 'alta',
-                        'urgent': 'critica',
-                        'success': 'media'
-                    };
-                    
-                    const config = {
-                        categoria: mapeoCategoria[tipo] || 'SISTEMA',
-                        prioridad: mapeoPrioridad[tipo] || 'alta',
-                        titulo: titulo,
-                        mensaje: mensaje,
-                        esAdmin: true
-                    };
-                    
-                    const id = instanciaNotificaciones.crearNotificacion(config);
-                    instanciaNotificaciones.empresaActual = empresaOriginal;
-                    
-                    if (empresaOriginal === empresaId) {
-                        setTimeout(() => {
-                            instanciaNotificaciones.cargarNotificaciones();
-                        }, 100);
-                    }
-                    
-                    console.log(`✅ Notificación admin creada para ${empresaId}: ${titulo}`);
-                    return id;
-                } catch (error) {
-                    console.error('Error recibiendo notificación del admin:', error);
-                    return null;
-                }
-            }
+    // Control de duplicados en recepción
+    const claveUnica = `${empresaId}-${titulo}-${mensaje}`;
+    if (window.notificacionesRecibidas && window.notificacionesRecibidas.includes(claveUnica)) {
+        console.log('🚫 Notificación duplicada ignorada');
+        return null;
+    }
+    
+    if (!window.notificacionesRecibidas) window.notificacionesRecibidas = [];
+    window.notificacionesRecibidas.push(claveUnica);
+    
+    setTimeout(() => {
+        const index = window.notificacionesRecibidas.indexOf(claveUnica);
+        if (index > -1) window.notificacionesRecibidas.splice(index, 1);
+    }, 3000);
+
+    try {
+        console.log(`✅ Recibiendo ÚNICA vez para: ${empresaId}`);
+        
+        const empresaOriginal = instanciaNotificaciones.empresaActual;
+        instanciaNotificaciones.empresaActual = empresaId;
+        
+        const config = {
+            categoria: 'SISTEMA',
+            prioridad: 'alta',
+            titulo: titulo,
+            mensaje: mensaje,
+            esAdmin: true
         };
+        
+        const id = instanciaNotificaciones.crearNotificacion(config);
+        instanciaNotificaciones.empresaActual = empresaOriginal;
+        
+        if (empresaOriginal === empresaId) {
+            setTimeout(() => {
+                instanciaNotificaciones.cargarNotificaciones();
+            }, 100);
+        }
+        
+        return id;
+    } catch (error) {
+        console.error('Error recibiendo notificación:', error);
+        return null;
+    }
+},
 
         // FUNCIÓN FILTRADA - Solo notificaciones importantes, NO guardado automático
 window.mostrarNotificacion = (mensaje, tipo = 'info') => {
