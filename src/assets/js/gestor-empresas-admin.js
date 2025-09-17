@@ -891,7 +891,13 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
     };
     
     // ENVÍO ÚNICO al sistema de notificaciones
-    this._enviarANotificacionesSistema(destinatario, notificacion);
+    // Solo enviar una vez con control de tiempo
+   if (!this._ultimoEnvioAdmin || (Date.now() - this._ultimoEnvioAdmin > 2000)) {
+      this._ultimoEnvioAdmin = Date.now();
+      this._enviarANotificacionesSistema(destinatario, notificacion);
+  } else {
+      console.log('Envío bloqueado por control de tiempo');
+  }
     
     this._mostrarNotificacion(`Aviso "${tipo}" enviado a ${destinatario}`, 'success');
     this._registrarLog('info', `Aviso ${tipo} enviado: ${mensaje}`);
