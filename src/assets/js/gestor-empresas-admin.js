@@ -2622,3 +2622,41 @@ document.addEventListener('keydown', function(e) {
         }
     }
 });
+// FUNCIÓN CORREGIDA PARA DETECTAR EMPRESA ACTUAL
+window.GestorEmpresasAdmin.prototype._convertirEmpresaId = function(empresaId, empresaNombre = null) {
+    // Detectar empresa actual del selector
+    const selector = document.getElementById('companySelector');
+    let nombreReal = null;
+    
+    if (selector) {
+        // Buscar elemento activo/seleccionado
+        const activo = selector.querySelector('.active, [data-selected="true"], .selected, .company-item.selected');
+        if (activo && activo.textContent) {
+            nombreReal = activo.textContent.trim();
+        }
+        
+        // Si no encuentra activo, buscar en spans/divs
+        if (!nombreReal) {
+            const elementos = selector.querySelectorAll('span, div');
+            for (let el of elementos) {
+                const texto = el.textContent?.trim();
+                if (texto && texto.length > 3 && texto !== 'Seleccionar empresa') {
+                    nombreReal = texto;
+                    break;
+                }
+            }
+        }
+    }
+    
+    // Convertir nombre a formato correcto
+    if (nombreReal && nombreReal.length > 0) {
+        return nombreReal
+            .toLowerCase()
+            .replace(/\s+/g, '-')
+            .replace(/[^a-z0-9-]/g, '')
+            .substring(0, 50);
+    }
+    
+    // Fallback
+    return empresaId || 'empresa-default';
+};
