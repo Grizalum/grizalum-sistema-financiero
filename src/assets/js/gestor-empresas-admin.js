@@ -1108,13 +1108,30 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
         console.log('Vista actualizada para empresa:', empresaId);
     }
 
-    _configurarBotonesAvisos() {
-        const botonEnviar = document.querySelector('button[onclick*="enviarNotificacion"]');
-        if (botonEnviar) {
-            botonEnviar.onclick = (e) => {
-                e.preventDefault();
-                this.enviarNotificacion();
-            };
+   _configurarBotonesAvisos() {
+    const botonEnviar = document.querySelector('button[onclick*="enviarNotificacion"]');
+    if (botonEnviar) {
+        // Remover eventos anteriores
+        botonEnviar.replaceWith(botonEnviar.cloneNode(true));
+        const nuevoBoton = document.querySelector('button[onclick*="enviarNotificacion"]');
+        
+        // Un solo evento limpio
+        nuevoBoton.onclick = (e) => {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            
+            // Deshabilitar temporalmente
+            nuevoBoton.disabled = true;
+            nuevoBoton.textContent = 'Enviando...';
+            
+            this.enviarNotificacion();
+            
+            // Rehabilitar después de 3 segundos
+            setTimeout(() => {
+                nuevoBoton.disabled = false;
+                nuevoBoton.innerHTML = '📤 ENVIAR AVISO';
+            }, 3000);
+        };
             console.log('✅ Botón ENVIAR AVISO configurado');
         }
     }
