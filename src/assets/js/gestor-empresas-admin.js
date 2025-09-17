@@ -894,6 +894,7 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
         }
         
         this._mostrarNotificacion(`Aviso "${tipo}" enviado a ${destinatario}`, 'success');
+        this._enviarANotificacionesSistema(destinatario, notificacion);
         this._registrarLog('info', `Aviso ${tipo} enviado: ${mensaje}`);
         
         // Limpiar formulario
