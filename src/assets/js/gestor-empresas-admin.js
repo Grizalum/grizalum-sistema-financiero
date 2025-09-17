@@ -903,82 +903,59 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
 }
     // ============= NUEVA FUNCIÓN: CONEXIÓN CON NOTIFICACIONES =============
     _enviarANotificacionesSistema(destinatario, notificacion) {
-        // Verificar que el sistema esté disponible
-        if (!window.GrizalumNotificacionesPremium) {
-            console.warn('⚠️ Sistema de notificaciones no disponible');
-            console.log('🔍 DEBUG: Enviando notificación', {
-           destinatario,
-            titulo: notificacion.titulo,
-            mensaje: notificacion.mensaje
-         });
-            return;
-        }
+    // Control de duplicados por notificación
+    const notifId = `${notificacion.mensaje}-${destinatario}-${Date.now()}`;
+    if (this.notificacionesEnviadas && this.notificacionesEnviadas.includes(notifId)) {
+        console.log('Notificación duplicada bloqueada');
+        return;
+    }
+    
+    if (!this.notificacionesEnviadas) this.notificacionesEnviadas = [];
+    this.notificacionesEnviadas.push(notifId);
+    
+    // Limpiar histórico después de 5 segundos
+    setTimeout(() => {
+        const index = this.notificacionesEnviadas.indexOf(notifId);
+        if (index > -1) this.notificacionesEnviadas.splice(index, 1);
+    }, 5000);
 
-        // Mapear tipos de admin a categorías de notificaciones
-        const mapeoTipos = {
-            'info': 'SISTEMA',
-            'warning': 'VENCIMIENTO', 
-            'urgent': 'FINANCIERO',
-            'success': 'OPORTUNIDAD'
-        };
-
-        // Mapear prioridades
-        const mapeoPrioridades = {
-            'info': 'media',
-            'warning': 'alta',
-            'urgent': 'critica', 
-            'success': 'media'
-        };
-
-        try {
-            if (destinatario === 'todas') {
-                // Enviar a todas las empresas
-                const empresas = Object.values(this.gestor.estado.empresas);
-                empresas.forEach(empresa => {
-                    const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
-                    console.log('📤 Enviando a empresa:', empresaKey);
-                    window.GrizalumNotificacionesPremium.recibirDelAdmin(
-                        empresaKey,
-                        notificacion.titulo,
-                        notificacion.mensaje,
-                        'admin'
-                    );
-                });
-                console.log(`✅ Notificaciones enviadas a ${empresas.length} empresas`);
-            } else {
-                // Enviar a empresas específicas según filtro
-                let empresasFiltradas = [];
-                
-                if (destinatario === 'activas') {
-                    empresasFiltradas = Object.values(this.gestor.estado.empresas)
-                        .filter(e => e.estado === 'Operativo');
-                } else if (destinatario === 'riesgo') {
-                    empresasFiltradas = Object.values(this.gestor.estado.empresas)
-                        .filter(e => (e.finanzas?.caja || 0) < 1000);
-                } else {
-                    // Empresa específica
-                    const empresa = this.gestor.estado.empresas[destinatario];
-                    if (empresa) empresasFiltradas = [empresa];
-                }
-                
-                empresasFiltradas.forEach(empresa => {
-                    const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
-                    console.log('📤 Enviando a empresa filtrada:', empresaKey);
-                    window.GrizalumNotificacionesPremium.recibirDelAdmin(
-                        empresaKey,
-                        notificacion.titulo,
-                        notificacion.mensaje,
-                        'admin'
-                    );
-                });
-                
-                console.log(`✅ Notificaciones enviadas a ${empresasFiltradas.length} empresas (${destinatario})`);
-            }
-        } catch (error) {
-            console.error('Error enviando a sistema de notificaciones:', error);
-        }
+    if (!window.GrizalumNotificacionesPremium) {
+        console.warn('Sistema de notificaciones no disponible');
+        return;
     }
 
+    try {
+        if (destinatario === 'todas') {
+            const empresas = Object.values(this.gestor.estado.empresas);
+            empresas.forEach(empresa => {
+                const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
+                console.log(`Enviando a: ${empresaKey}`);
+                
+                window.GrizalumNotificacionesPremium.recibirDelAdmin(
+                    empresaKey,
+                    notificacion.titulo,
+                    notificacion.mensaje,
+                    'admin'
+                );
+            });
+        } else if (destinatario === 'activas') {
+            const empresasActivas = Object.values(this.gestor.estado.empresas)
+                .filter(e => e.estado === 'Operativo');
+                
+            empresasActivas.forEach(empresa => {
+                const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
+                window.GrizalumNotificacionesPremium.recibirDelAdmin(
+                    empresaKey,
+                    notificacion.titulo,
+                    notificacion.mensaje,
+                    'admin'
+                );
+            });
+        }
+    } catch (error) {
+        console.error('Error enviando notificación:', error);
+    }
+}
     // ============= FUNCIÓN AUXILIAR: CONVERSIÓN DE ID =============
     _convertirEmpresaId(empresaId, empresaNombre = null) {
         try {
