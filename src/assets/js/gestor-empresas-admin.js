@@ -935,15 +935,18 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
     try {
         if (destinatario === 'todas') {
             const empresas = Object.values(this.gestor.estado.empresas);
-            empresas.forEach(empresa => {
-                const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
-                window.GrizalumNotificacionesPremium.recibirDelAdmin(
-                    empresaKey,
-                    notificacion.titulo,
-                    notificacion.mensaje,
-                    'admin'
-                );
-            });
+            console.log(`Enviando a ${empresas.length} empresas - UNA SOLA VEZ`);
+empresas.forEach((empresa, index) => {
+    setTimeout(() => {
+        const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
+        window.GrizalumNotificacionesPremium.recibirDelAdmin(
+            empresaKey,
+            notificacion.titulo,
+            notificacion.mensaje,
+            'admin'
+        );
+    }, index * 200); // Delay de 200ms entre cada empresa
+});
         }
     } catch (error) {
         console.error('Error enviando notificación:', error);
