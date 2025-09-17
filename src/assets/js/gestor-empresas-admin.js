@@ -2660,3 +2660,30 @@ window.GestorEmpresasAdmin.prototype._convertirEmpresaId = function(empresaId, e
     // Fallback
     return empresaId || 'empresa-default';
 };
+// PROTECCIÓN CONTRA ENVÍOS DUPLICADOS
+let enviandoNotificacion = false;
+
+// Sobrescribir la función original con protección
+if (window.GestorEmpresasAdmin) {
+    const enviarOriginal = window.GestorEmpresasAdmin.prototype.enviarNotificacion;
+    
+    window.GestorEmpresasAdmin.prototype.enviarNotificacion = function() {
+        // Prevenir múltiples envíos
+        if (enviandoNotificacion) {
+            console.log('⚠️ Envío ya en progreso, ignorando...');
+            return;
+        }
+        
+        enviandoNotificacion = true;
+        
+        try {
+            // Ejecutar función original
+            enviarOriginal.call(this);
+        } finally {
+            // Liberar después de 2 segundos
+            setTimeout(() => {
+                enviandoNotificacion = false;
+            }, 2000);
+        }
+    };
+}
