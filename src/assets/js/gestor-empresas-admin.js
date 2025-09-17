@@ -857,52 +857,50 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
     // ============= FUNCIONES CRÍTICAS CON CONEXIÓN SEGURA =============
 
     enviarNotificacion() {
-        const tipo = document.getElementById('premium-tipo-aviso')?.value || 'info';
-        const destinatario = document.getElementById('premium-destinatario')?.value || 'todas';  
-        const mensaje = document.getElementById('premium-mensaje')?.value?.trim();
-        
-        if (!mensaje) {
-            this._mostrarNotificacion('El mensaje es obligatorio', 'error');
-            return;
-        }
-        
-        // Crear la notificación
-        const notificacion = {
-            id: Date.now().toString(),
-            tipo: tipo,
-            titulo: `Aviso ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`,
-            mensaje: mensaje,
-            fecha: new Date().toISOString(),
-            leida: false,
-            remitente: 'Super Admin Premium'
-        };
-        
-        // NUEVA FUNCIONALIDAD: Enviar a sistema de notificaciones
-        try {
-            this._enviarANotificacionesSistema(destinatario, notificacion);
-        } catch (error) {
-            console.warn('Sistema de notificaciones no disponible:', error);
-        }
-        
-        // Funcionalidad original mantenida
-        if (destinatario === 'todas') {
-            Object.keys(this.gestor.estado.empresas).forEach(empresaId => {
-                this._añadirNotificacionEmpresa(empresaId, notificacion);
-            });
-        } else {
-            this._añadirNotificacionEmpresa(destinatario, notificacion);
-        }
-        
-        this._mostrarNotificacion(`Aviso "${tipo}" enviado a ${destinatario}`, 'success');
-        this._enviarANotificacionesSistema(destinatario, notificacion);
-        this._registrarLog('info', `Aviso ${tipo} enviado: ${mensaje}`);
-        
-        // Limpiar formulario
-        if (document.getElementById('premium-mensaje')) {
-            document.getElementById('premium-mensaje').value = '';
-        }
+    // Control de duplicados
+    const ahora = Date.now();
+    if (!this.ultimoEnvio) this.ultimoEnvio = 0;
+    
+    if (ahora - this.ultimoEnvio < 3000) {
+        console.log('Envío muy rápido, ignorando...');
+        return;
     }
-
+    
+    this.ultimoEnvio = ahora;
+    
+    const tipo = document.getElementById('premium-tipo-aviso')?.value || 'info';
+    const destinatario = document.getElementById('premium-destinatario')?.value || 'todas';  
+    const mensaje = document.getElementById('premium-mensaje')?.value?.trim();
+    
+    if (!mensaje) {
+        this._mostrarNotificacion('El mensaje es obligatorio', 'error');
+        return;
+    }
+    
+    console.log(`📤 ENVIANDO UNA SOLA VEZ: ${tipo} a ${destinatario}`);
+    
+    // Crear la notificación
+    const notificacion = {
+        id: Date.now().toString(),
+        tipo: tipo,
+        titulo: `Aviso ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`,
+        mensaje: mensaje,
+        fecha: new Date().toISOString(),
+        leida: false,
+        remitente: 'Super Admin Premium'
+    };
+    
+    // ENVÍO ÚNICO al sistema de notificaciones
+    this._enviarANotificacionesSistema(destinatario, notificacion);
+    
+    this._mostrarNotificacion(`Aviso "${tipo}" enviado a ${destinatario}`, 'success');
+    this._registrarLog('info', `Aviso ${tipo} enviado: ${mensaje}`);
+    
+    // Limpiar formulario
+    if (document.getElementById('premium-mensaje')) {
+        document.getElementById('premium-mensaje').value = '';
+    }
+}
     // ============= NUEVA FUNCIÓN: CONEXIÓN CON NOTIFICACIONES =============
     _enviarANotificacionesSistema(destinatario, notificacion) {
         // Verificar que el sistema esté disponible
