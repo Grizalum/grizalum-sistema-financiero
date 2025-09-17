@@ -1,13 +1,13 @@
 /**
  * ================================================================
- * GRIZALUM NOTIFICACIONES PREMIUM - VERSIÓN CON CONEXIÓN ADMIN
- * Actualizado para recibir avisos del sistema admin
+ * GRIZALUM NOTIFICACIONES PREMIUM - VERSIÓN FINAL CORREGIDA
+ * Sin notificaciones automáticas molestas y con todas las referencias arregladas
  * ================================================================
  */
 
 class GrizalumNotificacionesPremium {
     constructor() {
-        this.version = '2.3.0';
+        this.version = '2.5.0';
         this.empresaActual = null;
         this.notificaciones = new Map();
         this.categorias = {
@@ -35,11 +35,10 @@ class GrizalumNotificacionesPremium {
         this.conectarSistema();
         this.crearAPI();
         this.generarEjemplo();
-        console.log('✨ GRIZALUM Notificaciones v2.3 - CON CONEXIÓN ADMIN');
+        console.log('✅ GRIZALUM Notificaciones v2.5 - SIN SPAM DE GUARDADO');
     }
 
     crearBoton() {
-        // Eliminar botón existente si hay uno
         const existente = document.getElementById('grizalumNotificationBtn');
         if (existente) existente.remove();
 
@@ -55,7 +54,6 @@ class GrizalumNotificacionesPremium {
     }
 
     crearPanel() {
-        // Eliminar panel existente si hay uno
         const existente = document.getElementById('grizalumNotificationPanel');
         if (existente) existente.remove();
 
@@ -112,7 +110,6 @@ class GrizalumNotificacionesPremium {
         const styles = document.createElement('style');
         styles.id = styleId;
         styles.textContent = `
-            /* BOTÓN PRINCIPAL */
             #grizalumNotificationBtn {
                 position: fixed;
                 top: 120px;
@@ -161,7 +158,6 @@ class GrizalumNotificacionesPremium {
                 display: flex;
             }
 
-            /* PANEL PRINCIPAL */
             #grizalumNotificationPanel {
                 position: fixed;
                 top: 80px;
@@ -186,7 +182,6 @@ class GrizalumNotificacionesPremium {
                 opacity: 1;
             }
 
-            /* HEADER */
             .notification-header {
                 background: linear-gradient(135deg, #d4af37, #f1c40f);
                 padding: 20px;
@@ -204,7 +199,6 @@ class GrizalumNotificacionesPremium {
                 opacity: 0.9;
             }
 
-            /* FILTROS */
             .notification-filters {
                 padding: 16px 20px;
                 display: flex;
@@ -229,7 +223,6 @@ class GrizalumNotificacionesPremium {
                 color: white;
             }
 
-            /* ESTADÍSTICAS */
             .notification-stats {
                 padding: 16px 20px;
                 display: flex;
@@ -255,7 +248,6 @@ class GrizalumNotificacionesPremium {
                 text-transform: uppercase;
             }
 
-            /* LISTA DE NOTIFICACIONES */
             .notification-list {
                 flex: 1;
                 overflow-y: auto;
@@ -346,7 +338,6 @@ class GrizalumNotificacionesPremium {
             .priority-media { background: #e3f2fd; color: #1565c0; }
             .priority-baja { background: #f3e5f5; color: #7b1fa2; }
 
-            /* BOTÓN ELIMINAR INDIVIDUAL */
             .delete-btn {
                 position: absolute;
                 top: 12px;
@@ -375,7 +366,6 @@ class GrizalumNotificacionesPremium {
                 transform: scale(1.1);
             }
 
-            /* FOOTER */
             .notification-footer {
                 padding: 16px 20px;
                 background: #f8f9fa;
@@ -403,7 +393,6 @@ class GrizalumNotificacionesPremium {
                 transform: translateY(-1px);
             }
 
-            /* ESTADO VACÍO */
             .empty-state {
                 padding: 40px 20px;
                 text-align: center;
@@ -422,7 +411,6 @@ class GrizalumNotificacionesPremium {
                 color: #7f8c8d;
             }
 
-            /* RESPONSIVE */
             @media (max-width: 768px) {
                 #grizalumNotificationPanel {
                     right: 10px;
@@ -442,7 +430,6 @@ class GrizalumNotificacionesPremium {
     }
 
     configurarEventos() {
-        // Filtros
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -451,24 +438,20 @@ class GrizalumNotificacionesPremium {
             });
         });
 
-        // Marcar todas como leídas
         document.getElementById('markAllReadBtn').addEventListener('click', () => {
             this.marcarTodasLeidas();
         });
     }
 
     conectarSistema() {
-        // Detectar empresa actual
         setTimeout(() => this.detectarEmpresa(), 1000);
         
-        // Observar cambios mejorado
         const observer = new MutationObserver(() => this.detectarEmpresa());
         const selector = document.getElementById('companySelector');
         if (selector) {
             observer.observe(selector, { childList: true, subtree: true });
         }
 
-        // También observar el documento completo para cambios dinámicos
         const observerGlobal = new MutationObserver(() => {
             if (!this.empresaActual) {
                 this.detectarEmpresa();
@@ -477,15 +460,12 @@ class GrizalumNotificacionesPremium {
         observerGlobal.observe(document.body, { childList: true, subtree: true });
     }
 
-    // ============= DETECCIÓN MEJORADA DE EMPRESA =============
     detectarEmpresa() {
         const selector = document.getElementById('companySelector');
         if (!selector) return;
 
-        // Buscar empresa activa de múltiples formas
         let activa = selector.querySelector('.active, [data-selected="true"], .selected, [style*="background"], .current');
         
-        // Si no encuentra, buscar en el texto del selector
         if (!activa) {
             const spans = selector.querySelectorAll('span, div, button, option');
             activa = Array.from(spans).find(el => 
@@ -497,7 +477,6 @@ class GrizalumNotificacionesPremium {
             );
         }
 
-        // También buscar por clases específicas
         if (!activa) {
             activa = selector.querySelector('[class*="selected"], [class*="active"], [class*="current"]');
         }
@@ -505,18 +484,17 @@ class GrizalumNotificacionesPremium {
         if (activa) {
             let nombreEmpresa = activa.textContent?.trim() || '';
             
-            // Limpiar el nombre y convertir a formato consistente
             nombreEmpresa = nombreEmpresa
                 .toLowerCase()
                 .replace(/\s+/g, '-')
                 .replace(/[^a-z0-9-]/g, '')
-                .substring(0, 50); // Límite de longitud
+                .substring(0, 50);
                 
             if (nombreEmpresa && nombreEmpresa !== this.empresaActual) {
                 this.empresaActual = nombreEmpresa;
                 this.actualizarDisplay();
                 this.cargarNotificaciones();
-                console.log(`🏢 Empresa detectada para notificaciones: ${nombreEmpresa}`);
+                console.log('Empresa detectada:', nombreEmpresa);
             }
         }
     }
@@ -541,7 +519,7 @@ class GrizalumNotificacionesPremium {
             mensaje: config.mensaje,
             fecha: new Date().toISOString(),
             leida: false,
-            esAdmin: config.esAdmin || false // NUEVO: marcar si viene del admin
+            esAdmin: config.esAdmin || false
         };
 
         const notifs = this.notificaciones.get(this.empresaActual) || [];
@@ -608,11 +586,36 @@ class GrizalumNotificacionesPremium {
         document.getElementById('statTotal').textContent = notifs.length;
     }
 
+    renderizar(filtro = 'todas') {
+        const lista = document.getElementById('notificationList');
+        if (!lista) return;
+
+        const notifs = this.notificaciones.get(this.empresaActual) || [];
+        let filtradas = notifs;
+
+        if (filtro !== 'todas') {
+            filtradas = notifs.filter(n => n.prioridad === filtro);
+        }
+
+        if (filtradas.length === 0) {
+            lista.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-bell-slash"></i>
+                    <h4>No hay notificaciones</h4>
+                    <p>Todo está al día</p>
+                </div>
+            `;
+            return;
+        }
+
+        lista.innerHTML = filtradas.map(notif => this.renderizarItem(notif)).join('');
+        this.agregarEventosItems();
+    }
+
     renderizarItem(notif) {
         const categoria = this.categorias[notif.categoria] || this.categorias.SISTEMA;
         const tiempo = this.formatearTiempo(notif.fecha);
         
-        // Clase especial para notificaciones del admin
         const claseAdmin = notif.esAdmin ? 'admin' : '';
         const prefijoTitulo = notif.esAdmin ? '[ADMIN] ' : '';
         
@@ -640,7 +643,6 @@ class GrizalumNotificacionesPremium {
     }
 
     agregarEventosItems() {
-        // Click en notificación para marcar como leída
         document.querySelectorAll('.notification-item').forEach(item => {
             item.addEventListener('click', (e) => {
                 if (!e.target.closest('.delete-btn')) {
@@ -649,7 +651,6 @@ class GrizalumNotificacionesPremium {
             });
         });
 
-        // Click en botón eliminar
         document.querySelectorAll('.delete-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -704,28 +705,20 @@ class GrizalumNotificacionesPremium {
         ejemplos.forEach(config => this.crearNotificacion(config));
     }
 
-    // ============= API MEJORADA CON CONEXIÓN ADMIN =============
     crearAPI() {
-        const self = this; // Guardar referencia para usar en las funciones
-
         window.GrizalumNotificacionesPremium = {
-            crear: (config) => self.crearNotificacion(config),
-            obtener: () => self.notificaciones.get(self.empresaActual) || [],
-            eliminar: (id) => self.eliminarNotificacion(id),
-            marcarLeida: (id) => self.marcarLeida(id),
+            crear: (config) => instanciaNotificaciones.crearNotificacion(config),
+            obtener: () => instanciaNotificaciones.notificaciones.get(instanciaNotificaciones.empresaActual) || [],
+            eliminar: (id) => instanciaNotificaciones.eliminarNotificacion(id),
+            marcarLeida: (id) => instanciaNotificaciones.marcarLeida(id),
             
-            // ============= FUNCIÓN PRINCIPAL PARA RECIBIR DEL ADMIN =============
             recibirDelAdmin: (empresaId, titulo, mensaje, tipo = 'info') => {
                 try {
                     console.log(`📨 Recibiendo del admin para empresa: ${empresaId}`);
                     
-                    // Guardar empresa actual temporal
-                    const empresaOriginal = self.empresaActual;
+                    const empresaOriginal = instanciaNotificaciones.empresaActual;
+                    instanciaNotificaciones.empresaActual = empresaId;
                     
-                    // Cambiar temporalmente a la empresa destino
-                    self.empresaActual = empresaId;
-                    
-                    // Mapear tipo de admin a categoría y prioridad
                     const mapeoCategoria = {
                         'admin': 'SISTEMA',
                         'info': 'SISTEMA',
@@ -742,30 +735,24 @@ class GrizalumNotificacionesPremium {
                         'success': 'media'
                     };
                     
-                    // Crear la notificación con marca especial de admin
                     const config = {
                         categoria: mapeoCategoria[tipo] || 'SISTEMA',
                         prioridad: mapeoPrioridad[tipo] || 'alta',
                         titulo: titulo,
                         mensaje: mensaje,
-                        esAdmin: true // MARCAR COMO NOTIFICACIÓN DEL ADMIN
+                        esAdmin: true
                     };
                     
-                    const id = self.crearNotificacion(config);
+                    const id = instanciaNotificaciones.crearNotificacion(config);
+                    instanciaNotificaciones.empresaActual = empresaOriginal;
                     
-                    // Restaurar empresa original
-                    self.empresaActual = empresaOriginal;
-                    
-                    // Si la empresa destino es la actual, actualizar vista
                     if (empresaOriginal === empresaId) {
                         setTimeout(() => {
-                            self.cargarNotificaciones();
+                            instanciaNotificaciones.cargarNotificaciones();
                         }, 100);
                     }
                     
-                    // Log de confirmación
                     console.log(`✅ Notificación admin creada para ${empresaId}: ${titulo}`);
-                    
                     return id;
                 } catch (error) {
                     console.error('Error recibiendo notificación del admin:', error);
@@ -774,11 +761,22 @@ class GrizalumNotificacionesPremium {
             }
         };
 
-        // Función de compatibilidad global
+        // FUNCIÓN FILTRADA - Solo notificaciones importantes, NO guardado automático
         window.mostrarNotificacion = (mensaje, tipo = 'info') => {
+            // FILTRAR notificaciones de guardado automático
+            if (mensaje.toLowerCase().includes('guardado') || 
+                mensaje.toLowerCase().includes('saved') ||
+                mensaje.toLowerCase().includes('actualizado automáticamente') ||
+                mensaje.toLowerCase().includes('datos guardados') ||
+                mensaje.toLowerCase().includes('información guardada')) {
+                console.log('🚫 Notificación de guardado automático bloqueada:', mensaje);
+                return null; // NO mostrar
+            }
+
             const cats = { error: 'FINANCIERO', warning: 'VENCIMIENTO', success: 'OPORTUNIDAD', info: 'SISTEMA' };
             const prios = { error: 'critica', warning: 'alta', success: 'media', info: 'baja' };
-            return self.crearNotificacion({
+            
+            return instanciaNotificaciones.crearNotificacion({
                 categoria: cats[tipo] || 'SISTEMA',
                 prioridad: prios[tipo] || 'media',
                 titulo: tipo === 'error' ? 'Alerta' : 'Información',
@@ -786,24 +784,25 @@ class GrizalumNotificacionesPremium {
             });
         };
 
-        console.log('📡 API de notificaciones con conexión admin creada');
+        console.log('📡 API de notificaciones con filtro anti-spam creada');
     }
 }
 
-// Inicialización
+// Inicialización global
 const instanciaNotificaciones = new GrizalumNotificacionesPremium();
 
-// Verificar conexión con admin al cargar
+// Verificar conexión con admin
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         if (window.adminEmpresas && window.GrizalumNotificacionesPremium) {
             console.log('🎉 CONEXIÓN BIDIRECCIONAL ESTABLECIDA:');
             console.log('✅ Admin Premium ↔ Sistema Notificaciones');
             console.log('📨 Los avisos del admin ahora llegan a las notificaciones');
+            console.log('🚫 Notificaciones de guardado automático BLOQUEADAS');
         } else {
             console.log('⏳ Esperando conexión con sistema admin...');
         }
     }, 2000);
 });
 
-console.log('✨ Sistema de Notificaciones Premium v2.3 - CON CONEXIÓN ADMIN ACTIVA');
+console.log('✅ Sistema de Notificaciones Premium v2.5 - SIN SPAM DE GUARDADO');
