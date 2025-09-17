@@ -461,44 +461,44 @@ class GrizalumNotificacionesPremium {
     }
 
     detectarEmpresa() {
-        const selector = document.getElementById('companySelector');
-        if (!selector) return;
-
-        let activa = selector.querySelector('.active, [data-selected="true"], .selected, [style*="background"], .current');
-        
-        if (!activa) {
-            const spans = selector.querySelectorAll('span, div, button, option');
-            activa = Array.from(spans).find(el => 
-                el.textContent && 
-                el.textContent.trim() !== 'Seleccionar empresa' &&
-                el.textContent.trim().length > 0 &&
-                !el.textContent.includes('Nueva empresa') &&
-                !el.textContent.includes('Crear')
-            );
-        }
-
-        if (!activa) {
-            activa = selector.querySelector('[class*="selected"], [class*="active"], [class*="current"]');
-        }
-
-        if (activa) {
-            let nombreEmpresa = activa.textContent?.trim() || '';
+    // Múltiples métodos de detección
+    let nombreEmpresa = null;
+    
+    // Método 1: Buscar en selector principal
+    const selector = document.getElementById('companySelector');
+    if (selector) {
+        const activa = selector.querySelector('.active, [data-selected="true"], .selected');
+        if (activa) nombreEmpresa = activa.textContent?.trim();
+    }
+    
+    // Método 2: Buscar en título de página o header
+    if (!nombreEmpresa) {
+        const pageTitle = document.querySelector('h1, .page-title, .company-name');
+        if (pageTitle) nombreEmpresa = pageTitle.textContent?.trim();
+    }
+    
+    // Método 3: Buscar en URL
+    if (!nombreEmpresa) {
+        const url = window.location.href;
+        const match = url.match(/empresa=([^&]+)/);
+        if (match) nombreEmpresa = decodeURIComponent(match[1]);
+    }
+    
+    if (nombreEmpresa && nombreEmpresa.length > 0) {
+        const empresaKey = nombreEmpresa
+            .toLowerCase()
+            .replace(/\s+/g, '-')
+            .replace(/[^a-z0-9-]/g, '')
+            .substring(0, 50);
             
-            nombreEmpresa = nombreEmpresa
-                .toLowerCase()
-                .replace(/\s+/g, '-')
-                .replace(/[^a-z0-9-]/g, '')
-                .substring(0, 50);
-                
-            if (nombreEmpresa && nombreEmpresa !== this.empresaActual) {
-                this.empresaActual = nombreEmpresa;
-                this.actualizarDisplay();
-                this.cargarNotificaciones();
-                console.log('Empresa detectada:', nombreEmpresa);
-            }
+        if (empresaKey !== this.empresaActual) {
+            this.empresaActual = empresaKey;
+            this.actualizarDisplay();
+            this.cargarNotificaciones();
+            console.log(`🏢 Empresa cambiada a: ${empresaKey}`);
         }
     }
-
+}
     actualizarDisplay() {
         const display = document.getElementById('empresaDisplay');
         if (display && this.empresaActual) {
@@ -762,27 +762,33 @@ class GrizalumNotificacionesPremium {
         };
 
         // FUNCIÓN FILTRADA - Solo notificaciones importantes, NO guardado automático
-        window.mostrarNotificacion = (mensaje, tipo = 'info') => {
-            // FILTRAR notificaciones de guardado automático
-            if (mensaje.toLowerCase().includes('guardado') || 
-                mensaje.toLowerCase().includes('saved') ||
-                mensaje.toLowerCase().includes('actualizado automáticamente') ||
-                mensaje.toLowerCase().includes('datos guardados') ||
-                mensaje.toLowerCase().includes('información guardada')) {
-                console.log('🚫 Notificación de guardado automático bloqueada:', mensaje);
-                return null; // NO mostrar
-            }
-
-            const cats = { error: 'FINANCIERO', warning: 'VENCIMIENTO', success: 'OPORTUNIDAD', info: 'SISTEMA' };
-            const prios = { error: 'critica', warning: 'alta', success: 'media', info: 'baja' };
-            
-            return instanciaNotificaciones.crearNotificacion({
-                categoria: cats[tipo] || 'SISTEMA',
-                prioridad: prios[tipo] || 'media',
-                titulo: tipo === 'error' ? 'Alerta' : 'Información',
-                mensaje
-            });
-        };
+window.mostrarNotificacion = (mensaje, tipo = 'info') => {
+    const mensajesProhibidos = [
+        'guardado', 'saved', 'actualizado', 'cargado', 'loading',
+        'gráficos', 'métricas', 'interfaz', 'datos', 'sistema',
+        'correctamente', 'dinámicamente', 'automáticamente'
+    ];
+    
+    const mensajeLower = mensaje.toLowerCase();
+    const esProhibido = mensajesProhibidos.some(palabra => 
+        mensajeLower.includes(palabra)
+    );
+    
+    if (esProhibido) {
+        console.log('🚫 Notificación bloqueada:', mensaje);
+        return null;
+    }
+    
+    const cats = { error: 'FINANCIERO', warning: 'VENCIMIENTO', success: 'OPORTUNIDAD', info: 'SISTEMA' };
+    const prios = { error: 'critica', warning: 'alta', success: 'media', info: 'baja' };
+    
+    return instanciaNotificaciones.crearNotificacion({
+        categoria: cats[tipo] || 'SISTEMA',
+        prioridad: prios[tipo] || 'media',
+        titulo: tipo === 'error' ? 'Alerta' : 'Información',
+        mensaje
+    });
+};
 
         console.log('📡 API de notificaciones con filtro anti-spam creada');
     }
