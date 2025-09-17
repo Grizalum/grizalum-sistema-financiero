@@ -4332,48 +4332,4 @@ document.addEventListener('keydown', function(e) {
     }
 })
 
-// NUEVA - Agregar al final de tu archivo original
-_añadirNotificacionEmpresaConectada(empresaId, notificacion) {
-    const empresa = this.gestor.estado.empresas[empresaId];
-    if (!empresa) return;
-    
-    if (!empresa.notificaciones) {
-        empresa.notificaciones = [];
-    }
-    
-    empresa.notificaciones.push(notificacion);
-    this.gestor._guardarEmpresas();
-    
-    // Conectar con sistema manager
-    this._activarNotificacionEnManager(empresaId, notificacion);
-}
 
-_activarNotificacionEnManager(empresaId, notificacion) {
-    const selectores = ['.notification-center', '[class*="notification"]', '[id*="notif"]'];
-    
-    let botonNotif = null;
-    for (const selector of selectores) {
-        botonNotif = document.querySelector(selector);
-        if (botonNotif) break;
-    }
-    
-    if (botonNotif) {
-        const evento = new CustomEvent('nuevaNotificacionAdmin', {
-            detail: { empresaId: empresaId, notificacion: notificacion }
-        });
-        
-        document.dispatchEvent(evento);
-        
-        const contador = botonNotif.querySelector('.notification-count, .badge, [class*="count"]');
-        if (contador) {
-            const actual = parseInt(contador.textContent) || 0;
-            contador.textContent = actual + 1;
-            contador.style.display = 'flex';
-        }
-        
-        botonNotif.style.animation = 'pulse 0.6s ease-in-out';
-        setTimeout(() => botonNotif.style.animation = '', 600);
-    }
-    
-    console.log(`📨 Notificación enviada al manager para empresa: ${empresaId}`);
-}
