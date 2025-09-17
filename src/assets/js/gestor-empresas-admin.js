@@ -908,6 +908,11 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
         // Verificar que el sistema esté disponible
         if (!window.GrizalumNotificacionesPremium) {
             console.warn('⚠️ Sistema de notificaciones no disponible');
+            console.log('🔍 DEBUG: Enviando notificación', {
+           destinatario,
+            titulo: notificacion.titulo,
+            mensaje: notificacion.mensaje
+         });
             return;
         }
 
@@ -933,6 +938,7 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
                 const empresas = Object.values(this.gestor.estado.empresas);
                 empresas.forEach(empresa => {
                     const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
+                    console.log('📤 Enviando a empresa:', empresaKey);
                     window.GrizalumNotificacionesPremium.recibirDelAdmin(
                         empresaKey,
                         notificacion.titulo,
@@ -959,6 +965,7 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
                 
                 empresasFiltradas.forEach(empresa => {
                     const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
+                    console.log('📤 Enviando a empresa filtrada:', empresaKey);
                     window.GrizalumNotificacionesPremium.recibirDelAdmin(
                         empresaKey,
                         notificacion.titulo,
