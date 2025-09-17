@@ -909,46 +909,33 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
 }
     // ============= NUEVA FUNCIÓN: CONEXIÓN CON NOTIFICACIONES =============
     _enviarANotificacionesSistema(destinatario, notificacion) {
-    // Control de duplicados por notificación
-    const notifId = `${notificacion.mensaje}-${destinatario}-${Date.now()}`;
-    if (this.notificacionesEnviadas && this.notificacionesEnviadas.includes(notifId)) {
-        console.log('Notificación duplicada bloqueada');
+    // BLOQUEO ABSOLUTO de duplicados
+    const claveBloqueador = `${notificacion.mensaje}-${destinatario}`;
+    
+    if (this.bloqueadorNotificaciones && this.bloqueadorNotificaciones[claveBloqueador]) {
+        console.log('🚫 DUPLICADO BLOQUEADO:', claveBloqueador);
         return;
     }
     
-    if (!this.notificacionesEnviadas) this.notificacionesEnviadas = [];
-    this.notificacionesEnviadas.push(notifId);
+    if (!this.bloqueadorNotificaciones) this.bloqueadorNotificaciones = {};
+    this.bloqueadorNotificaciones[claveBloqueador] = true;
     
-    // Limpiar histórico después de 5 segundos
+    // Auto-limpiar bloqueo después de 5 segundos
     setTimeout(() => {
-        const index = this.notificacionesEnviadas.indexOf(notifId);
-        if (index > -1) this.notificacionesEnviadas.splice(index, 1);
+        delete this.bloqueadorNotificaciones[claveBloqueador];
     }, 5000);
 
-    if (!window.GrizalumNotificacionesPremium) {
+    if (!window.GrizalumNotificacionesPremium?.recibirDelAdmin) {
         console.warn('Sistema de notificaciones no disponible');
         return;
     }
+
+    console.log('✅ ENVIANDO NOTIFICACIÓN ÚNICA:', claveBloqueador);
 
     try {
         if (destinatario === 'todas') {
             const empresas = Object.values(this.gestor.estado.empresas);
             empresas.forEach(empresa => {
-                const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
-                console.log(`Enviando a: ${empresaKey}`);
-                
-                window.GrizalumNotificacionesPremium.recibirDelAdmin(
-                    empresaKey,
-                    notificacion.titulo,
-                    notificacion.mensaje,
-                    'admin'
-                );
-            });
-        } else if (destinatario === 'activas') {
-            const empresasActivas = Object.values(this.gestor.estado.empresas)
-                .filter(e => e.estado === 'Operativo');
-                
-            empresasActivas.forEach(empresa => {
                 const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
                 window.GrizalumNotificacionesPremium.recibirDelAdmin(
                     empresaKey,
