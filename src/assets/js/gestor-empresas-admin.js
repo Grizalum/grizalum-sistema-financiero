@@ -766,93 +766,108 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
         `).join('');
     }
 
-    _generarSistemaNotificaciones() {
-        return `
-            <div class="premium-seccion" id="seccion-notificaciones" style="padding: 32px; display: none;">
+   // PASO 1: Reemplazar la sección de notificaciones en gestor-empresas-admin.js
+// Busca la función _generarSistemaNotificaciones() y reemplaza el HTML por este:
+
+_generarSistemaNotificaciones() {
+    return `
+        <div class="premium-seccion" id="seccion-notificaciones" style="padding: 32px; display: none;">
+            
+            <div style="background: white; border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08);">
+                <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">📢</div>
+                    Sistema de Avisos Premium
+                </h3>
                 
-                <div style="background: white; border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.08);">
-                    <h3 style="margin: 0 0 24px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">📢</div>
-                        Sistema de Avisos Premium
-                    </h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
-                        
-                        <!-- Enviar Avisos -->
-                        <div>
-                            <div style="display: grid; gap: 16px;">
-                                <div>
-                                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">Tipo de Aviso</label>
-                                    <select id="premium-tipo-aviso" style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px;">
-                                        <option value="info">💡 Información</option>
-                                        <option value="warning">⚠️ Advertencia</option>
-                                        <option value="urgent">🚨 Urgente</option>
-                                        <option value="success">✅ Éxito</option>
-                                    </select>
-                                </div>
-                                
-                                <div>
-                                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">Destinatario</label>
-                                    <select id="premium-destinatario" style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px;">
-                                        <option value="todas">📢 Todas las Empresas</option>
-                                        <option value="activas">✅ Solo Empresas Activas</option>
-                                        <option value="riesgo">⚠️ Solo Empresas en Riesgo</option>
-                                    </select>
-                                </div>
-                                
-                                <div>
-                                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">Mensaje</label>
-                                    <textarea 
-                                        id="premium-mensaje" 
-                                        placeholder="Escriba su mensaje aquí..."
-                                        style="width: 100%; height: 120px; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; resize: vertical;"
-                                    ></textarea>
-                                </div>
-                                
-                                <button 
-                                    onclick="adminEmpresas.enviarNotificacion()" 
-                                    style="
-                                        background: linear-gradient(135deg, #f59e0b, #d97706); 
-                                        color: white; 
-                                        border: none; 
-                                        padding: 16px; 
-                                        border-radius: 12px; 
-                                        cursor: pointer; 
-                                        font-weight: 700;
-                                        font-size: 16px;
-                                        transition: all 0.3s ease;
-                                    "
-                                    onmouseover="this.style.transform='translateY(-2px)'"
-                                    onmouseout="this.style.transform='translateY(0)'"
-                                >📤 ENVIAR AVISO</button>
+                    <!-- Enviar Avisos -->
+                    <div>
+                        <div style="display: grid; gap: 16px;">
+                            
+                            <!-- NUEVO: Selector de empresa específica -->
+                            <div>
+                                <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">Enviar a:</label>
+                                <select id="premium-empresa-especifica" style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px;">
+                                    <option value="todas">📢 Todas las Empresas</option>
+                                    ${this._generarOpcionesEmpresas()}
+                                </select>
                             </div>
+                            
+                            <div>
+                                <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">Tipo de Aviso</label>
+                                <select id="premium-tipo-aviso" style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px;">
+                                    <option value="info">💡 Información</option>
+                                    <option value="warning">⚠️ Advertencia</option>
+                                    <option value="urgent">🚨 Urgente</option>
+                                    <option value="success">✅ Éxito</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">Mensaje</label>
+                                <textarea 
+                                    id="premium-mensaje" 
+                                    placeholder="Escriba su mensaje aquí..."
+                                    style="width: 100%; height: 120px; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; resize: vertical;"
+                                ></textarea>
+                            </div>
+                            
+                            <button 
+                                onclick="adminEmpresas.enviarNotificacion()" 
+                                style="
+                                    background: linear-gradient(135deg, #f59e0b, #d97706); 
+                                    color: white; 
+                                    border: none; 
+                                    padding: 16px; 
+                                    border-radius: 12px; 
+                                    cursor: pointer; 
+                                    font-weight: 700;
+                                    font-size: 16px;
+                                    transition: all 0.3s ease;
+                                "
+                                onmouseover="this.style.transform='translateY(-2px)'"
+                                onmouseout="this.style.transform='translateY(0)'"
+                            >📤 ENVIAR AVISO</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Vista Previa Mejorada -->
+                    <div>
+                        <h4 style="margin: 0 0 16px 0; color: #374151;">Vista Previa del Aviso</h4>
+                        <div id="preview-notification" style="
+                            padding: 20px;
+                            background: linear-gradient(135deg, #3b82f6, #2563eb);
+                            color: white;
+                            border-radius: 12px;
+                            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+                        ">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                                <span id="preview-icon" style="font-size: 24px;">💡</span>
+                                <strong id="preview-title">Aviso para Empresa</strong>
+                            </div>
+                            <div id="preview-empresa" style="font-size: 12px; opacity: 0.8; margin-bottom: 8px;">
+                                Para: Todas las empresas
+                            </div>
+                            <div id="preview-message" style="background: rgba(255,255,255,0.2); padding: 16px; border-radius: 8px;">
+                                Su mensaje aparecerá aquí...
+                            </div>
+                            <div style="font-size: 12px; opacity: 0.8; margin-top: 12px;">Enviado por: Super Admin Premium</div>
                         </div>
                         
-                        <!-- Vista Previa -->
-                        <div>
-                            <h4 style="margin: 0 0 16px 0; color: #374151;">Vista Previa del Aviso</h4>
-                            <div style="
-                                padding: 20px;
-                                background: linear-gradient(135deg, #3b82f6, #2563eb);
-                                color: white;
-                                border-radius: 12px;
-                                box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
-                            ">
-                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                                    <span style="font-size: 24px;">💡</span>
-                                    <strong>Aviso para Empresas</strong>
-                                </div>
-                                <div style="background: rgba(255,255,255,0.2); padding: 16px; border-radius: 8px;">
-                                    Su mensaje aparecerá aquí...
-                                </div>
-                                <div style="font-size: 12px; opacity: 0.8; margin-top: 12px;">Enviado por: Super Admin Premium</div>
+                        <!-- Información adicional -->
+                        <div style="margin-top: 20px; padding: 16px; background: #f8fafc; border-radius: 8px;">
+                            <h5 style="margin: 0 0 8px 0; color: #374151;">📊 Estadísticas:</h5>
+                            <div style="font-size: 14px; color: #64748b;">
+                                <div>Total empresas: <strong>${Object.keys(this.gestor.estado.empresas).length}</strong></div>
+                                <div>Empresas activas: <strong>${Object.values(this.gestor.estado.empresas).filter(e => e.estado === 'Operativo').length}</strong></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        `;
-    }
+        </div>
+    `;
 
     // ============= FUNCIONES CRÍTICAS CON CONEXIÓN SEGURA =============
 
