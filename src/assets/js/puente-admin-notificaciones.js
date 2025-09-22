@@ -12,6 +12,7 @@ class PuenteAdminNotificaciones {
         this.ultimoEnvio = 0;
         this.bloqueadorDuplicados = new Set();
         this.empresaDetectada = null;
+        this.enviandoAhora = false;
         
         console.log('🌉 Iniciando Puente Admin-Notificaciones v1.0');
         this.init();
@@ -173,7 +174,7 @@ class PuenteAdminNotificaciones {
     procesarEnvioAdmin(funcionOriginal) {
         // Prevenir envíos duplicados - BLOQUEO MÁS ESTRICTO
         const ahora = Date.now();
-        if (ahora - this.ultimoEnvio < 5000) {
+        if (ahora - this.ultimoEnvio < 8000) {
             console.log('🚫 Envío bloqueado por duplicado - esperando 5 segundos');
             return;
         }
