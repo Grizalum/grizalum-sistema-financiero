@@ -34,7 +34,6 @@ class GrizalumNotificacionesPremium {
         this.inyectarEstilos();
         this.conectarSistema();
         this.crearAPI();
-        this.generarEjemplo();
         console.log('✅ GRIZALUM Notificaciones v2.5 - SIN SPAM DE GUARDADO');
     }
 
@@ -684,26 +683,6 @@ class GrizalumNotificacionesPremium {
         this.renderizar();
     }
 
-    generarEjemplo() {
-        if (!this.empresaActual) return;
-
-        const ejemplos = [
-            {
-                categoria: 'FINANCIERO',
-                prioridad: 'alta',
-                titulo: 'Revisión de Flujo de Caja',
-                mensaje: 'Recomendable revisar flujo de caja para el próximo trimestre'
-            },
-            {
-                categoria: 'OPORTUNIDAD',
-                prioridad: 'media',
-                titulo: 'Oportunidad de Crecimiento',
-                mensaje: 'Tus métricas muestran potencial para expandir'
-            }
-        ];
-
-        ejemplos.forEach(config => this.crearNotificacion(config));
-    }
 
     crearAPI() {
         window.GrizalumNotificacionesPremium = {
