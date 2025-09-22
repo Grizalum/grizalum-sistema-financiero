@@ -479,6 +479,15 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
         `;
     }
 
+    _generarOpcionesEmpresas() {
+        const empresas = Object.values(this.gestor.estado.empresas);
+        
+        return empresas.map(empresa => {
+            const empresaId = this._convertirEmpresaId(empresa.id, empresa.nombre);
+            return `<option value="${empresaId}">${empresa.icono || '🏢'} ${empresa.nombre}</option>`;
+        }).join('');
+    }
+
     _generarListaEmpresasDashboard() {
         const empresas = Object.values(this.gestor.estado.empresas);
         
@@ -868,10 +877,11 @@ _generarSistemaNotificaciones() {
             </div>
         </div>
     `;
-
+}
+    
     // ============= FUNCIONES CRÍTICAS CON CONEXIÓN SEGURA =============
 
-    enviarNotificacion() {
+enviarNotificacion() {
     // Control de duplicados
     const ahora = Date.now();
     if (!this.ultimoEnvio) this.ultimoEnvio = 0;
@@ -884,7 +894,7 @@ _generarSistemaNotificaciones() {
     this.ultimoEnvio = ahora;
     
     const tipo = document.getElementById('premium-tipo-aviso')?.value || 'info';
-    const destinatario = document.getElementById('premium-destinatario')?.value || 'todas';  
+    const empresaEspecifica = document.getElementById('premium-empresa-especifica')?.value || 'todas';
     const mensaje = document.getElementById('premium-mensaje')?.value?.trim();
     
     if (!mensaje) {
@@ -892,36 +902,35 @@ _generarSistemaNotificaciones() {
         return;
     }
     
-    console.log(`📤 ENVIANDO UNA SOLA VEZ: ${tipo} a ${destinatario}`);
+    console.log(`📤 ENVIANDO: ${tipo} a ${empresaEspecifica}`);
     
     // Crear la notificación
     const notificacion = {
         id: Date.now().toString(),
         tipo: tipo,
-        titulo: `Aviso ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`,
+        titulo: this._obtenerTituloSegunTipo(tipo),
         mensaje: mensaje,
         fecha: new Date().toISOString(),
         leida: false,
         remitente: 'Super Admin Premium'
     };
     
-    // ENVÍO ÚNICO al sistema de notificaciones
-    // Solo enviar una vez con control de tiempo
-   if (!this._ultimoEnvioAdmin || (Date.now() - this._ultimoEnvioAdmin > 2000)) {
-      this._ultimoEnvioAdmin = Date.now();
-      this._enviarANotificacionesSistema(destinatario, notificacion);
-  } else {
-      console.log('Envío bloqueado por control de tiempo');
-  }
+    // ENVÍO ESPECÍFICO
+    this._enviarAEmpresaEspecifica(empresaEspecifica, notificacion);
     
-    this._mostrarNotificacion(`Aviso "${tipo}" enviado a ${destinatario}`, 'success');
-    this._registrarLog('info', `Aviso ${tipo} enviado: ${mensaje}`);
+    // Mostrar confirmación específica
+    const nombreEmpresa = empresaEspecifica === 'todas' ? 'todas las empresas' : 
+                         this._obtenerNombreEmpresaPorId(empresaEspecifica);
+    
+    this._mostrarNotificacion(`Aviso "${tipo}" enviado a: ${nombreEmpresa}`, 'success');
+    this._registrarLog('info', `Aviso ${tipo} enviado a ${empresaEspecifica}: ${mensaje}`);
     
     // Limpiar formulario
     if (document.getElementById('premium-mensaje')) {
         document.getElementById('premium-mensaje').value = '';
     }
 }
+
     // ============= NUEVA FUNCIÓN: CONEXIÓN CON NOTIFICACIONES =============
     _enviarANotificacionesSistema(destinatario, notificacion) {
     // BLOQUEO ABSOLUTO de duplicados
@@ -2690,3 +2699,110 @@ if (window.GestorEmpresasAdmin) {
         }
     };
 }
+
+    _enviarAEmpresaEspecifica(empresaTarget, notificacion) {
+        if (!window.GrizalumNotificacionesPremium?.recibirDelAdmin) {
+            console.warn('Sistema de notificaciones no disponible');
+            return;
+        }
+
+        const mapeoTipos = {
+            'info': 'admin',
+            'warning': 'warning', 
+            'urgent': 'urgent',
+            'success': 'success'
+        };
+
+        try {
+            if (empresaTarget === 'todas') {
+                const empresas = Object.values(this.gestor.estado.empresas);
+                console.log(`Enviando a ${empresas.length} empresas`);
+                
+                empresas.forEach((empresa, index) => {
+                    setTimeout(() => {
+                        const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
+                        window.GrizalumNotificacionesPremium.recibirDelAdmin(
+                            empresaKey,
+                            notificacion.titulo,
+                            notificacion.mensaje,
+                            mapeoTipos[notificacion.tipo] || 'admin'
+                        );
+                    }, index * 100);
+                });
+            } else {
+                console.log(`Enviando SOLO a: ${empresaTarget}`);
+                
+                const resultado = window.GrizalumNotificacionesPremium.recibirDelAdmin(
+                    empresaTarget,
+                    notificacion.titulo,
+                    notificacion.mensaje,
+                    mapeoTipos[notificacion.tipo] || 'admin'
+                );
+                
+                if (resultado) {
+                    console.log('Notificación enviada exitosamente a empresa específica');
+                }
+            }
+            
+        } catch (error) {
+            console.error('Error enviando notificación específica:', error);
+        }
+    }
+
+    _obtenerTituloSegunTipo(tipo) {
+        const titulos = {
+            'info': 'Mensaje del Administrador',
+            'warning': 'Advertencia del Sistema',
+            'urgent': 'Aviso Urgente',
+            'success': 'Confirmación Administrativa'
+        };
+        return titulos[tipo] || 'Mensaje del Administrador';
+    }
+
+    _obtenerNombreEmpresaPorId(empresaId) {
+        const empresas = Object.values(this.gestor.estado.empresas);
+        for (let empresa of empresas) {
+            const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
+            if (empresaKey === empresaId) {
+                return empresa.nombre;
+            }
+        }
+        return empresaId.replace(/-/g, ' ');
+    }
+
+    _configurarPreviewDinamico() {
+        const tipoSelect = document.getElementById('premium-tipo-aviso');
+        const empresaSelect = document.getElementById('premium-empresa-especifica');
+        const mensajeTextarea = document.getElementById('premium-mensaje');
+        
+        const iconos = {
+            'info': '💡',
+            'warning': '⚠️',
+            'urgent': '🚨',
+            'success': '✅'
+        };
+        
+        const actualizarPreview = () => {
+            const tipo = tipoSelect?.value || 'info';
+            const empresa = empresaSelect?.value || 'todas';
+            const mensaje = mensajeTextarea?.value || 'Su mensaje aparecerá aquí...';
+            
+            const previewIcon = document.getElementById('preview-icon');
+            const previewTitle = document.getElementById('preview-title');
+            const previewEmpresa = document.getElementById('preview-empresa');
+            const previewMessage = document.getElementById('preview-message');
+            
+            if (previewIcon) previewIcon.textContent = iconos[tipo];
+            if (previewTitle) previewTitle.textContent = this._obtenerTituloSegunTipo(tipo);
+            if (previewEmpresa) {
+                const nombreEmpresa = empresa === 'todas' ? 'Todas las empresas' : 
+                                     this._obtenerNombreEmpresaPorId(empresa);
+                previewEmpresa.textContent = `Para: ${nombreEmpresa}`;
+            }
+            if (previewMessage) previewMessage.textContent = mensaje;
+        };
+        
+        tipoSelect?.addEventListener('change', actualizarPreview);
+        empresaSelect?.addEventListener('change', actualizarPreview);
+        mensajeTextarea?.addEventListener('input', actualizarPreview);
+    }
