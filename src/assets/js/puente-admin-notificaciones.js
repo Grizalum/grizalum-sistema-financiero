@@ -171,10 +171,10 @@ class PuenteAdminNotificaciones {
     }
     
     procesarEnvioAdmin(funcionOriginal) {
-        // Prevenir envíos duplicados
+        // Prevenir envíos duplicados - BLOQUEO MÁS ESTRICTO
         const ahora = Date.now();
-        if (ahora - this.ultimoEnvio < 2000) {
-            console.log('🚫 Envío bloqueado por duplicado');
+        if (ahora - this.ultimoEnvio < 5000) {
+            console.log('🚫 Envío bloqueado por duplicado - esperando 5 segundos');
             return;
         }
         this.ultimoEnvio = ahora;
@@ -198,15 +198,24 @@ class PuenteAdminNotificaciones {
             return;
         }
         
-        // Crear clave única para evitar duplicados
-        const claveUnica = `${empresaActual}-${mensaje.substring(0, 20)}-${tipo}`;
+        // Crear clave única para evitar duplicados - MÁS ESTRICTA
+        const claveUnica = `${empresaActual}-${mensaje.substring(0, 30)}-${tipo}-${destinatario}`;
         if (this.bloqueadorDuplicados.has(claveUnica)) {
-            console.log('🚫 Mensaje duplicado bloqueado');
+            console.log('🚫 Mensaje duplicado bloqueado:', claveUnica);
             return;
         }
         
         this.bloqueadorDuplicados.add(claveUnica);
-        setTimeout(() => this.bloqueadorDuplicados.delete(claveUnica), 10000);
+        setTimeout(() => this.bloqueadorDuplicados.delete(claveUnica), 15000);
+        
+        // BLOQUEO ADICIONAL: Solo un envío cada 3 segundos
+        if (this.enviandoAhora) {
+            console.log('🚫 Ya se está enviando otro mensaje');
+            return;
+        }
+        
+        this.enviandoAhora = true;
+        setTimeout(() => { this.enviandoAhora = false; }, 3000);
         
         console.log('📤 Procesando envío:', { tipo, destinatario, empresa: empresaActual, mensaje: mensaje.substring(0, 50) + '...' });
         
