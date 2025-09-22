@@ -1040,9 +1040,7 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
         empresaSelect?.addEventListener('change', actualizarPreview);
         mensajeTextarea?.addEventListener('input', actualizarPreview);
     }
-    // CONTINÚA DESDE LA PARTE 1...
-
-    _generarAnalyticsPremium() {
+     _generarAnalyticsPremium() {
         return `
             <div class="premium-seccion" id="seccion-analytics" style="padding: 32px; display: none;">
                 
