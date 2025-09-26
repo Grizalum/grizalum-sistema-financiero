@@ -2708,3 +2708,41 @@ if (window.GestorEmpresasAdmin) {
         }
     };
 }
+
+// ============= SISTEMA DE NOTIFICACIONES SIMPLE =============
+if (!window.GrizalumNotificacionesPremium) {
+    window.GrizalumNotificacionesPremium = {
+        notificaciones: new Map(),
+        
+        recibirDelAdmin: function(empresaId, titulo, mensaje, tipo = 'admin') {
+            console.log(`📨 [NOTIF] Para: ${empresaId} | ${titulo}`);
+            
+            const notif = {
+                id: Date.now(),
+                titulo: titulo,
+                mensaje: mensaje,
+                tipo: tipo,
+                fecha: new Date().toISOString(),
+                leida: false
+            };
+            
+            const notifs = this.notificaciones.get(empresaId) || [];
+            notifs.unshift(notif);
+            this.notificaciones.set(empresaId, notifs);
+            
+            // Mostrar notificación toast si existe el sistema
+            if (window.mostrarNotificacion) {
+                window.mostrarNotificacion(`[${titulo}] ${mensaje}`, tipo);
+            }
+            
+            console.log(`✅ Notificación guardada para ${empresaId}`);
+            return notif.id;
+        },
+        
+        obtener: function(empresaId) {
+            return this.notificaciones.get(empresaId) || [];
+        }
+    };
+    
+    console.log('📡 Sistema básico de notificaciones Admin conectado');
+}
