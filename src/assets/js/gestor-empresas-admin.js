@@ -855,13 +855,11 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
 
     // ============= FUNCIONES CRÍTICAS CON CONEXIÓN SEGURA =============
 
-    enviarNotificacion() {
-    // Control anti-duplicados
+   enviarNotificacion() {
     const ahora = Date.now();
     if (!this.ultimoEnvio) this.ultimoEnvio = 0;
     
     if (ahora - this.ultimoEnvio < 3000) {
-        console.log('⏳ Espera 3 segundos entre envíos');
         this._mostrarNotificacion('⏳ Espera 3 segundos entre envíos', 'warning');
         return;
     }
@@ -877,7 +875,7 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
         return;
     }
     
-    console.log(`📤 ENVIANDO: ${tipo} a ${destinatario}`);
+    console.log(`📤 ENVIANDO: tipo=${tipo}, dest=${destinatario}, msg="${mensaje}"`);
     
     const notificacion = {
         id: Date.now().toString(),
@@ -889,11 +887,11 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
         remitente: 'Super Admin Premium'
     };
     
-    // ENVÍO CONTROLADO
+    // ENVÍO ÚNICO
     this._enviarANotificacionesSistema(destinatario, notificacion);
     
-    this._mostrarNotificacion(`✅ Aviso "${tipo}" enviado a ${destinatario}`, 'success');
-    this._registrarLog('info', `Aviso ${tipo} enviado: ${mensaje}`);
+    this._mostrarNotificacion(`✅ Aviso enviado exitosamente`, 'success');
+    this._registrarLog('info', `Aviso ${tipo} enviado a ${destinatario}: ${mensaje}`);
     
     if (document.getElementById('premium-mensaje')) {
         document.getElementById('premium-mensaje').value = '';
@@ -901,89 +899,62 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
 }
     // ============= NUEVA FUNCIÓN: CONEXIÓN CON NOTIFICACIONES =============
     _enviarANotificacionesSistema(destinatario, notificacion) {
-        // Verificar que el sistema esté disponible
-        if (!window.GrizalumNotificacionesPremium) {
-            console.warn('⚠️ Sistema de notificaciones no disponible');
-            console.log('🔍 DEBUG: Enviando notificación', {
-           destinatario,
-            titulo: notificacion.titulo,
-            mensaje: notificacion.mensaje
-         });
-            return;
-        }
-
-        // Mapear tipos de admin a categorías de notificaciones
-        const mapeoTipos = {
-            'info': 'SISTEMA',
-            'warning': 'VENCIMIENTO', 
-            'urgent': 'FINANCIERO',
-            'success': 'OPORTUNIDAD'
-        };
-
-        // Mapear prioridades
-        const mapeoPrioridades = {
-            'info': 'media',
-            'warning': 'alta',
-            'urgent': 'critica', 
-            'success': 'media'
-        };
-
-        try {
-            if (destinatario === 'todas') {
-                // Enviar a todas las empresas
-                const empresas = Object.values(this.gestor.estado.empresas);
-                empresas.forEach(empresa => {
-                    const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
-                    console.log('📤 Enviando a empresa:', empresaKey);
-                    window.GrizalumNotificacionesPremium.recibirDelAdmin(
-                        empresaKey,
-                        notificacion.titulo,
-                        notificacion.mensaje,
-                        'admin'
-                    );
-                });
-                console.log(`✅ Notificaciones enviadas a ${empresas.length} empresas`);
-            } else {
-                // Enviar a empresas específicas según filtro
-                let empresasFiltradas = [];
-                
-                if (destinatario === 'activas') {
-                    empresasFiltradas = Object.values(this.gestor.estado.empresas)
-                        .filter(e => e.estado === 'Operativo');
-                } else if (destinatario === 'riesgo') {
-                    empresasFiltradas = Object.values(this.gestor.estado.empresas)
-                        .filter(e => (e.finanzas?.caja || 0) < 1000);
-                } else {
-                    // Empresa específica
-                    const empresa = this.gestor.estado.empresas[destinatario];
-                    if (empresa) empresasFiltradas = [empresa];
-                }
-                
-                empresasFiltradas.forEach(empresa => {
-                    const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
-                    console.log('📤 Enviando a empresa filtrada:', empresaKey);
-                    window.GrizalumNotificacionesPremium.recibirDelAdmin(
-                        empresaKey,
-                        notificacion.titulo,
-                        notificacion.mensaje,
-                        'admin'
-                    );
-                });
-                
-                console.log(`✅ Notificaciones enviadas a ${empresasFiltradas.length} empresas (${destinatario})`);
-            }
-        } catch (error) {
-            console.error('Error enviando a sistema de notificaciones:', error);
-        }
+    if (!window.GrizalumNotificacionesPremium) {
+        console.warn('⚠️ Sistema de notificaciones no disponible');
+        return;
     }
-    
+
+    try {
+        if (destinatario === 'todas') {
+            const empresas = Object.values(this.gestor.estado.empresas);
+            console.log(`📤 Enviando a ${empresas.length} empresas`);
+            
+            let enviadosExitosos = 0;
+            empresas.forEach(empresa => {
+                const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
+                console.log(`  → ${empresa.nombre} (${empresaKey})`);
+                
+                window.GrizalumNotificacionesPremium.recibirDelAdmin(
+                    empresaKey,
+                    notificacion.titulo,
+                    notificacion.mensaje,
+                    notificacion.tipo
+                );
+                enviadosExitosos++;
+            });
+            
+            console.log(`✅ ${enviadosExitosos} notificaciones enviadas`);
+        } else {
+            // Empresa específica usando ID
+            const empresa = this.gestor.estado.empresas[destinatario];
+            
+            if (empresa) {
+                const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
+                console.log(`📤 Enviando a: ${empresa.nombre} (${empresaKey})`);
+                
+                window.GrizalumNotificacionesPremium.recibirDelAdmin(
+                    empresaKey,
+                    notificacion.titulo,
+                    notificacion.mensaje,
+                    notificacion.tipo
+                );
+                
+                console.log(`✅ Enviada a ${empresa.nombre}`);
+            } else {
+                console.error(`❌ Empresa no encontrada: ${destinatario}`);
+            }
+        }
+    } catch (error) {
+        console.error('❌ Error enviando:', error);
+    }
+}
      _generarOpcionesEmpresas() {
-     const empresas = Object.values(this.gestor.estado.empresas);
+    const empresas = Object.values(this.gestor.estado.empresas);
     return empresas.map(empresa => {
-         const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
-        return '<option value="' + empresaKey + '">' + (empresa.icono || '🏢') + ' ' + empresa.nombre + '</option>';
-     }).join('');
- }
+        // Usar el ID real de la empresa, NO el nombre convertido
+        return `<option value="${empresa.id}">${empresa.icono || '🏢'} ${empresa.nombre}</option>`;
+    }).join('');
+}
     
     // ============= FUNCIÓN AUXILIAR: CONVERSIÓN DE ID =============
     _convertirEmpresaId(empresaId, empresaNombre = null) {
