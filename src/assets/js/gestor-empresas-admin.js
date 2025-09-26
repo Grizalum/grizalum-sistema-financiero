@@ -889,62 +889,93 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
         remitente: 'Super Admin Premium'
     };
     
-    // ============= NUEVA FUNCIÓN: CONEXIÓN CON NOTIFICACIONES =============
-_enviarANotificacionesSistema(destinatario, notificacion) {
-    // Verificar que el sistema esté disponible
-    if (!window.GrizalumNotificacionesPremium) {
-        console.warn('⚠️ Sistema de notificaciones no disponible');
-        console.log('🔍 DEBUG: Enviando notificación', {
-            destinatario,
-            titulo: notificacion.titulo,
-            mensaje: notificacion.mensaje
-        });
-        return;
-    }
-
-    try {
-        if (destinatario === 'todas') {
-            // Enviar a todas las empresas
-            const empresas = Object.values(this.gestor.estado.empresas);
-            console.log(`📤 Enviando a ${empresas.length} empresas`);
-            
-            empresas.forEach(empresa => {
-                const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
-                console.log(`  → ${empresa.nombre} (key: ${empresaKey})`);
-                
-                window.GrizalumNotificacionesPremium.recibirDelAdmin(
-                    empresaKey,
-                    notificacion.titulo,
-                    notificacion.mensaje,
-                    notificacion.tipo || 'admin'
-                );
-            });
-            
-            console.log(`✅ Notificaciones enviadas a ${empresas.length} empresas`);
-        } else {
-            // Enviar a empresa específica
-            const empresa = this.gestor.estado.empresas[destinatario];
-            
-            if (empresa) {
-                const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
-                console.log(`📤 Enviando a: ${empresa.nombre} (key: ${empresaKey})`);
-                
-                window.GrizalumNotificacionesPremium.recibirDelAdmin(
-                    empresaKey,
-                    notificacion.titulo,
-                    notificacion.mensaje,
-                    notificacion.tipo || 'admin'
-                );
-                
-                console.log(`✅ Notificación enviada a ${empresa.nombre}`);
-            } else {
-                console.error(`❌ Empresa no encontrada: ${destinatario}`);
-            }
-        }
-    } catch (error) {
-        console.error('Error enviando a sistema de notificaciones:', error);
+    // ENVÍO CONTROLADO
+    this._enviarANotificacionesSistema(destinatario, notificacion);
+    
+    this._mostrarNotificacion(`✅ Aviso "${tipo}" enviado a ${destinatario}`, 'success');
+    this._registrarLog('info', `Aviso ${tipo} enviado: ${mensaje}`);
+    
+    if (document.getElementById('premium-mensaje')) {
+        document.getElementById('premium-mensaje').value = '';
     }
 }
+    // ============= NUEVA FUNCIÓN: CONEXIÓN CON NOTIFICACIONES =============
+    _enviarANotificacionesSistema(destinatario, notificacion) {
+        // Verificar que el sistema esté disponible
+        if (!window.GrizalumNotificacionesPremium) {
+            console.warn('⚠️ Sistema de notificaciones no disponible');
+            console.log('🔍 DEBUG: Enviando notificación', {
+           destinatario,
+            titulo: notificacion.titulo,
+            mensaje: notificacion.mensaje
+         });
+            return;
+        }
+
+        // Mapear tipos de admin a categorías de notificaciones
+        const mapeoTipos = {
+            'info': 'SISTEMA',
+            'warning': 'VENCIMIENTO', 
+            'urgent': 'FINANCIERO',
+            'success': 'OPORTUNIDAD'
+        };
+
+        // Mapear prioridades
+        const mapeoPrioridades = {
+            'info': 'media',
+            'warning': 'alta',
+            'urgent': 'critica', 
+            'success': 'media'
+        };
+
+        try {
+            if (destinatario === 'todas') {
+                // Enviar a todas las empresas
+                const empresas = Object.values(this.gestor.estado.empresas);
+                empresas.forEach(empresa => {
+                    const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
+                    console.log('📤 Enviando a empresa:', empresaKey);
+                    window.GrizalumNotificacionesPremium.recibirDelAdmin(
+                        empresaKey,
+                        notificacion.titulo,
+                        notificacion.mensaje,
+                        'admin'
+                    );
+                });
+                console.log(`✅ Notificaciones enviadas a ${empresas.length} empresas`);
+            } else {
+                // Enviar a empresas específicas según filtro
+                let empresasFiltradas = [];
+                
+                if (destinatario === 'activas') {
+                    empresasFiltradas = Object.values(this.gestor.estado.empresas)
+                        .filter(e => e.estado === 'Operativo');
+                } else if (destinatario === 'riesgo') {
+                    empresasFiltradas = Object.values(this.gestor.estado.empresas)
+                        .filter(e => (e.finanzas?.caja || 0) < 1000);
+                } else {
+                    // Empresa específica
+                    const empresa = this.gestor.estado.empresas[destinatario];
+                    if (empresa) empresasFiltradas = [empresa];
+                }
+                
+                empresasFiltradas.forEach(empresa => {
+                    const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
+                    console.log('📤 Enviando a empresa filtrada:', empresaKey);
+                    window.GrizalumNotificacionesPremium.recibirDelAdmin(
+                        empresaKey,
+                        notificacion.titulo,
+                        notificacion.mensaje,
+                        'admin'
+                    );
+                });
+                
+                console.log(`✅ Notificaciones enviadas a ${empresasFiltradas.length} empresas (${destinatario})`);
+            }
+        } catch (error) {
+            console.error('Error enviando a sistema de notificaciones:', error);
+        }
+    }
     
      _generarOpcionesEmpresas() {
      const empresas = Object.values(this.gestor.estado.empresas);
@@ -955,42 +986,34 @@ _enviarANotificacionesSistema(destinatario, notificacion) {
  }
     
     // ============= FUNCIÓN AUXILIAR: CONVERSIÓN DE ID =============
-_convertirEmpresaId(empresaId, empresaNombre = null) {
-    try {
-        // Si tenemos el nombre, usarlo directamente
-        if (empresaNombre) {
-            const nombreLimpio = empresaNombre
-                .replace(/[^\w\s]/g, '') // Quitar emojis y símbolos
-                .trim();
+    _convertirEmpresaId(empresaId, empresaNombre = null) {
+        try {
+            // Si tenemos el nombre, usarlo
+            if (empresaNombre) {
+                return empresaNombre
+                    .toLowerCase()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^a-z0-9-]/g, '')
+                    .substring(0, 50);
+            }
             
-            return nombreLimpio
-                .toLowerCase()
-                .replace(/\s+/g, '-')
-                .replace(/[^a-z0-9-]/g, '')
-                .substring(0, 50);
-        }
-        
-        // Si no, buscar en el gestor
-        const empresa = this.gestor?.estado?.empresas?.[empresaId];
-        if (empresa && empresa.nombre) {
-            const nombreLimpio = empresa.nombre
-                .replace(/[^\w\s]/g, '') // Quitar emojis y símbolos
-                .trim();
+            // Si no, buscar en el gestor
+            const empresa = this.gestor?.estado?.empresas?.[empresaId];
+            if (empresa && empresa.nombre) {
+                return empresa.nombre
+                    .toLowerCase()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^a-z0-9-]/g, '')
+                    .substring(0, 50);
+            }
             
-            return nombreLimpio
-                .toLowerCase()
-                .replace(/\s+/g, '-')
-                .replace(/[^a-z0-9-]/g, '')
-                .substring(0, 50);
+            // Fallback: usar ID directamente
+            return empresaId.toLowerCase().replace(/[^a-z0-9-]/g, '');
+        } catch (error) {
+            console.warn('Error convirtiendo empresa ID:', error);
+            return empresaId || 'empresa-default';
         }
-        
-        // Fallback: usar ID directamente
-        return empresaId.toLowerCase().replace(/[^a-z0-9-]/g, '');
-    } catch (error) {
-        console.warn('Error convirtiendo empresa ID:', error);
-        return empresaId || 'empresa-default';
     }
-}
 
     // ============= RESTO DE FUNCIONES ORIGINALES (SIN CAMBIOS) =============
 
