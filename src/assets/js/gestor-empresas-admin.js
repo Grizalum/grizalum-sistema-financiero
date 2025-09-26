@@ -881,57 +881,53 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
     }
 
     // FUNCIÓN ENVIAR NOTIFICACIÓN MEJORADA (SIN DUPLICADOS)
-// FUNCIÓN ENVIAR NOTIFICACIÓN MEJORADA (SIN DUPLICADOS)
-enviarNotificacion() {
-    // Control anti-duplicados estricto
-    const ahora = Date.now();
-    if (ahora - this.ultimoEnvioSeguro < 3000) { // Cambiado a 3 segundos
-        console.log('🚫 Envío bloqueado por seguridad - espera 3 segundos');
-        this._mostrarNotificacion('⏳ Espera 3 segundos entre envíos', 'warning');
-        return;
+    enviarNotificacion() {
+        // Control anti-duplicados estricto
+        const ahora = Date.now();
+        if (ahora - this.ultimoEnvioSeguro < 5000) {
+            console.log('🚫 Envío bloqueado por seguridad - espera 5 segundos');
+            this._mostrarNotificacion('Espera 5 segundos antes de enviar otro mensaje', 'warning');
+            return;
+        }
+        this.ultimoEnvioSeguro = ahora;
+        
+        const tipo = document.getElementById('premium-tipo-aviso')?.value || 'info';
+        const empresaEspecifica = document.getElementById('premium-empresa-especifica')?.value || 'todas';
+        const mensaje = document.getElementById('premium-mensaje')?.value?.trim();
+        
+        if (!mensaje) {
+            this._mostrarNotificacion('El mensaje es obligatorio', 'error');
+            return;
+        }
+        
+        console.log(`📤 ENVIANDO CONTROLADO: ${tipo} a ${empresaEspecifica}`);
+        
+        // Crear la notificación
+        const notificacion = {
+            id: Date.now().toString(),
+            tipo: tipo,
+            titulo: this._obtenerTituloSegunTipo(tipo),
+            mensaje: mensaje,
+            fecha: new Date().toISOString(),
+            leida: false,
+            remitente: 'Super Admin Premium'
+        };
+        
+        // ENVÍO ESPECÍFICO CONTROLADO
+        this._enviarAEmpresaEspecifica(empresaEspecifica, notificacion);
+        
+        // Mostrar confirmación específica
+        const nombreEmpresa = empresaEspecifica === 'todas' ? 'todas las empresas' : 
+                             this._obtenerNombreEmpresaPorId(empresaEspecifica);
+        
+        this._mostrarNotificacion(`Aviso "${tipo}" enviado a: ${nombreEmpresa}`, 'success');
+        this._registrarLog('info', `Aviso ${tipo} enviado a ${empresaEspecifica}: ${mensaje}`);
+        
+        // Limpiar formulario
+        if (document.getElementById('premium-mensaje')) {
+            document.getElementById('premium-mensaje').value = '';
+        }
     }
-    
-    const tipo = document.getElementById('premium-tipo-aviso')?.value || 'info';
-    const empresaEspecifica = document.getElementById('premium-empresa-especifica')?.value || 'todas';
-    const mensaje = document.getElementById('premium-mensaje')?.value?.trim();
-    
-    if (!mensaje) {
-        this._mostrarNotificacion('❌ El mensaje es obligatorio', 'error');
-        return;
-    }
-    
-    // MARCAR COMO ENVIADO ANTES DE EMPEZAR
-    this.ultimoEnvioSeguro = ahora;
-    
-    console.log(`📤 ENVIANDO: ${tipo} a ${empresaEspecifica}`);
-    
-    // Crear la notificación
-    const notificacion = {
-        id: Date.now().toString(),
-        tipo: tipo,
-        titulo: this._obtenerTituloSegunTipo(tipo),
-        mensaje: mensaje,
-        fecha: new Date().toISOString(),
-        leida: false,
-        remitente: 'Super Admin Premium'
-    };
-    
-    // ENVÍO CONTROLADO
-    this._enviarAEmpresaEspecifica(empresaEspecifica, notificacion);
-    
-    // Confirmación específica
-    const nombreDestino = empresaEspecifica === 'todas' 
-        ? `${Object.keys(this.gestor.estado.empresas).length} empresas` 
-        : this._obtenerNombreEmpresaPorId(empresaEspecifica);
-    
-    this._mostrarNotificacion(`✅ Aviso "${tipo}" enviado a: ${nombreDestino}`, 'success');
-    this._registrarLog('info', `Aviso ${tipo} enviado a ${empresaEspecifica}: ${mensaje}`);
-    
-    // Limpiar formulario
-    if (document.getElementById('premium-mensaje')) {
-        document.getElementById('premium-mensaje').value = '';
-    }
-}
 
     // FUNCIÓN PARA ENVÍO ESPECÍFICO (NUEVA)
     _enviarAEmpresaEspecifica(empresaTarget, notificacion) {
