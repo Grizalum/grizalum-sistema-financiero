@@ -929,7 +929,6 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
         }
     }
 
-    // FUNCIÓN PARA ENVÍO ESPECÍFICO (NUEVA)
     // FUNCIÓN PARA ENVÍO ESPECÍFICO (CORREGIDA)
     _enviarAEmpresaEspecifica(empresaTarget, notificacion) {
         if (!window.GrizalumNotificacionesPremium?.recibirDelAdmin) {
