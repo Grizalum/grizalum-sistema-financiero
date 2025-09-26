@@ -794,10 +794,9 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
                                 <div>
                                     <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">Destinatario</label>
                                     <select id="premium-destinatario" style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px;">
-                                        <option value="todas">📢 Todas las Empresas</option>
-                                        <option value="activas">✅ Solo Empresas Activas</option>
-                                        <option value="riesgo">⚠️ Solo Empresas en Riesgo</option>
-                                    </select>
+                                      <option value="todas">📢 Todas las Empresas</option>
+                                      ${this._generarOpcionesEmpresas()}
+                                  </select>
                                 </div>
                                 
                                 <div>
@@ -857,12 +856,13 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
     // ============= FUNCIONES CRÍTICAS CON CONEXIÓN SEGURA =============
 
     enviarNotificacion() {
-    // Control de duplicados
+    // Control anti-duplicados
     const ahora = Date.now();
     if (!this.ultimoEnvio) this.ultimoEnvio = 0;
     
     if (ahora - this.ultimoEnvio < 3000) {
-        console.log('Envío muy rápido, ignorando...');
+        console.log('⏳ Espera 3 segundos entre envíos');
+        this._mostrarNotificacion('⏳ Espera 3 segundos entre envíos', 'warning');
         return;
     }
     
@@ -873,13 +873,12 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
     const mensaje = document.getElementById('premium-mensaje')?.value?.trim();
     
     if (!mensaje) {
-        this._mostrarNotificacion('El mensaje es obligatorio', 'error');
+        this._mostrarNotificacion('❌ El mensaje es obligatorio', 'error');
         return;
     }
     
-    console.log(`📤 ENVIANDO UNA SOLA VEZ: ${tipo} a ${destinatario}`);
+    console.log(`📤 ENVIANDO: ${tipo} a ${destinatario}`);
     
-    // Crear la notificación
     const notificacion = {
         id: Date.now().toString(),
         tipo: tipo,
@@ -890,13 +889,12 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
         remitente: 'Super Admin Premium'
     };
     
-    // ENVÍO ÚNICO al sistema de notificaciones
+    // ENVÍO CONTROLADO
     this._enviarANotificacionesSistema(destinatario, notificacion);
     
-    this._mostrarNotificacion(`Aviso "${tipo}" enviado a ${destinatario}`, 'success');
+    this._mostrarNotificacion(`✅ Aviso "${tipo}" enviado a ${destinatario}`, 'success');
     this._registrarLog('info', `Aviso ${tipo} enviado: ${mensaje}`);
     
-    // Limpiar formulario
     if (document.getElementById('premium-mensaje')) {
         document.getElementById('premium-mensaje').value = '';
     }
@@ -978,7 +976,15 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
             console.error('Error enviando a sistema de notificaciones:', error);
         }
     }
-
+    
+     _generarOpcionesEmpresas() {
+     const empresas = Object.values(this.gestor.estado.empresas);
+    return empresas.map(empresa => {
+         const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
+        return '<option value="' + empresaKey + '">' + (empresa.icono || '🏢') + ' ' + empresa.nombre + '</option>';
+     }).join('');
+ }
+    
     // ============= FUNCIÓN AUXILIAR: CONVERSIÓN DE ID =============
     _convertirEmpresaId(empresaId, empresaNombre = null) {
         try {
