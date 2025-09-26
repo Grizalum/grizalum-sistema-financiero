@@ -691,52 +691,49 @@ class GrizalumNotificacionesPremium {
             eliminar: (id) => instanciaNotificaciones.eliminarNotificacion(id),
             marcarLeida: (id) => instanciaNotificaciones.marcarLeida(id),
             
-            recibirDelAdmin: (empresaId, titulo, mensaje, tipo = 'info') => {
-                try {
-                    console.log(`📨 Recibiendo del admin para empresa: ${empresaId}`);
-                    
-                    const empresaOriginal = instanciaNotificaciones.empresaActual;
-                    instanciaNotificaciones.empresaActual = empresaId;
-                    
-                    const mapeoCategoria = {
-                        'admin': 'SISTEMA',
-                        'info': 'SISTEMA',
-                        'warning': 'VENCIMIENTO',
-                        'urgent': 'FINANCIERO',
-                        'success': 'OPORTUNIDAD'
-                    };
-                    
-                    const mapeoPrioridad = {
-                        'admin': 'alta',
-                        'info': 'media',
-                        'warning': 'alta',
-                        'urgent': 'critica',
-                        'success': 'media'
-                    };
-                    
-                    const config = {
-                        categoria: mapeoCategoria[tipo] || 'SISTEMA',
-                        prioridad: mapeoPrioridad[tipo] || 'alta',
-                        titulo: titulo,
-                        mensaje: mensaje,
-                        esAdmin: true
-                    };
-                    
-                    const id = instanciaNotificaciones.crearNotificacion(config);
-                    instanciaNotificaciones.empresaActual = empresaOriginal;
-                    
-                    if (empresaOriginal === empresaId) {
-                        setTimeout(() => {
-                            instanciaNotificaciones.cargarNotificaciones();
-                        }, 100);
-                    }
-                    
-                    console.log(`✅ Notificación admin creada para ${empresaId}: ${titulo}`);
-                    return id;
+    recibirDelAdmin: (empresaId, titulo, mensaje, tipo = 'admin') => {
+      try {
+          console.log(`📨 [NOTIF] Guardando para: ${empresaId}`);
+          console.log(`   Título: ${titulo}`);
+        
+          const mapeoCategoria = {
+              'admin': 'SISTEMA',
+              'info': 'SISTEMA',
+              'warning': 'VENCIMIENTO',
+              'urgent': 'FINANCIERO',
+              'success': 'OPORTUNIDAD'
+          };
+        
+           const mapeoPrioridad = {
+              'admin': 'alta',
+              'info': 'media',
+               'warning': 'alta',
+              'urgent': 'critica',
+               'success': 'media'
+          };
+        
+          const notif = {
+              id: `not-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
+              categoria: mapeoCategoria[tipo] || 'SISTEMA',
+              prioridad: mapeoPrioridad[tipo] || 'alta',
+              titulo: titulo,
+              mensaje: mensaje,
+              fecha: new Date().toISOString(),
+              leida: false,
+               esAdmin: true
+          };
+        
+                const notifs = instanciaNotificaciones.notificaciones.get(empresaId) || [];
+               notifs.unshift(notif);
+               instanciaNotificaciones.notificaciones.set(empresaId, notifs);
+        
+               console.log(`✅ Guardada para ${empresaId}. Total: ${notifs.length}`);
+        
+              return notif.id;
                 } catch (error) {
-                    console.error('Error recibiendo notificación del admin:', error);
-                    return null;
-                }
+                  console.error('❌ Error:', error);
+                  return null;
+              }
             }
         };
 
