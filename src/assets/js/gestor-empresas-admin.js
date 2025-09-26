@@ -898,7 +898,7 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
     }
 }
     // ============= NUEVA FUNCIÓN: CONEXIÓN CON NOTIFICACIONES =============
-    _enviarANotificacionesSistema(destinatario, notificacion) {
+_enviarANotificacionesSistema(destinatario, notificacion) {
     if (!window.GrizalumNotificacionesPremium) {
         console.warn('⚠️ Sistema de notificaciones no disponible');
         return;
@@ -909,10 +909,17 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
             const empresas = Object.values(this.gestor.estado.empresas);
             console.log(`📤 Enviando a ${empresas.length} empresas`);
             
-            let enviadosExitosos = 0;
             empresas.forEach(empresa => {
-                const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
-                console.log(`  → ${empresa.nombre} (${empresaKey})`);
+                // Usar directamente el nombre de la empresa
+                const empresaKey = empresa.nombre
+                    .toLowerCase()
+                    .replace(/[^\w\s]/g, '')
+                    .trim()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^a-z0-9-]/g, '')
+                    .substring(0, 50);
+                
+                console.log(`  → ${empresa.nombre} = ${empresaKey}`);
                 
                 window.GrizalumNotificacionesPremium.recibirDelAdmin(
                     empresaKey,
@@ -920,17 +927,24 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
                     notificacion.mensaje,
                     notificacion.tipo
                 );
-                enviadosExitosos++;
             });
             
-            console.log(`✅ ${enviadosExitosos} notificaciones enviadas`);
+            console.log(`✅ Enviadas a ${empresas.length} empresas`);
         } else {
-            // Empresa específica usando ID
+            // Empresa específica
             const empresa = this.gestor.estado.empresas[destinatario];
             
             if (empresa) {
-                const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
-                console.log(`📤 Enviando a: ${empresa.nombre} (${empresaKey})`);
+                // Convertir SOLO el nombre de la empresa destino
+                const empresaKey = empresa.nombre
+                    .toLowerCase()
+                    .replace(/[^\w\s]/g, '')
+                    .trim()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^a-z0-9-]/g, '')
+                    .substring(0, 50);
+                
+                console.log(`📤 Enviando a: ${empresa.nombre} = ${empresaKey}`);
                 
                 window.GrizalumNotificacionesPremium.recibirDelAdmin(
                     empresaKey,
@@ -945,7 +959,7 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
             }
         }
     } catch (error) {
-        console.error('❌ Error enviando:', error);
+        console.error('❌ Error:', error);
     }
 }
      _generarOpcionesEmpresas() {
