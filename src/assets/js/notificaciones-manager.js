@@ -788,3 +788,14 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 console.log('✅ Sistema de Notificaciones Premium v2.5 - SIN SPAM DE GUARDADO');
+// DEBUG: Mostrar notificaciones cada vez que se guardan
+window.verNotificaciones = function() {
+    console.log('📋 Notificaciones por empresa:');
+    instanciaNotificaciones.notificaciones.forEach((notifs, empresa) => {
+        console.log(`  ${empresa}: ${notifs.length} notificaciones`);
+        notifs.forEach(n => console.log(`    - ${n.titulo}: ${n.mensaje}`));
+    });
+};
+
+// Hacer accesible la instancia globalmente
+window.instanciaNotificaciones = instanciaNotificaciones;
