@@ -884,7 +884,7 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
     enviarNotificacion() {
         // Control anti-duplicados estricto
         const ahora = Date.now();
-        if (ahora - this.ultimoEnvioSeguro < 3000) {
+        if (ahora - this.ultimoEnvioSeguro < 5000) {
             console.log('🚫 Envío bloqueado por seguridad - espera 5 segundos');
             this._mostrarNotificacion('Espera 5 segundos antes de enviar otro mensaje', 'warning');
             return;
@@ -929,11 +929,10 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
         }
     }
 
-    // FUNCIÓN PARA ENVÍO ESPECÍFICO (CORREGIDA)
+    // FUNCIÓN PARA ENVÍO ESPECÍFICO (NUEVA)
     _enviarAEmpresaEspecifica(empresaTarget, notificacion) {
         if (!window.GrizalumNotificacionesPremium?.recibirDelAdmin) {
-            console.warn('⚠️ Sistema de notificaciones no disponible');
-            this._mostrarNotificacion('⚠️ Sistema de notificaciones no disponible', 'warning');
+            console.warn('Sistema de notificaciones no disponible');
             return;
         }
 
@@ -946,29 +945,24 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
 
         try {
             if (empresaTarget === 'todas') {
-                // ENVIAR A TODAS SIN DELAY (ARREGLADO)
+                // Enviar a todas las empresas (comportamiento original PERO CON DELAY)
                 const empresas = Object.values(this.gestor.estado.empresas);
-                let enviadosExitosos = 0;
+                console.log(`Enviando a ${empresas.length} empresas CON CONTROL`);
                 
-                console.log(`📨 Enviando a ${empresas.length} empresas...`);
-                
-                empresas.forEach((empresa) => {
-                    const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
-                    const resultado = window.GrizalumNotificacionesPremium.recibirDelAdmin(
-                        empresaKey,
-                        notificacion.titulo,
-                        notificacion.mensaje,
-                        mapeoTipos[notificacion.tipo] || 'admin'
-                    );
-                    
-                    if (resultado) enviadosExitosos++;
+                empresas.forEach((empresa, index) => {
+                    setTimeout(() => {
+                        const empresaKey = this._convertirEmpresaId(empresa.id, empresa.nombre);
+                        window.GrizalumNotificacionesPremium.recibirDelAdmin(
+                            empresaKey,
+                            notificacion.titulo,
+                            notificacion.mensaje,
+                            mapeoTipos[notificacion.tipo] || 'admin'
+                        );
+                    }, index * 200); // Delay de 200ms entre envíos
                 });
-                
-                console.log(`✅ Notificaciones enviadas: ${enviadosExitosos}/${empresas.length}`);
-                
             } else {
-                // ENVIAR SOLO A UNA EMPRESA ESPECÍFICA
-                console.log(`📨 Enviando SOLO a: ${empresaTarget}`);
+                // Enviar solo a la empresa específica
+                console.log(`Enviando SOLO a: ${empresaTarget}`);
                 
                 const resultado = window.GrizalumNotificacionesPremium.recibirDelAdmin(
                     empresaTarget,
@@ -978,15 +972,12 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
                 );
                 
                 if (resultado) {
-                    console.log('✅ Notificación enviada exitosamente');
-                } else {
-                    console.warn('⚠️ No se pudo enviar la notificación');
+                    console.log('✅ Notificación enviada exitosamente a empresa específica');
                 }
             }
             
         } catch (error) {
-            console.error('❌ Error enviando notificación:', error);
-            this._mostrarNotificacion('❌ Error enviando notificación', 'error');
+            console.error('Error enviando notificación específica:', error);
         }
     }
 
