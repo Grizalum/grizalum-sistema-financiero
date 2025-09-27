@@ -145,10 +145,12 @@ class GrizalumNotificacionesPremium {
             // CORRECCIÓN CRÍTICA: Usar el mismo formato que el admin
             const nombreLimpio = nombreEmpresa.replace(/[^\w\s]/g, '').trim();
             const empresaKey = nombreLimpio
-                .toLowerCase()
-                .replace(/\s+/g, '-')
-                .replace(/[^a-z0-9-]/g, '')
-                .substring(0, 50);
+           .toLowerCase()
+           .replace(/\s+/g, '-')
+           .replace(/[^a-z0-9-]/g, '')
+           .split('-')
+           .slice(0, 2)
+           .join('-');
             
             if (empresaKey !== this.empresaActual) {
                 this.empresaActual = empresaKey;
