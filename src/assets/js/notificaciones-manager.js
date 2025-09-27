@@ -594,7 +594,19 @@ class GrizalumNotificacionesPremium {
         if (!lista) return;
 
         const notifs = this.notificaciones.get(this.empresaActual) || [];
+        console.log(`🔍 Buscando: "${this.empresaActual}", Encontradas: ${notifs.length}`);
+        console.log(`📦 IDs guardados:`, [...this.notificaciones.keys()]);
         let filtradas = notifs;
+
+       // Si no encuentra notificaciones, intentar con ID alternativo
+         if (notifs.length === 0 && this.empresaActual) {
+          const idAlternativo = this.empresaActual.replace(/^-/, '').replace(/-+$/, '');
+          const notifsAlt = this.notificaciones.get(idAlternativo) || [];
+         if (notifsAlt.length > 0) {
+           console.log(`✅ Encontradas con ID alternativo: ${idAlternativo}`);
+           filtradas = notifsAlt;
+        }
+     }
 
         if (filtro !== 'todas') {
             filtradas = notifs.filter(n => n.prioridad === filtro);
