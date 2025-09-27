@@ -494,6 +494,8 @@ class GrizalumNotificacionesPremium {
             this.empresaActual = empresaKey;
             this.actualizarDisplay();
             this.cargarNotificaciones();
+            setTimeout(() => this.renderizar(), 500);
+            
             console.log(`🏢 Empresa cambiada a: ${empresaKey}`);
         }
     }
