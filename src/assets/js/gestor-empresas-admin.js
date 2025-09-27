@@ -912,12 +912,15 @@ _enviarANotificacionesSistema(destinatario, notificacion) {
             empresas.forEach(empresa => {
                 // Usar directamente el nombre de la empresa
                 const empresaKey = empresa.nombre
-                    .toLowerCase()
-                    .replace(/[^\w\s]/g, '')
-                    .trim()
-                    .replace(/\s+/g, '-')
-                    .replace(/[^a-z0-9-]/g, '')
-                    .substring(0, 50);
+               .replace(/[^\w\s]/g, '')      // Quitar emojis/símbolos
+               .trim()
+               .replace(/\s+/g, ' ')         // Normalizar espacios
+               .toLowerCase()
+               .replace(/\s+/g, '-')
+               .replace(/[^a-z0-9-]/g, '')
+               .split('-')                   // Separar por guiones
+               .slice(0, 2)                  // TOMAR SOLO PRIMERAS 2 PALABRAS
+               .join('-');                   // Unir
                 
                 console.log(`  → ${empresa.nombre} = ${empresaKey}`);
                 
@@ -936,13 +939,16 @@ _enviarANotificacionesSistema(destinatario, notificacion) {
             
             if (empresa) {
                 // Convertir SOLO el nombre de la empresa destino
-                const empresaKey = empresa.nombre
-                    .toLowerCase()
-                    .replace(/[^\w\s]/g, '')
-                    .trim()
-                    .replace(/\s+/g, '-')
-                    .replace(/[^a-z0-9-]/g, '')
-                    .substring(0, 50);
+                  const empresaKey = empresa.nombre
+               .replace(/[^\w\s]/g, '')      // Quitar emojis/símbolos
+               .trim()
+               .replace(/\s+/g, ' ')         // Normalizar espacios
+               .toLowerCase()
+               .replace(/\s+/g, '-')
+               .replace(/[^a-z0-9-]/g, '')
+               .split('-')                   // Separar por guiones
+               .slice(0, 2)                  // TOMAR SOLO PRIMERAS 2 PALABRAS
+               .join('-');                   // Unir
                 
                 console.log(`📤 Enviando a: ${empresa.nombre} = ${empresaKey}`);
                 
