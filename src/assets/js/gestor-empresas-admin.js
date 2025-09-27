@@ -13,7 +13,7 @@ window.GestorEmpresasAdmin = class GestorEmpresasAdminPremium {
         this.gestor = gestorPrincipal;
         this.modalActivo = null;
         this.datosTemporales = {};
-        this.notificaciones = this._cargarNotificaciones();
+        this.notificaciones = new Map();
         this.logs = this._cargarLogs();
         this.configuracion = this._cargarConfiguracion();
         
