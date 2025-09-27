@@ -1,1177 +1,55 @@
-/**
- * ================================================================
- * GRIZALUM GESTOR DE EMPRESAS - FORMULARIOS Y WIZARD
- * Creación y edición de empresas paso a paso
- * Versión: 2.0 - Adaptado para el mercado peruano
- * ================================================================
- */
-
-class FormularioEmpresas {
-    constructor(gestorPrincipal) {
-        this.gestor = gestorPrincipal;
-        this.pasoActual = 1;
-        this.totalPasos = 3;
-        this.datosFormulario = {};
-        this.emojiSeleccionado = '🏢';
-        
-        // Datos específicos para Perú
-        this.regionesPeruana = {
-            'lima': {
-                nombre: 'Lima',
-                provincias: ['Lima', 'Barranca', 'Cajatambo', 'Canta', 'Cañete', 'Huaral', 'Huarochirí', 'Huaura', 'Oyón', 'Yauyos']
-            },
-            'arequipa': {
-                nombre: 'Arequipa',
-                provincias: ['Arequipa', 'Camaná', 'Caravelí', 'Castilla', 'Caylloma', 'Condesuyos', 'Islay', 'La Unión']
-            },
-            'cusco': {
-                nombre: 'Cusco',
-                provincias: ['Cusco', 'Acomayo', 'Anta', 'Calca', 'Canas', 'Canchis', 'Chumbivilcas', 'Espinar', 'La Convención', 'Paruro', 'Paucartambo', 'Quispicanchi', 'Urubamba']
-            },
-            'piura': {
-                nombre: 'Piura',
-                provincias: ['Piura', 'Ayabaca', 'Huancabamba', 'Morropón', 'Paita', 'Sullana', 'Talara', 'Sechura']
-            },
-            'la-libertad': {
-                nombre: 'La Libertad',
-                provincias: ['Trujillo', 'Ascope', 'Bolívar', 'Chepén', 'Julcán', 'Otuzco', 'Pacasmayo', 'Pataz', 'Sánchez Carrión', 'Santiago de Chuco', 'Gran Chimú', 'Virú']
-            }
-        };
-        
-        this.tiposEmpresa = [
-            { valor: 'manufactura', nombre: '🏭 Manufactura/Industria', descripcion: 'Producción y fabricación' },
-            { valor: 'comercio', nombre: '🏪 Comercio/Retail', descripcion: 'Venta de productos' },
-            { valor: 'servicios', nombre: '⚙️ Servicios', descripcion: 'Prestación de servicios' },
-            { valor: 'construccion', nombre: '🏗️ Construcción', descripcion: 'Obras y construcción' },
-            { valor: 'mineria', nombre: '⛏️ Minería', descripcion: 'Extracción minera' },
-            { valor: 'agricultura', nombre: '🌾 Agricultura', descripcion: 'Cultivos y cosechas' },
-            { valor: 'ganaderia', nombre: '🐄 Ganadería', descripcion: 'Crianza de animales' },
-            { valor: 'pesca', nombre: '🐟 Pesca', descripcion: 'Pesca y acuicultura' },
-            { valor: 'tecnologia', nombre: '💻 Tecnología', descripcion: 'Software y TI' },
-            { valor: 'turismo', nombre: '✈️ Turismo', descripcion: 'Servicios turísticos' },
-            { valor: 'transporte', nombre: '🚚 Transporte', descripcion: 'Logística y transporte' },
-            { valor: 'restaurantes', nombre: '🍽️ Restaurantes', descripcion: 'Comida y bebidas' }
-        ];
-        
-        this.configurarEstilosFormulario();
-    }
-
-    // ================================================================
-    // CONFIGURAR ESTILOS DEL FORMULARIO
-    // ================================================================
-    
-    configurarEstilosFormulario() {
-        const estilos = document.createElement('style');
-        estilos.id = 'grizalum-formulario-estilos';
-        estilos.textContent = `
-            /* Formulario de Empresas - Estilos */
-            .modal-formulario {
-                position: fixed;
-                top: 0; left: 0; right: 0; bottom: 0;
-                background: rgba(0, 0, 0, 0.7);
-                z-index: 10000;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                opacity: 0;
-                visibility: hidden;
-                transition: all 0.3s ease;
-            }
-            
-            .modal-formulario.mostrar {
-                opacity: 1;
-                visibility: visible;
-            }
-            
-            .contenido-modal {
-                background: white;
-                border-radius: 20px;
-                width: 95%;
-                max-width: 600px;
-                max-height: 90vh;
-                overflow: hidden;
-                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-                animation: modalEntrada 0.3s ease;
-            }
-            
-            @keyframes modalEntrada {
-                from { opacity: 0; transform: scale(0.9) translateY(-20px); }
-                to { opacity: 1; transform: scale(1) translateY(0); }
-            }
-            
-            .cabecera-modal {
-                background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-                color: white;
-                padding: 2rem;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-            
-            .titulo-modal {
-                display: flex;
-                align-items: center;
-                gap: 0.75rem;
-                font-size: 1.5rem;
-                font-weight: 800;
-                margin: 0;
-            }
-            
-            .boton-cerrar-modal {
-                background: none;
-                border: none;
-                color: white;
-                font-size: 1.8rem;
-                cursor: pointer;
-                padding: 0.5rem;
-                border-radius: 50%;
-                transition: all 0.3s ease;
-                width: 50px;
-                height: 50px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            
-            .boton-cerrar-modal:hover {
-                background: rgba(255, 255, 255, 0.2);
-                transform: rotate(90deg) scale(1.1);
-            }
-            
-            /* Wizard de pasos */
-            .wizard-pasos {
-                display: flex;
-                justify-content: center;
-                padding: 1.5rem;
-                background: #f8f9fa;
-                border-bottom: 1px solid #e5e7eb;
-            }
-            
-            .paso-wizard {
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                padding: 0.75rem 1.5rem;
-                border-radius: 25px;
-                font-weight: 600;
-                font-size: 0.9rem;
-                transition: all 0.3s ease;
-                position: relative;
-            }
-            
-            .paso-wizard::after {
-                content: '';
-                position: absolute;
-                right: -20px;
-                top: 50%;
-                transform: translateY(-50%);
-                width: 0;
-                height: 0;
-                border-left: 10px solid #e5e7eb;
-                border-top: 8px solid transparent;
-                border-bottom: 8px solid transparent;
-            }
-            
-            .paso-wizard:last-child::after {
-                display: none;
-            }
-            
-            .paso-wizard.activo {
-                background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-                color: white;
-                transform: scale(1.05);
-            }
-            
-            .paso-wizard.activo::after {
-                border-left-color: #dc2626;
-            }
-            
-            .paso-wizard.completado {
-                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-                color: white;
-            }
-            
-            .paso-wizard.completado::after {
-                border-left-color: #10b981;
-            }
-            
-            /* Contenido del formulario */
-            .cuerpo-modal {
-                padding: 2rem;
-                max-height: 60vh;
-                overflow-y: auto;
-            }
-            
-            .contenido-paso {
-                display: none;
-            }
-            
-            .contenido-paso.activo {
-                display: block;
-                animation: pasoEntrada 0.4s ease;
-            }
-            
-            @keyframes pasoEntrada {
-                from { opacity: 0; transform: translateX(20px); }
-                to { opacity: 1; transform: translateX(0); }
-            }
-            
-            .titulo-paso {
-                font-size: 1.3rem;
-                font-weight: 700;
-                color: #1f2937;
-                margin-bottom: 0.5rem;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
-            
-            .descripcion-paso {
-                color: #6b7280;
-                margin-bottom: 2rem;
-                line-height: 1.6;
-            }
-            
-            .grupo-campo {
-                margin-bottom: 1.5rem;
-            }
-            
-            .etiqueta-campo {
-                display: block;
-                font-weight: 600;
-                color: #374151;
-                margin-bottom: 0.5rem;
-                font-size: 0.9rem;
-            }
-            
-            .campo-requerido {
-                color: #dc2626;
-            }
-            
-            .input-texto, .input-select, .input-textarea {
-                width: 100%;
-                padding: 1rem;
-                border: 2px solid #e5e7eb;
-                border-radius: 10px;
-                font-size: 1rem;
-                transition: all 0.3s ease;
-                outline: none;
-                box-sizing: border-box;
-            }
-            
-            .input-texto:focus, .input-select:focus, .input-textarea:focus {
-                border-color: #dc2626;
-                box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
-                transform: translateY(-1px);
-            }
-            
-            .ayuda-campo {
-                font-size: 0.8rem;
-                color: #6b7280;
-                margin-top: 0.5rem;
-                display: block;
-            }
-            
-            .input-grupo {
-                display: flex;
-                align-items: center;
-                position: relative;
-            }
-            
-            .prefijo-input {
-                position: absolute;
-                left: 1rem;
-                font-weight: 600;
-                color: #6b7280;
-                z-index: 2;
-            }
-            
-            .input-con-prefijo {
-                padding-left: 3rem;
-            }
-            
-            /* Selector de emoji */
-            .selector-emoji {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                background: white;
-                border: 2px solid #e5e7eb;
-                border-radius: 10px;
-                padding: 1rem;
-                cursor: pointer;
-                transition: all 0.3s ease;
-            }
-            
-            .selector-emoji:hover {
-                border-color: #dc2626;
-                box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
-            }
-            
-            .emoji-mostrar {
-                font-size: 2rem;
-                width: 50px;
-                height: 50px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: #f3f4f6;
-                border-radius: 10px;
-                transition: all 0.3s ease;
-            }
-            
-            .texto-emoji {
-                flex: 1;
-                font-weight: 600;
-                color: #374151;
-            }
-            
-            /* Selector de tipo de empresa */
-            .tipos-empresa {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                gap: 1rem;
-            }
-            
-            .opcion-tipo {
-                border: 2px solid #e5e7eb;
-                border-radius: 10px;
-                padding: 1rem;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                background: white;
-            }
-            
-            .opcion-tipo:hover, .opcion-tipo.seleccionado {
-                border-color: #dc2626;
-                background: rgba(220, 38, 38, 0.05);
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
-            }
-            
-            .nombre-tipo {
-                font-weight: 600;
-                margin-bottom: 0.25rem;
-                color: #1f2937;
-            }
-            
-            .descripcion-tipo {
-                font-size: 0.85rem;
-                color: #6b7280;
-            }
-            
-            /* Estados */
-            .selector-estados {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 1rem;
-            }
-            
-            .opcion-estado {
-                border: 2px solid #e5e7eb;
-                border-radius: 10px;
-                padding: 1rem;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                display: flex;
-                align-items: center;
-                gap: 0.75rem;
-            }
-            
-            .opcion-estado:hover, .opcion-estado.seleccionado {
-                border-color: #dc2626;
-                background: rgba(220, 38, 38, 0.05);
-                transform: translateY(-2px);
-            }
-            
-            .punto-estado {
-                width: 12px;
-                height: 12px;
-                border-radius: 50%;
-            }
-            
-            .punto-estado.verde { background: #10b981; }
-            .punto-estado.azul { background: #3b82f6; }
-            .punto-estado.amarillo { background: #f59e0b; }
-            
-            .info-estado strong {
-                display: block;
-                margin-bottom: 0.25rem;
-                color: #1f2937;
-            }
-            
-            .info-estado small {
-                color: #6b7280;
-                font-size: 0.8rem;
-            }
-            
-            /* Pie del modal */
-            .pie-modal {
-                padding: 1.5rem 2rem;
-                background: #f8f9fa;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                border-top: 1px solid #e5e7eb;
-            }
-            
-            .boton-anterior, .boton-siguiente, .boton-crear {
-                padding: 0.875rem 1.75rem;
-                border-radius: 10px;
-                font-weight: 700;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                transition: all 0.3s ease;
-                font-size: 0.9rem;
-                border: none;
-            }
-            
-            .boton-anterior {
-                background: white;
-                color: #6b7280;
-                border: 2px solid #e5e7eb;
-            }
-            
-            .boton-anterior:hover {
-                border-color: #d1d5db;
-                color: #374151;
-                transform: translateY(-2px);
-            }
-            
-            .boton-siguiente, .boton-crear {
-                background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-                color: white;
-                box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
-            }
-            
-            .boton-siguiente:hover, .boton-crear:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
-            }
-            
-            .boton-anterior:disabled, .boton-siguiente:disabled {
-                opacity: 0.5;
-                cursor: not-allowed;
-                transform: none;
-            }
-            
-            /* Responsive */
-            @media (max-width: 768px) {
-                .contenido-modal {
-                    width: 98%;
-                    margin: 1rem;
-                }
-                
-                .cabecera-modal {
-                    padding: 1.5rem;
-                }
-                
-                .titulo-modal {
-                    font-size: 1.2rem;
-                }
-                
-                .cuerpo-modal {
-                    padding: 1.5rem;
-                }
-                
-                .tipos-empresa {
-                    grid-template-columns: 1fr;
-                }
-                
-                .selector-estados {
-                    grid-template-columns: 1fr;
-                }
-                
-                .wizard-pasos {
-                    flex-direction: column;
-                    gap: 0.5rem;
-                }
-                
-                .paso-wizard::after {
-                    display: none;
-                }
-            }
-        `;
-        
-        document.head.appendChild(estilos);
-    }
-
-    // ================================================================
-    // MOSTRAR FORMULARIO PRINCIPAL
-    // ================================================================
-    
-    mostrarFormulario() {
-        console.log('📝 Abriendo formulario para nueva empresa');
-        
-        // Reiniciar datos
-        this.pasoActual = 1;
-        this.datosFormulario = {};
-        this.emojiSeleccionado = '🏢';
-        
-        const modal = this.crearModal();
-        document.body.appendChild(modal);
-        
-        setTimeout(() => {
-            modal.classList.add('mostrar');
-        }, 100);
-        
-        this.actualizarPaso();
-    }
-
-    crearModal() {
-        const modal = document.createElement('div');
-        modal.className = 'modal-formulario';
-        modal.id = 'modalNuevaEmpresa';
-        
-        modal.innerHTML = `
-            <div class="contenido-modal">
-                <div class="cabecera-modal">
-                    <h2 class="titulo-modal">
-                        <span>🏢</span>
-                        <span>Nueva Empresa Peruana</span>
-                    </h2>
-                    <button class="boton-cerrar-modal" onclick="formularioEmpresas.cerrarFormulario()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                
-                <div class="wizard-pasos">
-                    <div class="paso-wizard activo" data-paso="1">
-                        <i class="fas fa-building"></i>
-                        <span>Datos Básicos</span>
-                    </div>
-                    <div class="paso-wizard" data-paso="2">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>Ubicación</span>
-                    </div>
-                    <div class="paso-wizard" data-paso="3">
-                        <i class="fas fa-calculator"></i>
-                        <span>Finanzas</span>
-                    </div>
-                </div>
-                
-                <div class="cuerpo-modal">
-                    ${this.generarPaso1()}
-                    ${this.generarPaso2()}
-                    ${this.generarPaso3()}
-                </div>
-                
-                <div class="pie-modal">
-                    <button class="boton-anterior" onclick="formularioEmpresas.pasoAnterior()" style="visibility: hidden;">
-                        <i class="fas fa-arrow-left"></i> Anterior
-                    </button>
-                    <button class="boton-siguiente" onclick="formularioEmpresas.pasoSiguiente()">
-                        Siguiente <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
-        `;
-        
-        return modal;
-    }
-
-    // ================================================================
-    // GENERAR CONTENIDO DE CADA PASO
-    // ================================================================
-    
-    generarPaso1() {
-        return `
-            <div class="contenido-paso activo" id="paso-1">
-                <h3 class="titulo-paso">📋 Información Básica</h3>
-                <p class="descripcion-paso">Ingresa los datos principales de tu empresa</p>
-                
-                <div class="grupo-campo">
-                    <label class="etiqueta-campo">
-                        Nombre de la Empresa <span class="campo-requerido">*</span>
-                    </label>
-                    <input type="text" id="nombreEmpresa" class="input-texto" 
-                           placeholder="Ej: Mi Empresa S.A.C." required maxlength="100">
-                    <small class="ayuda-campo">Nombre comercial o razón social completa</small>
-                </div>
-                
-                <div class="grupo-campo">
-                    <label class="etiqueta-campo">RUC (Opcional)</label>
-                    <input type="text" id="rucEmpresa" class="input-texto" 
-                           placeholder="20123456789" maxlength="11">
-                    <small class="ayuda-campo">Registro Único de Contribuyentes - 11 dígitos</small>
-                </div>
-                
-                <div class="grupo-campo">
-                    <label class="etiqueta-campo">
-                        Tipo de Empresa <span class="campo-requerido">*</span>
-                    </label>
-                    <div class="tipos-empresa" id="tiposEmpresa">
-                        ${this.tiposEmpresa.map(tipo => `
-                            <div class="opcion-tipo" data-tipo="${tipo.valor}" onclick="formularioEmpresas.seleccionarTipo('${tipo.valor}')">
-                                <div class="nombre-tipo">${tipo.nombre}</div>
-                                <div class="descripcion-tipo">${tipo.descripcion}</div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-                
-                <div class="grupo-campo">
-                    <label class="etiqueta-campo">Icono Representativo</label>
-                    <div class="selector-emoji" onclick="formularioEmpresas.mostrarSelectorEmoji()">
-                        <div class="emoji-mostrar" id="emojiMostrar">🏢</div>
-                        <span class="texto-emoji">Seleccionar icono para la empresa</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    generarPaso2() {
-        return `
-            <div class="contenido-paso" id="paso-2">
-                <h3 class="titulo-paso">📍 Ubicación y Contacto</h3>
-                <p class="descripcion-paso">¿Dónde está ubicada tu empresa?</p>
-                
-                <div class="grupo-campo">
-                    <label class="etiqueta-campo">
-                        Región/Departamento <span class="campo-requerido">*</span>
-                    </label>
-                    <select id="regionEmpresa" class="input-select" onchange="formularioEmpresas.cargarProvincias()" required>
-                        <option value="">Selecciona la región</option>
-                        ${Object.entries(this.regionesPeruana).map(([valor, region]) => 
-                            `<option value="${valor}">${region.nombre}</option>`
-                        ).join('')}
-                    </select>
-                </div>
-                
-                <div class="grupo-campo">
-                    <label class="etiqueta-campo">Provincia</label>
-                    <select id="provinciaEmpresa" class="input-select">
-                        <option value="">Primero selecciona la región</option>
-                    </select>
-                </div>
-                
-                <div class="grupo-campo">
-                    <label class="etiqueta-campo">Distrito</label>
-                    <input type="text" id="distritoEmpresa" class="input-texto" 
-                           placeholder="Ej: Miraflores, San Isidro">
-                    <small class="ayuda-campo">Distrito donde opera la empresa</small>
-                </div>
-                
-                <div class="grupo-campo">
-                    <label class="etiqueta-campo">Dirección Completa</label>
-                    <textarea id="direccionEmpresa" class="input-textarea" rows="3" 
-                              placeholder="Av. Principal 123, Urbanización..."></textarea>
-                    <small class="ayuda-campo">Dirección física de la empresa</small>
-                </div>
-                
-                <div class="grupo-campo">
-                    <label class="etiqueta-campo">Teléfono</label>
-                    <input type="tel" id="telefonoEmpresa" class="input-texto" 
-                           placeholder="+51 1 234-5678">
-                    <small class="ayuda-campo">Número de contacto principal</small>
-                </div>
-            </div>
-        `;
-    }
-
-    generarPaso3() {
-        return `
-            <div class="contenido-paso" id="paso-3">
-                <h3 class="titulo-paso">💰 Información Financiera</h3>
-                <p class="descripcion-paso">Datos financieros iniciales para empezar</p>
-                
-                <div class="grupo-campo">
-                    <label class="etiqueta-campo">Dinero en Caja Actual</label>
-                    <div class="input-grupo">
-                        <span class="prefijo-input">S/.</span>
-                        <input type="number" id="dineroEnCaja" class="input-texto input-con-prefijo" 
-                               placeholder="50000" min="0" step="100">
-                    </div>
-                    <small class="ayuda-campo">Efectivo disponible en caja y bancos</small>
-                </div>
-                
-                <div class="grupo-campo">
-                    <label class="etiqueta-campo">Ingresos Anuales Estimados</label>
-                    <div class="input-grupo">
-                        <span class="prefijo-input">S/.</span>
-                        <input type="number" id="ingresosAnuales" class="input-texto input-con-prefijo" 
-                               placeholder="1000000" min="0" step="1000">
-                    </div>
-                    <small class="ayuda-campo">Facturación anual aproximada</small>
-                </div>
-                
-                <div class="grupo-campo">
-                    <label class="etiqueta-campo">Gastos Mensuales Promedio</label>
-                    <div class="input-grupo">
-                        <span class="prefijo-input">S/.</span>
-                        <input type="number" id="gastosMensuales" class="input-texto input-con-prefijo" 
-                               placeholder="50000" min="0" step="1000">
-                    </div>
-                    <small class="ayuda-campo">Costos operativos, personal, alquileres, etc.</small>
-                </div>
-                
-                <div class="grupo-campo">
-                    <label class="etiqueta-campo">Estado Operativo Inicial</label>
-                    <div class="selector-estados">
-                        <div class="opcion-estado seleccionado" data-estado="operativo" onclick="formularioEmpresas.seleccionarEstado('operativo')">
-                            <span class="punto-estado verde"></span>
-                            <div class="info-estado">
-                                <strong>Operativo</strong>
-                                <small>Funcionando normalmente</small>
-                            </div>
-                        </div>
-                        <div class="opcion-estado" data-estado="preparacion" onclick="formularioEmpresas.seleccionarEstado('preparacion')">
-                            <span class="punto-estado azul"></span>
-                            <div class="info-estado">
-                                <strong>En Preparación</strong>
-                                <small>Próximo a iniciar</small>
-                            </div>
-                        </div>
-                        <div class="opcion-estado" data-estado="expansion" onclick="formularioEmpresas.seleccionarEstado('expansion')">
-                            <span class="punto-estado amarillo"></span>
-                            <div class="info-estado">
-                                <strong>En Expansión</strong>
-                                <small>Crecimiento acelerado</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    // ================================================================
-    // NAVEGACIÓN ENTRE PASOS
-    // ================================================================
-    
-    pasoSiguiente() {
-        if (this.validarPasoActual()) {
-            this.guardarDatosPaso();
-            
-            if (this.pasoActual < this.totalPasos) {
-                this.pasoActual++;
-                this.actualizarPaso();
-            } else {
-                this.crearEmpresa();
-            }
-        }
-    }
-
-    pasoAnterior() {
-        if (this.pasoActual > 1) {
-            this.pasoActual--;
-            this.actualizarPaso();
-        }
-    }
-
-    actualizarPaso() {
-        // Actualizar indicadores de pasos
-        document.querySelectorAll('.paso-wizard').forEach((paso, index) => {
-            paso.classList.remove('activo', 'completado');
-            
-            if (index + 1 < this.pasoActual) {
-                paso.classList.add('completado');
-            } else if (index + 1 === this.pasoActual) {
-                paso.classList.add('activo');
-            }
-        });
-
-        // Mostrar contenido del paso actual
-        document.querySelectorAll('.contenido-paso').forEach((contenido, index) => {
-            contenido.classList.remove('activo');
-            
-            if (index + 1 === this.pasoActual) {
-                contenido.classList.add('activo');
-            }
-        });
-
-        // Actualizar botones
-        const botonAnterior = document.querySelector('.boton-anterior');
-        const botonSiguiente = document.querySelector('.boton-siguiente');
-
-        botonAnterior.style.visibility = this.pasoActual === 1 ? 'hidden' : 'visible';
-        
-        if (this.pasoActual === this.totalPasos) {
-            botonSiguiente.innerHTML = '<i class="fas fa-check"></i> Crear Empresa';
-            botonSiguiente.className = 'boton-crear';
-        } else {
-            botonSiguiente.innerHTML = 'Siguiente <i class="fas fa-arrow-right"></i>';
-            botonSiguiente.className = 'boton-siguiente';
-        }
-    }
-
-    // ================================================================
-    // VALIDACIONES
-    // ================================================================
-    
-    validarPasoActual() {
-        switch (this.pasoActual) {
-            case 1:
-                return this.validarPaso1();
-            case 2:
-                return this.validarPaso2();
-            case 3:
-                return this.validarPaso3();
-            default:
-                return false;
-        }
-    }
-
-    validarPaso1() {
-        const nombre = document.getElementById('nombreEmpresa').value.trim();
-        const tipoSeleccionado = document.querySelector('.opcion-tipo.seleccionado');
-
-        if (!nombre) {
-            this.mostrarError('El nombre de la empresa es requerido');
-            return false;
-        }
-
-        if (nombre.length < 3) {
-            this.mostrarError('El nombre debe tener al menos 3 caracteres');
-            return false;
-        }
-
-        if (!tipoSeleccionado) {
-            this.mostrarError('Selecciona el tipo de empresa');
-            return false;
-        }
-
-        // Validar RUC si se ingresó
-        const ruc = document.getElementById('rucEmpresa').value.trim();
-        if (ruc && !this.validarRUC(ruc)) {
-            this.mostrarError('El RUC debe tener 11 dígitos');
-            return false;
-        }
-
-        return true;
-    }
-
-    validarPaso2() {
-        const region = document.getElementById('regionEmpresa').value;
-
-        if (!region) {
-            this.mostrarError('Selecciona la región donde está ubicada la empresa');
-            return false;
-        }
-
-        return true;
-    }
-
-    validarPaso3() {
-        // Los campos financieros son opcionales, pero si se llenan deben ser válidos
-        const caja = parseFloat(document.getElementById('dineroEnCaja').value) || 0;
-        const ingresos = parseFloat(document.getElementById('ingresosAnuales').value) || 0;
-        const gastos = parseFloat(document.getElementById('gastosMensuales').value) || 0;
-
-        if (caja < 0 || ingresos < 0 || gastos < 0) {
-            this.mostrarError('Los valores financieros no pueden ser negativos');
-            return false;
-        }
-
-        return true;
-    }
-
-    validarRUC(ruc) {
-        return /^\d{11}$/.test(ruc);
-    }
-
-    mostrarError(mensaje) {
-        // Simple alert por ahora - se puede mejorar con notificaciones
-        alert('❌ ' + mensaje);
-    }
-
-    // ================================================================
-    // FUNCIONES DE SELECCIÓN
-    // ================================================================
-    
-    seleccionarTipo(tipo) {
-        document.querySelectorAll('.opcion-tipo').forEach(opcion => {
-            opcion.classList.remove('seleccionado');
-        });
-        
-        document.querySelector(`[data-tipo="${tipo}"]`).classList.add('seleccionado');
-    }
-
-    seleccionarEstado(estado) {
-        document.querySelectorAll('.opcion-estado').forEach(opcion => {
-            opcion.classList.remove('seleccionado');
-        });
-        
-        document.querySelector(`[data-estado="${estado}"]`).classList.add('seleccionado');
-    }
-
-    cargarProvincias() {
-        const regionSelect = document.getElementById('regionEmpresa');
-        const provinciaSelect = document.getElementById('provinciaEmpresa');
-        const regionSeleccionada = regionSelect.value;
-
-        provinciaSelect.innerHTML = '<option value="">Selecciona la provincia</option>';
-
-        if (regionSeleccionada && this.regionesPeruana[regionSeleccionada]) {
-            const provincias = this.regionesPeruana[regionSeleccionada].provincias;
-            
-            provincias.forEach(provincia => {
-                const option = document.createElement('option');
-                option.value = provincia.toLowerCase().replace(/\s+/g, '-');
-                option.textContent = provincia;
-                provinciaSelect.appendChild(option);
-            });
-        }
-    }
-
-    mostrarSelectorEmoji() {
-        // Por ahora, una lista simple de emojis comunes
-        const emojisComunes = ['🏢', '🏭', '🏪', '🏬', '🏦', '🏥', '🚚', '🍽️', '💻', '🔥', '⚙️', '🌾', '🐄', '🐟', '⛏️', '🏗️'];
-        
-        const emojiActual = prompt('Selecciona un emoji:\n\n' + emojisComunes.join(' '), this.emojiSeleccionado);
-        
-        if (emojiActual && emojisComunes.includes(emojiActual)) {
-            this.emojiSeleccionado = emojiActual;
-            document.getElementById('emojiMostrar').textContent = emojiActual;
-        }
-    }
-
-    // ================================================================
-    // GUARDAR DATOS Y CREAR EMPRESA
-    // ================================================================
-    
-    guardarDatosPaso() {
-        switch (this.pasoActual) {
-            case 1:
-                this.datosFormulario.nombre = document.getElementById('nombreEmpresa').value.trim();
-                this.datosFormulario.ruc = document.getElementById('rucEmpresa').value.trim();
-                this.datosFormulario.tipo = document.querySelector('.opcion-tipo.seleccionado')?.dataset.tipo;
-                this.datosFormulario.icono = this.emojiSeleccionado;
-                break;
-                
-            case 2:
-                this.datosFormulario.region = document.getElementById('regionEmpresa').value;
-                this.datosFormulario.provincia = document.getElementById('provinciaEmpresa').value;
-                this.datosFormulario.distrito = document.getElementById('distritoEmpresa').value.trim();
-                this.datosFormulario.direccion = document.getElementById('direccionEmpresa').value.trim();
-                this.datosFormulario.telefono = document.getElementById('telefonoEmpresa').value.trim();
-                break;
-                
-            case 3:
-                this.datosFormulario.dineroEnCaja = parseFloat(document.getElementById('dineroEnCaja').value) || 0;
-                this.datosFormulario.ingresosAnuales = parseFloat(document.getElementById('ingresosAnuales').value) || 0;
-                this.datosFormulario.gastosMensuales = parseFloat(document.getElementById('gastosMensuales').value) || 0;
-                this.datosFormulario.estado = document.querySelector('.opcion-estado.seleccionado')?.dataset.estado || 'operativo';
-                break;
-        }
-    }
-
-    crearEmpresa() {
-        this.guardarDatosPaso();
-        
-        // Construir ubicación
-        const ubicacionParts = [
-            this.datosFormulario.distrito,
-            document.getElementById('provinciaEmpresa').selectedOptions[0]?.text,
-            this.regionesPeruana[this.datosFormulario.region]?.nombre
-        ].filter(Boolean);
-        
-        const ubicacion = ubicacionParts.join(', ') || 'Perú';
-        
-        // Calcular ganancia estimada
-        const gananciaMensual = (this.datosFormulario.ingresosAnuales / 12) - this.datosFormulario.gastosMensuales;
-        const gananciAnual = gananciaMensual * 12;
-        
-        // Convertir estado
-        const estadosMap = {
-            'operativo': 'Operativo',
-            'preparacion': 'En Preparación',
-            'expansion': 'En Expansión'
-        };
-
-        // Crear objeto empresa
-        const nuevaEmpresa = {
-            nombre: this.datosFormulario.nombre,
-            icono: this.datosFormulario.icono,
-            estado: estadosMap[this.datosFormulario.estado],
-            ruc: this.datosFormulario.ruc || '',
-            ubicacion: ubicacion,
-            telefono: this.datosFormulario.telefono || '',
-            direccion: this.datosFormulario.direccion || '',
-            tipo: this.datosFormulario.tipo,
-            dinero: {
-                caja: this.datosFormulario.dineroEnCaja,
-                ingresos: this.datosFormulario.ingresosAnuales,
-                gastos: this.datosFormulario.gastosMensuales * 12,
-                ganancia: Math.max(0, gananciAnual)
-            },
-            fechaCreacion: new Date().toISOString()
-        };
-
-        // Generar ID único
-        const empresaId = this.generarIdEmpresa(nuevaEmpresa.nombre);
-        
-        // Verificar que no exista
-        if (this.gestor.empresas[empresaId]) {
-            this.mostrarError('Ya existe una empresa con ese nombre');
-            return;
-        }
-
-        // Agregar al gestor
-        this.gestor.empresas[empresaId] = nuevaEmpresa;
-        this.gestor.guardarEmpresas();
-        
-        // Actualizar UI
-        this.gestor.actualizarListaEmpresas();
-        this.gestor.seleccionarEmpresa(empresaId);
-        
-        // Cerrar formulario
-        this.cerrarFormulario();
-        
-        // Notificación de éxito
-        console.log(`✅ Empresa "${nuevaEmpresa.nombre}" creada exitosamente`);
-        alert(`🎉 ¡Empresa "${nuevaEmpresa.nombre}" creada exitosamente!`);
-    }
-
-    generarIdEmpresa(nombre) {
-        let baseId = nombre.toLowerCase()
-            .replace(/[áàäâ]/g, 'a')
-            .replace(/[éèëê]/g, 'e')
-            .replace(/[íìïî]/g, 'i')
-            .replace(/[óòöô]/g, 'o')
-            .replace(/[úùüû]/g, 'u')
-            .replace(/ñ/g, 'n')
-            .replace(/[^a-z0-9]/g, '-')
-            .replace(/-+/g, '-')
-            .replace(/^-|-$/g, '');
-        
-        // Verificar unicidad
-        let contador = 1;
-        let idFinal = baseId;
-        
-        while (this.gestor.empresas[idFinal]) {
-            idFinal = `${baseId}-${contador}`;
-            contador++;
-        }
-        
-        return idFinal;
-    }
-
-    // ================================================================
-    // CERRAR FORMULARIO
-    // ================================================================
-    
-    cerrarFormulario() {
-        const modal = document.getElementById('modalNuevaEmpresa');
-        if (modal) {
-            modal.classList.remove('mostrar');
-            setTimeout(() => {
-                modal.remove();
-            }, 300);
-        }
-    }
-}
-
 // ================================================================
-// INICIALIZACIÓN
+// MODAL DE EDICIÓN PROFESIONAL
 // ================================================================
 
-let formularioEmpresas = null;
-
-// Inicializar cuando el gestor principal esté listo
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(() => {
-        if (window.gestorEmpresas) {
-            setTimeout(() => {
-    if (window.gestorEmpresas) {
-        formularioEmpresas = new FormularioEmpresas(window.gestorEmpresas);
-        window.formularioEmpresas = formularioEmpresas;
-        console.log('✅ FormularioEmpresas conectado correctamente');
-    } else {
-        console.error('❌ gestorEmpresas no disponible al intentar conectar');
-    }
-}, 1000);
-            window.formularioEmpresas = formularioEmpresas;
-            
-            // Conectar con el gestor principal
-            window.gestorEmpresas.mostrarFormularioNuevaEmpresa = function() {
-                formularioEmpresas.mostrarFormulario();
-            };
-            
-            console.log('📝 Formulario de empresas listo');
-        }
-    }, 400);
-});
-
-console.log(`
-📝 ===================================================
-   GRIZALUM FORMULARIO DE EMPRESAS v2.0
-   Creación de empresas paso a paso
-📝 ===================================================
-
-✨ CARACTERÍSTICAS:
-   • 🎯 Wizard paso a paso intuitivo
-   • 🇵🇪 Regiones y provincias del Perú
-   • 📋 Validación de RUC peruano
-   • 💰 Cálculos financieros automáticos
-   • 📱 Interfaz responsive completa
-
-📝 ===================================================
-`);
-
-// ================================================================
-// EXTENSIÓN PARA EDITAR EMPRESAS CON CUSTOMIZADOR DE COLORES
-// Agregar después de la línea del console.log final
-// ================================================================
-
-// Extender la clase FormularioEmpresas con funcionalidad de edición
 FormularioEmpresas.prototype.editarEmpresa = function(empresaId) {
     console.log('✏️ Editando empresa:', empresaId);
     
-     // AGREGAR ESTAS LÍNEAS AQUÍ:
     if (!this.gestor) {
-        console.error('❌ Gestor de empresas no está disponible');
+        console.error('❌ Gestor no disponible');
         alert('El sistema de empresas no está listo. Recarga la página.');
         return;
     }
     
-    console.log('🔍 DEBUG - empresaId:', empresaId);
-   console.log('🔍 DEBUG - empresas disponibles:', this.gestor?.empresas ? Object.keys(this.gestor.empresas) : 'No hay empresas');
-    const empresa = window.gestorEmpresas?.empresas?.[empresaId] || { nombre: 'Empresa Test', icono: '🏢' };
-    console.log('🔍 DEBUG - empresa encontrada:', empresa);
+    const empresa = this.gestor.empresas[empresaId];
+    
     if (!empresa) {
         this.mostrarError('Empresa no encontrada');
         return;
     }
     
-    // Configurar modo edición
     this.modoEdicion = true;
     this.empresaEditando = empresaId;
-    this.cargarDatosEmpresaExistente(empresa);
+    this.emojiSeleccionado = empresa.icono || '🏢';
+    this.logoSubido = empresa.logo || null;
     
-    const modal = this.crearModalEdicion(empresa);
+    const modal = this.crearModalEdicionProfesional(empresa);
     document.body.appendChild(modal);
     
     setTimeout(() => {
         modal.classList.add('mostrar');
+        this.inicializarEditores(empresa);
     }, 100);
 };
 
-FormularioEmpresas.prototype.cargarDatosEmpresaExistente = function(empresa) {
-    this.datosFormulario = {
-        nombre: empresa.nombre,
-        ruc: empresa.ruc || '',
-        tipo: empresa.tipo || 'servicios',
-        icono: empresa.icono || '🏢'
-    };
-    this.emojiSeleccionado = empresa.icono || '🏢';
-};
-
-FormularioEmpresas.prototype.crearModalEdicion = function(empresa) {
+FormularioEmpresas.prototype.crearModalEdicionProfesional = function(empresa) {
     const modal = document.createElement('div');
     modal.className = 'modal-formulario';
     modal.id = 'modalEditarEmpresa';
     
+    const colores = empresa.coloresPersonalizados || {
+        ingresos: '#d4af37',
+        gastos: '#ff6b35',
+        utilidad: '#2ecc71',
+        crecimiento: '#9b59b6'
+    };
+    
     modal.innerHTML = `
-        <div class="contenido-modal">
+        <div class="contenido-modal modal-edicion-pro">
             <div class="cabecera-modal">
                 <h2 class="titulo-modal">
                     <span>✏️</span>
-                    <span>Editar ${empresa.nombre}</span>
+                    <span>Editar Empresa</span>
                 </h2>
                 <button class="boton-cerrar-modal" onclick="formularioEmpresas.cerrarFormularioEdicion()">
                     <i class="fas fa-times"></i>
@@ -1179,7 +57,145 @@ FormularioEmpresas.prototype.crearModalEdicion = function(empresa) {
             </div>
             
             <div class="cuerpo-modal">
-                ${this.generarFormularioEdicion(empresa)}
+                <!-- Información Básica -->
+                <div class="seccion-edit">
+                    <h3 class="titulo-seccion">
+                        <i class="fas fa-building"></i>
+                        Información Básica
+                    </h3>
+                    
+                    <div class="grupo-campo">
+                        <label class="etiqueta-campo">Nombre de la Empresa</label>
+                        <input type="text" id="editNombre" class="input-texto" value="${empresa.nombre}">
+                    </div>
+                    
+                    <div class="grupo-campo">
+                        <label class="etiqueta-campo">RUC</label>
+                        <input type="text" id="editRuc" class="input-texto" value="${empresa.ruc || ''}" maxlength="11">
+                    </div>
+                </div>
+                
+                <!-- Selector de Icono/Logo -->
+                <div class="seccion-edit">
+                    <h3 class="titulo-seccion">
+                        <i class="fas fa-image"></i>
+                        Identidad Visual
+                    </h3>
+                    
+                    <div class="selector-tipo-icono">
+                        <button class="btn-tipo-icono active" data-tipo="emoji" onclick="formularioEmpresas.cambiarTipoIcono('emoji')">
+                            <i class="fas fa-smile"></i>
+                            Emoji
+                        </button>
+                        <button class="btn-tipo-icono" data-tipo="logo" onclick="formularioEmpresas.cambiarTipoIcono('logo')">
+                            <i class="fas fa-image"></i>
+                            Logo Personalizado
+                        </button>
+                    </div>
+                    
+                    <!-- Panel Emoji -->
+                    <div class="panel-icono active" id="panelEmoji">
+                        <input type="text" id="buscarEmoji" class="input-buscar-emoji" placeholder="🔍 Buscar emoji...">
+                        <div class="grid-emojis" id="gridEmojis">
+                            ${this.generarGridEmojis()}
+                        </div>
+                        <div class="emoji-seleccionado-preview">
+                            <span>Seleccionado:</span>
+                            <div class="emoji-grande" id="emojiPreview">${this.emojiSeleccionado}</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Panel Logo -->
+                    <div class="panel-icono" id="panelLogo">
+                        <div class="zona-subida-logo" id="zonaSubidaLogo">
+                            <input type="file" id="inputLogo" accept="image/*" style="display:none" onchange="formularioEmpresas.subirLogo(event)">
+                            <button class="btn-subir-logo" onclick="document.getElementById('inputLogo').click()">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Subir Logo</span>
+                                <small>PNG, JPG (máx 2MB)</small>
+                            </button>
+                            <div class="logo-preview" id="logoPreview" style="display:none">
+                                <img id="logoImg" src="" alt="Logo">
+                                <button class="btn-eliminar-logo" onclick="formularioEmpresas.eliminarLogo()">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Personalizador de Colores -->
+                <div class="seccion-edit">
+                    <h3 class="titulo-seccion">
+                        <i class="fas fa-palette"></i>
+                        Colores de Métricas
+                    </h3>
+                    
+                    <div class="paletas-preset">
+                        <button class="btn-preset" onclick="formularioEmpresas.aplicarPaleta('default')">Por Defecto</button>
+                        <button class="btn-preset" onclick="formularioEmpresas.aplicarPaleta('ocean')">Océano</button>
+                        <button class="btn-preset" onclick="formularioEmpresas.aplicarPaleta('sunset')">Atardecer</button>
+                        <button class="btn-preset" onclick="formularioEmpresas.aplicarPaleta('forest')">Bosque</button>
+                    </div>
+                    
+                    <div class="editores-color">
+                        ${this.generarEditorColor('Ingresos', 'ingresos', colores.ingresos, '💰')}
+                        ${this.generarEditorColor('Gastos', 'gastos', colores.gastos, '💸')}
+                        ${this.generarEditorColor('Utilidad', 'utilidad', colores.utilidad, '📈')}
+                        ${this.generarEditorColor('Crecimiento', 'crecimiento', colores.crecimiento, '🚀')}
+                    </div>
+                </div>
+                
+                <!-- Vista Previa en Vivo -->
+                <div class="seccion-edit">
+                    <h3 class="titulo-seccion">
+                        <i class="fas fa-eye"></i>
+                        Vista Previa en Vivo
+                    </h3>
+                    <p class="texto-ayuda">Los valores se actualizan mientras escribes</p>
+                    
+                    <div class="metricas-financieras-edit">
+                        <div class="input-metrica">
+                            <label>Ingresos (S/.)</label>
+                            <input type="number" id="previewIngresos" value="0" min="0" oninput="formularioEmpresas.actualizarPreview()">
+                        </div>
+                        <div class="input-metrica">
+                            <label>Gastos (S/.)</label>
+                            <input type="number" id="previewGastos" value="0" min="0" oninput="formularioEmpresas.actualizarPreview()">
+                        </div>
+                    </div>
+                    
+                    <div class="preview-metricas-live" id="previewMetricas">
+                        <div class="metric-preview" data-tipo="ingresos">
+                            <div class="metric-icon-preview">💰</div>
+                            <div class="metric-info-preview">
+                                <span>Ingresos</span>
+                                <strong id="valorIngresos">S/. 0</strong>
+                            </div>
+                        </div>
+                        <div class="metric-preview" data-tipo="gastos">
+                            <div class="metric-icon-preview">💸</div>
+                            <div class="metric-info-preview">
+                                <span>Gastos</span>
+                                <strong id="valorGastos">S/. 0</strong>
+                            </div>
+                        </div>
+                        <div class="metric-preview" data-tipo="utilidad">
+                            <div class="metric-icon-preview">📈</div>
+                            <div class="metric-info-preview">
+                                <span>Utilidad</span>
+                                <strong id="valorUtilidad">S/. 0</strong>
+                            </div>
+                        </div>
+                        <div class="metric-preview" data-tipo="crecimiento">
+                            <div class="metric-icon-preview">🚀</div>
+                            <div class="metric-info-preview">
+                                <span>Crecimiento</span>
+                                <strong id="valorCrecimiento">0%</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div class="pie-modal">
@@ -1196,264 +212,229 @@ FormularioEmpresas.prototype.crearModalEdicion = function(empresa) {
     return modal;
 };
 
-FormularioEmpresas.prototype.generarFormularioEdicion = function(empresa) {
+FormularioEmpresas.prototype.generarGridEmojis = function() {
+    const emojis = [
+        '🏢', '🏭', '🏪', '🏬', '🏦', '🏥', '🏛️', '🏗️',
+        '🚚', '🚢', '✈️', '🚁', '🚂', '🚗', '🏎️', '🚕',
+        '🍽️', '🍕', '🍔', '🍜', '🍰', '☕', '🍷', '🥗',
+        '💻', '📱', '⌨️', '🖥️', '🖨️', '📷', '📹', '🎮',
+        '⚙️', '🔧', '🔨', '🛠️', '⚡', '🔥', '💡', '🔌',
+        '🌾', '🌿', '🌱', '🌳', '🌻', '🌺', '🌸', '🌼',
+        '🐄', '🐖', '🐔', '🐑', '🐴', '🦃', '🐝', '🦋',
+        '🐟', '🐠', '🦐', '🦞', '🦑', '🐙', '🦀', '🐡',
+        '⛏️', '💎', '🪨', '⛰️', '🗻', '🏔️', '🌋', '🏞️'
+    ];
+    
+    return emojis.map(emoji => 
+        `<div class="emoji-item ${emoji === this.emojiSeleccionado ? 'selected' : ''}" 
+              onclick="formularioEmpresas.seleccionarEmojiPro('${emoji}')">${emoji}</div>`
+    ).join('');
+};
+
+FormularioEmpresas.prototype.generarEditorColor = function(nombre, id, valorInicial, icono) {
     return `
-        <div class="contenido-edicion">
-            <h3 class="titulo-paso">📝 Información Básica</h3>
-            
-            <div class="grupo-campo">
-                <label class="etiqueta-campo">Nombre de la Empresa</label>
-                <input type="text" id="editNombreEmpresa" class="input-texto" 
-                       value="${empresa.nombre}" maxlength="100">
+        <div class="editor-color-pro">
+            <div class="color-header">
+                <span class="color-icono">${icono}</span>
+                <span class="color-nombre">${nombre}</span>
             </div>
-            
-            <div class="grupo-campo">
-                <label class="etiqueta-campo">RUC</label>
-                <input type="text" id="editRucEmpresa" class="input-texto" 
-                       value="${empresa.ruc || ''}" maxlength="11">
-            </div>
-            
-            <div class="grupo-campo">
-                <label class="etiqueta-campo">Icono</label>
-                <div class="selector-emoji" onclick="formularioEmpresas.mostrarSelectorEmojiEdicion()">
-                    <div class="emoji-mostrar" id="editEmojiMostrar">${empresa.icono || '🏢'}</div>
-                    <span class="texto-emoji">Cambiar icono</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-            </div>
-            
-            <h3 class="titulo-paso" style="margin-top: 2rem;">🎨 Personalización de Colores</h3>
-            <p class="descripcion-paso">Personaliza los colores de las métricas para esta empresa</p>
-            
-            <div class="grupo-campo">
-                <label class="etiqueta-campo">Color Principal (Ingresos)</label>
-                <div class="color-picker-group">
-                    <input type="color" id="colorIngresos" value="#d4af37" class="color-picker">
-                    <input type="text" id="colorIngresosHex" value="#d4af37" class="color-input">
-                </div>
-            </div>
-            
-            <div class="grupo-campo">
-                <label class="etiqueta-campo">Color de Gastos</label>
-                <div class="color-picker-group">
-                    <input type="color" id="colorGastos" value="#ff6b35" class="color-picker">
-                    <input type="text" id="colorGastosHex" value="#ff6b35" class="color-input">
-                </div>
-            </div>
-            
-            <div class="grupo-campo">
-                <label class="etiqueta-campo">Color de Utilidad</label>
-                <div class="color-picker-group">
-                    <input type="color" id="colorUtilidad" value="#2ecc71" class="color-picker">
-                    <input type="text" id="colorUtilidadHex" value="#2ecc71" class="color-input">
-                </div>
-            </div>
-            
-            <div class="grupo-campo">
-                <label class="etiqueta-campo">Color de Crecimiento</label>
-                <div class="color-picker-group">
-                    <input type="color" id="colorCrecimiento" value="#9b59b6" class="color-picker">
-                    <input type="text" id="colorCrecimientoHex" value="#9b59b6" class="color-input">
-                </div>
-            </div>
-            
-            <div class="grupo-campo">
-                <h4>Vista Previa</h4>
-                <div class="preview-metricas-edit">
-                    <div class="preview-metric-mini ingresos-preview">
-                        <span>Ingresos</span>
-                        <strong>S/. 125,000</strong>
-                    </div>
-                    <div class="preview-metric-mini gastos-preview">
-                        <span>Gastos</span>
-                        <strong>S/. 75,000</strong>
-                    </div>
-                    <div class="preview-metric-mini utilidad-preview">
-                        <span>Utilidad</span>
-                        <strong>S/. 50,000</strong>
-                    </div>
-                    <div class="preview-metric-mini crecimiento-preview">
-                        <span>Crecimiento</span>
-                        <strong>+24.8%</strong>
-                    </div>
-                </div>
+            <div class="color-controls">
+                <input type="color" id="color${id.charAt(0).toUpperCase() + id.slice(1)}" 
+                       value="${valorInicial}" class="color-picker-pro" 
+                       oninput="formularioEmpresas.cambiarColor('${id}', this.value)">
+                <input type="text" id="hex${id.charAt(0).toUpperCase() + id.slice(1)}" 
+                       value="${valorInicial}" class="hex-input" 
+                       oninput="formularioEmpresas.cambiarColorHex('${id}', this.value)">
             </div>
         </div>
     `;
 };
 
-FormularioEmpresas.prototype.mostrarSelectorEmojiEdicion = function() {
-    const emojisComunes = ['🏢', '🏭', '🏪', '🏬', '🏦', '🏥', '🚚', '🍽️', '💻', '🔥', '⚙️', '🌾', '🐄', '🐟', '⛏️', '🏗️'];
-    const emojiActual = prompt('Selecciona un emoji:\n\n' + emojisComunes.join(' '), this.emojiSeleccionado);
-    
-    if (emojiActual && emojisComunes.includes(emojiActual)) {
-        this.emojiSeleccionado = emojiActual;
-        document.getElementById('editEmojiMostrar').textContent = emojiActual;
+// Funciones de interacción
+FormularioEmpresas.prototype.inicializarEditores = function(empresa) {
+    // Cargar logo si existe
+    if (empresa.logo) {
+        this.cambiarTipoIcono('logo');
+        document.getElementById('logoImg').src = empresa.logo;
+        document.getElementById('logoPreview').style.display = 'flex';
     }
+    
+    // Inicializar colores
+    const colores = empresa.coloresPersonalizados || {};
+    if (colores.ingresos) this.cambiarColor('ingresos', colores.ingresos);
+    if (colores.gastos) this.cambiarColor('gastos', colores.gastos);
+    if (colores.utilidad) this.cambiarColor('utilidad', colores.utilidad);
+    if (colores.crecimiento) this.cambiarColor('crecimiento', colores.crecimiento);
 };
 
-FormularioEmpresas.prototype.guardarCambiosEmpresa = function() {
-    const empresaId = this.empresaEditando;
-    const empresa = this.gestor.empresas[empresaId];
+FormularioEmpresas.prototype.cambiarTipoIcono = function(tipo) {
+    document.querySelectorAll('.btn-tipo-icono').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.panel-icono').forEach(panel => panel.classList.remove('active'));
     
-    if (!empresa) {
-        this.mostrarError('Error al guardar los cambios');
+    document.querySelector(`[data-tipo="${tipo}"]`).classList.add('active');
+    document.getElementById(tipo === 'emoji' ? 'panelEmoji' : 'panelLogo').classList.add('active');
+};
+
+FormularioEmpresas.prototype.seleccionarEmojiPro = function(emoji) {
+    document.querySelectorAll('.emoji-item').forEach(item => item.classList.remove('selected'));
+    event.target.classList.add('selected');
+    this.emojiSeleccionado = emoji;
+    document.getElementById('emojiPreview').textContent = emoji;
+};
+
+FormularioEmpresas.prototype.subirLogo = function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    if (file.size > 2 * 1024 * 1024) {
+        alert('❌ El logo no puede superar 2MB');
         return;
     }
     
-    // Actualizar datos básicos
-    empresa.nombre = document.getElementById('editNombreEmpresa').value.trim();
-    empresa.ruc = document.getElementById('editRucEmpresa').value.trim();
-    empresa.icono = this.emojiSeleccionado;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        this.logoSubido = e.target.result;
+        document.getElementById('logoImg').src = e.target.result;
+        document.getElementById('logoPreview').style.display = 'flex';
+    };
+    reader.readAsDataURL(file);
+};
+
+FormularioEmpresas.prototype.eliminarLogo = function() {
+    this.logoSubido = null;
+    document.getElementById('logoPreview').style.display = 'none';
+    document.getElementById('inputLogo').value = '';
+};
+
+FormularioEmpresas.prototype.cambiarColor = function(tipo, color) {
+    document.getElementById(`hex${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`).value = color;
+    const preview = document.querySelector(`[data-tipo="${tipo}"]`);
+    if (preview) {
+        preview.style.setProperty('--color-metrica', color);
+    }
+};
+
+FormularioEmpresas.prototype.cambiarColorHex = function(tipo, hex) {
+    if (/^#[0-9A-F]{6}$/i.test(hex)) {
+        document.getElementById(`color${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`).value = hex;
+        this.cambiarColor(tipo, hex);
+    }
+};
+
+FormularioEmpresas.prototype.aplicarPaleta = function(nombre) {
+    const paletas = {
+        default: { ingresos: '#d4af37', gastos: '#ff6b35', utilidad: '#2ecc71', crecimiento: '#9b59b6' },
+        ocean: { ingresos: '#3498db', gastos: '#e74c3c', utilidad: '#1abc9c', crecimiento: '#16a085' },
+        sunset: { ingresos: '#e67e22', gastos: '#c0392b', utilidad: '#f39c12', crecimiento: '#d35400' },
+        forest: { ingresos: '#27ae60', gastos: '#c0392b', utilidad: '#2ecc71', crecimiento: '#16a085' }
+    };
     
-    // Guardar colores personalizados
-    const coloresPersonalizados = {
+    const paleta = paletas[nombre];
+    Object.keys(paleta).forEach(tipo => {
+        this.cambiarColor(tipo, paleta[tipo]);
+        document.getElementById(`color${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`).value = paleta[tipo];
+    });
+};
+
+FormularioEmpresas.prototype.actualizarPreview = function() {
+    const ingresos = parseFloat(document.getElementById('previewIngresos').value) || 0;
+    const gastos = parseFloat(document.getElementById('previewGastos').value) || 0;
+    const utilidad = ingresos - gastos;
+    const crecimiento = ingresos > 0 ? ((utilidad / ingresos) * 100).toFixed(1) : 0;
+    
+    document.getElementById('valorIngresos').textContent = `S/. ${ingresos.toLocaleString()}`;
+    document.getElementById('valorGastos').textContent = `S/. ${gastos.toLocaleString()}`;
+    document.getElementById('valorUtilidad').textContent = `S/. ${utilidad.toLocaleString()}`;
+    document.getElementById('valorCrecimiento').textContent = `${crecimiento}%`;
+};
+
+FormularioEmpresas.prototype.guardarCambiosEmpresa = function() {
+    const empresa = this.gestor.empresas[this.empresaEditando];
+    if (!empresa) return;
+    
+    // Actualizar datos
+    empresa.nombre = document.getElementById('editNombre').value.trim();
+    empresa.ruc = document.getElementById('editRuc').value.trim();
+    
+    // Guardar icono o logo
+    if (this.logoSubido) {
+        empresa.logo = this.logoSubido;
+        empresa.icono = null;
+    } else {
+        empresa.icono = this.emojiSeleccionado;
+        empresa.logo = null;
+    }
+    
+    // Guardar colores
+    empresa.coloresPersonalizados = {
         ingresos: document.getElementById('colorIngresos').value,
         gastos: document.getElementById('colorGastos').value,
         utilidad: document.getElementById('colorUtilidad').value,
         crecimiento: document.getElementById('colorCrecimiento').value
     };
     
-    empresa.coloresPersonalizados = coloresPersonalizados;
-    
-    // Guardar en localStorage
     this.gestor.guardarEmpresas();
-    
-    // Aplicar los nuevos colores inmediatamente
-    this.aplicarColoresEmpresa(coloresPersonalizados);
-    
-    // Actualizar UI
     this.gestor.actualizarListaEmpresas();
-    
-    // Cerrar modal
     this.cerrarFormularioEdicion();
     
-    // Notificación
     alert('✅ Empresa actualizada correctamente');
-    console.log('✅ Empresa actualizada:', empresa.nombre);
-};
-
-FormularioEmpresas.prototype.aplicarColoresEmpresa = function(colores) {
-    // Aplicar colores a las métricas inmediatamente
-    const metricCards = document.querySelectorAll('.metric-card');
-    
-    metricCards.forEach(card => {
-        if (card.classList.contains('revenue')) {
-            this.aplicarColorACard(card, colores.ingresos);
-        } else if (card.classList.contains('expenses')) {
-            this.aplicarColorACard(card, colores.gastos);
-        } else if (card.classList.contains('profit')) {
-            this.aplicarColorACard(card, colores.utilidad);
-        } else if (card.classList.contains('growth')) {
-            this.aplicarColorACard(card, colores.crecimiento);
-        }
-    });
-};
-
-FormularioEmpresas.prototype.aplicarColorACard = function(card, color) {
-    const rgb = this.hexToRgb(color);
-    const colorOscuro = this.darkenColor(color, 20);
-    
-    card.style.setProperty('--metric-primary-color', color);
-    card.style.setProperty('--metric-secondary-color', colorOscuro);
-    card.style.setProperty('--metric-background-color', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.1)`);
-    
-    const icon = card.querySelector('.metric-icon');
-    if (icon) {
-        icon.style.background = `linear-gradient(135deg, ${color} 0%, ${colorOscuro} 100%)`;
-    }
-    
-    const value = card.querySelector('.metric-value');
-    if (value) {
-        value.style.color = color;
-    }
-};
-
-FormularioEmpresas.prototype.hexToRgb = function(hex) {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-    } : { r: 212, g: 175, b: 55 };
-};
-
-FormularioEmpresas.prototype.darkenColor = function(hex, percent) {
-    const num = parseInt(hex.replace("#", ""), 16);
-    const amt = Math.round(2.55 * percent);
-    const R = (num >> 16) - amt;
-    const G = (num >> 8 & 0x00FF) - amt;
-    const B = (num & 0x0000FF) - amt;
-    return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
-        (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
-        (B < 255 ? B < 1 ? 0 : B : 255))
-        .toString(16).slice(1);
 };
 
 FormularioEmpresas.prototype.cerrarFormularioEdicion = function() {
     const modal = document.getElementById('modalEditarEmpresa');
     if (modal) {
         modal.classList.remove('mostrar');
-        setTimeout(() => {
-            modal.remove();
-        }, 300);
+        setTimeout(() => modal.remove(), 300);
     }
     this.modoEdicion = false;
     this.empresaEditando = null;
 };
 
-// Agregar estilos para el editor de colores
-const estilosEditor = document.createElement('style');
-estilosEditor.textContent = `
-    .color-picker-group {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-    }
-    
-    .color-picker {
-        width: 50px;
-        height: 40px;
-        border: 2px solid #e5e7eb;
-        border-radius: 8px;
-        cursor: pointer;
-    }
-    
-    .color-input {
-        flex: 1;
-        padding: 10px;
-        border: 2px solid #e5e7eb;
-        border-radius: 8px;
-        font-family: monospace;
-    }
-    
-    .preview-metricas-edit {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-        margin-top: 10px;
-    }
-    
-    .preview-metric-mini {
-        padding: 15px;
-        border-radius: 8px;
-        text-align: center;
-        border: 2px solid var(--preview-color, #ddd);
-        background: var(--preview-background, rgba(0,0,0,0.05));
-    }
-    
-    .preview-metric-mini span {
-        display: block;
-        font-size: 12px;
-        color: #666;
-        margin-bottom: 5px;
-    }
-    
-    .preview-metric-mini strong {
-        color: var(--preview-color, #333);
-        font-size: 16px;
-    }
+// Estilos profesionales
+const estilosPro = document.createElement('style');
+estilosPro.textContent = `
+    .modal-edicion-pro { max-width: 800px !important; }
+    .seccion-edit { margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 12px; }
+    .titulo-seccion { display: flex; align-items: center; gap: 0.75rem; font-size: 1.1rem; font-weight: 700; color: #1f2937; margin-bottom: 1rem; }
+    .selector-tipo-icono { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+    .btn-tipo-icono { flex: 1; padding: 1rem; border: 2px solid #e5e7eb; border-radius: 10px; background: white; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 600; }
+    .btn-tipo-icono.active { border-color: #dc2626; background: rgba(220, 38, 38, 0.1); color: #dc2626; }
+    .panel-icono { display: none; }
+    .panel-icono.active { display: block; }
+    .input-buscar-emoji { width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; margin-bottom: 1rem; }
+    .grid-emojis { display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 0.5rem; max-height: 200px; overflow-y: auto; padding: 0.5rem; background: white; border-radius: 8px; }
+    .emoji-item { font-size: 2rem; padding: 0.5rem; text-align: center; cursor: pointer; border-radius: 8px; transition: all 0.2s; }
+    .emoji-item:hover, .emoji-item.selected { background: rgba(220, 38, 38, 0.1); transform: scale(1.1); }
+    .emoji-seleccionado-preview { display: flex; align-items: center; gap: 1rem; margin-top: 1rem; padding: 1rem; background: white; border-radius: 8px; }
+    .emoji-grande { font-size: 3rem; }
+    .zona-subida-logo { min-height: 200px; display: flex; align-items: center; justify-content: center; }
+    .btn-subir-logo { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 2rem; border: 3px dashed #d1d5db; border-radius: 12px; background: white; cursor: pointer; transition: all 0.3s; }
+    .btn-subir-logo:hover { border-color: #dc2626; background: rgba(220, 38, 38, 0.05); }
+    .btn-subir-logo i { font-size: 3rem; color: #6b7280; }
+    .logo-preview { display: flex; align-items: center; gap: 1rem; padding: 1rem; background: white; border-radius: 12px; }
+    .logo-preview img { max-width: 150px; max-height: 150px; object-fit: contain; }
+    .btn-eliminar-logo { padding: 0.5rem 1rem; background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer; }
+    .paletas-preset { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-bottom: 1.5rem; }
+    .btn-preset { padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+    .btn-preset:hover { border-color: #dc2626; background: rgba(220, 38, 38, 0.1); }
+    .editores-color { display: grid; gap: 1rem; }
+    .editor-color-pro { display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: white; border-radius: 10px; }
+    .color-header { display: flex; align-items: center; gap: 0.75rem; }
+    .color-icono { font-size: 1.5rem; }
+    .color-nombre { font-weight: 600; color: #374151; }
+    .color-controls { display: flex; gap: 0.75rem; align-items: center; }
+    .color-picker-pro { width: 60px; height: 40px; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer; }
+    .hex-input { width: 100px; padding: 0.5rem; border: 2px solid #e5e7eb; border-radius: 8px; font-family: monospace; text-transform: uppercase; }
+    .metricas-financieras-edit { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+    .input-metrica label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: #374151; }
+    .input-metrica input { width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; }
+    .preview-metricas-live { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+    .metric-preview { display: flex; align-items: center; gap: 1rem; padding: 1rem; background: white; border-radius: 10px; border-left: 4px solid var(--color-metrica, #d4af37); }
+    .metric-icon-preview { font-size: 2rem; }
+    .metric-info-preview span { display: block; font-size: 0.85rem; color: #6b7280; }
+    .metric-info-preview strong { font-size: 1.25rem; color: var(--color-metrica, #1f2937); }
+    .texto-ayuda { font-size: 0.9rem; color: #6b7280; margin-bottom: 1rem; }
 `;
-document.head.appendChild(estilosEditor);
+document.head.appendChild(estilosPro);
 
-console.log('✏️ Extensión de edición de empresas cargada');
+console.log('✏️ Editor profesional de empresas cargado');
