@@ -818,3 +818,20 @@ window.verNotificaciones = function() {
 
 // Hacer accesible la instancia globalmente
 window.instanciaNotificaciones = instanciaNotificaciones;
+
+// BYPASS: Forzar actualización cuando se recibe del admin
+const originalRecibirDelAdmin = window.GrizalumNotificacionesPremium?.recibirDelAdmin;
+if (originalRecibirDelAdmin) {
+    window.GrizalumNotificacionesPremium.recibirDelAdmin = function(empresaId, titulo, mensaje, tipo) {
+        const resultado = originalRecibirDelAdmin.call(this, empresaId, titulo, mensaje, tipo);
+        
+        // Forzar renderizado si es la empresa actual
+        if (instanciaNotificaciones.empresaActual === empresaId) {
+            setTimeout(() => {
+                instanciaNotificaciones.renderizar();
+            }, 200);
+        }
+        
+        return resultado;
+    };
+}
