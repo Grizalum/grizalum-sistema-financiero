@@ -2328,13 +2328,40 @@ _enviarANotificacionesSistema(destinatario, notificacion) {
         }
     }
 
-    _cargarNotificaciones() {
-        try {
-            return JSON.parse(localStorage.getItem('grizalum_admin_notificaciones') || '[]');
-        } catch {
-            return [];
+   cargarNotificaciones() {
+    // Obtener empresa actual del selector
+    const selector = document.getElementById('companySelector');
+    let empresaKey = null;
+    
+    if (selector) {
+        const activa = selector.querySelector('.active, [data-selected="true"]');
+        if (activa) {
+            const nombre = activa.textContent.trim();
+            empresaKey = nombre.toLowerCase()
+                .replace(/[^\w\s]/g, '')
+                .trim()
+                .replace(/\s+/g, '-')
+                .replace(/[^a-z0-9-]/g, '')
+                .substring(0, 50);
         }
     }
+    
+    console.log(`🔍 Buscando notificaciones para: ${empresaKey}`);
+    
+   // Obtener notificaciones de la instancia global
+let notifs = [];
+if (window.instanciaNotificaciones && window.instanciaNotificaciones.notificaciones) {
+    notifs = window.instanciaNotificaciones.notificaciones.get(empresaKey) || [];
+} else if (window.GrizalumNotificacionesPremium && typeof window.GrizalumNotificacionesPremium.obtener === 'function') {
+    // Fallback: usar la API pública
+    notifs = window.GrizalumNotificacionesPremium.obtener(empresaKey) || [];
+}
+
+console.log(`📋 Encontradas: ${notifs.length} notificaciones para ${empresaKey}`);
+    
+    this.actualizarContador();
+    this.renderizar();
+}
 
     _guardarNotificaciones() {
         localStorage.setItem('grizalum_admin_notificaciones', JSON.stringify(this.notificaciones));
