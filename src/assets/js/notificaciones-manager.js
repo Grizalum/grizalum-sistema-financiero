@@ -524,6 +524,8 @@ class GrizalumNotificacionesPremium {
         };
 
         const notifs = this.notificaciones.get(this.empresaActual) || [];
+        console.log(`🔍 Buscando en: ${this.empresaActual}, Encontradas: ${notifs.length}`);
+        console.log('📦 Todas las empresas guardadas:', [...this.notificaciones.keys()]);
         notifs.unshift(notif);
         this.notificaciones.set(this.empresaActual, notifs);
         
