@@ -685,16 +685,16 @@ class GrizalumNotificacionesPremium {
 
 
     crearAPI() {
-        window.GrizalumNotificacionesPremium = {
-            crear: (config) => instanciaNotificaciones.crearNotificacion(config),
-            obtener: (empresaId) => {
-           const id = empresaId || instanciaNotificaciones.empresaActual;
-          return instanciaNotificaciones.notificaciones.get(id) || [];
-       }
-            eliminar: (id) => instanciaNotificaciones.eliminarNotificacion(id),
-            marcarLeida: (id) => instanciaNotificaciones.marcarLeida(id),
-            
-    recibirDelAdmin: (empresaId, titulo, mensaje, tipo = 'admin') => {
+    window.GrizalumNotificacionesPremium = {
+        crear: (config) => instanciaNotificaciones.crearNotificacion(config),
+        obtener: (empresaId) => {
+            const id = empresaId || instanciaNotificaciones.empresaActual;
+            return instanciaNotificaciones.notificaciones.get(id) || [];
+        },
+        eliminar: (id) => instanciaNotificaciones.eliminarNotificacion(id),
+        marcarLeida: (id) => instanciaNotificaciones.marcarLeida(id),
+        
+        recibirDelAdmin: (empresaId, titulo, mensaje, tipo = 'admin') => {
       try {
           console.log(`📨 [NOTIF] Guardando para: ${empresaId}`);
           console.log(`   Título: ${titulo}`);
