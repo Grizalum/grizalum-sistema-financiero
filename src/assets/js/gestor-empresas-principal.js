@@ -901,7 +901,7 @@ class GestorEmpresasProfesional {
                 ${this._obtenerEmojiEstado(empresa.estado)}
             </div>
            <div class="grizalum-card-actions">
-                <button class="grizalum-action-btn grizalum-btn-editar" onclick="event.stopPropagation(); window.formularioEmpresas.editarEmpresa('${id}')" title="Editar Empresa">
+                <button class="grizalum-action-btn grizalum-btn-editar" onclick="event.stopPropagation(); editorEmpresas.editarEmpresa('${id}')" title="Editar Empresa">
                   <i class="fas fa-edit"></i>
                 </button>
                 ${this._generarBotonesSegunRol(id)}
