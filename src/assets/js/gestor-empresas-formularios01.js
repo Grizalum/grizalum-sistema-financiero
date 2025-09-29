@@ -839,7 +839,21 @@ guardar() {
         empresa.logo = null;
     }
 
+    // NUEVO: Guardar y aplicar colores personalizados
     empresa.coloresPersonalizados = { ...this.coloresTemp };
+    
+    // Aplicar colores inmediatamente al sistema
+    const root = document.documentElement;
+    root.style.setProperty('--color-ingresos', this.coloresTemp.ingresos);
+    root.style.setProperty('--color-gastos', this.coloresTemp.gastos);
+    root.style.setProperty('--color-utilidad', this.coloresTemp.utilidad);
+    root.style.setProperty('--color-crecimiento', this.coloresTemp.crecimiento);
+
+    // Notificar al sistema de paletas sobre el cambio
+    document.dispatchEvent(new CustomEvent('empresaColoresActualizados', {
+        detail: { colores: this.coloresTemp }
+    }));
+
     empresa.notas = notas;
     
     // Agregar al historial
@@ -874,8 +888,9 @@ guardar() {
     }, 300);
 
     console.log('✅ Empresa guardada:', nombre);
+    console.log('🎨 Colores personalizados aplicados al sistema');
 }
-
+    
     cerrar() {
         const modal = document.getElementById('grizalumModalEditor');
         if (modal) {
