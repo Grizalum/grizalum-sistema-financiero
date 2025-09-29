@@ -901,8 +901,8 @@ class GestorEmpresasProfesional {
                 ${this._obtenerEmojiEstado(empresa.estado)}
             </div>
            <div class="grizalum-card-actions">
-                <button class="grizalum-action-btn grizalum-btn-editar" onclick="editarEmpresaActual('${id}')" title="Editar Empresa">
-                    <i class="fas fa-edit"></i>
+                <button class="grizalum-action-btn grizalum-btn-editar" onclick="event.stopPropagation(); window.formularioEmpresas.editarEmpresa('${id}')" title="Editar Empresa">
+                  <i class="fas fa-edit"></i>
                 </button>
                 ${this._generarBotonesSegunRol(id)}
             </div>
@@ -2446,17 +2446,15 @@ window.changeCompany = function(empresaId) {
 };
 
 // Función corregida para el botón editar
-function editarEmpresaActual() {
-    // Usar el selector real que existe en el DOM
-    const selectorEmpresa = document.querySelector('#companySelector');
-    const empresaActiva = selectorEmpresa ? { 
-        id: 'fundacion-laguna'
-    } : null;
+// Función corregida para el botón editar
+function editarEmpresaActual(empresaId) {
+    console.log('📝 Intentando editar empresa:', empresaId);
     
-    if (empresaActiva) {
-        window.formularioEmpresas.editarEmpresa(empresaActiva.id);
+    if (window.formularioEmpresas && typeof window.formularioEmpresas.editarEmpresa === 'function') {
+        window.formularioEmpresas.editarEmpresa(empresaId);
     } else {
-        alert('Selecciona una empresa primero');
+        console.error('❌ formularioEmpresas.editarEmpresa no disponible');
+        alert('El editor de empresas no está listo. Recarga la página.');
     }
 }
 console.log(`
