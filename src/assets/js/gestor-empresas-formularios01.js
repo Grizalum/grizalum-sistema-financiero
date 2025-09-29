@@ -11,7 +11,14 @@ class EditorEmpresasProfesional {
         this.empresaEditando = null;
         this.logoTemporal = null;
         this.emojiSeleccionado = null;
-        this.coloresTemp = {};
+        this.coloresTemp = {
+        ingresos: '#d4af37',
+        gastos: '#ff6b35',
+        utilidad: '#2ecc71',
+        crecimiento: '#9b59b6',
+        tematica: '#d4af37'
+    };
+        
         
         console.log('🎨 Editor de Empresas Profesional inicializando...');
         this._esperarGestor();
@@ -524,11 +531,13 @@ class EditorEmpresasProfesional {
         this.logoTemporal = empresa.logo || null;
         this.emojiSeleccionado = empresa.icono || '🏢';
         this.coloresTemp = empresa.coloresPersonalizados || {
-            ingresos: '#d4af37',
-            gastos: '#ff6b35',
-            utilidad: '#2ecc71',
-            crecimiento: '#9b59b6'
-        };
+          ingresos: '#d4af37',
+          gastos: '#ff6b35',
+          utilidad: '#2ecc71',
+          crecimiento: '#9b59b6',
+          tematica: '#d4af37'
+      };
+        
 
         this._mostrarModal(empresa);
     }
@@ -634,6 +643,7 @@ class EditorEmpresasProfesional {
                 ${this._generarColorPicker('Gastos', 'gastos', this.coloresTemp.gastos, '💸')}
                 ${this._generarColorPicker('Utilidad', 'utilidad', this.coloresTemp.utilidad, '📈')}
                 ${this._generarColorPicker('Crecimiento', 'crecimiento', this.coloresTemp.crecimiento, '🚀')}
+                ${this._generarColorPicker('Temática Principal', 'tematica', this.coloresTemp.tematica, '🎨')}
             </div>
 
             <div class="grizalum-seccion">
@@ -848,6 +858,8 @@ guardar() {
     root.style.setProperty('--color-gastos', this.coloresTemp.gastos);
     root.style.setProperty('--color-utilidad', this.coloresTemp.utilidad);
     root.style.setProperty('--color-crecimiento', this.coloresTemp.crecimiento);
+    root.style.setProperty('--color-primario', this.coloresTemp.tematica);
+    root.style.setProperty('--color-secundario', this.coloresTemp.tematica);
 
     // Notificar al sistema de paletas sobre el cambio
     document.dispatchEvent(new CustomEvent('empresaColoresActualizados', {
