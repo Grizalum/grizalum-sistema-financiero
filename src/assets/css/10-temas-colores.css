@@ -273,3 +273,31 @@
 .theme-option[data-theme="gris-minimalista"] { 
     background: linear-gradient(135deg, #6b7280 0%, #4ade80 100%); 
 }
+/* ================================================================
+   FIX FLUJO DE CAJA - Fondo más claro y texto legible
+   ================================================================ */
+.financial-summary {
+    background: rgba(0,0,0,0.4) !important;
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
+}
+
+.summary-item {
+    margin-bottom: 12px;
+}
+
+.summary-label {
+    color: rgba(255,255,255,0.8) !important;
+    font-size: 13px;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.summary-value {
+    color: #ffffff !important;
+    font-size: 18px;
+    font-weight: 700;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+}
