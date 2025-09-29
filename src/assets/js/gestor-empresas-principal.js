@@ -1147,7 +1147,8 @@ _aplicarColoresEmpresa(empresaId) {
         ingresos: '#d4af37',
         gastos: '#ff6b35',
         utilidad: '#2ecc71',
-        crecimiento: '#9b59b6'
+        crecimiento: '#9b59b6',
+        tematica: '#d4af37'
     };
     
     const root = document.documentElement;
@@ -1158,8 +1159,9 @@ _aplicarColoresEmpresa(empresaId) {
     root.style.setProperty('--color-utilidad', colores.utilidad);
     root.style.setProperty('--color-crecimiento', colores.crecimiento);
     
-    // Aplicar color primario basado en ingresos
-    root.style.setProperty('--color-primario', colores.ingresos);
+    // APLICAR TEMÁTICA (esto es lo que faltaba)
+    root.style.setProperty('--color-primario', colores.tematica || colores.ingresos);
+    root.style.setProperty('--color-secundario', colores.tematica || colores.ingresos);
     
     this._log('info', `🎨 Colores aplicados para: ${empresa.nombre}`);
 }
