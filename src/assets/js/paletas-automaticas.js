@@ -132,41 +132,55 @@ class GestorPaletas {
     }
 
     aplicarPaleta(nombrePaleta) {
-        const paleta = PALETAS_PREMIUM[nombrePaleta];
-        if (!paleta) {
-            console.error('Paleta no encontrada:', nombrePaleta);
-            return false;
-        }
-
-        const root = document.documentElement;
-
-        // Aplicar colores de métricas
-        root.style.setProperty('--color-ingresos', paleta.colores.ingresos);
-        root.style.setProperty('--color-gastos', paleta.colores.gastos);
-        root.style.setProperty('--color-utilidad', paleta.colores.utilidad);
-        root.style.setProperty('--color-crecimiento', paleta.colores.crecimiento);
-
-        // Aplicar tema global
-        root.style.setProperty('--color-primario', paleta.tema.primario);
-        root.style.setProperty('--color-secundario', paleta.tema.secundario);
-        root.style.setProperty('--fondo-principal', paleta.tema.fondo);
-        root.style.setProperty('--fondo-superficie', paleta.tema.superficie);
-        root.style.setProperty('--texto-principal', paleta.tema.texto);
-        root.style.setProperty('--texto-secundario', paleta.tema.textoSecundario);
-
-        // Actualizar selector visual
-        this.actualizarSelectorActivo(nombrePaleta);
-
-        // Guardar paleta activa
-        this.paletaActiva = nombrePaleta;
-        localStorage.setItem('grizalum_paleta_activa', nombrePaleta);
-
-        // Sincronizar con el editor de empresa si existe
-        this.sincronizarConEditor(paleta.colores);
-
-        console.log(`Paleta aplicada: ${paleta.nombre}`);
-        return true;
+    const paleta = PALETAS_PREMIUM[nombrePaleta];
+    if (!paleta) {
+        console.error('Paleta no encontrada:', nombrePaleta);
+        return false;
     }
+
+    const root = document.documentElement;
+
+    // Aplicar colores de métricas
+    root.style.setProperty('--color-ingresos', paleta.colores.ingresos);
+    root.style.setProperty('--color-gastos', paleta.colores.gastos);
+    root.style.setProperty('--color-utilidad', paleta.colores.utilidad);
+    root.style.setProperty('--color-crecimiento', paleta.colores.crecimiento);
+
+    // Aplicar tema global
+    root.style.setProperty('--color-primario', paleta.tema.primario);
+    root.style.setProperty('--color-secundario', paleta.tema.secundario);
+
+    // Actualizar selector visual
+    this.actualizarSelectorActivo(nombrePaleta);
+
+    // Guardar paleta activa
+    this.paletaActiva = nombrePaleta;
+    localStorage.setItem('grizalum_paleta_activa', nombrePaleta);
+
+    // NUEVO: Guardar colores en la empresa actual
+    if (window.gestorEmpresas && window.gestorEmpresas.estado?.empresaActual) {
+        const empresaId = window.gestorEmpresas.estado.empresaActual;
+        const empresa = window.gestorEmpresas.estado.empresas[empresaId];
+        
+        if (empresa) {
+            // Guardar los colores de la paleta en la empresa
+            empresa.coloresPersonalizados = {
+                ingresos: paleta.colores.ingresos,
+                gastos: paleta.colores.gastos,
+                utilidad: paleta.colores.utilidad,
+                crecimiento: paleta.colores.crecimiento,
+                tematica: paleta.tema.primario
+            };
+            
+            // Guardar en localStorage
+            window.gestorEmpresas._guardarEmpresas();
+            console.log(`💾 Paleta "${paleta.nombre}" guardada en empresa: ${empresa.nombre}`);
+        }
+    }
+
+    console.log(`Paleta aplicada: ${paleta.nombre}`);
+    return true;
+}
 
     sincronizarConEditor(colores) {
         // Si existe el editor de empresas y una empresa seleccionada
