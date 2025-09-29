@@ -568,98 +568,133 @@ class EditorEmpresasProfesional {
     }
 
     _generarBody(empresa) {
-        const emojis = ['🏢', '🏭', '🏪', '🏬', '🏦', '🏥', '🚚', '🍽️', '💻', '🔥', '⚙️', '🌾', '🐄', '🐟', '⛏️', '🏗️', '💎', '⚡', '🚀', '💡', '🎯', '💰', '🍕', '☕', '🚗', '✈️', '🏀', '🎮', '📱', '🔧'];
+    const emojis = ['🏢', '🏭', '🏪', '🏬', '🏦', '🏥', '🚚', '🍽️', '💻', '🔥', '⚙️', '🌾', '🐄', '🐟', '⛏️', '🏗️', '💎', '⚡', '🚀', '💡', '🎯', '💰', '🍕', '☕', '🚗', '✈️', '🏀', '🎮', '📱', '🔧'];
 
-        return `
-            <div class="grizalum-modal-body">
-                <div class="grizalum-seccion">
-                    <div class="grizalum-seccion-titulo">Información Básica</div>
-                    
-                    <div class="grizalum-campo">
-                        <label class="grizalum-label">Nombre de la Empresa</label>
-                        <input type="text" id="empresaNombre" class="grizalum-input" value="${empresa.nombre}" maxlength="80">
+    return `
+        <div class="grizalum-modal-body">
+            <div class="grizalum-seccion">
+                <div class="grizalum-seccion-titulo">Información Básica</div>
+                
+                <div class="grizalum-campo">
+                    <label class="grizalum-label">Nombre de la Empresa</label>
+                    <input type="text" id="empresaNombre" class="grizalum-input" value="${empresa.nombre}" maxlength="80">
+                </div>
+
+                <div class="grizalum-campo">
+                    <label class="grizalum-label">RUC (Opcional)</label>
+                    <input type="text" id="empresaRuc" class="grizalum-input" value="${empresa.legal?.ruc || ''}" maxlength="11">
+                </div>
+            </div>
+
+            <div class="grizalum-seccion">
+                <div class="grizalum-seccion-titulo">Identidad Visual</div>
+                
+                <div class="grizalum-tabs">
+                    <div class="grizalum-tab active" data-tab="emoji" onclick="editorEmpresas.cambiarTab('emoji')">
+                        😀 Emoji
                     </div>
-
-                    <div class="grizalum-campo">
-                        <label class="grizalum-label">RUC (Opcional)</label>
-                        <input type="text" id="empresaRuc" class="grizalum-input" value="${empresa.legal?.ruc || ''}" maxlength="11">
+                    <div class="grizalum-tab" data-tab="logo" onclick="editorEmpresas.cambiarTab('logo')">
+                        🖼️ Logo
                     </div>
                 </div>
 
-                <div class="grizalum-seccion">
-                    <div class="grizalum-seccion-titulo">Identidad Visual</div>
-                    
-                    <div class="grizalum-tabs">
-                        <div class="grizalum-tab active" data-tab="emoji" onclick="editorEmpresas.cambiarTab('emoji')">
-                            😀 Emoji
-                        </div>
-                        <div class="grizalum-tab" data-tab="logo" onclick="editorEmpresas.cambiarTab('logo')">
-                            🖼️ Logo
-                        </div>
-                    </div>
-
-                    <div class="grizalum-tab-content active" id="tabEmoji">
-                        <div class="grizalum-emoji-grid">
-                            ${emojis.map(emoji => `
-                                <div class="grizalum-emoji-item ${emoji === empresa.icono ? 'selected' : ''}" 
-                                     onclick="editorEmpresas.seleccionarEmoji('${emoji}')">${emoji}</div>
-                            `).join('')}
-                        </div>
-                    </div>
-
-                    <div class="grizalum-tab-content" id="tabLogo">
-                        <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="editorEmpresas.subirLogo(event)">
-                        <div class="grizalum-upload-zona" onclick="document.getElementById('logoInput').click()">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <div class="grizalum-upload-texto">Haz clic para subir tu logo</div>
-                            <small style="color: rgba(255,255,255,0.5)">PNG, JPG (máx 2MB)</small>
-                        </div>
-                        <div class="grizalum-logo-preview ${this.logoTemporal ? 'show' : ''}" id="logoPreview">
-                            <img src="${this.logoTemporal || ''}" id="logoImg">
-                            <div style="flex: 1; color: white;">
-                                <div style="font-weight: 700;">Logo cargado</div>
-                                <small style="color: rgba(255,255,255,0.6)">Se guardará al confirmar</small>
-                            </div>
-                            <button class="grizalum-btn grizalum-btn-cancelar" onclick="editorEmpresas.eliminarLogo()" style="padding: 8px 16px;">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
+                <div class="grizalum-tab-content active" id="tabEmoji">
+                    <div class="grizalum-emoji-grid">
+                        ${emojis.map(emoji => `
+                            <div class="grizalum-emoji-item ${emoji === empresa.icono ? 'selected' : ''}" 
+                                 onclick="editorEmpresas.seleccionarEmoji('${emoji}')">${emoji}</div>
+                        `).join('')}
                     </div>
                 </div>
 
-                <div class="grizalum-seccion">
-                    <div class="grizalum-seccion-titulo">Colores de Métricas</div>
-                    
-                    ${this._generarColorPicker('Ingresos', 'ingresos', this.coloresTemp.ingresos, '💰')}
-                    ${this._generarColorPicker('Gastos', 'gastos', this.coloresTemp.gastos, '💸')}
-                    ${this._generarColorPicker('Utilidad', 'utilidad', this.coloresTemp.utilidad, '📈')}
-                    ${this._generarColorPicker('Crecimiento', 'crecimiento', this.coloresTemp.crecimiento, '🚀')}
+                <div class="grizalum-tab-content" id="tabLogo">
+                    <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="editorEmpresas.subirLogo(event)">
+                    <div class="grizalum-upload-zona" onclick="document.getElementById('logoInput').click()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <div class="grizalum-upload-texto">Haz clic para subir tu logo</div>
+                        <small style="color: rgba(255,255,255,0.5)">PNG, JPG (máx 2MB)</small>
+                    </div>
+                    <div class="grizalum-logo-preview ${this.logoTemporal ? 'show' : ''}" id="logoPreview">
+                        <img src="${this.logoTemporal || ''}" id="logoImg">
+                        <div style="flex: 1; color: white;">
+                            <div style="font-weight: 700;">Logo cargado</div>
+                            <small style="color: rgba(255,255,255,0.6)">Se guardará al confirmar</small>
+                        </div>
+                        <button class="grizalum-btn grizalum-btn-cancelar" onclick="editorEmpresas.eliminarLogo()" style="padding: 8px 16px;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
                 </div>
+            </div>
 
-                <div class="grizalum-seccion">
-                    <div class="grizalum-seccion-titulo">Vista Previa</div>
-                    <div class="grizalum-preview-grid">
-                        <div class="grizalum-preview-card" style="--preview-color: ${this.coloresTemp.ingresos}">
-                            <div class="grizalum-preview-label">💰 Ingresos</div>
-                            <div class="grizalum-preview-valor" style="color: ${this.coloresTemp.ingresos}">S/. 125,000</div>
+            <div class="grizalum-seccion">
+                <div class="grizalum-seccion-titulo">Colores de Métricas</div>
+                
+                ${this._generarColorPicker('Ingresos', 'ingresos', this.coloresTemp.ingresos, '💰')}
+                ${this._generarColorPicker('Gastos', 'gastos', this.coloresTemp.gastos, '💸')}
+                ${this._generarColorPicker('Utilidad', 'utilidad', this.coloresTemp.utilidad, '📈')}
+                ${this._generarColorPicker('Crecimiento', 'crecimiento', this.coloresTemp.crecimiento, '🚀')}
+            </div>
+
+            <div class="grizalum-seccion">
+                <div class="grizalum-seccion-titulo">Datos Reales de la Empresa</div>
+                <div class="grizalum-preview-grid">
+                    <div class="grizalum-preview-card" style="--preview-color: ${this.coloresTemp.ingresos}">
+                        <div class="grizalum-preview-label">💰 Ingresos</div>
+                        <div class="grizalum-preview-valor" style="color: ${this.coloresTemp.ingresos}">
+                            S/. ${(empresa.finanzas?.ingresos || 0).toLocaleString()}
                         </div>
-                        <div class="grizalum-preview-card" style="--preview-color: ${this.coloresTemp.gastos}">
-                            <div class="grizalum-preview-label">💸 Gastos</div>
-                            <div class="grizalum-preview-valor" style="color: ${this.coloresTemp.gastos}">S/. 75,000</div>
+                    </div>
+                    <div class="grizalum-preview-card" style="--preview-color: ${this.coloresTemp.gastos}">
+                        <div class="grizalum-preview-label">💸 Gastos</div>
+                        <div class="grizalum-preview-valor" style="color: ${this.coloresTemp.gastos}">
+                            S/. ${(empresa.finanzas?.gastos || 0).toLocaleString()}
                         </div>
-                        <div class="grizalum-preview-card" style="--preview-color: ${this.coloresTemp.utilidad}">
-                            <div class="grizalum-preview-label">📈 Utilidad</div>
-                            <div class="grizalum-preview-valor" style="color: ${this.coloresTemp.utilidad}">S/. 50,000</div>
+                    </div>
+                    <div class="grizalum-preview-card" style="--preview-color: ${this.coloresTemp.utilidad}">
+                        <div class="grizalum-preview-label">📈 Utilidad</div>
+                        <div class="grizalum-preview-valor" style="color: ${this.coloresTemp.utilidad}">
+                            S/. ${(empresa.finanzas?.utilidadNeta || 0).toLocaleString()}
                         </div>
-                        <div class="grizalum-preview-card" style="--preview-color: ${this.coloresTemp.crecimiento}">
-                            <div class="grizalum-preview-label">🚀 Crecimiento</div>
-                            <div class="grizalum-preview-valor" style="color: ${this.coloresTemp.crecimiento}">+24.8%</div>
+                    </div>
+                    <div class="grizalum-preview-card" style="--preview-color: ${this.coloresTemp.crecimiento}">
+                        <div class="grizalum-preview-label">🚀 Margen</div>
+                        <div class="grizalum-preview-valor" style="color: ${this.coloresTemp.crecimiento}">
+                            ${(empresa.finanzas?.margenNeto || 0).toFixed(1)}%
                         </div>
                     </div>
                 </div>
             </div>
-        `;
-    }
+
+            <div class="grizalum-seccion">
+                <div class="grizalum-seccion-titulo">Notas y Comentarios</div>
+                
+                <div class="grizalum-campo">
+                    <label class="grizalum-label">Observaciones sobre la empresa</label>
+                    <textarea id="empresaNotas" class="grizalum-input" rows="4" 
+                              placeholder="Añade notas importantes, cambios recientes, observaciones...">${empresa.notas || ''}</textarea>
+                    <small style="color: rgba(255,255,255,0.5); font-size: 12px; display: block; margin-top: 8px;">
+                        Las notas se guardan automáticamente con la fecha de modificación
+                    </small>
+                </div>
+
+                ${empresa.historial && empresa.historial.length > 0 ? `
+                    <div style="margin-top: 20px;">
+                        <label class="grizalum-label">Historial de Cambios</label>
+                        <div style="background: rgba(0,0,0,0.2); border-radius: 12px; padding: 16px; max-height: 200px; overflow-y: auto;">
+                            ${empresa.historial.slice(0, 5).map(cambio => `
+                                <div style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: rgba(255,255,255,0.7); font-size: 13px;">
+                                    <strong style="color: white;">${new Date(cambio.fecha).toLocaleString('es-PE')}</strong>
+                                    <br>${cambio.descripcion}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+            </div>
+        </div>
+    `;
+}
 
     _generarColorPicker(nombre, id, color, emoji) {
         return `
@@ -768,49 +803,78 @@ class EditorEmpresasProfesional {
         });
     }
 
-    guardar() {
-        const nombre = document.getElementById('empresaNombre').value.trim();
-        const ruc = document.getElementById('empresaRuc').value.trim();
+guardar() {
+    const nombre = document.getElementById('empresaNombre').value.trim();
+    const ruc = document.getElementById('empresaRuc').value.trim();
+    const notas = document.getElementById('empresaNotas').value.trim();
 
-        if (!nombre || nombre.length < 3) {
-            alert('❌ El nombre debe tener al menos 3 caracteres');
-            return;
-        }
-
-        const empresa = this.gestor.estado.empresas[this.empresaEditando];
-        empresa.nombre = nombre;
-        
-        if (empresa.legal) {
-            empresa.legal.ruc = ruc;
-        }
-
-        if (this.logoTemporal) {
-            empresa.logo = this.logoTemporal;
-            empresa.icono = null;
-        } else if (this.emojiSeleccionado) {
-            empresa.icono = this.emojiSeleccionado;
-            empresa.logo = null;
-        }
-
-        empresa.coloresPersonalizados = { ...this.coloresTemp };
-        
-        if (empresa.meta) {
-            empresa.meta.fechaActualizacion = new Date().toISOString();
-        }
-
-        this.gestor._guardarEmpresas();
-        this.gestor._actualizarListaEmpresas();
-        this.gestor._actualizarSelectorPrincipal();
-        this.gestor._calcularMetricas();
-
-        this.cerrar();
-        
-        setTimeout(() => {
-            alert('✅ Empresa actualizada correctamente');
-        }, 300);
-
-        console.log('✅ Empresa guardada:', nombre);
+    if (!nombre || nombre.length < 3) {
+        alert('❌ El nombre debe tener al menos 3 caracteres');
+        return;
     }
+
+    const empresa = this.gestor.estado.empresas[this.empresaEditando];
+    const nombreAnterior = empresa.nombre;
+    
+    // Construir descripción de cambios
+    let cambios = [];
+    if (empresa.nombre !== nombre) cambios.push(`Nombre cambiado a "${nombre}"`);
+    if (this.logoTemporal && !empresa.logo) cambios.push('Logo personalizado agregado');
+    if (!this.logoTemporal && this.emojiSeleccionado !== empresa.icono) cambios.push(`Icono cambiado a ${this.emojiSeleccionado}`);
+    if (JSON.stringify(empresa.coloresPersonalizados) !== JSON.stringify(this.coloresTemp)) cambios.push('Colores personalizados actualizados');
+    if (notas !== (empresa.notas || '')) cambios.push('Notas actualizadas');
+    
+    // Actualizar datos
+    empresa.nombre = nombre;
+    
+    if (empresa.legal) {
+        empresa.legal.ruc = ruc;
+    }
+
+    if (this.logoTemporal) {
+        empresa.logo = this.logoTemporal;
+        empresa.icono = null;
+    } else if (this.emojiSeleccionado) {
+        empresa.icono = this.emojiSeleccionado;
+        empresa.logo = null;
+    }
+
+    empresa.coloresPersonalizados = { ...this.coloresTemp };
+    empresa.notas = notas;
+    
+    // Agregar al historial
+    if (!empresa.historial) empresa.historial = [];
+    
+    if (cambios.length > 0) {
+        empresa.historial.unshift({
+            fecha: new Date().toISOString(),
+            descripcion: cambios.join(', '),
+            usuario: 'Admin'
+        });
+        
+        // Mantener solo los últimos 20 cambios
+        if (empresa.historial.length > 20) {
+            empresa.historial = empresa.historial.slice(0, 20);
+        }
+    }
+    
+    if (empresa.meta) {
+        empresa.meta.fechaActualizacion = new Date().toISOString();
+    }
+
+    this.gestor._guardarEmpresas();
+    this.gestor._actualizarListaEmpresas();
+    this.gestor._actualizarSelectorPrincipal();
+    this.gestor._calcularMetricas();
+
+    this.cerrar();
+    
+    setTimeout(() => {
+        alert(`✅ Empresa actualizada correctamente\n\nCambios: ${cambios.join(', ') || 'Sin cambios'}`);
+    }, 300);
+
+    console.log('✅ Empresa guardada:', nombre);
+}
 
     cerrar() {
         const modal = document.getElementById('grizalumModalEditor');
