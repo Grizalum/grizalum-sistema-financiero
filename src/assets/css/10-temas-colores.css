@@ -1,169 +1,374 @@
 /* ================================================================
-   GRIZALUM - Sistema de Paletas Dinámicas v1.0
-   CSS optimizado que funciona con paletas-automaticas.js
+   GRIZALUM - Sistema de Temas Dinámicos Ultra Futurista v2.0
+   Transformación visual completa por empresa
    ================================================================ */
 
-/* ===== VARIABLES BASE (se sobrescriben dinámicamente) ===== */
 :root {
-    /* Colores de métricas (modificables por paletas y editor) */
+    /* Colores base que cambian dinámicamente */
+    --color-primario: #d4af37;
+    --color-secundario: #b8941f;
     --color-ingresos: #d4af37;
     --color-gastos: #ff6b35;
     --color-utilidad: #2ecc71;
     --color-crecimiento: #9b59b6;
     
-    /* Tema global */
-    --color-primario: #d4af37;
-    --color-secundario: #b8941f;
-    --fondo-principal: #0a0a0b;
-    --fondo-superficie: #1a1b23;
-    --texto-principal: #ffffff;
-    --texto-secundario: #e0e0e0;
+    /* Fondos dinámicos */
+    --fondo-header: linear-gradient(135deg, var(--color-primario), var(--color-secundario));
+    --fondo-sidebar: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.98) 100%);
     
-    /* Efectos modernos */
-    --glass-effect: rgba(26, 27, 35, 0.8);
-    --glass-border: rgba(212, 175, 55, 0.15);
-    --glass-blur: blur(20px);
-    --shadow-glow: 0 0 24px;
+    /* Efectos */
+    --glow-primario: 0 0 30px;
+    --transition-theme: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ===== APLICACIÓN DE COLORES A MÉTRICAS ===== */
-
-/* Tarjeta de Ingresos */
-.metric-card.revenue .metric-icon {
-    background: linear-gradient(135deg, var(--color-ingresos), var(--color-ingresos)) !important;
-    box-shadow: 0 4px 15px var(--color-ingresos) !important;
+/* ================================================================
+   TRANSICIONES SUAVES AL CAMBIAR TEMA
+   ================================================================ */
+* {
+    transition: 
+        background-color 0.6s ease,
+        border-color 0.6s ease,
+        color 0.6s ease,
+        box-shadow 0.6s ease !important;
 }
 
-.metric-card.revenue .metric-value {
-    color: var(--color-ingresos) !important;
+body.theme-changing {
+    pointer-events: none;
 }
 
-.metric-card.revenue:hover {
-    border-color: var(--color-ingresos) !important;
-    box-shadow: 0 8px 30px rgba(var(--color-ingresos), 0.3) !important;
+/* ================================================================
+   HEADER SUPERIOR - TRANSFORMACIÓN COMPLETA
+   ================================================================ */
+.executive-header {
+    background: var(--fondo-header) !important;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 3px solid var(--color-primario) !important;
 }
 
-/* Tarjeta de Gastos */
-.metric-card.expenses .metric-icon {
-    background: linear-gradient(135deg, var(--color-gastos), var(--color-gastos)) !important;
-    box-shadow: 0 4px 15px var(--color-gastos) !important;
+.executive-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: headerPulse 8s ease-in-out infinite;
 }
 
-.metric-card.expenses .metric-value {
-    color: var(--color-gastos) !important;
+@keyframes headerPulse {
+    0%, 100% { transform: scale(1) translate(0, 0); opacity: 0.3; }
+    50% { transform: scale(1.2) translate(-20px, 20px); opacity: 0.6; }
 }
 
-.metric-card.expenses:hover {
-    border-color: var(--color-gastos) !important;
-    box-shadow: 0 8px 30px rgba(var(--color-gastos), 0.3) !important;
+.page-title {
+    background: linear-gradient(135deg, white 0%, rgba(255,255,255,0.8) 100%);
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    font-weight: 900 !important;
+    text-shadow: none !important;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
 }
 
-/* Tarjeta de Utilidad */
-.metric-card.profit .metric-icon {
-    background: linear-gradient(135deg, var(--color-utilidad), var(--color-utilidad)) !important;
-    box-shadow: 0 4px 15px var(--color-utilidad) !important;
+.page-subtitle {
+    color: rgba(255,255,255,0.9) !important;
 }
 
-.metric-card.profit .metric-value {
-    color: var(--color-utilidad) !important;
+.ai-insights {
+    background: rgba(255,255,255,0.15) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+    color: white !important;
 }
 
-.metric-card.profit:hover {
-    border-color: var(--color-utilidad) !important;
-    box-shadow: 0 8px 30px rgba(var(--color-utilidad), 0.3) !important;
+/* ================================================================
+   BOTONES DE PERÍODO - TEMA DINÁMICO
+   ================================================================ */
+.time-period-selector {
+    display: flex;
+    gap: 8px;
 }
 
-/* Tarjeta de Crecimiento */
-.metric-card.growth .metric-icon {
-    background: linear-gradient(135deg, var(--color-crecimiento), var(--color-crecimiento)) !important;
-    box-shadow: 0 4px 15px var(--color-crecimiento) !important;
+.period-btn {
+    background: rgba(255,255,255,0.1) !important;
+    border: 2px solid rgba(255,255,255,0.2) !important;
+    color: rgba(255,255,255,0.8) !important;
+    backdrop-filter: blur(10px) !important;
+    transition: var(--transition-theme) !important;
 }
 
-.metric-card.growth .metric-value {
-    color: var(--color-crecimiento) !important;
+.period-btn:hover {
+    background: rgba(255,255,255,0.2) !important;
+    border-color: rgba(255,255,255,0.4) !important;
+    color: white !important;
+    transform: translateY(-2px) !important;
 }
 
-.metric-card.growth:hover {
-    border-color: var(--color-crecimiento) !important;
-    box-shadow: 0 8px 30px rgba(var(--color-crecimiento), 0.3) !important;
+.period-btn.active {
+    background: white !important;
+    border-color: white !important;
+    color: var(--color-primario) !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 15px rgba(255,255,255,0.3) !important;
 }
 
-/* ===== EFECTOS GLOBALES CON COLOR PRIMARIO ===== */
+/* ================================================================
+   BOTÓN IA - TEMA DINÁMICO
+   ================================================================ */
+.ai-header-button {
+    background: white !important;
+    color: var(--color-primario) !important;
+    border: 2px solid white !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 15px rgba(255,255,255,0.3) !important;
+}
 
-/* Sidebar */
+.ai-header-button:hover {
+    background: rgba(255,255,255,0.9) !important;
+    transform: translateY(-2px) scale(1.05) !important;
+    box-shadow: 0 8px 25px rgba(255,255,255,0.4) !important;
+}
+
+/* ================================================================
+   SIDEBAR - TRANSFORMACIÓN COMPLETA
+   ================================================================ */
+.sidebar {
+    background: var(--fondo-sidebar) !important;
+    border-right: 2px solid var(--color-primario) !important;
+    position: relative;
+}
+
+.sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--color-primario), transparent);
+    box-shadow: var(--glow-primario) var(--color-primario);
+}
+
 .sidebar-header {
-    background: linear-gradient(135deg, var(--color-primario), var(--color-secundario)) !important;
+    background: var(--fondo-header) !important;
+    border-bottom: 2px solid var(--color-primario) !important;
+    position: relative;
+    overflow: hidden;
 }
 
-/* Navegación activa */
+.sidebar-header::after {
+    content: '';
+    position: absolute;
+    bottom: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: sidebarGlow 6s ease-in-out infinite;
+}
+
+@keyframes sidebarGlow {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(10%, 10%); }
+}
+
 .nav-link.active {
-    background: linear-gradient(135deg, var(--color-primario), var(--color-secundario)) !important;
+    background: linear-gradient(90deg, var(--color-primario), transparent) !important;
     border-left: 4px solid var(--color-primario) !important;
+    color: white !important;
+    box-shadow: var(--glow-primario) var(--color-primario) !important;
 }
 
 .nav-link:hover:not(.active) {
-    color: var(--color-primario) !important;
+    background: linear-gradient(90deg, rgba(255,255,255,0.05), transparent) !important;
     border-left: 3px solid var(--color-primario) !important;
+    color: var(--color-primario) !important;
 }
 
-/* Botones principales */
-.ai-header-button,
-.btn-primary,
-.btn-create,
-.btn-guardar {
-    background: linear-gradient(135deg, var(--color-primario), var(--color-secundario)) !important;
-    border: none !important;
+/* ================================================================
+   TARJETAS DE MÉTRICAS - TRANSFORMACIÓN TOTAL
+   ================================================================ */
+.metric-card {
+    background: linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.8) 100%) !important;
+    backdrop-filter: blur(20px) !important;
+    border: 2px solid rgba(255,255,255,0.1) !important;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition-theme) !important;
 }
 
-/* Títulos con gradiente */
-.page-title {
+.metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primario), var(--color-secundario));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-8px) scale(1.02) !important;
+    border-color: var(--color-primario) !important;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.4), var(--glow-primario) var(--color-primario) !important;
+}
+
+.metric-card:hover::before {
+    opacity: 1;
+}
+
+/* Colores específicos por métrica */
+.metric-card.revenue {
+    --metrica-color: var(--color-ingresos);
+}
+
+.metric-card.expenses {
+    --metrica-color: var(--color-gastos);
+}
+
+.metric-card.profit {
+    --metrica-color: var(--color-utilidad);
+}
+
+.metric-card.growth {
+    --metrica-color: var(--color-crecimiento);
+}
+
+.metric-card .metric-icon {
+    background: linear-gradient(135deg, var(--metrica-color), var(--metrica-color)) !important;
+    box-shadow: 0 8px 25px var(--metrica-color) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.metric-card .metric-icon::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: iconRotate 3s linear infinite;
+}
+
+@keyframes iconRotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.metric-card .metric-value {
+    color: var(--metrica-color) !important;
+    text-shadow: 0 0 20px var(--metrica-color), 0 0 40px var(--metrica-color) !important;
+    font-weight: 900 !important;
+}
+
+.metric-card:hover .metric-value {
+    animation: valueGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes valueGlow {
+    0%, 100% { text-shadow: 0 0 20px var(--metrica-color), 0 0 40px var(--metrica-color); }
+    50% { text-shadow: 0 0 30px var(--metrica-color), 0 0 60px var(--metrica-color); }
+}
+
+/* ================================================================
+   TARJETAS DE GRÁFICOS - TEMA COMPLETO
+   ================================================================ */
+.chart-card {
+    background: linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.8) 100%) !important;
+    backdrop-filter: blur(20px) !important;
+    border: 2px solid rgba(255,255,255,0.1) !important;
+    transition: var(--transition-theme) !important;
+}
+
+.chart-card:hover {
+    border-color: var(--color-primario) !important;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.4), 0 0 30px var(--color-primario) !important;
+    transform: translateY(-5px) !important;
+}
+
+.chart-title {
+    color: white !important;
     background: linear-gradient(135deg, var(--color-primario), var(--color-secundario));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
 }
 
-/* ===== SELECTOR DE PALETAS FLOTANTE ===== */
+/* ================================================================
+   SELECTOR FLOTANTE DE PALETAS - MEJORADO
+   ================================================================ */
 .theme-selector {
     position: fixed;
     bottom: 20px;
     right: 20px;
     z-index: 10000;
-    background: var(--glass-effect);
-    backdrop-filter: var(--glass-blur);
-    border-radius: 50px;
-    padding: 10px;
+    background: linear-gradient(135deg, rgba(0,0,0,0.9), rgba(0,0,0,0.95));
+    backdrop-filter: blur(20px);
+    border-radius: 60px;
+    padding: 12px;
     display: flex;
-    gap: 10px;
-    border: 1px solid var(--glass-border);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-    transition: transform 0.3s ease;
+    gap: 12px;
+    border: 2px solid var(--color-primario);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6), var(--glow-primario) var(--color-primario);
+    transition: var(--transition-theme);
 }
 
 .theme-selector:hover {
-    transform: translateY(-5px);
+    transform: translateY(-8px) scale(1.05);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 50px var(--color-primario);
 }
 
 .theme-option {
-    width: 45px;
-    height: 45px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     border: 3px solid transparent;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
-    background-clip: padding-box;
+    overflow: hidden;
+}
+
+.theme-option::before {
+    content: '';
+    position: absolute;
+    inset: -50%;
+    background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: optionGlow 2s linear infinite;
+    opacity: 0;
+}
+
+.theme-option:hover::before {
+    opacity: 1;
+}
+
+@keyframes optionGlow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 .theme-option:hover {
-    transform: scale(1.15);
-    border-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.25) rotate(5deg);
+    border-color: rgba(255,255,255,0.5);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
 }
 
 .theme-option.active {
     border-color: white !important;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-    transform: scale(1.2);
+    box-shadow: 0 0 30px white, 0 0 50px white !important;
+    transform: scale(1.3);
+    animation: activeTheme 2s ease-in-out infinite;
+}
+
+@keyframes activeTheme {
+    0%, 100% { box-shadow: 0 0 30px white, 0 0 50px white; }
+    50% { box-shadow: 0 0 40px white, 0 0 70px white; }
 }
 
 .theme-option.active::after {
@@ -173,12 +378,18 @@
     left: 50%;
     transform: translate(-50%, -50%);
     color: white;
-    font-weight: bold;
-    font-size: 18px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    font-weight: 900;
+    font-size: 22px;
+    text-shadow: 0 0 10px black, 0 0 20px black;
+    animation: checkPulse 1s ease-in-out infinite;
 }
 
-/* Colores específicos de cada paleta */
+@keyframes checkPulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.2); }
+}
+
+/* Colores de paletas */
 .theme-option[data-theme="dorado-clasico"] { 
     background: linear-gradient(135deg, #d4af37 0%, #ff6b35 100%); 
 }
@@ -203,36 +414,50 @@
     background: linear-gradient(135deg, #6b7280 0%, #4ade80 100%); 
 }
 
-/* ===== EFECTOS GLASSMORPHISM ===== */
+/* ================================================================
+   ANIMACIONES GLOBALES
+   ================================================================ */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .metric-card,
 .chart-card {
-    backdrop-filter: var(--glass-blur);
-    transition: all 0.3s ease;
+    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) backwards;
 }
 
-.metric-card:hover,
-.chart-card:hover {
-    transform: translateY(-5px);
-}
+.metric-card:nth-child(1) { animation-delay: 0.1s; }
+.metric-card:nth-child(2) { animation-delay: 0.2s; }
+.metric-card:nth-child(3) { animation-delay: 0.3s; }
+.metric-card:nth-child(4) { animation-delay: 0.4s; }
 
-/* ===== RESPONSIVE ===== */
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
 @media (max-width: 768px) {
     .theme-selector {
         bottom: 10px;
         right: 10px;
-        padding: 6px;
-        gap: 6px;
-        flex-wrap: wrap;
-        max-width: 250px;
+        padding: 8px;
+        gap: 8px;
     }
     
     .theme-option {
-        width: 38px;
-        height: 38px;
+        width: 40px;
+        height: 40px;
     }
 }
 
-/* ===== ACCESIBILIDAD ===== */
+/* ================================================================
+   MODO REDUCIDO DE MOVIMIENTO
+   ================================================================ */
 @media (prefers-reduced-motion: reduce) {
     * {
         animation: none !important;
