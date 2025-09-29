@@ -954,6 +954,7 @@ class GestorEmpresasProfesional {
 
     const empresaAnterior = this.estado.empresaActual;
     this.estado.empresaActual = empresaId;
+    this._aplicarColoresEmpresa(empresaId);    
     
     // Actualizar interfaz
     this._actualizarSelectorPrincipal();
@@ -1134,6 +1135,34 @@ class GestorEmpresasProfesional {
             ultimaActualizacion: Date.now()
         };
     }
+    // ═══════════════════════════════════════════════════════════════════════════
+// SISTEMA DE COLORES POR EMPRESA
+// ═══════════════════════════════════════════════════════════════════════════
+
+_aplicarColoresEmpresa(empresaId) {
+    const empresa = this.estado.empresas[empresaId];
+    if (!empresa) return;
+    
+    const colores = empresa.coloresPersonalizados || {
+        ingresos: '#d4af37',
+        gastos: '#ff6b35',
+        utilidad: '#2ecc71',
+        crecimiento: '#9b59b6'
+    };
+    
+    const root = document.documentElement;
+    
+    // Aplicar colores de métricas
+    root.style.setProperty('--color-ingresos', colores.ingresos);
+    root.style.setProperty('--color-gastos', colores.gastos);
+    root.style.setProperty('--color-utilidad', colores.utilidad);
+    root.style.setProperty('--color-crecimiento', colores.crecimiento);
+    
+    // Aplicar color primario basado en ingresos
+    root.style.setProperty('--color-primario', colores.ingresos);
+    
+    this._log('info', `🎨 Colores aplicados para: ${empresa.nombre}`);
+}
 
     // ═══════════════════════════════════════════════════════════════════════════
     // SISTEMA DE PERSISTENCIA Y SINCRONIZACIÓN
