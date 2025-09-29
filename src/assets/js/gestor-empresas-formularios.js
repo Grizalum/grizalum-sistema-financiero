@@ -439,14 +439,37 @@ document.head.appendChild(estilosPro);
 
 console.log('✏️ Editor profesional de empresas cargado');
 
-// INICIALIZACIÓN GLOBAL
-if (typeof window.formularioEmpresas === 'undefined') {
+document.head.appendChild(estilosPro);
+
+console.log('✏️ Editor profesional de empresas cargado');
+
+// ================================================================
+// INICIALIZACIÓN FORZADA
+// ================================================================
+
+console.log('🔄 Intentando inicializar FormularioEmpresas...');
+
+function inicializarFormularioEmpresas() {
+    if (window.gestorEmpresas) {
+        window.formularioEmpresas = new FormularioEmpresas(window.gestorEmpresas);
+        console.log('✅ FormularioEmpresas creado exitosamente');
+        console.log('✅ Función editarEmpresa disponible:', typeof window.formularioEmpresas.editarEmpresa);
+        return true;
+    } else {
+        console.warn('⏳ gestorEmpresas aún no disponible, reintentando...');
+        return false;
+    }
+}
+
+// Intentar inmediatamente
+if (!inicializarFormularioEmpresas()) {
     setTimeout(() => {
-        if (window.gestorEmpresas) {
-            window.formularioEmpresas = new FormularioEmpresas(window.gestorEmpresas);
-            console.log('✅ FormularioEmpresas inicializado');
-        } else {
-            console.error('❌ gestorEmpresas no disponible');
+        if (!inicializarFormularioEmpresas()) {
+            setTimeout(() => {
+                if (!inicializarFormularioEmpresas()) {
+                    setTimeout(inicializarFormularioEmpresas, 3000);
+                }
+            }, 1500);
         }
-    }, 2000);
+    }, 500);
 }
