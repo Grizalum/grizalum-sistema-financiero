@@ -438,3 +438,15 @@ estilosPro.textContent = `
 document.head.appendChild(estilosPro);
 
 console.log('✏️ Editor profesional de empresas cargado');
+
+// INICIALIZACIÓN GLOBAL
+if (typeof window.formularioEmpresas === 'undefined') {
+    setTimeout(() => {
+        if (window.gestorEmpresas) {
+            window.formularioEmpresas = new FormularioEmpresas(window.gestorEmpresas);
+            console.log('✅ FormularioEmpresas inicializado');
+        } else {
+            console.error('❌ gestorEmpresas no disponible');
+        }
+    }, 2000);
+}
