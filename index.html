@@ -466,16 +466,16 @@
    </div>
 
    <!-- ================================================================
-        🎨 SELECTOR DE TEMAS FLOTANTE
-        ================================================================ -->
-   <div class="theme-selector">
-       <div class="theme-option active" data-theme="gold" onclick="window.grizalumFuturisticThemes?.changeTheme('gold') || changeTheme('gold')"></div>
-       <div class="theme-option" data-theme="blue" onclick="window.grizalumFuturisticThemes?.changeTheme('blue') || changeTheme('blue')"></div>
-       <div class="theme-option" data-theme="green" onclick="window.grizalumFuturisticThemes?.changeTheme('green') || changeTheme('green')"></div>
-       <div class="theme-option" data-theme="purple" onclick="window.grizalumFuturisticThemes?.changeTheme('purple') || changeTheme('purple')"></div>
-       <div class="theme-option" data-theme="red" onclick="window.grizalumFuturisticThemes?.changeTheme('red') || changeTheme('red')"></div>
-       <div class="theme-option" data-theme="dark" onclick="window.grizalumFuturisticThemes?.changeTheme('dark') || changeTheme('dark')"></div>
-   </div>
+     🎨 SELECTOR DE PALETAS AUTOMÁTICAS
+     ================================================================ -->
+<div class="theme-selector">
+    <button class="theme-option active" data-theme="dorado-clasico" onclick="aplicarPaletaAutomatica('dorado-clasico')" title="Dorado Clásico"></button>
+    <button class="theme-option" data-theme="azul-corporativo" onclick="aplicarPaletaAutomatica('azul-corporativo')" title="Azul Corporativo"></button>
+    <button class="theme-option" data-theme="verde-fresco" onclick="aplicarPaletaAutomatica('verde-fresco')" title="Verde Fresco"></button>
+    <button class="theme-option" data-theme="morado-innovacion" onclick="aplicarPaletaAutomatica('morado-innovacion')" title="Morado Innovación"></button>
+    <button class="theme-option" data-theme="rojo-energia" onclick="aplicarPaletaAutomatica('rojo-energia')" title="Rojo Energía"></button>
+    <button class="theme-option" data-theme="gris-minimalista" onclick="aplicarPaletaAutomatica('gris-minimalista')" title="Gris Minimalista"></button>
+</div>
 
 <!-- ================================================================
      🚀 SISTEMA JAVASCRIPT MODULAR GRIZALUM v4.0 - SOLO RAMAS
@@ -483,6 +483,7 @@
 
 <!-- 📦 CONFIGURACIÓN Y UTILIDADES (cargar primero) -->
 <script src="src/assets/js/config.js" defer></script>
+<script src="src/assets/js/paletas-automaticas.js" defer></script>    
 <script src="src/assets/js/utilidades.js" defer></script>
 <script src="src/assets/js/datos-empresas.js" defer></script>
 <script src="src/assets/js/controlador-periodos.js" defer></script>
@@ -492,7 +493,6 @@
 <script src="src/assets/js/gestor-empresas-formularios01.js"></script>
 <script src="src/assets/js/gestor-empresas-principal.js" defer></script>  
 <script src="src/assets/js/gestor-empresas-emojis.js" defer></script>    
-<script src="src/assets/js/gestor-empresas-temas.js" defer></script>
 <script src="src/assets/js/gestor-empresas-reportes.js" defer></script>
 
 <!-- 📊 SISTEMA PRINCIPAL Y GRÁFICOS -->
