@@ -934,7 +934,92 @@ guardar() {
     console.log('✅ Empresa guardada:', nombre);
     console.log('🎨 Colores personalizados aplicados al sistema');
 }
-    
+
+   aplicarPaleta(nombrePaleta) {
+    const paletas = {
+        'dorado-clasico': {
+            ingresos: '#d4af37',
+            gastos: '#ff6b35',
+            utilidad: '#10b981',
+            crecimiento: '#3b82f6',
+            tematica: '#d4af37'
+        },
+        'azul-corporativo': {
+            ingresos: '#2563eb',
+            gastos: '#f59e0b',
+            utilidad: '#10b981',
+            crecimiento: '#8b5cf6',
+            tematica: '#2563eb'
+        },
+        'verde-fresco': {
+            ingresos: '#10b981',
+            gastos: '#ef4444',
+            utilidad: '#22c55e',
+            crecimiento: '#06b6d4',
+            tematica: '#10b981'
+        },
+        'morado-innovacion': {
+            ingresos: '#8b5cf6',
+            gastos: '#f97316',
+            utilidad: '#10b981',
+            crecimiento: '#3b82f6',
+            tematica: '#8b5cf6'
+        },
+        'rojo-energia': {
+            ingresos: '#ef4444',
+            gastos: '#f59e0b',
+            utilidad: '#10b981',
+            crecimiento: '#06b6d4',
+            tematica: '#ef4444'
+        },
+        'gris-minimalista': {
+            ingresos: '#64748b',
+            gastos: '#f97316',
+            utilidad: '#10b981',
+            crecimiento: '#3b82f6',
+            tematica: '#64748b'
+        }
+    };
+
+    const colores = paletas[nombrePaleta];
+    if (!colores) return;
+
+    this.paletaActiva = nombrePaleta;
+    this.coloresTemp = { ...colores };
+
+    Object.keys(colores).forEach(tipo => {
+        const input = document.getElementById(`color${tipo}`);
+        const hex = document.getElementById(`hex${tipo}`);
+        const preview = input?.parentElement.querySelector('.grizalum-color-preview');
+        
+        if (input) input.value = colores[tipo];
+        if (hex) hex.textContent = colores[tipo];
+        if (preview) preview.style.background = colores[tipo];
+    });
+
+    const cards = document.querySelectorAll('.grizalum-preview-card');
+    cards.forEach(card => {
+        const label = card.querySelector('.grizalum-preview-label').textContent;
+        if (label.includes('Ingresos')) {
+            card.style.setProperty('--preview-color', colores.ingresos);
+            card.querySelector('.grizalum-preview-valor').style.color = colores.ingresos;
+        }
+        if (label.includes('Gastos')) {
+            card.style.setProperty('--preview-color', colores.gastos);
+            card.querySelector('.grizalum-preview-valor').style.color = colores.gastos;
+        }
+        if (label.includes('Utilidad')) {
+            card.style.setProperty('--preview-color', colores.utilidad);
+            card.querySelector('.grizalum-preview-valor').style.color = colores.utilidad;
+        }
+        if (label.includes('Margen')) {
+            card.style.setProperty('--preview-color', colores.crecimiento);
+            card.querySelector('.grizalum-preview-valor').style.color = colores.crecimiento;
+        }
+    });
+
+    console.log(`Paleta "${nombrePaleta}" aplicada`);
+} 
     cerrar() {
         const modal = document.getElementById('grizalumModalEditor');
         if (modal) {
