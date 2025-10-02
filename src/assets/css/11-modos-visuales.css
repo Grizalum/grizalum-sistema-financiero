@@ -1,30 +1,31 @@
-/* ================================================================
-   MODOS VISUALES - Sistema completo
-   ================================================================ */
+/* MODO CLARO - Máxima prioridad */
+body.modo-claro,
+body.modo-claro * {
+    transition: background-color 0.3s ease, color 0.3s ease !important;
+}
 
-/* MODO CLARO */
 body.modo-claro {
     background: #f8fafc !important;
 }
 
+body.modo-claro .dashboard-content,
 body.modo-claro .main-content {
     background: #ffffff !important;
 }
 
-body.modo-claro .executive-header {
-    background: linear-gradient(135deg, var(--color-primario) 0%, var(--color-secundario) 100%) !important;
+body.modo-claro .chart-card {
+    background: #ffffff !important;
+    border: 2px solid #e5e7eb !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
 }
 
-body.modo-claro .chart-card,
 body.modo-claro .metric-card {
-    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
-    border: 2px solid rgba(0, 0, 0, 0.1) !important;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08) !important;
+    background: #ffffff !important;
+    border: 2px solid #e5e7eb !important;
 }
 
 body.modo-claro .chart-title,
-body.modo-claro .metric-title,
-body.modo-claro .page-title {
+body.modo-claro .metric-title {
     color: #1f2937 !important;
     text-shadow: none !important;
 }
@@ -34,24 +35,23 @@ body.modo-claro .metric-value {
 }
 
 body.modo-claro .chart-container {
-    background: rgba(0, 0, 0, 0.02) !important;
+    background: #f9fafb !important;
 }
 
 body.modo-claro .sidebar {
-    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%) !important;
+    background: #ffffff !important;
+    border-right: 3px solid var(--color-primario) !important;
+}
+
+body.modo-claro .sidebar-header {
+    background: linear-gradient(135deg, var(--color-primario) 0%, var(--color-secundario) 100%) !important;
 }
 
 body.modo-claro .nav-link {
     color: #4b5563 !important;
 }
 
-body.modo-claro .nav-link.active {
-    background: linear-gradient(90deg, var(--color-primario) 0%, transparent 100%) !important;
-    color: #000000 !important;
-}
-
 body.modo-claro .company-brand h1,
-body.modo-claro .nav-section-title,
 body.modo-claro .summary-label,
 body.modo-claro .summary-value {
     color: #1f2937 !important;
@@ -62,27 +62,21 @@ body.modo-neutro {
     background: #475569 !important;
 }
 
+body.modo-neutro .dashboard-content,
 body.modo-neutro .main-content {
     background: #64748b !important;
 }
 
-body.modo-neutro .executive-header {
-    background: linear-gradient(135deg, var(--color-primario) 0%, var(--color-secundario) 100%) !important;
-}
-
 body.modo-neutro .chart-card,
 body.modo-neutro .metric-card {
-    background: linear-gradient(135deg, rgba(71, 85, 105, 0.95) 0%, rgba(51, 65, 85, 0.95) 100%) !important;
-    border: 2px solid rgba(255, 255, 255, 0.15) !important;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;
+    background: rgba(71, 85, 105, 0.9) !important;
+    border: 2px solid rgba(255, 255, 255, 0.2) !important;
 }
 
 body.modo-neutro .chart-title,
 body.modo-neutro .metric-title,
-body.modo-neutro .metric-value,
-body.modo-neutro .page-title {
+body.modo-neutro .metric-value {
     color: #f9fafb !important;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5) !important;
 }
 
 body.modo-neutro .chart-container {
@@ -90,23 +84,5 @@ body.modo-neutro .chart-container {
 }
 
 body.modo-neutro .sidebar {
-    background: linear-gradient(180deg, #475569 0%, #334155 100%) !important;
-}
-
-body.modo-neutro .nav-link {
-    color: rgba(255, 255, 255, 0.9) !important;
-}
-
-body.modo-neutro .company-brand h1,
-body.modo-neutro .nav-section-title,
-body.modo-neutro .summary-label,
-body.modo-neutro .summary-value {
-    color: #f9fafb !important;
-}
-
-/* MODO OSCURO (por defecto) */
-body:not(.modo-claro):not(.modo-neutro) .chart-card,
-body:not(.modo-claro):not(.modo-neutro) .metric-card {
-    background: linear-gradient(135deg, rgba(26, 27, 35, 0.95) 0%, rgba(22, 33, 62, 0.95) 100%) !important;
-    border: 2px solid rgba(255, 255, 255, 0.1) !important;
+    background: #475569 !important;
 }
