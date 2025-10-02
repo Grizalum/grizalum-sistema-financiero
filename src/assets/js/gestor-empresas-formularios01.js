@@ -509,6 +509,37 @@ class EditorEmpresasProfesional {
                     padding: 20px;
                 }
             }
+            .grizalum-modo-btn {
+    padding: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 6px;
+}
+
+.grizalum-modo-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.grizalum-modo-btn.activo {
+    border-color: #d4af37 !important;
+    box-shadow: 0 0 20px #d4af37, inset 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+.grizalum-modo-btn span {
+    display: block;
+    font-size: 15px;
+}
         `;
 
         document.head.appendChild(estilos);
@@ -624,6 +655,30 @@ class EditorEmpresasProfesional {
         <button class="grizalum-paleta-btn" onclick="editorEmpresas.aplicarPaleta('gris-minimalista')"
                 style="background: linear-gradient(135deg, #64748b 0%, #475569 100%);">
             <span>⚫ Gris Minimalista</span>
+        </button>
+    </div>
+</div>
+<div class="grizalum-seccion">
+    <div class="grizalum-seccion-titulo">🌓 Modo de Visualización</div>
+    <p style="color: rgba(255,255,255,0.6); font-size: 14px; margin-bottom: 16px;">
+        Elige el modo visual según tu preferencia o condiciones de luz
+    </p>
+    
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+        <button class="grizalum-modo-btn" onclick="editorEmpresas.aplicarModoVisual('oscuro')" 
+                style="background: linear-gradient(135deg, #1a1b23 0%, #16213e 100%); color: white;">
+            <span>🌙 Modo Oscuro</span>
+            <small style="opacity: 0.7; font-size: 11px;">Para ambientes con poca luz</small>
+        </button>
+        <button class="grizalum-modo-btn" onclick="editorEmpresas.aplicarModoVisual('claro')"
+                style="background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%); color: #1f2937;">
+            <span>☀️ Modo Claro</span>
+            <small style="opacity: 0.7; font-size: 11px;">Para ambientes con mucha luz</small>
+        </button>
+        <button class="grizalum-modo-btn" onclick="editorEmpresas.aplicarModoVisual('neutro')"
+                style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); color: white;">
+            <span>⚖️ Modo Neutro</span>
+            <small style="opacity: 0.7; font-size: 11px;">Equilibrado y cómodo</small>
         </button>
     </div>
 </div>
@@ -1021,6 +1076,16 @@ guardar() {
 
     console.log(`Paleta "${nombrePaleta}" aplicada`);
 } 
+    aplicarModoVisual(modo) {
+    this.modoVisual = modo;
+    
+    document.querySelectorAll('.grizalum-modo-btn').forEach(btn => {
+        btn.classList.remove('activo');
+    });
+    event.target.closest('.grizalum-modo-btn').classList.add('activo');
+    
+    console.log(`🌓 Modo visual "${modo}" seleccionado`);
+}
     cerrar() {
         const modal = document.getElementById('grizalumModalEditor');
         if (modal) {
