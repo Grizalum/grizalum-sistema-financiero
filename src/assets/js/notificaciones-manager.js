@@ -779,11 +779,10 @@ class GrizalumNotificacionesPremium {
                             : '<i class="fas fa-chevron-down"></i> Ver más';
                     }
                 }
-                
-                // Marcar como leída después de 1 segundo
-                setTimeout(() => {
+              } else {
+                    // Si es mensaje corto, marcar como leída
                     this.marcarLeida(item.dataset.id);
-                }, 1000);
+                }
             });
         });
     }
