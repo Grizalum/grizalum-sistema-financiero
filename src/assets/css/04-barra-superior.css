@@ -683,3 +683,96 @@ html body button#btnNotificaciones.notification-center i,
     background-color: #d4af37 !important;
     background-image: linear-gradient(135deg, #d4af37 0%, #b8941f 100%) !important;
 }
+/* ================================================================
+   SELECTOR DE EMPRESA - INTEGRADO CON TEMÁTICA
+   ================================================================ */
+.company-selector,
+#companySelector {
+    background: rgba(0, 0, 0, 0.25) !important;
+    backdrop-filter: blur(15px) !important;
+    border: 2px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 14px !important;
+    padding: 10px 16px !important;
+    transition: all 0.3s ease !important;
+    min-width: 200px !important;
+}
+
+.company-selector:hover,
+#companySelector:hover {
+    border-color: var(--color-primario, #d4af37) !important;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.25) !important;
+    background: rgba(0, 0, 0, 0.35) !important;
+}
+
+.company-selector select,
+.company-selector button,
+.company-selector .selected-company,
+#companySelector select,
+#companySelector button {
+    background: rgba(0, 0, 0, 0.15) !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 10px !important;
+    padding: 10px 14px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+}
+
+.company-selector select:hover,
+#companySelector select:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: var(--color-primario, #d4af37) !important;
+}
+
+/* Icono de empresa */
+.company-selector .company-icon,
+#companySelector .company-icon {
+    font-size: 20px !important;
+    margin-right: 8px !important;
+}
+
+/* Estado operativo */
+.company-selector .status-indicator,
+#companySelector .status-indicator {
+    width: 8px !important;
+    height: 8px !important;
+    border-radius: 50% !important;
+    background: #10b981 !important;
+    margin-left: 8px !important;
+    box-shadow: 0 0 8px #10b981 !important;
+}
+
+/* MODO CLARO */
+body.modo-claro .company-selector,
+body.modo-claro #companySelector {
+    background: white !important;
+    border: 2px solid #e5e7eb !important;
+}
+
+body.modo-claro .company-selector select,
+body.modo-claro #companySelector select {
+    background: #f9fafb !important;
+    color: #1f2937 !important;
+    border: 1px solid #e5e7eb !important;
+}
+
+body.modo-claro .company-selector:hover,
+body.modo-claro #companySelector:hover {
+    border-color: var(--color-primario, #d4af37) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* MODO NEUTRO */
+body.modo-neutro .company-selector,
+body.modo-neutro #companySelector {
+    background: rgba(74, 59, 39, 0.5) !important;
+    border-color: rgba(212, 175, 55, 0.3) !important;
+}
+
+body.modo-neutro .company-selector select,
+body.modo-neutro #companySelector select {
+    background: rgba(0, 0, 0, 0.2) !important;
+    color: #f5d9a8 !important;
+}
