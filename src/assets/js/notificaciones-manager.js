@@ -771,18 +771,17 @@ class GrizalumNotificacionesPremium {
             item.addEventListener('click', (e) => {
                 // Si tiene indicador "Ver más", expandir primero
                 if (item.querySelector('.expand-indicator')) {
-                    item.classList.toggle('expanded');
-                    const indicador = item.querySelector('.expand-indicator');
-                    if (indicador) {
-                        indicador.innerHTML = item.classList.contains('expanded') 
-                            ? '<i class="fas fa-chevron-up"></i> Ver menos'
-                            : '<i class="fas fa-chevron-down"></i> Ver más';
-                    }
+                item.classList.toggle('expanded');
+                const indicador = item.querySelector('.expand-indicator');
+                if (indicador) {
+                    indicador.innerHTML = item.classList.contains('expanded') 
+                        ? '<i class="fas fa-chevron-up"></i> Ver menos'
+                        : '<i class="fas fa-chevron-down"></i> Ver más';
                 }
-              } else {
-                    // Si es mensaje corto, marcar como leída
-                    this.marcarLeida(item.dataset.id);
-                }
+            } else {
+                // Si es mensaje corto, marcar como leída
+                this.marcarLeida(item.dataset.id);
+            }
             });
         });
     }
