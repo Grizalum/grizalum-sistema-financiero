@@ -800,63 +800,63 @@ class GestorEmpresasProfesional {
         this._log('info', '🎨 Interfaz renderizada exitosamente');
     }
 
-    _generarHTMLSelector() {
-        const empresaActual = this._obtenerEmpresaActual();
-        const totalCaja = this._calcularTotalCaja();
-        const totalEmpresas = Object.keys(this.estado.empresas).length;
+   _generarHTMLSelector() {
+    const empresaActual = this._obtenerEmpresaActual();
+    const totalCaja = this._calcularTotalCaja();
+    const totalEmpresas = Object.keys(this.estado.empresas).length;
 
-        return `
-            <div class="grizalum-empresas-container">
-                <div class="grizalum-empresa-selector" onclick="gestorEmpresas.alternarLista()">
-                    <div class="grizalum-empresa-info">
-                        <div class="grizalum-empresa-avatar" id="grizalumEmpresaAvatar">
-                            ${empresaActual?.icono || '🏢'}
-                        </div>
-                        <div class="grizalum-empresa-details">
-                            <div class="grizalum-empresa-nombre" id="grizalumEmpresaNombre">
-                                ${empresaActual?.nombre || 'Seleccionar Empresa'}
-                            </div>
-                            <div class="grizalum-empresa-estado" id="grizalumEmpresaEstado">
-                                ${this._generarEstadoEmpresa(empresaActual)}
-                            </div>
-                            <div class="grizalum-empresa-metricas" id="grizalumEmpresaMetricas">
-                                💰 ${this.config.regional.moneda} ${empresaActual?.finanzas?.caja?.toLocaleString() || '0'}
-                            </div>
-                        </div>
+    return `
+        <div class="grizalum-empresas-container" id="grizalumCompanyContainer">
+            <div class="grizalum-empresa-selector" onclick="gestorEmpresas.alternarLista()">
+                <div class="grizalum-empresa-info">
+                    <div class="grizalum-empresa-avatar" id="grizalumEmpresaAvatar">
+                        ${empresaActual?.icono || '🏢'}
                     </div>
-                    <div class="grizalum-dropdown-arrow" id="grizalumDropdownArrow">
-                        <i class="fas fa-chevron-down"></i>
+                    <div class="grizalum-empresa-details">
+                        <div class="grizalum-empresa-nombre" id="grizalumEmpresaNombre">
+                            ${empresaActual?.nombre || 'Seleccionar Empresa'}
+                        </div>
+                        <div class="grizalum-empresa-estado" id="grizalumEmpresaEstado">
+                            ${this._generarEstadoEmpresa(empresaActual)}
+                        </div>
+                        <div class="grizalum-empresa-metricas" id="grizalumEmpresaMetricas">
+                            💰 ${this.config.regional.moneda} ${empresaActual?.finanzas?.caja?.toLocaleString() || '0'}
+                        </div>
                     </div>
                 </div>
+                <div class="grizalum-dropdown-arrow" id="grizalumDropdownArrow">
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
 
-                <div class="grizalum-empresas-list" id="grizalumEmpresasList">
-                    <div class="grizalum-list-header">
-                        <h4 class="grizalum-list-title">
-                            🏢 Mis Empresas
-                        </h4>
-                        <button class="grizalum-btn-nueva" onclick="gestorEmpresas.abrirModalNuevaEmpresa()">
-                            <i class="fas fa-plus"></i>
-                            Nueva
-                        </button>
+            <div class="grizalum-empresas-list" id="grizalumEmpresasList">
+                <div class="grizalum-list-header">
+                    <h4 class="grizalum-list-title">
+                        🏢 Mis Empresas
+                    </h4>
+                    <button class="grizalum-btn-nueva" onclick="gestorEmpresas.abrirModalNuevaEmpresa()">
+                        <i class="fas fa-plus"></i>
+                        Nueva
+                    </button>
+                </div>
+                
+                <div class="grizalum-empresas-grid" id="grizalumEmpresasGrid">
+                    <!-- Se llena dinámicamente -->
+                </div>
+                
+                <div class="grizalum-list-footer">
+                    <div class="grizalum-total-empresas">
+                        📊 ${totalEmpresas} empresa${totalEmpresas !== 1 ? 's' : ''} registrada${totalEmpresas !== 1 ? 's' : ''}
                     </div>
-                    
-                    <div class="grizalum-empresas-grid" id="grizalumEmpresasGrid">
-                        <!-- Se llena dinámicamente -->
-                    </div>
-                    
-                    <div class="grizalum-list-footer">
-                        <div class="grizalum-total-empresas">
-                            📊 ${totalEmpresas} empresa${totalEmpresas !== 1 ? 's' : ''} registrada${totalEmpresas !== 1 ? 's' : ''}
-                        </div>
-                        <div class="grizalum-total-caja">
-                            <i class="fas fa-coins"></i>
-                            Total en Caja: ${this.config.regional.moneda} ${totalCaja.toLocaleString()}
-                        </div>
+                    <div class="grizalum-total-caja">
+                        <i class="fas fa-coins"></i>
+                        Total en Caja: ${this.config.regional.moneda} ${totalCaja.toLocaleString()}
                     </div>
                 </div>
             </div>
-        `;
-    }
+        </div>
+    `;
+}
 
     _actualizarListaEmpresas() {
         const grid = document.getElementById('grizalumEmpresasGrid');
