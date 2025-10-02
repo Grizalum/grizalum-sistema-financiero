@@ -594,7 +594,39 @@ class EditorEmpresasProfesional {
                     <input type="text" id="empresaRuc" class="grizalum-input" value="${empresa.legal?.ruc || ''}" maxlength="11">
                 </div>
             </div>
-
+           <div class="grizalum-seccion">
+    <div class="grizalum-seccion-titulo">🎨 Paletas Predefinidas</div>
+    <p style="color: rgba(255,255,255,0.6); font-size: 14px; margin-bottom: 16px;">
+        Selecciona una paleta rápida o personaliza cada color manualmente
+    </p>
+    
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+        <button class="grizalum-paleta-btn" onclick="editorEmpresas.aplicarPaleta('dorado-clasico')" 
+                style="background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);">
+            <span>✨ Dorado Clásico</span>
+        </button>
+        <button class="grizalum-paleta-btn" onclick="editorEmpresas.aplicarPaleta('azul-corporativo')"
+                style="background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);">
+            <span>💼 Azul Corporativo</span>
+        </button>
+        <button class="grizalum-paleta-btn" onclick="editorEmpresas.aplicarPaleta('verde-fresco')"
+                style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+            <span>🌿 Verde Fresco</span>
+        </button>
+        <button class="grizalum-paleta-btn" onclick="editorEmpresas.aplicarPaleta('morado-innovacion')"
+                style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">
+            <span>🚀 Morado Innovación</span>
+        </button>
+        <button class="grizalum-paleta-btn" onclick="editorEmpresas.aplicarPaleta('rojo-energia')"
+                style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+            <span>🔥 Rojo Energía</span>
+        </button>
+        <button class="grizalum-paleta-btn" onclick="editorEmpresas.aplicarPaleta('gris-minimalista')"
+                style="background: linear-gradient(135deg, #64748b 0%, #475569 100%);">
+            <span>⚫ Gris Minimalista</span>
+        </button>
+    </div>
+</div>
             <div class="grizalum-seccion">
                 <div class="grizalum-seccion-titulo">Identidad Visual</div>
                 
