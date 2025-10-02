@@ -1080,12 +1080,20 @@ guardar() {
     aplicarModoVisual(modo) {
     this.modoVisual = modo;
     
+    document.body.classList.remove('modo-oscuro', 'modo-claro', 'modo-neutro');
+    
+    if (modo === 'claro') {
+        document.body.classList.add('modo-claro');
+    } else if (modo === 'neutro') {
+        document.body.classList.add('modo-neutro');
+    }
+    
     document.querySelectorAll('.grizalum-modo-btn').forEach(btn => {
         btn.classList.remove('activo');
     });
     event.target.closest('.grizalum-modo-btn').classList.add('activo');
     
-    console.log(`🌓 Modo visual "${modo}" seleccionado`);
+    console.log(`🌓 Modo visual "${modo}" aplicado al sistema`);
 }
     cerrar() {
         const modal = document.getElementById('grizalumModalEditor');
