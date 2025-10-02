@@ -591,6 +591,16 @@ class EditorEmpresasProfesional {
         setTimeout(() => modal.classList.add('show'), 10);
 
         this._configurarEventos();
+        // Aplicar modo visual guardado
+if (this.modoVisual) {
+    setTimeout(() => {
+        document.body.classList.remove('modo-oscuro', 'modo-claro', 'modo-neutro');
+        if (this.modoVisual === 'claro') {
+            document.body.classList.add('modo-claro');
+        } else if (this.modoVisual === 'neutro') {
+            document.body.classList.add('modo-neutro');
+        }
+    }, 100);
     }
 
     _generarHeader(empresa) {
