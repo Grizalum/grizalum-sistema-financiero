@@ -507,6 +507,12 @@ class GrizalumNotificacionesPremium {
                 -webkit-line-clamp: 2;
                 -webkit-box-orient: vertical;
                 overflow: hidden;
+                transition: all 0.3s;
+            }
+
+            .notification-item.expanded .notification-title {
+                display: block;
+                -webkit-line-clamp: unset;
             }
 
             .notification-message {
@@ -517,6 +523,30 @@ class GrizalumNotificacionesPremium {
                 -webkit-line-clamp: 2;
                 -webkit-box-orient: vertical;
                 overflow: hidden;
+                transition: all 0.3s;
+            }
+
+            .notification-item.expanded .notification-message {
+                display: block;
+                -webkit-line-clamp: unset;
+            }
+
+            .expand-indicator {
+                margin-top: 8px;
+                font-size: 11px;
+                color: #d4af37;
+                font-weight: 600;
+                display: none;
+                align-items: center;
+                gap: 4px;
+            }
+
+            .notification-item:not(.expanded) .expand-indicator {
+                display: flex;
+            }
+
+            .expand-indicator i {
+                font-size: 10px;
             }
 
             .notification-time {
@@ -716,6 +746,11 @@ class GrizalumNotificacionesPremium {
             const admin = notif.esAdmin ? 'admin' : '';
             const pref = notif.esAdmin ? '🎖️ [ADMIN] ' : '';
             const tiempo = this.formatearTiempo(notif.fecha);
+            
+            // Detectar si el mensaje es largo
+            const esLargo = notif.mensaje.length > 80 || notif.titulo.length > 50;
+            const indicador = esLargo ? '<div class="expand-indicator"><i class="fas fa-chevron-down"></i> Ver más</div>' : '';
+            
             return `
                 <div class="notification-item ${!notif.leida ? 'unread' : ''} ${admin}" data-id="${notif.id}">
                     <div class="notification-icon" style="background:${cat.gradient}">
@@ -724,14 +759,32 @@ class GrizalumNotificacionesPremium {
                     <div class="notification-content">
                         <div class="notification-title">${pref}${notif.titulo}</div>
                         <div class="notification-message">${notif.mensaje}</div>
+                        ${indicador}
                         <div class="notification-time">${tiempo}</div>
                     </div>
                 </div>
             `;
         }).join('');
         
+        // Eventos: Click para expandir/marcar leída
         document.querySelectorAll('.notification-item').forEach(item => {
-            item.addEventListener('click', () => this.marcarLeida(item.dataset.id));
+            item.addEventListener('click', (e) => {
+                // Si tiene indicador "Ver más", expandir primero
+                if (item.querySelector('.expand-indicator')) {
+                    item.classList.toggle('expanded');
+                    const indicador = item.querySelector('.expand-indicator');
+                    if (indicador) {
+                        indicador.innerHTML = item.classList.contains('expanded') 
+                            ? '<i class="fas fa-chevron-up"></i> Ver menos'
+                            : '<i class="fas fa-chevron-down"></i> Ver más';
+                    }
+                }
+                
+                // Marcar como leída después de 1 segundo
+                setTimeout(() => {
+                    this.marcarLeida(item.dataset.id);
+                }, 1000);
+            });
         });
     }
 
