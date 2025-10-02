@@ -954,7 +954,8 @@ class GestorEmpresasProfesional {
 
     const empresaAnterior = this.estado.empresaActual;
     this.estado.empresaActual = empresaId;
-    this._aplicarColoresEmpresa(empresaId);    
+    this._aplicarColoresEmpresa(empresaId); 
+    this._aplicarModoVisualEmpresa(empresaId);
     
     // Actualizar interfaz
     this._actualizarSelectorPrincipal();
@@ -1164,6 +1165,24 @@ _aplicarColoresEmpresa(empresaId) {
     root.style.setProperty('--color-secundario', colores.tematica || colores.ingresos);
     
     this._log('info', `🎨 Colores aplicados para: ${empresa.nombre}`);
+}
+    _aplicarModoVisualEmpresa(empresaId) {
+    const empresa = this.estado.empresas[empresaId];
+    if (!empresa) return;
+    
+    const modoVisual = empresa.modoVisual || 'oscuro';
+    
+    // Remover todas las clases de modo
+    document.body.classList.remove('modo-oscuro', 'modo-claro', 'modo-neutro');
+    
+    // Aplicar el modo de esta empresa
+    if (modoVisual === 'claro') {
+        document.body.classList.add('modo-claro');
+    } else if (modoVisual === 'neutro') {
+        document.body.classList.add('modo-neutro');
+    }
+    
+    this._log('info', `🌓 Modo visual de ${empresa.nombre}: ${modoVisual}`);
 }
 
     // ═══════════════════════════════════════════════════════════════════════════
