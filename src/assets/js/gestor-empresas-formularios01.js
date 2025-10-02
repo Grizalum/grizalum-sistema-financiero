@@ -883,6 +883,7 @@ guardar() {
 
     // NUEVO: Guardar y aplicar colores personalizados
     empresa.coloresPersonalizados = { ...this.coloresTemp };
+    empresa.paletaActiva = this.paletaActiva;
     
     // Aplicar colores inmediatamente al sistema
     const root = document.documentElement;
