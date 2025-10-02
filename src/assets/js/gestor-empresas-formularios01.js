@@ -939,6 +939,7 @@ guardar() {
     // NUEVO: Guardar y aplicar colores personalizados
     empresa.coloresPersonalizados = { ...this.coloresTemp };
     empresa.paletaActiva = this.paletaActiva;
+    empresa.modoVisual = this.modoVisual || 'oscuro';
     
     // Aplicar colores inmediatamente al sistema
     const root = document.documentElement;
