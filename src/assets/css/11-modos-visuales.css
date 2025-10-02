@@ -1,31 +1,28 @@
-/* MODO CLARO - Máxima prioridad */
-body.modo-claro,
-body.modo-claro * {
-    transition: background-color 0.3s ease, color 0.3s ease !important;
-}
+/* ================================================================
+   MODOS VISUALES MEJORADOS - Versión Final
+   ================================================================ */
 
+/* ========== MODO CLARO ========== */
 body.modo-claro {
     background: #f8fafc !important;
 }
 
-body.modo-claro .dashboard-content,
-body.modo-claro .main-content {
+body.modo-claro .main-content,
+body.modo-claro .dashboard-content {
     background: #ffffff !important;
 }
 
-body.modo-claro .chart-card {
-    background: #ffffff !important;
-    border: 2px solid #e5e7eb !important;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
-}
-
+body.modo-claro .chart-card,
 body.modo-claro .metric-card {
     background: #ffffff !important;
     border: 2px solid #e5e7eb !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
 }
 
 body.modo-claro .chart-title,
-body.modo-claro .metric-title {
+body.modo-claro .metric-title,
+body.modo-claro .page-title,
+body.modo-claro .page-subtitle {
     color: #1f2937 !important;
     text-shadow: none !important;
 }
@@ -40,7 +37,6 @@ body.modo-claro .chart-container {
 
 body.modo-claro .sidebar {
     background: #ffffff !important;
-    border-right: 3px solid var(--color-primario) !important;
 }
 
 body.modo-claro .sidebar-header {
@@ -52,37 +48,89 @@ body.modo-claro .nav-link {
 }
 
 body.modo-claro .company-brand h1,
+body.modo-claro .company-brand p,
 body.modo-claro .summary-label,
 body.modo-claro .summary-value {
     color: #1f2937 !important;
 }
 
-/* MODO NEUTRO */
-body.modo-neutro {
-    background: #475569 !important;
+/* ========== MODO OSCURO PURO ========== */
+body:not(.modo-claro):not(.modo-neutro) .sidebar {
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%) !important;
 }
 
-body.modo-neutro .dashboard-content,
-body.modo-neutro .main-content {
-    background: #64748b !important;
+body:not(.modo-claro):not(.modo-neutro) .sidebar-header {
+    background: linear-gradient(135deg, var(--color-primario) 0%, var(--color-secundario) 100%) !important;
+}
+
+body:not(.modo-claro):not(.modo-neutro) .main-content {
+    background: #0f172a !important;
+}
+
+body:not(.modo-claro):not(.modo-neutro) .executive-header {
+    background: linear-gradient(135deg, var(--color-primario) 0%, var(--color-secundario) 100%) !important;
+}
+
+body:not(.modo-claro):not(.modo-neutro) .chart-card,
+body:not(.modo-claro):not(.modo-neutro) .metric-card {
+    background: linear-gradient(135deg, rgba(26, 27, 35, 0.95) 0%, rgba(22, 33, 62, 0.95) 100%) !important;
+    border: 2px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+body:not(.modo-claro):not(.modo-neutro) .company-brand h1,
+body:not(.modo-claro):not(.modo-neutro) .summary-label,
+body:not(.modo-claro):not(.modo-neutro) .summary-value {
+    color: #ffffff !important;
+}
+
+/* ========== MODO NEUTRO (Estilo Windows Luz Nocturna) ========== */
+body.modo-neutro {
+    background: linear-gradient(135deg, #2c2416 0%, #3d2f1f 100%) !important;
+    filter: sepia(0.15) saturate(0.85) !important;
+}
+
+body.modo-neutro .main-content,
+body.modo-neutro .dashboard-content {
+    background: #3d2f1f !important;
+}
+
+body.modo-neutro .executive-header {
+    background: linear-gradient(135deg, #6b5737 0%, #54442c 100%) !important;
 }
 
 body.modo-neutro .chart-card,
 body.modo-neutro .metric-card {
-    background: rgba(71, 85, 105, 0.9) !important;
-    border: 2px solid rgba(255, 255, 255, 0.2) !important;
+    background: linear-gradient(135deg, rgba(74, 59, 39, 0.95) 0%, rgba(61, 47, 31, 0.95) 100%) !important;
+    border: 2px solid rgba(212, 175, 55, 0.2) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
 }
 
 body.modo-neutro .chart-title,
 body.modo-neutro .metric-title,
-body.modo-neutro .metric-value {
-    color: #f9fafb !important;
+body.modo-neutro .metric-value,
+body.modo-neutro .page-title {
+    color: #f5d9a8 !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5) !important;
 }
 
 body.modo-neutro .chart-container {
-    background: rgba(0, 0, 0, 0.2) !important;
+    background: rgba(0, 0, 0, 0.25) !important;
 }
 
 body.modo-neutro .sidebar {
-    background: #475569 !important;
+    background: linear-gradient(180deg, #4a3b27 0%, #3d2f1f 100%) !important;
+}
+
+body.modo-neutro .sidebar-header {
+    background: linear-gradient(135deg, #8b7355 0%, #6b5737 100%) !important;
+}
+
+body.modo-neutro .nav-link {
+    color: rgba(245, 217, 168, 0.9) !important;
+}
+
+body.modo-neutro .company-brand h1,
+body.modo-neutro .summary-label,
+body.modo-neutro .summary-value {
+    color: #f5d9a8 !important;
 }
