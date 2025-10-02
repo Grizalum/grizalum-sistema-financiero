@@ -776,3 +776,87 @@ body.modo-neutro #companySelector select {
     background: rgba(0, 0, 0, 0.2) !important;
     color: #f5d9a8 !important;
 }
+/* ═══════════════════════════════════════════════════════════════════
+   INTEGRACIÓN CON MODOS VISUALES - MÁXIMA PRIORIDAD
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* SELECTOR PRINCIPAL - Adaptado a temática oscura */
+.grizalum-empresa-selector {
+    background: rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(15px) !important;
+    border: 2px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.grizalum-empresa-selector:hover {
+    background: rgba(0, 0, 0, 0.4) !important;
+    border-color: var(--color-primario, #d4af37) !important;
+}
+
+.grizalum-empresa-nombre,
+.grizalum-empresa-estado,
+.grizalum-empresa-metricas {
+    color: white !important;
+}
+
+/* LISTA DROPDOWN - Oscura y premium */
+.grizalum-empresas-list {
+    background: rgba(26, 27, 35, 0.98) !important;
+    border: 2px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+.grizalum-list-header {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.grizalum-list-title {
+    color: white !important;
+}
+
+.grizalum-empresa-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.grizalum-empresa-card:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.grizalum-card-nombre {
+    color: white !important;
+}
+
+.grizalum-card-datos {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.grizalum-list-footer {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.grizalum-total-empresas,
+.grizalum-total-caja {
+    color: white !important;
+}
+
+/* MODO CLARO */
+body.modo-claro .grizalum-empresa-selector {
+    background: white !important;
+    border-color: #e5e7eb !important;
+}
+
+body.modo-claro .grizalum-empresa-nombre,
+body.modo-claro .grizalum-empresa-estado,
+body.modo-claro .grizalum-empresa-metricas,
+body.modo-claro .grizalum-list-title,
+body.modo-claro .grizalum-card-nombre,
+body.modo-claro .grizalum-total-empresas,
+body.modo-claro .grizalum-total-caja {
+    color: #1f2937 !important;
+}
+
+body.modo-claro .grizalum-empresas-list {
+    background: white !important;
+    border-color: #e5e7eb !important;
+}
