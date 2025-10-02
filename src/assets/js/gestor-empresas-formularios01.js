@@ -569,6 +569,7 @@ class EditorEmpresasProfesional {
           tematica: '#d4af37'
       };
         
+        this.modoVisual = empresa.modoVisual || 'oscuro';
 
         this._mostrarModal(empresa);
     }
