@@ -3,7 +3,7 @@
  * GRIZALUM SIDEBAR MANAGER - ULTRA PROFESSIONAL EDITION v2.0
  * Sistema de navegación lateral dinámico e inteligente
  * Integrado con sistema de temas y utilidades GRIZALUM
- * ================================================================
+ * ===============================================ƒ=================
  */
 
 class ManejadorSidebarGRIZALUM {
@@ -90,7 +90,6 @@ class ManejadorSidebarGRIZALUM {
             
         } catch (error) {
             this.log(`❌ Error inicializando sidebar: ${error.message}`, 'error');
-            this.mostrarNotificacion('Error inicializando sidebar', 'error');
         }
     }
 
