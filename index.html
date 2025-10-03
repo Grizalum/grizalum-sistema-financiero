@@ -259,6 +259,12 @@
                            <span>Balance General</span>
                        </a>
                    </div>
+                   <div class="nav-item">
+                   <a href="#" class="nav-link" onclick="showSection('cuentas-bancarias')">
+                        <i class="nav-icon fas fa-university"></i>
+                       <span>Cuentas Bancarias</span>
+                      </a>
+                  </div>
                </div>
 
                <div class="nav-section">
@@ -463,6 +469,9 @@
                 📄 OTRAS SECCIONES (SE CARGAN DINÁMICAMENTE)
                 ================================================================ -->
 
+                 <div id="cuentasBancariasContent" class="dashboard-content" style="display: none;">
+             <!-- El contenido lo maneja ui-cuentas-bancarias.js -->
+         </div>
        </main>
    </div>
 
@@ -476,6 +485,7 @@
 <script src="src/assets/js/utilidades.js" defer></script>
 <script src="src/assets/js/datos-empresas.js" defer></script>
 <script src="src/assets/js/gestor-cuentas-bancarias.js" defer></script>
+<script src="src/assets/js/ui-cuentas-bancarias.js" defer></script>
 <script src="src/assets/js/controlador-periodos.js" defer></script>
 <script src="src/assets/js/graficos-dinamicos.js" defer></script>
 
