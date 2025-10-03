@@ -609,32 +609,35 @@ class GrizalumApp {
     }
 
     finalizeInitialization() {
-        this.hideLoadingScreen();
-        this.isInitialized = true;
-        
-        const loadTime = Date.now() - this.startTime;
-        console.log(`GRIZALUM inicializado en ${loadTime}ms`);
-        
-        this.mostrarNotificacionSegura(`¡Bienvenido a ${this.config.name}! Sistema financiero listo.`, 'success');
-        
-        const readyEvent = new CustomEvent('grizalumReady', {
-            detail: { 
-                version: this.config.version,
-                loadTime: loadTime,
-                modules: Object.keys(this.modules),
-                sections: Array.from(this.sections.keys())
-            }
-        });
-        document.dispatchEvent(readyEvent);
-        
-        this.handleResponsiveDesign();
-        
-        // Mostrar dashboard por defecto
-        this.showSection('dashboard');
-        
-        console.log('Sistema GRIZALUM completamente operativo');
-        console.log(`Secciones registradas: ${this.sections.size}`);
-    }
+    this.hideLoadingScreen();
+    this.isInitialized = true;
+    
+    // CRÍTICO: Registrar secciones AQUÍ cuando el DOM está completamente listo
+    this.registerSections();
+    
+    const loadTime = Date.now() - this.startTime;
+    console.log(`GRIZALUM inicializado en ${loadTime}ms`);
+    
+    this.mostrarNotificacionSegura(`¡Bienvenido a ${this.config.name}! Sistema financiero listo.`, 'success');
+    
+    const readyEvent = new CustomEvent('grizalumReady', {
+        detail: { 
+            version: this.config.version,
+            loadTime: loadTime,
+            modules: Object.keys(this.modules),
+            sections: Array.from(this.sections.keys())
+        }
+    });
+    document.dispatchEvent(readyEvent);
+    
+    this.handleResponsiveDesign();
+    
+    // Mostrar dashboard por defecto
+    this.showSection('dashboard');
+    
+    console.log('Sistema GRIZALUM completamente operativo');
+    console.log(`Secciones registradas: ${this.sections.size}`);
+}
 
     changeTheme(theme) {
         document.body.className = document.body.className.replace(/theme-\w+/g, '');
