@@ -9,7 +9,7 @@
     min-height: 100vh;
     width: 100%;
     position: relative;
-    overflow-x: hidden; /* Evita scroll horizontal */
+    overflow-x: hidden;
 }
 
 /* ===== MAIN CONTENT CONTAINER ===== */
@@ -21,39 +21,26 @@
     flex-direction: column;
     transition: all var(--transition-normal);
     background: transparent;
-    /* Removido: margin-top y padding-top innecesarios */
-    /* Removido: overflow-y auto que causaba problemas */
 }
 
-/* ===== DASHBOARD CONTENT - SIMPLIFICADO ===== */
+/* ===== DASHBOARD CONTENT - CORREGIDO Y UNIFICADO ===== */
 .dashboard-content {
     flex: 1;
-    padding: var(--dashboard-padding);
-    display: flex;
-    flex-direction: column;
-    gap: var(--dashboard-gap);
+    width: 100%;
     max-width: 100%;
-    overflow-x: hidden;
-    /* Removido: padding personalizado que causaba inconsistencias */
-}
-
-/* CORRECCIÓN: Solo una regla para #dashboardContent */
-#dashboardContent {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: var(--dashboard-gap) !important;
-    padding: var(--dashboard-padding) !important;
-}
-
-/* ===== SISTEMA DE SECCIONES - MEJORADO ===== */
-.dashboard-content:not(.active) {
-    display: none;
-}
-
-.dashboard-content.active {
-    display: flex;
+    padding: 20px;
+    margin: 0 auto;
     flex-direction: column;
-    gap: var(--dashboard-gap);
+    align-items: center;
+    gap: 30px;
+    overflow-x: hidden;
+    /* CRÍTICO: Por defecto oculto */
+    display: none !important;
+}
+
+/* CRÍTICO: Solo la sección activa es visible */
+.dashboard-content.active {
+    display: flex !important;
 }
 
 /* ===== CONTAINERS ESPECIALIZADOS ===== */
@@ -83,7 +70,7 @@
     pointer-events: all;
 }
 
-/* ===== COMPANY SELECTOR - SIMPLIFICADO ===== */
+/* ===== COMPANY SELECTOR ===== */
 .company-selector {
     position: relative;
     z-index: 1000;
@@ -230,7 +217,6 @@
     gap: var(--spacing-md);
 }
 
-/* CORRECCIÓN: Iconos de empresa mejorados */
 .grizalum-company-item-icon {
     width: 42px !important;
     height: 42px !important;
@@ -433,41 +419,7 @@
 .h-full { height: 100%; }
 .min-h-screen { min-height: 100vh; }
 
-/* CENTRAR CONTENIDO CUANDO FALTAN ELEMENTOS */
-.metrics-grid {
-    display: grid !important;
-    grid-template-columns: repeat(4, 1fr) !important;
-    justify-content: center !important;
-    align-content: center !important;
-    place-items: stretch !important;
-}
-
-/* ASEGURAR QUE EL DASHBOARD ESTÉ CENTRADO */
-.dashboard-content {
-    max-width: 100% !important;
-    margin: 0 auto !important;
-    padding-left: 20px !important;
-    padding-right: 20px !important;
-}
-
-.dashboard-content {
-    width: 100% !important;
-    max-width: 100% !important;
-    padding: 20px !important;
-    margin: 0 auto !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-}
-
-.metrics-grid,
-.charts-section {
-    width: 100% !important;
-    max-width: 1400px !important;
-    margin: 0 auto !important;
-}
-
-/* AGREGA ESTO AL FINAL DE CUALQUIER CSS */
+/* ===== GRIDS Y CARDS - UNIFICADO ===== */
 .metrics-grid {
     display: grid !important;
     grid-template-columns: repeat(4, 1fr) !important;
@@ -489,16 +441,6 @@
     box-sizing: border-box !important;
 }
 
-.dashboard-content {
-    width: 100% !important;
-    max-width: 100% !important;
-    padding: 20px !important;
-    margin: 0 auto !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-}
-
 .charts-section {
     display: grid !important;
     grid-template-columns: repeat(3, 1fr) !important;
@@ -513,4 +455,28 @@
     min-height: 300px !important;
     max-height: 300px !important;
 }
-</style>
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1200px) {
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    .charts-section {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .metrics-grid {
+        grid-template-columns: 1fr !important;
+    }
+    .charts-section {
+        grid-template-columns: 1fr !important;
+    }
+    .metric-card {
+        height: 140px !important;
+    }
+    .chart-card {
+        height: 280px !important;
+    }
+}
