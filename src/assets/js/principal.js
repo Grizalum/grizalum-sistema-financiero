@@ -194,7 +194,7 @@ class GrizalumApp {
     console.log(`📄 Navegando a sección: ${sectionId}`);
     
     // Ocultar TODAS las secciones con display flex para mantener el layout
-    const allSections = document.querySelectorAll('.dashboard-content');
+    const allSections = document.querySelectorAll('[id$="Content"]');
     allSections.forEach(section => {
         section.classList.remove('active');
         section.style.display = 'none';
