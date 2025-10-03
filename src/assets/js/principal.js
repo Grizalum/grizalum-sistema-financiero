@@ -191,36 +191,39 @@ class GrizalumApp {
 
     // ======= NAVEGACIÓN Y SECCIONES =======
     showSection(sectionId) {
-        console.log(`📄 Navegando a sección: ${sectionId}`);
+    console.log(`📄 Navegando a sección: ${sectionId}`);
+    
+    // Ocultar TODAS las secciones con display flex para mantener el layout
+    const allSections = document.querySelectorAll('.dashboard-content');
+    allSections.forEach(section => {
+        section.classList.remove('active');
+        section.style.display = 'none';
+    });
+    
+    // Mostrar sección objetivo
+    const targetSection = document.getElementById(sectionId + 'Content');
+    if (targetSection) {
+        targetSection.style.display = 'flex'; // Importante: usar flex, no block
+        targetSection.classList.add('active');
         
-        // Ocultar todas las secciones
-        const allSections = document.querySelectorAll('[id$="Content"]');
-        allSections.forEach(section => {
-            section.classList.remove('active');
-            section.style.display = 'none';
-        });
-        
-        // Mostrar sección objetivo
-        const targetSection = document.getElementById(sectionId + 'Content');
-        if (targetSection) {
-            targetSection.style.display = 'block';
-            targetSection.classList.add('active');
-            
-            // Animar entrada
-            setTimeout(() => {
-                targetSection.style.opacity = '1';
-                targetSection.style.transform = 'translateY(0)';
-            }, 50);
-        }
-        
-        // Actualizar navegación y título
-        this.updateNavigation(sectionId);
-        this.updatePageTitle(sectionId);
-        this.triggerSectionChange(sectionId);
-        
-        // Actualizar sección actual
-        this.currentSection = sectionId;
+        // Animar entrada
+        targetSection.style.opacity = '0';
+        setTimeout(() => {
+            targetSection.style.opacity = '1';
+            targetSection.style.transform = 'translateY(0)';
+        }, 50);
+    } else {
+        console.warn(`⚠️ Sección no encontrada: ${sectionId}Content`);
     }
+    
+    // Actualizar navegación y título
+    this.updateNavigation(sectionId);
+    this.updatePageTitle(sectionId);
+    this.triggerSectionChange(sectionId);
+    
+    // Actualizar sección actual
+    this.currentSection = sectionId;
+}
 
     updateNavigation(sectionId) {
         // Remover clase activa de todos los enlaces
