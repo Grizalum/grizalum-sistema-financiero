@@ -646,6 +646,7 @@ class GrizalumApp {
         
         // Aplicar responsive design inicial
         this.handleResponsiveDesign();
+        this.showSection('dashboard');
         
         console.log('🚀 Sistema GRIZALUM completamente operativo');
     }
