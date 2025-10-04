@@ -484,7 +484,7 @@ async function initializeCharts() {
         
         // Notificar éxito si está disponible
         if (typeof window.mostrarNotificacion === 'function') {
-            window.mostrarNotificacion(`${successCount} gráficos cargados correctamente`, 'success');
+            // window.mostrarNotificacion(`${successCount} gráficos cargados correctamente`, 'success');
         }
         
         return true;
@@ -493,7 +493,7 @@ async function initializeCharts() {
         console.error('💥 Error fatal en inicialización:', error);
         
         if (typeof window.mostrarNotificacion === 'function') {
-            window.mostrarNotificacion('Error cargando gráficos', 'error');
+            // window.mostrarNotificacion('Error cargando gráficos', 'error');
         }
         
         return false;
