@@ -32,13 +32,15 @@ class UICuentasBancarias {
     }
 
     configurarNavegacion() {
-        // Interceptar el click del botón "Cuentas Bancarias"
-        const navLink = document.querySelector('a[onclick*="cuentas-bancarias"]');
+        const navLink = document.querySelector('.nav-cuentas-bancarias');
         if (navLink) {
-            navLink.onclick = (e) => {
+            navLink.addEventListener('click', (e) => {
                 e.preventDefault();
                 this.mostrarSeccion();
-            };
+            });
+            console.log('✅ Navegación de Cuentas Bancarias configurada');
+        } else {
+            console.error('❌ No se encontró el botón de Cuentas Bancarias');
         }
     }
 
