@@ -313,6 +313,7 @@ class GrizalumMetricsUpdater {
 
     extractNumericValue(text) {
         if (typeof text === 'number') return text;
+        if (!text || text === undefined || text === null) return 0;
         
         const cleanText = text.toString()
             .replace(/[S\/\.\s,₡$€£¥%]/g, '')
