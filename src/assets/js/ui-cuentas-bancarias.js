@@ -46,35 +46,37 @@ class UICuentasBancarias {
 }
 
     mostrarSeccion() {
-        // Ocultar todas las secciones
-        document.querySelectorAll('.dashboard-content').forEach(section => {
-            section.style.display = 'none';
-            section.classList.remove('active');
-        });
+    console.log('🏦 Mostrando Cuentas Bancarias');
+    
+    // Ocultar todas las secciones
+    document.querySelectorAll('.dashboard-content').forEach(section => {
+        section.style.display = 'none';
+        section.classList.remove('active');
+    });
 
-        // Mostrar sección de cuentas bancarias
-        const seccion = document.getElementById('cuentasBancariasContent');
-        if (seccion) {
-            seccion.style.display = 'flex';
-            seccion.classList.add('active');
-        }
-
-        // Actualizar navegación activa
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.classList.remove('active');
-        });
-        const navLink = document.querySelector('a[onclick*="cuentas-bancarias"]');
-        if (navLink) {
-            navLink.classList.add('active');
-        }
-
-        // Actualizar header
-        document.getElementById('pageTitle').textContent = 'Gestión de Cuentas Bancarias';
-        document.getElementById('pageSubtitle').textContent = 'Administra tus cuentas, cajas y movimientos';
-
-        // Renderizar contenido
-        this.renderizarContenido();
+    // Mostrar sección de cuentas bancarias
+    const seccion = document.getElementById('cuentasBancariasContent');
+    if (seccion) {
+        seccion.style.display = 'flex';
+        seccion.classList.add('active');
     }
+
+    // Actualizar navegación activa
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+    });
+    const navLink = document.querySelector('.nav-cuentas-bancarias');
+    if (navLink) {
+        navLink.classList.add('active');
+    }
+
+    // Actualizar header
+    document.getElementById('pageTitle').textContent = 'Gestión de Cuentas Bancarias';
+    document.getElementById('pageSubtitle').textContent = 'Administra tus cuentas, cajas y movimientos';
+
+    // Renderizar contenido
+    this.renderizarContenido();
+}
 
     renderizarContenido() {
         const seccion = document.getElementById('cuentasBancariasContent');
