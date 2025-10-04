@@ -106,27 +106,53 @@ function toggleSidebar() {
 function showSection(seccion) {
     console.log(`🧭 Navegando a sección: ${seccion}`);
     
-    // Aquí puedes agregar lógica para mostrar/ocultar secciones
-    // Por ahora solo mostramos una notificación
+    // Ocultar todas las secciones
+    document.querySelectorAll('.dashboard-content').forEach(section => {
+        section.style.display = 'none';
+        section.classList.remove('active');
+    });
     
-    // Actualizar enlaces activos
+    // Mostrar la sección solicitada
+    const targetSection = document.getElementById(seccion + 'Content');
+    if (targetSection) {
+        targetSection.style.display = 'flex';
+        targetSection.classList.add('active');
+        console.log(`✅ Sección ${seccion} mostrada correctamente`);
+    } else {
+        console.error(`❌ No se encontró la sección: ${seccion}Content`);
+    }
+    
+    // Actualizar enlaces activos en el menú
     document.querySelectorAll('.nav-link').forEach(link => {
         link.classList.remove('active');
     });
     
-    // Encontrar y activar el enlace correspondiente
-    const enlaceActivo = document.querySelector(`[onclick="showSection('${seccion}')"]`);
+    const enlaceActivo = document.querySelector(`[data-section="${seccion}"]`);
     if (enlaceActivo) {
         enlaceActivo.classList.add('active');
+    }
+    
+    // Actualizar títulos del header
+    const titles = {
+        'dashboard': { title: 'Panel de Control Ejecutivo', subtitle: 'Resumen financiero en tiempo real' },
+        'cash-flow': { title: 'Flujo de Caja', subtitle: 'Control de ingresos y egresos' },
+        'income-statement': { title: 'Estado de Resultados', subtitle: 'Análisis de rentabilidad' },
+        'balance-sheet': { title: 'Balance General', subtitle: 'Situación financiera' },
+        'inventory': { title: 'Inventario', subtitle: 'Gestión de stock y productos' },
+        'sales': { title: 'Ventas', subtitle: 'Registro y análisis de ventas' }
+    };
+    
+    if (titles[seccion]) {
+        const titleElement = document.getElementById('pageTitle');
+        const subtitleElement = document.getElementById('pageSubtitle');
+        if (titleElement) titleElement.textContent = titles[seccion].title;
+        if (subtitleElement) subtitleElement.textContent = titles[seccion].subtitle;
     }
     
     // Disparar evento para otros módulos
     document.dispatchEvent(new CustomEvent('grizalumSeccionCambiada', {
         detail: { seccion: seccion, timestamp: Date.now() }
     }));
-    
-    // Mostrar notificación temporal
-    mostrarNotificacion(`📱 Navegando a: ${seccion}`, 'info');
 }
 
 // ================================================================
