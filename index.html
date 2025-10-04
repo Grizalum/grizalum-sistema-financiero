@@ -21,33 +21,22 @@
 <link rel="stylesheet" href="src/assets/css/11-modos-visuales.css">
 <link rel="stylesheet" href="src/assets/css/grizalum-principal.css">
     
-    <!-- ================================================================
-         📊 META TAGS SEO Y SOCIAL
-         ================================================================ -->
     <meta name="description" content="Sistema financiero empresarial premium con IA integrada para empresas peruanas. Dashboard ejecutivo, flujo de caja, análisis predictivo.">
     <meta name="keywords" content="sistema financiero, empresas peru, contabilidad, flujo de caja, dashboard, IA">
     <meta name="author" content="GRIZALUM">
     
-    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="GRIZALUM | Sistema Financiero Empresarial">
     <meta property="og:description" content="Dashboard ejecutivo premium para empresas peruanas">
     <meta property="og:image" content="./src/assets/images/grizalum-preview.png">
     
-    <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:title" content="GRIZALUM | Sistema Financiero">
     <meta property="twitter:description" content="Control financiero profesional">
 
-    <!-- ================================================================
-         🌐 FAVICON Y ICONOS OPTIMIZADOS
-         ================================================================ -->
     <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
     <link rel="apple-touch-icon" href="./src/assets/images/apple-touch-icon.png">
 
-    <!-- ================================================================
-         📱 PWA CONFIGURATION
-         ================================================================ -->
     <link rel="manifest" href="./manifest.json">
     <meta name="application-name" content="GRIZALUM">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -57,37 +46,18 @@
     <meta name="msapplication-TileColor" content="#d4af37">
     <meta name="theme-color" content="#d4af37">
 
-    <!-- ================================================================
-         🔤 FONTS OPTIMIZADOS
-         ================================================================ -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-    <!-- ================================================================
-         📈 LIBRERÍAS EXTERNAS OPTIMIZADAS
-         ================================================================ -->
-  
-    <!-- FontAwesome para iconos -->
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-   <!-- CHART.JS -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
-
-   <!-- jsPDF para generar PDFs -->
   <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
 
-    <!-- ================================================================
-         ⚡ PRELOAD CRÍTICO
-         ================================================================ -->
     <link rel="preload" href="src/assets/css/grizalum-principal.css" as="style">
     <link rel="preload" href="src/assets/js/principal.js" as="script">
 
-    <!-- ================================================================
-         🔧 LAYOUT CSS INTEGRADO (SOLO ESTRUCTURA)
-         ================================================================ -->
     <style>
-        /* ESTRUCTURA BÁSICA DEL LAYOUT */
         .metrics-grid {
             display: grid !important;
             grid-template-columns: repeat(4, 1fr) !important;
@@ -141,7 +111,6 @@
             max-height: 350px !important;
         }
 
-        /* RESPONSIVE */
         @media (max-width: 1200px) {
             .metrics-grid {
                 grid-template-columns: repeat(2, 1fr) !important;
@@ -173,9 +142,6 @@
 
 </head>
 <body>
-   <!-- ================================================================
-        🔄 PANTALLA DE CARGA PREMIUM
-        ================================================================ -->
    <div id="loadingScreen" class="loading-screen">
        <div class="loading-content">
            <div class="brand-icon loading-logo">
@@ -190,14 +156,7 @@
        </div>
    </div>
 
-   <!-- ================================================================
-        🏗️ CONTENEDOR PRINCIPAL DE LA APLICACIÓN
-        ================================================================ -->
    <div class="app-container">
-       
-       <!-- ================================================================
-            📋 BARRA LATERAL DE NAVEGACIÓN
-            ================================================================ -->
        <nav class="sidebar" id="sidebar">
            <div class="sidebar-header">
                <div class="company-brand">
@@ -229,13 +188,13 @@
                        Panel Principal
                    </div>
                    <div class="nav-item">
-                       <a href="#" class="nav-link active" onclick="showSection('dashboard')">
+                       <a href="#" class="nav-link active" data-section="dashboard">
                            <i class="nav-icon fas fa-tachometer-alt"></i>
                            <span>Panel de Control</span>
                        </a>
                    </div>
                    <div class="nav-item">
-                       <a href="#" class="nav-link" onclick="showSection('cash-flow')">
+                       <a href="#" class="nav-link" data-section="cash-flow">
                            <i class="nav-icon fas fa-water"></i>
                            <span>Flujo de Caja</span>
                        </a>
@@ -248,23 +207,23 @@
                        Contabilidad
                    </div>
                    <div class="nav-item">
-                       <a href="#" class="nav-link" onclick="showSection('income-statement')">
+                       <a href="#" class="nav-link" data-section="income-statement">
                            <i class="nav-icon fas fa-chart-pie"></i>
                            <span>Estado de Resultados</span>
                        </a>
                    </div>
                    <div class="nav-item">
-                       <a href="#" class="nav-link" onclick="showSection('balance-sheet')">
+                       <a href="#" class="nav-link" data-section="balance-sheet">
                            <i class="nav-icon fas fa-balance-scale"></i>
                            <span>Balance General</span>
                        </a>
                    </div>
                    <div class="nav-item">
-                    <a href="#" class="nav-link nav-cuentas-bancarias">
-                        <i class="nav-icon fas fa-university"></i>
-                        <span>Cuentas Bancarias</span>
-                    </a>
-                </div>
+                       <a href="#" class="nav-link nav-cuentas-bancarias">
+                           <i class="nav-icon fas fa-university"></i>
+                           <span>Cuentas Bancarias</span>
+                       </a>
+                   </div>
                </div>
 
                <div class="nav-section">
@@ -273,13 +232,13 @@
                        Operaciones
                    </div>
                    <div class="nav-item">
-                       <a href="#" class="nav-link" onclick="showSection('inventory')">
+                       <a href="#" class="nav-link" data-section="inventory">
                            <i class="nav-icon fas fa-boxes"></i>
                            <span>Inventario</span>
                        </a>
                    </div>
                    <div class="nav-item">
-                       <a href="#" class="nav-link" onclick="showSection('sales')">
+                       <a href="#" class="nav-link" data-section="sales">
                            <i class="nav-icon fas fa-shopping-cart"></i>
                            <span>Ventas</span>
                        </a>
@@ -287,15 +246,8 @@
                </div>
            </div>
        </nav>
-
-       <!-- ================================================================
-            📊 CONTENIDO PRINCIPAL
-            ================================================================ -->
        <main class="main-content">
            
-           <!-- ================================================================
-                🏗️ HEADER EJECUTIVO
-                ================================================================ -->
            <header class="executive-header">
                <button class="mobile-menu-toggle" onclick="toggleSidebar()">
                    <i class="fas fa-bars"></i>
@@ -321,29 +273,19 @@
                      <button class="period-btn" onclick="changePeriod('año', this)">Año</button>
                  </div>
 
-                 <!-- BOTÓN IA EN HEADER -->
                  <button class="ai-header-button" onclick="toggleAIAssistant()">
                  <i class="fas fa-brain"></i>
                  <span>IA Assistant</span>
                 </button>
 
-                  <!-- SELECTOR DE EMPRESAS -->
                   <div class="company-selector" id="companySelector">
-                      <!-- Se genera automáticamente por gestor-empresas-principal.js -->
                   </div>
                </div>
            </header>
 
-           <!-- ================================================================
-                📊 DASHBOARD CONTENT - ÁREA PRINCIPAL
-                ================================================================ -->
-          <div id="dashboardContent" class="dashboard-content">
+          <div id="dashboardContent" class="dashboard-content active">
                
-               <!-- ================================================================
-                    📈 MÉTRICAS PRINCIPALES (KPIs)
-                    ================================================================ -->
                 <section class="metrics-grid">
-                    <!-- CARD 1: GASTOS OPERATIVOS -->
                     <div class="metric-card expenses">
                         <div class="metric-header">
                             <span class="metric-title">Gastos Operativos</span>
@@ -358,7 +300,6 @@
                         </div>
                     </div>
 
-                    <!-- CARD 2: UTILIDAD NETA -->
                     <div class="metric-card profit">
                         <div class="metric-header">
                             <span class="metric-title">Utilidad Neta</span>
@@ -373,7 +314,6 @@
                         </div>
                     </div>
 
-                    <!-- CARD 3: CRECIMIENTO -->
                     <div class="metric-card growth">
                         <div class="metric-header">
                             <span class="metric-title">Crecimiento</span>
@@ -388,7 +328,6 @@
                         </div>
                     </div>
 
-                    <!-- CARD 4: INGRESOS TOTALES -->
                     <div class="metric-card revenue">
                         <div class="metric-header">
                             <span class="metric-title">Ingresos Totales</span>
@@ -404,11 +343,7 @@
                     </div>
                 </section>
 
-                <!-- ================================================================
-                     📊 GRÁFICOS Y VISUALIZACIONES
-                     ================================================================ -->
                 <section class="charts-section">
-                    <!-- Gráfico Principal de Flujo de Caja -->
                     <div class="chart-card main-chart">
                         <div class="chart-header">
                             <h3 class="chart-title">Flujo de Caja - Últimos 6 Meses</h3>
@@ -423,7 +358,6 @@
                         </div>
                     </div>
 
-                    <!-- Gráfico de Distribución de Gastos -->
                     <div class="chart-card">
                         <div class="chart-header">
                             <h3 class="chart-title">Distribución de Gastos</h3>
@@ -433,7 +367,6 @@
                         </div>
                     </div>
                     
-                    <!-- Gráfico de Ingresos vs Gastos -->
                     <div class="chart-card">
                         <div class="chart-header">
                             <h3 class="chart-title">Ingresos vs Gastos</h3>
@@ -443,7 +376,6 @@
                         </div>
                     </div>
                     
-                    <!-- Gráfico de Antigüedad de Cuentas -->
                     <div class="chart-card">
                         <div class="chart-header">
                             <h3 class="chart-title">Antigüedad de Cuentas</h3>
@@ -453,7 +385,6 @@
                         </div>
                     </div>
                     
-                    <!-- Gráfico Detallado de Flujo de Caja -->
                     <div class="chart-card">
                         <div class="chart-header">
                             <h3 class="chart-title">Flujo de Caja Diario</h3>
@@ -464,45 +395,51 @@
                     </div>
                 </section>
            </div>
+           <div id="cuentasBancariasContent" class="dashboard-content" style="display: none;">
+           </div>
 
-           <!-- ================================================================
-                📄 OTRAS SECCIONES (SE CARGAN DINÁMICAMENTE)
-                ================================================================ -->
-
-                 <div id="cuentasBancariasContent" class="dashboard-content" style="display: none;">
-             <!-- El contenido lo maneja ui-cuentas-bancarias.js -->
-         </div>
            <div id="cash-flowContent" class="dashboard-content" style="display: none;">
-    <div style="text-align: center; padding: 60px 20px; color: #95a5a6;">
-        <i class="fas fa-water" style="font-size: 64px; color: #3498db; margin-bottom: 20px;"></i>
-        <h2>Flujo de Caja</h2>
-        <p>Módulo en desarrollo</p>
-    </div>
-</div>
+               <div style="text-align: center; padding: 60px 20px; color: #95a5a6;">
+                   <i class="fas fa-water" style="font-size: 64px; color: #3498db; margin-bottom: 20px;"></i>
+                   <h2>Flujo de Caja</h2>
+                   <p>Módulo en desarrollo</p>
+               </div>
+           </div>
 
-<div id="income-statementContent" class="dashboard-content" style="display: none;">
-    <div style="text-align: center; padding: 60px 20px; color: #95a5a6;">
-        <i class="fas fa-chart-pie" style="font-size: 64px; color: #e74c3c; margin-bottom: 20px;"></i>
-        <h2>Estado de Resultados</h2>
-        <p>Módulo en desarrollo</p>
-    </div>
-</div>
+           <div id="income-statementContent" class="dashboard-content" style="display: none;">
+               <div style="text-align: center; padding: 60px 20px; color: #95a5a6;">
+                   <i class="fas fa-chart-pie" style="font-size: 64px; color: #e74c3c; margin-bottom: 20px;"></i>
+                   <h2>Estado de Resultados</h2>
+                   <p>Módulo en desarrollo</p>
+               </div>
+           </div>
 
-<div id="balance-sheetContent" class="dashboard-content" style="display: none;">
-    <div style="text-align: center; padding: 60px 20px; color: #95a5a6;">
-        <i class="fas fa-balance-scale" style="font-size: 64px; color: #27ae60; margin-bottom: 20px;"></i>
-        <h2>Balance General</h2>
-        <p>Módulo en desarrollo</p>
-    </div>
-</div>
+           <div id="balance-sheetContent" class="dashboard-content" style="display: none;">
+               <div style="text-align: center; padding: 60px 20px; color: #95a5a6;">
+                   <i class="fas fa-balance-scale" style="font-size: 64px; color: #27ae60; margin-bottom: 20px;"></i>
+                   <h2>Balance General</h2>
+                   <p>Módulo en desarrollo</p>
+               </div>
+           </div>
+
+           <div id="inventoryContent" class="dashboard-content" style="display: none;">
+               <div style="text-align: center; padding: 60px 20px; color: #95a5a6;">
+                   <i class="fas fa-boxes" style="font-size: 64px; color: #f39c12; margin-bottom: 20px;"></i>
+                   <h2>Inventario</h2>
+                   <p>Módulo en desarrollo</p>
+               </div>
+           </div>
+
+           <div id="salesContent" class="dashboard-content" style="display: none;">
+               <div style="text-align: center; padding: 60px 20px; color: #95a5a6;">
+                   <i class="fas fa-shopping-cart" style="font-size: 64px; color: #9b59b6; margin-bottom: 20px;"></i>
+                   <h2>Ventas</h2>
+                   <p>Módulo en desarrollo</p>
+               </div>
+           </div>
        </main>
    </div>
 
-<!-- ================================================================
-     🚀 SISTEMA JAVASCRIPT MODULAR GRIZALUM v4.0 - SOLO RAMAS
-     ================================================================ -->
-
-<!-- 📦 CONFIGURACIÓN Y UTILIDADES (cargar primero) -->
 <script src="src/assets/js/config.js" defer></script>
 <script src="src/assets/js/paletas-automaticas.js" defer></script>    
 <script src="src/assets/js/utilidades.js" defer></script>
@@ -512,27 +449,38 @@
 <script src="src/assets/js/controlador-periodos.js" defer></script>
 <script src="src/assets/js/graficos-dinamicos.js" defer></script>
 
-<!-- 🏢 GESTOR DE EMPRESAS MODULAR (orden crítico) -->
 <script src="src/assets/js/gestor-empresas-formularios01.js"></script>
 <script src="src/assets/js/gestor-empresas-principal.js" defer></script>  
 <script src="src/assets/js/gestor-empresas-emojis.js" defer></script>    
 <script src="src/assets/js/gestor-empresas-reportes.js" defer></script>
 
-<!-- 📊 SISTEMA PRINCIPAL Y GRÁFICOS -->
 <script src="src/assets/js/graficos.js" defer></script>
 <script src="src/assets/js/grizalum-principal.js" defer></script>
 
-<!-- 🧠 MÓDULOS DEL SISTEMA (orden específico) -->
 <script src="src/assets/js/manejo-sidebar.js" defer></script>
 <script src="src/assets/js/actualizador-metricas.js" defer></script> 
 <script src="src/assets/js/notificaciones-manager.js" defer></script>
 
-<!-- 🤖 INTELIGENCIA ARTIFICIAL -->
 <script src="src/assets/js/asistente-ia-avanzado.js" defer></script>
 
-<!-- 🚀 CONTROLADOR PRINCIPAL (cargar al final) -->
 <script src="src/assets/js/principal.js" defer></script>
 <script src="src/assets/js/gestor-empresas-admin-new.js"></script>
+
+<script>
+// Sistema de navegación centralizado
+document.addEventListener('DOMContentLoaded', function() {
+    // Manejar todos los botones con data-section
+    document.querySelectorAll('a[data-section]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const section = this.getAttribute('data-section');
+            if (window.showSection) {
+                window.showSection(section);
+            }
+        });
+    });
+});
+</script>
 
 </body>
 </html>
