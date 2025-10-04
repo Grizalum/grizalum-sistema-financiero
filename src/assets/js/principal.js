@@ -673,11 +673,57 @@ class GrizalumApp {
 let grizalumApp = null;
 
 function showSection(sectionId) {
-    if (grizalumApp) {
-        return grizalumApp.showSection(sectionId);
+    console.log('Navegando a sección:', sectionId);
+    
+    // Ocultar todas las secciones
+    document.querySelectorAll('.dashboard-content').forEach(section => {
+        section.style.display = 'none';
+        section.classList.remove('active');
+    });
+    
+    // Mostrar la sección solicitada
+    const targetSection = document.getElementById(sectionId + 'Content');
+    if (targetSection) {
+        targetSection.style.display = 'flex';
+        targetSection.classList.add('active');
+        console.log('Sección mostrada exitosamente:', sectionId);
+    } else {
+        console.warn('⚠️ Sección no encontrada:', sectionId);
     }
-    console.warn('GrizalumApp no inicializada');
-    return false;
+    
+    // Actualizar navegación activa
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+    });
+    
+    const activeLink = document.querySelector(`a[data-section="${sectionId}"]`);
+    if (activeLink) {
+        activeLink.classList.add('active');
+    }
+    
+    // Actualizar títulos del header
+    const titles = {
+        'dashboard': { title: 'Panel de Control Ejecutivo', subtitle: 'Resumen financiero en tiempo real' },
+        'cash-flow': { title: 'Flujo de Caja', subtitle: 'Control de ingresos y egresos' },
+        'income-statement': { title: 'Estado de Resultados', subtitle: 'Análisis de rentabilidad' },
+        'balance-sheet': { title: 'Balance General', subtitle: 'Situación financiera' },
+        'inventory': { title: 'Inventario', subtitle: 'Gestión de stock y productos' },
+        'sales': { title: 'Ventas', subtitle: 'Registro y análisis de ventas' }
+    };
+    
+    if (titles[sectionId]) {
+        const titleElement = document.getElementById('pageTitle');
+        const subtitleElement = document.getElementById('pageSubtitle');
+        if (titleElement) titleElement.textContent = titles[sectionId].title;
+        if (subtitleElement) subtitleElement.textContent = titles[sectionId].subtitle;
+    }
+    
+    // Intentar llamar a GrizalumApp si existe
+    if (grizalumApp && grizalumApp.showSection) {
+        grizalumApp.showSection(sectionId);
+    }
+    
+    return true;
 }
 
 function changePeriod(period, buttonElement) {
@@ -752,3 +798,5 @@ console.log('  • Navegación robusta sin conflictos');
 console.log('  • Validación de secciones existentes');
 console.log('  • Preparado para escalabilidad');
 console.log('  • Sincronización perfecta con módulos');
+
+
