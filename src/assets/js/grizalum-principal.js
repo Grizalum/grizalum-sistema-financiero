@@ -188,7 +188,6 @@ function actualizarNotificacionesEmpresa() {
 
 function toggleAIAssistant() {
     console.log('🤖 Abriendo IA Assistant');
-    mostrarNotificacion('IA Assistant próximamente', 'info');
 }
 
 // ================================================================
@@ -261,7 +260,6 @@ function aplicarTemaEmpresa(empresaId) {
     
     if (!empresa || !empresa.theme) {
         console.warn('❌ No se encontró empresa o tema');
-        mostrarNotificacion('No se pudo aplicar el tema de la empresa', 'warning');
         return;
     }
     
@@ -279,7 +277,7 @@ function aplicarTemaEmpresa(empresaId) {
     document.head.appendChild(estilo);
     
     console.log(`✅ Tema aplicado correctamente`);
-    mostrarNotificacion(`Tema de ${empresa.name} aplicado`, 'success');
+    
     
     document.dispatchEvent(new CustomEvent('grizalumTemaAplicado', {
         detail: { empresaId, empresa, tema, timestamp: Date.now() }
