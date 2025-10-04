@@ -466,21 +466,6 @@
 <script src="src/assets/js/principal.js" defer></script>
 <script src="src/assets/js/gestor-empresas-admin-new.js"></script>
 
-<script>
-// Sistema de navegación centralizado
-document.addEventListener('DOMContentLoaded', function() {
-    // Manejar todos los botones con data-section
-    document.querySelectorAll('a[data-section]').forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const section = this.getAttribute('data-section');
-            if (window.showSection) {
-                window.showSection(section);
-            }
-        });
-    });
-});
-</script>
 
 </body>
 </html>
