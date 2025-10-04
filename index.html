@@ -187,14 +187,18 @@
                        <i class="fas fa-chart-bar"></i>
                        Panel Principal
                    </div>
+                   
+                   <!-- ✅ CORREGIDO: Agregado onclick a Panel de Control -->
                    <div class="nav-item">
-                       <a href="#" class="nav-link active" data-section="dashboard">
+                       <a href="#" class="nav-link active" data-section="dashboard" onclick="cambiarSeccion('dashboard', event)">
                            <i class="nav-icon fas fa-tachometer-alt"></i>
                            <span>Panel de Control</span>
                        </a>
                    </div>
+                   
+                   <!-- ✅ CORREGIDO: Agregado onclick a Flujo de Caja -->
                    <div class="nav-item">
-                       <a href="#" class="nav-link" data-section="cash-flow">
+                       <a href="#" class="nav-link" data-section="cash-flow" onclick="cambiarSeccion('cash-flow', event)">
                            <i class="nav-icon fas fa-water"></i>
                            <span>Flujo de Caja</span>
                        </a>
@@ -206,20 +210,26 @@
                        <i class="fas fa-calculator"></i>
                        Contabilidad
                    </div>
+                   
+                   <!-- ✅ CORREGIDO: Agregado onclick a Estado de Resultados -->
                    <div class="nav-item">
-                       <a href="#" class="nav-link" data-section="income-statement">
+                       <a href="#" class="nav-link" data-section="income-statement" onclick="cambiarSeccion('income-statement', event)">
                            <i class="nav-icon fas fa-chart-pie"></i>
                            <span>Estado de Resultados</span>
                        </a>
                    </div>
+                   
+                   <!-- ✅ CORREGIDO: Agregado onclick a Balance General -->
                    <div class="nav-item">
-                       <a href="#" class="nav-link" data-section="balance-sheet">
+                       <a href="#" class="nav-link" data-section="balance-sheet" onclick="cambiarSeccion('balance-sheet', event)">
                            <i class="nav-icon fas fa-balance-scale"></i>
                            <span>Balance General</span>
                        </a>
                    </div>
+                   
+                   <!-- ✅ CRÍTICO: Corregido Cuentas Bancarias -->
                    <div class="nav-item">
-                       <a href="#" class="nav-link nav-cuentas-bancarias">
+                       <a href="#" class="nav-link" data-section="cuentas-bancarias" onclick="cambiarSeccion('cuentas-bancarias', event)">
                            <i class="nav-icon fas fa-university"></i>
                            <span>Cuentas Bancarias</span>
                        </a>
@@ -231,14 +241,18 @@
                        <i class="fas fa-warehouse"></i>
                        Operaciones
                    </div>
+                   
+                   <!-- ✅ CORREGIDO: Agregado onclick a Inventario -->
                    <div class="nav-item">
-                       <a href="#" class="nav-link" data-section="inventory">
+                       <a href="#" class="nav-link" data-section="inventory" onclick="cambiarSeccion('inventory', event)">
                            <i class="nav-icon fas fa-boxes"></i>
                            <span>Inventario</span>
                        </a>
                    </div>
+                   
+                   <!-- ✅ CORREGIDO: Agregado onclick a Ventas -->
                    <div class="nav-item">
-                       <a href="#" class="nav-link" data-section="sales">
+                       <a href="#" class="nav-link" data-section="sales" onclick="cambiarSeccion('sales', event)">
                            <i class="nav-icon fas fa-shopping-cart"></i>
                            <span>Ventas</span>
                        </a>
@@ -395,6 +409,8 @@
                     </div>
                 </section>
            </div>
+           
+           <!-- ✅ CRÍTICO: ID corregido para Cuentas Bancarias -->
            <div id="cuentasBancariasContent" class="dashboard-content" style="display: none;">
            </div>
 
@@ -466,6 +482,62 @@
 <script src="src/assets/js/principal.js" defer></script>
 <script src="src/assets/js/gestor-empresas-admin-new.js"></script>
 
+<!-- ✅ NUEVO: Script para navegación -->
+<script>
+function cambiarSeccion(seccionId, event) {
+    if (event) {
+        event.preventDefault();
+    }
+    
+    console.log('Cambiando a sección:', seccionId);
+    
+    // Ocultar todas las secciones
+    document.querySelectorAll('.dashboard-content').forEach(sec => {
+        sec.style.display = 'none';
+        sec.classList.remove('active');
+    });
+    
+    // Remover active de todos los links
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+    });
+    
+    // Mapeo de IDs de sección a IDs de contenedor
+    const mapeoSecciones = {
+        'dashboard': 'dashboardContent',
+        'cash-flow': 'cash-flowContent',
+        'income-statement': 'income-statementContent',
+        'balance-sheet': 'balance-sheetContent',
+        'cuentas-bancarias': 'cuentasBancariasContent',
+        'inventory': 'inventoryContent',
+        'sales': 'salesContent'
+    };
+    
+    const contenedorId = mapeoSecciones[seccionId];
+    const seccion = document.getElementById(contenedorId);
+    
+    if (seccion) {
+        seccion.style.display = 'block';
+        seccion.classList.add('active');
+        console.log('Sección mostrada:', contenedorId);
+    } else {
+        console.error('No se encontró el contenedor:', contenedorId);
+    }
+    
+    // Activar el link clickeado
+    if (event && event.currentTarget) {
+        event.currentTarget.classList.add('active');
+    }
+    
+    // Si es Cuentas Bancarias, cargar su UI
+    if (seccionId === 'cuentas-bancarias' && window.mostrarSeccionCuentasBancarias) {
+        window.mostrarSeccionCuentasBancarias();
+    }
+}
+
+// Hacer la función global
+window.cambiarSeccion = cambiarSeccion;
+</script>
 
 </body>
 </html>
