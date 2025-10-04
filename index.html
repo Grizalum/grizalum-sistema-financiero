@@ -1,1 +1,544 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRIZALUM | Centro de Control Financiero</title>
+    
+   <!-- ================================================================
+     🎨 ESTILOS MODULARES GRIZALUM v4.0 - ORDEN ESPECÍFICO
+     ================================================================ -->
+<link rel="stylesheet" href="src/assets/css/01-base-sistema.css">
+<link rel="stylesheet" href="src/assets/css/02-estructura-general.css">
+<link rel="stylesheet" href="src/assets/css/03-menu-lateral.css">
+<link rel="stylesheet" href="src/assets/css/04-barra-superior.css">
+<link rel="stylesheet" href="src/assets/css/05-tarjetas-numeros.css">
+<link rel="stylesheet" href="src/assets/css/06-graficos-charts.css">
+<link rel="stylesheet" href="src/assets/css/07-modales-sistema.css">
+<link rel="stylesheet" href="src/assets/css/08-notificaciones.css">
+<link rel="stylesheet" href="src/assets/css/09-responsive-mobile.css">
+<link rel="stylesheet" href="src/assets/css/10-temas-colores.css">
+<link rel="stylesheet" href="src/assets/css/11-modos-visuales.css">
+<link rel="stylesheet" href="src/assets/css/grizalum-principal.css">
+    
+    <meta name="description" content="Sistema financiero empresarial premium con IA integrada para empresas peruanas. Dashboard ejecutivo, flujo de caja, análisis predictivo.">
+    <meta name="keywords" content="sistema financiero, empresas peru, contabilidad, flujo de caja, dashboard, IA">
+    <meta name="author" content="GRIZALUM">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="GRIZALUM | Sistema Financiero Empresarial">
+    <meta property="og:description" content="Dashboard ejecutivo premium para empresas peruanas">
+    <meta property="og:image" content="./src/assets/images/grizalum-preview.png">
+    
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="GRIZALUM | Sistema Financiero">
+    <meta property="twitter:description" content="Control financiero profesional">
 
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+    <link rel="apple-touch-icon" href="./src/assets/images/apple-touch-icon.png">
+
+    <link rel="manifest" href="./manifest.json">
+    <meta name="application-name" content="GRIZALUM">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="GRIZALUM">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="msapplication-TileColor" content="#d4af37">
+    <meta name="theme-color" content="#d4af37">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+  <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
+
+    <link rel="preload" href="src/assets/css/grizalum-principal.css" as="style">
+    <link rel="preload" href="src/assets/js/principal.js" as="script">
+
+    <style>
+        .metrics-grid {
+            display: grid !important;
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 20px !important;
+            margin: 0 auto 30px auto !important;
+            width: 100% !important;
+            max-width: 1200px !important;
+            align-items: stretch !important;
+        }
+
+        .metric-card {
+            height: 160px !important;
+            min-height: 160px !important;
+            max-height: 160px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+            padding: 20px !important;
+            box-sizing: border-box !important;
+        }
+
+        .dashboard-content {
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 20px !important;
+            margin: 0 auto !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+        }
+
+        .charts-section {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 20px !important;
+            width: 100% !important;
+            max-width: 1200px !important;
+            margin: 0 auto !important;
+        }
+
+        .chart-card {
+            height: 300px !important;
+            min-height: 300px !important;
+            max-height: 300px !important;
+        }
+
+        .chart-card.main-chart {
+            grid-column: 1 / -1 !important;
+            height: 350px !important;
+            min-height: 350px !important;
+            max-height: 350px !important;
+        }
+
+        @media (max-width: 1200px) {
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            .charts-section {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: 1fr !important;
+            }
+            .charts-section {
+                grid-template-columns: 1fr !important;
+            }
+            .metric-card {
+                height: 140px !important;
+                min-height: 140px !important;
+                max-height: 140px !important;
+            }
+            .chart-card {
+                height: 280px !important;
+                min-height: 280px !important;
+                max-height: 280px !important;
+            }
+        }
+    </style>
+
+</head>
+<body>
+   <div id="loadingScreen" class="loading-screen">
+       <div class="loading-content">
+           <div class="brand-icon loading-logo">
+               <i class="fas fa-chart-line"></i>
+           </div>
+           <h1>GRIZALUM</h1>
+           <p>Iniciando sistema financiero...</p>
+           <div class="loading-bar">
+               <div class="loading-progress"></div>
+           </div>
+           <div class="loading-version">v4.0 Professional</div>
+       </div>
+   </div>
+
+   <div class="app-container">
+       <nav class="sidebar" id="sidebar">
+           <div class="sidebar-header">
+               <div class="company-brand">
+                   <div class="brand-icon">
+                       <i class="fas fa-chart-line"></i>
+                   </div>
+                   <div class="brand-text">
+                       <h1>GRIZALUM</h1>
+                       <p>Control Financiero</p>
+                   </div>
+               </div>
+               
+               <div class="financial-summary">
+                   <div class="summary-item">
+                       <span class="summary-label">Flujo de Caja</span>
+                       <span class="summary-value" id="sidebarCashFlow">S/. 0</span>
+                   </div>
+                   <div class="summary-item">
+                       <span class="summary-label">Utilidad Neta</span>
+                       <span class="summary-value" id="sidebarProfit">S/. 0</span>
+                   </div>
+               </div>
+           </div>
+
+           <div class="nav-menu">
+               <div class="nav-section">
+                   <div class="nav-section-title">
+                       <i class="fas fa-chart-bar"></i>
+                       Panel Principal
+                   </div>
+                   
+                   <!-- ✅ CORREGIDO: Agregado onclick a Panel de Control -->
+                   <div class="nav-item">
+                       <a href="#" class="nav-link active" data-section="dashboard" onclick="cambiarSeccion('dashboard', event)">
+                           <i class="nav-icon fas fa-tachometer-alt"></i>
+                           <span>Panel de Control</span>
+                       </a>
+                   </div>
+                   
+                   <!-- ✅ CORREGIDO: Agregado onclick a Flujo de Caja -->
+                   <div class="nav-item">
+                       <a href="#" class="nav-link" data-section="cash-flow" onclick="cambiarSeccion('cash-flow', event)">
+                           <i class="nav-icon fas fa-water"></i>
+                           <span>Flujo de Caja</span>
+                       </a>
+                   </div>
+               </div>
+
+               <div class="nav-section">
+                   <div class="nav-section-title">
+                       <i class="fas fa-calculator"></i>
+                       Contabilidad
+                   </div>
+                   
+                   <!-- ✅ CORREGIDO: Agregado onclick a Estado de Resultados -->
+                   <div class="nav-item">
+                       <a href="#" class="nav-link" data-section="income-statement" onclick="cambiarSeccion('income-statement', event)">
+                           <i class="nav-icon fas fa-chart-pie"></i>
+                           <span>Estado de Resultados</span>
+                       </a>
+                   </div>
+                   
+                   <!-- ✅ CORREGIDO: Agregado onclick a Balance General -->
+                   <div class="nav-item">
+                       <a href="#" class="nav-link" data-section="balance-sheet" onclick="cambiarSeccion('balance-sheet', event)">
+                           <i class="nav-icon fas fa-balance-scale"></i>
+                           <span>Balance General</span>
+                       </a>
+                   </div>
+                   
+                   <!-- ✅ CRÍTICO: Corregido Cuentas Bancarias -->
+                   <div class="nav-item">
+                       <a href="#" class="nav-link" data-section="cuentas-bancarias" onclick="cambiarSeccion('cuentas-bancarias', event)">
+                           <i class="nav-icon fas fa-university"></i>
+                           <span>Cuentas Bancarias</span>
+                       </a>
+                   </div>
+               </div>
+
+               <div class="nav-section">
+                   <div class="nav-section-title">
+                       <i class="fas fa-warehouse"></i>
+                       Operaciones
+                   </div>
+                   
+                   <!-- ✅ CORREGIDO: Agregado onclick a Inventario -->
+                   <div class="nav-item">
+                       <a href="#" class="nav-link" data-section="inventory" onclick="cambiarSeccion('inventory', event)">
+                           <i class="nav-icon fas fa-boxes"></i>
+                           <span>Inventario</span>
+                       </a>
+                   </div>
+                   
+                   <!-- ✅ CORREGIDO: Agregado onclick a Ventas -->
+                   <div class="nav-item">
+                       <a href="#" class="nav-link" data-section="sales" onclick="cambiarSeccion('sales', event)">
+                           <i class="nav-icon fas fa-shopping-cart"></i>
+                           <span>Ventas</span>
+                       </a>
+                   </div>
+               </div>
+           </div>
+       </nav>
+       <main class="main-content">
+           
+           <header class="executive-header">
+               <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+                   <i class="fas fa-bars"></i>
+               </button>
+               
+               <div class="page-header">
+                   <div>
+                       <h1 class="page-title" id="pageTitle">Panel de Control Ejecutivo</h1>
+                       <p class="page-subtitle" id="pageSubtitle">Resumen financiero en tiempo real</p>
+                       <div class="ai-insights">
+                           <i class="fas fa-brain"></i>
+                           <span>IA predice un crecimiento del 15% este trimestre</span>
+                       </div>
+                   </div>
+               </div>
+
+               <div class="header-controls">
+                   <div class="time-period-selector">
+                      <button class="period-btn active" onclick="window.changePeriod('hoy', this)">Hoy</button>
+                      <button class="period-btn" onclick="window.changePeriod('semana', this)">Semana</button>
+                     <button class="period-btn" onclick="changePeriod('mes', this)">Mes</button>
+                     <button class="period-btn" onclick="changePeriod('trimestre', this)">Trimestre</button>
+                     <button class="period-btn" onclick="changePeriod('año', this)">Año</button>
+                 </div>
+
+                 <button class="ai-header-button" onclick="toggleAIAssistant()">
+                 <i class="fas fa-brain"></i>
+                 <span>IA Assistant</span>
+                </button>
+
+                  <div class="company-selector" id="companySelector">
+                  </div>
+               </div>
+           </header>
+
+          <div id="dashboardContent" class="dashboard-content active">
+               
+                <section class="metrics-grid">
+                    <div class="metric-card expenses">
+                        <div class="metric-header">
+                            <span class="metric-title">Gastos Operativos</span>
+                            <div class="metric-icon expenses">
+                                <i class="fas fa-receipt"></i>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="expensesValue">S/. 0</div>
+                        <div class="metric-change negative">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+3.2% vs mes anterior</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card profit">
+                        <div class="metric-header">
+                            <span class="metric-title">Utilidad Neta</span>
+                            <div class="metric-icon profit">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="profitValue">S/. 0</div>
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+18.7% vs mes anterior</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card growth">
+                        <div class="metric-header">
+                            <span class="metric-title">Crecimiento</span>
+                            <div class="metric-icon growth">
+                                <i class="fas fa-chart-area"></i>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="growthValue">+0%</div>
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>Meta anual: 20%</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card revenue">
+                        <div class="metric-header">
+                            <span class="metric-title">Ingresos Totales</span>
+                            <div class="metric-icon revenue">
+                                <i class="fas fa-arrow-trend-up"></i>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="revenueValue">S/. 0</div>
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+12.5% vs mes anterior</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="charts-section">
+                    <div class="chart-card main-chart">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Flujo de Caja - Últimos 6 Meses</h3>
+                            <div class="chart-filters">
+                                <button class="filter-btn active">6M</button>
+                                <button class="filter-btn">1A</button>
+                                <button class="filter-btn">2A</button>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="mainCashFlowChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Distribución de Gastos</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="expensesChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Ingresos vs Gastos</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Antigüedad de Cuentas</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="agingChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Flujo de Caja Diario</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="cashFlowDetailChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+           </div>
+           
+           <!-- ✅ CRÍTICO: ID corregido para Cuentas Bancarias -->
+           <div id="cuentasBancariasContent" class="dashboard-content" style="display: none;">
+           </div>
+
+           <div id="cash-flowContent" class="dashboard-content" style="display: none;">
+               <div style="text-align: center; padding: 60px 20px; color: #95a5a6;">
+                   <i class="fas fa-water" style="font-size: 64px; color: #3498db; margin-bottom: 20px;"></i>
+                   <h2>Flujo de Caja</h2>
+                   <p>Módulo en desarrollo</p>
+               </div>
+           </div>
+
+           <div id="income-statementContent" class="dashboard-content" style="display: none;">
+               <div style="text-align: center; padding: 60px 20px; color: #95a5a6;">
+                   <i class="fas fa-chart-pie" style="font-size: 64px; color: #e74c3c; margin-bottom: 20px;"></i>
+                   <h2>Estado de Resultados</h2>
+                   <p>Módulo en desarrollo</p>
+               </div>
+           </div>
+
+           <div id="balance-sheetContent" class="dashboard-content" style="display: none;">
+               <div style="text-align: center; padding: 60px 20px; color: #95a5a6;">
+                   <i class="fas fa-balance-scale" style="font-size: 64px; color: #27ae60; margin-bottom: 20px;"></i>
+                   <h2>Balance General</h2>
+                   <p>Módulo en desarrollo</p>
+               </div>
+           </div>
+
+           <div id="inventoryContent" class="dashboard-content" style="display: none;">
+               <div style="text-align: center; padding: 60px 20px; color: #95a5a6;">
+                   <i class="fas fa-boxes" style="font-size: 64px; color: #f39c12; margin-bottom: 20px;"></i>
+                   <h2>Inventario</h2>
+                   <p>Módulo en desarrollo</p>
+               </div>
+           </div>
+
+           <div id="salesContent" class="dashboard-content" style="display: none;">
+               <div style="text-align: center; padding: 60px 20px; color: #95a5a6;">
+                   <i class="fas fa-shopping-cart" style="font-size: 64px; color: #9b59b6; margin-bottom: 20px;"></i>
+                   <h2>Ventas</h2>
+                   <p>Módulo en desarrollo</p>
+               </div>
+           </div>
+       </main>
+   </div>
+
+<script src="src/assets/js/config.js" defer></script>
+<script src="src/assets/js/paletas-automaticas.js" defer></script>    
+<script src="src/assets/js/utilidades.js" defer></script>
+<script src="src/assets/js/datos-empresas.js" defer></script>
+<script src="src/assets/js/gestor-cuentas-bancarias.js" defer></script>
+<script src="src/assets/js/ui-cuentas-bancarias.js" defer></script>
+<script src="src/assets/js/controlador-periodos.js" defer></script>
+<script src="src/assets/js/graficos-dinamicos.js" defer></script>
+
+<script src="src/assets/js/gestor-empresas-formularios01.js"></script>
+<script src="src/assets/js/gestor-empresas-principal.js" defer></script>  
+<script src="src/assets/js/gestor-empresas-emojis.js" defer></script>    
+<script src="src/assets/js/gestor-empresas-reportes.js" defer></script>
+
+<script src="src/assets/js/graficos.js" defer></script>
+<script src="src/assets/js/grizalum-principal.js" defer></script>
+
+<script src="src/assets/js/manejo-sidebar.js" defer></script>
+<script src="src/assets/js/actualizador-metricas.js" defer></script> 
+<script src="src/assets/js/notificaciones-manager.js" defer></script>
+
+<script src="src/assets/js/asistente-ia-avanzado.js" defer></script>
+
+<script src="src/assets/js/principal.js" defer></script>
+<script src="src/assets/js/navegacion.js" defer></script>
+<script src="src/assets/js/gestor-empresas-admin-new.js"></script>
+
+<!-- ✅ NUEVO: Script para navegación -->
+<script>
+function cambiarSeccion(seccionId, event) {
+    if (event) {
+        event.preventDefault();
+    }
+    
+    console.log('Cambiando a sección:', seccionId);
+    
+    // Ocultar todas las secciones
+    document.querySelectorAll('.dashboard-content').forEach(sec => {
+        sec.style.display = 'none';
+        sec.classList.remove('active');
+    });
+    
+    // Remover active de todos los links
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+    });
+    
+    // Mapeo de IDs de sección a IDs de contenedor
+    const mapeoSecciones = {
+        'dashboard': 'dashboardContent',
+        'cash-flow': 'cash-flowContent',
+        'income-statement': 'income-statementContent',
+        'balance-sheet': 'balance-sheetContent',
+        'cuentas-bancarias': 'cuentasBancariasContent',
+        'inventory': 'inventoryContent',
+        'sales': 'salesContent'
+    };
+    
+    const contenedorId = mapeoSecciones[seccionId];
+    const seccion = document.getElementById(contenedorId);
+    
+    if (seccion) {
+        seccion.style.display = 'block';
+        seccion.classList.add('active');
+        console.log('Sección mostrada:', contenedorId);
+    } else {
+        console.error('No se encontró el contenedor:', contenedorId);
+    }
+    
+    // Activar el link clickeado
+    if (event && event.currentTarget) {
+        event.currentTarget.classList.add('active');
+    }
+    
+    // Si es Cuentas Bancarias, cargar su UI
+    if (seccionId === 'cuentas-bancarias' && window.mostrarSeccionCuentasBancarias) {
+        window.mostrarSeccionCuentasBancarias();
+    }
+}
+
+// Hacer la función global
+window.cambiarSeccion = cambiarSeccion;
+</script>
+
+</body>
+</html>
