@@ -1,13 +1,15 @@
 /**
  * ================================================================
- * UI CUENTAS BANCARIAS - GRIZALUM
+ * UI CUENTAS BANCARIAS - GRIZALUM v3.0
  * Interfaz de usuario para el módulo de cuentas bancarias
+ * Conectado con navegacion.js
  * ================================================================
  */
 
 class UICuentasBancarias {
     constructor() {
         this.gestor = null;
+        this.inicializado = false;
         this.init();
     }
 
@@ -20,67 +22,47 @@ class UICuentasBancarias {
     }
 
     inicializar() {
+        console.log('🏦 Iniciando UI Cuentas Bancarias...');
+        
         // Esperar a que el gestor esté disponible
         const esperarGestor = setInterval(() => {
             if (window.GestorCuentasBancarias) {
                 this.gestor = window.GestorCuentasBancarias;
                 clearInterval(esperarGestor);
-                this.configurarNavegacion();
-                console.log('✅ UI Cuentas Bancarias inicializada');
+                this.inicializado = true;
+                console.log('✅ UI Cuentas Bancarias inicializada con gestor');
             }
         }, 100);
+        
+        // Timeout de seguridad
+        setTimeout(() => {
+            if (!this.inicializado) {
+                clearInterval(esperarGestor);
+                console.error('❌ Timeout: Gestor no disponible después de 5s');
+            }
+        }, 5000);
     }
-
-    configurarNavegacion() {
-    const navLink = document.querySelector('.nav-cuentas-bancarias');
-    if (navLink) {
-        navLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            console.log('🏦 CLICK DETECTADO en Cuentas Bancarias'); // ← NUEVA LÍNEA
-            this.mostrarSeccion();
-        });
-        console.log('✅ Navegación de Cuentas Bancarias configurada');
-    } else {
-        console.error('❌ No se encontró el botón de Cuentas Bancarias');
-    }
-}
 
     mostrarSeccion() {
-    console.log('🏦 Mostrando Cuentas Bancarias');
-    
-    // Ocultar todas las secciones
-    document.querySelectorAll('.dashboard-content').forEach(section => {
-        section.style.display = 'none';
-        section.classList.remove('active');
-    });
-
-    // Mostrar sección de cuentas bancarias
-    const seccion = document.getElementById('cuentasBancariasContent');
-    if (seccion) {
-        seccion.style.display = 'flex';
-        seccion.classList.add('active');
+        console.log('🏦 mostrarSeccion() llamada');
+        
+        if (!this.gestor) {
+            console.error('❌ Gestor no disponible');
+            return;
+        }
+        
+        // Renderizar contenido
+        this.renderizarContenido();
     }
-
-    // Actualizar navegación activa
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.classList.remove('active');
-    });
-    const navLink = document.querySelector('.nav-cuentas-bancarias');
-    if (navLink) {
-        navLink.classList.add('active');
-    }
-
-    // Actualizar header
-    document.getElementById('pageTitle').textContent = 'Gestión de Cuentas Bancarias';
-    document.getElementById('pageSubtitle').textContent = 'Administra tus cuentas, cajas y movimientos';
-
-    // Renderizar contenido
-    this.renderizarContenido();
-}
 
     renderizarContenido() {
+        console.log('🎨 Renderizando contenido de Cuentas Bancarias...');
+        
         const seccion = document.getElementById('cuentasBancariasContent');
-        if (!seccion) return;
+        if (!seccion) {
+            console.error('❌ No se encontró el contenedor cuentasBancariasContent');
+            return;
+        }
 
         const cuentas = this.gestor.cuentas.listar({ soloActivas: true });
         const saldos = this.gestor.reportes.saldoTotal();
@@ -102,6 +84,13 @@ class UICuentasBancarias {
 
         seccion.innerHTML = `
             <style>
+                #cuentasBancariasContent {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    padding: 30px;
+                    width: 100%;
+                }
                 .bank-header {
                     width: 100%;
                     max-width: 1200px;
@@ -300,7 +289,7 @@ class UICuentasBancarias {
 
             <div class="bank-header">
                 <div class="bank-title-section">
-                    <h2>Gestión de Cuentas Bancarias</h2>
+                    <h2>🏦 Gestión de Cuentas Bancarias</h2>
                     <p>Administra tus cuentas, cajas y movimientos financieros</p>
                 </div>
                 <button class="btn-new-account" onclick="alert('Próximamente: Modal para crear nueva cuenta')">
@@ -363,6 +352,8 @@ class UICuentasBancarias {
                 </div>
             </div>
         `;
+        
+        console.log('✅ Contenido renderizado exitosamente');
     }
 
     renderizarTarjetaCuenta(cuenta) {
@@ -410,3 +401,11 @@ class UICuentasBancarias {
 // Inicializar automáticamente
 const uiCuentas = new UICuentasBancarias();
 window.uiCuentas = uiCuentas;
+
+// CRÍTICO: Exponer función para que navegacion.js la llame
+window.mostrarSeccionCuentasBancarias = function() {
+    console.log('🏦 mostrarSeccionCuentasBancarias() llamada desde navegacion.js');
+    uiCuentas.mostrarSeccion();
+};
+
+console.log('✅ UI Cuentas Bancarias v3.0 cargado');
