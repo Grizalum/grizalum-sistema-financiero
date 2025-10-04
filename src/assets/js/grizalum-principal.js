@@ -50,7 +50,7 @@ function iniciarSistemaGrizalum() {
     console.log('✅ Sistema GRIZALUM completamente listo');
     
     // 5. Mostrar mensaje de bienvenida
-    mostrarNotificacion('Sistema GRIZALUM iniciado correctamente', 'success');
+    // mostrarNotificacion('Sistema GRIZALUM iniciado correctamente', 'success');
 }
 
 // ================================================================
@@ -170,7 +170,7 @@ function changePeriod(periodo, boton) {
         detail: { periodo: periodo, timestamp: Date.now() }
     }));
     
-    mostrarNotificacion(`Período cambiado a: ${periodo}`, 'info');
+   // mostrarNotificacion(`Período cambiado a: ${periodo}`, 'info');
 }
 
 function showNotifications() {
