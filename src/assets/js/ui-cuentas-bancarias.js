@@ -32,17 +32,18 @@ class UICuentasBancarias {
     }
 
     configurarNavegacion() {
-        const navLink = document.querySelector('.nav-cuentas-bancarias');
-        if (navLink) {
-            navLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.mostrarSeccion();
-            });
-            console.log('✅ Navegación de Cuentas Bancarias configurada');
-        } else {
-            console.error('❌ No se encontró el botón de Cuentas Bancarias');
-        }
+    const navLink = document.querySelector('.nav-cuentas-bancarias');
+    if (navLink) {
+        navLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('🏦 CLICK DETECTADO en Cuentas Bancarias'); // ← NUEVA LÍNEA
+            this.mostrarSeccion();
+        });
+        console.log('✅ Navegación de Cuentas Bancarias configurada');
+    } else {
+        console.error('❌ No se encontró el botón de Cuentas Bancarias');
     }
+}
 
     mostrarSeccion() {
         // Ocultar todas las secciones
