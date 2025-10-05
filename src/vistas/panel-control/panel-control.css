@@ -55,7 +55,7 @@
 .metrica-tarjeta {
     height: 180px;
     padding: 28px;
-    background: rgba(255, 255, 255, 0.03);
+     background: var(--fondo-tarjeta, rgba(255, 255, 255, 0.05));
     backdrop-filter: blur(20px) saturate(180%);
     border-radius: 24px;
     border: 2px solid rgba(255, 255, 255, 0.08);
