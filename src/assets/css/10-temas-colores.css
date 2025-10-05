@@ -9,6 +9,8 @@
     --color-gastos: #ff6b35;
     --color-utilidad: #2ecc71;
     --color-crecimiento: #9b59b6;
+    --fondo-tarjeta: rgba(255, 255, 255, 0.05);
+    --borde-tarjeta: rgba(255, 255, 255, 0.1);
 }
 
 /* Sin transiciones molestas en texto */
