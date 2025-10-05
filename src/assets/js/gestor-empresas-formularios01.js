@@ -320,6 +320,26 @@ class EditorEmpresasProfesional {
     }
 
     _generarColorPicker(nombre, id, color, emoji) {
+    // Detectar Safari
+    const esSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+    
+    if (esSafari) {
+        // Versión Safari/Mac - Input manual + presets
+        return `
+            <div class="grizalum-color-picker">
+                <div class="grizalum-color-preview" style="background: ${color}" 
+                     onclick="editorEmpresas.mostrarPaletaSafari('${id}')"></div>
+                <div class="grizalum-color-info">
+                    <div class="grizalum-color-nombre">${emoji} ${nombre}</div>
+                    <input type="text" id="hex${id}" class="grizalum-color-hex-input" 
+                           value="${color}" maxlength="7" 
+                           oninput="editorEmpresas.cambiarColorManual('${id}', this.value)"
+                           placeholder="#000000">
+                </div>
+            </div>
+        `;
+    } else {
+        // Versión Windows/Chrome - Nativo
         return `
             <div class="grizalum-color-picker">
                 <div class="grizalum-color-preview" style="background: ${color}" 
@@ -333,7 +353,7 @@ class EditorEmpresasProfesional {
             </div>
         `;
     }
-
+}
     _generarFooter() {
         return `
             <div class="grizalum-modal-footer">
@@ -625,6 +645,67 @@ class EditorEmpresasProfesional {
         this.empresaEditando = null;
         this.logoTemporal = null;
         this.emojiSeleccionado = null;
+    }
+    cambiarColorManual(tipo, valor) {
+        if (!/^#[0-9A-F]{6}$/i.test(valor)) {
+            return;
+        }
+        
+        this.coloresTemp[tipo] = valor;
+        
+        const preview = document.querySelector(`#hex${tipo}`).parentElement.parentElement.querySelector('.grizalum-color-preview');
+        if (preview) preview.style.background = valor;
+        
+        this.actualizarPreviewCards();
+    }
+    
+    mostrarPaletaSafari(tipo) {
+        const coloresComunes = [
+            '#d4af37', '#f1c40f', '#ff6b35', '#e74c3c', 
+            '#2ecc71', '#27ae60', '#3498db', '#2980b9',
+            '#9b59b6', '#8e44ad', '#34495e', '#2c3e50',
+            '#95a5a6', '#7f8c8d', '#e67e22', '#d35400'
+        ];
+        
+        const html = `
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px;">
+                ${coloresComunes.map(c => `
+                    <div style="width: 40px; height: 40px; background: ${c}; border-radius: 8px; cursor: pointer; border: 2px solid rgba(255,255,255,0.2);" 
+                         onclick="editorEmpresas.cambiarColorManual('${tipo}', '${c}'); document.getElementById('hex${tipo}').value = '${c}'; this.parentElement.remove();"></div>
+                `).join('')}
+            </div>
+        `;
+        
+        const input = document.getElementById(`hex${tipo}`);
+        if (!input.nextElementSibling || !input.nextElementSibling.classList.contains('safari-palette')) {
+            const div = document.createElement('div');
+            div.className = 'safari-palette';
+            div.innerHTML = html;
+            input.parentElement.parentElement.appendChild(div);
+        }
+    }
+    
+    actualizarPreviewCards() {
+        const cards = document.querySelectorAll('.grizalum-preview-card');
+        cards.forEach(card => {
+            const label = card.querySelector('.grizalum-preview-label').textContent;
+            if (label.includes('Ingresos')) {
+                card.style.setProperty('--preview-color', this.coloresTemp.ingresos);
+                card.querySelector('.grizalum-preview-valor').style.color = this.coloresTemp.ingresos;
+            }
+            if (label.includes('Gastos')) {
+                card.style.setProperty('--preview-color', this.coloresTemp.gastos);
+                card.querySelector('.grizalum-preview-valor').style.color = this.coloresTemp.gastos;
+            }
+            if (label.includes('Utilidad')) {
+                card.style.setProperty('--preview-color', this.coloresTemp.utilidad);
+                card.querySelector('.grizalum-preview-valor').style.color = this.coloresTemp.utilidad;
+            }
+            if (label.includes('Margen')) {
+                card.style.setProperty('--preview-color', this.coloresTemp.crecimiento);
+                card.querySelector('.grizalum-preview-valor').style.color = this.coloresTemp.crecimiento;
+            }
+        });
     }
 }
 
