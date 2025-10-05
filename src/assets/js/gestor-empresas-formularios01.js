@@ -49,501 +49,17 @@ class EditorEmpresasProfesional {
     }
 
     _inyectarEstilos() {
-        if (document.getElementById('grizalum-editor-styles')) return;
-
-        const estilos = document.createElement('style');
-        estilos.id = 'grizalum-editor-styles';
-        estilos.textContent = `
-            .grizalum-modal-editor {
-                position: fixed;
-                inset: 0;
-                background: rgba(0, 0, 0, 0.85);
-                backdrop-filter: blur(8px);
-                z-index: 999999;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 20px;
-                opacity: 0;
-                visibility: hidden;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-
-            .grizalum-modal-editor.show {
-                opacity: 1;
-                visibility: visible;
-            }
-
-            .grizalum-modal-contenido {
-                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-                border-radius: 24px;
-                width: 900px;
-                max-width: 95vw;
-                max-height: 90vh;
-                overflow: hidden;
-                box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
-                transform: scale(0.9) translateY(20px);
-                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-            }
-
-            .grizalum-modal-editor.show .grizalum-modal-contenido {
-                transform: scale(1) translateY(0);
-            }
-
-            .grizalum-modal-header {
-                background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-                padding: 28px 32px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                position: relative;
-                overflow: hidden;
-            }
-
-            .grizalum-modal-header::before {
-                content: '';
-                position: absolute;
-                top: -50%;
-                right: -10%;
-                width: 300px;
-                height: 300px;
-                background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-                animation: pulse 4s ease-in-out infinite;
-            }
-
-            @keyframes pulse {
-                0%, 100% { transform: scale(1); opacity: 0.5; }
-                50% { transform: scale(1.1); opacity: 0.8; }
-            }
-
-            .grizalum-modal-titulo {
-                display: flex;
-                align-items: center;
-                gap: 16px;
-                z-index: 1;
-            }
-
-            .grizalum-modal-icono {
-                width: 56px;
-                height: 56px;
-                background: rgba(255, 255, 255, 0.15);
-                backdrop-filter: blur(10px);
-                border-radius: 16px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 28px;
-            }
-
-            .grizalum-modal-titulo h2 {
-                margin: 0;
-                font-size: 28px;
-                font-weight: 800;
-                color: white;
-                text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            }
-
-            .grizalum-modal-titulo p {
-                margin: 4px 0 0 0;
-                font-size: 14px;
-                opacity: 0.9;
-            }
-
-            .grizalum-btn-cerrar {
-                width: 48px;
-                height: 48px;
-                background: rgba(255, 255, 255, 0.15);
-                backdrop-filter: blur(10px);
-                border: none;
-                border-radius: 12px;
-                color: white;
-                font-size: 24px;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                z-index: 1;
-            }
-
-            .grizalum-btn-cerrar:hover {
-                background: rgba(255, 255, 255, 0.25);
-                transform: rotate(90deg) scale(1.1);
-            }
-
-            .grizalum-modal-body {
-                padding: 32px;
-                max-height: calc(90vh - 200px);
-                overflow-y: auto;
-                background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
-            }
-
-            .grizalum-modal-body::-webkit-scrollbar {
-                width: 8px;
-            }
-
-            .grizalum-modal-body::-webkit-scrollbar-track {
-                background: rgba(255, 255, 255, 0.05);
-                border-radius: 10px;
-            }
-
-            .grizalum-modal-body::-webkit-scrollbar-thumb {
-                background: rgba(220, 38, 38, 0.6);
-                border-radius: 10px;
-            }
-
-            .grizalum-seccion {
-                background: rgba(255, 255, 255, 0.03);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                border-radius: 16px;
-                padding: 24px;
-                margin-bottom: 24px;
-                transition: all 0.3s ease;
-            }
-
-            .grizalum-seccion:hover {
-                background: rgba(255, 255, 255, 0.05);
-                border-color: rgba(220, 38, 38, 0.3);
-            }
-
-            .grizalum-seccion-titulo {
-                font-size: 18px;
-                font-weight: 700;
-                color: white;
-                margin-bottom: 20px;
-                display: flex;
-                align-items: center;
-                gap: 12px;
-            }
-
-            .grizalum-seccion-titulo::before {
-                content: '';
-                width: 4px;
-                height: 24px;
-                background: linear-gradient(180deg, #dc2626 0%, #b91c1c 100%);
-                border-radius: 2px;
-            }
-
-            .grizalum-campo {
-                margin-bottom: 20px;
-            }
-
-            .grizalum-label {
-                display: block;
-                color: rgba(255, 255, 255, 0.8);
-                font-size: 14px;
-                font-weight: 600;
-                margin-bottom: 8px;
-            }
-
-            .grizalum-input {
-                width: 100%;
-                padding: 14px 16px;
-                background: rgba(255, 255, 255, 0.05);
-                border: 2px solid rgba(255, 255, 255, 0.1);
-                border-radius: 12px;
-                color: white;
-                font-size: 16px;
-                transition: all 0.3s ease;
-                box-sizing: border-box;
-            }
-
-            .grizalum-input:focus {
-                outline: none;
-                background: rgba(255, 255, 255, 0.08);
-                border-color: #dc2626;
-                box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.2);
-            }
-
-            .grizalum-tabs {
-                display: flex;
-                gap: 12px;
-                margin-bottom: 20px;
-            }
-
-            .grizalum-tab {
-                flex: 1;
-                padding: 14px;
-                background: rgba(255, 255, 255, 0.05);
-                border: 2px solid rgba(255, 255, 255, 0.1);
-                border-radius: 12px;
-                color: rgba(255, 255, 255, 0.6);
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                text-align: center;
-            }
-
-            .grizalum-tab.active {
-                background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-                border-color: #dc2626;
-                color: white;
-                box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
-            }
-
-            .grizalum-tab-content {
-                display: none;
-            }
-
-            .grizalum-tab-content.active {
-                display: block;
-            }
-
-            .grizalum-emoji-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-                gap: 8px;
-                padding: 16px;
-                background: rgba(0, 0, 0, 0.2);
-                border-radius: 12px;
-                max-height: 300px;
-                overflow-y: auto;
-            }
-
-            .grizalum-emoji-item {
-                width: 60px;
-                height: 60px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 32px;
-                background: rgba(255, 255, 255, 0.05);
-                border: 2px solid transparent;
-                border-radius: 12px;
-                cursor: pointer;
-                transition: all 0.2s ease;
-            }
-
-            .grizalum-emoji-item:hover {
-                background: rgba(220, 38, 38, 0.2);
-                border-color: #dc2626;
-                transform: scale(1.15);
-            }
-
-            .grizalum-emoji-item.selected {
-                background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-                border-color: #dc2626;
-                box-shadow: 0 4px 15px rgba(220, 38, 38, 0.5);
-            }
-
-            .grizalum-upload-zona {
-                border: 3px dashed rgba(255, 255, 255, 0.2);
-                border-radius: 16px;
-                padding: 40px;
-                text-align: center;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                background: rgba(0, 0, 0, 0.2);
-            }
-
-            .grizalum-upload-zona:hover {
-                border-color: #dc2626;
-                background: rgba(220, 38, 38, 0.1);
-            }
-
-            .grizalum-upload-zona i {
-                font-size: 48px;
-                color: rgba(255, 255, 255, 0.4);
-                margin-bottom: 16px;
-            }
-
-            .grizalum-upload-texto {
-                color: rgba(255, 255, 255, 0.7);
-                font-size: 16px;
-                font-weight: 600;
-            }
-
-            .grizalum-logo-preview {
-                display: none;
-                align-items: center;
-                gap: 16px;
-                padding: 20px;
-                background: rgba(0, 0, 0, 0.3);
-                border-radius: 12px;
-                margin-top: 16px;
-            }
-
-            .grizalum-logo-preview.show {
-                display: flex;
-            }
-
-            .grizalum-logo-preview img {
-                width: 80px;
-                height: 80px;
-                object-fit: cover;
-                border-radius: 12px;
-                border: 2px solid rgba(255, 255, 255, 0.2);
-            }
-
-            .grizalum-color-picker {
-                display: flex;
-                align-items: center;
-                gap: 16px;
-                padding: 16px;
-                background: rgba(0, 0, 0, 0.2);
-                border-radius: 12px;
-                margin-bottom: 12px;
-            }
-
-            .grizalum-color-preview {
-                width: 60px;
-                height: 60px;
-                border-radius: 12px;
-                border: 3px solid rgba(255, 255, 255, 0.2);
-                cursor: pointer;
-                transition: all 0.3s ease;
-            }
-
-            .grizalum-color-preview:hover {
-                transform: scale(1.1);
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            }
-
-            .grizalum-color-info {
-                flex: 1;
-            }
-
-            .grizalum-color-nombre {
-                font-size: 16px;
-                font-weight: 700;
-                color: white;
-                margin-bottom: 4px;
-            }
-
-            .grizalum-color-hex {
-                font-family: 'Courier New', monospace;
-                font-size: 14px;
-                color: rgba(255, 255, 255, 0.6);
-            }
-
-            .grizalum-preview-grid {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 16px;
-            }
-
-            .grizalum-preview-card {
-                padding: 20px;
-                border-radius: 12px;
-                background: rgba(0, 0, 0, 0.3);
-                border-left: 4px solid var(--preview-color, #dc2626);
-                transition: all 0.3s ease;
-            }
-
-            .grizalum-preview-card:hover {
-                transform: translateY(-4px);
-                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-            }
-
-            .grizalum-preview-label {
-                font-size: 12px;
-                color: rgba(255, 255, 255, 0.6);
-                margin-bottom: 8px;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-            }
-
-            .grizalum-preview-valor {
-                font-size: 24px;
-                font-weight: 800;
-                color: white;
-            }
-
-            .grizalum-modal-footer {
-                padding: 24px 32px;
-                background: rgba(0, 0, 0, 0.4);
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            .grizalum-btn {
-                padding: 14px 28px;
-                border-radius: 12px;
-                font-size: 15px;
-                font-weight: 700;
-                cursor: pointer;
-                border: none;
-                transition: all 0.3s ease;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-
-            .grizalum-btn-cancelar {
-                background: rgba(107, 114, 128, 0.3);
-                color: white;
-            }
-
-            .grizalum-btn-cancelar:hover {
-                background: rgba(107, 114, 128, 0.5);
-                transform: translateY(-2px);
-            }
-
-            .grizalum-btn-guardar {
-                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-                color: white;
-                box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
-            }
-
-            .grizalum-btn-guardar:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
-            }
-
-            @media (max-width: 768px) {
-                .grizalum-modal-contenido {
-                    width: 100%;
-                    margin: 10px;
-                }
-
-                .grizalum-preview-grid {
-                    grid-template-columns: 1fr;
-                }
-
-                .grizalum-modal-header {
-                    padding: 20px;
-                }
-
-                .grizalum-modal-body {
-                    padding: 20px;
-                }
-            }
-            .grizalum-modo-btn {
-    padding: 16px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    gap: 6px;
-}
-
-.grizalum-modo-btn:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-    border-color: rgba(255, 255, 255, 0.4);
-}
-
-.grizalum-modo-btn.activo {
-    border-color: #d4af37 !important;
-    box-shadow: 0 0 20px #d4af37, inset 0 0 20px rgba(255, 255, 255, 0.1);
-}
-
-.grizalum-modo-btn span {
-    display: block;
-    font-size: 15px;
-}
-        `;
-
-        document.head.appendChild(estilos);
-        console.log('🎨 Estilos del editor inyectados');
+        // Verificar si el CSS ya está cargado
+        if (document.getElementById('grizalum-modal-css')) return;
+        
+        // Cargar CSS externo
+        const link = document.createElement('link');
+        link.id = 'grizalum-modal-css';
+        link.rel = 'stylesheet';
+        link.href = 'src/assets/css/gestor-empresas-modal.css';
+        document.head.appendChild(link);
+        
+        console.log('✅ CSS del modal cargado desde archivo externo');
     }
 
     editarEmpresa(empresaId) {
@@ -638,7 +154,7 @@ class EditorEmpresasProfesional {
             </div>
            <div class="grizalum-seccion">
     <div class="grizalum-seccion-titulo">🎨 Paletas Predefinidas</div>
-    <p style="color: rgba(255,255,255,0.6); font-size: 14px; margin-bottom: 16px;">
+    <p style="color: var(--modal-texto-terciario); font-size: 14px; margin-bottom: 16px;">
         Selecciona una paleta rápida o personaliza cada color manualmente
     </p>
     
@@ -671,7 +187,7 @@ class EditorEmpresasProfesional {
 </div>
 <div class="grizalum-seccion">
     <div class="grizalum-seccion-titulo">🌓 Modo de Visualización</div>
-    <p style="color: rgba(255,255,255,0.6); font-size: 14px; margin-bottom: 16px;">
+    <p style="color: var(--modal-texto-terciario); font-size: 14px; margin-bottom: 16px;">
         Elige el modo visual según tu preferencia o condiciones de luz
     </p>
     
@@ -719,13 +235,13 @@ class EditorEmpresasProfesional {
                     <div class="grizalum-upload-zona" onclick="document.getElementById('logoInput').click()">
                         <i class="fas fa-cloud-upload-alt"></i>
                         <div class="grizalum-upload-texto">Haz clic para subir tu logo</div>
-                        <small style="color: rgba(255,255,255,0.5)">PNG, JPG (máx 2MB)</small>
+                        <small style="color: var(--modal-texto-terciario)">PNG, JPG (máx 2MB)</small>
                     </div>
                     <div class="grizalum-logo-preview ${this.logoTemporal ? 'show' : ''}" id="logoPreview">
                         <img src="${this.logoTemporal || ''}" id="logoImg">
-                        <div style="flex: 1; color: white;">
+                        <div style="flex: 1; color: var(--modal-texto-principal);">
                             <div style="font-weight: 700;">Logo cargado</div>
-                            <small style="color: rgba(255,255,255,0.6)">Se guardará al confirmar</small>
+                            <small style="color: var(--modal-texto-terciario)">Se guardará al confirmar</small>
                         </div>
                         <button class="grizalum-btn grizalum-btn-cancelar" onclick="editorEmpresas.eliminarLogo()" style="padding: 8px 16px;">
                             <i class="fas fa-trash"></i>
@@ -781,7 +297,7 @@ class EditorEmpresasProfesional {
                     <label class="grizalum-label">Observaciones sobre la empresa</label>
                     <textarea id="empresaNotas" class="grizalum-input" rows="4" 
                               placeholder="Añade notas importantes, cambios recientes, observaciones...">${empresa.notas || ''}</textarea>
-                    <small style="color: rgba(255,255,255,0.5); font-size: 12px; display: block; margin-top: 8px;">
+                    <small style="color: var(--modal-texto-terciario); font-size: 12px; display: block; margin-top: 8px;">
                         Las notas se guardan automáticamente con la fecha de modificación
                     </small>
                 </div>
@@ -789,10 +305,10 @@ class EditorEmpresasProfesional {
                 ${empresa.historial && empresa.historial.length > 0 ? `
                     <div style="margin-top: 20px;">
                         <label class="grizalum-label">Historial de Cambios</label>
-                        <div style="background: rgba(0,0,0,0.2); border-radius: 12px; padding: 16px; max-height: 200px; overflow-y: auto;">
+                        <div style="background: var(--modal-fondo-input); border-radius: 12px; padding: 16px; max-height: 200px; overflow-y: auto;">
                             ${empresa.historial.slice(0, 5).map(cambio => `
-                                <div style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: rgba(255,255,255,0.7); font-size: 13px;">
-                                    <strong style="color: white;">${new Date(cambio.fecha).toLocaleString('es-PE')}</strong>
+                                <div style="padding: 8px 0; border-bottom: 1px solid var(--modal-borde); color: var(--modal-texto-secundario); font-size: 13px;">
+                                    <strong style="color: var(--modal-texto-principal);">${new Date(cambio.fecha).toLocaleString('es-PE')}</strong>
                                     <br>${cambio.descripcion}
                                 </div>
                             `).join('')}
@@ -1082,12 +598,94 @@ guardar() {
         }
         if (label.includes('Margen')) {
             card.style.setProperty('--preview-color', colores.crecimiento);
+            card.
+
+    aplicarPaleta(nombrePaleta) {
+    const paletas = {
+        'dorado-clasico': {
+            ingresos: '#d4af37',
+            gastos: '#ff6b35',
+            utilidad: '#10b981',
+            crecimiento: '#3b82f6',
+            tematica: '#d4af37'
+        },
+        'azul-corporativo': {
+            ingresos: '#2563eb',
+            gastos: '#f59e0b',
+            utilidad: '#10b981',
+            crecimiento: '#8b5cf6',
+            tematica: '#2563eb'
+        },
+        'verde-fresco': {
+            ingresos: '#10b981',
+            gastos: '#ef4444',
+            utilidad: '#22c55e',
+            crecimiento: '#06b6d4',
+            tematica: '#10b981'
+        },
+        'morado-innovacion': {
+            ingresos: '#8b5cf6',
+            gastos: '#f97316',
+            utilidad: '#10b981',
+            crecimiento: '#3b82f6',
+            tematica: '#8b5cf6'
+        },
+        'rojo-energia': {
+            ingresos: '#ef4444',
+            gastos: '#f59e0b',
+            utilidad: '#10b981',
+            crecimiento: '#06b6d4',
+            tematica: '#ef4444'
+        },
+        'gris-minimalista': {
+            ingresos: '#64748b',
+            gastos: '#f97316',
+            utilidad: '#10b981',
+            crecimiento: '#3b82f6',
+            tematica: '#64748b'
+        }
+    };
+
+    const colores = paletas[nombrePaleta];
+    if (!colores) return;
+
+    this.paletaActiva = nombrePaleta;
+    this.coloresTemp = { ...colores };
+
+    Object.keys(colores).forEach(tipo => {
+        const input = document.getElementById(`color${tipo}`);
+        const hex = document.getElementById(`hex${tipo}`);
+        const preview = input?.parentElement.querySelector('.grizalum-color-preview');
+        
+        if (input) input.value = colores[tipo];
+        if (hex) hex.textContent = colores[tipo];
+        if (preview) preview.style.background = colores[tipo];
+    });
+
+    const cards = document.querySelectorAll('.grizalum-preview-card');
+    cards.forEach(card => {
+        const label = card.querySelector('.grizalum-preview-label').textContent;
+        if (label.includes('Ingresos')) {
+            card.style.setProperty('--preview-color', colores.ingresos);
+            card.querySelector('.grizalum-preview-valor').style.color = colores.ingresos;
+        }
+        if (label.includes('Gastos')) {
+            card.style.setProperty('--preview-color', colores.gastos);
+            card.querySelector('.grizalum-preview-valor').style.color = colores.gastos;
+        }
+        if (label.includes('Utilidad')) {
+            card.style.setProperty('--preview-color', colores.utilidad);
+            card.querySelector('.grizalum-preview-valor').style.color = colores.utilidad;
+        }
+        if (label.includes('Margen')) {
+            card.style.setProperty('--preview-color', colores.crecimiento);
             card.querySelector('.grizalum-preview-valor').style.color = colores.crecimiento;
         }
     });
 
     console.log(`Paleta "${nombrePaleta}" aplicada`);
 } 
+
     aplicarModoVisual(modo) {
     this.modoVisual = modo;
     
@@ -1106,6 +704,7 @@ guardar() {
     
     console.log(`🌓 Modo visual "${modo}" aplicado al sistema`);
 }
+
     cerrar() {
         const modal = document.getElementById('grizalumModalEditor');
         if (modal) {
