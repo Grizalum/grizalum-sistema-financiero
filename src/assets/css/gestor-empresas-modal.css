@@ -569,3 +569,32 @@ body.modo-neutro {
         padding: 20px;
     }
 }
+/* ═══════════════════════════════════════════════════════════════
+   Selector de color manual para Safari/Mac
+   ═══════════════════════════════════════════════════════════════ */
+
+.grizalum-color-hex-input {
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    color: var(--modal-texto-principal);
+    background: var(--modal-fondo-input);
+    border: 2px solid var(--modal-borde);
+    padding: 8px 12px;
+    border-radius: 8px;
+    width: 100px;
+    transition: all 0.3s ease;
+}
+
+.grizalum-color-hex-input:focus {
+    outline: none;
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
+}
+
+.safari-palette {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--modal-fondo-input);
+    border-radius: 12px;
+    border: 1px solid var(--modal-borde);
+}
