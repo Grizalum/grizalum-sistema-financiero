@@ -660,31 +660,91 @@ class EditorEmpresasProfesional {
     }
     
     mostrarPaletaSafari(tipo) {
-        const coloresComunes = [
-            '#d4af37', '#f1c40f', '#ff6b35', '#e74c3c', 
-            '#2ecc71', '#27ae60', '#3498db', '#2980b9',
-            '#9b59b6', '#8e44ad', '#34495e', '#2c3e50',
-            '#95a5a6', '#7f8c8d', '#e67e22', '#d35400'
-        ];
-        
-        const html = `
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px;">
-                ${coloresComunes.map(c => `
-                    <div style="width: 40px; height: 40px; background: ${c}; border-radius: 8px; cursor: pointer; border: 2px solid rgba(255,255,255,0.2);" 
-                         onclick="editorEmpresas.cambiarColorManual('${tipo}', '${c}'); document.getElementById('hex${tipo}').value = '${c}'; this.parentElement.remove();"></div>
-                `).join('')}
+    // Paleta premium con degradados y colores profesionales
+    const paletaPremium = {
+        'Dorados': ['#d4af37', '#f1c40f', '#f39c12', '#e67e22'],
+        'Rojos': ['#e74c3c', '#c0392b', '#ff6b6b', '#ff4757'],
+        'Naranjas': ['#ff6348', '#ff7675', '#fd79a8', '#fab1a0'],
+        'Verdes': ['#2ecc71', '#27ae60', '#00b894', '#55efc4'],
+        'Azules': ['#3498db', '#2980b9', '#0984e3', '#74b9ff'],
+        'Morados': ['#9b59b6', '#8e44ad', '#a29bfe', '#6c5ce7'],
+        'Grises': ['#95a5a6', '#7f8c8d', '#636e72', '#2d3436'],
+        'Oscuros': ['#34495e', '#2c3e50', '#1e272e', '#0a3d62']
+    };
+    
+    let html = `
+        <div class="paleta-premium-safari">
+            <div class="paleta-header">
+                <span style="font-weight: 700; color: var(--modal-texto-principal); font-size: 13px;">Paleta de Colores Premium</span>
+                <button onclick="this.closest('.paleta-premium-safari').remove()" style="background: none; border: none; color: var(--modal-texto-secundario); cursor: pointer; font-size: 18px;">✕</button>
+            </div>
+    `;
+    
+    Object.entries(paletaPremium).forEach(([categoria, colores]) => {
+        html += `
+            <div class="paleta-categoria">
+                <div class="paleta-categoria-titulo">${categoria}</div>
+                <div class="paleta-colores-grid">
+                    ${colores.map(color => `
+                        <div class="paleta-color-item" 
+                             style="background: ${color};" 
+                             title="${color}"
+                             onclick="editorEmpresas.aplicarColorSeleccionado('${tipo}', '${color}')">
+                            <span class="color-codigo">${color}</span>
+                        </div>
+                    `).join('')}
+                </div>
             </div>
         `;
-        
-        const input = document.getElementById(`hex${tipo}`);
-        if (!input.nextElementSibling || !input.nextElementSibling.classList.contains('safari-palette')) {
-            const div = document.createElement('div');
-            div.className = 'safari-palette';
-            div.innerHTML = html;
-            input.parentElement.parentElement.appendChild(div);
-        }
+    });
+    
+    html += `
+            <div class="paleta-footer">
+                <input type="text" 
+                       id="colorManual${tipo}" 
+                       class="input-color-manual" 
+                       placeholder="#000000" 
+                       maxlength="7"
+                       value="${this.coloresTemp[tipo]}"
+                       oninput="if(/^#[0-9A-F]{6}$/i.test(this.value)) editorEmpresas.aplicarColorSeleccionado('${tipo}', this.value)">
+                <button class="btn-aplicar-manual" onclick="editorEmpresas.aplicarColorSeleccionado('${tipo}', document.getElementById('colorManual${tipo}').value)">
+                    Aplicar
+                </button>
+            </div>
+        </div>
+    `;
+    
+    const input = document.getElementById(`hex${tipo}`);
+    const existing = input.parentElement.parentElement.querySelector('.paleta-premium-safari');
+    if (existing) {
+        existing.remove();
+    } else {
+        const div = document.createElement('div');
+        div.innerHTML = html;
+        input.parentElement.parentElement.appendChild(div.firstElementChild);
+    }
+}
+
+aplicarColorSeleccionado(tipo, color) {
+    if (!/^#[0-9A-F]{6}$/i.test(color)) {
+        alert('Color inválido. Use formato #RRGGBB');
+        return;
     }
     
+    this.coloresTemp[tipo] = color;
+    
+    const input = document.getElementById(`hex${tipo}`);
+    if (input) input.value = color;
+    
+    const preview = input.parentElement.parentElement.querySelector('.grizalum-color-preview');
+    if (preview) preview.style.background = color;
+    
+    this.actualizarPreviewCards();
+    
+    // Cerrar paleta
+    const paleta = input.parentElement.parentElement.querySelector('.paleta-premium-safari');
+    if (paleta) paleta.remove();
+}
     actualizarPreviewCards() {
         const cards = document.querySelectorAll('.grizalum-preview-card');
         cards.forEach(card => {
