@@ -598,3 +598,123 @@ body.modo-neutro {
     border-radius: 12px;
     border: 1px solid var(--modal-borde);
 }
+
+/* Paleta Premium para Safari/Mac */
+.paleta-premium-safari {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 12px;
+    background: var(--modal-fondo-principal);
+    border: 2px solid var(--modal-borde);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    max-height: 450px;
+    overflow-y: auto;
+}
+
+.paleta-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--modal-borde);
+}
+
+.paleta-categoria {
+    margin-bottom: 16px;
+}
+
+.paleta-categoria-titulo {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--modal-texto-terciario);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.paleta-colores-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.paleta-color-item {
+    height: 50px;
+    border-radius: 10px;
+    cursor: pointer;
+    position: relative;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: flex-end;
+    padding: 6px;
+}
+
+.paleta-color-item:hover {
+    transform: scale(1.1);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.color-codigo {
+    font-size: 9px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.paleta-color-item:hover .color-codigo {
+    opacity: 1;
+}
+
+.paleta-footer {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--modal-borde);
+}
+
+.input-color-manual {
+    flex: 1;
+    padding: 10px 12px;
+    background: var(--modal-fondo-input);
+    border: 2px solid var(--modal-borde);
+    border-radius: 8px;
+    color: var(--modal-texto-principal);
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+}
+
+.input-color-manual:focus {
+    outline: none;
+    border-color: #dc2626;
+}
+
+.btn-aplicar-manual {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-aplicar-manual:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+}
+
+.grizalum-color-picker {
+    position: relative;
+}
