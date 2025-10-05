@@ -1,0 +1,86 @@
+/* ═══════════════════════════════════════════════════════════════
+   GRIZALUM - MODAL LISTA DE EMPRESAS (gestor-empresas-principal.js)
+   Estilos adaptativos para modo oscuro/claro/neutro
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Variables modo oscuro (default) */
+:root {
+    --lista-texto-principal: #1f2937;
+    --lista-texto-secundario: #6b7280;
+    --lista-fondo: #ffffff;
+    --lista-fondo-secundario: #f8fafc;
+    --lista-borde: #e5e7eb;
+}
+
+/* Modo claro - mismo que modo oscuro en este caso */
+body.modo-claro {
+    --lista-texto-principal: #1f2937;
+    --lista-texto-secundario: #6b7280;
+    --lista-fondo: #ffffff;
+    --lista-fondo-secundario: #f8fafc;
+    --lista-borde: #e5e7eb;
+}
+
+/* Modo neutro */
+body.modo-neutro {
+    --lista-texto-principal: #e5e7eb;
+    --lista-texto-secundario: rgba(229, 231, 235, 0.7);
+    --lista-fondo: #374151;
+    --lista-fondo-secundario: #1f2937;
+    --lista-borde: rgba(255, 255, 255, 0.15);
+}
+
+/* Modo oscuro explícito */
+body.modo-oscuro {
+    --lista-texto-principal: #f3f4f6;
+    --lista-texto-secundario: #9ca3af;
+    --lista-fondo: #1f2937;
+    --lista-fondo-secundario: #111827;
+    --lista-borde: rgba(255, 255, 255, 0.1);
+}
+
+/* Aplicar variables a los elementos */
+.grizalum-empresas-list {
+    background: var(--lista-fondo) !important;
+    border-color: var(--lista-borde) !important;
+}
+
+.grizalum-list-header {
+    background: var(--lista-fondo-secundario) !important;
+    border-color: var(--lista-borde) !important;
+}
+
+.grizalum-list-title {
+    color: var(--lista-texto-principal) !important;
+}
+
+.grizalum-empresa-card {
+    color: var(--lista-texto-principal) !important;
+}
+
+.grizalum-card-nombre {
+    color: var(--lista-texto-principal) !important;
+}
+
+.grizalum-card-datos {
+    color: var(--lista-texto-secundario) !important;
+}
+
+.grizalum-card-ubicacion,
+.grizalum-card-finanzas {
+    color: var(--lista-texto-secundario) !important;
+}
+
+.grizalum-list-footer {
+    background: var(--lista-fondo-secundario) !important;
+    border-color: var(--lista-borde) !important;
+}
+
+.grizalum-total-empresas {
+    color: var(--lista-texto-principal) !important;
+}
+
+.grizalum-empresa-card:hover {
+    background: var(--lista-fondo-secundario) !important;
+    border-color: var(--lista-borde) !important;
+}
