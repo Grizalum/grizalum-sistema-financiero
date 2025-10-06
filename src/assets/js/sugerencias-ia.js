@@ -24,8 +24,8 @@ class SistemaSugerenciasIA {
         this.umbrales = {
             usoMinimo: 3, // Veces que debe usar algo para considerar "usado"
             tiempoMinimo: 30000, // 30 segundos en módulo
-            diasParaSugerir: 3, // Días antes de mostrar sugerencias
-            sugerenciasPorDia: 2 // Máximo de sugerencias por día
+            diasParaSugerir: 0, // Días antes de mostrar sugerencias
+            sugerenciasPorDia: 3 // Máximo de sugerencias por día
         };
         
         // Cola de sugerencias pendientes
@@ -143,12 +143,6 @@ class SistemaSugerenciasIA {
         const empresa = this.gestor.estado.empresas[this.empresaActual];
         if (!empresa) return;
 
-        // No sugerir en los primeros días
-        const diasDesdeCreacion = this._calcularDiasDesdeCreacion(empresa);
-        if (diasDesdeCreacion < this.umbrales.diasParaSugerir) {
-            console.log(`⏳ Esperando ${this.umbrales.diasParaSugerir - diasDesdeCreacion} días más para sugerir`);
-            return;
-        }
 
         // No exceder límite diario
         if (this._sugerenciasHoy() >= this.umbrales.sugerenciasPorDia) {
@@ -206,8 +200,13 @@ class SistemaSugerenciasIA {
     }
 
     _detectarNecesidad(moduloId, empresa) {
-        const contexto = empresa.contextoNegocio || {};
         const tracking = this.tracking;
+        const contexto = empresa.contextoNegocio || {};
+        // Fallback si no hay contexto (empresas sin onboarding)
+if (!contexto.complejidad && empresa.modulosActivos) {
+    const modulosActivos = Object.values(empresa.modulosActivos).filter(v => v).length;
+    contexto.complejidad = modulosActivos > 5 ? 'complejo' : modulosActivos > 3 ? 'intermedio' : 'simple';
+}
 
         // Detección inteligente por módulo
         switch (moduloId) {
