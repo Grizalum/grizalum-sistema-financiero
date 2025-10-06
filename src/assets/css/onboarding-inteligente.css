@@ -456,3 +456,35 @@ body.modo-neutro {
         font-size: 22px;
     }
 }
+/* Input personalizado */
+.wizard-input-text {
+    width: 100%;
+    padding: 16px 20px;
+    background: var(--wizard-fondo-card);
+    border: 2px solid var(--wizard-borde);
+    border-radius: 12px;
+    color: var(--wizard-texto-principal);
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.wizard-input-text:focus {
+    outline: none;
+    border-color: #dc2626;
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.2);
+    background: var(--wizard-fondo-card-hover);
+}
+
+.wizard-input-text::placeholder {
+    color: var(--wizard-texto-terciario);
+}
+
+.input-personalizado {
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
