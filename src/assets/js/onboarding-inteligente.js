@@ -663,6 +663,34 @@ _guardarPatronAprendizaje() {
         console.error('Error guardando patrón:', error);
     }
 }
+    crearIndustriaPersonalizada() {
+    this.respuestas.industria = 'personalizada';
+    this._actualizarWizard();
+}
+
+guardarNombrePersonalizado(nombre) {
+    this.respuestas.nombreIndustriaPersonalizada = nombre.trim();
+    
+    // Si escribió algo, crear perfil temporal
+    if (nombre.trim().length > 2) {
+        this.perfilRecomendado = {
+            id: 'personalizada',
+            nombre: nombre.trim(),
+            icono: '🏢',
+            categoria: 'Personalizada',
+            modulosRecomendados: {
+                'flujo-caja': { prioridad: 10, obligatorio: true },
+                'inventario': { prioridad: 7, obligatorio: false },
+                'clientes': { prioridad: 7, obligatorio: false },
+                'facturacion': { prioridad: 6, obligatorio: false },
+                'reportes': { prioridad: 8, obligatorio: false },
+                'empleados': { prioridad: 5, obligatorio: false },
+                'proyectos': { prioridad: 5, obligatorio: false },
+                'contabilidad': { prioridad: 4, obligatorio: false }
+            }
+        };
+    }
+}
     cerrar() {
         const wizard = document.getElementById('onboardingWizard');
         if (wizard) {
