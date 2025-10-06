@@ -227,6 +227,15 @@ class OnboardingInteligente {
             case 'multiple':
                 contenido = this._generarMultiple(pregunta);
                 break;
+                case 'dinamico':  // AGREGAR ESTE CASO
+            const preguntaDinamica = this._generarPreguntaDinamica();
+            if (preguntaDinamica) {
+                pregunta.pregunta = preguntaDinamica.pregunta;
+                pregunta.descripcion = preguntaDinamica.descripcion;
+                pregunta.opciones = preguntaDinamica.opciones;
+                contenido = this._generarSeleccion(pregunta);
+            }
+            break;
         }
 
         return `
@@ -400,6 +409,17 @@ class OnboardingInteligente {
             respuestas: this.respuestas,
             version: '1.0'
         };
+        // Guardar contexto profundo
+    empresa.contextoNegocio = {
+        tamano: this.respuestas.tamano,
+        volumenNegocio: this.respuestas['volumen-negocio'],
+        complejidad: this.respuestas['complejidad-operaciones'],
+        ciclo: this.respuestas['ciclo-negocio'],
+        contextoEspecifico: this.respuestas['contexto-especifico']
+    };
+    
+    // Guardar patrón para aprendizaje
+        this._guardarPatronAprendizaje();
         
         this.gestor._guardarEmpresas();
         console.log('✅ Empresa configurada automáticamente');
