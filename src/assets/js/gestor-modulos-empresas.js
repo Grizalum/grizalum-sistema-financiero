@@ -128,7 +128,11 @@ class SistemaModulosEmpresas {
             this.empresaActual = e.detail.companyId;
             this._aplicarModulosActivos();
         });
-
+        if (this.gestor.estado.empresaActual) {
+        this.empresaActual = this.gestor.estado.empresaActual;
+        this._aplicarModulosActivos();
+        }
+       
         // Inicializar módulos por defecto si no existen
         this._inicializarModulosPorDefecto();
         
