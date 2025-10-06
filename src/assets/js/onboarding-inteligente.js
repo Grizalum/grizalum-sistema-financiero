@@ -254,26 +254,53 @@ class OnboardingInteligente {
     }
 
     _generarSeleccionVisual(pregunta) {
-        const perfiles = Object.values(this.perfiles.obtenerTodosLosPerfiles());
-        const categorias = this.perfiles.obtenerCategorias();
-        
-        let html = '<div class="industrias-grid">';
-        
-        perfiles.forEach(perfil => {
-            const seleccionado = this.respuestas[pregunta.id] === perfil.id ? 'seleccionado' : '';
-            html += `
-                <div class="industria-card ${seleccionado}" onclick="onboarding.seleccionarOpcion('${pregunta.id}', '${perfil.id}')">
-                    <div class="industria-icono">${perfil.icono}</div>
-                    <div class="industria-nombre">${perfil.nombre}</div>
-                    <div class="industria-categoria">${perfil.categoria}</div>
-                </div>
-            `;
-        });
-        
-        html += '</div>';
-        return html;
+    const perfiles = Object.values(this.perfiles.obtenerTodosLosPerfiles());
+    
+    let html = '<div class="industrias-grid">';
+    
+    // Mostrar perfiles existentes
+    perfiles.forEach(perfil => {
+        const seleccionado = this.respuestas[pregunta.id] === perfil.id ? 'seleccionado' : '';
+        html += `
+            <div class="industria-card ${seleccionado}" onclick="onboarding.seleccionarOpcion('${pregunta.id}', '${perfil.id}')">
+                <div class="industria-icono">${perfil.icono}</div>
+                <div class="industria-nombre">${perfil.nombre}</div>
+                <div class="industria-categoria">${perfil.categoria}</div>
+            </div>
+        `;
+    });
+    
+    // Opción "Otra industria"
+    const esOtra = this.respuestas[pregunta.id] === 'personalizada';
+    html += `
+        <div class="industria-card ${esOtra ? 'seleccionado' : ''}" onclick="onboarding.crearIndustriaPersonalizada()">
+            <div class="industria-icono">➕</div>
+            <div class="industria-nombre">Otra Industria</div>
+            <div class="industria-categoria">Personalizada</div>
+        </div>
+    `;
+    
+    html += '</div>';
+    
+    // Input para industria personalizada
+    if (esOtra) {
+        html += `
+            <div class="input-personalizado" style="margin-top: 24px;">
+                <input type="text" 
+                       id="nombreIndustriaPersonalizada" 
+                       placeholder="Ej: Importadora, Joyería, Panadería, etc."
+                       class="wizard-input-text"
+                       value="${this.respuestas.nombreIndustriaPersonalizada || ''}"
+                       oninput="onboarding.guardarNombrePersonalizado(this.value)">
+                <small style="color: var(--wizard-texto-terciario); display: block; margin-top: 8px;">
+                    Escribe el nombre de tu industria. Configuraremos los módulos esenciales.
+                </small>
+            </div>
+        `;
     }
-
+    
+    return html;
+}
     _generarSeleccion(pregunta) {
         let html = '<div class="opciones-grid">';
         
