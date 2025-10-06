@@ -137,6 +137,10 @@ class OnboardingInteligente {
         ]
     }
 ];
+        console.log('🎯 Onboarding Inteligente inicializando...');
+        this._esperarDependencias();
+    }
+    
     _esperarDependencias() {
         const intentar = () => {
             if (window.gestorEmpresas && window.perfilesIndustriales) {
