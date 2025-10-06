@@ -14,66 +14,129 @@ class OnboardingInteligente {
         this.perfilRecomendado = null;
         
         this.preguntas = [
-            {
-                id: 'industria',
-                tipo: 'seleccion-visual',
-                pregunta: '¿A qué se dedica tu empresa?',
-                descripcion: 'Esto nos ayudará a configurar las herramientas adecuadas',
-                opciones: 'dynamic' // Se carga desde perfiles
-            },
-            {
-                id: 'tamano',
-                tipo: 'seleccion',
-                pregunta: '¿Qué tamaño tiene tu empresa?',
-                descripcion: 'Esto determinará qué módulos son más útiles para ti',
-                opciones: [
-                    { id: 'micro', nombre: 'Micro', descripcion: '1-5 empleados o solo tú', icono: '👤' },
-                    { id: 'pequena', nombre: 'Pequeña', descripcion: '6-20 empleados', icono: '👥' },
-                    { id: 'mediana', nombre: 'Mediana', descripcion: '21-100 empleados', icono: '👨‍👩‍👧‍👦' },
-                    { id: 'grande', nombre: 'Grande', descripcion: 'Más de 100 empleados', icono: '🏢' }
-                ]
-            },
-            {
-                id: 'objetivos',
-                tipo: 'multiple',
-                pregunta: '¿Qué necesitas controlar principalmente?',
-                descripcion: 'Puedes elegir varias opciones',
-                opciones: [
-                    { id: 'dinero', nombre: 'Dinero (ingresos y gastos)', icono: '💰' },
-                    { id: 'inventario', nombre: 'Productos o inventario', icono: '📦' },
-                    { id: 'clientes', nombre: 'Clientes y ventas', icono: '👥' },
-                    { id: 'empleados', nombre: 'Empleados y planilla', icono: '👷' },
-                    { id: 'proyectos', nombre: 'Proyectos u obras', icono: '🎯' }
-                ]
-            },
-            {
-                id: 'experiencia',
-                tipo: 'seleccion',
-                pregunta: '¿Qué experiencia tienes con apps de gestión?',
-                descripcion: 'Nos ayuda a ajustar la complejidad de la interfaz',
-                opciones: [
-                    { id: 'ninguna', nombre: 'Primera vez', descripcion: 'Nunca he usado algo similar', icono: '🌱' },
-                    { id: 'basica', nombre: 'Básica', descripcion: 'He usado Excel o apps simples', icono: '📊' },
-                    { id: 'avanzada', nombre: 'Avanzada', descripcion: 'He usado sistemas completos', icono: '🚀' }
-                ]
-            },
-            {
-                id: 'preferencia',
-                tipo: 'seleccion',
-                pregunta: '¿Qué prefieres al inicio?',
-                descripcion: 'Siempre puedes cambiar esto después',
-                opciones: [
-                    { id: 'simple', nombre: 'Simple y Básico', descripcion: 'Solo lo esencial, sin complicaciones', icono: '✨' },
-                    { id: 'balanceado', nombre: 'Balanceado', descripcion: 'Lo necesario para empezar bien', icono: '⚖️' },
-                    { id: 'completo', nombre: 'Completo', descripcion: 'Todas las herramientas disponibles', icono: '🎯' }
-                ]
-            }
-        ];
-        
-        console.log('🎯 Onboarding Inteligente inicializando...');
-        this._esperarDependencias();
+    {
+        id: 'industria',
+        tipo: 'seleccion-visual',
+        pregunta: '¿A qué se dedica tu empresa?',
+        descripcion: 'Selecciona el sector que mejor describa tu actividad',
+        opciones: 'dynamic'
+    },
+    {
+        id: 'tamano',
+        tipo: 'seleccion',
+        pregunta: '¿Qué tamaño tiene tu empresa actualmente?',
+        descripcion: 'Esto nos ayuda a configurar la complejidad adecuada',
+        opciones: [
+            { id: 'solo', nombre: 'Solo yo', descripcion: 'Emprendimiento individual', icono: '👤' },
+            { id: 'micro', nombre: 'Micro (2-5)', descripcion: '2-5 personas trabajando', icono: '👥' },
+            { id: 'pequena', nombre: 'Pequeña (6-20)', descripcion: '6-20 empleados', icono: '👨‍👩‍👧' },
+            { id: 'mediana', nombre: 'Mediana (21-100)', descripcion: '21-100 empleados', icono: '👨‍👩‍👧‍👦' },
+            { id: 'grande', nombre: 'Grande (+100)', descripcion: 'Más de 100 empleados', icono: '🏢' }
+        ]
+    },
+    {
+        id: 'volumen-negocio',
+        tipo: 'seleccion',
+        pregunta: '¿Cuál es tu volumen de operaciones mensual?',
+        descripcion: 'Aproximado en cantidad de transacciones o movimientos',
+        opciones: [
+            { id: 'bajo', nombre: 'Bajo', descripcion: '1-20 movimientos/mes', icono: '📊' },
+            { id: 'medio', nombre: 'Medio', descripcion: '21-100 movimientos/mes', icono: '📈' },
+            { id: 'alto', nombre: 'Alto', descripcion: '101-500 movimientos/mes', icono: '🚀' },
+            { id: 'muy-alto', nombre: 'Muy Alto', descripcion: '+500 movimientos/mes', icono: '⚡' }
+        ]
+    },
+    {
+        id: 'objetivos',
+        tipo: 'multiple',
+        pregunta: '¿Qué necesitas controlar principalmente?',
+        descripcion: 'Selecciona todas las que apliquen',
+        opciones: [
+            { id: 'dinero', nombre: 'Dinero (ingresos y gastos)', icono: '💰' },
+            { id: 'inventario', nombre: 'Productos o inventario', icono: '📦' },
+            { id: 'clientes', nombre: 'Clientes y ventas', icono: '👥' },
+            { id: 'empleados', nombre: 'Empleados y planilla', icono: '👷' },
+            { id: 'proyectos', nombre: 'Proyectos u obras', icono: '🎯' },
+            { id: 'proveedores', nombre: 'Proveedores', icono: '🤝' }
+        ]
+    },
+    {
+        id: 'contexto-especifico',
+        tipo: 'dinamico',
+        pregunta: 'dynamic', // Se genera según industria
+        descripcion: 'dynamic',
+        opciones: 'dynamic'
+    },
+    {
+        id: 'complejidad-operaciones',
+        tipo: 'seleccion',
+        pregunta: '¿Qué tan complejas son tus operaciones?',
+        descripcion: 'Esto determina el nivel de detalle que necesitas',
+        opciones: [
+            { id: 'simple', nombre: 'Simple', descripcion: 'Compras, ventas básicas', icono: '🌱' },
+            { id: 'intermedio', nombre: 'Intermedio', descripcion: 'Múltiples productos/servicios', icono: '🌿' },
+            { id: 'complejo', nombre: 'Complejo', descripcion: 'Procesos elaborados, múltiples etapas', icono: '🌳' }
+        ]
+    },
+    {
+        id: 'facturacion',
+        tipo: 'seleccion',
+        pregunta: '¿Emites facturas o comprobantes?',
+        descripcion: 'Importante para configurar el módulo de facturación',
+        opciones: [
+            { id: 'no', nombre: 'No emito', descripcion: 'Ventas sin comprobantes', icono: '❌' },
+            { id: 'boletas', nombre: 'Solo Boletas', descripcion: 'Boletas de venta', icono: '🧾' },
+            { id: 'facturas', nombre: 'Facturas', descripcion: 'Facturas electrónicas', icono: '📄' },
+            { id: 'ambos', nombre: 'Boletas y Facturas', descripcion: 'Ambos tipos', icono: '📋' }
+        ]
+    },
+    {
+        id: 'ciclo-negocio',
+        tipo: 'seleccion',
+        pregunta: '¿Cómo es el ciclo de tu negocio?',
+        descripcion: 'Esto afecta cómo organizamos tus reportes',
+        opciones: [
+            { id: 'diario', nombre: 'Diario', descripcion: 'Operaciones todos los días', icono: '☀️' },
+            { id: 'semanal', nombre: 'Semanal', descripcion: 'Ciclos semanales', icono: '📅' },
+            { id: 'mensual', nombre: 'Mensual', descripcion: 'Operaciones mensuales', icono: '📆' },
+            { id: 'estacional', nombre: 'Estacional', descripcion: 'Temporadas específicas', icono: '🗓️' }
+        ]
+    },
+    {
+        id: 'experiencia',
+        tipo: 'seleccion',
+        pregunta: '¿Qué experiencia tienes con sistemas de gestión?',
+        descripcion: 'Ajustaremos la interfaz según tu nivel',
+        opciones: [
+            { id: 'ninguna', nombre: 'Primera vez', descripcion: 'Nunca he usado algo similar', icono: '🌱' },
+            { id: 'basica', nombre: 'Básica', descripcion: 'Excel o apps simples', icono: '📊' },
+            { id: 'avanzada', nombre: 'Avanzada', descripcion: 'He usado sistemas ERP', icono: '🚀' }
+        ]
+    },
+    {
+        id: 'urgencia',
+        tipo: 'seleccion',
+        pregunta: '¿Qué necesitas hacer primero?',
+        descripcion: 'Priorizaremos estas funciones',
+        opciones: [
+            { id: 'organizar', nombre: 'Organizar mis datos', descripcion: 'Necesito orden', icono: '📋' },
+            { id: 'control', nombre: 'Control de gastos', descripcion: 'Reducir pérdidas', icono: '💸' },
+            { id: 'crecer', nombre: 'Crecer el negocio', descripcion: 'Vender más', icono: '📈' },
+            { id: 'eficiencia', nombre: 'Ser más eficiente', descripcion: 'Ahorrar tiempo', icono: '⚡' }
+        ]
+    },
+    {
+        id: 'preferencia',
+        tipo: 'seleccion',
+        pregunta: '¿Cómo prefieres empezar?',
+        descripcion: 'Puedes cambiar módulos en cualquier momento',
+        opciones: [
+            { id: 'minimo', nombre: 'Mínimo Esencial', descripcion: 'Solo lo absolutamente necesario', icono: '🎯' },
+            { id: 'balanceado', nombre: 'Balanceado', descripcion: 'Lo recomendado para tu industria', icono: '⚖️' },
+            { id: 'completo', nombre: 'Todo Activado', descripcion: 'Todas las herramientas disponibles', icono: '🚀' }
+        ]
     }
-
+];
     _esperarDependencias() {
         const intentar = () => {
             if (window.gestorEmpresas && window.perfilesIndustriales) {
@@ -427,6 +490,128 @@ class OnboardingInteligente {
         }
     }
 
+    _generarPreguntaDinamica() {
+    const industriaId = this.respuestas.industria;
+    if (!industriaId) return null;
+    
+    const preguntasEspecificas = {
+        'avicola': {
+            pregunta: '¿Qué produces principalmente?',
+            descripcion: 'Esto personaliza tus métricas',
+            opciones: [
+                { id: 'pollos', nombre: 'Pollos de engorde', icono: '🐔' },
+                { id: 'huevos', nombre: 'Huevos', icono: '🥚' },
+                { id: 'ambos', nombre: 'Pollos y huevos', icono: '🐔🥚' },
+                { id: 'otros', nombre: 'Otras aves', icono: '🦆' }
+            ]
+        },
+        'fundicion': {
+            pregunta: '¿Qué tipo de fundición realizas?',
+            descripcion: 'Configura métricas específicas',
+            opciones: [
+                { id: 'hierro', nombre: 'Hierro/Acero', icono: '⚙️' },
+                { id: 'aluminio', nombre: 'Aluminio', icono: '🔩' },
+                { id: 'bronce', nombre: 'Bronce/Cobre', icono: '🔧' },
+                { id: 'varios', nombre: 'Varios metales', icono: '🏭' }
+            ]
+        },
+        'importadora': {
+            pregunta: '¿Qué tipo de productos importas?',
+            descripcion: 'Personalizaremos tu control',
+            opciones: [
+                { id: 'tecnologia', nombre: 'Tecnología/Electrónica', icono: '💻' },
+                { id: 'textiles', nombre: 'Textiles/Ropa', icono: '👔' },
+                { id: 'alimentos', nombre: 'Alimentos', icono: '🍕' },
+                { id: 'maquinaria', nombre: 'Maquinaria', icono: '⚙️' },
+                { id: 'varios', nombre: 'Productos variados', icono: '📦' }
+            ]
+        },
+        'comercio-retail': {
+            pregunta: '¿Qué tipo de productos vendes?',
+            descripcion: 'Optimiza tu inventario',
+            opciones: [
+                { id: 'abarrotes', nombre: 'Abarrotes/Bodega', icono: '🛒' },
+                { id: 'ropa', nombre: 'Ropa/Textiles', icono: '👕' },
+                { id: 'tecnologia', nombre: 'Tecnología', icono: '📱' },
+                { id: 'farmacia', nombre: 'Farmacia', icono: '💊' },
+                { id: 'varios', nombre: 'Varios rubros', icono: '🏪' }
+            ]
+        },
+        'construccion': {
+            pregunta: '¿Qué tipo de obras realizas?',
+            descripcion: 'Configura seguimiento de proyectos',
+            opciones: [
+                { id: 'edificios', nombre: 'Edificios', icono: '🏢' },
+                { id: 'casas', nombre: 'Casas/Viviendas', icono: '🏠' },
+                { id: 'infraestructura', nombre: 'Infraestructura', icono: '🛣️' },
+                { id: 'remodelacion', nombre: 'Remodelación', icono: '🔨' }
+            ]
+        },
+        'restaurante': {
+            pregunta: '¿Qué tipo de servicio ofreces?',
+            descripcion: 'Personaliza tu operación',
+            opciones: [
+                { id: 'fast-food', nombre: 'Comida rápida', icono: '🍔' },
+                { id: 'restaurante', nombre: 'Restaurante', icono: '🍽️' },
+                { id: 'delivery', nombre: 'Solo delivery', icono: '🚚' },
+                { id: 'cafeteria', nombre: 'Cafetería', icono: '☕' }
+            ]
+        },
+        'transporte': {
+            pregunta: '¿Qué tipo de transporte realizas?',
+            descripcion: 'Configura control de rutas',
+            opciones: [
+                { id: 'carga', nombre: 'Carga pesada', icono: '🚛' },
+                { id: 'pasajeros', nombre: 'Pasajeros', icono: '🚌' },
+                { id: 'courier', nombre: 'Courier/Mensajería', icono: '📦' },
+                { id: 'taxi', nombre: 'Taxi/Transporte privado', icono: '🚕' }
+            ]
+        }
+    };
+    
+    return preguntasEspecificas[industriaId] || {
+        pregunta: '¿Qué caracteriza tu operación?',
+        descripcion: 'Ayúdanos a conocer mejor tu negocio',
+        opciones: [
+            { id: 'estandar', nombre: 'Operación estándar', icono: '✅' },
+            { id: 'personalizado', nombre: 'Necesito personalización', icono: '⚙️' }
+        ]
+    };
+}
+
+_guardarPatronAprendizaje() {
+    try {
+        const patrones = JSON.parse(localStorage.getItem('grizalum_patrones_aprendizaje') || '{}');
+        const industriaId = this.respuestas.industria;
+        
+        if (!industriaId) return;
+        
+        if (!patrones[industriaId]) {
+            patrones[industriaId] = {
+                configuraciones: [],
+                modulosMasUsados: {},
+                componentesMasUsados: []
+            };
+        }
+        
+        patrones[industriaId].configuraciones.push({
+            respuestas: this.respuestas,
+            modulos: this._determinarModulosActivos(),
+            fecha: new Date().toISOString(),
+            version: '1.0'
+        });
+        
+        // Mantener solo últimas 50 configuraciones por industria
+        if (patrones[industriaId].configuraciones.length > 50) {
+            patrones[industriaId].configuraciones = patrones[industriaId].configuraciones.slice(-50);
+        }
+        
+        localStorage.setItem('grizalum_patrones_aprendizaje', JSON.stringify(patrones));
+        console.log(`📊 Patrón guardado para industria: ${industriaId}`);
+    } catch (error) {
+        console.error('Error guardando patrón:', error);
+    }
+}
     cerrar() {
         const wizard = document.getElementById('onboardingWizard');
         if (wizard) {
