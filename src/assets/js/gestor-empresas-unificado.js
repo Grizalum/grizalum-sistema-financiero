@@ -747,4 +747,653 @@ class GestorEmpresasUnificado {
         this._guardarEmpresas();
         
         this.cerrarModal();
-        this._renderizarInterf
+        this._renderizarInterfaz();
+        this.seleccionarEmpresa(empresaId);
+        
+        this._registrarActividad('EMPRESA_CREADA', `Nueva empresa creada: ${nombre}`);
+        
+        // ✅ INTEGRACIÓN CON ONBOARDING AUTOMÁTICO
+        setTimeout(() => {
+            if (window.onboarding) {
+                console.log('🎯 Iniciando onboarding automático para:', nombre);
+                onboarding.iniciar(empresaId);
+            } else {
+                alert(`✅ Empresa "${nombre}" creada exitosamente`);
+            }
+        }, 500);
+    }
+
+    _generarIdEmpresa(nombre) {
+        const base = nombre
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '')
+            .substring(0, 30);
+        
+        let id = base;
+        let contador = 1;
+        
+        while (this.estado.empresas[id]) {
+            id = `${base}-${contador}`;
+            contador++;
+        }
+        
+        return id;
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // EDITAR EMPRESA
+    // ═══════════════════════════════════════════════════════════════
+
+    editarEmpresa(empresaId) {
+        const empresa = this.estado.empresas[empresaId];
+        if (!empresa) {
+            alert('❌ Empresa no encontrada');
+            return;
+        }
+
+        this.empresaEditando = empresaId;
+        this.logoTemporal = empresa.logo || null;
+        this.emojiSeleccionado = empresa.icono || '🏢';
+        this.coloresTemp = empresa.coloresPersonalizados || {
+            ingresos: '#d4af37',
+            gastos: '#ff6b35',
+            utilidad: '#2ecc71',
+            crecimiento: '#9b59b6',
+            tematica: '#d4af37'
+        };
+        this.modoVisual = empresa.modoVisual || 'oscuro';
+        
+        this._mostrarModalEditar(empresa);
+    }
+
+    _mostrarModalEditar(empresa) {
+        const emojis = ['🏢', '🏭', '🏪', '🏬', '🏦', '🏥', '🚚', '🍽️', '💻', '🔥', '⚙️', '🌾', '🐄', '🐟', '⛏️', '🏗️', '💎', '⚡', '🚀', '💡', '🎯', '💰', '🍕', '☕', '🚗', '✈️', '🏀', '🎮', '📱', '🔧'];
+
+        const modal = document.createElement('div');
+        modal.className = 'grizalum-modal-editor';
+        modal.id = 'grizalumModalEditor';
+
+        modal.innerHTML = `
+            <div class="grizalum-modal-contenido">
+                <div class="grizalum-modal-header">
+                    <div class="grizalum-modal-titulo">
+                        <div class="grizalum-modal-icono">${empresa.icono || '🏢'}</div>
+                        <div>
+                            <h2>Editar Empresa</h2>
+                            <p>${empresa.nombre}</p>
+                        </div>
+                    </div>
+                    <button class="grizalum-btn-cerrar" onclick="gestorEmpresas.cerrarModal()">✕</button>
+                </div>
+
+                <div class="grizalum-modal-body">
+                    <div class="grizalum-seccion">
+                        <div class="grizalum-seccion-titulo">Información Básica</div>
+                        
+                        <div class="grizalum-campo">
+                            <label class="grizalum-label">Nombre de la Empresa</label>
+                            <input type="text" id="empresaNombre" class="grizalum-input" value="${empresa.nombre}" maxlength="80">
+                        </div>
+
+                        <div class="grizalum-campo">
+                            <label class="grizalum-label">RUC (Opcional)</label>
+                            <input type="text" id="empresaRuc" class="grizalum-input" value="${empresa.legal?.ruc || ''}" maxlength="11">
+                        </div>
+                    </div>
+
+                    <div class="grizalum-seccion">
+                        <div class="grizalum-seccion-titulo">🎨 Paletas Predefinidas</div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
+                            <button class="grizalum-paleta-btn" onclick="gestorEmpresas.aplicarPaleta('dorado-clasico')" 
+                                    style="background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                                ✨ Dorado Clásico
+                            </button>
+                            <button class="grizalum-paleta-btn" onclick="gestorEmpresas.aplicarPaleta('azul-corporativo')"
+                                    style="background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                                💼 Azul Corporativo
+                            </button>
+                            <button class="grizalum-paleta-btn" onclick="gestorEmpresas.aplicarPaleta('verde-fresco')"
+                                    style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                                🌿 Verde Fresco
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grizalum-seccion">
+                        <div class="grizalum-seccion-titulo">🌓 Modo de Visualización</div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
+                            <button onclick="gestorEmpresas.aplicarModoVisual('oscuro')" 
+                                    style="background: linear-gradient(135deg, #1a1b23 0%, #16213e 100%); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                                🌙 Modo Oscuro
+                            </button>
+                            <button onclick="gestorEmpresas.aplicarModoVisual('claro')"
+                                    style="background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%); color: #1f2937; border: 1px solid #e5e7eb; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                                ☀️ Modo Claro
+                            </button>
+                            <button onclick="gestorEmpresas.aplicarModoVisual('neutro')"
+                                    style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                                ⚖️ Modo Neutro
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grizalum-seccion">
+                        <div class="grizalum-seccion-titulo">Identidad Visual</div>
+                        
+                        <div class="grizalum-emoji-grid">
+                            ${emojis.map(emoji => `
+                                <div class="grizalum-emoji-item ${emoji === empresa.icono ? 'selected' : ''}" 
+                                     onclick="gestorEmpresas.seleccionarEmoji('${emoji}')">${emoji}</div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="grizalum-seccion">
+                        <div class="grizalum-seccion-titulo">Colores de Métricas</div>
+                        
+                        ${this._generarColorPicker('Ingresos', 'ingresos', this.coloresTemp.ingresos, '💰')}
+                        ${this._generarColorPicker('Gastos', 'gastos', this.coloresTemp.gastos, '💸')}
+                        ${this._generarColorPicker('Utilidad', 'utilidad', this.coloresTemp.utilidad, '📈')}
+                        ${this._generarColorPicker('Crecimiento', 'crecimiento', this.coloresTemp.crecimiento, '🚀')}
+                        ${this._generarColorPicker('Temática', 'tematica', this.coloresTemp.tematica, '🎨')}
+                    </div>
+
+                    <div class="grizalum-seccion">
+                        <div class="grizalum-seccion-titulo">Vista Previa</div>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                            <div style="padding: 16px; background: rgba(255,255,255,0.05); border-radius: 12px; text-align: center;">
+                                <div style="font-size: 12px; color: var(--modal-texto-terciario); margin-bottom: 8px;">💰 Ingresos</div>
+                                <div style="font-size: 24px; font-weight: 800; color: ${this.coloresTemp.ingresos};">
+                                    S/. ${(empresa.finanzas?.ingresos || 0).toLocaleString()}
+                                </div>
+                            </div>
+                            <div style="padding: 16px; background: rgba(255,255,255,0.05); border-radius: 12px; text-align: center;">
+                                <div style="font-size: 12px; color: var(--modal-texto-terciario); margin-bottom: 8px;">💸 Gastos</div>
+                                <div style="font-size: 24px; font-weight: 800; color: ${this.coloresTemp.gastos};">
+                                    S/. ${(empresa.finanzas?.gastos || 0).toLocaleString()}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grizalum-modal-footer">
+                    <button class="grizalum-btn grizalum-btn-cancelar" onclick="gestorEmpresas.cerrarModal()">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button class="grizalum-btn grizalum-btn-guardar" onclick="gestorEmpresas.guardarEdicion()">
+                        <i class="fas fa-save"></i> Guardar Cambios
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+        setTimeout(() => modal.classList.add('show'), 10);
+    }
+
+    _generarColorPicker(nombre, id, color, emoji) {
+        const esSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+        
+        return `
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                <div style="width: 40px; height: 40px; background: ${color}; border-radius: 8px; cursor: pointer;" 
+                     onclick="${esSafari ? `gestorEmpresas.mostrarPaletaSafari('${id}')` : `document.getElementById('color${id}').click()`}">
+                </div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 600; color: var(--modal-texto-principal);">${emoji} ${nombre}</div>
+                    ${esSafari ? 
+                        `<input type="text" id="hex${id}" value="${color}" maxlength="7" 
+                                style="width: 100%; padding: 6px; background: rgba(255,255,255,0.05); border: 1px solid var(--modal-borde); border-radius: 6px; color: var(--modal-texto-principal);"
+                                oninput="gestorEmpresas.cambiarColorManual('${id}', this.value)">` :
+                        `<div style="font-size: 12px; color: var(--modal-texto-terciario);" id="hex${id}">${color}</div>`
+                    }
+                </div>
+                ${!esSafari ? `<input type="color" id="color${id}" value="${color}" style="display:none" onchange="gestorEmpresas.cambiarColor('${id}', this.value)">` : ''}
+            </div>
+        `;
+    }
+
+    seleccionarEmoji(emoji) {
+        document.querySelectorAll('.grizalum-emoji-item').forEach(item => {
+            item.classList.remove('selected');
+        });
+        event.target.classList.add('selected');
+        this.emojiSeleccionado = emoji;
+    }
+
+    cambiarColor(tipo, color) {
+        this.coloresTemp[tipo] = color;
+        const hex = document.getElementById(`hex${tipo}`);
+        if (hex) hex.textContent = color;
+        
+        const preview = document.querySelector(`input#color${tipo}`).parentElement.querySelector('div[style*="background"]');
+        if (preview) preview.style.background = color;
+    }
+
+    cambiarColorManual(tipo, valor) {
+        if (!/^#[0-9A-F]{6}$/i.test(valor)) return;
+        
+        this.coloresTemp[tipo] = valor;
+        const preview = document.getElementById(`hex${tipo}`).parentElement.querySelector('div[style*="background"]');
+        if (preview) preview.style.background = valor;
+    }
+
+    mostrarPaletaSafari(tipo) {
+        const colores = {
+            'Dorados': ['#d4af37', '#f1c40f', '#f39c12', '#e67e22'],
+            'Rojos': ['#e74c3c', '#c0392b', '#ff6b6b', '#ff4757'],
+            'Verdes': ['#2ecc71', '#27ae60', '#00b894', '#55efc4'],
+            'Azules': ['#3498db', '#2980b9', '#0984e3', '#74b9ff'],
+            'Morados': ['#9b59b6', '#8e44ad', '#a29bfe', '#6c5ce7']
+        };
+        
+        let html = '<div style="background: var(--modal-fondo-card); padding: 12px; border-radius: 8px; margin-top: 8px;">';
+        
+        Object.entries(colores).forEach(([cat, cols]) => {
+            html += `<div style="margin-bottom: 8px;"><strong style="color: var(--modal-texto-principal);">${cat}</strong><div style="display: flex; gap: 8px; margin-top: 4px;">`;
+            cols.forEach(c => {
+                html += `<div onclick="gestorEmpresas.aplicarColorSeleccionado('${tipo}', '${c}')" 
+                              style="width: 32px; height: 32px; background: ${c}; border-radius: 6px; cursor: pointer;"></div>`;
+            });
+            html += '</div></div>';
+        });
+        
+        html += '</div>';
+        
+        const input = document.getElementById(`hex${tipo}`);
+        const existing = input.parentElement.querySelector('[style*="padding: 12px"]');
+        if (existing) {
+            existing.remove();
+        } else {
+            const div = document.createElement('div');
+            div.innerHTML = html;
+            input.parentElement.appendChild(div.firstElementChild);
+        }
+    }
+
+    aplicarColorSeleccionado(tipo, color) {
+        this.coloresTemp[tipo] = color;
+        const input = document.getElementById(`hex${tipo}`);
+        if (input) input.value = color;
+        
+        const preview = input.parentElement.querySelector('div[style*="background"]');
+        if (preview) preview.style.background = color;
+        
+        const paleta = input.parentElement.querySelector('[style*="padding: 12px"]');
+        if (paleta) paleta.remove();
+    }
+
+    aplicarPaleta(nombrePaleta) {
+        const paletas = {
+            'dorado-clasico': {
+                ingresos: '#d4af37',
+                gastos: '#ff6b35',
+                utilidad: '#10b981',
+                crecimiento: '#3b82f6',
+                tematica: '#d4af37'
+            },
+            'azul-corporativo': {
+                ingresos: '#2563eb',
+                gastos: '#f59e0b',
+                utilidad: '#10b981',
+                crecimiento: '#8b5cf6',
+                tematica: '#2563eb'
+            },
+            'verde-fresco': {
+                ingresos: '#10b981',
+                gastos: '#ef4444',
+                utilidad: '#22c55e',
+                crecimiento: '#06b6d4',
+                tematica: '#10b981'
+            }
+        };
+
+        const colores = paletas[nombrePaleta];
+        if (!colores) return;
+
+        this.coloresTemp = { ...colores };
+
+        Object.keys(colores).forEach(tipo => {
+            const input = document.getElementById(`color${tipo}`);
+            const hex = document.getElementById(`hex${tipo}`);
+            
+            if (input) input.value = colores[tipo];
+            if (hex) {
+                if (hex.tagName === 'INPUT') {
+                    hex.value = colores[tipo];
+                } else {
+                    hex.textContent = colores[tipo];
+                }
+            }
+            
+            const preview = hex?.parentElement.querySelector('div[style*="background"]');
+            if (preview) preview.style.background = colores[tipo];
+        });
+    }
+
+    aplicarModoVisual(modo) {
+        this.modoVisual = modo;
+        
+        document.body.classList.remove('modo-oscuro', 'modo-claro', 'modo-neutro');
+        
+        if (modo === 'claro') {
+            document.body.classList.add('modo-claro');
+        } else if (modo === 'neutro') {
+            document.body.classList.add('modo-neutro');
+        }
+    }
+
+    guardarEdicion() {
+        const nombre = document.getElementById('empresaNombre').value.trim();
+        const ruc = document.getElementById('empresaRuc').value.trim();
+
+        if (!nombre || nombre.length < 3) {
+            alert('❌ El nombre debe tener al menos 3 caracteres');
+            return;
+        }
+
+        const empresa = this.estado.empresas[this.empresaEditando];
+        
+        empresa.nombre = nombre;
+        if (empresa.legal) empresa.legal.ruc = ruc;
+        
+        empresa.icono = this.emojiSeleccionado;
+        empresa.coloresPersonalizados = { ...this.coloresTemp };
+        empresa.modoVisual = this.modoVisual || 'oscuro';
+        
+        if (empresa.meta) {
+            empresa.meta.fechaActualizacion = new Date().toISOString();
+        }
+
+        const root = document.documentElement;
+        root.style.setProperty('--color-ingresos', this.coloresTemp.ingresos);
+        root.style.setProperty('--color-gastos', this.coloresTemp.gastos);
+        root.style.setProperty('--color-utilidad', this.coloresTemp.utilidad);
+        root.style.setProperty('--color-crecimiento', this.coloresTemp.crecimiento);
+
+        this._guardarEmpresas();
+        this._actualizarListaEmpresas();
+        this._actualizarSelectorPrincipal();
+
+        this.cerrarModal();
+        
+        setTimeout(() => {
+            alert(`✅ Empresa "${nombre}" actualizada correctamente`);
+        }, 300);
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // ELIMINAR EMPRESA
+    // ═══════════════════════════════════════════════════════════════
+
+    confirmarEliminarEmpresa(empresaId) {
+        const empresa = this.estado.empresas[empresaId];
+        if (!empresa) return;
+
+        if (confirm(`¿Eliminar la empresa "${empresa.nombre}"?\n\nEsta acción no se puede deshacer.`)) {
+            delete this.estado.empresas[empresaId];
+            
+            if (this.estado.empresaActual === empresaId) {
+                const primeraEmpresa = Object.keys(this.estado.empresas)[0];
+                if (primeraEmpresa) {
+                    this.seleccionarEmpresa(primeraEmpresa);
+                } else {
+                    this.estado.empresaActual = null;
+                }
+            }
+            
+            this._guardarEmpresas();
+            this._renderizarInterfaz();
+            
+            alert(`✅ Empresa "${empresa.nombre}" eliminada`);
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // UTILIDADES
+    // ═══════════════════════════════════════════════════════════════
+
+    cerrarModal() {
+        const modales = ['grizalumModalNuevaEmpresa', 'grizalumModalEditor'];
+        modales.forEach(id => {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.classList.remove('show');
+                setTimeout(() => modal.remove(), 300);
+            }
+        });
+        
+        this.empresaEditando = null;
+        this.logoTemporal = null;
+        this.emojiSeleccionado = null;
+    }
+
+    _cerrarLista() {
+        this.estado.listaAbierta = false;
+        const lista = document.getElementById('grizalumEmpresasList');
+        const arrow = document.getElementById('grizalumDropdownArrow');
+        lista?.classList.remove('show');
+        arrow?.classList.remove('rotated');
+    }
+
+    _seleccionarEmpresaInicial() {
+        const primeraEmpresa = Object.keys(this.estado.empresas)[0];
+        if (primeraEmpresa) {
+            this.seleccionarEmpresa(primeraEmpresa);
+        }
+    }
+
+    _obtenerEmpresaActual() {
+        return this.estado.empresas[this.estado.empresaActual];
+    }
+
+    _generarEstadoEmpresa(empresa) {
+        if (!empresa) return 'No seleccionada';
+        return `🟢 ${empresa.estado}`;
+    }
+
+    _calcularTotalCaja() {
+        return Object.values(this.estado.empresas)
+            .filter(empresa => empresa.meta?.activa !== false)
+            .reduce((total, empresa) => total + (empresa.finanzas?.caja || 0), 0);
+    }
+
+    _calcularMetricas() {
+        const empresas = Object.values(this.estado.empresas).filter(e => e.meta?.activa !== false);
+        
+        this.estado.metricas = {
+            totalEmpresas: empresas.length,
+            totalCaja: empresas.reduce((sum, e) => sum + (e.finanzas?.caja || 0), 0),
+            totalIngresos: empresas.reduce((sum, e) => sum + (e.finanzas?.ingresos || 0), 0),
+            totalGastos: empresas.reduce((sum, e) => sum + (e.finanzas?.gastos || 0), 0)
+        };
+    }
+
+    _aplicarColoresEmpresa(empresaId) {
+        const empresa = this.estado.empresas[empresaId];
+        if (!empresa) return;
+        
+        const colores = empresa.coloresPersonalizados || {
+            ingresos: '#d4af37',
+            gastos: '#ff6b35',
+            utilidad: '#2ecc71',
+            crecimiento: '#9b59b6',
+            tematica: '#d4af37'
+        };
+        
+        const root = document.documentElement;
+        root.style.setProperty('--color-ingresos', colores.ingresos);
+        root.style.setProperty('--color-gastos', colores.gastos);
+        root.style.setProperty('--color-utilidad', colores.utilidad);
+        root.style.setProperty('--color-crecimiento', colores.crecimiento);
+        root.style.setProperty('--color-primario', colores.tematica);
+    }
+
+    _aplicarModoVisualEmpresa(empresaId) {
+        const empresa = this.estado.empresas[empresaId];
+        if (!empresa) return;
+        
+        const modoVisual = empresa.modoVisual || 'oscuro';
+        
+        document.body.classList.remove('modo-oscuro', 'modo-claro', 'modo-neutro');
+        
+        if (modoVisual === 'claro') {
+            document.body.classList.add('modo-claro');
+        } else if (modoVisual === 'neutro') {
+            document.body.classList.add('modo-neutro');
+        }
+    }
+
+    _actualizarSelectorPrincipal() {
+        const empresa = this._obtenerEmpresaActual();
+        if (!empresa) return;
+
+        const avatar = document.getElementById('grizalumEmpresaAvatar');
+        const nombre = document.getElementById('grizalumEmpresaNombre');
+        const estado = document.getElementById('grizalumEmpresaEstado');
+
+        if (avatar) {
+            if (empresa.logo) {
+                avatar.innerHTML = `<img src="${empresa.logo}" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">`;
+            } else {
+                avatar.textContent = empresa.icono;
+            }
+            
+            const temaEmpresa = this.config.temas[empresa.tema] || this.config.temas.rojo;
+            avatar.style.background = `linear-gradient(135deg, ${temaEmpresa.primary} 0%, ${temaEmpresa.secondary} 100%)`;
+        }
+        
+        if (nombre) nombre.textContent = empresa.nombre;
+        if (estado) estado.innerHTML = this._generarEstadoEmpresa(empresa);
+    }
+
+    _actualizarTarjetasActivas() {
+        document.querySelectorAll('.grizalum-empresa-card').forEach(card => {
+            card.classList.remove('active');
+        });
+        
+        const tarjetaActiva = document.querySelector(`[data-empresa-id="${this.estado.empresaActual}"]`);
+        if (tarjetaActiva) {
+            tarjetaActiva.classList.add('active');
+        }
+    }
+
+    _guardarEmpresas() {
+        try {
+            localStorage.setItem('grizalum_empresas', JSON.stringify(this.estado.empresas));
+            localStorage.setItem('grizalum_empresa_actual', this.estado.empresaActual);
+        } catch (error) {
+            this._log('error', 'Error guardando empresas:', error);
+        }
+    }
+
+    _validarIntegridadEmpresas() {
+        Object.entries(this.estado.empresas).forEach(([id, empresa]) => {
+            if (!empresa.meta) {
+                empresa.meta = {
+                    fechaCreacion: new Date().toISOString(),
+                    fechaActualizacion: new Date().toISOString(),
+                    version: '1.0',
+                    activa: true
+                };
+            }
+            
+            if (!empresa.finanzas) {
+                empresa.finanzas = {
+                    caja: 0,
+                    ingresos: 0,
+                    gastos: 0,
+                    utilidadNeta: 0,
+                    margenNeto: 0,
+                    roi: 0
+                };
+            }
+        });
+    }
+
+    _iniciarSincronizacion() {
+        if (this.config.autoSave) {
+            setInterval(() => {
+                this._guardarEmpresas();
+                this._calcularMetricas();
+            }, this.config.syncInterval);
+        }
+    }
+
+    _configurarEventos() {
+        document.addEventListener('click', (evento) => {
+            const container = document.querySelector('.grizalum-empresas-container');
+            if (container && !container.contains(evento.target)) {
+                this._cerrarLista();
+            }
+        });
+
+        document.addEventListener('keydown', (evento) => {
+            if (evento.key === 'Escape') {
+                this._cerrarLista();
+                this.cerrarModal();
+            }
+        });
+    }
+
+    _dispararEvento(nombreEvento, datos) {
+        const evento = new CustomEvent(nombreEvento, {
+            detail: { ...datos, gestor: this },
+            bubbles: true,
+            cancelable: true
+        });
+        document.dispatchEvent(evento);
+    }
+
+    _log(nivel, mensaje, datos = null) {
+        const timestamp = new Date().toISOString();
+        const prefijo = `[${timestamp}] [${this.config.componente}]`;
+        
+        if (nivel === 'error') {
+            console.error(`${prefijo}`, mensaje, datos);
+        } else if (nivel === 'warn') {
+            console.warn(`${prefijo}`, mensaje, datos);
+        } else if (this.config.debug || nivel === 'success') {
+            console.log(`${prefijo}`, mensaje, datos);
+        }
+    }
+
+    _registrarActividad(accion, descripcion, datos = {}) {
+        const registro = {
+            id: Date.now() + Math.random(),
+            accion,
+            descripcion,
+            datos,
+            timestamp: Date.now(),
+            fecha: new Date().toISOString()
+        };
+        
+        this.actividades.unshift(registro);
+        
+        if (this.actividades.length > 100) {
+            this.actividades = this.actividades.slice(0, 100);
+        }
+        
+        this._guardarActividades();
+    }
+
+    async _cargarActividades() {
+        try {
+            const actividades = localStorage.getItem('grizalum_actividades_empresas');
+            if (actividades) {
+                this.actividades = JSON.parse(actividades);
+            }
+        } catch (error) {
+            this._log('warn', 'No se pudieron cargar las actividades');
+        }
+    }
+
+    _guardarActividades() {
+        try {
+        
