@@ -1396,4 +1396,81 @@ class GestorEmpresasUnificado {
 
     _guardarActividades() {
         try {
+            localStorage.setItem('grizalum_actividades_empresas', JSON.stringify(this.actividades));
+        } catch (error) {
+            this._log('warn', 'No se pudieron guardar las actividades');
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // API PÚBLICA
+    // ═══════════════════════════════════════════════════════════════
+
+    obtenerEmpresaActual() {
+        return {
+            id: this.estado.empresaActual,
+            datos: this.estado.empresas[this.estado.empresaActual]
+        };
+    }
+
+    obtenerTodasLasEmpresas() {
+        return { ...this.estado.empresas };
+    }
+
+    obtenerMetricas() {
+        return { ...this.estado.metricas };
+    }
+
+    cerrarLista() {
+        this._cerrarLista();
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// INICIALIZACIÓN GLOBAL
+// ═══════════════════════════════════════════════════════════════════════════
+
+let gestorEmpresas = null;
+
+function inicializarGestorEmpresas() {
+    try {
+        if (gestorEmpresas) {
+            console.log('✅ Gestor de Empresas ya inicializado');
+            return gestorEmpresas;
+        }
+
+        gestorEmpresas = new GestorEmpresasUnificado();
+        window.gestorEmpresas = gestorEmpresas;
+        
+        console.log('✅ Gestor de Empresas Unificado v4.0 inicializado');
+        return gestorEmpresas;
+        
+    } catch (error) {
+        console.error('❌ Error al inicializar Gestor de Empresas:', error);
+        return null;
+    }
+}
+
+// Auto-inicialización
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', inicializarGestorEmpresas);
+} else if (document.readyState === 'interactive') {
+    setTimeout(inicializarGestorEmpresas, 200);
+} else {
+    inicializarGestorEmpresas();
+}
+
+console.log(`
+╔═══════════════════════════════════════════════════════════════╗
+║  🏢 GRIZALUM GESTOR DE EMPRESAS UNIFICADO v4.0               ║
+╠═══════════════════════════════════════════════════════════════╣
+║  ✅ Sistema completo de gestión                               ║
+║  ✅ Crear, editar y eliminar empresas                         ║
+║  ✅ Sin empresas de prueba (inicio limpio)                    ║
+║  ✅ Onboarding automático integrado                           ║
+║  ✅ Personalización total de colores                          ║
+║  ✅ 3 modos visuales (oscuro/claro/neutro)                    ║
+║  ✅ Compatible con todos los módulos                          ║
+╚═══════════════════════════════════════════════════════════════╝
+`);
         
