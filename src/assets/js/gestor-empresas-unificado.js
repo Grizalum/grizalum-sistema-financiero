@@ -479,14 +479,14 @@ class GestorEmpresasUnificado {
                     
                     <div class="grizalum-empresas-grid" id="grizalumEmpresasGrid"></div>
                     
-                    <div class="grizalum-list-footer">
-                        <div style="font-weight: 700; color: var(--grizalum-text); margin-bottom: 0.5rem;">
-                            ${totalEmpresas} empresa${totalEmpresas !== 1 ? 's' : ''}
-                        </div>
-                        <div style="font-size: 1.1rem; font-weight: 800; color: var(--grizalum-success);">
-                            Total: ${this.config.regional.moneda} ${totalCaja.toLocaleString()}
-                        </div>
-                    </div>
+                                        <div class="grizalum-list-footer">
+                        <div style="font-size: 1.1rem; font-weight: 800; color: var(--grizalum-primary); margin-bottom: 8px;">
+                           💼 ${totalEmpresas} empresa${totalEmpresas !== 1 ? 's' : ''} activa${totalEmpresas !== 1 ? 's' : ''}
+                     </div>
+                      <div style="font-size: 0.9rem; color: var(--grizalum-text-light); font-style: italic;">
+                        ${this._obtenerMensajeMotivacional()}
+                      </div>
+                   </div>
                 </div>
             </div>
         `;
@@ -521,9 +521,9 @@ class GestorEmpresasUnificado {
             </div>
             <div class="grizalum-card-info">
                 <div class="grizalum-card-nombre">${empresa.nombre}</div>
-                <div style="font-size: 0.8rem; color: var(--grizalum-text-light);">
-                    ${this.config.regional.moneda} ${empresa.finanzas?.caja?.toLocaleString() || '0'}
-                </div>
+                <div style="font-size: 0.75rem; color: var(--grizalum-text-light); opacity: 0.7;">
+                 📊 ${Object.keys(this.estado.empresas).length} empresa${Object.keys(this.estado.empresas).length !== 1 ? 's' : ''}
+             </div>
             </div>
             <div class="grizalum-card-actions">
                 <button class="grizalum-action-btn" onclick="event.stopPropagation(); gestorEmpresas.editarEmpresa('${id}')" title="Editar">
@@ -1560,6 +1560,27 @@ class GestorEmpresasUnificado {
 
     obtenerMetricas() {
         return { ...this.estado.metricas };
+    }
+    _obtenerMensajeMotivacional() {
+        const mensajes = [
+            '✨ Cada día es una nueva oportunidad',
+            '🚀 El éxito comienza con un paso',
+            '💡 Las grandes ideas se convierten en realidad',
+            '🎯 Enfócate en tus metas',
+            '💪 La constancia es la clave del éxito',
+            '🌟 Hoy es el día perfecto para crecer',
+            '⚡ Tu esfuerzo tiene recompensa',
+            '🔥 Trabaja con pasión',
+            '🎨 Crea algo extraordinario hoy',
+            '🌈 El futuro lo construyes tú'
+        ];
+        
+        const hora = new Date().getHours();
+        
+        if (hora < 12) return '☀️ Buenos días, ¡comienza con energía!';
+        if (hora < 18) return '🌤️ Buenas tardes, ¡sigue adelante!';
+        
+        return mensajes[Math.floor(Math.random() * mensajes.length)];
     }
 
     cerrarLista() {
