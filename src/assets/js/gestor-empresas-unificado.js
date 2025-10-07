@@ -641,15 +641,80 @@ class GestorEmpresasUnificado {
                     </div>
 
                     <div class="grizalum-seccion">
+                        <div class="grizalum-seccion-titulo">🎨 Color Temático de la Empresa</div>
+                        <p style="color: var(--modal-texto-terciario); font-size: 13px; margin-bottom: 12px;">
+                            Este será el color principal de tu empresa
+                        </p>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 20px;">
+                            <div onclick="gestorEmpresas.seleccionarTemaNew('rojo')" style="cursor: pointer; padding: 16px; background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); border-radius: 10px; text-align: center; color: white; font-weight: 700; transition: all 0.3s ease;" class="tema-selector">
+                                🔴 Rojo
+                            </div>
+                            <div onclick="gestorEmpresas.seleccionarTemaNew('azul')" style="cursor: pointer; padding: 16px; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); border-radius: 10px; text-align: center; color: white; font-weight: 700; transition: all 0.3s ease;" class="tema-selector">
+                                🔵 Azul
+                            </div>
+                            <div onclick="gestorEmpresas.seleccionarTemaNew('verde')" style="cursor: pointer; padding: 16px; background: linear-gradient(135deg, #059669 0%, #047857 100%); border-radius: 10px; text-align: center; color: white; font-weight: 700; transition: all 0.3s ease;" class="tema-selector">
+                                🟢 Verde
+                            </div>
+                            <div onclick="gestorEmpresas.seleccionarTemaNew('morado')" style="cursor: pointer; padding: 16px; background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); border-radius: 10px; text-align: center; color: white; font-weight: 700; transition: all 0.3s ease;" class="tema-selector">
+                                🟣 Morado
+                            </div>
+                            <div onclick="gestorEmpresas.seleccionarTemaNew('dorado')" style="cursor: pointer; padding: 16px; background: linear-gradient(135deg, #d97706 0%, #b45309 100%); border-radius: 10px; text-align: center; color: white; font-weight: 700; transition: all 0.3s ease;" class="tema-selector">
+                                🟡 Dorado
+                            </div>
+                        </div>
+
+                        <style>
+                            .tema-selector:hover {
+                                transform: translateY(-3px);
+                                box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+                            }
+                            .tema-selector.selected {
+                                box-shadow: 0 0 0 3px white, 0 0 0 5px currentColor;
+                                transform: scale(1.05);
+                            }
+                        </style>
+                    </div>
+
+                    <div class="grizalum-seccion">
                         <div class="grizalum-seccion-titulo">Identidad Visual</div>
                         
-                        <div class="grizalum-emoji-grid">
-                            ${['🏢', '🏭', '🏪', '🏬', '🏦', '🍽️', '💻', '🔥', '⚙️', '🌾', '🐄', '🐔', '⛏️', '🏗️', '💎', '⚡', '🚀', '💡', '🎯', '💰'].map(emoji => `
-                                <div class="grizalum-emoji-item" onclick="gestorEmpresas.seleccionarEmojiNueva('${emoji}')">${emoji}</div>
-                            `).join('')}
+                        <div class="grizalum-tabs" style="display: flex; border-bottom: 2px solid var(--modal-borde); margin-bottom: 20px;">
+                            <div class="tab-btn active" data-tab="emoji" onclick="gestorEmpresas.cambiarTabNew('emoji')" style="flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: 700; border-bottom: 3px solid #dc2626; color: var(--modal-texto-principal);">
+                                😀 Emoji
+                            </div>
+                            <div class="tab-btn" data-tab="logo" onclick="gestorEmpresas.cambiarTabNew('logo')" style="flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: 700; color: var(--modal-texto-terciario);">
+                                🖼️ Logo
+                            </div>
+                        </div>
+
+                        <div class="tab-content active" id="tabEmojiNew">
+                            <div class="grizalum-emoji-grid">
+                                ${['🏢', '🏭', '🏪', '🏬', '🏦', '🍽️', '💻', '🔥', '⚙️', '🌾', '🐄', '🐔', '⛏️', '🏗️', '💎', '⚡', '🚀', '💡', '🎯', '💰'].map(emoji => `
+                                    <div class="grizalum-emoji-item" onclick="gestorEmpresas.seleccionarEmojiNueva('${emoji}')">${emoji}</div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div class="tab-content" id="tabLogoNew" style="display: none;">
+                            <input type="file" id="logoInputNew" accept="image/*" style="display:none" onchange="gestorEmpresas.subirLogoNueva(event)">
+                            <div onclick="document.getElementById('logoInputNew').click()" style="padding: 40px; border: 2px dashed var(--modal-borde); border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: rgba(255,255,255,0.02);">
+                                <i class="fas fa-cloud-upload-alt" style="font-size: 48px; color: var(--modal-texto-terciario); margin-bottom: 12px;"></i>
+                                <div style="font-weight: 700; color: var(--modal-texto-principal); margin-bottom: 8px;">Subir logo de tu empresa</div>
+                                <small style="color: var(--modal-texto-terciario);">PNG, JPG (máx 2MB)</small>
+                            </div>
+                            <div id="logoPreviewNew" style="display: none; margin-top: 16px; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 12px; align-items: center; gap: 16px;">
+                                <img id="logoImgNew" style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px; background: white;">
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 700; color: var(--modal-texto-principal);">Logo cargado</div>
+                                    <small style="color: var(--modal-texto-terciario);">Se guardará al crear la empresa</small>
+                                </div>
+                                <button onclick="event.stopPropagation(); gestorEmpresas.eliminarLogoNueva()" style="padding: 8px 16px; background: rgba(239, 68, 68, 0.2); color: #ef4444; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                                    <i class="fas fa-trash"></i> Quitar
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
 
                 <div class="grizalum-modal-footer">
                     <button class="grizalum-btn grizalum-btn-cancelar" onclick="gestorEmpresas.cerrarModal()">
