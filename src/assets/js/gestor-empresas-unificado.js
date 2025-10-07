@@ -741,6 +741,81 @@ class GestorEmpresasUnificado {
         event.target.classList.add('selected');
         this.emojiSeleccionado = emoji;
     }
+    seleccionarTemaNew(tema) {
+        this.temaNuevo = tema;
+        
+        // Actualizar estilos visuales
+        document.querySelectorAll('.tema-selector').forEach(el => {
+            el.classList.remove('selected');
+        });
+        event.target.classList.add('selected');
+        
+        console.log('✅ Tema seleccionado:', tema);
+    }
+
+    cambiarTabNew(tab) {
+        // Actualizar botones
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+            btn.style.borderBottom = 'none';
+            btn.style.color = 'var(--modal-texto-terciario)';
+        });
+        
+        const btnActivo = document.querySelector(`[data-tab="${tab}"]`);
+        if (btnActivo) {
+            btnActivo.classList.add('active');
+            btnActivo.style.borderBottom = '3px solid #dc2626';
+            btnActivo.style.color = 'var(--modal-texto-principal)';
+        }
+        
+        // Mostrar contenido
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+            content.style.display = 'none';
+        });
+        
+        const contentActivo = document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}New`);
+        if (contentActivo) {
+            contentActivo.classList.add('active');
+            contentActivo.style.display = 'block';
+        }
+    }
+
+    subirLogoNueva(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        if (file.size > 2 * 1024 * 1024) {
+            alert('❌ El logo no puede superar 2MB');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            this.logoTemporal = e.target.result;
+            
+            const preview = document.getElementById('logoPreviewNew');
+            const img = document.getElementById('logoImgNew');
+            
+            img.src = e.target.result;
+            preview.style.display = 'flex';
+            
+            console.log('✅ Logo cargado temporalmente');
+        };
+        reader.readAsDataURL(file);
+    }
+
+    eliminarLogoNueva() {
+        this.logoTemporal = null;
+        
+        const preview = document.getElementById('logoPreviewNew');
+        const input = document.getElementById('logoInputNew');
+        
+        preview.style.display = 'none';
+        input.value = '';
+        
+        console.log('🗑️ Logo eliminado');
+    }
 
     crearNuevaEmpresa() {
         const nombre = document.getElementById('nuevaEmpresaNombre').value.trim();
@@ -757,7 +832,8 @@ class GestorEmpresasUnificado {
             id: empresaId,
             nombre: nombre,
             icono: this.emojiSeleccionado || '🏢',
-            tema: 'rojo',
+            logo: this.logoTemporal || null,
+            tema: this.temaNuevo || 'rojo',
             estado: 'Operativo',
             categoria: 'General',
             
