@@ -1741,7 +1741,31 @@ class GestorEmpresasUnificado {
         }
 
         const root = document.documentElement;
+        const root = document.documentElement;
         root.style.setProperty('--color-ingresos', this.coloresTemp.ingresos);
+        root.style.setProperty('--color-gastos', this.coloresTemp.gastos);
+        root.style.setProperty('--color-utilidad', this.coloresTemp.utilidad);
+        root.style.setProperty('--color-crecimiento', this.coloresTemp.crecimiento);
+        root.style.setProperty('--color-primario', this.coloresTemp.tematica);
+        root.style.setProperty('--color-secundario', this.coloresTemp.tematicaSecundario || this.coloresTemp.tematica);
+
+        // Disparar evento para actualizar gráficos
+        document.dispatchEvent(new CustomEvent('empresaColoresActualizados', {
+            detail: { 
+                colores: this.coloresTemp,
+                empresaId: this.empresaEditando
+            }
+        }));
+
+        this._guardarEmpresas();
+        this._actualizarListaEmpresas();
+        this._actualizarSelectorPrincipal();
+        this.cerrarModal();
+        
+        setTimeout(() => {
+            alert(`✅ Empresa "${nombre}" actualizada correctamente`);
+        }, 300);
+    }oresTemp.ingresos);
         root.style.setProperty('--color-gastos', this.coloresTemp.gastos);
         root.style.setProperty('--color-utilidad', this.coloresTemp.utilidad);
         root.style.setProperty('--color-crecimiento', this.coloresTemp.crecimiento);
