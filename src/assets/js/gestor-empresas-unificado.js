@@ -1023,7 +1023,7 @@ class GestorEmpresasUnificado {
                         </div>
                     </div>
 
-                    <<div class="grizalum-seccion">
+                    <div class="grizalum-seccion">
                         <div class="grizalum-seccion-titulo">Identidad Visual</div>
                         
                         <div style="display: flex; border-bottom: 2px solid var(--modal-borde); margin-bottom: 20px;">
@@ -1235,6 +1235,29 @@ class GestorEmpresasUnificado {
                 </div>
             `;
         }
+        
+        // COLORES NORMALES (no temática)
+        const esSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+        
+        return `
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                <div style="width: 40px; height: 40px; background: ${color}; border-radius: 8px; cursor: pointer; border: 2px solid var(--modal-borde);" 
+                     onclick="${esSafari ? `gestorEmpresas.abrirPaletaPremium('${id}', '${color}')` : `document.getElementById('color${id}').click()`}">
+                </div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 600; color: var(--modal-texto-principal); margin-bottom: 4px;">${emoji} ${nombre}</div>
+                    ${esSafari ? 
+                        `<input type="text" id="hex${id}" value="${color}" maxlength="7" 
+                                style="width: 100%; padding: 6px 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--modal-borde); border-radius: 6px; color: var(--modal-texto-principal); font-family: monospace;"
+                                oninput="gestorEmpresas.cambiarColorManualConPreview('${id}', this.value)">` :
+                        `<div style="font-size: 13px; color: var(--modal-texto-terciario); font-family: monospace;" id="hex${id}">${color}</div>`
+                    }
+                </div>
+                ${!esSafari ? `<input type="color" id="color${id}" value="${color}" style="display:none" onchange="gestorEmpresas.cambiarColorConPreview('${id}', this.value)">` : ''}
+            </div>
+        `;
+    }
+    
     seleccionarEmoji(emoji) {
         document.querySelectorAll('.grizalum-emoji-item').forEach(item => {
             item.classList.remove('selected');
