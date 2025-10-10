@@ -1855,14 +1855,21 @@ class GestorEmpresasUnificado {
             crecimiento: '#9b59b6',
             tematica: '#d4af37'
         };
-        
-        const root = document.documentElement;
+
+        // Asegurar que tematicaSecundario existe
+    if (!colores.tematicaSecundario) {
+        colores.tematicaSecundario = colores.tematica;
+    }    
+       const root = document.documentElement;
         root.style.setProperty('--color-ingresos', colores.ingresos);
         root.style.setProperty('--color-gastos', colores.gastos);
         root.style.setProperty('--color-utilidad', colores.utilidad);
         root.style.setProperty('--color-crecimiento', colores.crecimiento);
         root.style.setProperty('--color-primario', colores.tematica);
     }
+  
+    this._log('info', `Colores aplicados para: ${empresa.nombre}`);
+}
 
     _aplicarModoVisualEmpresa(empresaId) {
         const empresa = this.estado.empresas[empresaId];
