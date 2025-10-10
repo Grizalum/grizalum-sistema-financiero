@@ -441,30 +441,34 @@ class OnboardingInteligente {
     _analizarRespuestas() {
     const industriaId = this.respuestas.industria;
     
+    console.log('🔍 Industria detectada:', industriaId);
+    
     // Si es industria personalizada, ya tenemos el perfil creado
     if (industriaId === 'personalizada') {
-        // Verificar que se haya guardado el perfil temporal
-        if (!this.perfilRecomendado) {
-            const nombre = this.respuestas.nombreIndustriaPersonalizada || 'Empresa Personalizada';
-            this.perfilRecomendado = {
-                id: 'personalizada',
-                nombre: nombre,
-                icono: '🏢',
-                categoria: 'Personalizada',
-                modulosRecomendados: {
-                    'flujo-caja': { prioridad: 10, obligatorio: true },
-                    'inventario': { prioridad: 7, obligatorio: false },
-                    'clientes': { prioridad: 7, obligatorio: false },
-                    'facturacion': { prioridad: 6, obligatorio: false },
-                    'reportes': { prioridad: 8, obligatorio: false },
-                    'empleados': { prioridad: 5, obligatorio: false },
-                    'proyectos': { prioridad: 5, obligatorio: false },
-                    'contabilidad': { prioridad: 4, obligatorio: false }
-                }
-            };
-        }
+        console.log('✅ Es personalizada, creando perfil...');
+        
+        const nombre = this.respuestas.nombreIndustriaPersonalizada || 'Empresa Personalizada';
+        
+        this.perfilRecomendado = {
+            id: 'personalizada',
+            nombre: nombre,
+            icono: '🏢',
+            categoria: 'Personalizada',
+            modulosRecomendados: {
+                'flujo-caja': { prioridad: 10, obligatorio: true },
+                'inventario': { prioridad: 7, obligatorio: false },
+                'clientes': { prioridad: 7, obligatorio: false },
+                'facturacion': { prioridad: 6, obligatorio: false },
+                'reportes': { prioridad: 8, obligatorio: false },
+                'empleados': { prioridad: 5, obligatorio: false },
+                'proyectos': { prioridad: 5, obligatorio: false },
+                'contabilidad': { prioridad: 4, obligatorio: false }
+            }
+        };
+        
+        console.log('✅ Perfil personalizado creado:', this.perfilRecomendado);
     } else {
-        // Industria predefinida
+        console.log('📋 Buscando perfil predefinido...');
         this.perfilRecomendado = this.perfiles?.obtenerPerfil(industriaId);
     }
     
