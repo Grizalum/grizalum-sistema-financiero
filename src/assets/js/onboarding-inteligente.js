@@ -414,10 +414,29 @@ class OnboardingInteligente {
     }
 
     finalizar() {
-        this._analizarRespuestas();
-        this._configurarEmpresa();
-        this._mostrarResumen();
+    console.log('🎯 Finalizando onboarding...');
+    console.log('📋 Respuestas completas:', this.respuestas);
+    
+    this._analizarRespuestas();
+    
+    if (!this.perfilRecomendado) {
+        console.error('❌ No se pudo determinar el perfil');
+        alert('Error al configurar la empresa. Por favor, intenta de nuevo.');
+        return;
     }
+    
+    this._configurarEmpresa();
+    
+    // Verificar que se guardó
+    const empresa = this.gestor.estado.empresas[this.empresaId];
+    if (empresa && empresa.onboarding && empresa.onboarding.completado) {
+        console.log('✅ Empresa configurada y guardada correctamente');
+        this._mostrarResumen();
+    } else {
+        console.error('❌ Error al guardar la configuración');
+        alert('Hubo un problema al guardar. Verifica los datos e intenta de nuevo.');
+    }
+}
 
     _analizarRespuestas() {
         const industriaId = this.respuestas.industria;
@@ -703,10 +722,127 @@ guardarNombrePersonalizado(nombre) {
     }
 }
     cancelar() {
-        if (confirm('¿Seguro que quieres salir?\n\nPodrás configurar tu empresa después desde el menú de ajustes.')) {
-            this.cerrar();
-        }
+    // Crear modal de confirmación personalizado
+    const modalConfirm = document.createElement('div');
+    modalConfirm.className = 'wizard-confirm-overlay';
+    modalConfirm.innerHTML = `
+        <div class="wizard-confirm-card">
+            <div style="text-align: center; margin-bottom: 24px;">
+                <div style="font-size: 48px; margin-bottom: 12px;">⚠️</div>
+                <h3 style="margin: 0 0 8px 0; color: var(--wizard-texto-principal); font-size: 20px;">
+                    ¿Qué deseas hacer?
+                </h3>
+                <p style="margin: 0; color: var(--wizard-texto-secundario); font-size: 14px;">
+                    Has avanzado ${this.pasoActual + 1} de ${this.preguntas.length} pasos
+                </p>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button onclick="onboarding.opcionCancelar('continuar')" style="padding: 16px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; transition: all 0.3s ease;">
+                    ✅ Guardar y Configurar Después
+                    <small style="display: block; opacity: 0.9; font-size: 12px; margin-top: 4px; font-weight: 400;">
+                        Tu empresa se guarda con configuración básica
+                    </small>
+                </button>
+                
+                <button onclick="onboarding.opcionCancelar('completar')" style="padding: 16px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; transition: all 0.3s ease;">
+                    🤖 Que la IA lo Complete por Mí
+                    <small style="display: block; opacity: 0.9; font-size: 12px; margin-top: 4px; font-weight: 400;">
+                        La IA configura automáticamente según tu industria
+                    </small>
+                </button>
+                
+                <button onclick="onboarding.opcionCancelar('eliminar')" style="padding: 16px; background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 2px solid #ef4444; border-radius: 10px; font-weight: 700; cursor: pointer; transition: all 0.3s ease;">
+                    🗑️ Cancelar y Eliminar Empresa
+                    <small style="display: block; opacity: 0.9; font-size: 12px; margin-top: 4px; font-weight: 400;">
+                        Se borrará todo lo que has hecho
+                    </small>
+                </button>
+            </div>
+            
+            <button onclick="document.querySelector('.wizard-confirm-overlay').remove()" style="margin-top: 16px; width: 100%; padding: 12px; background: transparent; color: var(--wizard-texto-terciario); border: none; cursor: pointer; font-weight: 600;">
+                Volver al Asistente
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(modalConfirm);
+    setTimeout(() => modalConfirm.classList.add('show'), 10);
+}
+
+opcionCancelar(opcion) {
+    const empresa = this.gestor.estado.empresas[this.empresaId];
+    
+    switch(opcion) {
+        case 'continuar':
+            // Guardar empresa con configuración mínima
+            this._configurarMinimo();
+            alert('✅ Empresa guardada\n\nPuedes completar la configuración después desde el menú de ajustes.');
+            this.cerrarYRecargar();
+            break;
+            
+        case 'completar':
+            // IA completa automáticamente
+            this._completarAutomaticamente();
+            alert('🤖 IA ha configurado tu empresa\n\nRevisa los módulos activados y ajusta lo que necesites.');
+            this.cerrarYRecargar();
+            break;
+            
+        case 'eliminar':
+            if (confirm('⚠️ ¿Seguro que quieres eliminar esta empresa?\n\nEsta acción no se puede deshacer.')) {
+                delete this.gestor.estado.empresas[this.empresaId];
+                this.gestor._guardarEmpresas();
+                alert('🗑️ Empresa eliminada');
+                this.cerrar();
+                location.reload();
+            }
+            break;
     }
+    
+    // Cerrar modal de confirmación
+    document.querySelector('.wizard-confirm-overlay')?.remove();
+}
+
+_configurarMinimo() {
+    const empresa = this.gestor.estado.empresas[this.empresaId];
+    if (!empresa) return;
+    
+    // Solo activar lo esencial
+    empresa.modulosActivos = {
+        'flujo-caja': true,
+        'dashboard': true,
+        'reportes': true
+    };
+    
+    empresa.onboarding = {
+        completado: false,
+        parcial: true,
+        fecha: new Date().toISOString(),
+        respuestas: this.respuestas
+    };
+    
+    this.gestor._guardarEmpresas();
+}
+
+_completarAutomaticamente() {
+    // Completar respuestas faltantes con valores inteligentes
+    if (!this.respuestas.tamano) this.respuestas.tamano = 'micro';
+    if (!this.respuestas['volumen-negocio']) this.respuestas['volumen-negocio'] = 'medio';
+    if (!this.respuestas['complejidad-operaciones']) this.respuestas['complejidad-operaciones'] = 'intermedio';
+    if (!this.respuestas.facturacion) this.respuestas.facturacion = 'boletas';
+    if (!this.respuestas['ciclo-negocio']) this.respuestas['ciclo-negocio'] = 'diario';
+    if (!this.respuestas.experiencia) this.respuestas.experiencia = 'basica';
+    if (!this.respuestas.urgencia) this.respuestas.urgencia = 'organizar';
+    if (!this.respuestas.preferencia) this.respuestas.preferencia = 'balanceado';
+    
+    if (!this.respuestas.objetivos || this.respuestas.objetivos.length === 0) {
+        this.respuestas.objetivos = ['dinero', 'inventario', 'clientes'];
+    }
+    
+    // Configurar empresa completa
+    this._analizarRespuestas();
+    this._configurarEmpresa();
+}
     _validarPasoActual() {
         const pregunta = this.preguntas[this.pasoActual];
         const respuesta = this.respuestas[pregunta.id];
@@ -758,6 +894,53 @@ estilosOnboarding.textContent = `
         background: rgba(239, 68, 68, 0.2);
         color: #ef4444;
         transform: rotate(90deg);
+    }
+    
+    .wizard-confirm-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(5px);
+        z-index: 200001;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        padding: 20px;
+    }
+    
+    .wizard-confirm-overlay.show {
+        opacity: 1;
+    }
+    
+    .wizard-confirm-card {
+        background: var(--wizard-fondo-principal);
+        border-radius: 16px;
+        padding: 32px;
+        max-width: 480px;
+        width: 100%;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        animation: slideUp 0.3s ease;
+    }
+    
+    @keyframes slideUp {
+        from {
+            transform: translateY(20px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+    
+    .wizard-confirm-card button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     }
 `;
 document.head.appendChild(estilosOnboarding);
