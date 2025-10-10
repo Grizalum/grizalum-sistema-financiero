@@ -985,24 +985,65 @@ class GestorEmpresasUnificado {
                         </div>
                     </div>
 
-                    <div class="grizalum-seccion">
-                        <div class="grizalum-seccion-titulo">🎨 Paletas Predefinidas</div>
-                        
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
-                            <button class="grizalum-paleta-btn" onclick="gestorEmpresas.aplicarPaleta('dorado-clasico')" 
-                                    style="background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600;">
-                                ✨ Dorado Clásico
-                            </button>
-                            <button class="grizalum-paleta-btn" onclick="gestorEmpresas.aplicarPaleta('azul-corporativo')"
-                                    style="background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600;">
-                                💼 Azul Corporativo
-                            </button>
-                            <button class="grizalum-paleta-btn" onclick="gestorEmpresas.aplicarPaleta('verde-fresco')"
-                                    style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600;">
-                                🌿 Verde Fresco
-                            </button>
-                        </div>
-                    </div>
+                   <div class="grizalum-seccion">
+    <div class="grizalum-seccion-titulo">🎨 Paletas de Colores</div>
+    <p style="color: var(--modal-texto-terciario); font-size: 13px; margin-bottom: 16px;">
+        Elige una paleta rápida o personaliza cada color manualmente
+    </p>
+    
+    <div style="margin-bottom: 20px;">
+        <div style="font-weight: 600; color: var(--modal-texto-principal); margin-bottom: 12px; font-size: 14px;">
+            🎨 Paletas Sólidas
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+            <button class="grizalum-paleta-btn" onclick="gestorEmpresas.aplicarPaleta('dorado-clasico')" 
+                    style="background: #d4af37; color: white; border: none; padding: 14px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 13px; transition: all 0.3s ease;">
+                <div>✨ Dorado</div>
+                <small style="opacity: 0.8; font-size: 11px;">Clásico</small>
+            </button>
+            <button class="grizalum-paleta-btn" onclick="gestorEmpresas.aplicarPaleta('azul-corporativo')"
+                    style="background: #2563eb; color: white; border: none; padding: 14px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 13px; transition: all 0.3s ease;">
+                <div>💼 Azul</div>
+                <small style="opacity: 0.8; font-size: 11px;">Corporativo</small>
+            </button>
+            <button class="grizalum-paleta-btn" onclick="gestorEmpresas.aplicarPaleta('verde-fresco')"
+                    style="background: #10b981; color: white; border: none; padding: 14px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 13px; transition: all 0.3s ease;">
+                <div>🌿 Verde</div>
+                <small style="opacity: 0.8; font-size: 11px;">Fresco</small>
+            </button>
+        </div>
+    </div>
+
+    <div>
+        <div style="font-weight: 600; color: var(--modal-texto-principal); margin-bottom: 12px; font-size: 14px;">
+            🌈 Paletas Mixtas (Degradados)
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+            <button class="grizalum-paleta-btn" onclick="gestorEmpresas.aplicarPaleta('sunset-pro')" 
+                    style="background: linear-gradient(135deg, #ff6b6b 0%, #f39c12 100%); color: white; border: none; padding: 14px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 13px; transition: all 0.3s ease;">
+                <div>🌅 Sunset</div>
+                <small style="opacity: 0.8; font-size: 11px;">Rojo-Naranja</small>
+            </button>
+            <button class="grizalum-paleta-btn" onclick="gestorEmpresas.aplicarPaleta('ocean-pro')"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 14px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 13px; transition: all 0.3s ease;">
+                <div>🌊 Ocean</div>
+                <small style="opacity: 0.8; font-size: 11px;">Azul-Morado</small>
+            </button>
+            <button class="grizalum-paleta-btn" onclick="gestorEmpresas.aplicarPaleta('forest-pro')"
+                    style="background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%); color: white; border: none; padding: 14px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 13px; transition: all 0.3s ease;">
+                <div>🌲 Forest</div>
+                <small style="opacity: 0.8; font-size: 11px;">Verde-Lima</small>
+            </button>
+        </div>
+    </div>
+
+    <style>
+        .grizalum-paleta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+    </style>
+</div>
 
                     <div class="grizalum-seccion">
                         <div class="grizalum-seccion-titulo">🌓 Modo de Visualización</div>
@@ -1554,54 +1595,94 @@ class GestorEmpresasUnificado {
         if (paleta) paleta.remove();
     }
 
-    aplicarPaleta(nombrePaleta) {
-        const paletas = {
-            'dorado-clasico': {
-                ingresos: '#d4af37',
-                gastos: '#ff6b35',
-                utilidad: '#10b981',
-                crecimiento: '#3b82f6',
-                tematica: '#d4af37'
-            },
-            'azul-corporativo': {
-                ingresos: '#2563eb',
-                gastos: '#f59e0b',
-                utilidad: '#10b981',
-                crecimiento: '#8b5cf6',
-                tematica: '#2563eb'
-            },
-            'verde-fresco': {
-                ingresos: '#10b981',
-                gastos: '#ef4444',
-                utilidad: '#22c55e',
-                crecimiento: '#06b6d4',
-                tematica: '#10b981'
+   aplicarPaleta(nombrePaleta) {
+    const paletas = {
+        // PALETAS SÓLIDAS
+        'dorado-clasico': {
+            ingresos: '#d4af37',
+            gastos: '#ff6b35',
+            utilidad: '#10b981',
+            crecimiento: '#3b82f6',
+            tematica: '#d4af37',
+            tematicaSecundario: '#d4af37'
+        },
+        'azul-corporativo': {
+            ingresos: '#2563eb',
+            gastos: '#f59e0b',
+            utilidad: '#10b981',
+            crecimiento: '#8b5cf6',
+            tematica: '#2563eb',
+            tematicaSecundario: '#2563eb'
+        },
+        'verde-fresco': {
+            ingresos: '#10b981',
+            gastos: '#ef4444',
+            utilidad: '#22c55e',
+            crecimiento: '#06b6d4',
+            tematica: '#10b981',
+            tematicaSecundario: '#10b981'
+        },
+        // PALETAS MIXTAS (DEGRADADOS)
+        'sunset-pro': {
+            ingresos: '#ff6b6b',
+            gastos: '#f39c12',
+            utilidad: '#10b981',
+            crecimiento: '#e74c3c',
+            tematica: '#ff6b6b',
+            tematicaSecundario: '#f39c12'
+        },
+        'ocean-pro': {
+            ingresos: '#667eea',
+            gastos: '#f093fb',
+            utilidad: '#4facfe',
+            crecimiento: '#764ba2',
+            tematica: '#667eea',
+            tematicaSecundario: '#764ba2'
+        },
+        'forest-pro': {
+            ingresos: '#56ab2f',
+            gastos: '#ff6b35',
+            utilidad: '#a8e063',
+            crecimiento: '#38b000',
+            tematica: '#56ab2f',
+            tematicaSecundario: '#a8e063'
+        }
+    };
+
+    const colores = paletas[nombrePaleta];
+    if (!colores) return;
+
+    this.coloresTemp = { ...colores };
+
+    // Actualizar todos los inputs
+    Object.keys(colores).forEach(tipo => {
+        const input = document.getElementById(`color${tipo}`);
+        const hex = document.getElementById(`hex${tipo}`);
+        
+        if (input) input.value = colores[tipo];
+        if (hex) {
+            if (hex.tagName === 'INPUT') {
+                hex.value = colores[tipo];
+            } else {
+                hex.textContent = colores[tipo];
             }
-        };
-
-        const colores = paletas[nombrePaleta];
-        if (!colores) return;
-
-        this.coloresTemp = { ...colores };
-
-        Object.keys(colores).forEach(tipo => {
-            const input = document.getElementById(`color${tipo}`);
-            const hex = document.getElementById(`hex${tipo}`);
-            
-            if (input) input.value = colores[tipo];
-            if (hex) {
-                if (hex.tagName === 'INPUT') {
-                    hex.value = colores[tipo];
-                } else {
-                    hex.textContent = colores[tipo];
-                }
+        }
+        
+        // Actualizar preview visual
+        const preview = hex?.parentElement?.parentElement?.querySelector('div[style*="background"]');
+        if (preview) {
+            preview.style.background = colores[tipo];
+            if (tipo.includes('tematica')) {
+                preview.style.boxShadow = `0 4px 12px ${colores[tipo]}40`;
             }
-            
-            const preview = hex?.parentElement.querySelector('div[style*="background"]');
-            if (preview) preview.style.background = colores[tipo];
-        });
-    }
+        }
+    });
 
+    // Actualizar preview del degradado temático
+    this.actualizarPreviewDegradado();
+
+    console.log(`✅ Paleta "${nombrePaleta}" aplicada`);
+}
     aplicarModoVisual(modo) {
         this.modoVisual = modo;
         
