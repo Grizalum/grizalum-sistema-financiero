@@ -720,6 +720,17 @@ guardarNombrePersonalizado(nombre) {
             }
         };
     }
+    
+    // Actualizar botón en tiempo real
+    this._actualizarBotonSiguiente();
+}
+
+_actualizarBotonSiguiente() {
+    const boton = document.querySelector('.wizard-btn-siguiente');
+    if (!boton) return;
+    
+    const puedeAvanzar = this._validarPasoActual();
+    boton.disabled = !puedeAvanzar;
 }
     cancelar() {
     // Crear modal de confirmación personalizado
@@ -861,11 +872,20 @@ _completarAutomaticamente() {
         // Validación estándar
         return respuesta !== undefined && respuesta !== null && respuesta !== '';
     }
-    cerrar() {
+     cerrar() {
+        // Cerrar modal de confirmación si existe
+        const modalConfirm = document.querySelector('.wizard-confirm-overlay');
+        if (modalConfirm) {
+            modalConfirm.remove();
+        }
+        
+        // Cerrar wizard
         const wizard = document.getElementById('onboardingWizard');
         if (wizard) {
             wizard.classList.remove('show');
-            setTimeout(() => wizard.remove(), 300);
+            setTimeout(() => {
+                wizard.remove();
+            }, 300);
         }
     }
 }
