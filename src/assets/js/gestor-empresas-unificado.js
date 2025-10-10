@@ -1869,29 +1869,31 @@ class GestorEmpresasUnificado {
     }
 
     _aplicarColoresEmpresa(empresaId) {
-        const empresa = this.estado.empresas[empresaId];
-        if (!empresa) return;
-        
-        const colores = empresa.coloresPersonalizados || {
-            ingresos: '#d4af37',
-            gastos: '#ff6b35',
-            utilidad: '#2ecc71',
-            crecimiento: '#9b59b6',
-            tematica: '#d4af37'
-        };
-
-        // Asegurar que tematicaSecundario existe
+    const empresa = this.estado.empresas[empresaId];
+    if (!empresa) return;
+    
+    const colores = empresa.coloresPersonalizados || {
+        ingresos: '#d4af37',
+        gastos: '#ff6b35',
+        utilidad: '#2ecc71',
+        crecimiento: '#9b59b6',
+        tematica: '#d4af37',
+        tematicaSecundario: '#b8941f'
+    };
+    
+    // Asegurar que tematicaSecundario existe
     if (!colores.tematicaSecundario) {
         colores.tematicaSecundario = colores.tematica;
-    }    
-       const root = document.documentElement;
-        root.style.setProperty('--color-ingresos', colores.ingresos);
-        root.style.setProperty('--color-gastos', colores.gastos);
-        root.style.setProperty('--color-utilidad', colores.utilidad);
-        root.style.setProperty('--color-crecimiento', colores.crecimiento);
-        root.style.setProperty('--color-primario', colores.tematica);
     }
-  
+    
+    const root = document.documentElement;
+    root.style.setProperty('--color-ingresos', colores.ingresos);
+    root.style.setProperty('--color-gastos', colores.gastos);
+    root.style.setProperty('--color-utilidad', colores.utilidad);
+    root.style.setProperty('--color-crecimiento', colores.crecimiento);
+    root.style.setProperty('--color-primario', colores.tematica);
+    root.style.setProperty('--color-secundario', colores.tematicaSecundario);
+    
     this._log('info', `Colores aplicados para: ${empresa.nombre}`);
 }
 
