@@ -1023,15 +1023,71 @@ class GestorEmpresasUnificado {
                         </div>
                     </div>
 
-                    <div class="grizalum-seccion">
+                    <<div class="grizalum-seccion">
                         <div class="grizalum-seccion-titulo">Identidad Visual</div>
                         
-                        <div class="grizalum-emoji-grid">
-                            ${emojis.map(emoji => `
-                                <div class="grizalum-emoji-item ${emoji === empresa.icono ? 'selected' : ''}" 
-                                     onclick="gestorEmpresas.seleccionarEmoji('${emoji}')">${emoji}</div>
-                            `).join('')}
+                        <div style="display: flex; border-bottom: 2px solid var(--modal-borde); margin-bottom: 20px;">
+                            <div class="tab-edit-btn active" data-tab="emoji" onclick="gestorEmpresas.cambiarTabEdit('emoji')" style="flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: 700; border-bottom: 3px solid var(--color-primario); color: var(--modal-texto-principal); transition: all 0.3s ease;">
+                                😀 Emoji
+                            </div>
+                            <div class="tab-edit-btn" data-tab="logo" onclick="gestorEmpresas.cambiarTabEdit('logo')" style="flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: 700; color: var(--modal-texto-terciario); transition: all 0.3s ease;">
+                                🖼️ Logo Premium
+                            </div>
                         </div>
+
+                        <div class="tab-edit-content active" id="tabEmojiEdit">
+                            <div class="grizalum-emoji-grid">
+                                ${emojis.map(emoji => `
+                                    <div class="grizalum-emoji-item ${emoji === empresa.icono ? 'selected' : ''}" 
+                                         onclick="gestorEmpresas.seleccionarEmoji('${emoji}')">${emoji}</div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div class="tab-edit-content" id="tabLogoEdit" style="display: none;">
+                            <input type="file" id="logoInputEdit" accept="image/*" style="display:none" onchange="gestorEmpresas.subirLogoEdit(event)">
+                            
+                            <div onclick="document.getElementById('logoInputEdit').click()" style="padding: 40px; border: 2px dashed var(--modal-borde); border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: rgba(255,255,255,0.02); position: relative; overflow: hidden;">
+                                <div style="position: absolute; top: 10px; right: 10px; background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700;">
+                                    ⭐ PREMIUM
+                                </div>
+                                <i class="fas fa-cloud-upload-alt" style="font-size: 48px; color: var(--modal-texto-terciario); margin-bottom: 12px; display: block;"></i>
+                                <div style="font-weight: 700; color: var(--modal-texto-principal); margin-bottom: 8px; font-size: 16px;">Subir logo personalizado</div>
+                                <small style="color: var(--modal-texto-terciario); display: block;">PNG, JPG, SVG (máx 2MB)</small>
+                                <small style="color: var(--modal-texto-terciario); display: block; margin-top: 8px; opacity: 0.7;">Recomendado: 500x500px fondo transparente</small>
+                            </div>
+
+                            ${empresa.logo || this.logoTemporal ? `
+                                <div id="logoPreviewEdit" style="display: flex; margin-top: 20px; padding: 20px; background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%); border-radius: 12px; align-items: center; gap: 20px; border: 1px solid var(--modal-borde);">
+                                    <div style="width: 80px; height: 80px; background: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; padding: 10px;">
+                                        <img id="logoImgEdit" src="${empresa.logo || this.logoTemporal}" style="width: 100%; height: 100%; object-fit: contain;">
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <div style="font-weight: 700; color: var(--modal-texto-principal); font-size: 15px; margin-bottom: 4px;">✅ Logo cargado</div>
+                                        <small style="color: var(--modal-texto-terciario); display: block;">Se guardará al confirmar cambios</small>
+                                        <small style="color: var(--modal-texto-terciario); display: block; margin-top: 4px; opacity: 0.7;">Aparecerá en lugar del emoji</small>
+                                    </div>
+                                    <button onclick="event.stopPropagation(); gestorEmpresas.eliminarLogoEdit()" style="padding: 10px 20px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.2) 100%); color: #ef4444; border: 1px solid #ef4444; border-radius: 8px; cursor: pointer; font-weight: 700; transition: all 0.3s ease;">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </button>
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        <style>
+                            .tab-edit-btn:hover {
+                                background: rgba(255,255,255,0.05);
+                            }
+                            .tab-edit-btn.active {
+                                border-bottom: 3px solid var(--color-primario) !important;
+                                color: var(--modal-texto-principal) !important;
+                            }
+                            [onclick*="logoInputEdit"]:hover {
+                                border-color: var(--color-primario);
+                                background: rgba(255,255,255,0.05);
+                                transform: scale(1.01);
+                            }
+                        </style>
                     </div>
 
                     <div class="grizalum-seccion">
@@ -1106,6 +1162,97 @@ class GestorEmpresasUnificado {
         });
         event.target.classList.add('selected');
         this.emojiSeleccionado = emoji;
+    }
+    cambiarTabEdit(tab) {
+        // Actualizar botones
+        document.querySelectorAll('.tab-edit-btn').forEach(btn => {
+            btn.classList.remove('active');
+            btn.style.borderBottom = 'none';
+            btn.style.color = 'var(--modal-texto-terciario)';
+        });
+        
+        const btnActivo = document.querySelector(`.tab-edit-btn[data-tab="${tab}"]`);
+        if (btnActivo) {
+            btnActivo.classList.add('active');
+            btnActivo.style.borderBottom = '3px solid var(--color-primario)';
+            btnActivo.style.color = 'var(--modal-texto-principal)';
+        }
+        
+        // Mostrar contenido
+        document.querySelectorAll('.tab-edit-content').forEach(content => {
+            content.classList.remove('active');
+            content.style.display = 'none';
+        });
+        
+        const contentActivo = document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}Edit`);
+        if (contentActivo) {
+            contentActivo.classList.add('active');
+            contentActivo.style.display = 'block';
+        }
+    }
+
+    subirLogoEdit(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // Validar tamaño
+        if (file.size > 2 * 1024 * 1024) {
+            alert('❌ El logo no puede superar 2MB\n\nTip: Usa herramientas como TinyPNG para comprimir tu imagen.');
+            return;
+        }
+
+        // Validar formato
+        const formatosValidos = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml'];
+        if (!formatosValidos.includes(file.type)) {
+            alert('❌ Formato no válido\n\nSolo se aceptan: PNG, JPG, SVG');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            this.logoTemporal = e.target.result;
+            
+            // Crear preview si no existe
+            let preview = document.getElementById('logoPreviewEdit');
+            if (!preview) {
+                const container = document.getElementById('tabLogoEdit');
+                preview = document.createElement('div');
+                preview.id = 'logoPreviewEdit';
+                preview.innerHTML = `
+                    <div style="width: 80px; height: 80px; background: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; padding: 10px;">
+                        <img id="logoImgEdit" style="width: 100%; height: 100%; object-fit: contain;">
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 700; color: var(--modal-texto-principal); font-size: 15px; margin-bottom: 4px;">✅ Logo cargado</div>
+                        <small style="color: var(--modal-texto-terciario); display: block;">Se guardará al confirmar cambios</small>
+                    </div>
+                    <button onclick="event.stopPropagation(); gestorEmpresas.eliminarLogoEdit()" style="padding: 10px 20px; background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; border-radius: 8px; cursor: pointer; font-weight: 700;">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </button>
+                `;
+                preview.style.cssText = 'display: flex; margin-top: 20px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 12px; align-items: center; gap: 20px; border: 1px solid var(--modal-borde);';
+                container.appendChild(preview);
+            }
+            
+            const img = document.getElementById('logoImgEdit');
+            img.src = e.target.result;
+            preview.style.display = 'flex';
+            
+            console.log('✅ Logo cargado - Tamaño:', (file.size / 1024).toFixed(2), 'KB');
+        };
+        reader.readAsDataURL(file);
+    }
+
+    eliminarLogoEdit() {
+        this.logoTemporal = null;
+        
+        const preview = document.getElementById('logoPreviewEdit');
+        const input = document.getElementById('logoInputEdit');
+        
+        if (preview) preview.style.display = 'none';
+        if (input) input.value = '';
+        
+        console.log('🗑️ Logo eliminado del editor');
     }
 
     cambiarColor(tipo, color) {
