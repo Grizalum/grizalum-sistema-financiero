@@ -1391,7 +1391,13 @@ class GestorEmpresasUnificado {
         empresa.nombre = nombre;
         if (empresa.legal) empresa.legal.ruc = ruc;
         
+        if (this.logoTemporal) {
+        empresa.logo = this.logoTemporal;
+        empresa.icono = null;
+      } else if (this.emojiSeleccionado) {
         empresa.icono = this.emojiSeleccionado;
+        empresa.logo = null;
+      }
         empresa.coloresPersonalizados = { ...this.coloresTemp };
         empresa.modoVisual = this.modoVisual || 'oscuro';
         
