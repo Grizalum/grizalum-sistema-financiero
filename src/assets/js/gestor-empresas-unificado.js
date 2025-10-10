@@ -1457,7 +1457,7 @@ class GestorEmpresasUnificado {
         };
         
         let html = `
-            <div class="paleta-premium-overlay" onclick="this.remove()" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 100000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); animation: fadeIn 0.3s ease;">
+            <div class="paleta-premium-overlay" onclick="this.remove()" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 200000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); animation: fadeIn 0.3s ease;">
                 <div onclick="event.stopPropagation()" style="background: var(--modal-fondo-principal); border-radius: 16px; padding: 24px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                         <div>
@@ -1680,6 +1680,19 @@ class GestorEmpresasUnificado {
 
     // Actualizar preview del degradado temático
     this.actualizarPreviewDegradado();
+    // Aplicar colores inmediatamente al sistema
+    const root = document.documentElement;
+    root.style.setProperty('--color-ingresos', colores.ingresos);
+    root.style.setProperty('--color-gastos', colores.gastos);
+    root.style.setProperty('--color-utilidad', colores.utilidad);
+    root.style.setProperty('--color-crecimiento', colores.crecimiento);
+    root.style.setProperty('--color-primario', colores.tematica);
+    root.style.setProperty('--color-secundario', colores.tematicaSecundario || colores.tematica);
+    
+    // Actualizar gráficos si existen
+    if (window.actualizarGraficosConColores) {
+        window.actualizarGraficosConColores(colores);
+    }
 
     console.log(`✅ Paleta "${nombrePaleta}" aplicada`);
 }
@@ -1718,6 +1731,10 @@ class GestorEmpresasUnificado {
       }
         empresa.coloresPersonalizados = { ...this.coloresTemp };
         empresa.modoVisual = this.modoVisual || 'oscuro';
+        // Asegurar que tematicaSecundario existe
+         if (!empresa.coloresPersonalizados.tematicaSecundario) {
+          empresa.coloresPersonalizados.tematicaSecundario = empresa.coloresPersonalizados.tematica;
+       }
         
         if (empresa.meta) {
             empresa.meta.fechaActualizacion = new Date().toISOString();
