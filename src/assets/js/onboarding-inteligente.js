@@ -511,6 +511,17 @@ if (this.respuestas.industria === 'personalizada') {
     
     // Guardar patrón para aprendizaje
         this._guardarPatronAprendizaje();
+
+         // Notificar al Sistema de Niveles
+    document.dispatchEvent(new CustomEvent('grizalumOnboardingCompletado', {
+        detail: {
+            empresaId: this.empresaId,
+            respuestas: this.respuestas,
+            perfilRecomendado: this.perfilRecomendado
+        }
+    }));
+    
+      console.log('📡 Datos enviados al Sistema de Niveles');
         
         this.gestor._guardarEmpresas();
         console.log('✅ Empresa configurada automáticamente');
