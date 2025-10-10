@@ -193,16 +193,21 @@ class OnboardingInteligente {
     }
 
     _generarHeaderWizard() {
-        return `
-            <div class="wizard-header">
+    return `
+        <div class="wizard-header">
+            <div style="display: flex; align-items: center; gap: 16px; flex: 1;">
                 <div class="wizard-icono">🎯</div>
                 <div>
                     <h2>Configuración Inicial</h2>
                     <p>Te ayudaremos a configurar tu empresa en minutos</p>
                 </div>
             </div>
-        `;
-    }
+            <button class="wizard-btn-cerrar" onclick="onboarding.cancelar()" title="Cerrar (puedes configurar después)">
+                ✕
+            </button>
+        </div>
+    `;
+}
 
     _generarProgressBar() {
         const progreso = ((this.pasoActual + 1) / this.preguntas.length) * 100;
@@ -342,7 +347,7 @@ class OnboardingInteligente {
     }
 
     _generarFooterWizard() {
-        const puedeAvanzar = this.respuestas[this.preguntas[this.pasoActual].id] !== undefined;
+        const puedeAvanzar = this._validarPasoActual();
         const esUltimoPaso = this.pasoActual === this.preguntas.length - 1;
         
         return `
@@ -427,8 +432,14 @@ class OnboardingInteligente {
         if (!empresa || !this.perfilRecomendado) return;
         
         // Aplicar perfil industrial
-        empresa.perfilIndustrial = this.perfilRecomendado.id;
-        empresa.categoria = this.perfilRecomendado.categoria;
+if (this.respuestas.industria === 'personalizada') {
+    empresa.perfilIndustrial = 'personalizada';
+    empresa.categoria = 'Personalizada';
+    empresa.nombreIndustria = this.respuestas.nombreIndustriaPersonalizada;
+} else {
+    empresa.perfilIndustrial = this.perfilRecomendado.id;
+    empresa.categoria = this.perfilRecomendado.categoria;
+}
         
         // Configurar módulos según respuestas
         empresa.modulosActivos = this._determinarModulosActivos();
@@ -691,6 +702,29 @@ guardarNombrePersonalizado(nombre) {
         };
     }
 }
+    cancelar() {
+        if (confirm('¿Seguro que quieres salir?\n\nPodrás configurar tu empresa después desde el menú de ajustes.')) {
+            this.cerrar();
+        }
+    }
+    _validarPasoActual() {
+        const pregunta = this.preguntas[this.pasoActual];
+        const respuesta = this.respuestas[pregunta.id];
+        
+        // Validación especial para industria personalizada
+        if (pregunta.id === 'industria' && respuesta === 'personalizada') {
+            const nombre = this.respuestas.nombreIndustriaPersonalizada;
+            return nombre && nombre.trim().length >= 3;
+        }
+        
+        // Validación para preguntas múltiples
+        if (pregunta.tipo === 'multiple') {
+            return Array.isArray(respuesta) && respuesta.length > 0;
+        }
+        
+        // Validación estándar
+        return respuesta !== undefined && respuesta !== null && respuesta !== '';
+    }
     cerrar() {
         const wizard = document.getElementById('onboardingWizard');
         if (wizard) {
@@ -702,6 +736,31 @@ guardarNombrePersonalizado(nombre) {
 
 // Inicialización global
 window.onboarding = new OnboardingInteligente();
+// Inyectar estilos del botón cerrar
+const estilosOnboarding = document.createElement('style');
+estilosOnboarding.textContent = `
+    .wizard-btn-cerrar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: var(--wizard-texto-principal);
+        font-size: 24px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .wizard-btn-cerrar:hover {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+        transform: rotate(90deg);
+    }
+`;
+document.head.appendChild(estilosOnboarding);
 
 console.log(`
 ╔═══════════════════════════════════════════════════════════════╗
