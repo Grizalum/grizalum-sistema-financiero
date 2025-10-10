@@ -954,7 +954,7 @@ estilosOnboarding.textContent = `
         bottom: 0;
         background: rgba(0, 0, 0, 0.8);
         backdrop-filter: blur(5px);
-        z-index: 200001;
+        z-index: 200000;
         display: flex;
         align-items: center;
         justify-content: center;
