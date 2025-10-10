@@ -439,13 +439,39 @@ class OnboardingInteligente {
 }
 
     _analizarRespuestas() {
-        const industriaId = this.respuestas.industria;
-        this.perfilRecomendado = this.perfiles.obtenerPerfil(industriaId);
-        
-        console.log('📊 Análisis de respuestas:', this.respuestas);
-        console.log('🎯 Perfil recomendado:', this.perfilRecomendado?.nombre);
+    const industriaId = this.respuestas.industria;
+    
+    // Si es industria personalizada, ya tenemos el perfil creado
+    if (industriaId === 'personalizada') {
+        // Verificar que se haya guardado el perfil temporal
+        if (!this.perfilRecomendado) {
+            const nombre = this.respuestas.nombreIndustriaPersonalizada || 'Empresa Personalizada';
+            this.perfilRecomendado = {
+                id: 'personalizada',
+                nombre: nombre,
+                icono: '🏢',
+                categoria: 'Personalizada',
+                modulosRecomendados: {
+                    'flujo-caja': { prioridad: 10, obligatorio: true },
+                    'inventario': { prioridad: 7, obligatorio: false },
+                    'clientes': { prioridad: 7, obligatorio: false },
+                    'facturacion': { prioridad: 6, obligatorio: false },
+                    'reportes': { prioridad: 8, obligatorio: false },
+                    'empleados': { prioridad: 5, obligatorio: false },
+                    'proyectos': { prioridad: 5, obligatorio: false },
+                    'contabilidad': { prioridad: 4, obligatorio: false }
+                }
+            };
+        }
+    } else {
+        // Industria predefinida
+        this.perfilRecomendado = this.perfiles?.obtenerPerfil(industriaId);
     }
-
+    
+    console.log('📊 Análisis de respuestas:', this.respuestas);
+    console.log('🎯 Perfil recomendado:', this.perfilRecomendado?.nombre);
+    console.log('🏭 Industria ID:', industriaId);
+}
     _configurarEmpresa() {
         const empresa = this.gestor.estado.empresas[this.empresaId];
         if (!empresa || !this.perfilRecomendado) return;
