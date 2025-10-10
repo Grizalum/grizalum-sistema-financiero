@@ -1595,7 +1595,7 @@ class GestorEmpresasUnificado {
         if (paleta) paleta.remove();
     }
 
-   aplicarPaleta(nombrePaleta) {
+aplicarPaleta(nombrePaleta) {
     const paletas = {
         // PALETAS SÓLIDAS
         'dorado-clasico': {
@@ -1680,6 +1680,7 @@ class GestorEmpresasUnificado {
 
     // Actualizar preview del degradado temático
     this.actualizarPreviewDegradado();
+    
     // Aplicar colores inmediatamente al sistema
     const root = document.documentElement;
     root.style.setProperty('--color-ingresos', colores.ingresos);
@@ -1696,18 +1697,18 @@ class GestorEmpresasUnificado {
 
     console.log(`✅ Paleta "${nombrePaleta}" aplicada`);
 }
-    aplicarModoVisual(modo) {
-        this.modoVisual = modo;
-        
-        document.body.classList.remove('modo-oscuro', 'modo-claro', 'modo-neutro');
-        
-        if (modo === 'claro') {
-            document.body.classList.add('modo-claro');
-        } else if (modo === 'neutro') {
-            document.body.classList.add('modo-neutro');
-        }
-    }
 
+aplicarModoVisual(modo) {
+    this.modoVisual = modo;
+    
+    document.body.classList.remove('modo-oscuro', 'modo-claro', 'modo-neutro');
+    
+    if (modo === 'claro') {
+        document.body.classList.add('modo-claro');
+    } else if (modo === 'neutro') {
+        document.body.classList.add('modo-neutro');
+    }
+}
     guardarEdicion() {
         const nombre = document.getElementById('empresaNombre').value.trim();
         const ruc = document.getElementById('empresaRuc').value.trim();
