@@ -521,8 +521,8 @@ class GestorEmpresasUnificado {
             </div>
             <div class="grizalum-card-info">
                 <div class="grizalum-card-nombre">${empresa.nombre}</div>
-                <div style="font-size: 0.75rem; color: var(--grizalum-text-light); opacity: 0.7;">
-                 📊 ${Object.keys(this.estado.empresas).length} empresa${Object.keys(this.estado.empresas).length !== 1 ? 's' : ''}
+                <div style="font-size: 0.75rem; font-weight: 600;">
+                  ${this._generarBadgeEstado(empresa.estado)}
              </div>
             </div>
             <div class="grizalum-card-actions">
@@ -1560,6 +1560,34 @@ class GestorEmpresasUnificado {
 
     obtenerMetricas() {
         return { ...this.estado.metricas };
+    }
+    _generarBadgeEstado(estado) {
+        const estados = {
+            'Activo': { emoji: '🟢', color: '#10b981', texto: 'Activo' },
+            'Operativo': { emoji: '🟢', color: '#10b981', texto: 'Operativo' },
+            'Ocupado': { emoji: '🟡', color: '#f59e0b', texto: 'Ocupado' },
+            'Inactivo': { emoji: '⚫', color: '#6b7280', texto: 'Inactivo' },
+            'Mantenimiento': { emoji: '🔧', color: '#3b82f6', texto: 'Mantenimiento' },
+            'Suspendido': { emoji: '⏸️', color: '#ef4444', texto: 'Suspendido' }
+        };
+        
+        const info = estados[estado] || estados['Operativo'];
+        
+        return `
+            <span style="
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                padding: 4px 10px;
+                background: ${info.color}20;
+                color: ${info.color};
+                border-radius: 6px;
+                font-size: 11px;
+                font-weight: 700;
+            ">
+                ${info.emoji} ${info.texto}
+            </span>
+        `;
     }
     _obtenerMensajeMotivacional() {
         const mensajes = [
