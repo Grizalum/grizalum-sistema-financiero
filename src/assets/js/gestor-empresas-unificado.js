@@ -1135,27 +1135,106 @@ class GestorEmpresasUnificado {
     }
 
     _generarColorPicker(nombre, id, color, emoji) {
-        const esSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
-        
-        return `
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">
-                <div style="width: 40px; height: 40px; background: ${color}; border-radius: 8px; cursor: pointer;" 
-                     onclick="${esSafari ? `gestorEmpresas.mostrarPaletaSafari('${id}')` : `document.getElementById('color${id}').click()`}">
-                </div>
-                <div style="flex: 1;">
-                    <div style="font-weight: 600; color: var(--modal-texto-principal);">${emoji} ${nombre}</div>
-                    ${esSafari ? 
-                        `<input type="text" id="hex${id}" value="${color}" maxlength="7" 
-                                style="width: 100%; padding: 6px; background: rgba(255,255,255,0.05); border: 1px solid var(--modal-borde); border-radius: 6px; color: var(--modal-texto-principal);"
-                                oninput="gestorEmpresas.cambiarColorManual('${id}', this.value)">` :
-                        `<div style="font-size: 12px; color: var(--modal-texto-terciario);" id="hex${id}">${color}</div>`
-                    }
-                </div>
-                ${!esSafari ? `<input type="color" id="color${id}" value="${color}" style="display:none" onchange="gestorEmpresas.cambiarColor('${id}', this.value)">` : ''}
-            </div>
-        `;
-    }
+       // Sistema especial para Temática con degradado mixto
+        if (id === 'tematica') {
+            const color1 = this.coloresTemp.tematica || '#d4af37';
+            const color2 = this.coloresTemp.tematicaSecundario || '#b8941f';
+            
+            // Detectar Safari para usar sistema alternativo
+            const esSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+            
+            return `
+                <div style="padding: 20px; background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%); border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--modal-borde);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                        <div style="font-weight: 700; color: var(--modal-texto-principal); font-size: 16px;">
+                            ${emoji} ${nombre}
+                        </div>
+                        <div style="padding: 4px 12px; background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); color: white; border-radius: 20px; font-size: 11px; font-weight: 700;">
+                            🌈 DEGRADADO MIXTO
+                        </div>
+                    </div>
+                    
+                    <p style="color: var(--modal-texto-terciario); font-size: 13px; margin-bottom: 16px; line-height: 1.5;">
+                        Crea un degradado único combinando 2 colores. Este será el color principal de tu empresa.
+                    </p>
+                    
+                    <!-- COLOR 1: Principal -->
+                    <div style="margin-bottom: 16px;">
+                        <label style="font-size: 13px; color: var(--modal-texto-secundario); display: block; margin-bottom: 8px; font-weight: 600;">
+                            🎨 Color Principal (Inicio del degradado)
+                        </label>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 50px; height: 50px; background: ${color1}; border-radius: 10px; cursor: pointer; border: 3px solid var(--modal-borde); transition: all 0.3s ease; box-shadow: 0 4px 12px ${color1}40;" 
+                                 onclick="${esSafari ? `gestorEmpresas.abrirPaletaPremium('tematica', '${color1}')` : `document.getElementById('colortematica').click()`}"
+                                 onmouseover="this.style.transform='scale(1.1)'; this.style.borderColor='${color1}';"
+                                 onmouseout="this.style.transform='scale(1)'; this.style.borderColor='var(--modal-borde)';">
+                            </div>
+                            ${esSafari ? 
+                                `<input type="text" id="hextematica" value="${color1}" maxlength="7" 
+                                        placeholder="#RRGGBB"
+                                        style="flex: 1; padding: 12px 16px; background: rgba(255,255,255,0.05); border: 2px solid var(--modal-borde); border-radius: 8px; color: var(--modal-texto-principal); font-family: 'Courier New', monospace; font-size: 14px; font-weight: 700; transition: all 0.3s ease;"
+                                        oninput="gestorEmpresas.cambiarColorManualConPreview('tematica', this.value)"
+                                        onfocus="this.style.borderColor='${color1}'"
+                                        onblur="this.style.borderColor='var(--modal-borde)'">` :
+                                `<div style="flex: 1; padding: 12px 16px; background: rgba(255,255,255,0.05); border: 2px solid var(--modal-borde); border-radius: 8px;">
+                                    <div style="font-family: 'Courier New', monospace; color: var(--modal-texto-principal); font-size: 14px; font-weight: 700;" id="hextematica">${color1}</div>
+                                 </div>`
+                            }
+                            ${!esSafari ? `<input type="color" id="colortematica" value="${color1}" style="display:none" onchange="gestorEmpresas.cambiarColorConPreview('tematica', this.value)">` : ''}
+                            <button onclick="gestorEmpresas.abrirPaletaPremium('tematica', '${color1}')" 
+                                    style="padding: 12px 16px; background: rgba(255,255,255,0.1); border: 2px solid var(--modal-borde); border-radius: 8px; cursor: pointer; color: var(--modal-texto-principal); font-weight: 700; transition: all 0.3s ease;"
+                                    onmouseover="this.style.background='rgba(255,255,255,0.15)'; this.style.borderColor='${color1}';"
+                                    onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.borderColor='var(--modal-borde)';">
+                                🎨 Paleta
+                            </button>
+                        </div>
+                    </div>
 
+                    <!-- COLOR 2: Secundario -->
+                    <div style="margin-bottom: 20px;">
+                        <label style="font-size: 13px; color: var(--modal-texto-secundario); display: block; margin-bottom: 8px; font-weight: 600;">
+                            🎨 Color Secundario (Fin del degradado)
+                        </label>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 50px; height: 50px; background: ${color2}; border-radius: 10px; cursor: pointer; border: 3px solid var(--modal-borde); transition: all 0.3s ease; box-shadow: 0 4px 12px ${color2}40;" 
+                                 onclick="${esSafari ? `gestorEmpresas.abrirPaletaPremium('tematicaSecundario', '${color2}')` : `document.getElementById('colortematicaSecundario').click()`}"
+                                 onmouseover="this.style.transform='scale(1.1)'; this.style.borderColor='${color2}';"
+                                 onmouseout="this.style.transform='scale(1)'; this.style.borderColor='var(--modal-borde)';">
+                            </div>
+                            ${esSafari ? 
+                                `<input type="text" id="hextematicaSecundario" value="${color2}" maxlength="7" 
+                                        placeholder="#RRGGBB"
+                                        style="flex: 1; padding: 12px 16px; background: rgba(255,255,255,0.05); border: 2px solid var(--modal-borde); border-radius: 8px; color: var(--modal-texto-principal); font-family: 'Courier New', monospace; font-size: 14px; font-weight: 700; transition: all 0.3s ease;"
+                                        oninput="gestorEmpresas.cambiarColorManualConPreview('tematicaSecundario', this.value)"
+                                        onfocus="this.style.borderColor='${color2}'"
+                                        onblur="this.style.borderColor='var(--modal-borde)'">` :
+                                `<div style="flex: 1; padding: 12px 16px; background: rgba(255,255,255,0.05); border: 2px solid var(--modal-borde); border-radius: 8px;">
+                                    <div style="font-family: 'Courier New', monospace; color: var(--modal-texto-principal); font-size: 14px; font-weight: 700;" id="hextematicaSecundario">${color2}</div>
+                                 </div>`
+                            }
+                            ${!esSafari ? `<input type="color" id="colortematicaSecundario" value="${color2}" style="display:none" onchange="gestorEmpresas.cambiarColorConPreview('tematicaSecundario', this.value)">` : ''}
+                            <button onclick="gestorEmpresas.abrirPaletaPremium('tematicaSecundario', '${color2}')" 
+                                    style="padding: 12px 16px; background: rgba(255,255,255,0.1); border: 2px solid var(--modal-borde); border-radius: 8px; cursor: pointer; color: var(--modal-texto-principal); font-weight: 700; transition: all 0.3s ease;"
+                                    onmouseover="this.style.background='rgba(255,255,255,0.15)'; this.style.borderColor='${color2}';"
+                                    onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.borderColor='var(--modal-borde)';">
+                                🎨 Paleta
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- PREVIEW DEL DEGRADADO -->
+                    <div id="previewDegradado" style="padding: 24px; background: linear-gradient(135deg, ${color1} 0%, ${color2} 100%); border-radius: 12px; text-align: center; color: white; font-weight: 700; font-size: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); position: relative; overflow: hidden;">
+                        <div style="position: relative; z-index: 1;">
+                            ✨ Vista Previa del Degradado
+                        </div>
+                        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.1); opacity: 0; transition: opacity 0.3s ease;" 
+                             onmouseover="this.style.opacity='1'" 
+                             onmouseout="this.style.opacity='0'">
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
     seleccionarEmoji(emoji) {
         document.querySelectorAll('.grizalum-emoji-item').forEach(item => {
             item.classList.remove('selected');
@@ -1255,21 +1334,156 @@ class GestorEmpresasUnificado {
         console.log('🗑️ Logo eliminado del editor');
     }
 
-    cambiarColor(tipo, color) {
+   cambiarColorConPreview(tipo, color) {
         this.coloresTemp[tipo] = color;
-        const hex = document.getElementById(`hex${tipo}`);
-        if (hex) hex.textContent = color;
         
-        const preview = document.querySelector(`input#color${tipo}`).parentElement.querySelector('div[style*="background"]');
+        const hex = document.getElementById(`hex${tipo}`);
+        if (hex) {
+            if (hex.tagName === 'INPUT') {
+                hex.value = color;
+            } else {
+                hex.textContent = color;
+            }
+        }
+        
+        // Actualizar preview visual del cuadro
+        const preview = document.querySelector(`input#color${tipo}`)?.parentElement?.querySelector('div[style*="background"]');
         if (preview) preview.style.background = color;
+        
+        // Actualizar preview del degradado si es temática
+        this.actualizarPreviewDegradado();
     }
 
-    cambiarColorManual(tipo, valor) {
-        if (!/^#[0-9A-F]{6}$/i.test(valor)) return;
+    cambiarColorManualConPreview(tipo, valor) {
+        // Validar formato hexadecimal
+        if (!/^#[0-9A-F]{6}$/i.test(valor)) {
+            return;
+        }
         
         this.coloresTemp[tipo] = valor;
-        const preview = document.getElementById(`hex${tipo}`).parentElement.querySelector('div[style*="background"]');
-        if (preview) preview.style.background = valor;
+        
+        // Actualizar cuadro de color
+        const preview = document.getElementById(`hex${tipo}`)?.parentElement?.parentElement?.querySelector('div[style*="border-radius: 10px"]');
+        if (preview) {
+            preview.style.background = valor;
+            preview.style.boxShadow = `0 4px 12px ${valor}40`;
+        }
+        
+        // Actualizar preview del degradado
+        this.actualizarPreviewDegradado();
+    }
+
+    actualizarPreviewDegradado() {
+        const preview = document.getElementById('previewDegradado');
+        if (preview && this.coloresTemp.tematica && this.coloresTemp.tematicaSecundario) {
+            preview.style.background = `linear-gradient(135deg, ${this.coloresTemp.tematica} 0%, ${this.coloresTemp.tematicaSecundario} 100%)`;
+        }
+    }
+
+    abrirPaletaPremium(tipo, colorActual) {
+        // Paleta premium con colores profesionales organizados por categorías
+        const paletaPremium = {
+            'Dorados y Cálidos': ['#d4af37', '#ffd700', '#f1c40f', '#f39c12', '#e67e22', '#d35400'],
+            'Rojos y Naranjas': ['#e74c3c', '#c0392b', '#ff6b6b', '#ff4757', '#ff6348', '#ff7675'],
+            'Verdes': ['#2ecc71', '#27ae60', '#00b894', '#55efc4', '#10b981', '#059669'],
+            'Azules': ['#3498db', '#2980b9', '#0984e3', '#74b9ff', '#2563eb', '#1d4ed8'],
+            'Morados': ['#9b59b6', '#8e44ad', '#a29bfe', '#6c5ce7', '#7c3aed', '#6d28d9'],
+            'Rosas': ['#e91e63', '#f093fb', '#fd79a8', '#fab1a0', '#ff6b9d', '#c44569'],
+            'Grises y Neutros': ['#95a5a6', '#7f8c8d', '#636e72', '#2d3436', '#34495e', '#2c3e50']
+        };
+        
+        let html = `
+            <div class="paleta-premium-overlay" onclick="this.remove()" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 100000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); animation: fadeIn 0.3s ease;">
+                <div onclick="event.stopPropagation()" style="background: var(--modal-fondo-principal); border-radius: 16px; padding: 24px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <div>
+                            <h3 style="margin: 0; color: var(--modal-texto-principal); font-size: 20px;">🎨 Paleta Premium</h3>
+                            <p style="margin: 4px 0 0 0; color: var(--modal-texto-terciario); font-size: 13px;">Selecciona un color profesional</p>
+                        </div>
+                        <button onclick="this.closest('.paleta-premium-overlay').remove()" style="width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; color: var(--modal-texto-principal); cursor: pointer; font-size: 20px; transition: all 0.3s ease;"
+                                onmouseover="this.style.background='rgba(255,0,0,0.2)'; this.style.transform='rotate(90deg)';"
+                                onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='rotate(0deg)';">
+                            ✕
+                        </button>
+                    </div>
+        `;
+        
+        Object.entries(paletaPremium).forEach(([categoria, colores]) => {
+            html += `
+                <div style="margin-bottom: 24px;">
+                    <div style="font-weight: 700; color: var(--modal-texto-principal); margin-bottom: 12px; font-size: 14px;">${categoria}</div>
+                    <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px;">
+                        ${colores.map(color => `
+                            <div onclick="gestorEmpresas.seleccionarColorDePaleta('${tipo}', '${color}')" 
+                                 style="aspect-ratio: 1; background: ${color}; border-radius: 10px; cursor: pointer; border: 3px solid ${color === colorActual ? 'white' : 'transparent'}; transition: all 0.3s ease; position: relative; box-shadow: 0 4px 12px ${color}40;"
+                                 onmouseover="this.style.transform='scale(1.15)'; this.style.boxShadow='0 8px 24px ${color}60';"
+                                 onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 12px ${color}40';"
+                                 title="${color}">
+                                ${color === colorActual ? '<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 20px;">✓</div>' : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += `
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid var(--modal-borde);">
+                        <label style="display: block; font-weight: 700; color: var(--modal-texto-principal); margin-bottom: 8px; font-size: 14px;">
+                            ✏️ O ingresa un color personalizado:
+                        </label>
+                        <div style="display: flex; gap: 12px;">
+                            <input type="text" id="colorPersonalizado${tipo}" placeholder="#RRGGBB" maxlength="7" 
+                                   style="flex: 1; padding: 12px 16px; background: rgba(255,255,255,0.05); border: 2px solid var(--modal-borde); border-radius: 8px; color: var(--modal-texto-principal); font-family: 'Courier New', monospace; font-weight: 700; font-size: 14px;"
+                                   value="${colorActual}">
+                            <button onclick="gestorEmpresas.aplicarColorPersonalizado('${tipo}')" 
+                                    style="padding: 12px 24px; background: linear-gradient(135deg, var(--color-primario) 0%, var(--color-secundario) 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; transition: all 0.3s ease;"
+                                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.3)';"
+                                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                                Aplicar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <style>
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+            </style>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', html);
+    }
+
+    seleccionarColorDePaleta(tipo, color) {
+        this.cambiarColorManualConPreview(tipo, color);
+        
+        // Actualizar input si existe
+        const input = document.getElementById(`hex${tipo}`);
+        if (input) {
+            if (input.tagName === 'INPUT') {
+                input.value = color;
+            } else {
+                input.textContent = color;
+            }
+        }
+        
+        // Cerrar paleta
+        document.querySelector('.paleta-premium-overlay')?.remove();
+    }
+
+    aplicarColorPersonalizado(tipo) {
+        const input = document.getElementById(`colorPersonalizado${tipo}`);
+        const color = input?.value;
+        
+        if (!color || !/^#[0-9A-F]{6}$/i.test(color)) {
+            alert('❌ Color inválido\n\nUsa el formato: #RRGGBB\nEjemplo: #d4af37');
+            return;
+        }
+        
+        this.seleccionarColorDePaleta(tipo, color);
     }
 
     mostrarPaletaSafari(tipo) {
