@@ -37,25 +37,30 @@ class CargadorVistas {
             return false;
         }
 
-             console.log('Cargador de vistas inicializado');
-    }
-
-    async cargarVista(vistaId) {
-        console.log(`Cargando vista: ${vistaId}`);
-        
-        // Buscar contenedor
-        this.contenedor = document.getElementById('contenedorVistas');
-        if (!this.contenedor) {
-            console.error('No se encontró contenedor de vistas');
-            return false;
+        // ⬇️⬇️⬇️ CASO ESPECIAL: PRE-CARGAR FLUJO DE CAJA ⬇️⬇️⬇️
+        if (vistaId === 'cash-flow') {
+            console.log('📦 Pre-cargando módulos de Flujo de Caja...');
+            
+            try {
+                // Cargar config primero
+                await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-config.js');
+                console.log('✅ flujo-caja-config.js cargado');
+                
+                // Esperar un momento
+                await new Promise(resolve => setTimeout(resolve, 200));
+                
+                // Cargar módulo principal
+                await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja.js');
+                console.log('✅ flujo-caja.js cargado');
+                
+                // Esperar antes de cargar HTML
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+            } catch (error) {
+                console.error('❌ Error pre-cargando módulos:', error);
+            }
         }
-
-        // Obtener ruta
-        const ruta = this.vistas[vistaId];
-        if (!ruta) {
-            console.error(`Vista no encontrada: ${vistaId}`);
-            return false;
-        }
+        // ⬆️⬆️⬆️ FIN CASO ESPECIAL ⬆️⬆️⬆️
 
         try {
             // Cargar HTML
@@ -74,74 +79,10 @@ class CargadorVistas {
             // Cargar CSS si existe
             await this.cargarCSS(vistaId);
             
-            // Cargar JS si existe
-            await this.cargarJS(vistaId);
-            
-            console.log(`Vista ${vistaId} cargada exitosamente`);
-            return true;
-            
-        } catch (error) {
-            console.error(`Error cargando vista ${vistaId}:`, error);
-            this.contenedor.innerHTML = `
-                <div style="padding: 60px; text-align: center; color: #e74c3c;">
-                    <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 20px;"></i>
-                    <h2>Error al cargar la vista</h2>
-                    <p>${error.message}</p>
-                </div>
-            `;
-            return false;
-        }
-    }
-
-    async cargarCSS(vistaId) {
-        const carpeta = this.vistas[vistaId].replace('.html', '');
-        const rutaCSS = carpeta + '.css';
-        
-        // Eliminar CSS anterior si existe
-        const cssAnterior = document.getElementById('vista-css-dinamico');
-        if (cssAnterior) {
-            cssAnterior.remove();
-        }
-        
-        // Crear nuevo link CSS
-        const link = document.createElement('link');
-        link.id = 'vista-css-dinamico';
-        link.rel = 'stylesheet';
-        link.href = rutaCSS;
-        document.head.appendChild(link);
-        
-        console.log(`CSS cargado: ${rutaCSS}`);
-    }
-
-    async cargarJS(vistaId) {
-        const carpeta = this.vistas[vistaId].replace('.html', '');
-        const rutaJS = carpeta + '.js';
-        
-        try {
-            const response = await fetch(rutaJS);
-            if (response.ok) {
-                const script = await response.text();
-                eval(script);
-
-        try {
-            // Cargar HTML
-            const response = await fetch(ruta);
-            
-            if (!response.ok) {
-                throw new Error(`Error HTTP: ${response.status}`);
+            // Cargar JS si existe (solo para vistas que no sean cash-flow)
+            if (vistaId !== 'cash-flow') {
+                await this.cargarJS(vistaId);
             }
-            
-            const html = await response.text();
-            
-            // Inyectar en contenedor
-            this.contenedor.innerHTML = html;
-            this.vistaActual = vistaId;
-            
-            // Cargar CSS si existe
-            await this.cargarCSS(vistaId);
-            
-            // Cargar JS si existe
-            await this.cargarJS(vistaId);
             
             console.log(`Vista ${vistaId} cargada exitosamente`);
             return true;
@@ -201,6 +142,36 @@ class CargadorVistas {
             console.warn(`No se pudo cargar JS para ${vistaId}:`, error);
         }
     }
+
+    // ⬇️⬇️⬇️ FUNCIÓN NUEVA PARA CARGAR SCRIPTS ESPECIALES ⬇️⬇️⬇️
+    async cargarScriptEspecial(src) {
+        return new Promise((resolve, reject) => {
+            // Verificar si ya existe
+            const existente = document.querySelector(`script[src="${src}"]`);
+            if (existente) {
+                console.log(`Script ya existe: ${src}`);
+                resolve();
+                return;
+            }
+            
+            const script = document.createElement('script');
+            script.src = src;
+            script.async = false;
+            
+            script.onload = () => {
+                console.log(`✅ Script cargado: ${src}`);
+                resolve();
+            };
+            
+            script.onerror = () => {
+                console.error(`❌ Error cargando: ${src}`);
+                reject(new Error(`No se pudo cargar ${src}`));
+            };
+            
+            document.head.appendChild(script);
+        });
+    }
+    // ⬆️⬆️⬆️ FIN FUNCIÓN NUEVA ⬆️⬆️⬆️
 }
 
 // Instancia global
