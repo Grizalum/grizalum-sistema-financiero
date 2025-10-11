@@ -477,30 +477,31 @@ class OnboardingInteligente {
     console.log('🏭 Industria ID:', industriaId);
 }
     _configurarEmpresa() {
-        const empresa = this.gestor.estado.empresas[this.empresaId];
-        if (!empresa || !this.perfilRecomendado) return;
-        
-        // Aplicar perfil industrial
-if (this.respuestas.industria === 'personalizada') {
-    empresa.perfilIndustrial = 'personalizada';
-    empresa.categoria = 'Personalizada';
-    empresa.nombreIndustria = this.respuestas.nombreIndustriaPersonalizada;
-} else {
-    empresa.perfilIndustrial = this.perfilRecomendado.id;
-    empresa.categoria = this.perfilRecomendado.categoria;
-}
-        
-        // Configurar módulos según respuestas
-        empresa.modulosActivos = this._determinarModulosActivos();
-        
-        // Guardar preferencias
-        empresa.onboarding = {
-            completado: true,
-            fecha: new Date().toISOString(),
-            respuestas: this.respuestas,
-            version: '1.0'
-        };
-        // Guardar contexto profundo
+    const empresa = this.gestor.estado.empresas[this.empresaId];
+    if (!empresa || !this.perfilRecomendado) return;
+    
+    // Aplicar perfil industrial
+    if (this.respuestas.industria === 'personalizada') {
+        empresa.perfilIndustrial = 'personalizada';
+        empresa.categoria = 'Personalizada';
+        empresa.nombreIndustria = this.respuestas.nombreIndustriaPersonalizada;
+    } else {
+        empresa.perfilIndustrial = this.perfilRecomendado.id;
+        empresa.categoria = this.perfilRecomendado.categoria;
+    }
+    
+    // Configurar módulos según respuestas
+    empresa.modulosActivos = this._determinarModulosActivos();
+    
+    // Guardar preferencias
+    empresa.onboarding = {
+        completado: true,
+        fecha: new Date().toISOString(),
+        respuestas: this.respuestas,
+        version: '1.0'
+    };
+    
+    // Guardar contexto profundo
     empresa.contextoNegocio = {
         tamano: this.respuestas.tamano,
         volumenNegocio: this.respuestas['volumen-negocio'],
@@ -510,23 +511,48 @@ if (this.respuestas.industria === 'personalizada') {
     };
     
     // Guardar patrón para aprendizaje
-        this._guardarPatronAprendizaje();
-
-         // Notificar al Sistema de Niveles
-    document.dispatchEvent(new CustomEvent('grizalumOnboardingCompletado', {
-        detail: {
-            empresaId: this.empresaId,
-            respuestas: this.respuestas,
-            perfilRecomendado: this.perfilRecomendado
-        }
-    }));
+    this._guardarPatronAprendizaje();
     
-      console.log('📡 Datos enviados al Sistema de Niveles');
+    // Guardar primero la empresa
+    this.gestor._guardarEmpresas();
+    console.log('✅ Empresa configurada automáticamente');
+    
+    // ⬇️⬇️⬇️ NOTIFICAR AL SISTEMA DE NIVELES (AL FINAL) ⬇️⬇️⬇️
+    try {
+        // Validar que tenemos todos los datos necesarios
+        if (!this.empresaId) {
+            console.error('❌ empresaId no definido');
+            return;
+        }
+        if (!this.respuestas) {
+            console.error('❌ respuestas no definidas');
+            return;
+        }
+        if (!this.perfilRecomendado) {
+            console.error('❌ perfilRecomendado no definido');
+            return;
+        }
         
-        this.gestor._guardarEmpresas();
-        console.log('✅ Empresa configurada automáticamente');
+        // Esperar 500ms para asegurar que todo se guardó
+        setTimeout(() => {
+            document.dispatchEvent(new CustomEvent('grizalumOnboardingCompletado', {
+                detail: {
+                    empresaId: this.empresaId,
+                    respuestas: this.respuestas,
+                    perfilRecomendado: this.perfilRecomendado
+                }
+            }));
+            
+            console.log('📡 Datos enviados al Sistema de Niveles');
+            console.log('   Empresa:', this.empresaId);
+            console.log('   Respuestas:', this.respuestas);
+            console.log('   Perfil:', this.perfilRecomendado.nombre);
+        }, 500);
+        
+    } catch (error) {
+        console.error('❌ Error al notificar Sistema de Niveles:', error);
     }
-
+}
     _determinarModulosActivos() {
         const modulos = {};
         const perfil = this.perfilRecomendado;
