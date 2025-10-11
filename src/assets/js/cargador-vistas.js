@@ -37,29 +37,38 @@ class CargadorVistas {
             return false;
         }
 
-        // ⬇️⬇️⬇️ CASO ESPECIAL: PRE-CARGAR FLUJO DE CAJA ⬇️⬇️⬇️
-        if (vistaId === 'cash-flow') {
-            console.log('📦 Pre-cargando módulos de Flujo de Caja...');
-            
-            try {
-                // Cargar config primero
-                await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-config.js');
-                console.log('✅ flujo-caja-config.js cargado');
-                
-                // Esperar un momento
-                await new Promise(resolve => setTimeout(resolve, 200));
-                
-                // Cargar módulo principal
-                await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja.js');
-                console.log('✅ flujo-caja.js cargado');
-                
-                // Esperar antes de cargar HTML
-                await new Promise(resolve => setTimeout(resolve, 300));
-                
-            } catch (error) {
-                console.error('❌ Error pre-cargando módulos:', error);
-            }
-        }
+       // CASO ESPECIAL: PRE-CARGAR FLUJO DE CAJA
+if (vistaId === 'cash-flow') {
+    console.log('📦 Pre-cargando módulos de Flujo de Caja...');
+    
+    try {
+        // Cargar config primero
+        await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-config.js');
+        console.log('✅ flujo-caja-config.js cargado');
+        
+        // Esperar un momento
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        // Cargar módulo principal
+        await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja.js');
+        console.log('✅ flujo-caja.js cargado');
+        
+        // Esperar un momento
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        // ⬇️⬇️⬇️ ESTAS 3 LÍNEAS SON NUEVAS ⬇️⬇️⬇️
+        // Cargar UI
+        await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-ui.js');
+        console.log('✅ flujo-caja-ui.js cargado');
+        // ⬆️⬆️⬆️ FIN LÍNEAS NUEVAS ⬆️⬆️⬆️
+        
+        // Esperar antes de cargar HTML
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+    } catch (error) {
+        console.error('❌ Error pre-cargando módulos:', error);
+    }
+}
         // ⬆️⬆️⬆️ FIN CASO ESPECIAL ⬆️⬆️⬆️
 
         try {
