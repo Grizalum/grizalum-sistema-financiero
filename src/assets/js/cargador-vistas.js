@@ -37,6 +37,92 @@ class CargadorVistas {
             return false;
         }
 
+             console.log('Cargador de vistas inicializado');
+    }
+
+    async cargarVista(vistaId) {
+        console.log(`Cargando vista: ${vistaId}`);
+        
+        // Buscar contenedor
+        this.contenedor = document.getElementById('contenedorVistas');
+        if (!this.contenedor) {
+            console.error('No se encontró contenedor de vistas');
+            return false;
+        }
+
+        // Obtener ruta
+        const ruta = this.vistas[vistaId];
+        if (!ruta) {
+            console.error(`Vista no encontrada: ${vistaId}`);
+            return false;
+        }
+
+        try {
+            // Cargar HTML
+            const response = await fetch(ruta);
+            
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status}`);
+            }
+            
+            const html = await response.text();
+            
+            // Inyectar en contenedor
+            this.contenedor.innerHTML = html;
+            this.vistaActual = vistaId;
+            
+            // Cargar CSS si existe
+            await this.cargarCSS(vistaId);
+            
+            // Cargar JS si existe
+            await this.cargarJS(vistaId);
+            
+            console.log(`Vista ${vistaId} cargada exitosamente`);
+            return true;
+            
+        } catch (error) {
+            console.error(`Error cargando vista ${vistaId}:`, error);
+            this.contenedor.innerHTML = `
+                <div style="padding: 60px; text-align: center; color: #e74c3c;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 20px;"></i>
+                    <h2>Error al cargar la vista</h2>
+                    <p>${error.message}</p>
+                </div>
+            `;
+            return false;
+        }
+    }
+
+    async cargarCSS(vistaId) {
+        const carpeta = this.vistas[vistaId].replace('.html', '');
+        const rutaCSS = carpeta + '.css';
+        
+        // Eliminar CSS anterior si existe
+        const cssAnterior = document.getElementById('vista-css-dinamico');
+        if (cssAnterior) {
+            cssAnterior.remove();
+        }
+        
+        // Crear nuevo link CSS
+        const link = document.createElement('link');
+        link.id = 'vista-css-dinamico';
+        link.rel = 'stylesheet';
+        link.href = rutaCSS;
+        document.head.appendChild(link);
+        
+        console.log(`CSS cargado: ${rutaCSS}`);
+    }
+
+    async cargarJS(vistaId) {
+        const carpeta = this.vistas[vistaId].replace('.html', '');
+        const rutaJS = carpeta + '.js';
+        
+        try {
+            const response = await fetch(rutaJS);
+            if (response.ok) {
+                const script = await response.text();
+                eval(script);
+
         try {
             // Cargar HTML
             const response = await fetch(ruta);
