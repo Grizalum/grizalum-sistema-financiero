@@ -110,24 +110,39 @@ class CargadorVistas {
     }
 
     async cargarCSS(vistaId) {
-        const carpeta = this.vistas[vistaId].replace('.html', '');
-        const rutaCSS = carpeta + '.css';
-        
-        // Eliminar CSS anterior si existe
-        const cssAnterior = document.getElementById('vista-css-dinamico');
-        if (cssAnterior) {
-            cssAnterior.remove();
-        }
-        
-        // Crear nuevo link CSS
-        const link = document.createElement('link');
-        link.id = 'vista-css-dinamico';
-        link.rel = 'stylesheet';
-        link.href = rutaCSS;
-        document.head.appendChild(link);
-        
-        console.log(`CSS cargado: ${rutaCSS}`);
+    const carpeta = this.vistas[vistaId].replace('.html', '');
+    const rutaCSS = carpeta + '.css';
+    
+    // Eliminar CSS anterior
+    const cssAnterior = document.getElementById('vista-css-dinamico');
+    if (cssAnterior) {
+        cssAnterior.remove();
     }
+    
+    try {
+        // ⬇️⬇️⬇️ NUEVA FORMA: Fetch + crear style tag ⬇️⬇️⬇️
+        console.log(`🎨 Cargando CSS: ${rutaCSS}`);
+        
+        const response = await fetch(rutaCSS);
+        if (response.ok) {
+            const cssText = await response.text();
+            
+            // Crear tag <style> con el contenido
+            const style = document.createElement('style');
+            style.id = 'vista-css-dinamico';
+            style.textContent = cssText;
+            document.head.appendChild(style);
+            
+            console.log(`✅ CSS aplicado directamente (${cssText.length} caracteres)`);
+        } else {
+            console.warn(`⚠️ CSS no encontrado: ${response.status}`);
+        }
+        // ⬆️⬆️⬆️ FIN NUEVA FORMA ⬆️⬆️⬆️
+        
+    } catch (error) {
+        console.error(`❌ Error cargando CSS:`, error);
+    }
+}
 
     async cargarJS(vistaId) {
         const carpeta = this.vistas[vistaId].replace('.html', '');
