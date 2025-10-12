@@ -37,48 +37,43 @@ class CargadorVistas {
             return false;
         }
 
-       // CASO ESPECIAL: PRE-CARGAR FLUJO DE CAJA
-if (vistaId === 'cash-flow') {
-    console.log('📦 Pre-cargando módulos de Flujo de Caja...');
-    
-    try {
-        // Cargar config primero
-        await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-config.js');
-        console.log('✅ flujo-caja-config.js cargado');
-        
-        // Esperar un momento
-        await new Promise(resolve => setTimeout(resolve, 200));
-        
-        // Cargar módulo principal
-        await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja.js');
-        console.log('✅ flujo-caja.js cargado');
-        
-        // Esperar un momento
-        await new Promise(resolve => setTimeout(resolve, 200));
-        
-        // ⬇️⬇️⬇️ ESTAS 3 LÍNEAS SON NUEVAS ⬇️⬇️⬇️
-        // Cargar UI
-        await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-ui.js');
-        console.log('✅ flujo-caja-ui.js cargado');
-        // ⬆️⬆️⬆️ FIN LÍNEAS NUEVAS ⬆️⬆️⬆️
-        
-        // Esperar antes de cargar HTML
-        await new Promise(resolve => setTimeout(resolve, 300));
-        
-    } catch (error) {
-        console.error('❌ Error pre-cargando módulos:', error);
-    }
-}
-        // ⬆️⬆️⬆️ FIN CASO ESPECIAL ⬆️⬆️⬆️
+        // ⬇️⬇️⬇️ OCULTAR CONTENEDOR MIENTRAS CARGA ⬇️⬇️⬇️
+        this.contenedor.style.opacity = '0';
+        this.contenedor.style.transition = 'opacity 0.2s ease';
+        // ⬆️⬆️⬆️
 
-       try {
-            // ⬇️⬇️⬇️ CARGAR CSS PRIMERO (ANTES DEL HTML) ⬇️⬇️⬇️
+        // CASO ESPECIAL: PRE-CARGAR FLUJO DE CAJA
+        if (vistaId === 'cash-flow') {
+            console.log('📦 Pre-cargando módulos de Flujo de Caja...');
+            
+            try {
+                await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-config.js');
+                console.log('✅ flujo-caja-config.js cargado');
+                
+                await new Promise(resolve => setTimeout(resolve, 200));
+                
+                await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja.js');
+                console.log('✅ flujo-caja.js cargado');
+                
+                await new Promise(resolve => setTimeout(resolve, 200));
+                
+                await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-ui.js');
+                console.log('✅ flujo-caja-ui.js cargado');
+                
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+            } catch (error) {
+                console.error('❌ Error pre-cargando módulos:', error);
+            }
+        }
+
+        try {
+            // CARGAR CSS PRIMERO
             await this.cargarCSS(vistaId);
             console.log('✅ CSS pre-cargado');
             
-            // Pequeña espera para asegurar que el CSS esté aplicado
-            await new Promise(resolve => setTimeout(resolve, 100));
-            // ⬆️⬆️⬆️ FIN PRE-CARGA CSS ⬆️⬆️⬆️
+            // Esperar a que el CSS se aplique
+            await new Promise(resolve => setTimeout(resolve, 150));
             
             // Cargar HTML
             const response = await fetch(ruta);
@@ -98,6 +93,11 @@ if (vistaId === 'cash-flow') {
                 await this.cargarJS(vistaId);
             }
             
+            // ⬇️⬇️⬇️ ESPERAR Y MOSTRAR CON FADE ⬇️⬇️⬇️
+            await new Promise(resolve => setTimeout(resolve, 100));
+            this.contenedor.style.opacity = '1';
+            // ⬆️⬆️⬆️
+            
             console.log(`Vista ${vistaId} cargada exitosamente`);
             return true;
             
@@ -110,6 +110,7 @@ if (vistaId === 'cash-flow') {
                     <p>${error.message}</p>
                 </div>
             `;
+            this.contenedor.style.opacity = '1';
             return false;
         }
     }
