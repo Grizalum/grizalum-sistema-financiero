@@ -71,7 +71,15 @@ if (vistaId === 'cash-flow') {
 }
         // ⬆️⬆️⬆️ FIN CASO ESPECIAL ⬆️⬆️⬆️
 
-        try {
+       try {
+            // ⬇️⬇️⬇️ CARGAR CSS PRIMERO (ANTES DEL HTML) ⬇️⬇️⬇️
+            await this.cargarCSS(vistaId);
+            console.log('✅ CSS pre-cargado');
+            
+            // Pequeña espera para asegurar que el CSS esté aplicado
+            await new Promise(resolve => setTimeout(resolve, 100));
+            // ⬆️⬆️⬆️ FIN PRE-CARGA CSS ⬆️⬆️⬆️
+            
             // Cargar HTML
             const response = await fetch(ruta);
             
@@ -84,9 +92,6 @@ if (vistaId === 'cash-flow') {
             // Inyectar en contenedor
             this.contenedor.innerHTML = html;
             this.vistaActual = vistaId;
-            
-            // Cargar CSS si existe
-            await this.cargarCSS(vistaId);
             
             // Cargar JS si existe (solo para vistas que no sean cash-flow)
             if (vistaId !== 'cash-flow') {
