@@ -22,7 +22,15 @@ class CargadorVistas {
 
    async cargarVista(vistaId) {
         console.log(`Cargando vista: ${vistaId}`);
-        
+
+       // ⬇️⬇️⬇️ AGREGAR ESTAS 6 LÍNEAS ⬇️⬇️⬇️
+    // Limpiar cualquier CSS residual que esté causando conflictos
+    document.querySelectorAll('link[href*="flujo-caja.css"]').forEach(el => {
+        console.log('🗑️ Eliminando link residual al inicio:', el.href);
+        el.remove();
+    });
+    // ⬆️⬆️⬆️ FIN DE LÍNEAS NUEVAS ⬆️⬆️⬆️
+       
         // Buscar contenedor
         this.contenedor = document.getElementById('contenedorVistas');
         if (!this.contenedor) {
@@ -109,41 +117,59 @@ class CargadorVistas {
         }
     }
 
-    async cargarCSS(vistaId) {
+   async cargarCSS(vistaId) {
     const carpeta = this.vistas[vistaId].replace('.html', '');
     const rutaCSS = carpeta + '.css';
     
-    // Eliminar CSS anterior
-    const cssAnterior = document.getElementById('vista-css-dinamico');
-    if (cssAnterior) {
-        cssAnterior.remove();
-    }
+    console.log(`🎨 Cargando CSS para: ${vistaId}`);
+    
+    // ⬇️⬇️⬇️ ELIMINAR TODOS LOS CSS ANTERIORES ⬇️⬇️⬇️
+    // Eliminar links viejos
+    document.querySelectorAll('link[id="vista-css-dinamico"]').forEach(el => {
+        console.log('🗑️ Eliminando link:', el.href);
+        el.remove();
+    });
+    
+    // Eliminar style tags viejos
+    document.querySelectorAll('style[id="vista-css-dinamico"]').forEach(el => {
+        console.log('🗑️ Eliminando style tag');
+        el.remove();
+    });
+    
+    // Eliminar cualquier link de flujo-caja residual
+    document.querySelectorAll('link[href*="flujo-caja.css"]').forEach(el => {
+        console.log('🗑️ Eliminando link residual de flujo-caja');
+        el.remove();
+    });
+    // ⬆️⬆️⬆️
     
     try {
-        // ⬇️⬇️⬇️ NUEVA FORMA: Fetch + crear style tag ⬇️⬇️⬇️
-        console.log(`🎨 Cargando CSS: ${rutaCSS}`);
-        
+        // MÉTODO DEFINITIVO: Fetch + Style tag
         const response = await fetch(rutaCSS);
+        
         if (response.ok) {
             const cssText = await response.text();
             
-            // Crear tag <style> con el contenido
+            // Crear style tag con el CSS
             const style = document.createElement('style');
             style.id = 'vista-css-dinamico';
             style.textContent = cssText;
             document.head.appendChild(style);
             
-            console.log(`✅ CSS aplicado directamente (${cssText.length} caracteres)`);
+            const numReglas = style.sheet?.cssRules?.length || 0;
+            console.log(`✅ CSS aplicado: ${cssText.length} caracteres, ${numReglas} reglas CSS`);
+            
+            // Esperar a que el navegador aplique los estilos
+            await new Promise(resolve => setTimeout(resolve, 50));
+            
         } else {
-            console.warn(`⚠️ CSS no encontrado: ${response.status}`);
+            console.warn(`⚠️ CSS no encontrado: ${rutaCSS} (${response.status})`);
         }
-        // ⬆️⬆️⬆️ FIN NUEVA FORMA ⬆️⬆️⬆️
         
     } catch (error) {
-        console.error(`❌ Error cargando CSS:`, error);
+        console.error(`❌ Error cargando CSS ${rutaCSS}:`, error);
     }
 }
-
     async cargarJS(vistaId) {
         const carpeta = this.vistas[vistaId].replace('.html', '');
         const rutaJS = carpeta + '.js';
