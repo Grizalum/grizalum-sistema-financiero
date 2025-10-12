@@ -20,7 +20,7 @@ class CargadorVistas {
         console.log('Cargador de vistas inicializado');
     }
 
-    async cargarVista(vistaId) {
+   async cargarVista(vistaId) {
         console.log(`Cargando vista: ${vistaId}`);
         
         // Buscar contenedor
@@ -37,45 +37,37 @@ class CargadorVistas {
             return false;
         }
 
-        // ⬇️⬇️⬇️ OCULTAR CONTENEDOR MIENTRAS CARGA ⬇️⬇️⬇️
+        // OCULTAR CONTENEDOR
         this.contenedor.style.opacity = '0';
-        this.contenedor.style.transition = 'opacity 0.2s ease';
-        // ⬆️⬆️⬆️
-
-        // CASO ESPECIAL: PRE-CARGAR FLUJO DE CAJA
-        if (vistaId === 'cash-flow') {
-            console.log('📦 Pre-cargando módulos de Flujo de Caja...');
-            
-            try {
-                await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-config.js');
-                console.log('✅ flujo-caja-config.js cargado');
-                
-                await new Promise(resolve => setTimeout(resolve, 200));
-                
-                await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja.js');
-                console.log('✅ flujo-caja.js cargado');
-                
-                await new Promise(resolve => setTimeout(resolve, 200));
-                
-                await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-ui.js');
-                console.log('✅ flujo-caja-ui.js cargado');
-                
-                await new Promise(resolve => setTimeout(resolve, 300));
-                
-            } catch (error) {
-                console.error('❌ Error pre-cargando módulos:', error);
-            }
-        }
+        this.contenedor.style.transition = 'opacity 0.3s ease';
 
         try {
-            // CARGAR CSS PRIMERO
+            // ⬇️⬇️⬇️ PASO 1: CARGAR CSS PRIMERO (ANTES DE TODO) ⬇️⬇️⬇️
+            console.log('🎨 Paso 1: Cargando CSS...');
             await this.cargarCSS(vistaId);
-            console.log('✅ CSS pre-cargado');
-            
-            // Esperar a que el CSS se aplique
-            await new Promise(resolve => setTimeout(resolve, 150));
-            
-            // Cargar HTML
+            await new Promise(resolve => setTimeout(resolve, 200));
+            console.log('✅ CSS aplicado');
+            // ⬆️⬆️⬆️
+
+            // ⬇️⬇️⬇️ PASO 2: SCRIPTS ESPECIALES (SOLO PARA CASH-FLOW) ⬇️⬇️⬇️
+            if (vistaId === 'cash-flow') {
+                console.log('📦 Paso 2: Pre-cargando scripts de Flujo de Caja...');
+                
+                await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-config.js');
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja.js');
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-ui.js');
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                console.log('✅ Scripts cargados');
+            }
+            // ⬆️⬆️⬆️
+
+            // ⬇️⬇️⬇️ PASO 3: CARGAR HTML ⬇️⬇️⬇️
+            console.log('📄 Paso 3: Cargando HTML...');
             const response = await fetch(ruta);
             
             if (!response.ok) {
@@ -83,26 +75,28 @@ class CargadorVistas {
             }
             
             const html = await response.text();
-            
-            // Inyectar en contenedor
             this.contenedor.innerHTML = html;
             this.vistaActual = vistaId;
-            
-            // Cargar JS si existe (solo para vistas que no sean cash-flow)
+            console.log('✅ HTML inyectado');
+            // ⬆️⬆️⬆️
+
+            // ⬇️⬇️⬇️ PASO 4: JS NORMAL (OTRAS VISTAS) ⬇️⬇️⬇️
             if (vistaId !== 'cash-flow') {
                 await this.cargarJS(vistaId);
             }
-            
-            // ⬇️⬇️⬇️ ESPERAR Y MOSTRAR CON FADE ⬇️⬇️⬇️
-            await new Promise(resolve => setTimeout(resolve, 100));
+            // ⬆️⬆️⬆️
+
+            // ⬇️⬇️⬇️ PASO 5: MOSTRAR CON FADE ⬇️⬇️⬇️
+            console.log('✨ Paso 4: Mostrando vista...');
+            await new Promise(resolve => setTimeout(resolve, 150));
             this.contenedor.style.opacity = '1';
             // ⬆️⬆️⬆️
             
-            console.log(`Vista ${vistaId} cargada exitosamente`);
+            console.log(`✅ Vista ${vistaId} cargada exitosamente`);
             return true;
             
         } catch (error) {
-            console.error(`Error cargando vista ${vistaId}:`, error);
+            console.error(`❌ Error cargando vista ${vistaId}:`, error);
             this.contenedor.innerHTML = `
                 <div style="padding: 60px; text-align: center; color: #e74c3c;">
                     <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 20px;"></i>
