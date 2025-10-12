@@ -20,112 +20,162 @@ class CargadorVistas {
         console.log('Cargador de vistas inicializado');
     }
 
-    async cargarVista(vistaId) {
-        console.log(`\n═══════════════════════════════════════`);
-        console.log(`📂 Cargando vista: ${vistaId}`);
-        console.log(`═══════════════════════════════════════`);
-        
-        // Limpiar CSS residuales de flujo-caja
-        document.querySelectorAll('link[href*="flujo-caja.css"]').forEach(el => {
-            console.log('🗑️ Eliminando link residual:', el.href);
-            el.remove();
-        });
-        
-        // Buscar contenedor
-        this.contenedor = document.getElementById('contenedorVistas');
-        if (!this.contenedor) {
-            console.error('❌ No se encontró contenedor de vistas');
-            return false;
-        }
-
-        // Obtener ruta
-        const ruta = this.vistas[vistaId];
-        if (!ruta) {
-            console.error(`❌ Vista no encontrada: ${vistaId}`);
-            return false;
-        }
-
-        // Ocultar contenedor mientras carga
-        this.contenedor.style.opacity = '0';
-        this.contenedor.style.transition = 'opacity 0.3s ease';
-
-        try {
-            // ═══════════════════════════════════════════════════════
-            // PASO 1: CARGAR CSS PRIMERO (SIEMPRE)
-            // ═══════════════════════════════════════════════════════
-            console.log('🎨 [PASO 1/5] Cargando CSS...');
-            await this.cargarCSS(vistaId);
-            await new Promise(resolve => setTimeout(resolve, 250));
-            console.log('✅ CSS cargado y aplicado\n');
-
-            // ═══════════════════════════════════════════════════════
-            // PASO 2: SCRIPTS ESPECIALES (SOLO PARA CASH-FLOW)
-            // ═══════════════════════════════════════════════════════
-            if (vistaId === 'cash-flow') {
-                console.log('📦 [PASO 2/5] Pre-cargando scripts de Flujo de Caja...');
-                
-                await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-config.js');
-                await new Promise(resolve => setTimeout(resolve, 150));
-                
-                await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja.js');
-                await new Promise(resolve => setTimeout(resolve, 150));
-                
-                await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-ui.js');
-                await new Promise(resolve => setTimeout(resolve, 150));
-                
-                console.log('✅ Scripts pre-cargados\n');
-            }
-
-            // ═══════════════════════════════════════════════════════
-            // PASO 3: CARGAR HTML
-            // ═══════════════════════════════════════════════════════
-            console.log('📄 [PASO 3/5] Cargando HTML...');
-            const response = await fetch(ruta);
-            
-            if (!response.ok) {
-                throw new Error(`Error HTTP: ${response.status}`);
-            }
-            
-            const html = await response.text();
-            this.contenedor.innerHTML = html;
-            this.vistaActual = vistaId;
-            console.log('✅ HTML inyectado\n');
-
-            // ═══════════════════════════════════════════════════════
-            // PASO 4: CARGAR JS NORMAL (OTRAS VISTAS)
-            // ═══════════════════════════════════════════════════════
-            if (vistaId !== 'cash-flow') {
-                console.log('📜 [PASO 4/5] Cargando JavaScript...');
-                await this.cargarJS(vistaId);
-                console.log('✅ JavaScript cargado\n');
-            }
-
-            // ═══════════════════════════════════════════════════════
-            // PASO 5: MOSTRAR CON FADE-IN
-            // ═══════════════════════════════════════════════════════
-            console.log('✨ [PASO 5/5] Mostrando vista...');
-            await new Promise(resolve => setTimeout(resolve, 200));
-            this.contenedor.style.opacity = '1';
-            
-            console.log(`═══════════════════════════════════════`);
-            console.log(`✅ Vista ${vistaId} cargada exitosamente`);
-            console.log(`═══════════════════════════════════════\n`);
-            return true;
-            
-        } catch (error) {
-            console.error(`❌ Error cargando vista ${vistaId}:`, error);
-            this.contenedor.innerHTML = `
-                <div style="padding: 60px; text-align: center; color: #e74c3c;">
-                    <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 20px;"></i>
-                    <h2>Error al cargar la vista</h2>
-                    <p>${error.message}</p>
-                </div>
-            `;
-            this.contenedor.style.opacity = '1';
-            return false;
-        }
+   async cargarVista(vistaId) {
+    console.log(`\n═══════════════════════════════════════`);
+    console.log(`📂 Cargando vista: ${vistaId}`);
+    console.log(`═══════════════════════════════════════`);
+    
+    // Limpiar CSS residuales
+    document.querySelectorAll('link[href*="flujo-caja.css"]').forEach(el => {
+        console.log('🗑️ Eliminando link residual:', el.href);
+        el.remove();
+    });
+    
+    // Buscar contenedor
+    this.contenedor = document.getElementById('contenedorVistas');
+    if (!this.contenedor) {
+        console.error('❌ No se encontró contenedor de vistas');
+        return false;
     }
 
+    // Obtener ruta
+    const ruta = this.vistas[vistaId];
+    if (!ruta) {
+        console.error(`❌ Vista no encontrada: ${vistaId}`);
+        return false;
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // ESTRATEGIA: Ocultar TODO, cargar TODO, mostrar cuando esté listo
+    // ═══════════════════════════════════════════════════════
+    
+    // Crear overlay de carga
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        inset: 0;
+        background: var(--fondo-principal, #0f172a);
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.3s ease;
+    `;
+    overlay.innerHTML = `
+        <div style="text-align: center; color: var(--texto-principal, #fff);">
+            <div style="
+                width: 50px;
+                height: 50px;
+                border: 4px solid rgba(255,255,255,0.2);
+                border-top-color: var(--color-primario, #3b82f6);
+                border-radius: 50%;
+                animation: spin 0.8s linear infinite;
+                margin: 0 auto 1rem;
+            "></div>
+            <p style="font-size: 0.9rem; opacity: 0.7;">Cargando ${vistaId}...</p>
+        </div>
+        <style>
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+        </style>
+    `;
+    document.body.appendChild(overlay);
+
+    try {
+        // ═══════════════════════════════════════════════════════
+        // PASO 1: CARGAR CSS EN BACKGROUND
+        // ═══════════════════════════════════════════════════════
+        console.log('🎨 [PASO 1/4] Cargando CSS en background...');
+        await this.cargarCSS(vistaId);
+        await new Promise(resolve => setTimeout(resolve, 100));
+        console.log('✅ CSS preparado\n');
+
+        // ═══════════════════════════════════════════════════════
+        // PASO 2: SCRIPTS (SOLO CASH-FLOW)
+        // ═══════════════════════════════════════════════════════
+        if (vistaId === 'cash-flow') {
+            console.log('📦 [PASO 2/4] Cargando scripts...');
+            
+            await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-config.js');
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja.js');
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-ui.js');
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            console.log('✅ Scripts listos\n');
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // PASO 3: CARGAR HTML (TODAVÍA OCULTO)
+        // ═══════════════════════════════════════════════════════
+        console.log('📄 [PASO 3/4] Cargando contenido...');
+        const response = await fetch(ruta);
+        
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        
+        const html = await response.text();
+        
+        // Inyectar HTML (todavía detrás del overlay)
+        this.contenedor.innerHTML = html;
+        this.vistaActual = vistaId;
+        console.log('✅ Contenido inyectado\n');
+
+        // ═══════════════════════════════════════════════════════
+        // PASO 4: JS NORMAL (OTRAS VISTAS)
+        // ═══════════════════════════════════════════════════════
+        if (vistaId !== 'cash-flow') {
+            await this.cargarJS(vistaId);
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // PASO FINAL: DAR TIEMPO A QUE LOS ESTILOS SE APLIQUEN
+        // ═══════════════════════════════════════════════════════
+        console.log('✨ [PASO 4/4] Aplicando estilos...');
+        
+        // Esperar 3 frames del navegador para asegurar que TODO esté pintado
+        await new Promise(resolve => requestAnimationFrame(() => 
+            requestAnimationFrame(() => 
+                requestAnimationFrame(resolve)
+            )
+        ));
+        
+        // Esperar 150ms adicionales
+        await new Promise(resolve => setTimeout(resolve, 150));
+        
+        console.log('✅ Todo listo, mostrando...\n');
+        
+        // Remover overlay con fade out
+        overlay.style.opacity = '0';
+        setTimeout(() => overlay.remove(), 300);
+        
+        console.log(`═══════════════════════════════════════`);
+        console.log(`✅ Vista ${vistaId} cargada exitosamente`);
+        console.log(`═══════════════════════════════════════\n`);
+        return true;
+        
+    } catch (error) {
+        console.error(`❌ Error cargando vista ${vistaId}:`, error);
+        
+        // Remover overlay
+        overlay.remove();
+        
+        // Mostrar error
+        this.contenedor.innerHTML = `
+            <div style="padding: 60px; text-align: center; color: #e74c3c;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 20px;"></i>
+                <h2>Error al cargar la vista</h2>
+                <p>${error.message}</p>
+            </div>
+        `;
+        return false;
+    }
+}
     async cargarCSS(vistaId) {
         const carpeta = this.vistas[vistaId].replace('.html', '');
         const rutaCSS = carpeta + '.css';
