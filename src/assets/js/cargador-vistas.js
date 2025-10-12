@@ -21,102 +21,99 @@ class CargadorVistas {
     }
 
    async cargarVista(vistaId) {
-        console.log(`Cargando vista: ${vistaId}`);
-
-       // ⬇️⬇️⬇️ AGREGAR ESTAS 6 LÍNEAS ⬇️⬇️⬇️
-    // Limpiar cualquier CSS residual que esté causando conflictos
+    console.log(`Cargando vista: ${vistaId}`);
+    
+    // Limpiar CSS residuales
     document.querySelectorAll('link[href*="flujo-caja.css"]').forEach(el => {
         console.log('🗑️ Eliminando link residual al inicio:', el.href);
         el.remove();
     });
-    // ⬆️⬆️⬆️ FIN DE LÍNEAS NUEVAS ⬆️⬆️⬆️
-       
-        // Buscar contenedor
-        this.contenedor = document.getElementById('contenedorVistas');
-        if (!this.contenedor) {
-            console.error('No se encontró contenedor de vistas');
-            return false;
-        }
-
-        // Obtener ruta
-        const ruta = this.vistas[vistaId];
-        if (!ruta) {
-            console.error(`Vista no encontrada: ${vistaId}`);
-            return false;
-        }
-
-        // OCULTAR CONTENEDOR
-        this.contenedor.style.opacity = '0';
-        this.contenedor.style.transition = 'opacity 0.3s ease';
-
-        try {
-            // ⬇️⬇️⬇️ PASO 1: CARGAR CSS PRIMERO (ANTES DE TODO) ⬇️⬇️⬇️
-            console.log('🎨 Paso 1: Cargando CSS...');
-            await this.cargarCSS(vistaId);
-            await new Promise(resolve => setTimeout(resolve, 200));
-            console.log('✅ CSS aplicado');
-            // ⬆️⬆️⬆️
-
-            // ⬇️⬇️⬇️ PASO 2: SCRIPTS ESPECIALES (SOLO PARA CASH-FLOW) ⬇️⬇️⬇️
-            if (vistaId === 'cash-flow') {
-                console.log('📦 Paso 2: Pre-cargando scripts de Flujo de Caja...');
-                
-                await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-config.js');
-                await new Promise(resolve => setTimeout(resolve, 100));
-                
-                await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja.js');
-                await new Promise(resolve => setTimeout(resolve, 100));
-                
-                await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-ui.js');
-                await new Promise(resolve => setTimeout(resolve, 100));
-                
-                console.log('✅ Scripts cargados');
-            }
-            // ⬆️⬆️⬆️
-
-            // ⬇️⬇️⬇️ PASO 3: CARGAR HTML ⬇️⬇️⬇️
-            console.log('📄 Paso 3: Cargando HTML...');
-            const response = await fetch(ruta);
-            
-            if (!response.ok) {
-                throw new Error(`Error HTTP: ${response.status}`);
-            }
-            
-            const html = await response.text();
-            this.contenedor.innerHTML = html;
-            this.vistaActual = vistaId;
-            console.log('✅ HTML inyectado');
-            // ⬆️⬆️⬆️
-
-            // ⬇️⬇️⬇️ PASO 4: JS NORMAL (OTRAS VISTAS) ⬇️⬇️⬇️
-            if (vistaId !== 'cash-flow') {
-                await this.cargarJS(vistaId);
-            }
-            // ⬆️⬆️⬆️
-
-            // ⬇️⬇️⬇️ PASO 5: MOSTRAR CON FADE ⬇️⬇️⬇️
-            console.log('✨ Paso 4: Mostrando vista...');
-            await new Promise(resolve => setTimeout(resolve, 150));
-            this.contenedor.style.opacity = '1';
-            // ⬆️⬆️⬆️
-            
-            console.log(`✅ Vista ${vistaId} cargada exitosamente`);
-            return true;
-            
-        } catch (error) {
-            console.error(`❌ Error cargando vista ${vistaId}:`, error);
-            this.contenedor.innerHTML = `
-                <div style="padding: 60px; text-align: center; color: #e74c3c;">
-                    <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 20px;"></i>
-                    <h2>Error al cargar la vista</h2>
-                    <p>${error.message}</p>
-                </div>
-            `;
-            this.contenedor.style.opacity = '1';
-            return false;
-        }
+    
+    // Buscar contenedor
+    this.contenedor = document.getElementById('contenedorVistas');
+    if (!this.contenedor) {
+        console.error('No se encontró contenedor de vistas');
+        return false;
     }
 
+    // Obtener ruta
+    const ruta = this.vistas[vistaId];
+    if (!ruta) {
+        console.error(`Vista no encontrada: ${vistaId}`);
+        return false;
+    }
+
+    // OCULTAR CONTENEDOR
+    this.contenedor.style.opacity = '0';
+    this.contenedor.style.transition = 'opacity 0.3s ease';
+
+    try {
+        // ⬇️⬇️⬇️ PASO 1: CARGAR CSS PRIMERO ⬇️⬇️⬇️
+        console.log('🎨 Paso 1: Cargando CSS...');
+        await this.cargarCSS(vistaId);
+        await new Promise(resolve => setTimeout(resolve, 200));
+        console.log('✅ CSS aplicado');
+        // ⬆️⬆️⬆️
+
+        // ⬇️⬇️⬇️ PASO 2: SCRIPTS (SOLO CASH-FLOW) ⬇️⬇️⬇️
+        if (vistaId === 'cash-flow') {
+            console.log('📦 Paso 2: Pre-cargando scripts de Flujo de Caja...');
+            
+            await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-config.js');
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja.js');
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-ui.js');
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            console.log('✅ Scripts cargados');
+        }
+        // ⬆️⬆️⬆️
+
+        // ⬇️⬇️⬇️ PASO 3: CARGAR HTML ⬇️⬇️⬇️
+        console.log('📄 Paso 3: Cargando HTML...');
+        const response = await fetch(ruta);
+        
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        
+        const html = await response.text();
+        this.contenedor.innerHTML = html;
+        this.vistaActual = vistaId;
+        console.log('✅ HTML inyectado');
+        // ⬆️⬆️⬆️
+
+        // ⬇️⬇️⬇️ PASO 4: JS NORMAL ⬇️⬇️⬇️
+        if (vistaId !== 'cash-flow') {
+            await this.cargarJS(vistaId);
+        }
+        // ⬆️⬆️⬆️
+
+        // ⬇️⬇️⬇️ PASO 5: MOSTRAR ⬇️⬇️⬇️
+        console.log('✨ Paso 5: Mostrando vista...');
+        await new Promise(resolve => setTimeout(resolve, 150));
+        this.contenedor.style.opacity = '1';
+        // ⬆️⬆️⬆️
+        
+        console.log(`✅ Vista ${vistaId} cargada exitosamente`);
+        return true;
+        
+    } catch (error) {
+        console.error(`❌ Error cargando vista ${vistaId}:`, error);
+        this.contenedor.innerHTML = `
+            <div style="padding: 60px; text-align: center; color: #e74c3c;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 20px;"></i>
+                <h2>Error al cargar la vista</h2>
+                <p>${error.message}</p>
+            </div>
+        `;
+        this.contenedor.style.opacity = '1';
+        return false;
+    }
+}
    async cargarCSS(vistaId) {
     const carpeta = this.vistas[vistaId].replace('.html', '');
     const rutaCSS = carpeta + '.css';
