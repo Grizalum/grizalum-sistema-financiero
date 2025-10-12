@@ -328,26 +328,75 @@ class FlujoCajaUI {
     }
 
     guardarTransaccion(e) {
-        e.preventDefault();
-        
-        const datos = {
-            tipo: document.querySelector('input[name="tipo"]:checked')?.value,
-            monto: parseFloat(document.getElementById('inputMonto')?.value || 0),
-            categoria: document.getElementById('selectCategoria')?.value,
-            descripcion: document.getElementById('inputDescripcion')?.value || '',
-            fecha: new Date(document.getElementById('inputFecha')?.value).toISOString(),
-            metodoPago: document.getElementById('selectMetodo')?.value || 'efectivo',
-            notas: document.getElementById('inputNotas')?.value || ''
-        };
-
+    e.preventDefault();
+    
+    console.log('💾 Intentando guardar transacción...');
+    
+    // Obtener valores
+    const tipoElement = document.querySelector('input[name="tipo"]:checked');
+    const montoElement = document.getElementById('inputMonto');
+    const categoriaElement = document.getElementById('selectCategoria');
+    const descripcionElement = document.getElementById('inputDescripcion');
+    const fechaElement = document.getElementById('inputFecha');
+    const metodoElement = document.getElementById('selectMetodo');
+    const notasElement = document.getElementById('inputNotas');
+    
+    // Validaciones
+    if (!tipoElement) {
+        alert('❌ Selecciona el tipo (Ingreso o Gasto)');
+        return;
+    }
+    
+    if (!montoElement || !montoElement.value || parseFloat(montoElement.value) <= 0) {
+        alert('❌ Ingresa un monto válido mayor a 0');
+        montoElement?.focus();
+        return;
+    }
+    
+    if (!categoriaElement || !categoriaElement.value) {
+        alert('❌ Selecciona una categoría');
+        categoriaElement?.focus();
+        return;
+    }
+    
+    if (!fechaElement || !fechaElement.value) {
+        alert('❌ Selecciona una fecha');
+        fechaElement?.focus();
+        return;
+    }
+    
+    // Construir datos
+    const datos = {
+        tipo: tipoElement.value,
+        monto: parseFloat(montoElement.value),
+        categoria: categoriaElement.value,
+        descripcion: descripcionElement?.value || '',
+        fecha: new Date(fechaElement.value).toISOString(),
+        metodoPago: metodoElement?.value || 'efectivo',
+        notas: notasElement?.value || ''
+    };
+    
+    console.log('📝 Datos a guardar:', datos);
+    
+    try {
         if (this.transaccionEditando) {
             this.modulo.editarTransaccion(this.transaccionEditando, datos);
+            console.log('✅ Transacción editada');
         } else {
             this.modulo.agregarTransaccion(datos);
+            console.log('✅ Transacción agregada');
         }
-
+        
         this.cerrarModalTransaccion();
+        
+        // Mostrar mensaje de éxito
+        this.mostrarNotificacion('✅ Transacción guardada correctamente', 'success');
+        
+    } catch (error) {
+        console.error('❌ Error al guardar:', error);
+        alert('❌ Error al guardar la transacción. Revisa la consola.');
     }
+}
 
     editarTransaccion(id) {
         const transaccion = this.modulo.obtenerTransaccion(id);
@@ -436,6 +485,34 @@ class FlujoCajaUI {
             style: 'currency',
             currency: 'PEN'
         }).format(valor);
+    }
+     // ⬇️⬇️⬇️ AGREGAR ESTA FUNCIÓN AQUÍ ⬇️⬇️⬇️
+    mostrarNotificacion(mensaje, tipo = 'info') {
+        // Crear notificación
+        const notif = document.createElement('div');
+        notif.className = `notificacion notif-${tipo}`;
+        notif.textContent = mensaje;
+        notif.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            background: ${tipo === 'success' ? '#10b981' : tipo === 'error' ? '#ef4444' : '#3b82f6'};
+            color: white;
+            border-radius: 10px;
+            font-weight: 700;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            z-index: 200000;
+            animation: slideIn 0.3s ease;
+        `;
+        
+        document.body.appendChild(notif);
+        
+        // Auto-remover después de 3 segundos
+        setTimeout(() => {
+            notif.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => notif.remove(), 300);
+        }, 3000);
     }
 }
 
