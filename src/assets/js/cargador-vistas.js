@@ -76,19 +76,6 @@ class CargadorVistas {
         if (vistaId !== 'cash-flow') {
             await this.cargarJS(vistaId);
         }
-
-        // ═══ PASO 5: FORZAR REPAINT ═══
-        // Esto obliga al navegador a aplicar los estilos ANTES de mostrar
-        this.contenedor.offsetHeight; // Trigger reflow
-        
-        // Esperar 2 frames para que el CSS se aplique
-        await new Promise(resolve => requestAnimationFrame(() => 
-            requestAnimationFrame(resolve)
-        ));
-        
-        // ═══ PASO 6: MOSTRAR ═══
-        this.contenedor.style.visibility = 'visible';
-        this.contenedor.style.opacity = '1';
         
         console.log(`✅ Vista ${vistaId} cargada`);
         return true;
