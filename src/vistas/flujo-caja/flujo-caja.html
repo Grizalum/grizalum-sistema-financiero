@@ -15,55 +15,51 @@
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <div id="flujoCajaApp" class="flujo-caja-container">
         
-      <!-- ═══════════════════════════════════════════════════════════════ -->
-<!-- HEADER PROFESIONAL -->
-<!-- ═══════════════════════════════════════════════════════════════ -->
-<header class="flujo-header">
-    <div class="header-titulo">
-        <div class="header-icono">
-            <i class="fas fa-water"></i>
-        </div>
-        <div>
-            <h1>Flujo de Caja</h1>
-            <p class="header-subtitulo">Sistema adaptativo de gestión financiera</p>
-        </div>
-    </div>
-    
-    <div class="header-acciones">
-        <button id="btnExportarRapido" class="btn-secondary">
-            <i class="fas fa-download"></i>
-            <span>Exportar</span>
-        </button>
-             <button id="btnNuevaTransaccion" class="btn-primary" onclick="abrirModalTransaccion()">
-          <i class="fas fa-plus"></i>
-          <span>Nueva Transacción</span>
-      </button>
-    </div>
-</header>
+        <!-- HEADER PROFESIONAL -->
+        <header class="flujo-header">
+            <div class="header-titulo">
+                <div class="header-icono">
+                    <i class="fas fa-water"></i>
+                </div>
+                <div>
+                    <h1>Flujo de Caja</h1>
+                    <p class="header-subtitulo">Sistema adaptativo de gestión financiera</p>
+                </div>
+            </div>
+            
+            <div class="header-acciones">
+                <button id="btnExportarRapido" class="btn-secondary">
+                    <i class="fas fa-download"></i>
+                    <span>Exportar</span>
+                </button>
+                <button id="btnNuevaTransaccion" class="btn-primary">
+                    <i class="fas fa-plus"></i>
+                    <span>Nueva Transacción</span>
+                </button>
+            </div>
+        </header>
 
-       <!-- ═══════════════════════════════════════════════════════════════ -->
-<!-- NIVEL CON SKELETON LOADER -->
-<!-- ═══════════════════════════════════════════════════════════════ -->
-<div id="nivelBanner" class="nivel-banner">
-    <div class="nivel-info">
-        <div class="nivel-icono">
-            <div class="skeleton-loader skeleton-circle"></div>
-        </div>
-        <div class="nivel-textos">
-            <div class="nivel-nombre">
-                <div class="skeleton-loader skeleton-title"></div>
+        <!-- NIVEL CON SKELETON LOADER -->
+        <div id="nivelBanner" class="nivel-banner">
+            <div class="nivel-info">
+                <div class="nivel-icono">
+                    <div class="skeleton-loader skeleton-circle"></div>
+                </div>
+                <div class="nivel-textos">
+                    <div class="nivel-nombre">
+                        <div class="skeleton-loader skeleton-title"></div>
+                    </div>
+                    <div class="nivel-score">
+                        <div class="skeleton-loader skeleton-text" style="width: 100px;"></div>
+                    </div>
+                </div>
             </div>
-            <div class="nivel-score">
-                <div class="skeleton-loader skeleton-text" style="width: 100px;"></div>
+            <div class="nivel-progreso">
+                <div class="progreso-bar">
+                    <div id="progresoFill" class="progreso-fill" style="width: 0%"></div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="nivel-progreso">
-        <div class="progreso-bar">
-            <div id="progresoFill" class="progreso-fill" style="width: 0%"></div>
-        </div>
-    </div>
-</div>
 
         <!-- BALANCE PRINCIPAL -->
         <section class="balance-principal">
@@ -166,18 +162,18 @@
 
             <!-- Estado vacío mejorado -->
             <div id="sinTransacciones" class="sin-datos empty-state">
-              <div class="empty-state__icon">
-                   <i class="fas fa-inbox"></i>
-              </div>
-              <div class="empty-state__title">No hay transacciones</div>
-              <div class="empty-state__text">
-                   Comienza agregando tu primer ingreso o gasto para llevar el control de tu flujo de caja
-              </div>
-               <button class="btn-primary" onclick="abrirModalTransaccion()">
-                  <i class="fas fa-plus"></i>
-                <span>Agregar Primera Transacción</span>
-            </button>
-         </div>
+                <div class="empty-state__icon">
+                    <i class="fas fa-inbox"></i>
+                </div>
+                <div class="empty-state__title">No hay transacciones</div>
+                <div class="empty-state__text">
+                    Comienza agregando tu primer ingreso o gasto para llevar el control de tu flujo de caja
+                </div>
+                <button class="btn-primary" id="btnPrimeraTransaccion">
+                    <i class="fas fa-plus"></i>
+                    <span>Agregar Primera Transacción</span>
+                </button>
+            </div>
         </section>
 
     </div>
@@ -189,7 +185,7 @@
         <div class="modal-contenido">
             <div class="modal-header">
                 <h2 id="modalTitulo">Nueva Transacción</h2>
-                <button class="modal-cerrar" onclick="cerrarModalTransaccion()">
+                <button class="modal-cerrar" id="btnCerrarModal">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -268,7 +264,7 @@
             </form>
 
             <div class="modal-footer">
-                <button type="button" class="btn-secondary" onclick="cerrarModalTransaccion()">
+                <button type="button" class="btn-secondary" id="btnCancelarModal">
                     <i class="fas fa-times"></i> Cancelar
                 </button>
                 <button type="submit" form="formTransaccion" class="btn-primary">
@@ -282,169 +278,214 @@
     <!-- SCRIPTS -->
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <script>
-        // Variables globales
+        // ═══════════════════════════════════════════════════════════════
+        // VARIABLES GLOBALES (Scope global para que onclick funcione)
+        // ═══════════════════════════════════════════════════════════════
         let transaccionEditando = null;
 
-        // Inicialización
-        document.addEventListener('DOMContentLoaded', function() {
-            inicializarFlujoCaja();
-        });
-
-        function inicializarFlujoCaja() {
-    console.log('🚀 Inicializando interfaz Flujo de Caja...');
-    
-    // Configurar fecha actual por defecto
-    const fechaInput = document.getElementById('inputFecha');
-    if (fechaInput) {
-        fechaInput.valueAsDate = new Date();
-    }
-    
-    // Configurar eventos SIEMPRE (aunque flujoCaja no exista todavía)
-    configurarEventos();
-    
-    // Esperar a que el módulo esté listo para cargar datos
-    if (!window.flujoCaja) {
-        console.warn('⚠️ Esperando módulo flujoCaja...');
-        setTimeout(() => {
-            if (window.flujoCaja) {
-                cargarDatosIniciales();
-            } else {
-                console.error('❌ Módulo flujoCaja no disponible');
+        // ═══════════════════════════════════════════════════════════════
+        // FUNCIONES DE MODAL (Scope global)
+        // ═══════════════════════════════════════════════════════════════
+        function abrirModalTransaccion() {
+            console.log('🎯 Abriendo modal...');
+            
+            try {
+                transaccionEditando = null;
+                document.getElementById('modalTitulo').textContent = 'Nueva Transacción';
+                document.getElementById('formTransaccion').reset();
+                document.getElementById('inputFecha').valueAsDate = new Date();
+                
+                // Cargar categorías según tipo seleccionado
+                if (window.flujoCaja) {
+                    actualizarCategoriasSegunTipo();
+                }
+                
+                // Mostrar modal con animación
+                const modal = document.getElementById('modalTransaccion');
+                modal.classList.add('show');
+                
+                // Focus en primer campo
+                setTimeout(() => {
+                    document.getElementById('inputMonto').focus();
+                }, 300);
+                
+                console.log('✅ Modal abierto');
+            } catch (error) {
+                console.error('❌ Error abriendo modal:', error);
             }
-        }, 1000);
-        return;
-    }
-
-    cargarDatosIniciales();
-}
-
-function cargarDatosIniciales() {
-    console.log('📊 Cargando datos iniciales...');
-    cargarNivel();
-    cargarCategorias();
-    cargarBalance();
-    cargarTransacciones();
-    console.log('✅ Interfaz lista');
-}
-
-        function configurarEventos() {
-            // Botón nueva transacción
-            document.getElementById('btnNuevaTransaccion')?.addEventListener('click', abrirModalTransaccion);
-
-            // Form transacción
-            document.getElementById('formTransaccion')?.addEventListener('submit', guardarTransaccion);
-
-            // Cambio de tipo (ingreso/gasto)
-            document.querySelectorAll('input[name="tipo"]').forEach(radio => {
-                radio.addEventListener('change', actualizarCategoriasSegunTipo);
-            });
-
-            // Filtros
-            document.getElementById('btnAplicarFiltros')?.addEventListener('click', aplicarFiltros);
-            document.getElementById('btnLimpiarFiltros')?.addEventListener('click', limpiarFiltros);
-
-            // Buscador
-            let timeoutBusqueda;
-            document.getElementById('inputBusqueda')?.addEventListener('input', function(e) {
-                clearTimeout(timeoutBusqueda);
-                timeoutBusqueda = setTimeout(() => buscarTransacciones(e.target.value), 500);
-            });
-
-            // Exportar
-            document.getElementById('btnExportar')?.addEventListener('click', exportarDatos);
-
-            // Escuchar eventos del módulo
-            document.addEventListener('grizalumTransaccionAgregada', () => {
-                cargarBalance();
-                cargarTransacciones();
-            });
-
-            document.addEventListener('grizalumTransaccionEditada', () => {
-                cargarBalance();
-                cargarTransacciones();
-            });
-
-            document.addEventListener('grizalumTransaccionEliminada', () => {
-                cargarBalance();
-                cargarTransacciones();
-            });
         }
 
-        function cargarNivel() {
-            const info = window.flujoCaja.obtenerInfo();
+        function cerrarModalTransaccion() {
+            console.log('🔒 Cerrando modal...');
+            document.getElementById('modalTransaccion').classList.remove('show');
+            transaccionEditando = null;
+        }
+
+        function guardarTransaccion(e) {
+            e.preventDefault();
             
-            if (!info.nivel) return;
+            console.log('💾 Guardando transacción...');
+            
+            try {
+                const datos = {
+                    tipo: document.querySelector('input[name="tipo"]:checked').value,
+                    monto: parseFloat(document.getElementById('inputMonto').value),
+                    categoria: document.getElementById('selectCategoria').value,
+                    descripcion: document.getElementById('inputDescripcion').value,
+                    fecha: new Date(document.getElementById('inputFecha').value).toISOString(),
+                    metodoPago: document.getElementById('selectMetodo').value,
+                    notas: document.getElementById('inputNotas').value
+                };
 
-            const banner = document.getElementById('nivelBanner');
-            const icono = banner.querySelector('.nivel-icono');
-            const nombre = banner.querySelector('.nivel-nombre');
-            const scoreTexto = banner.querySelector('.nivel-score');
-            const progreso = document.getElementById('progresoFill');
+                if (transaccionEditando) {
+                    window.flujoCaja.editarTransaccion(transaccionEditando, datos);
+                } else {
+                    window.flujoCaja.agregarTransaccion(datos);
+                }
 
-            icono.textContent = info.nivel.nivel.icono;
-            nombre.textContent = `Nivel ${info.nivel.nivel.nombre}`;
-            scoreTexto.textContent = `Score: ${info.nivel.score}/100`;
-            progreso.style.width = `${info.nivel.score}%`;
+                cerrarModalTransaccion();
+                console.log('✅ Transacción guardada');
+            } catch (error) {
+                console.error('❌ Error guardando transacción:', error);
+                alert('Error al guardar la transacción. Por favor intenta nuevamente.');
+            }
+        }
 
-            // Mostrar/ocultar componentes según score
-            mostrarComponentesSegunNivel(info.componentesActivos);
+        function editarTransaccion(id) {
+            console.log('✏️ Editando transacción:', id);
+            
+            try {
+                const transaccion = window.flujoCaja.obtenerTransaccion(id);
+                if (!transaccion) {
+                    console.error('Transacción no encontrada');
+                    return;
+                }
+
+                transaccionEditando = id;
+                document.getElementById('modalTitulo').textContent = 'Editar Transacción';
+                
+                document.querySelector(`input[name="tipo"][value="${transaccion.tipo}"]`).checked = true;
+                document.getElementById('inputMonto').value = transaccion.monto;
+                actualizarCategoriasSegunTipo();
+                document.getElementById('selectCategoria').value = transaccion.categoria;
+                document.getElementById('inputDescripcion').value = transaccion.descripcion || '';
+                document.getElementById('inputFecha').valueAsDate = new Date(transaccion.fecha);
+                document.getElementById('selectMetodo').value = transaccion.metodoPago || 'efectivo';
+                document.getElementById('inputNotas').value = transaccion.notas || '';
+                
+                document.getElementById('modalTransaccion').classList.add('show');
+            } catch (error) {
+                console.error('❌ Error editando transacción:', error);
+            }
+        }
+
+        function eliminarTransaccion(id) {
+            console.log('🗑️ Eliminando transacción:', id);
+            
+            if (confirm('¿Seguro que quieres eliminar esta transacción?')) {
+                try {
+                    window.flujoCaja.eliminarTransaccion(id);
+                    console.log('✅ Transacción eliminada');
+                } catch (error) {
+                    console.error('❌ Error eliminando transacción:', error);
+                }
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // FUNCIONES DE CARGA DE DATOS
+        // ═══════════════════════════════════════════════════════════════
+        function cargarNivel() {
+            try {
+                const info = window.flujoCaja.obtenerInfo();
+                
+                if (!info || !info.nivel) {
+                    console.warn('⚠️ Sin información de nivel');
+                    return;
+                }
+
+                const banner = document.getElementById('nivelBanner');
+                const icono = banner.querySelector('.nivel-icono');
+                const nombre = banner.querySelector('.nivel-nombre');
+                const scoreTexto = banner.querySelector('.nivel-score');
+                const progreso = document.getElementById('progresoFill');
+
+                // Reemplazar skeleton con contenido real
+                icono.innerHTML = `<span style="font-size: 2.5rem;">${info.nivel.nivel.icono}</span>`;
+                nombre.innerHTML = `<span style="font-size: 1.25rem; font-weight: 700;">Nivel ${info.nivel.nivel.nombre}</span>`;
+                scoreTexto.innerHTML = `<span style="font-size: 0.875rem;">Score: ${info.nivel.score}/100</span>`;
+                progreso.style.width = `${info.nivel.score}%`;
+
+                // Mostrar/ocultar componentes según score
+                mostrarComponentesSegunNivel(info.componentesActivos);
+                
+                console.log('✅ Nivel cargado');
+            } catch (error) {
+                console.error('❌ Error cargando nivel:', error);
+            }
         }
 
         function mostrarComponentesSegunNivel(componentes) {
-            // Filtros
-            if (componentes.mejorasBasicas?.filtrosFecha?.activo) {
-                document.getElementById('seccionFiltros')?.classList.remove('oculto');
-            }
+            try {
+                // Filtros
+                if (componentes.mejorasBasicas?.filtrosFecha?.activo) {
+                    document.getElementById('seccionFiltros')?.classList.remove('oculto');
+                }
 
-            // Buscador
-            if (componentes.mejorasBasicas?.busqueda?.activo) {
-                document.getElementById('seccionBuscador')?.classList.remove('oculto');
-            }
+                // Buscador
+                if (componentes.mejorasBasicas?.busqueda?.activo) {
+                    document.getElementById('seccionBuscador')?.classList.remove('oculto');
+                }
 
-            // Gráficos
-            if (componentes.visualizacionAvanzada?.graficosBasicos?.activo) {
-                document.getElementById('seccionGraficos')?.classList.remove('oculto');
-            }
+                // Gráficos
+                if (componentes.visualizacionAvanzada?.graficosBasicos?.activo) {
+                    document.getElementById('seccionGraficos')?.classList.remove('oculto');
+                }
 
-            // Exportar
-            if (componentes.visualizacionAvanzada?.exportarExcel?.activo) {
-                document.getElementById('seccionExportar')?.classList.remove('oculto');
+                // Exportar
+                if (componentes.visualizacionAvanzada?.exportarExcel?.activo) {
+                    document.getElementById('seccionExportar')?.classList.remove('oculto');
+                }
+            } catch (error) {
+                console.error('❌ Error mostrando componentes:', error);
             }
         }
 
         function cargarCategorias() {
-    try {
-        const info = window.flujoCaja.obtenerInfo();
-        
-        if (!info || !info.categorias) {
-            console.warn('⚠️ No se pudieron cargar las categorías');
-            // Categorías por defecto si falla
-            const categoriasDefault = {
-                ingresos: ['Ventas', 'Servicios', 'Otros Ingresos'],
-                gastos: ['Compras', 'Servicios', 'Gastos Operativos', 'Otros Gastos']
-            };
-            actualizarSelectCategorias(categoriasDefault.ingresos);
-            return;
+            try {
+                const info = window.flujoCaja.obtenerInfo();
+                
+                if (!info || !info.categorias) {
+                    console.warn('⚠️ No se pudieron cargar las categorías');
+                    const categoriasDefault = {
+                        ingresos: ['Ventas', 'Servicios', 'Otros Ingresos'],
+                        gastos: ['Compras', 'Servicios', 'Gastos Operativos', 'Otros Gastos']
+                    };
+                    actualizarSelectCategorias(categoriasDefault.ingresos);
+                    return;
+                }
+                
+                actualizarSelectCategorias(info.categorias.ingresos);
+                console.log('✅ Categorías cargadas');
+            } catch (error) {
+                console.error('❌ Error cargando categorías:', error);
+                actualizarSelectCategorias(['Ventas', 'Servicios', 'Otros']);
+            }
         }
-        
-        actualizarSelectCategorias(info.categorias.ingresos);
-        console.log('✅ Categorías cargadas:', info.categorias);
-    } catch (error) {
-        console.error('❌ Error cargando categorías:', error);
-        // Categorías por defecto en caso de error
-        actualizarSelectCategorias(['Ventas', 'Servicios', 'Otros']);
-    }
-}
 
         function actualizarCategoriasSegunTipo() {
-            const tipo = document.querySelector('input[name="tipo"]:checked').value;
-            const info = window.flujoCaja.obtenerInfo();
-            
-            const categorias = tipo === 'ingreso' 
-                ? info.categorias.ingresos 
-                : info.categorias.gastos;
-            
-            actualizarSelectCategorias(categorias);
+            try {
+                const tipo = document.querySelector('input[name="tipo"]:checked').value;
+                const info = window.flujoCaja.obtenerInfo();
+                
+                const categorias = tipo === 'ingreso' 
+                    ? info.categorias.ingresos 
+                    : info.categorias.gastos;
+                
+                actualizarSelectCategorias(categorias);
+            } catch (error) {
+                console.error('❌ Error actualizando categorías:', error);
+            }
         }
 
         function actualizarSelectCategorias(categorias) {
@@ -460,7 +501,7 @@ function cargarDatosIniciales() {
 
             // También actualizar filtro de categorías
             const filtroSelect = document.getElementById('filtroCategoria');
-            if (filtroSelect) {
+            if (filtroSelect && window.flujoCaja) {
                 const valorActual = filtroSelect.value;
                 filtroSelect.innerHTML = '<option value="">Todas las categorías</option>';
                 
@@ -481,34 +522,45 @@ function cargarDatosIniciales() {
         }
 
         function cargarBalance() {
-            const balance = window.flujoCaja.calcularBalance();
-            
-            document.getElementById('balanceTotal').textContent = formatearMoneda(balance.balance);
-            document.getElementById('totalIngresos').textContent = formatearMoneda(balance.ingresos);
-            document.getElementById('totalGastos').textContent = formatearMoneda(balance.gastos);
-            
-            document.getElementById('cantidadIngresos').textContent = `${balance.cantidadIngresos} transacción${balance.cantidadIngresos !== 1 ? 'es' : ''}`;
-            document.getElementById('cantidadGastos').textContent = `${balance.cantidadGastos} transacción${balance.cantidadGastos !== 1 ? 'es' : ''}`;
+            try {
+                const balance = window.flujoCaja.calcularBalance();
+                
+                document.getElementById('balanceTotal').textContent = formatearMoneda(balance.balance);
+                document.getElementById('totalIngresos').textContent = formatearMoneda(balance.ingresos);
+                document.getElementById('totalGastos').textContent = formatearMoneda(balance.gastos);
+                
+                document.getElementById('cantidadIngresos').textContent = `${balance.cantidadIngresos} transacción${balance.cantidadIngresos !== 1 ? 'es' : ''}`;
+                document.getElementById('cantidadGastos').textContent = `${balance.cantidadGastos} transacción${balance.cantidadGastos !== 1 ? 'es' : ''}`;
+                
+                console.log('✅ Balance actualizado');
+            } catch (error) {
+                console.error('❌ Error cargando balance:', error);
+            }
         }
 
         function cargarTransacciones(filtros = {}) {
-            const transacciones = window.flujoCaja.obtenerTransacciones(filtros);
-            const lista = document.getElementById('listaTransacciones');
-            const sinDatos = document.getElementById('sinTransacciones');
-            const totalBadge = document.getElementById('totalTransacciones');
+            try {
+                const transacciones = window.flujoCaja.obtenerTransacciones(filtros);
+                const lista = document.getElementById('listaTransacciones');
+                const sinDatos = document.getElementById('sinTransacciones');
+                const totalBadge = document.getElementById('totalTransacciones');
 
-            totalBadge.textContent = transacciones.length;
+                totalBadge.textContent = transacciones.length;
 
-            if (transacciones.length === 0) {
-                lista.style.display = 'none';
-                sinDatos.style.display = 'flex';
-                return;
+                if (transacciones.length === 0) {
+                    lista.style.display = 'none';
+                    sinDatos.style.display = 'flex';
+                    return;
+                }
+
+                lista.style.display = 'block';
+                sinDatos.style.display = 'none';
+
+                lista.innerHTML = transacciones.map(t => crearTarjetaTransaccion(t)).join('');
+                console.log(`✅ ${transacciones.length} transacciones cargadas`);
+            } catch (error) {
+                console.error('❌ Error cargando transacciones:', error);
             }
-
-            lista.style.display = 'block';
-            sinDatos.style.display = 'none';
-
-            lista.innerHTML = transacciones.map(t => crearTarjetaTransaccion(t)).join('');
         }
 
         function crearTarjetaTransaccion(transaccion) {
@@ -542,81 +594,9 @@ function cargarDatosIniciales() {
             `;
         }
 
-        function abrirModalTransaccion() {
-    console.log('🎯 Abriendo modal...');
-    
-    transaccionEditando = null;
-    document.getElementById('modalTitulo').textContent = 'Nueva Transacción';
-    document.getElementById('formTransaccion').reset();
-    document.getElementById('inputFecha').valueAsDate = new Date();
-    
-    // Cargar categorías según tipo seleccionado
-    actualizarCategoriasSegunTipo();
-    
-    // Mostrar modal con animación
-    const modal = document.getElementById('modalTransaccion');
-    modal.classList.add('show');
-    
-    // Focus en primer campo
-    setTimeout(() => {
-        document.getElementById('inputMonto').focus();
-    }, 300);
-    
-    console.log('✅ Modal abierto');
-}
-
-        function cerrarModalTransaccion() {
-            document.getElementById('modalTransaccion').classList.remove('show');
-            transaccionEditando = null;
-        }
-
-        function guardarTransaccion(e) {
-            e.preventDefault();
-            
-            const datos = {
-                tipo: document.querySelector('input[name="tipo"]:checked').value,
-                monto: parseFloat(document.getElementById('inputMonto').value),
-                categoria: document.getElementById('selectCategoria').value,
-                descripcion: document.getElementById('inputDescripcion').value,
-                fecha: new Date(document.getElementById('inputFecha').value).toISOString(),
-                metodoPago: document.getElementById('selectMetodo').value,
-                notas: document.getElementById('inputNotas').value
-            };
-
-            if (transaccionEditando) {
-                window.flujoCaja.editarTransaccion(transaccionEditando, datos);
-            } else {
-                window.flujoCaja.agregarTransaccion(datos);
-            }
-
-            cerrarModalTransaccion();
-        }
-
-        function editarTransaccion(id) {
-            const transaccion = window.flujoCaja.obtenerTransaccion(id);
-            if (!transaccion) return;
-
-            transaccionEditando = id;
-            document.getElementById('modalTitulo').textContent = 'Editar Transacción';
-            
-            document.querySelector(`input[name="tipo"][value="${transaccion.tipo}"]`).checked = true;
-            document.getElementById('inputMonto').value = transaccion.monto;
-            actualizarCategoriasSegunTipo();
-            document.getElementById('selectCategoria').value = transaccion.categoria;
-            document.getElementById('inputDescripcion').value = transaccion.descripcion;
-            document.getElementById('inputFecha').valueAsDate = new Date(transaccion.fecha);
-            document.getElementById('selectMetodo').value = transaccion.metodoPago;
-            document.getElementById('inputNotas').value = transaccion.notas;
-            
-            document.getElementById('modalTransaccion').classList.add('show');
-        }
-
-        function eliminarTransaccion(id) {
-            if (confirm('¿Seguro que quieres eliminar esta transacción?')) {
-                window.flujoCaja.eliminarTransaccion(id);
-            }
-        }
-
+        // ═══════════════════════════════════════════════════════════════
+        // FUNCIONES DE FILTROS Y BÚSQUEDA
+        // ═══════════════════════════════════════════════════════════════
         function aplicarFiltros() {
             const filtros = {
                 tipo: document.getElementById('filtroTipo').value,
@@ -641,14 +621,19 @@ function cargarDatosIniciales() {
         }
 
         function exportarDatos() {
-            const datos = window.flujoCaja.exportarJSON();
-            const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `flujo-caja-${datos.empresa}-${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
+            try {
+                const datos = window.flujoCaja.exportarJSON();
+                const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `flujo-caja-${datos.empresa}-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                console.log('✅ Datos exportados');
+            } catch (error) {
+                console.error('❌ Error exportando datos:', error);
+            }
         }
 
         function formatearMoneda(valor) {
@@ -656,6 +641,162 @@ function cargarDatosIniciales() {
                 style: 'currency',
                 currency: 'PEN'
             }).format(valor);
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // CONFIGURACIÓN DE EVENTOS
+        // ═══════════════════════════════════════════════════════════════
+        function configurarEventos() {
+            console.log('⚙️ Configurando eventos...');
+            
+            // Botón nueva transacción (header)
+            const btnNueva = document.getElementById('btnNuevaTransaccion');
+            if (btnNueva) {
+                btnNueva.addEventListener('click', abrirModalTransaccion);
+            }
+            
+            // Botón primera transacción (estado vacío)
+            const btnPrimera = document.getElementById('btnPrimeraTransaccion');
+            if (btnPrimera) {
+                btnPrimera.addEventListener('click', abrirModalTransaccion);
+            }
+
+            // Botón cerrar modal
+            const btnCerrar = document.getElementById('btnCerrarModal');
+            if (btnCerrar) {
+                btnCerrar.addEventListener('click', cerrarModalTransaccion);
+            }
+            
+            // Botón cancelar modal
+            const btnCancelar = document.getElementById('btnCancelarModal');
+            if (btnCancelar) {
+                btnCancelar.addEventListener('click', cerrarModalTransaccion);
+            }
+
+            // Form transacción
+            const form = document.getElementById('formTransaccion');
+            if (form) {
+                form.addEventListener('submit', guardarTransaccion);
+            }
+
+            // Cambio de tipo (ingreso/gasto)
+            document.querySelectorAll('input[name="tipo"]').forEach(radio => {
+                radio.addEventListener('change', actualizarCategoriasSegunTipo);
+            });
+
+            // Filtros
+            const btnAplicar = document.getElementById('btnAplicarFiltros');
+            if (btnAplicar) {
+                btnAplicar.addEventListener('click', aplicarFiltros);
+            }
+            
+            const btnLimpiar = document.getElementById('btnLimpiarFiltros');
+            if (btnLimpiar) {
+                btnLimpiar.addEventListener('click', limpiarFiltros);
+            }
+
+            // Buscador
+            let timeoutBusqueda;
+            const inputBusqueda = document.getElementById('inputBusqueda');
+            if (inputBusqueda) {
+                inputBusqueda.addEventListener('input', function(e) {
+                    clearTimeout(timeoutBusqueda);
+                    timeoutBusqueda = setTimeout(() => buscarTransacciones(e.target.value), 500);
+                });
+            }
+
+            // Exportar
+            const btnExportar = document.getElementById('btnExportar');
+            if (btnExportar) {
+                btnExportar.addEventListener('click', exportarDatos);
+            }
+            
+            const btnExportarRapido = document.getElementById('btnExportarRapido');
+            if (btnExportarRapido) {
+                btnExportarRapido.addEventListener('click', exportarDatos);
+            }
+
+            // Escuchar eventos del módulo
+            document.addEventListener('grizalumTransaccionAgregada', () => {
+                cargarBalance();
+                cargarTransacciones();
+            });
+
+            document.addEventListener('grizalumTransaccionEditada', () => {
+                cargarBalance();
+                cargarTransacciones();
+            });
+
+            document.addEventListener('grizalumTransaccionEliminada', () => {
+                cargarBalance();
+                cargarTransacciones();
+            });
+            
+            // Cerrar modal con ESC
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    cerrarModalTransaccion();
+                }
+            });
+            
+            // Cerrar modal al hacer click fuera
+            const modal = document.getElementById('modalTransaccion');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        cerrarModalTransaccion();
+                    }
+                });
+            }
+            
+            console.log('✅ Eventos configurados');
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // INICIALIZACIÓN
+        // ═══════════════════════════════════════════════════════════════
+        function inicializarFlujoCaja() {
+            console.log('🚀 Inicializando Flujo de Caja...');
+            
+            // Configurar fecha actual por defecto
+            const fechaInput = document.getElementById('inputFecha');
+            if (fechaInput) {
+                fechaInput.valueAsDate = new Date();
+            }
+            
+            // Configurar eventos SIEMPRE
+            configurarEventos();
+            
+            // Esperar a que el módulo esté listo para cargar datos
+            if (!window.flujoCaja) {
+                console.warn('⚠️ Esperando módulo flujoCaja...');
+                setTimeout(() => {
+                    if (window.flujoCaja) {
+                        cargarDatosIniciales();
+                    } else {
+                        console.error('❌ Módulo flujoCaja no disponible');
+                    }
+                }, 1000);
+                return;
+            }
+
+            cargarDatosIniciales();
+        }
+
+        function cargarDatosIniciales() {
+            console.log('📊 Cargando datos iniciales...');
+            cargarNivel();
+            cargarCategorias();
+            cargarBalance();
+            cargarTransacciones();
+            console.log('✅ Flujo de Caja listo');
+        }
+
+        // Iniciar cuando el DOM esté listo
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', inicializarFlujoCaja);
+        } else {
+            inicializarFlujoCaja();
         }
     </script>
 
