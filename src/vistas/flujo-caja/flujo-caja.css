@@ -524,13 +524,13 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   MODAL
+   MODAL ADAPTATIVO A MODOS Y PALETAS
    ═══════════════════════════════════════════════════════════════════ */
 .modal {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(12px);
     z-index: 100000;
     display: flex;
     align-items: center;
@@ -547,6 +547,8 @@
 }
 
 .modal-contenido {
+    background: var(--fondo-card) !important;
+    border: 2px solid var(--borde-principal) !important;
     border-radius: 20px;
     width: 100%;
     max-width: 600px;
@@ -567,23 +569,26 @@
     align-items: center;
     padding: 1.5rem;
     border-bottom: 2px solid var(--borde-principal);
+    background: linear-gradient(135deg, var(--color-primario) 0%, var(--color-secundario) 100%);
+    border-radius: 18px 18px 0 0;
 }
 
 .modal-header h2 {
     margin: 0;
     font-size: 1.5rem;
     font-weight: 800;
-    color: var(--texto-principal);
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .modal-cerrar {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: transparent;
-    border: none;
-    color: var(--texto-terciario);
-    font-size: 1.5rem;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    font-size: 1.25rem;
     cursor: pointer;
     transition: all var(--transition-normal);
     display: flex;
@@ -592,13 +597,15 @@
 }
 
 .modal-cerrar:hover {
-    background: var(--fondo-input);
-    color: var(--color-error);
-    transform: rotate(90deg);
+    background: rgba(255, 255, 255, 0.3);
+    border-color: #ffffff;
+    transform: rotate(90deg) scale(1.1);
 }
 
 .modal-body {
     padding: 1.5rem;
+    background: var(--fondo-card);
+    color: var(--texto-principal);
 }
 
 .modal-footer {
@@ -607,10 +614,30 @@
     gap: 1rem;
     padding: 1.5rem;
     border-top: 2px solid var(--borde-principal);
+    background: var(--fondo-card);
+    border-radius: 0 0 18px 18px;
 }
 
+/* Scrollbar del modal adaptativo */
+.modal-contenido::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-contenido::-webkit-scrollbar-track {
+    background: var(--fondo-input);
+    border-radius: 10px;
+}
+
+.modal-contenido::-webkit-scrollbar-thumb {
+    background: var(--color-primario);
+    border-radius: 10px;
+}
+
+.modal-contenido::-webkit-scrollbar-thumb:hover {
+    background: var(--color-secundario);
+}
 /* ═══════════════════════════════════════════════════════════════════
-   FORMULARIO
+   FORMULARIO ADAPTATIVO
    ═══════════════════════════════════════════════════════════════════ */
 .form-grupo {
     margin-bottom: 1.5rem;
@@ -631,26 +658,32 @@
 .form-textarea {
     width: 100%;
     padding: 0.875rem 1rem;
-    background: var(--fondo-input);
-    border: 2px solid var(--borde-principal);
+    background: var(--fondo-input) !important;
+    border: 2px solid var(--borde-principal) !important;
     border-radius: 10px;
-    color: var(--texto-principal);
+    color: var(--texto-principal) !important;
     font-size: 1rem;
     font-weight: 600;
     transition: all var(--transition-normal);
+    font-family: inherit;
 }
 
 .form-input:focus,
 .form-select:focus,
 .form-textarea:focus {
     outline: none;
-    border-color: var(--peru-gold);
-    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+    border-color: var(--color-primario) !important;
+    box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.15) !important;
+    background: var(--fondo-card) !important;
+}
+
+.form-input::placeholder {
+    color: var(--texto-terciario);
 }
 
 .form-textarea {
     resize: vertical;
-    font-family: inherit;
+    min-height: 100px;
 }
 
 /* Selector de tipo (Ingreso/Gasto) */
@@ -658,6 +691,10 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
+}
+
+.tipo-opcion {
+    position: relative;
 }
 
 .tipo-opcion input[type="radio"] {
@@ -672,6 +709,7 @@
     text-align: center;
     cursor: pointer;
     transition: all var(--transition-normal);
+    color: var(--texto-principal);
 }
 
 .tipo-card i {
@@ -680,12 +718,67 @@
     display: block;
 }
 
-.tipo-opcion input[type="radio"]:checked + .tipo-card {
-    border-color: var(--peru-gold);
-    background: rgba(212, 175, 55, 0.1);
-    transform: scale(1.05);
+.tipo-card span {
+    display: block;
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
+.tipo-opcion input[type="radio"]:checked + .tipo-card {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: var(--color-primario);
+    transform: scale(1.05);
+    box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
+}
+
+/* Colores específicos para ingreso/gasto */
+.tipo-ingreso input[type="radio"]:checked + .tipo-card {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: #10b981;
+}
+
+.tipo-ingreso input[type="radio"]:checked + .tipo-card i {
+    color: #10b981;
+}
+
+.tipo-gasto input[type="radio"]:checked + .tipo-card {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: #ef4444;
+}
+
+.tipo-gasto input[type="radio"]:checked + .tipo-card i {
+    color: #ef4444;
+}
+
+/* Select con estilo personalizado */
+.form-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 3rem;
+}
+
+/* Estados de validación */
+.form-input:invalid:not(:placeholder-shown),
+.form-select:invalid:not(:placeholder-shown) {
+    border-color: #ef4444;
+}
+
+.form-input:valid:not(:placeholder-shown),
+.form-select:valid:not(:placeholder-shown) {
+    border-color: #10b981;
+}
+
+/* Disabled state */
+.form-input:disabled,
+.form-select:disabled,
+.form-textarea:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
 /* ═══════════════════════════════════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════════════════════════════════ */
