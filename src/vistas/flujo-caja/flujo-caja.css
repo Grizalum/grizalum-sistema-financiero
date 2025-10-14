@@ -1,107 +1,9 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * FLUJO DE CAJA - VARIABLES CON FALLBACKS DIRECTOS
- * Solución: Si no existen variables del sistema, usar valores directos
+ * FLUJO DE CAJA - USA VARIABLES DEL SISTEMA BASE
+ * Ahora integrado con 01-base-sistema.css para coherencia total
  * ═══════════════════════════════════════════════════════════════════
  */
-
-/* MODO OSCURO (por defecto) */
-:root, body.modo-oscuro {
-    /* Textos - con fallback directo */
-    --fc-texto-principal: #ffffff;
-    --fc-texto-secundario: rgba(255, 255, 255, 0.7);
-    --fc-texto-terciario: rgba(255, 255, 255, 0.5);
-    
-    /* Fondos - con fallback directo */
-    --fc-fondo-principal: #0f172a;
-    --fc-fondo-card: #1e293b;
-    --fc-fondo-input: #334155;
-    --fc-fondo-hover: #475569;
-    
-    /* Bordes */
-    --fc-borde: rgba(255, 255, 255, 0.1);
-    --fc-borde-hover: rgba(255, 255, 255, 0.2);
-    
-    /* Estados */
-    --fc-exito: #10b981;
-    --fc-error: #ef4444;
-    --fc-advertencia: #f59e0b;
-    --fc-info: #3b82f6;
-    
-    /* Sombras - usar las del sistema o fallback */
-    --fc-shadow-sm: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.1));
-    --fc-shadow-md: var(--shadow-md, 0 4px 16px rgba(0, 0, 0, 0.15));
-    --fc-shadow-lg: var(--shadow-lg, 0 8px 32px rgba(0, 0, 0, 0.2));
-    --fc-shadow-modal: var(--shadow-xl, 0 20px 60px rgba(0, 0, 0, 0.4));
-    
-    /* Primario del sistema */
-    --fc-primario: var(--color-primario, #3b82f6);
-    --fc-secundario: var(--color-secundario, #6366f1);
-}
-
-/* MODO CLARO */
-body.modo-claro {
-    --fc-texto-principal: #1e293b;
-    --fc-texto-secundario: rgba(30, 41, 59, 0.7);
-    --fc-texto-terciario: rgba(30, 41, 59, 0.5);
-    --fc-fondo-principal: #f8fafc;
-    --fc-fondo-card: #ffffff;
-    --fc-fondo-input: #f1f5f9;
-    --fc-fondo-hover: #e2e8f0;
-    --fc-borde: rgba(30, 41, 59, 0.1);
-    --fc-borde-hover: rgba(30, 41, 59, 0.2);
-}
-
-/* MODO NEUTRO */
-body.modo-neutro {
-    --fc-texto-principal: #e5e7eb;
-    --fc-texto-secundario: rgba(229, 231, 235, 0.7);
-    --fc-texto-terciario: rgba(229, 231, 235, 0.5);
-    --fc-fondo-principal: #1f2937;
-    --fc-fondo-card: #374151;
-    --fc-fondo-input: #4b5563;
-    --fc-fondo-hover: #6b7280;
-    --fc-borde: rgba(229, 231, 235, 0.1);
-    --fc-borde-hover: rgba(229, 231, 235, 0.2);
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   APLICAR VARIABLES INMEDIATAMENTE AL CONTENEDOR
-   ═══════════════════════════════════════════════════════════════════ */
-.flujo-caja-container {
-    /* Forzar aplicación inmediata */
-    background: var(--fc-fondo-principal) !important;
-    color: var(--fc-texto-principal) !important;
-    min-height: 100vh;
-    padding: 2rem;
-}
-
-/* Asegurar que las tarjetas también se apliquen de inmediato */
-.nivel-banner,
-.balance-card,
-.transaccion-card,
-.seccion-transacciones,
-.modal-contenido {
-    background: var(--fc-fondo-card) !important;
-    color: var(--fc-texto-principal) !important;
-    border-color: var(--fc-borde) !important;
-}/* ═══════════════════════════════════════════════════════════════════
-   RESET Y BASE
-   ═══════════════════════════════════════════════════════════════════ */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: var(--fc-fondo-principal);
-    color: var(--fc-texto-principal);
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
 
 /* ═══════════════════════════════════════════════════════════════════
    CONTENEDOR PRINCIPAL
@@ -110,6 +12,25 @@ body {
     max-width: 1400px;
     margin: 0 auto;
     padding: 2rem;
+    background: var(--fondo-principal);
+    color: var(--texto-principal);
+    min-height: 100vh;
+}
+
+/* Aplicar estilos base a componentes clave */
+.nivel-banner,
+.balance-card,
+.transacciones-seccion,
+.seccion-componente,
+.modal-contenido {
+    background: var(--fondo-card) !important;
+    border: 2px solid var(--borde-principal) !important;
+    color: var(--texto-principal) !important;
+}
+
+.balance-card:hover,
+.transaccion-card:hover {
+    border-color: var(--borde-hover) !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -121,7 +42,7 @@ body {
     align-items: center;
     margin-bottom: 2rem;
     padding-bottom: 1.5rem;
-    border-bottom: 2px solid var(--fc-borde);
+    border-bottom: 2px solid var(--borde-principal);
 }
 
 .header-titulo {
@@ -133,20 +54,21 @@ body {
 .header-icono {
     width: 64px;
     height: 64px;
-    background: linear-gradient(135deg, var(--fc-primary) 0%, var(--fc-primary-hover) 100%);
+    background: var(--gradient-primary);
     border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 32px;
-    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+    box-shadow: var(--shadow-lg);
+    color: white;
 }
 
 .flujo-header h1 {
     margin: 0;
     font-size: 2rem;
     font-weight: 800;
-    background: linear-gradient(135deg, var(--fc-primary) 0%, #f87171 100%);
+    background: var(--gradient-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -155,15 +77,18 @@ body {
 .header-subtitulo {
     margin: 0.25rem 0 0 0;
     font-size: 1rem;
-    color: var(--fc-texto-terciario);
+    color: var(--texto-terciario);
+}
+
+.header-acciones {
+    display: flex;
+    gap: 1rem;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
    BANNER DE NIVEL
    ═══════════════════════════════════════════════════════════════════ */
 .nivel-banner {
-    background: var(--fc-fondo-card);
-    border: 2px solid var(--fc-borde);
     border-radius: 16px;
     padding: 1.5rem;
     margin-bottom: 2rem;
@@ -186,12 +111,12 @@ body {
 .nivel-nombre {
     font-size: 1.25rem;
     font-weight: 700;
-    color: var(--fc-texto-principal);
+    color: var(--texto-principal);
 }
 
 .nivel-score {
     font-size: 0.875rem;
-    color: var(--fc-texto-terciario);
+    color: var(--texto-terciario);
     font-weight: 600;
 }
 
@@ -203,17 +128,17 @@ body {
 .progreso-bar {
     width: 100%;
     height: 12px;
-    background: var(--fc-fondo-input);
+    background: var(--fondo-input);
     border-radius: 12px;
     overflow: hidden;
 }
 
 .progreso-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--fc-primary) 0%, #f87171 100%);
+    background: var(--gradient-primary);
     border-radius: 12px;
     transition: width 0.5s ease;
-    box-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -227,20 +152,18 @@ body {
 }
 
 .balance-card {
-    background: var(--fc-fondo-card);
-    border: 2px solid var(--fc-borde);
     border-radius: 16px;
     padding: 1.5rem;
     display: flex;
     align-items: center;
     gap: 1rem;
-    transition: all 0.3s ease;
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-sm);
 }
 
 .balance-card:hover {
     transform: translateY(-4px);
-    box-shadow: var(--fc-shadow-hover);
-    border-color: var(--fc-borde-hover);
+    box-shadow: var(--shadow-lg);
 }
 
 .balance-icono {
@@ -252,20 +175,21 @@ body {
     justify-content: center;
     font-size: 1.75rem;
     flex-shrink: 0;
+    color: white;
 }
 
 .balance-total .balance-icono {
-    background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+    background: var(--gradient-purple);
     box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
 }
 
 .balance-ingresos .balance-icono {
-    background: linear-gradient(135deg, var(--fc-ingreso) 0%, #059669 100%);
+    background: var(--gradient-success);
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 .balance-gastos .balance-icono {
-    background: linear-gradient(135deg, var(--fc-gasto) 0%, #dc2626 100%);
+    background: var(--gradient-danger);
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
@@ -275,7 +199,7 @@ body {
 
 .balance-label {
     font-size: 0.875rem;
-    color: var(--fc-texto-terciario);
+    color: var(--texto-terciario);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -285,12 +209,12 @@ body {
 .balance-monto {
     font-size: 1.75rem;
     font-weight: 800;
-    color: var(--fc-texto-principal);
+    color: var(--texto-principal);
 }
 
 .balance-cantidad {
     font-size: 0.75rem;
-    color: var(--fc-texto-terciario);
+    color: var(--texto-terciario);
     margin-top: 0.25rem;
 }
 
@@ -302,12 +226,10 @@ body {
 }
 
 .seccion-componente {
-    background: var(--fc-fondo-card);
-    border: 2px solid var(--fc-borde);
     border-radius: 16px;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
-    transition: all 0.3s ease;
+    transition: all var(--transition-normal);
 }
 
 .seccion-componente.oculto {
@@ -325,7 +247,7 @@ body {
     margin: 0;
     font-size: 1.25rem;
     font-weight: 700;
-    color: var(--fc-texto-principal);
+    color: var(--texto-principal);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -340,20 +262,20 @@ body {
 .filtro-select,
 .filtro-input {
     padding: 0.75rem 1rem;
-    background: var(--fc-fondo-input);
-    border: 2px solid var(--fc-borde);
+    background: var(--fondo-input);
+    border: 2px solid var(--borde-principal);
     border-radius: 8px;
-    color: var(--fc-texto-principal);
+    color: var(--texto-principal);
     font-size: 0.875rem;
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition: all var(--transition-normal);
 }
 
 .filtro-select:focus,
 .filtro-input:focus {
     outline: none;
-    border-color: var(--fc-primary);
-    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+    border-color: var(--peru-gold);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -369,38 +291,36 @@ body {
     left: 1rem;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--fc-texto-terciario);
+    color: var(--texto-terciario);
     font-size: 1rem;
 }
 
 .buscador-input {
     width: 100%;
     padding: 1rem 1rem 1rem 3rem;
-    background: var(--fc-fondo-input);
-    border: 2px solid var(--fc-borde);
+    background: var(--fondo-input);
+    border: 2px solid var(--borde-principal);
     border-radius: 12px;
-    color: var(--fc-texto-principal);
+    color: var(--texto-principal);
     font-size: 1rem;
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition: all var(--transition-normal);
 }
 
 .buscador-input:focus {
     outline: none;
-    border-color: var(--fc-primary);
-    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+    border-color: var(--peru-gold);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
 }
 
 .buscador-input::placeholder {
-    color: var(--fc-texto-terciario);
+    color: var(--texto-terciario);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
    LISTA DE TRANSACCIONES
    ═══════════════════════════════════════════════════════════════════ */
 .transacciones-seccion {
-    background: var(--fc-fondo-card);
-    border: 2px solid var(--fc-borde);
     border-radius: 16px;
     padding: 1.5rem;
 }
@@ -412,7 +332,7 @@ body {
     min-width: 32px;
     height: 32px;
     padding: 0 0.75rem;
-    background: var(--fc-primary);
+    background: var(--gradient-primary);
     color: white;
     border-radius: 16px;
     font-size: 0.875rem;
@@ -426,20 +346,19 @@ body {
 }
 
 .transaccion-card {
-    background: var(--fc-fondo-input);
-    border: 2px solid var(--fc-borde);
+    background: var(--fondo-input);
+    border: 2px solid var(--borde-principal);
     border-radius: 12px;
     padding: 1rem;
     display: flex;
     align-items: center;
     gap: 1rem;
-    transition: all 0.3s ease;
+    transition: all var(--transition-normal);
 }
 
 .transaccion-card:hover {
     transform: translateX(4px);
-    border-color: var(--fc-borde-hover);
-    background: var(--fc-fondo-card-hover);
+    background: var(--fondo-hover);
 }
 
 .transaccion-icono {
@@ -455,11 +374,11 @@ body {
 }
 
 .transaccion-icono.ingreso {
-    background: linear-gradient(135deg, var(--fc-ingreso) 0%, #059669 100%);
+    background: var(--gradient-success);
 }
 
 .transaccion-icono.gasto {
-    background: linear-gradient(135deg, var(--fc-gasto) 0%, #dc2626 100%);
+    background: var(--gradient-danger);
 }
 
 .transaccion-info {
@@ -469,7 +388,7 @@ body {
 .transaccion-descripcion {
     font-size: 1rem;
     font-weight: 700;
-    color: var(--fc-texto-principal);
+    color: var(--texto-principal);
     margin-bottom: 0.25rem;
 }
 
@@ -477,7 +396,7 @@ body {
     display: flex;
     gap: 1rem;
     font-size: 0.75rem;
-    color: var(--fc-texto-terciario);
+    color: var(--texto-terciario);
 }
 
 .transaccion-categoria {
@@ -494,11 +413,11 @@ body {
 }
 
 .transaccion-monto.ingreso {
-    color: var(--fc-ingreso);
+    color: var(--color-exito);
 }
 
 .transaccion-monto.gasto {
-    color: var(--fc-gasto);
+    color: var(--color-error);
 }
 
 .transaccion-acciones {
@@ -527,13 +446,13 @@ body {
 .sin-datos-titulo {
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--fc-texto-principal);
+    color: var(--texto-principal);
     margin-bottom: 0.5rem;
 }
 
 .sin-datos-texto {
     font-size: 1rem;
-    color: var(--fc-texto-terciario);
+    color: var(--texto-terciario);
     margin-bottom: 2rem;
 }
 
@@ -550,43 +469,43 @@ body {
     font-weight: 700;
     cursor: pointer;
     border: none;
-    transition: all 0.3s ease;
+    transition: all var(--transition-normal);
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--fc-primary) 0%, var(--fc-primary-hover) 100%);
+    background: var(--gradient-primary);
     color: white;
-    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+    box-shadow: var(--shadow-md);
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+    box-shadow: var(--shadow-lg);
 }
 
 .btn-secondary {
-    background: var(--fc-fondo-input);
-    color: var(--fc-texto-principal);
-    border: 2px solid var(--fc-borde);
+    background: var(--fondo-input);
+    color: var(--texto-principal);
+    border: 2px solid var(--borde-principal);
 }
 
 .btn-secondary:hover {
-    background: var(--fc-fondo-card-hover);
-    border-color: var(--fc-borde-hover);
+    background: var(--fondo-hover);
+    border-color: var(--borde-hover);
 }
 
 .btn-text {
     background: transparent;
-    color: var(--fc-texto-terciario);
+    color: var(--texto-terciario);
     padding: 0.5rem 1rem;
 }
 
 .btn-text:hover {
-    color: var(--fc-texto-principal);
-    background: var(--fc-fondo-input);
+    color: var(--texto-principal);
+    background: var(--fondo-input);
 }
 
 .btn-icono {
@@ -595,13 +514,13 @@ body {
     padding: 0;
     justify-content: center;
     background: transparent;
-    color: var(--fc-texto-terciario);
+    color: var(--texto-terciario);
     border-radius: 8px;
 }
 
 .btn-icono:hover {
-    background: var(--fc-fondo-input);
-    color: var(--fc-texto-principal);
+    background: var(--fondo-input);
+    color: var(--texto-principal);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -619,7 +538,7 @@ body {
     padding: 2rem;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s ease;
+    transition: all var(--transition-normal);
 }
 
 .modal.show {
@@ -628,16 +547,14 @@ body {
 }
 
 .modal-contenido {
-    background: var(--fc-fondo-card);
-    border: 2px solid var(--fc-borde);
     border-radius: 20px;
     width: 100%;
     max-width: 600px;
     max-height: 90vh;
     overflow-y: auto;
-    box-shadow: var(--fc-shadow-modal);
+    box-shadow: var(--shadow-2xl);
     transform: scale(0.9) translateY(20px);
-    transition: transform 0.3s ease;
+    transition: transform var(--transition-normal);
 }
 
 .modal.show .modal-contenido {
@@ -649,14 +566,14 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 1.5rem;
-    border-bottom: 2px solid var(--fc-borde);
+    border-bottom: 2px solid var(--borde-principal);
 }
 
 .modal-header h2 {
     margin: 0;
     font-size: 1.5rem;
     font-weight: 800;
-    color: var(--fc-texto-principal);
+    color: var(--texto-principal);
 }
 
 .modal-cerrar {
@@ -665,18 +582,18 @@ body {
     border-radius: 50%;
     background: transparent;
     border: none;
-    color: var(--fc-texto-terciario);
+    color: var(--texto-terciario);
     font-size: 1.5rem;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all var(--transition-normal);
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .modal-cerrar:hover {
-    background: var(--fc-fondo-input);
-    color: var(--fc-error);
+    background: var(--fondo-input);
+    color: var(--color-error);
     transform: rotate(90deg);
 }
 
@@ -689,7 +606,7 @@ body {
     justify-content: flex-end;
     gap: 1rem;
     padding: 1.5rem;
-    border-top: 2px solid var(--fc-borde);
+    border-top: 2px solid var(--borde-principal);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -703,7 +620,7 @@ body {
     display: block;
     font-size: 0.875rem;
     font-weight: 700;
-    color: var(--fc-texto-secundario);
+    color: var(--texto-secundario);
     margin-bottom: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -714,21 +631,21 @@ body {
 .form-textarea {
     width: 100%;
     padding: 0.875rem 1rem;
-    background: var(--fc-fondo-input);
-    border: 2px solid var(--fc-borde);
+    background: var(--fondo-input);
+    border: 2px solid var(--borde-principal);
     border-radius: 10px;
-    color: var(--fc-texto-principal);
+    color: var(--texto-principal);
     font-size: 1rem;
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition: all var(--transition-normal);
 }
 
 .form-input:focus,
 .form-select:focus,
 .form-textarea:focus {
     outline: none;
-    border-color: var(--fc-primary);
-    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+    border-color: var(--peru-gold);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
 }
 
 .form-textarea {
@@ -749,12 +666,12 @@ body {
 
 .tipo-card {
     padding: 1.5rem;
-    background: var(--fc-fondo-input);
-    border: 2px solid var(--fc-borde);
+    background: var(--fondo-input);
+    border: 2px solid var(--borde-principal);
     border-radius: 12px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all var(--transition-normal);
 }
 
 .tipo-card i {
@@ -764,19 +681,9 @@ body {
 }
 
 .tipo-opcion input[type="radio"]:checked + .tipo-card {
-    border-color: var(--fc-primary);
-    background: rgba(220, 38, 38, 0.1);
+    border-color: var(--peru-gold);
+    background: rgba(212, 175, 55, 0.1);
     transform: scale(1.05);
-}
-
-.tipo-ingreso input[type="radio"]:checked + .tipo-card {
-    border-color: var(--fc-ingreso);
-    background: var(--fc-ingreso-bg);
-}
-
-.tipo-gasto input[type="radio"]:checked + .tipo-card {
-    border-color: var(--fc-gasto);
-    background: var(--fc-gasto-bg);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -844,17 +751,17 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--fc-fondo-input);
+    background: var(--fondo-input);
     border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--fc-primary);
+    background: var(--gradient-primary);
     border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--fc-primary-hover);
+    background: var(--gradient-gold);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -878,30 +785,6 @@ body {
 /* ═══════════════════════════════════════════════════════════════════
    TRANSICIÓN SUAVE AL CARGAR VISTA
    ═══════════════════════════════════════════════════════════════════ */
-#contenedorVistas {
-    animation: fadeInView 0.3s ease;
-}
-
-@keyframes fadeInView {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Prevenir flash de contenido sin estilos */
 .flujo-caja-container {
-    opacity: 0;
-    animation: fadeIn 0.3s ease forwards;
-    animation-delay: 0.1s;
-}
-
-@keyframes fadeIn {
-    to {
-        opacity: 1;
-    }
+    animation: fadeIn 0.3s ease;
 }
