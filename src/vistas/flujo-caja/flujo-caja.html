@@ -15,39 +15,55 @@
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <div id="flujoCajaApp" class="flujo-caja-container">
         
-        <!-- HEADER -->
-        <header class="flujo-header">
-            <div class="header-titulo">
-                <div class="header-icono">💰</div>
-                <div>
-                    <h1>Flujo de Caja</h1>
-                    <p class="header-subtitulo">Gestión inteligente de ingresos y gastos</p>
-                </div>
-            </div>
-            
-            <div class="header-acciones">
-                <button id="btnNuevaTransaccion" class="btn-primary">
-                    <i class="fas fa-plus"></i>
-                    Nueva Transacción
-                </button>
-            </div>
-        </header>
+      <!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- HEADER PROFESIONAL -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<header class="flujo-header">
+    <div class="header-titulo">
+        <div class="header-icono">
+            <i class="fas fa-water"></i>
+        </div>
+        <div>
+            <h1>Flujo de Caja</h1>
+            <p class="header-subtitulo">Sistema adaptativo de gestión financiera</p>
+        </div>
+    </div>
+    
+    <div class="header-acciones">
+        <button id="btnExportarRapido" class="btn-secondary">
+            <i class="fas fa-download"></i>
+            <span>Exportar</span>
+        </button>
+        <button id="btnNuevaTransaccion" class="btn-primary">
+            <i class="fas fa-plus"></i>
+            <span>Nueva Transacción</span>
+        </button>
+    </div>
+</header>
 
-        <!-- NIVEL Y SCORE -->
-        <div id="nivelBanner" class="nivel-banner">
-            <div class="nivel-info">
-                <span class="nivel-icono">🌱</span>
-                <div>
-                    <div class="nivel-nombre">Cargando...</div>
-                    <div class="nivel-score">Score: --</div>
-                </div>
+       <!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- NIVEL CON SKELETON LOADER -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="nivelBanner" class="nivel-banner">
+    <div class="nivel-info">
+        <div class="nivel-icono">
+            <div class="skeleton-loader skeleton-circle"></div>
+        </div>
+        <div class="nivel-textos">
+            <div class="nivel-nombre">
+                <div class="skeleton-loader skeleton-title"></div>
             </div>
-            <div class="nivel-progreso">
-                <div class="progreso-bar">
-                    <div id="progresoFill" class="progreso-fill" style="width: 0%"></div>
-                </div>
+            <div class="nivel-score">
+                <div class="skeleton-loader skeleton-text" style="width: 100px;"></div>
             </div>
         </div>
+    </div>
+    <div class="nivel-progreso">
+        <div class="progreso-bar">
+            <div id="progresoFill" class="progreso-fill" style="width: 0%"></div>
+        </div>
+    </div>
+</div>
 
         <!-- BALANCE PRINCIPAL -->
         <section class="balance-principal">
@@ -148,14 +164,20 @@
                 <!-- Las transacciones se cargan dinámicamente -->
             </div>
 
-            <div id="sinTransacciones" class="sin-datos">
-                <div class="sin-datos-icono">📭</div>
-                <div class="sin-datos-titulo">No hay transacciones</div>
-                <div class="sin-datos-texto">Comienza agregando tu primer ingreso o gasto</div>
-                <button class="btn-primary" onclick="abrirModalTransaccion()">
-                    <i class="fas fa-plus"></i> Agregar Primera Transacción
-                </button>
-            </div>
+            <!-- Estado vacío mejorado -->
+            <div id="sinTransacciones" class="sin-datos empty-state">
+              <div class="empty-state__icon">
+                   <i class="fas fa-inbox"></i>
+              </div>
+              <div class="empty-state__title">No hay transacciones</div>
+              <div class="empty-state__text">
+                   Comienza agregando tu primer ingreso o gasto para llevar el control de tu flujo de caja
+              </div>
+               <button class="btn-primary" onclick="abrirModalTransaccion()">
+                  <i class="fas fa-plus"></i>
+                <span>Agregar Primera Transacción</span>
+            </button>
+         </div>
         </section>
 
     </div>
