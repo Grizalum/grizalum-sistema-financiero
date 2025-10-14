@@ -34,10 +34,10 @@
             <i class="fas fa-download"></i>
             <span>Exportar</span>
         </button>
-        <button id="btnNuevaTransaccion" class="btn-primary">
-            <i class="fas fa-plus"></i>
-            <span>Nueva Transacción</span>
-        </button>
+             <button id="btnNuevaTransaccion" class="btn-primary" onclick="abrirModalTransaccion()">
+          <i class="fas fa-plus"></i>
+          <span>Nueva Transacción</span>
+      </button>
     </div>
 </header>
 
@@ -291,28 +291,41 @@
         });
 
         function inicializarFlujoCaja() {
-            console.log('🚀 Inicializando interfaz Flujo de Caja...');
-            
-            // Esperar a que el módulo esté listo
-            if (!window.flujoCaja) {
-                setTimeout(inicializarFlujoCaja, 500);
-                return;
+    console.log('🚀 Inicializando interfaz Flujo de Caja...');
+    
+    // Configurar fecha actual por defecto
+    const fechaInput = document.getElementById('inputFecha');
+    if (fechaInput) {
+        fechaInput.valueAsDate = new Date();
+    }
+    
+    // Configurar eventos SIEMPRE (aunque flujoCaja no exista todavía)
+    configurarEventos();
+    
+    // Esperar a que el módulo esté listo para cargar datos
+    if (!window.flujoCaja) {
+        console.warn('⚠️ Esperando módulo flujoCaja...');
+        setTimeout(() => {
+            if (window.flujoCaja) {
+                cargarDatosIniciales();
+            } else {
+                console.error('❌ Módulo flujoCaja no disponible');
             }
+        }, 1000);
+        return;
+    }
 
-            // Configurar fecha actual por defecto
-            document.getElementById('inputFecha').valueAsDate = new Date();
+    cargarDatosIniciales();
+}
 
-            // Cargar datos iniciales
-            cargarNivel();
-            cargarCategorias();
-            cargarBalance();
-            cargarTransacciones();
-
-            // Configurar eventos
-            configurarEventos();
-
-            console.log('✅ Interfaz lista');
-        }
+function cargarDatosIniciales() {
+    console.log('📊 Cargando datos iniciales...');
+    cargarNivel();
+    cargarCategorias();
+    cargarBalance();
+    cargarTransacciones();
+    console.log('✅ Interfaz lista');
+}
 
         function configurarEventos() {
             // Botón nueva transacción
