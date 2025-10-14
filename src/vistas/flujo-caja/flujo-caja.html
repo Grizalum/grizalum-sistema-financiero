@@ -179,100 +179,103 @@
     </div>
 
     <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!-- MODAL NUEVA TRANSACCIÓN -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <div id="modalTransaccion" class="modal">
-        <div class="modal-contenido">
-            <div class="modal-header">
-                <h2 id="modalTitulo">Nueva Transacción</h2>
-                <button class="modal-cerrar" id="btnCerrarModal">
-                    <i class="fas fa-times"></i>
-                </button>
+<!-- MODAL NUEVA TRANSACCIÓN -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="modalTransaccion" class="modal">
+    <div class="modal-contenido">
+        <div class="modal-header">
+            <h2 id="modalTitulo">Nueva Transacción</h2>
+            <button class="modal-cerrar" onclick="document.getElementById('modalTransaccion').classList.remove('show')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <form id="formTransaccion" class="modal-body" onsubmit="event.preventDefault(); alert('Guardando...');">
+            
+            <!-- TIPO -->
+            <div class="form-grupo">
+                <label class="form-label">Tipo *</label>
+                <div class="tipo-selector">
+                    <label class="tipo-opcion tipo-ingreso">
+                        <input type="radio" name="tipo" value="ingreso" required checked>
+                        <div class="tipo-card">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>Ingreso</span>
+                        </div>
+                    </label>
+                    <label class="tipo-opcion tipo-gasto">
+                        <input type="radio" name="tipo" value="gasto" required>
+                        <div class="tipo-card">
+                            <i class="fas fa-arrow-down"></i>
+                            <span>Gasto</span>
+                        </div>
+                    </label>
+                </div>
             </div>
 
-            <form id="formTransaccion" class="modal-body">
-                
-                <!-- TIPO -->
-                <div class="form-grupo">
-                    <label class="form-label">Tipo *</label>
-                    <div class="tipo-selector">
-                        <label class="tipo-opcion tipo-ingreso">
-                            <input type="radio" name="tipo" value="ingreso" required checked>
-                            <div class="tipo-card">
-                                <i class="fas fa-arrow-up"></i>
-                                <span>Ingreso</span>
-                            </div>
-                        </label>
-                        <label class="tipo-opcion tipo-gasto">
-                            <input type="radio" name="tipo" value="gasto" required>
-                            <div class="tipo-card">
-                                <i class="fas fa-arrow-down"></i>
-                                <span>Gasto</span>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- MONTO -->
-                <div class="form-grupo">
-                    <label for="inputMonto" class="form-label">Monto (S/.) *</label>
-                    <input type="number" id="inputMonto" class="form-input" 
-                           placeholder="0.00" step="0.01" min="0" required>
-                </div>
-
-                <!-- CATEGORÍA -->
-                <div class="form-grupo">
-                    <label for="selectCategoria" class="form-label">Categoría *</label>
-                    <select id="selectCategoria" class="form-select" required>
-                        <option value="">Selecciona una categoría</option>
-                    </select>
-                </div>
-
-                <!-- DESCRIPCIÓN -->
-                <div class="form-grupo">
-                    <label for="inputDescripcion" class="form-label">Descripción</label>
-                    <input type="text" id="inputDescripcion" class="form-input" 
-                           placeholder="Ej: Venta de productos">
-                </div>
-
-                <!-- FECHA -->
-                <div class="form-grupo">
-                    <label for="inputFecha" class="form-label">Fecha *</label>
-                    <input type="date" id="inputFecha" class="form-input" required>
-                </div>
-
-                <!-- MÉTODO DE PAGO -->
-                <div class="form-grupo">
-                    <label for="selectMetodo" class="form-label">Método de Pago</label>
-                    <select id="selectMetodo" class="form-select">
-                        <option value="efectivo">Efectivo</option>
-                        <option value="tarjeta">Tarjeta</option>
-                        <option value="transferencia">Transferencia</option>
-                        <option value="yape">Yape</option>
-                        <option value="plin">Plin</option>
-                        <option value="otro">Otro</option>
-                    </select>
-                </div>
-
-                <!-- NOTAS -->
-                <div class="form-grupo">
-                    <label for="inputNotas" class="form-label">Notas adicionales</label>
-                    <textarea id="inputNotas" class="form-textarea" rows="3" 
-                              placeholder="Información adicional..."></textarea>
-                </div>
-
-            </form>
-
-            <div class="modal-footer">
-                <button type="button" class="btn-secondary" id="btnCancelarModal">
-                    <i class="fas fa-times"></i> Cancelar
-                </button>
-                <button type="submit" form="formTransaccion" class="btn-primary">
-                    <i class="fas fa-save"></i> Guardar
-                </button>
+            <!-- MONTO -->
+            <div class="form-grupo">
+                <label for="inputMonto" class="form-label">Monto (S/.) *</label>
+                <input type="number" id="inputMonto" class="form-input" 
+                       placeholder="0.00" step="0.01" min="0" required>
             </div>
+
+            <!-- CATEGORÍA -->
+            <div class="form-grupo">
+                <label for="selectCategoria" class="form-label">Categoría *</label>
+                <select id="selectCategoria" class="form-select" required>
+                    <option value="">Selecciona una categoría</option>
+                    <option value="ventas">Ventas</option>
+                    <option value="servicios">Servicios</option>
+                    <option value="otros">Otros Ingresos</option>
+                </select>
+            </div>
+
+            <!-- DESCRIPCIÓN -->
+            <div class="form-grupo">
+                <label for="inputDescripcion" class="form-label">Descripción</label>
+                <input type="text" id="inputDescripcion" class="form-input" 
+                       placeholder="Ej: Venta de productos">
+            </div>
+
+            <!-- FECHA -->
+            <div class="form-grupo">
+                <label for="inputFecha" class="form-label">Fecha *</label>
+                <input type="date" id="inputFecha" class="form-input" required>
+            </div>
+
+            <!-- MÉTODO DE PAGO -->
+            <div class="form-grupo">
+                <label for="selectMetodo" class="form-label">Método de Pago</label>
+                <select id="selectMetodo" class="form-select">
+                    <option value="efectivo">Efectivo</option>
+                    <option value="tarjeta">Tarjeta</option>
+                    <option value="transferencia">Transferencia</option>
+                    <option value="yape">Yape</option>
+                    <option value="plin">Plin</option>
+                    <option value="otro">Otro</option>
+                </select>
+            </div>
+
+            <!-- NOTAS -->
+            <div class="form-grupo">
+                <label for="inputNotas" class="form-label">Notas adicionales</label>
+                <textarea id="inputNotas" class="form-textarea" rows="3" 
+                          placeholder="Información adicional..."></textarea>
+            </div>
+
+        </form>
+
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" onclick="document.getElementById('modalTransaccion').classList.remove('show')">
+                <i class="fas fa-times"></i> Cancelar
+            </button>
+            <button type="submit" form="formTransaccion" class="btn-primary">
+                <i class="fas fa-save"></i> Guardar
+            </button>
         </div>
     </div>
+</div>
 
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <!-- SCRIPTS -->
