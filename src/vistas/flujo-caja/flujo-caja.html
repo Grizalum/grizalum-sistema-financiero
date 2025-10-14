@@ -530,13 +530,27 @@
         }
 
         function abrirModalTransaccion() {
-            transaccionEditando = null;
-            document.getElementById('modalTitulo').textContent = 'Nueva Transacción';
-            document.getElementById('formTransaccion').reset();
-            document.getElementById('inputFecha').valueAsDate = new Date();
-            actualizarCategoriasSegunTipo();
-            document.getElementById('modalTransaccion').classList.add('show');
-        }
+    console.log('🎯 Abriendo modal...');
+    
+    transaccionEditando = null;
+    document.getElementById('modalTitulo').textContent = 'Nueva Transacción';
+    document.getElementById('formTransaccion').reset();
+    document.getElementById('inputFecha').valueAsDate = new Date();
+    
+    // Cargar categorías según tipo seleccionado
+    actualizarCategoriasSegunTipo();
+    
+    // Mostrar modal con animación
+    const modal = document.getElementById('modalTransaccion');
+    modal.classList.add('show');
+    
+    // Focus en primer campo
+    setTimeout(() => {
+        document.getElementById('inputMonto').focus();
+    }, 300);
+    
+    console.log('✅ Modal abierto');
+}
 
         function cerrarModalTransaccion() {
             document.getElementById('modalTransaccion').classList.remove('show');
