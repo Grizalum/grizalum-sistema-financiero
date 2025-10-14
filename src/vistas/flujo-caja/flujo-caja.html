@@ -801,6 +801,125 @@
         } else {
             inicializarFlujoCaja();
         }
+        // Función global para guardar transacciones
+window.guardarTransaccionGlobal = function() {
+    console.log('💾 Guardando transacción...');
+    
+    try {
+        // Validar campos obligatorios
+        const monto = document.getElementById('inputMonto').value;
+        const categoria = document.getElementById('selectCategoria').value;
+        const fecha = document.getElementById('inputFecha').value;
+        
+        if (!monto || !categoria || !fecha) {
+            alert('⚠️ Por favor completa todos los campos obligatorios (*)');
+            return;
+        }
+        
+        // Recopilar datos del formulario
+        const datos = {
+            tipo: document.querySelector('input[name="tipo"]:checked').value,
+            monto: parseFloat(monto),
+            categoria: categoria,
+            descripcion: document.getElementById('inputDescripcion').value || '',
+            fecha: new Date(fecha).toISOString(),
+            metodoPago: document.getElementById('selectMetodo').value || 'efectivo',
+            notas: document.getElementById('inputNotas').value || ''
+        };
+        
+        console.log('📊 Datos a guardar:', datos);
+        
+        // Guardar usando el módulo FlujoCaja
+        if (window.flujoCaja) {
+            window.flujoCaja.agregarTransaccion(datos);
+            
+            // Cerrar modal
+            document.getElementById('modalTransaccion').classList.remove('show');
+            
+            // Limpiar formulario
+            document.getElementById('formTransaccion').reset();
+            document.getElementById('inputFecha').valueAsDate = new Date();
+            
+            // Actualizar vista (si las funciones existen)
+            if (typeof cargarBalance === 'function') {
+                setTimeout(cargarBalance, 100);
+            }
+            if (typeof cargarTransacciones === 'function') {
+                setTimeout(cargarTransacciones, 100);
+            }
+            
+            console.log('✅ Transacción guardada exitosamente');
+            
+            // Notificación visual
+            mostrarNotificacionExito();
+            
+        } else {
+            console.error('❌ Módulo FlujoCaja no disponible');
+            alert('❌ Error: Sistema no disponible. Recarga la página.');
+        }
+        
+    } catch (error) {
+        console.error('❌ Error al guardar transacción:', error);
+        alert('❌ Error al guardar: ' + error.message);
+    }
+};
+
+// Función para mostrar notificación de éxito
+function mostrarNotificacionExito() {
+    // Crear notificación temporal
+    const notif = document.createElement('div');
+    notif.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(16, 185, 129, 0.4);
+        z-index: 999999;
+        font-weight: 700;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        animation: slideIn 0.3s ease;
+    `;
+    notif.innerHTML = '<i class="fas fa-check-circle"></i> Transacción guardada exitosamente';
+    document.body.appendChild(notif);
+    
+    // Remover después de 3 segundos
+    setTimeout(() => {
+        notif.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notif.remove(), 300);
+    }, 3000);
+}
+
+// Agregar animaciones CSS para la notificación
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    @keyframes slideOut {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
     </script>
 
 </body>
