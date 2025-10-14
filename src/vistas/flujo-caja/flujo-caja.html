@@ -400,9 +400,28 @@
         }
 
         function cargarCategorias() {
-            const info = window.flujoCaja.obtenerInfo();
-            actualizarSelectCategorias(info.categorias.ingresos);
+    try {
+        const info = window.flujoCaja.obtenerInfo();
+        
+        if (!info || !info.categorias) {
+            console.warn('⚠️ No se pudieron cargar las categorías');
+            // Categorías por defecto si falla
+            const categoriasDefault = {
+                ingresos: ['Ventas', 'Servicios', 'Otros Ingresos'],
+                gastos: ['Compras', 'Servicios', 'Gastos Operativos', 'Otros Gastos']
+            };
+            actualizarSelectCategorias(categoriasDefault.ingresos);
+            return;
         }
+        
+        actualizarSelectCategorias(info.categorias.ingresos);
+        console.log('✅ Categorías cargadas:', info.categorias);
+    } catch (error) {
+        console.error('❌ Error cargando categorías:', error);
+        // Categorías por defecto en caso de error
+        actualizarSelectCategorias(['Ventas', 'Servicios', 'Otros']);
+    }
+}
 
         function actualizarCategoriasSegunTipo() {
             const tipo = document.querySelector('input[name="tipo"]:checked').value;
