@@ -20,16 +20,13 @@ class CargadorVistas {
         console.log('Cargador de vistas inicializado');
     }
 
-   async cargarVista(vistaId) {
-    console.log(`Cargando vista: ${vistaId}`);
-    
-    // Limpiar CSS residuales
-    document.querySelectorAll('link[href*="flujo-caja.css"]').forEach(el => el.remove());
+  async cargarVista(vistaId) {
+    console.log(`🔄 Cargando vista: ${vistaId}`);
     
     // Buscar contenedor
     this.contenedor = document.getElementById('contenedorVistas');
     if (!this.contenedor) {
-        console.error('❌ No se encontró contenedor de vistas');
+        console.error('❌ No se encontró contenedor');
         return false;
     }
 
@@ -42,68 +39,65 @@ class CargadorVistas {
 
     try {
         // ═══════════════════════════════════════════════════════
-        // ESTRATEGIA: Hacer invisible, cargar, aplicar, mostrar
+        // ESTRATEGIA: Cargar TODO antes de mostrar
+        // Sin visibility hidden, sin delays artificiales
         // ═══════════════════════════════════════════════════════
         
-        // Hacer invisible pero mantener espacio
-        this.contenedor.style.visibility = 'hidden';
-        this.contenedor.style.transition = 'opacity 0.2s ease';
+        // Limpiar vista anterior
+        this.contenedor.innerHTML = '';
+        this.contenedor.style.opacity = '0';
         
         // ═══ PASO 1: CSS PRIMERO ═══
         await this.cargarCSS(vistaId);
         
+        // Esperar a que CSS se aplique
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
         // ═══ PASO 2: SCRIPTS (SOLO CASH-FLOW) ═══
         if (vistaId === 'cash-flow') {
             await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-config.js');
-            await new Promise(resolve => setTimeout(resolve, 50));
-            
             await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja.js');
-            await new Promise(resolve => setTimeout(resolve, 50));
-            
             await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-ui.js');
-            await new Promise(resolve => setTimeout(resolve, 50));
         }
 
         // ═══ PASO 3: HTML ═══
         const response = await fetch(ruta);
-        if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         
         const html = await response.text();
         this.contenedor.innerHTML = html;
         this.vistaActual = vistaId;
 
-        // ═══ PASO 4: JS NORMAL ═══
+        // ═══ PASO 4: JS NORMAL (otras vistas) ═══
         if (vistaId !== 'cash-flow') {
             await this.cargarJS(vistaId);
         }
 
-        // ═══ PASO 5: FORZAR REPAINT ═══
-        // Esto obliga al navegador a aplicar los estilos ANTES de mostrar
-        this.contenedor.offsetHeight; // Trigger reflow
+        // ═══ PASO 5: FORZAR APLICACIÓN DE ESTILOS ═══
+        // Esperar 2 frames del navegador para que aplique CSS
+        await new Promise(resolve => {
+            requestAnimationFrame(() => {
+                requestAnimationFrame(resolve);
+            });
+        });
         
-        // Esperar 2 frames para que el CSS se aplique
-        await new Promise(resolve => requestAnimationFrame(() => 
-            requestAnimationFrame(resolve)
-        ));
-        
-        // ═══ PASO 6: MOSTRAR ═══
-        this.contenedor.style.visibility = 'visible';
+        // ═══ PASO 6: FADE IN SUAVE ═══
+        this.contenedor.style.transition = 'opacity 0.2s ease';
         this.contenedor.style.opacity = '1';
         
-        console.log(`✅ Vista ${vistaId} cargada`);
+        console.log(`✅ Vista ${vistaId} lista`);
         return true;
         
     } catch (error) {
-        console.error(`❌ Error:`, error);
-        this.contenedor.style.visibility = 'visible';
-        this.contenedor.style.opacity = '1';
+        console.error(`❌ Error cargando vista:`, error);
         this.contenedor.innerHTML = `
-            <div style="padding: 60px; text-align: center; color: #e74c3c;">
+            <div style="padding: 60px; text-align: center; color: var(--color-error);">
                 <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 20px;"></i>
                 <h2>Error al cargar la vista</h2>
                 <p>${error.message}</p>
             </div>
         `;
+        this.contenedor.style.opacity = '1';
         return false;
     }
 }
