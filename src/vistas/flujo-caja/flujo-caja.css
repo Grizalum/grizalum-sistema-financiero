@@ -1186,11 +1186,11 @@
     }
 }
 /* ═══════════════════════════════════════════════════════════════
-   🎨 EFECTOS VISUALES AVANZADOS - FLUJO DE CAJA
+   🎨 EFECTOS VISUALES AVANZADOS V2 - FLUJO DE CAJA
    ═══════════════════════════════════════════════════════════════ */
 
 /* ─────────────────────────────────────────────────────────────
-   1️⃣ RELIEVE CON LUZ EN CARDS (Efecto Neumórfico)
+   1️⃣ BORDE BRILLANTE (Como panel de control)
    ───────────────────────────────────────────────────────────── */
 .balance-card {
     position: relative;
@@ -1198,256 +1198,270 @@
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Borde animado que gira alrededor */
 .balance-card::before {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(
-        45deg,
-        transparent 30%,
-        rgba(255, 255, 255, 0.1) 50%,
-        transparent 70%
+    inset: -2px;
+    background: conic-gradient(
+        from 0deg,
+        transparent 0%,
+        var(--color-primario) 10%,
+        transparent 20%,
+        transparent 80%,
+        var(--color-primario) 90%,
+        transparent 100%
     );
-    transform: rotate(45deg);
-    animation: shimmer 3s infinite;
+    border-radius: 16px;
+    animation: rotateBorder 4s linear infinite;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-@keyframes shimmer {
-    0%, 100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-    50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+.balance-card:hover::before {
+    opacity: 1;
+}
+
+@keyframes rotateBorder {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Capa interna para no tapar el contenido */
+.balance-card::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    background: var(--fondo-card);
+    border-radius: 14px;
+    z-index: 0;
+}
+
+.balance-card > * {
+    position: relative;
+    z-index: 1;
 }
 
 .balance-card:hover {
     transform: translateY(-8px) scale(1.02);
     box-shadow: 
         0 20px 60px -15px rgba(0, 0, 0, 0.5),
-        0 0 0 1px rgba(255, 255, 255, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 /* ─────────────────────────────────────────────────────────────
-   2️⃣ ANIMACIÓN SERPIENTE EN FLECHAS
+   2️⃣ DIAMANTE LLENÁNDOSE CON MONEDAS DE ORO
    ───────────────────────────────────────────────────────────── */
 
-/* Contenedor de la animación */
-.balance-icono {
+.balance-total .balance-icono {
     position: relative;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.75rem;
+    overflow: hidden;
 }
 
-/* Efecto serpiente para INGRESOS (sube de abajo hacia arriba) */
-.balance-ingresos .balance-icono::before {
+/* Fondo del diamante (vacío) */
+.balance-total .balance-icono i {
+    position: relative;
+    z-index: 2;
+    color: white;
+    filter: drop-shadow(0 0 8px #fbbf24);
+}
+
+/* Llenado con monedas desde abajo */
+.balance-total .balance-icono::before {
     content: '';
     position: absolute;
     bottom: 0;
     left: 50%;
-    width: 4px;
-    height: 100%;
-    background: linear-gradient(
-        to top,
-        transparent 0%,
-        #10b981 20%,
-        #34d399 40%,
-        #6ee7b7 60%,
-        transparent 80%
-    );
-    border-radius: 2px;
-    transform: translateX(-50%) scaleY(0);
-    transform-origin: bottom;
-    animation: serpienteSubir 2.5s ease-in-out infinite;
-    filter: blur(1px);
-    box-shadow: 0 0 10px #10b981;
+    width: 36px;
+    height: 36px;
+    transform: translateX(-50%) rotate(45deg);
+    background: 
+        repeating-linear-gradient(
+            45deg,
+            #fbbf24 0px,
+            #f59e0b 2px,
+            #fbbf24 4px,
+            #d97706 6px
+        );
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    animation: llenarDiamante 3s ease-in-out infinite;
+    opacity: 0.9;
 }
 
-@keyframes serpienteSubir {
-    0% { 
-        transform: translateX(-50%) scaleY(0);
+@keyframes llenarDiamante {
+    0%, 100% {
+        height: 0%;
         opacity: 0;
     }
     20% {
-        opacity: 1;
-    }
-    50% { 
-        transform: translateX(-50%) scaleY(1);
-        opacity: 1;
-    }
-    70% {
-        opacity: 0.5;
-    }
-    100% { 
-        transform: translateX(-50%) scaleY(0);
-        opacity: 0;
-    }
-}
-
-/* Efecto serpiente para GASTOS (baja de arriba hacia abajo) */
-.balance-gastos .balance-icono::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    width: 4px;
-    height: 100%;
-    background: linear-gradient(
-        to bottom,
-        transparent 0%,
-        #ef4444 20%,
-        #f87171 40%,
-        #fca5a5 60%,
-        transparent 80%
-    );
-    border-radius: 2px;
-    transform: translateX(-50%) scaleY(0);
-    transform-origin: top;
-    animation: serpienteBajar 2.5s ease-in-out infinite;
-    filter: blur(1px);
-    box-shadow: 0 0 10px #ef4444;
-}
-
-@keyframes serpienteBajar {
-    0% { 
-        transform: translateX(-50%) scaleY(0);
-        opacity: 0;
-    }
-    20% {
-        opacity: 1;
-    }
-    50% { 
-        transform: translateX(-50%) scaleY(1);
-        opacity: 1;
-    }
-    70% {
-        opacity: 0.5;
-    }
-    100% { 
-        transform: translateX(-50%) scaleY(0);
-        opacity: 0;
-    }
-}
-
-/* Pulso en el ícono cuando llega la luz */
-.balance-ingresos .balance-icono i,
-.balance-gastos .balance-icono i {
-    animation: pulsoIcono 2.5s ease-in-out infinite;
-    filter: drop-shadow(0 0 8px currentColor);
-}
-
-@keyframes pulsoIcono {
-    0%, 100% { 
-        transform: scale(1);
         opacity: 0.9;
     }
-    50% { 
-        transform: scale(1.15);
+    50% {
+        height: 100%;
         opacity: 1;
+    }
+    70% {
+        opacity: 0.9;
+    }
+}
+
+/* Brillo dorado pulsante */
+.balance-total .balance-icono::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, #fbbf24 0%, transparent 70%);
+    animation: pulsoBrillo 2s ease-in-out infinite;
+    z-index: 1;
+    opacity: 0;
+}
+
+@keyframes pulsoBrillo {
+    0%, 100% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(1.2);
     }
 }
 
 /* ─────────────────────────────────────────────────────────────
-   3️⃣ MONEDAS CAYENDO EN EL DIAMANTE
+   3️⃣ FLECHA INGRESOS - Luz blanca sube de base a punta
    ───────────────────────────────────────────────────────────── */
 
-.balance-total .balance-icono {
+.balance-ingresos .balance-icono {
+    position: relative;
     overflow: visible;
 }
 
-/* Moneda individual */
-.balance-total .balance-icono::after {
-    content: '💰';
+/* Línea blanca que sube */
+.balance-ingresos .balance-icono::before {
+    content: '';
     position: absolute;
-    font-size: 1.2rem;
-    top: -20%;
     left: 50%;
-    transform: translateX(-50%);
-    animation: caerMoneda 3s ease-in infinite;
-    opacity: 0;
+    bottom: 10%;
+    width: 3px;
+    height: 80%;
+    background: linear-gradient(
+        to top,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.3) 20%,
+        rgba(255, 255, 255, 0.8) 40%,
+        rgba(255, 255, 255, 1) 60%,
+        rgba(255, 255, 255, 0.8) 80%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: translateX(-50%) scaleY(0);
+    transform-origin: bottom;
+    animation: luzSubiendo 2s ease-in-out infinite;
+    filter: blur(1px);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    border-radius: 2px;
 }
 
-@keyframes caerMoneda {
-    0% {
-        top: -20%;
+@keyframes luzSubiendo {
+    0% { 
+        transform: translateX(-50%) scaleY(0);
         opacity: 0;
-        transform: translateX(-50%) rotate(0deg);
     }
     10% {
         opacity: 1;
     }
-    50% {
-        top: 50%;
+    50% { 
+        transform: translateX(-50%) scaleY(1);
         opacity: 1;
-        transform: translateX(-50%) rotate(360deg);
     }
-    100% {
-        top: 120%;
+    90% {
         opacity: 0;
-        transform: translateX(-50%) rotate(720deg);
+    }
+    100% { 
+        transform: translateX(-50%) scaleY(1);
+        opacity: 0;
     }
 }
 
-/* Efecto de brillo dorado en el diamante */
-.balance-total .balance-icono i {
-    animation: brilloDiamante 2s ease-in-out infinite;
-    filter: drop-shadow(0 0 12px #fbbf24);
+/* Pulso en la flecha cuando la luz llega */
+.balance-ingresos .balance-icono i {
+    animation: pulsoFlecha 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
 }
 
-@keyframes brilloDiamante {
-    0%, 100% {
-        transform: scale(1) rotate(0deg);
-        filter: drop-shadow(0 0 12px #fbbf24);
+@keyframes pulsoFlecha {
+    0%, 100% { 
+        transform: scale(1);
     }
-    50% {
-        transform: scale(1.1) rotate(5deg);
-        filter: drop-shadow(0 0 20px #fbbf24) drop-shadow(0 0 30px #f59e0b);
-    }
-}
-
-/* Ondas de impacto cuando cae la moneda */
-.balance-total .balance-icono::before {
-    content: '';
-    position: absolute;
-    bottom: 10%;
-    left: 50%;
-    width: 80%;
-    height: 4px;
-    background: radial-gradient(circle, #fbbf24 0%, transparent 70%);
-    border-radius: 50%;
-    transform: translateX(-50%) scaleX(0);
-    animation: ondaImpacto 3s ease-out infinite;
-    opacity: 0;
-}
-
-@keyframes ondaImpacto {
-    0%, 45% {
-        transform: translateX(-50%) scaleX(0);
-        opacity: 0;
-    }
-    50% {
-        transform: translateX(-50%) scaleX(1);
-        opacity: 0.8;
-    }
-    55% {
-        transform: translateX(-50%) scaleX(1.5);
-        opacity: 0;
-    }
-    100% {
-        transform: translateX(-50%) scaleX(1.5);
-        opacity: 0;
+    50% { 
+        transform: scale(1.1);
     }
 }
 
 /* ─────────────────────────────────────────────────────────────
-   🎯 OPTIMIZACIONES DE RENDIMIENTO
+   4️⃣ FLECHA GASTOS - Luz blanca baja de punta a base
    ───────────────────────────────────────────────────────────── */
 
-/* Pausar animaciones cuando no está visible */
+.balance-gastos .balance-icono {
+    position: relative;
+    overflow: visible;
+}
+
+/* Línea blanca que baja */
+.balance-gastos .balance-icono::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 10%;
+    width: 3px;
+    height: 80%;
+    background: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.3) 20%,
+        rgba(255, 255, 255, 0.8) 40%,
+        rgba(255, 255, 255, 1) 60%,
+        rgba(255, 255, 255, 0.8) 80%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: translateX(-50%) scaleY(0);
+    transform-origin: top;
+    animation: luzBajando 2s ease-in-out infinite;
+    filter: blur(1px);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    border-radius: 2px;
+}
+
+@keyframes luzBajando {
+    0% { 
+        transform: translateX(-50%) scaleY(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    50% { 
+        transform: translateX(-50%) scaleY(1);
+        opacity: 1;
+    }
+    90% {
+        opacity: 0;
+    }
+    100% { 
+        transform: translateX(-50%) scaleY(1);
+        opacity: 0;
+    }
+}
+
+/* Pulso en la flecha cuando la luz llega */
+.balance-gastos .balance-icono i {
+    animation: pulsoFlecha 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
+}
+
+/* ─────────────────────────────────────────────────────────────
+   🎯 OPTIMIZACIONES
+   ───────────────────────────────────────────────────────────── */
+
 .balance-card {
     will-change: transform;
 }
@@ -1461,9 +1475,12 @@
     }
 }
 
-/* Pausar animaciones en móviles para mejor rendimiento */
 @media (max-width: 768px) {
     .balance-card::before {
-        animation-duration: 5s; /* Más lento en móvil */
+        animation-duration: 6s;
+    }
+    
+    .balance-icono::before {
+        animation-duration: 3s;
     }
 }
