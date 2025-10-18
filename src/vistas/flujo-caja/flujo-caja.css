@@ -1328,136 +1328,106 @@
 }
 
 /* ─────────────────────────────────────────────────────────────
-   3️⃣ FLECHA INGRESOS - Luz blanca sube de base a punta
+   3️⃣ FLECHA INGRESOS - Se dibuja desde abajo hacia arriba
    ───────────────────────────────────────────────────────────── */
 
 .balance-ingresos .balance-icono {
     position: relative;
-    overflow: visible;
+    overflow: hidden;
 }
 
-/* Línea blanca que sube */
+/* Ocultar la flecha original */
+.balance-ingresos .balance-icono i {
+    opacity: 0;
+}
+
+/* Flecha que se dibuja subiendo */
 .balance-ingresos .balance-icono::before {
-    content: '';
+    content: '\f062'; /* Código FontAwesome para arrow-up */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
     position: absolute;
+    top: 50%;
     left: 50%;
-    bottom: 10%;
-    width: 3px;
-    height: 80%;
-    background: linear-gradient(
-        to top,
-        rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 0.3) 20%,
-        rgba(255, 255, 255, 0.8) 40%,
-        rgba(255, 255, 255, 1) 60%,
-        rgba(255, 255, 255, 0.8) 80%,
-        rgba(255, 255, 255, 0) 100%
-    );
-    transform: translateX(-50%) scaleY(0);
-    transform-origin: bottom;
-    animation: luzSubiendo 2s ease-in-out infinite;
-    filter: blur(1px);
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
-    border-radius: 2px;
+    transform: translate(-50%, -50%);
+    font-size: 1.75rem;
+    color: white;
+    clip-path: inset(100% 0 0 0); /* Oculta desde arriba */
+    animation: dibujarFlechaSubiendo 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px white);
 }
 
-@keyframes luzSubiendo {
-    0% { 
-        transform: translateX(-50%) scaleY(0);
+@keyframes dibujarFlechaSubiendo {
+    0% {
+        clip-path: inset(100% 0 0 0); /* Completamente oculta */
         opacity: 0;
     }
     10% {
         opacity: 1;
     }
-    50% { 
-        transform: translateX(-50%) scaleY(1);
-        opacity: 1;
+    50% {
+        clip-path: inset(0% 0 0 0); /* Completamente visible */
+        filter: drop-shadow(0 0 12px white);
     }
-    90% {
+    60% {
+        filter: drop-shadow(0 0 20px white) drop-shadow(0 0 30px #10b981);
+    }
+    100% {
+        clip-path: inset(0% 0 0 0);
         opacity: 0;
-    }
-    100% { 
-        transform: translateX(-50%) scaleY(1);
-        opacity: 0;
-    }
-}
-
-/* Pulso en la flecha cuando la luz llega */
-.balance-ingresos .balance-icono i {
-    animation: pulsoFlecha 2s ease-in-out infinite;
-    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
-}
-
-@keyframes pulsoFlecha {
-    0%, 100% { 
-        transform: scale(1);
-    }
-    50% { 
-        transform: scale(1.1);
     }
 }
 
 /* ─────────────────────────────────────────────────────────────
-   4️⃣ FLECHA GASTOS - Luz blanca baja de punta a base
+   4️⃣ FLECHA GASTOS - Se dibuja desde arriba hacia abajo
    ───────────────────────────────────────────────────────────── */
 
 .balance-gastos .balance-icono {
     position: relative;
-    overflow: visible;
+    overflow: hidden;
 }
 
-/* Línea blanca que baja */
+/* Ocultar la flecha original */
+.balance-gastos .balance-icono i {
+    opacity: 0;
+}
+
+/* Flecha que se dibuja bajando */
 .balance-gastos .balance-icono::before {
-    content: '';
+    content: '\f063'; /* Código FontAwesome para arrow-down */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
     position: absolute;
+    top: 50%;
     left: 50%;
-    top: 10%;
-    width: 3px;
-    height: 80%;
-    background: linear-gradient(
-        to bottom,
-        rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 0.3) 20%,
-        rgba(255, 255, 255, 0.8) 40%,
-        rgba(255, 255, 255, 1) 60%,
-        rgba(255, 255, 255, 0.8) 80%,
-        rgba(255, 255, 255, 0) 100%
-    );
-    transform: translateX(-50%) scaleY(0);
-    transform-origin: top;
-    animation: luzBajando 2s ease-in-out infinite;
-    filter: blur(1px);
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
-    border-radius: 2px;
+    transform: translate(-50%, -50%);
+    font-size: 1.75rem;
+    color: white;
+    clip-path: inset(0 0 100% 0); /* Oculta desde abajo */
+    animation: dibujarFlechaBajando 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px white);
 }
 
-@keyframes luzBajando {
-    0% { 
-        transform: translateX(-50%) scaleY(0);
+@keyframes dibujarFlechaBajando {
+    0% {
+        clip-path: inset(0 0 100% 0); /* Completamente oculta */
         opacity: 0;
     }
     10% {
         opacity: 1;
     }
-    50% { 
-        transform: translateX(-50%) scaleY(1);
-        opacity: 1;
+    50% {
+        clip-path: inset(0 0 0% 0); /* Completamente visible */
+        filter: drop-shadow(0 0 12px white);
     }
-    90% {
-        opacity: 0;
+    60% {
+        filter: drop-shadow(0 0 20px white) drop-shadow(0 0 30px #ef4444);
     }
-    100% { 
-        transform: translateX(-50%) scaleY(1);
+    100% {
+        clip-path: inset(0 0 0% 0);
         opacity: 0;
     }
 }
-
-/* Pulso en la flecha cuando la luz llega */
-.balance-gastos .balance-icono i {
-    animation: pulsoFlecha 2s ease-in-out infinite;
-    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
-}
-
 /* ─────────────────────────────────────────────────────────────
    🎯 OPTIMIZACIONES
    ───────────────────────────────────────────────────────────── */
