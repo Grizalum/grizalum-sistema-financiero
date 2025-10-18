@@ -32,10 +32,10 @@
                     <i class="fas fa-download"></i>
                     <span>Exportar</span>
                 </button>
-               <button id="btnNuevaTransaccion" class="btn-primary" onclick="(function(){ const modal = document.getElementById('modalTransaccion'); if(modal) modal.classList.add('show'); })()">
-                    <i class="fas fa-plus"></i>
-                    <span>Nueva Transacción</span>
-                </button>
+               <button id="btnNuevaTransaccion" class="btn-primary" onclick="abrirModalTransaccion()">
+                   <i class="fas fa-plus"></i>
+                  <span>Nueva Transacción</span>
+               </button>
             </div>
         </header>
 
@@ -169,7 +169,7 @@
                 <div class="empty-state__text">
                     Comienza agregando tu primer ingreso o gasto para llevar el control de tu flujo de caja
                 </div>
-                <button class="btn-primary" id="btnPrimeraTransaccion">
+                <button class="btn-primary" id="btnPrimeraTransaccion" onclick="abrirModalTransaccion()">
                     <i class="fas fa-plus"></i>
                     <span>Agregar Primera Transacción</span>
                 </button>
