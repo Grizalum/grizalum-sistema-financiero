@@ -40,7 +40,7 @@
         </header>
 
         <!-- NIVEL CON SKELETON LOADER -->
-        <div id="nivelBanner" class="nivel-banner">
+        <div id="nivelBanner" class="nivel-banner" style="display: none;">
             <div class="nivel-info">
                 <div class="nivel-icono">
                     <div class="skeleton-loader skeleton-circle"></div>
@@ -64,7 +64,7 @@
         <!-- BALANCE PRINCIPAL -->
         <section class="balance-principal">
             <div class="balance-card balance-total">
-                <div class="balance-icono">💎</div>
+                <div class="balance-icono"><i class="fas fa-gem"></i></div>
                 <div class="balance-info">
                     <div class="balance-label">Balance Actual</div>
                     <div id="balanceTotal" class="balance-monto">S/. 0.00</div>
@@ -72,7 +72,7 @@
             </div>
 
             <div class="balance-card balance-ingresos">
-                <div class="balance-icono">📈</div>
+                <div class="balance-icono"><i class="fas fa-arrow-trend-up"></i></div>
                 <div class="balance-info">
                     <div class="balance-label">Ingresos</div>
                     <div id="totalIngresos" class="balance-monto">S/. 0.00</div>
@@ -81,7 +81,7 @@
             </div>
 
             <div class="balance-card balance-gastos">
-                <div class="balance-icono">📉</div>
+                <div class="balance-icono"><i class="fas fa-arrow-trend-down"></i></div>
                 <div class="balance-info">
                     <div class="balance-label">Gastos</div>
                     <div id="totalGastos" class="balance-monto">S/. 0.00</div>
@@ -403,10 +403,13 @@
         const info = window.flujoCaja?.obtenerInfo();
         
         // Si no hay info, ocultar el banner
-        if (!info || !info.nivel) {
-            document.getElementById('nivelBanner').style.display = 'none';
-            return;
-        }
+       if (!info || !info.nivel) {
+    document.getElementById('nivelBanner').style.display = 'none';
+    return;
+}
+
+// Mostrar banner si hay datos
+document.getElementById('nivelBanner').style.display = 'flex';
 
         const banner = document.getElementById('nivelBanner');
         banner.innerHTML = `
