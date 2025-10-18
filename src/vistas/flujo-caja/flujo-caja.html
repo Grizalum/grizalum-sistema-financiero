@@ -399,34 +399,41 @@
         // FUNCIONES DE CARGA DE DATOS
         // ═══════════════════════════════════════════════════════════════
         function cargarNivel() {
-            try {
-                const info = window.flujoCaja.obtenerInfo();
-                
-                if (!info || !info.nivel) {
-                    console.warn('⚠️ Sin información de nivel');
-                    return;
-                }
-
-                const banner = document.getElementById('nivelBanner');
-                const icono = banner.querySelector('.nivel-icono');
-                const nombre = banner.querySelector('.nivel-nombre');
-                const scoreTexto = banner.querySelector('.nivel-score');
-                const progreso = document.getElementById('progresoFill');
-
-                // Reemplazar skeleton con contenido real
-                icono.innerHTML = `<span style="font-size: 2.5rem;">${info.nivel.nivel.icono}</span>`;
-                nombre.innerHTML = `<span style="font-size: 1.25rem; font-weight: 700;">Nivel ${info.nivel.nivel.nombre}</span>`;
-                scoreTexto.innerHTML = `<span style="font-size: 0.875rem;">Score: ${info.nivel.score}/100</span>`;
-                progreso.style.width = `${info.nivel.score}%`;
-
-                // Mostrar/ocultar componentes según score
-                mostrarComponentesSegunNivel(info.componentesActivos);
-                
-                console.log('✅ Nivel cargado');
-            } catch (error) {
-                console.error('❌ Error cargando nivel:', error);
-            }
+    try {
+        const info = window.flujoCaja?.obtenerInfo();
+        
+        // Si no hay info, ocultar el banner
+        if (!info || !info.nivel) {
+            document.getElementById('nivelBanner').style.display = 'none';
+            return;
         }
+
+        const banner = document.getElementById('nivelBanner');
+        banner.innerHTML = `
+            <div class="nivel-info">
+                <span class="nivel-icono" style="font-size: 2.5rem;">${info.nivel.nivel.icono}</span>
+                <div class="nivel-textos">
+                    <div class="nivel-nombre" style="font-size: 1.25rem; font-weight: 700; color: var(--texto-principal);">
+                        Nivel ${info.nivel.nivel.nombre}
+                    </div>
+                    <div class="nivel-score" style="font-size: 0.875rem; color: var(--texto-terciario);">
+                        Score: ${info.nivel.score}/100
+                    </div>
+                </div>
+            </div>
+            <div class="nivel-progreso">
+                <div class="progreso-bar">
+                    <div class="progreso-fill" style="width: ${info.nivel.score}%"></div>
+                </div>
+            </div>
+        `;
+        
+        mostrarComponentesSegunNivel(info.componentesActivos);
+    } catch (error) {
+        console.warn('No se pudo cargar nivel:', error);
+        document.getElementById('nivelBanner').style.display = 'none';
+    }
+}
 
         function mostrarComponentesSegunNivel(componentes) {
             try {
