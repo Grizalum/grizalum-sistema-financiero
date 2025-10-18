@@ -270,8 +270,8 @@
             <button type="button" class="btn-secondary" onclick="document.getElementById('modalTransaccion').classList.remove('show')">
                 <i class="fas fa-times"></i> Cancelar
             </button>
-            <button type="button" class="btn-primary" onclick="(function(){try{const m=document.getElementById('inputMonto').value;const c=document.getElementById('selectCategoria').value;const f=document.getElementById('inputFecha').value;if(!m||!c||!f){alert('⚠️ Completa campos obligatorios');return;}window.flujoCaja.agregarTransaccion({tipo:document.querySelector('input[name=tipo]:checked').value,monto:parseFloat(m),categoria:c,descripcion:document.getElementById('inputDescripcion').value||'',fecha:new Date(f).toISOString(),metodoPago:document.getElementById('selectMetodo').value||'efectivo',notas:document.getElementById('inputNotas').value||''});document.getElementById('modalTransaccion').classList.remove('show');document.getElementById('formTransaccion').reset();const n=document.createElement('div');n.style.cssText='position:fixed;top:20px;right:20px;background:#10b981;color:white;padding:1rem;border-radius:12px;z-index:999999;font-weight:700';n.innerHTML='✅ Guardado';document.body.appendChild(n);setTimeout(()=>n.remove(),3000);if(typeof cargarBalance==='function')setTimeout(cargarBalance,100);if(typeof cargarTransacciones==='function')setTimeout(cargarTransacciones,100);}catch(e){alert('❌ Error: '+e.message)}})()"">
-            <i class="fas fa-save"></i> Guardar
+            <button type="button" class="btn-primary" onclick="(function(){try{const m=document.getElementById('inputMonto').value;const c=document.getElementById('selectCategoria').value;const f=document.getElementById('inputFecha').value;if(!m||!c||!f){alert('⚠️ Completa campos obligatorios');return;}const datos={tipo:document.querySelector('input[name=tipo]:checked').value,monto:parseFloat(m),categoria:c,descripcion:document.getElementById('inputDescripcion').value||'',fecha:new Date(f).toISOString(),metodoPago:document.getElementById('selectMetodo').value||'efectivo',notas:document.getElementById('inputNotas').value||''};if(window.transaccionEditando){window.flujoCaja.editarTransaccion(window.transaccionEditando,datos);window.transaccionEditando=null;}else{window.flujoCaja.agregarTransaccion(datos);}document.getElementById('modalTransaccion').classList.remove('show');document.getElementById('formTransaccion').reset();document.getElementById('inputFecha').valueAsDate=new Date();const n=document.createElement('div');n.style.cssText='position:fixed;top:20px;right:20px;background:#10b981;color:white;padding:1rem 1.5rem;border-radius:12px;z-index:999999;font-weight:700;';n.innerHTML='✅ Guardado';document.body.appendChild(n);setTimeout(()=>n.remove(),3000);if(typeof cargarBalance==='function')setTimeout(cargarBalance,100);if(typeof cargarTransacciones==='function')setTimeout(cargarTransacciones,100);}catch(e){alert('❌ Error: '+e.message)}}())"">
+          <i class="fas fa-save"></i> Guardar
          </button>
         </div>
     </div>
@@ -355,45 +355,132 @@
         }
 
         function editarTransaccion(id) {
-            console.log('✏️ Editando transacción:', id);
-            
-            try {
-                const transaccion = window.flujoCaja.obtenerTransaccion(id);
-                if (!transaccion) {
-                    console.error('Transacción no encontrada');
-                    return;
-                }
-
-                transaccionEditando = id;
-                document.getElementById('modalTitulo').textContent = 'Editar Transacción';
-                
-                document.querySelector(`input[name="tipo"][value="${transaccion.tipo}"]`).checked = true;
-                document.getElementById('inputMonto').value = transaccion.monto;
-                actualizarCategoriasSegunTipo();
-                document.getElementById('selectCategoria').value = transaccion.categoria;
-                document.getElementById('inputDescripcion').value = transaccion.descripcion || '';
-                document.getElementById('inputFecha').valueAsDate = new Date(transaccion.fecha);
-                document.getElementById('selectMetodo').value = transaccion.metodoPago || 'efectivo';
-                document.getElementById('inputNotas').value = transaccion.notas || '';
-                
-                document.getElementById('modalTransaccion').classList.add('show');
-            } catch (error) {
-                console.error('❌ Error editando transacción:', error);
-            }
+    console.log('✏️ Editando transacción:', id);
+    
+    try {
+        const transaccion = window.flujoCaja.obtenerTransaccion(id);
+        
+        if (!transaccion) {
+            alert('❌ No se encontró la transacción');
+            console.error('Transacción no encontrada:', id);
+            return;
         }
 
-        function eliminarTransaccion(id) {
-            console.log('🗑️ Eliminando transacción:', id);
-            
-            if (confirm('¿Seguro que quieres eliminar esta transacción?')) {
-                try {
-                    window.flujoCaja.eliminarTransaccion(id);
-                    console.log('✅ Transacción eliminada');
-                } catch (error) {
-                    console.error('❌ Error eliminando transacción:', error);
-                }
-            }
+        // Guardar ID para saber que estamos editando
+        transaccionEditando = id;
+        
+        // Cambiar título del modal
+        document.getElementById('modalTitulo').textContent = 'Editar Transacción';
+        
+        // Cargar tipo (ingreso/gasto)
+        const radioTipo = document.querySelector(`input[name="tipo"][value="${transaccion.tipo}"]`);
+        if (radioTipo) {
+            radioTipo.checked = true;
         }
+        
+        // Cargar categorías según el tipo
+        actualizarCategoriasSegunTipo();
+        
+        // Esperar un momento para que se carguen las categorías
+        setTimeout(() => {
+            // Cargar datos en el formulario
+            document.getElementById('inputMonto').value = transaccion.monto;
+            document.getElementById('selectCategoria').value = transaccion.categoria;
+            document.getElementById('inputDescripcion').value = transaccion.descripcion || '';
+            
+            // Convertir fecha ISO a formato input date (YYYY-MM-DD)
+            const fecha = new Date(transaccion.fecha);
+            const year = fecha.getFullYear();
+            const month = String(fecha.getMonth() + 1).padStart(2, '0');
+            const day = String(fecha.getDate()).padStart(2, '0');
+            document.getElementById('inputFecha').value = `${year}-${month}-${day}`;
+            
+            document.getElementById('selectMetodo').value = transaccion.metodoPago || 'efectivo';
+            document.getElementById('inputNotas').value = transaccion.notas || '';
+            
+            // Abrir modal
+            document.getElementById('modalTransaccion').classList.add('show');
+            
+            // Focus en el monto
+            setTimeout(() => {
+                document.getElementById('inputMonto').focus();
+                document.getElementById('inputMonto').select();
+            }, 300);
+            
+            console.log('✅ Modal de edición cargado');
+        }, 100);
+        
+    } catch (error) {
+        console.error('❌ Error editando transacción:', error);
+        alert('❌ Error al cargar la transacción');
+    }
+}
+
+       function eliminarTransaccion(id) {
+    console.log('🗑️ Eliminando transacción:', id);
+    
+    try {
+        const transaccion = window.flujoCaja.obtenerTransaccion(id);
+        
+        if (!transaccion) {
+            alert('❌ No se encontró la transacción');
+            return;
+        }
+        
+        // Crear modal de confirmación personalizado
+        const confirmar = confirm(
+            `¿Eliminar esta transacción?\n\n` +
+            `Tipo: ${transaccion.tipo === 'ingreso' ? 'Ingreso' : 'Gasto'}\n` +
+            `Monto: S/ ${transaccion.monto.toFixed(2)}\n` +
+            `Categoría: ${transaccion.categoria}\n` +
+            `Descripción: ${transaccion.descripcion || 'Sin descripción'}`
+        );
+        
+        if (!confirmar) {
+            console.log('⚠️ Eliminación cancelada');
+            return;
+        }
+        
+        // Eliminar
+        window.flujoCaja.eliminarTransaccion(id);
+        
+        console.log('✅ Transacción eliminada');
+        
+        // Mostrar notificación
+        const notif = document.createElement('div');
+        notif.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(239, 68, 68, 0.4);
+            z-index: 999999;
+            font-weight: 700;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: slideIn 0.3s ease;
+        `;
+        notif.innerHTML = '<i class="fas fa-trash"></i> Transacción eliminada';
+        document.body.appendChild(notif);
+        
+        // Remover notificación
+        setTimeout(() => {
+            notif.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => notif.remove(), 300);
+        }, 2500);
+        
+    } catch (error) {
+        console.error('❌ Error eliminando transacción:', error);
+        alert('❌ Error al eliminar la transacción');
+    }
+  }
+}
+       
 
         // ═══════════════════════════════════════════════════════════════
         // FUNCIONES DE CARGA DE DATOS
