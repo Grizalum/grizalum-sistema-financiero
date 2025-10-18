@@ -1250,80 +1250,347 @@
 }
 
 /* ─────────────────────────────────────────────────────────────
-   2️⃣ DIAMANTE LLENÁNDOSE CON MONEDAS DE ORO
+   2️⃣ DIAMANTE LLENÁNDOSE CON MONEDAS - Sistema Realista
    ───────────────────────────────────────────────────────────── */
 
 .balance-total .balance-icono {
     position: relative;
     overflow: hidden;
+    width: 60px;
+    height: 60px;
 }
 
-/* Fondo del diamante (vacío) */
+/* Diamante blanco con clip-path */
 .balance-total .balance-icono i {
-    position: relative;
-    z-index: 2;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.75rem;
     color: white;
-    filter: drop-shadow(0 0 8px #fbbf24);
+    z-index: 10;
+    filter: drop-shadow(0 0 12px rgba(251, 191, 36, 0.6));
+    pointer-events: none;
 }
 
-/* Llenado con monedas desde abajo */
-.balance-total .balance-icono::before {
-    content: '';
+/* Contenedor con forma de diamante */
+.diamante-contenedor {
     position: absolute;
-    bottom: 0;
+    top: 50%;
     left: 50%;
     width: 36px;
     height: 36px;
-    transform: translateX(-50%) rotate(45deg);
-    background: 
-        repeating-linear-gradient(
-            45deg,
-            #fbbf24 0px,
-            #f59e0b 2px,
-            #fbbf24 4px,
-            #d97706 6px
-        );
+    transform: translate(-50%, -50%) rotate(45deg);
     clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-    animation: llenarDiamante 3s ease-in-out infinite;
-    opacity: 0.9;
+    overflow: hidden;
+    z-index: 5;
 }
 
-@keyframes llenarDiamante {
-    0%, 100% {
-        height: 0%;
-        opacity: 0;
-    }
-    20% {
-        opacity: 0.9;
-    }
-    50% {
-        height: 100%;
-        opacity: 1;
-    }
-    70% {
-        opacity: 0.9;
-    }
-}
-
-/* Brillo dorado pulsante */
-.balance-total .balance-icono::after {
-    content: '';
+/* Monedas individuales */
+.moneda {
     position: absolute;
-    inset: 0;
-    background: radial-gradient(circle, #fbbf24 0%, transparent 70%);
-    animation: pulsoBrillo 2s ease-in-out infinite;
-    z-index: 1;
+    font-size: 0.65rem;
+    width: 12px;
+    height: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #fbbf24, #f59e0b, #d97706);
+    box-shadow: 
+        0 2px 4px rgba(0, 0, 0, 0.3),
+        inset 0 1px 2px rgba(255, 255, 255, 0.4);
     opacity: 0;
 }
 
-@keyframes pulsoBrillo {
-    0%, 100% {
+/* Animación individual para cada moneda */
+.moneda-1 {
+    left: 50%;
+    transform: translateX(-50%) rotate(-45deg);
+    animation: caerMoneda1 8s ease-in-out infinite;
+}
+
+.moneda-2 {
+    left: 50%;
+    transform: translateX(-50%) rotate(-45deg);
+    animation: caerMoneda2 8s ease-in-out infinite;
+    animation-delay: 0.8s;
+}
+
+.moneda-3 {
+    left: 50%;
+    transform: translateX(-50%) rotate(-45deg);
+    animation: caerMoneda3 8s ease-in-out infinite;
+    animation-delay: 1.6s;
+}
+
+.moneda-4 {
+    left: 50%;
+    transform: translateX(-50%) rotate(-45deg);
+    animation: caerMoneda4 8s ease-in-out infinite;
+    animation-delay: 2.4s;
+}
+
+.moneda-5 {
+    left: 45%;
+    transform: translateX(-50%) rotate(-45deg);
+    animation: caerMoneda5 8s ease-in-out infinite;
+    animation-delay: 3.2s;
+}
+
+.moneda-6 {
+    left: 55%;
+    transform: translateX(-50%) rotate(-45deg);
+    animation: caerMoneda6 8s ease-in-out infinite;
+    animation-delay: 4s;
+}
+
+.moneda-7 {
+    left: 48%;
+    transform: translateX(-50%) rotate(-45deg);
+    animation: caerMoneda7 8s ease-in-out infinite;
+    animation-delay: 4.8s;
+}
+
+.moneda-8 {
+    left: 52%;
+    transform: translateX(-50%) rotate(-45deg);
+    animation: caerMoneda8 8s ease-in-out infinite;
+    animation-delay: 5.6s;
+}
+
+/* Keyframes para cada moneda (apilamiento progresivo) */
+@keyframes caerMoneda1 {
+    0% {
+        top: -20%;
         opacity: 0;
-        transform: scale(0.8);
+        transform: translateX(-50%) rotate(-45deg) scale(0.8);
+    }
+    5% {
+        opacity: 1;
+    }
+    15% {
+        top: 85%;
+        transform: translateX(-50%) rotate(-45deg) scale(1);
+    }
+    20% {
+        top: 85%;
+        transform: translateX(-50%) rotate(-45deg) scale(1.05);
+    }
+    25%, 100% {
+        top: 85%;
+        opacity: 1;
+        transform: translateX(-50%) rotate(-45deg) scale(1);
+    }
+}
+
+@keyframes caerMoneda2 {
+    0%, 10% {
+        top: -20%;
+        opacity: 0;
+    }
+    15% {
+        opacity: 1;
+    }
+    25% {
+        top: 72%;
+        transform: translateX(-50%) rotate(-45deg) scale(1);
+    }
+    30% {
+        transform: translateX(-50%) rotate(-45deg) scale(1.05);
+    }
+    35%, 100% {
+        top: 72%;
+        opacity: 1;
+        transform: translateX(-50%) rotate(-45deg) scale(1);
+    }
+}
+
+@keyframes caerMoneda3 {
+    0%, 20% {
+        top: -20%;
+        opacity: 0;
+    }
+    25% {
+        opacity: 1;
+    }
+    35% {
+        top: 59%;
+    }
+    40% {
+        transform: translateX(-50%) rotate(-45deg) scale(1.05);
+    }
+    45%, 100% {
+        top: 59%;
+        opacity: 1;
+        transform: translateX(-50%) rotate(-45deg) scale(1);
+    }
+}
+
+@keyframes caerMoneda4 {
+    0%, 30% {
+        top: -20%;
+        opacity: 0;
+    }
+    35% {
+        opacity: 1;
+    }
+    45% {
+        top: 46%;
     }
     50% {
-        opacity: 0.6;
-        transform: scale(1.2);
+        transform: translateX(-50%) rotate(-45deg) scale(1.05);
+    }
+    55%, 100% {
+        top: 46%;
+        opacity: 1;
+        transform: translateX(-50%) rotate(-45deg) scale(1);
+    }
+}
+
+@keyframes caerMoneda5 {
+    0%, 40% {
+        top: -20%;
+        opacity: 0;
+    }
+    45% {
+        opacity: 1;
+    }
+    55% {
+        top: 33%;
+    }
+    60% {
+        transform: translateX(-50%) rotate(-45deg) scale(1.05);
+    }
+    65%, 100% {
+        top: 33%;
+        opacity: 1;
+        transform: translateX(-50%) rotate(-45deg) scale(1);
+    }
+}
+
+@keyframes caerMoneda6 {
+    0%, 50% {
+        top: -20%;
+        opacity: 0;
+    }
+    55% {
+        opacity: 1;
+    }
+    65% {
+        top: 20%;
+    }
+    70% {
+        transform: translateX(-50%) rotate(-45deg) scale(1.05);
+    }
+    75%, 100% {
+        top: 20%;
+        opacity: 1;
+        transform: translateX(-50%) rotate(-45deg) scale(1);
+    }
+}
+
+@keyframes caerMoneda7 {
+    0%, 60% {
+        top: -20%;
+        opacity: 0;
+    }
+    65% {
+        opacity: 1;
+    }
+    75% {
+        top: 10%;
+    }
+    80% {
+        transform: translateX(-50%) rotate(-45deg) scale(1.05);
+    }
+    85%, 100% {
+        top: 10%;
+        opacity: 1;
+        transform: translateX(-50%) rotate(-45deg) scale(1);
+    }
+}
+
+@keyframes caerMoneda8 {
+    0%, 70% {
+        top: -20%;
+        opacity: 0;
+    }
+    75% {
+        opacity: 1;
+    }
+    85% {
+        top: 0%;
+    }
+    90% {
+        transform: translateX(-50%) rotate(-45deg) scale(1.05);
+    }
+    95%, 100% {
+        top: 0%;
+        opacity: 1;
+        transform: translateX(-50%) rotate(-45deg) scale(1);
+    }
+}
+
+/* Brillo dorado cuando está lleno */
+.balance-total .balance-icono::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(251, 191, 36, 0.4) 0%, transparent 70%);
+    animation: brilloLleno 8s ease-in-out infinite;
+    z-index: 8;
+    opacity: 0;
+    pointer-events: none;
+}
+
+@keyframes brilloLleno {
+    0%, 88% {
+        opacity: 0;
+    }
+    90% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    95% {
+        opacity: 1;
+        transform: scale(1.3);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1);
+    }
+}
+
+/* Efecto de resplandor al completarse */
+.balance-total .balance-icono::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60px;
+    height: 60px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(251, 191, 36, 0.6) 0%, transparent 70%);
+    animation: explosion 8s ease-in-out infinite;
+    z-index: 1;
+    opacity: 0;
+    pointer-events: none;
+}
+
+@keyframes explosion {
+    0%, 88% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+    92% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.8);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(2.5);
     }
 }
 
