@@ -54,7 +54,7 @@
 .header-icono {
     width: 64px;
     height: 64px;
-    background: var(--gradient-primary);
+    background: var(--color-primario);
     border-radius: 16px;
     display: flex;
     align-items: center;
@@ -68,10 +68,7 @@
     margin: 0;
     font-size: 2rem;
     font-weight: 800;
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--color-primario);
 }
 
 .header-subtitulo {
@@ -135,10 +132,10 @@
 
 .progreso-fill {
     height: 100%;
-    background: var(--gradient-primary);
+    background: var(--color-primario);
     border-radius: 12px;
     transition: width 0.5s ease;
-    box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+    box-shadow: 0 0 10px var(--color-primario-transparente, rgba(102, 126, 234, 0.5));
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -332,7 +329,7 @@
     min-width: 32px;
     height: 32px;
     padding: 0 0.75rem;
-    background: var(--gradient-primary);
+    background: var(--color-primario);
     color: white;
     border-radius: 16px;
     font-size: 0.875rem;
@@ -476,7 +473,7 @@
 }
 
 .btn-primary {
-    background: var(--gradient-primary);
+    background: var(--color-primario);
     color: white;
     box-shadow: var(--shadow-md);
 }
@@ -569,7 +566,7 @@
     align-items: center;
     padding: 1.5rem;
     border-bottom: 2px solid var(--borde-principal);
-    background: linear-gradient(135deg, var(--color-primario) 0%, var(--color-secundario) 100%);
+    background: var(--color-primario);
     border-radius: 18px 18px 0 0;
 }
 
@@ -849,7 +846,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--gradient-primary);
+    background: var(--color-primario);
     border-radius: 10px;
 }
 
