@@ -282,9 +282,8 @@
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <script>
         // ═══════════════════════════════════════════════════════════════
-        // VARIABLES GLOBALES (Scope global para que onclick funcione)
-        // ═══════════════════════════════════════════════════════════════
-        let transaccionEditando = null;
+       // Variables globales
+      window.transaccionEditando = null;
 
         // ═══════════════════════════════════════════════════════════════
         // FUNCIONES DE MODAL (Scope global)
@@ -293,7 +292,7 @@
             console.log('🎯 Abriendo modal...');
             
             try {
-                transaccionEditando = null;
+                window.transaccionEditando = null;
                 document.getElementById('modalTitulo').textContent = 'Nueva Transacción';
                 document.getElementById('formTransaccion').reset();
                 document.getElementById('inputFecha').valueAsDate = new Date();
@@ -354,7 +353,7 @@
             }
         }
 
-        function editarTransaccion(id) {
+ function editarTransaccion(id) {
     console.log('✏️ Editando transacción:', id);
     
     try {
@@ -367,7 +366,9 @@
         }
 
         // Guardar ID para saber que estamos editando
-        transaccionEditando = id;
+        window.transaccionEditando = id;
+        
+        console.log('📝 Datos a editar:', transaccion);
         
         // Cambiar título del modal
         document.getElementById('modalTitulo').textContent = 'Editar Transacción';
@@ -381,11 +382,28 @@
         // Cargar categorías según el tipo
         actualizarCategoriasSegunTipo();
         
-        // Esperar un momento para que se carguen las categorías
+        // Esperar más tiempo para que se carguen las categorías
         setTimeout(() => {
             // Cargar datos en el formulario
             document.getElementById('inputMonto').value = transaccion.monto;
-            document.getElementById('selectCategoria').value = transaccion.categoria;
+            
+            // CRÍTICO: Seleccionar categoría con verificación
+            const selectCategoria = document.getElementById('selectCategoria');
+            const categoriaExiste = Array.from(selectCategoria.options).some(opt => opt.value === transaccion.categoria);
+            
+            if (categoriaExiste) {
+                selectCategoria.value = transaccion.categoria;
+                console.log('✅ Categoría seleccionada:', transaccion.categoria);
+            } else {
+                console.warn('⚠️ Categoría no encontrada:', transaccion.categoria);
+                // Agregar la categoría si no existe
+                const option = document.createElement('option');
+                option.value = transaccion.categoria;
+                option.textContent = transaccion.categoria;
+                selectCategoria.appendChild(option);
+                selectCategoria.value = transaccion.categoria;
+            }
+            
             document.getElementById('inputDescripcion').value = transaccion.descripcion || '';
             
             // Convertir fecha ISO a formato input date (YYYY-MM-DD)
@@ -407,8 +425,9 @@
                 document.getElementById('inputMonto').select();
             }, 300);
             
-            console.log('✅ Modal de edición cargado');
-        }, 100);
+            console.log('✅ Modal de edición cargado con ID:', transaccionEditando);
+            
+        }, 200); // Aumentado de 100ms a 200ms
         
     } catch (error) {
         console.error('❌ Error editando transacción:', error);
@@ -856,32 +875,56 @@ document.getElementById('nivelBanner').style.display = 'flex';
         // INICIALIZACIÓN
         // ═══════════════════════════════════════════════════════════════
         function inicializarFlujoCaja() {
-            console.log('🚀 Inicializando Flujo de Caja...');
-            
-            // Configurar fecha actual por defecto
-            const fechaInput = document.getElementById('inputFecha');
-            if (fechaInput) {
-                fechaInput.valueAsDate = new Date();
+    console.log('🚀 Inicializando Flujo de Caja...');
+    
+    // Configurar fecha actual por defecto
+    const fechaInput = document.getElementById('inputFecha');
+    if (fechaInput) {
+        fechaInput.valueAsDate = new Date();
+    }
+    
+    // Configurar eventos SIEMPRE
+    configurarEventos();
+    
+    // Esperar a que el módulo esté listo para cargar datos
+    if (!window.flujoCaja) {
+        console.warn('⚠️ Esperando módulo flujoCaja...');
+        let intentos = 0;
+        const esperarModulo = setInterval(() => {
+            intentos++;
+            if (window.flujoCaja) {
+                clearInterval(esperarModulo);
+                cargarDatosIniciales();
+            } else if (intentos > 10) {
+                clearInterval(esperarModulo);
+                console.error('❌ Módulo flujoCaja no disponible después de 5 segundos');
             }
-            
-            // Configurar eventos SIEMPRE
-            configurarEventos();
-            
-            // Esperar a que el módulo esté listo para cargar datos
-            if (!window.flujoCaja) {
-                console.warn('⚠️ Esperando módulo flujoCaja...');
-                setTimeout(() => {
-                    if (window.flujoCaja) {
-                        cargarDatosIniciales();
-                    } else {
-                        console.error('❌ Módulo flujoCaja no disponible');
-                    }
-                }, 1000);
-                return;
-            }
+        }, 500);
+        return;
+    }
 
-            cargarDatosIniciales();
-        }
+    cargarDatosIniciales();
+}
+
+function cargarDatosIniciales() {
+    console.log('📊 Cargando datos iniciales...');
+    
+    try {
+        cargarNivel();
+        cargarCategorias();
+        cargarBalance();
+        cargarTransacciones();
+        
+        console.log('✅ Flujo de Caja listo');
+        
+        // Verificar que se cargaron las transacciones
+        const transacciones = window.flujoCaja.obtenerTransacciones();
+        console.log(`📋 ${transacciones.length} transacciones cargadas desde localStorage`);
+        
+    } catch (error) {
+        console.error('❌ Error cargando datos iniciales:', error);
+    }
+}
 
         function cargarDatosIniciales() {
             console.log('📊 Cargando datos iniciales...');
