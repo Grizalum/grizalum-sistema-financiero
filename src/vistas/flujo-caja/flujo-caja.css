@@ -1454,3 +1454,250 @@
         animation-duration: 3s;
     }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   💰 EFECTO ALCANCÍA - DIAMANTE LLENÁNDOSE CON MONEDAS
+   ═══════════════════════════════════════════════════════════════ */
+
+.balance-total .balance-icono {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Diamante blanco por encima */
+.balance-total .balance-icono i {
+    position: relative;
+    z-index: 10;
+    color: rgba(255, 255, 255, 0.95);
+    filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.5));
+}
+
+/* Contenedor de monedas (forma de diamante) */
+.balance-total .balance-icono::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 36px;
+    height: 36px;
+    transform: translate(-50%, -50%) rotate(45deg);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    background: linear-gradient(
+        to top,
+        #f59e0b 0%,
+        #fbbf24 100%
+    );
+    transform-origin: center;
+    animation: llenarDiamante 8s ease-in-out infinite;
+    z-index: 5;
+}
+
+@keyframes llenarDiamante {
+    0% {
+        height: 0px;
+        opacity: 0;
+        transform: translate(-50%, 100%) rotate(45deg);
+    }
+    5% {
+        opacity: 1;
+    }
+    90% {
+        height: 36px;
+        transform: translate(-50%, -50%) rotate(45deg);
+        opacity: 1;
+    }
+    95% {
+        filter: brightness(1.5) saturate(1.5);
+    }
+    100% {
+        height: 36px;
+        transform: translate(-50%, -50%) rotate(45deg);
+        opacity: 0;
+    }
+}
+
+/* Monedas cayendo (simuladas con sombras) */
+.balance-total .balance-icono::after {
+    content: '';
+    position: absolute;
+    top: -10%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #fde68a, #fbbf24, #f59e0b);
+    transform: translateX(-50%);
+    box-shadow:
+        /* Moneda 1 */
+        0px 0px 0 0 transparent,
+        /* Moneda 2 */
+        -3px 0px 0 0 transparent,
+        /* Moneda 3 */
+        3px 0px 0 0 transparent,
+        /* Moneda 4 */
+        -6px 0px 0 0 transparent,
+        /* Moneda 5 */
+        6px 0px 0 0 transparent,
+        /* Moneda 6 */
+        0px 0px 0 0 transparent,
+        /* Moneda 7 */
+        -3px 0px 0 0 transparent,
+        /* Moneda 8 */
+        3px 0px 0 0 transparent;
+    animation: caerMonedas 8s ease-in infinite;
+    z-index: 8;
+    opacity: 0;
+}
+
+@keyframes caerMonedas {
+    0% {
+        top: -10%;
+        opacity: 0;
+        box-shadow:
+            0px 0px 0 0 transparent,
+            -3px 0px 0 0 transparent,
+            3px 0px 0 0 transparent,
+            -6px 0px 0 0 transparent,
+            6px 0px 0 0 transparent,
+            0px 0px 0 0 transparent,
+            -3px 0px 0 0 transparent,
+            3px 0px 0 0 transparent;
+    }
+    
+    /* Moneda 1 cae */
+    10% {
+        top: 50%;
+        opacity: 1;
+        box-shadow:
+            0px 35px 0 4px #fbbf24,
+            -3px 0px 0 0 transparent,
+            3px 0px 0 0 transparent,
+            -6px 0px 0 0 transparent,
+            6px 0px 0 0 transparent,
+            0px 0px 0 0 transparent,
+            -3px 0px 0 0 transparent,
+            3px 0px 0 0 transparent;
+    }
+    
+    /* Moneda 2 cae */
+    20% {
+        box-shadow:
+            0px 35px 0 4px #fbbf24,
+            -3px 28px 0 4px #f59e0b,
+            3px 0px 0 0 transparent,
+            -6px 0px 0 0 transparent,
+            6px 0px 0 0 transparent,
+            0px 0px 0 0 transparent,
+            -3px 0px 0 0 transparent,
+            3px 0px 0 0 transparent;
+    }
+    
+    /* Moneda 3 cae */
+    30% {
+        box-shadow:
+            0px 35px 0 4px #fbbf24,
+            -3px 28px 0 4px #f59e0b,
+            3px 28px 0 4px #fbbf24,
+            -6px 0px 0 0 transparent,
+            6px 0px 0 0 transparent,
+            0px 0px 0 0 transparent,
+            -3px 0px 0 0 transparent,
+            3px 0px 0 0 transparent;
+    }
+    
+    /* Moneda 4 cae */
+    40% {
+        box-shadow:
+            0px 35px 0 4px #fbbf24,
+            -3px 28px 0 4px #f59e0b,
+            3px 28px 0 4px #fbbf24,
+            -6px 21px 0 4px #f59e0b,
+            6px 0px 0 0 transparent,
+            0px 0px 0 0 transparent,
+            -3px 0px 0 0 transparent,
+            3px 0px 0 0 transparent;
+    }
+    
+    /* Moneda 5 cae */
+    50% {
+        box-shadow:
+            0px 35px 0 4px #fbbf24,
+            -3px 28px 0 4px #f59e0b,
+            3px 28px 0 4px #fbbf24,
+            -6px 21px 0 4px #f59e0b,
+            6px 21px 0 4px #fbbf24,
+            0px 0px 0 0 transparent,
+            -3px 0px 0 0 transparent,
+            3px 0px 0 0 transparent;
+    }
+    
+    /* Moneda 6 cae */
+    60% {
+        box-shadow:
+            0px 35px 0 4px #fbbf24,
+            -3px 28px 0 4px #f59e0b,
+            3px 28px 0 4px #fbbf24,
+            -6px 21px 0 4px #f59e0b,
+            6px 21px 0 4px #fbbf24,
+            0px 14px 0 4px #f59e0b,
+            -3px 0px 0 0 transparent,
+            3px 0px 0 0 transparent;
+    }
+    
+    /* Moneda 7 cae */
+    70% {
+        box-shadow:
+            0px 35px 0 4px #fbbf24,
+            -3px 28px 0 4px #f59e0b,
+            3px 28px 0 4px #fbbf24,
+            -6px 21px 0 4px #f59e0b,
+            6px 21px 0 4px #fbbf24,
+            0px 14px 0 4px #f59e0b,
+            -3px 7px 0 4px #fbbf24,
+            3px 0px 0 0 transparent;
+    }
+    
+    /* Moneda 8 cae (lleno) */
+    80%, 95% {
+        box-shadow:
+            0px 35px 0 4px #fbbf24,
+            -3px 28px 0 4px #f59e0b,
+            3px 28px 0 4px #fbbf24,
+            -6px 21px 0 4px #f59e0b,
+            6px 21px 0 4px #fbbf24,
+            0px 14px 0 4px #f59e0b,
+            -3px 7px 0 4px #fbbf24,
+            3px 7px 0 4px #f59e0b;
+    }
+    
+    /* Desvanece */
+    100% {
+        opacity: 0;
+        box-shadow:
+            0px 35px 0 4px #fbbf24,
+            -3px 28px 0 4px #f59e0b,
+            3px 28px 0 4px #fbbf24,
+            -6px 21px 0 4px #f59e0b,
+            6px 21px 0 4px #fbbf24,
+            0px 14px 0 4px #f59e0b,
+            -3px 7px 0 4px #fbbf24,
+            3px 7px 0 4px #f59e0b;
+    }
+}
+
+/* Brillo cuando está lleno */
+@keyframes brilloCompleto {
+    0%, 80% {
+        filter: brightness(1);
+    }
+    90% {
+        filter: brightness(1.5) saturate(1.5) drop-shadow(0 0 20px #fbbf24);
+    }
+    100% {
+        filter: brightness(1);
+    }
+}
+
+.balance-total .balance-icono {
+    animation: brilloCompleto 8s ease-in-out infinite;
+}
