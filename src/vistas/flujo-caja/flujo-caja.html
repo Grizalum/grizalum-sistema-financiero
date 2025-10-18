@@ -27,12 +27,12 @@
                 </div>
             </div>
             
-            <div class="header-acciones">
+             <div class="header-acciones">
                 <button id="btnExportarRapido" class="btn-secondary">
                     <i class="fas fa-download"></i>
                     <span>Exportar</span>
                 </button>
-               <button id="btnNuevaTransaccion" class="btn-primary">
+               <button id="btnNuevaTransaccion" class="btn-primary" onclick="(function(){ const modal = document.getElementById('modalTransaccion'); if(modal) modal.classList.add('show'); })()">
                     <i class="fas fa-plus"></i>
                     <span>Nueva Transacción</span>
                 </button>
