@@ -1185,3 +1185,285 @@
         justify-content: center;
     }
 }
+/* ═══════════════════════════════════════════════════════════════
+   🎨 EFECTOS VISUALES AVANZADOS - FLUJO DE CAJA
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────────────
+   1️⃣ RELIEVE CON LUZ EN CARDS (Efecto Neumórfico)
+   ───────────────────────────────────────────────────────────── */
+.balance-card {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.balance-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 70%
+    );
+    transform: rotate(45deg);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0%, 100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.balance-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 
+        0 20px 60px -15px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   2️⃣ ANIMACIÓN SERPIENTE EN FLECHAS
+   ───────────────────────────────────────────────────────────── */
+
+/* Contenedor de la animación */
+.balance-icono {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+}
+
+/* Efecto serpiente para INGRESOS (sube de abajo hacia arriba) */
+.balance-ingresos .balance-icono::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(
+        to top,
+        transparent 0%,
+        #10b981 20%,
+        #34d399 40%,
+        #6ee7b7 60%,
+        transparent 80%
+    );
+    border-radius: 2px;
+    transform: translateX(-50%) scaleY(0);
+    transform-origin: bottom;
+    animation: serpienteSubir 2.5s ease-in-out infinite;
+    filter: blur(1px);
+    box-shadow: 0 0 10px #10b981;
+}
+
+@keyframes serpienteSubir {
+    0% { 
+        transform: translateX(-50%) scaleY(0);
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    50% { 
+        transform: translateX(-50%) scaleY(1);
+        opacity: 1;
+    }
+    70% {
+        opacity: 0.5;
+    }
+    100% { 
+        transform: translateX(-50%) scaleY(0);
+        opacity: 0;
+    }
+}
+
+/* Efecto serpiente para GASTOS (baja de arriba hacia abajo) */
+.balance-gastos .balance-icono::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        #ef4444 20%,
+        #f87171 40%,
+        #fca5a5 60%,
+        transparent 80%
+    );
+    border-radius: 2px;
+    transform: translateX(-50%) scaleY(0);
+    transform-origin: top;
+    animation: serpienteBajar 2.5s ease-in-out infinite;
+    filter: blur(1px);
+    box-shadow: 0 0 10px #ef4444;
+}
+
+@keyframes serpienteBajar {
+    0% { 
+        transform: translateX(-50%) scaleY(0);
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    50% { 
+        transform: translateX(-50%) scaleY(1);
+        opacity: 1;
+    }
+    70% {
+        opacity: 0.5;
+    }
+    100% { 
+        transform: translateX(-50%) scaleY(0);
+        opacity: 0;
+    }
+}
+
+/* Pulso en el ícono cuando llega la luz */
+.balance-ingresos .balance-icono i,
+.balance-gastos .balance-icono i {
+    animation: pulsoIcono 2.5s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px currentColor);
+}
+
+@keyframes pulsoIcono {
+    0%, 100% { 
+        transform: scale(1);
+        opacity: 0.9;
+    }
+    50% { 
+        transform: scale(1.15);
+        opacity: 1;
+    }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   3️⃣ MONEDAS CAYENDO EN EL DIAMANTE
+   ───────────────────────────────────────────────────────────── */
+
+.balance-total .balance-icono {
+    overflow: visible;
+}
+
+/* Moneda individual */
+.balance-total .balance-icono::after {
+    content: '💰';
+    position: absolute;
+    font-size: 1.2rem;
+    top: -20%;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: caerMoneda 3s ease-in infinite;
+    opacity: 0;
+}
+
+@keyframes caerMoneda {
+    0% {
+        top: -20%;
+        opacity: 0;
+        transform: translateX(-50%) rotate(0deg);
+    }
+    10% {
+        opacity: 1;
+    }
+    50% {
+        top: 50%;
+        opacity: 1;
+        transform: translateX(-50%) rotate(360deg);
+    }
+    100% {
+        top: 120%;
+        opacity: 0;
+        transform: translateX(-50%) rotate(720deg);
+    }
+}
+
+/* Efecto de brillo dorado en el diamante */
+.balance-total .balance-icono i {
+    animation: brilloDiamante 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 12px #fbbf24);
+}
+
+@keyframes brilloDiamante {
+    0%, 100% {
+        transform: scale(1) rotate(0deg);
+        filter: drop-shadow(0 0 12px #fbbf24);
+    }
+    50% {
+        transform: scale(1.1) rotate(5deg);
+        filter: drop-shadow(0 0 20px #fbbf24) drop-shadow(0 0 30px #f59e0b);
+    }
+}
+
+/* Ondas de impacto cuando cae la moneda */
+.balance-total .balance-icono::before {
+    content: '';
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    width: 80%;
+    height: 4px;
+    background: radial-gradient(circle, #fbbf24 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translateX(-50%) scaleX(0);
+    animation: ondaImpacto 3s ease-out infinite;
+    opacity: 0;
+}
+
+@keyframes ondaImpacto {
+    0%, 45% {
+        transform: translateX(-50%) scaleX(0);
+        opacity: 0;
+    }
+    50% {
+        transform: translateX(-50%) scaleX(1);
+        opacity: 0.8;
+    }
+    55% {
+        transform: translateX(-50%) scaleX(1.5);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(-50%) scaleX(1.5);
+        opacity: 0;
+    }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   🎯 OPTIMIZACIONES DE RENDIMIENTO
+   ───────────────────────────────────────────────────────────── */
+
+/* Pausar animaciones cuando no está visible */
+.balance-card {
+    will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .balance-card::before,
+    .balance-icono::before,
+    .balance-icono::after,
+    .balance-icono i {
+        animation: none !important;
+    }
+}
+
+/* Pausar animaciones en móviles para mejor rendimiento */
+@media (max-width: 768px) {
+    .balance-card::before {
+        animation-duration: 5s; /* Más lento en móvil */
+    }
+}
