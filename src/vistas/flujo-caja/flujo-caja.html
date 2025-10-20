@@ -9,44 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="modo-oscuro">
-        <!-- ═══════════════════════════════════════════════════════════════ -->
-<!-- LOADING HELPER -->
-<!-- ═══════════════════════════════════════════════════════════════ -->
-<script>
-window.LoadingHelper = {
-    show: function(btn, txt) {
-        var t = txt || 'Cargando...';
-        var b = typeof btn === 'string' ? document.getElementById(btn) : btn;
-        if (!b) return;
-        b.setAttribute('data-html', b.innerHTML);
-        b.disabled = true;
-        b.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + t;
-        b.style.opacity = '0.7';
-    },
-    hide: function(btn) {
-        var b = typeof btn === 'string' ? document.getElementById(btn) : btn;
-        if (!b) return;
-        var h = b.getAttribute('data-html');
-        if (h) b.innerHTML = h;
-        b.disabled = false;
-        b.style.opacity = '1';
-    },
-    showOverlay: function(txt) {
-        var t = txt || 'Procesando...';
-        this.hideOverlay();
-        var o = document.createElement('div');
-        o.id = 'loadingOverlay';
-        o.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:999999;display:flex;align-items:center;justify-content:center;';
-        o.innerHTML = '<div style="text-align:center;color:white;"><i class="fas fa-spinner fa-spin" style="font-size:3rem;margin-bottom:1rem;"></i><p style="font-size:1.25rem;">' + t + '</p></div>';
-        document.body.appendChild(o);
-    },
-    hideOverlay: function() {
-        var o = document.getElementById('loadingOverlay');
-        if (o) o.remove();
-    }
-};
-console.log('✅ LoadingHelper cargado');
-</script>
 
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <!-- CONTENEDOR PRINCIPAL -->
