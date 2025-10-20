@@ -277,9 +277,48 @@
         </div>
     </div>
     
-     <!-- UTILIDADES -->
+      <!-- UTILIDADES -->
     <!-- ═══════════════════════════════════════════════════════════════ -->
-    <script src="../../utils/loading-helper.js"></script>
+    <script>
+    // ════════════════════════════════════════════════════════════════
+    // LOADING HELPER - INLINE
+    // ════════════════════════════════════════════════════════════════
+    window.LoadingHelper = {
+        show: function(buttonElement, text = 'Cargando...') {
+            const btn = typeof buttonElement === 'string' ? document.getElementById(buttonElement) : buttonElement;
+            if (!btn) return;
+            btn.dataset.originalHTML = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + text;
+            btn.style.opacity = '0.7';
+            console.log('✅ Loading activado');
+        },
+        
+        hide: function(buttonElement) {
+            const btn = typeof buttonElement === 'string' ? document.getElementById(buttonElement) : buttonElement;
+            if (!btn) return;
+            btn.disabled = false;
+            btn.innerHTML = btn.dataset.originalHTML || btn.innerHTML;
+            btn.style.opacity = '1';
+            console.log('✅ Loading desactivado');
+        },
+        
+        showOverlay: function(text = 'Procesando...') {
+            this.hideOverlay();
+            const overlay = document.createElement('div');
+            overlay.id = 'loadingOverlay';
+            overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:999999;display:flex;align-items:center;justify-content:center;';
+            overlay.innerHTML = '<div style="text-align:center;color:white;"><i class="fas fa-spinner fa-spin" style="font-size:3rem;margin-bottom:1rem;"></i><p style="font-size:1.25rem;font-weight:600;">' + text + '</p></div>';
+            document.body.appendChild(overlay);
+        },
+        
+        hideOverlay: function() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) overlay.remove();
+        }
+    };
+    console.log('✅ LoadingHelper cargado');
+    </script>
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <!-- SCRIPTS -->
     <!-- ═══════════════════════════════════════════════════════════════ -->
