@@ -277,48 +277,51 @@
         </div>
     </div>
     
-      <!-- UTILIDADES -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <script>
-    // ════════════════════════════════════════════════════════════════
-    // LOADING HELPER - INLINE
-    // ════════════════════════════════════════════════════════════════
+     <!-- UTILIDADES -->
+<script>
+(function() {
+    'use strict';
+    
     window.LoadingHelper = {
-        show: function(buttonElement, text = 'Cargando...') {
-            const btn = typeof buttonElement === 'string' ? document.getElementById(buttonElement) : buttonElement;
-            if (!btn) return;
-            btn.dataset.originalHTML = btn.innerHTML;
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + text;
-            btn.style.opacity = '0.7';
-            console.log('✅ Loading activado');
+        show: function(btn, text) {
+            text = text || 'Cargando...';
+            var button = typeof btn === 'string' ? document.getElementById(btn) : btn;
+            if (!button) return;
+            button.dataset.originalHTML = button.innerHTML;
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + text;
+            button.style.opacity = '0.7';
+            console.log('✅ Loading ON');
         },
         
-        hide: function(buttonElement) {
-            const btn = typeof buttonElement === 'string' ? document.getElementById(buttonElement) : buttonElement;
-            if (!btn) return;
-            btn.disabled = false;
-            btn.innerHTML = btn.dataset.originalHTML || btn.innerHTML;
-            btn.style.opacity = '1';
-            console.log('✅ Loading desactivado');
+        hide: function(btn) {
+            var button = typeof btn === 'string' ? document.getElementById(btn) : btn;
+            if (!button) return;
+            button.disabled = false;
+            button.innerHTML = button.dataset.originalHTML || button.innerHTML;
+            button.style.opacity = '1';
+            console.log('✅ Loading OFF');
         },
         
-        showOverlay: function(text = 'Procesando...') {
+        showOverlay: function(text) {
+            text = text || 'Procesando...';
             this.hideOverlay();
-            const overlay = document.createElement('div');
+            var overlay = document.createElement('div');
             overlay.id = 'loadingOverlay';
-            overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:999999;display:flex;align-items:center;justify-content:center;';
-            overlay.innerHTML = '<div style="text-align:center;color:white;"><i class="fas fa-spinner fa-spin" style="font-size:3rem;margin-bottom:1rem;"></i><p style="font-size:1.25rem;font-weight:600;">' + text + '</p></div>';
+            overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:999999;display:flex;align-items:center;justify-content:center;';
+            overlay.innerHTML = '<div style="text-align:center;color:white;"><i class="fas fa-spinner fa-spin" style="font-size:3rem;margin-bottom:1rem;"></i><p style="font-size:1.25rem;">' + text + '</p></div>';
             document.body.appendChild(overlay);
         },
         
         hideOverlay: function() {
-            const overlay = document.getElementById('loadingOverlay');
+            var overlay = document.getElementById('loadingOverlay');
             if (overlay) overlay.remove();
         }
     };
-    console.log('✅ LoadingHelper cargado');
-    </script>
+    
+    console.log('✅ LoadingHelper cargado correctamente');
+})();
+</script>
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <!-- SCRIPTS -->
     <!-- ═══════════════════════════════════════════════════════════════ -->
