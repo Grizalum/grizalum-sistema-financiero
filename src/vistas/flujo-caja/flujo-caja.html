@@ -181,96 +181,41 @@
 <!-- LOADING HELPER -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <script>
-console.log('🔧 Iniciando LoadingHelper...');
-
-window.LoadingHelper = {};
-
-window.LoadingHelper.show = function(buttonElement, text) {
-    console.log('📍 LoadingHelper.show llamado');
-    if (!text) text = 'Cargando...';
-    
-    var btn;
-    if (typeof buttonElement === 'string') {
-        btn = document.getElementById(buttonElement);
-    } else {
-        btn = buttonElement;
-    }
-    
-    if (!btn) {
-        console.warn('⚠️ Botón no encontrado');
-        return;
-    }
-    
-    btn.setAttribute('data-original-html', btn.innerHTML);
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + text;
-    btn.style.opacity = '0.7';
-    
-    console.log('✅ Loading activado');
-};
-
-window.LoadingHelper.hide = function(buttonElement) {
-    console.log('📍 LoadingHelper.hide llamado');
-    
-    var btn;
-    if (typeof buttonElement === 'string') {
-        btn = document.getElementById(buttonElement);
-    } else {
-        btn = buttonElement;
-    }
-    
-    if (!btn) {
-        console.warn('⚠️ Botón no encontrado');
-        return;
-    }
-    
-    var originalHTML = btn.getAttribute('data-original-html');
-    if (originalHTML) {
-        btn.innerHTML = originalHTML;
-    }
-    btn.disabled = false;
-    btn.style.opacity = '1';
-    
-    console.log('✅ Loading desactivado');
-};
-
-window.LoadingHelper.showOverlay = function(text) {
-    if (!text) text = 'Procesando...';
-    
-    window.LoadingHelper.hideOverlay();
-    
-    var overlay = document.createElement('div');
-    overlay.id = 'loadingOverlay';
-    overlay.style.position = 'fixed';
-    overlay.style.top = '0';
-    overlay.style.left = '0';
-    overlay.style.right = '0';
-    overlay.style.bottom = '0';
-    overlay.style.background = 'rgba(0,0,0,0.85)';
-    overlay.style.zIndex = '999999';
-    overlay.style.display = 'flex';
-    overlay.style.alignItems = 'center';
-    overlay.style.justifyContent = 'center';
-    
-    var content = document.createElement('div');
-    content.style.textAlign = 'center';
-    content.style.color = 'white';
-    content.innerHTML = '<i class="fas fa-spinner fa-spin" style="font-size:3rem;margin-bottom:1rem;"></i><p style="font-size:1.25rem;">' + text + '</p>';
-    
-    overlay.appendChild(content);
-    document.body.appendChild(overlay);
-};
-
-window.LoadingHelper.hideOverlay = function() {
-    var overlay = document.getElementById('loadingOverlay');
-    if (overlay) {
-        overlay.remove();
+window.LoadingHelper = {
+    show: function(btn, txt) {
+        var t = txt || 'Cargando...';
+        var b = typeof btn === 'string' ? document.getElementById(btn) : btn;
+        if (!b) return;
+        b.setAttribute('data-html', b.innerHTML);
+        b.disabled = true;
+        b.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + t;
+        b.style.opacity = '0.7';
+    },
+    hide: function(btn) {
+        var b = typeof btn === 'string' ? document.getElementById(btn) : btn;
+        if (!b) return;
+        var h = b.getAttribute('data-html');
+        if (h) b.innerHTML = h;
+        b.disabled = false;
+        b.style.opacity = '1';
+    },
+    showOverlay: function(txt) {
+        var t = txt || 'Procesando...';
+        this.hideOverlay();
+        var o = document.createElement('div');
+        o.id = 'loadingOverlay';
+        o.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:999999;display:flex;align-items:center;justify-content:center;';
+        o.innerHTML = '<div style="text-align:center;color:white;"><i class="fas fa-spinner fa-spin" style="font-size:3rem;margin-bottom:1rem;"></i><p style="font-size:1.25rem;">' + t + '</p></div>';
+        document.body.appendChild(o);
+    },
+    hideOverlay: function() {
+        var o = document.getElementById('loadingOverlay');
+        if (o) o.remove();
     }
 };
-
-console.log('✅ LoadingHelper cargado exitosamente');
-console.log('🔍 Verificar con: window.LoadingHelper');
+console.log('✅ LoadingHelper cargado');
 </script>
+
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <!-- MODAL NUEVA TRANSACCIÓN -->
     <!-- ═══════════════════════════════════════════════════════════════ -->
