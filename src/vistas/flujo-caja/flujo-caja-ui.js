@@ -234,13 +234,28 @@ class FlujoCajaUI {
     }
 
     cargarBalance() {
+    console.log('💰 [cargarBalance] Iniciando...');
+    
+    try {
+        if (!this.modulo) {
+            console.error('❌ [cargarBalance] No hay módulo disponible');
+            return;
+        }
+        
         const balance = this.modulo.calcularBalance();
+        console.log('📊 [cargarBalance] Balance calculado:', balance);
         
         const balanceTotal = document.getElementById('balanceTotal');
         const totalIngresos = document.getElementById('totalIngresos');
         const totalGastos = document.getElementById('totalGastos');
         const cantidadIngresos = document.getElementById('cantidadIngresos');
         const cantidadGastos = document.getElementById('cantidadGastos');
+
+        console.log('🎯 [cargarBalance] Elementos encontrados:', {
+            balanceTotal: !!balanceTotal,
+            totalIngresos: !!totalIngresos,
+            totalGastos: !!totalGastos
+        });
 
         if (balanceTotal) balanceTotal.textContent = this.formatearMoneda(balance.balance);
         if (totalIngresos) totalIngresos.textContent = this.formatearMoneda(balance.ingresos);
@@ -252,7 +267,13 @@ class FlujoCajaUI {
         if (cantidadGastos) {
             cantidadGastos.textContent = `${balance.cantidadGastos} transacción${balance.cantidadGastos !== 1 ? 'es' : ''}`;
         }
+        
+        console.log('✅ [cargarBalance] Completado');
+        
+    } catch (error) {
+        console.error('❌ [cargarBalance] Error:', error);
     }
+}
 
     cargarTransacciones(filtros = {}) {
         const transacciones = this.modulo.obtenerTransacciones(filtros);
