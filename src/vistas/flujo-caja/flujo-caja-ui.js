@@ -520,3 +520,51 @@ class FlujoCajaUI {
 window.flujoCajaUI = new FlujoCajaUI();
 
 console.log('🎨 UI de Flujo de Caja cargada');
+
+// ═══════════════════════════════════════════════════════════════
+// EXPORTAR FUNCIONES COMO GLOBALES (para compatibilidad con HTML)
+// ═══════════════════════════════════════════════════════════════
+
+window.cargarBalance = function() {
+    if (window.flujoCajaUI) {
+        window.flujoCajaUI.cargarBalance();
+    }
+};
+
+window.cargarTransacciones = function(filtros = {}) {
+    if (window.flujoCajaUI) {
+        window.flujoCajaUI.cargarTransacciones(filtros);
+    }
+};
+
+window.cargarNivel = function() {
+    if (window.flujoCajaUI) {
+        window.flujoCajaUI.cargarNivel();
+    }
+};
+
+window.cargarCategorias = function() {
+    if (window.flujoCajaUI) {
+        window.flujoCajaUI.cargarCategorias();
+    }
+};
+
+window.abrirModalTransaccion = function() {
+    if (window.flujoCajaUI) {
+        window.flujoCajaUI.abrirModalTransaccion();
+    }
+};
+
+window.editarTransaccion = function(id) {
+    if (window.flujoCajaUI) {
+        window.flujoCajaUI.editarTransaccion(id);
+    }
+};
+
+window.eliminarTransaccion = function(id) {
+    if (window.flujoCajaUI) {
+        window.flujoCajaUI.eliminarTransaccion(id);
+    }
+};
+
+console.log('✅ Funciones globales exportadas');
