@@ -505,7 +505,7 @@
         // ═══════════════════════════════════════════════════════════════
         // FUNCIONES DE CARGA DE DATOS
         // ═══════════════════════════════════════════════════════════════
-        function cargarNivel() {
+        window.cargarNivel = function() {
             try {
                 const info = window.flujoCaja?.obtenerInfo();
                 
@@ -571,7 +571,7 @@
             }
         }
 
-        function cargarCategorias() {
+        window.cargarCategorias = function() {
             try {
                 const info = window.flujoCaja.obtenerInfo();
                 
@@ -641,7 +641,7 @@
             }
         }
 
-        function cargarBalance() {
+        window.cargarBalance = function() {
             try {
                 const balance = window.flujoCaja.calcularBalance();
                 
@@ -658,7 +658,7 @@
             }
         }
 
-        function cargarTransacciones(filtros = {}) {
+        window.cargarTransacciones = function(filtros = {}) {
             try {
                 const transacciones = window.flujoCaja.obtenerTransacciones(filtros);
                 const lista = document.getElementById('listaTransacciones');
