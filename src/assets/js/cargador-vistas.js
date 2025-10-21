@@ -81,9 +81,23 @@ class CargadorVistas {
             });
         });
         
-        // ═══ PASO 6: FADE IN SUAVE ═══
+       // ═══ PASO 6: FADE IN SUAVE ═══
         this.contenedor.style.transition = 'opacity 0.2s ease';
         this.contenedor.style.opacity = '1';
+        
+        // ═══ PASO 7: DISPARAR EVENTO DE VISTA CARGADA ═══
+        setTimeout(() => {
+            // Evento genérico
+            window.dispatchEvent(new CustomEvent('vistaLista', { 
+                detail: { vistaId: vistaId } 
+            }));
+            
+            // Evento específico para flujo de caja
+            if (vistaId === 'cash-flow') {
+                window.dispatchEvent(new Event('flujoCajaVisible'));
+                console.log('   📢 Evento flujoCajaVisible disparado');
+            }
+        }, 350); // Esperar a que termine la animación
         
         console.log(`✅ Vista ${vistaId} lista`);
         return true;
