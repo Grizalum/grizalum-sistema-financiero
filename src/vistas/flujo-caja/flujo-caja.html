@@ -931,6 +931,93 @@
             }, 100);
         });    
 
+   // ═══════════════════════════════════════════════════════════════
+        // FUNCIÓN GLOBAL DE RECARGA
+        // ═══════════════════════════════════════════════════════════════
+        window.recargarFlujoCaja = function() {
+            console.log('🔄 Recargando Flujo de Caja...');
+            
+            if (!window.flujoCaja) {
+                console.warn('⚠️ Módulo flujoCaja no disponible');
+                return;
+            }
+            
+            try {
+                // Cargar transacciones
+                const transacciones = window.flujoCaja.obtenerTransacciones();
+                const lista = document.getElementById('listaTransacciones');
+                const sinDatos = document.getElementById('sinTransacciones');
+                const totalBadge = document.getElementById('totalTransacciones');
+                
+                if (!lista) {
+                    console.warn('⚠️ Elementos DOM no encontrados');
+                    return;
+                }
+                
+                totalBadge.textContent = transacciones.length;
+                
+                if (transacciones.length === 0) {
+                    lista.style.display = 'none';
+                    sinDatos.style.display = 'flex';
+                    return;
+                }
+                
+                lista.style.display = 'block';
+                sinDatos.style.display = 'none';
+                
+                lista.innerHTML = transacciones.map(t => {
+                    const fecha = new Date(t.fecha);
+                    const esIngreso = t.tipo === 'ingreso';
+                    return `
+                        <div class="transaccion-card ${t.tipo}">
+                            <div class="transaccion-icono ${t.tipo}">
+                                <i class="fas fa-arrow-${esIngreso ? 'up' : 'down'}"></i>
+                            </div>
+                            <div class="transaccion-info">
+                                <div class="transaccion-descripcion">${t.descripcion || t.categoria}</div>
+                                <div class="transaccion-detalles">
+                                    <span class="transaccion-categoria">${t.categoria}</span>
+                                    <span class="transaccion-fecha">${fecha.toLocaleDateString('es-PE')}</span>
+                                </div>
+                            </div>
+                            <div class="transaccion-monto ${t.tipo}">
+                                ${esIngreso ? '+' : '-'} S/. ${t.monto.toFixed(2)}
+                            </div>
+                            <div class="transaccion-acciones">
+                                <button class="btn-icono" onclick="editarTransaccion('${t.id}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn-icono" onclick="eliminarTransaccion('${t.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                // Cargar balance
+                const balance = window.flujoCaja.calcularBalance();
+                document.getElementById('balanceTotal').textContent = new Intl.NumberFormat('es-PE', {style: 'currency', currency: 'PEN'}).format(balance.balance);
+                document.getElementById('totalIngresos').textContent = new Intl.NumberFormat('es-PE', {style: 'currency', currency: 'PEN'}).format(balance.ingresos);
+                document.getElementById('totalGastos').textContent = new Intl.NumberFormat('es-PE', {style: 'currency', currency: 'PEN'}).format(balance.gastos);
+                document.getElementById('cantidadIngresos').textContent = `${balance.cantidadIngresos} transacción${balance.cantidadIngresos !== 1 ? 'es' : ''}`;
+                document.getElementById('cantidadGastos').textContent = `${balance.cantidadGastos} transacción${balance.cantidadGastos !== 1 ? 'es' : ''}`;
+                
+                console.log(`✅ ${transacciones.length} transacciones mostradas`);
+                
+            } catch (error) {
+                console.error('❌ Error recargando:', error);
+            }
+        };
+        
+        // Listener para vista visible
+        window.addEventListener('flujoCajaVisible', function() {
+            console.log('👁️ Vista visible, recargando...');
+            setTimeout(() => window.recargarFlujoCaja(), 200);
+        });
+        
+        console.log('✅ Función global recargarFlujoCaja creada');
+
     </script>
 
 </body>
