@@ -915,6 +915,21 @@
         } else {
             inicializarFlujoCaja();
         }
+        // ═══════════════════════════════════════════════════════════════
+        // RECARGAR AL MOSTRAR VISTA
+        // ═══════════════════════════════════════════════════════════════
+        window.addEventListener('flujoCajaVisible', function() {
+            console.log('👁️ Vista visible, recargando transacciones...');
+            setTimeout(() => {
+                if (window.flujoCaja && typeof cargarTransacciones === 'function') {
+                    cargarTransacciones();
+                    console.log('✅ Transacciones recargadas automáticamente');
+                }
+                if (typeof cargarBalance === 'function') {
+                    cargarBalance();
+                }
+            }, 100);
+        });    
 
     </script>
 
