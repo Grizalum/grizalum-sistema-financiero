@@ -543,10 +543,46 @@ class FlujoCajaUI {
     }
 }
 
-// Inicialización global
-window.flujoCajaUI = new FlujoCajaUI();
+// ═══════════════════════════════════════════════════════════════
+// INICIALIZACIÓN INTELIGENTE
+// ═══════════════════════════════════════════════════════════════
 
-console.log('🎨 UI de Flujo de Caja cargada');
+// NO inicializar inmediatamente, esperar a que la vista esté visible
+let flujoCajaUIInstancia = null;
+
+function inicializarFlujoCajaUI() {
+    console.log('🚀 Inicializando Flujo de Caja UI...');
+    
+    if (!flujoCajaUIInstancia) {
+        flujoCajaUIInstancia = new FlujoCajaUI();
+        window.flujoCajaUI = flujoCajaUIInstancia;
+    }
+    
+    // Esperar 500ms para asegurar que el DOM está listo
+    setTimeout(() => {
+        if (window.flujoCajaUI?.modulo) {
+            console.log('📊 Cargando datos iniciales...');
+            window.flujoCajaUI.cargarBalance();
+            window.flujoCajaUI.cargarTransacciones();
+        }
+    }, 500);
+}
+
+// Escuchar cuando la vista se hace visible
+window.addEventListener('flujoCajaVisible', inicializarFlujoCajaUI);
+
+// También intentar inicializar al cargar
+if (document.readyState === 'complete') {
+    inicializarFlujoCajaUI();
+} else {
+    window.addEventListener('load', inicializarFlujoCajaUI);
+}
+
+console.log('🎨 UI de Flujo de Caja lista para inicializar');
+
+// Funciones globales
+window.cargarBalance = () => window.flujoCajaUI?.cargarBalance();
+window.cargarTransacciones = (filtros) => window.flujoCajaUI?.cargarTransacciones(filtros);
 
 // ═══════════════════════════════════════════════════════════════
 // EXPORTAR FUNCIONES COMO GLOBALES (para compatibilidad con HTML)
