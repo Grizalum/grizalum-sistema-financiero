@@ -14,13 +14,19 @@ class FlujoCajaUI {
     }
 
     async _inicializar() {
-        console.log('🎨 Inicializando interfaz Flujo de Caja...');
-        
-        // Esperar a que el módulo esté listo
-        await this._esperarModulo();
-        
-        // Configurar fecha actual por defecto
-        this._configurarFechaActual();
+    console.log('🎨 Inicializando interfaz Flujo de Caja...');
+    
+    // Esperar a que el módulo esté listo
+    await this._esperarModulo();
+    
+    // ⬇️⬇️⬇️ AGREGAR ESTAS LÍNEAS ⬇️⬇️⬇️
+    // Esperar a que el DOM esté completamente listo
+    await new Promise(resolve => setTimeout(resolve, 300));
+    console.log('✅ DOM listo, cargando datos...');
+    // ⬆️⬆️⬆️ HASTA AQUÍ ⬆️⬆️⬆️
+    
+    // Configurar fecha actual por defecto
+    this._configurarFechaActual();
         
         // Cargar datos iniciales
         this.cargarNivel();
