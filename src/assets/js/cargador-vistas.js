@@ -99,7 +99,18 @@ class CargadorVistas {
             }
         }, 350); // Esperar a que termine la animación
         
-        console.log(`✅ Vista ${vistaId} lista`);
+       console.log(`✅ Vista ${vistaId} lista`);
+        
+        // FORZAR RECARGA PARA FLUJO DE CAJA
+        if (vistaId === 'cash-flow') {
+            setTimeout(() => {
+                if (window.recargarFlujoCaja) {
+                    window.recargarFlujoCaja();
+                    console.log('🔄 Flujo de caja recargado automáticamente');
+                }
+            }, 500);
+        }
+        
         return true;
         
     } catch (error) {
