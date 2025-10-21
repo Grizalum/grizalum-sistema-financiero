@@ -574,3 +574,29 @@ window.eliminarTransaccion = function(id) {
 };
 
 console.log('✅ Funciones globales exportadas');
+
+// ═══════════════════════════════════════════════════════════════
+// ESCUCHAR EVENTO DE VISTA VISIBLE
+// ═══════════════════════════════════════════════════════════════
+
+window.addEventListener('flujoCajaVisible', function() {
+    console.log('👁️ Vista Flujo de Caja visible');
+    setTimeout(() => {
+        if (window.flujoCajaUI?.modulo) {
+            console.log('🔄 Recargando datos...');
+            window.flujoCajaUI.cargarBalance();
+            window.flujoCajaUI.cargarTransacciones();
+        }
+    }, 500);
+});
+
+// También escuchar cuando se carga cualquier transacción
+document.addEventListener('grizalumTransaccionAgregada', () => {
+    console.log('📝 Nueva transacción detectada, actualizando...');
+    if (window.flujoCajaUI?.modulo) {
+        window.flujoCajaUI.cargarBalance();
+        window.flujoCajaUI.cargarTransacciones();
+    }
+});
+
+console.log('✅ Listeners de recarga configurados');
