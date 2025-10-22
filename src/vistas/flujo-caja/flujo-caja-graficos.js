@@ -20,7 +20,7 @@ class VisualizadorGraficos {
         
         try {
             // 1. Verificar que exista el contenedor
-            const container = document.getElementById('graficoMensual');
+            const container = document.querySelector('#seccionGraficos .graficos-contenedor');
             if (!container) {
                 console.warn('⚠️ [Gráficos] Contenedor no encontrado');
                 return false;
