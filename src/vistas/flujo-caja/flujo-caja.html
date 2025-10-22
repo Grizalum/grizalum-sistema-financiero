@@ -94,34 +94,33 @@
         <div id="componentesAdaptativos" class="componentes-adaptativos">
             
             <!-- FILTROS (Score 20+) -->
-            <section id="seccionFiltros" class="seccion-componente oculto">
-                <div class="seccion-header">
-                    <h3>📅 Filtros</h3>
-                </div>
-                <div class="filtros-contenedor">
-                    <select id="filtroTipo" class="filtro-select">
-                        <option value="">Todos los tipos</option>
-                        <option value="ingreso">Solo Ingresos</option>
-                        <option value="gasto">Solo Gastos</option>
-                    </select>
+<section id="seccionFiltros" class="seccion-componente oculto">
+    <div class="seccion-header">
+        <h3>🔍 Filtrar Transacciones</h3>
+    </div>
+    <div class="filtros-contenedor">
+        <select id="filtroTipo" class="filtro-select">
+            <option value="">📊 Todos los tipos</option>
+            <option value="ingreso">📈 Solo Ingresos</option>
+            <option value="gasto">📉 Solo Gastos</option>
+        </select>
 
-                    <select id="filtroCategoria" class="filtro-select">
-                        <option value="">Todas las categorías</option>
-                    </select>
+        <select id="filtroCategoria" class="filtro-select">
+            <option value="">🏷️ Todas las categorías</option>
+        </select>
 
-                    <input type="date" id="filtroFechaInicio" class="filtro-input" placeholder="Fecha inicio">
-                    <input type="date" id="filtroFechaFin" class="filtro-input" placeholder="Fecha fin">
+        <input type="date" id="filtroFechaInicio" class="filtro-input" placeholder="📅 Desde">
+        <input type="date" id="filtroFechaFin" class="filtro-input" placeholder="📅 Hasta">
 
-                    <button id="btnAplicarFiltros" class="btn-secondary">
-                        <i class="fas fa-filter"></i> Aplicar
-                    </button>
+        <button id="btnAplicarFiltros" class="btn-secondary">
+            <i class="fas fa-filter"></i> Aplicar Filtros
+        </button>
 
-                    <button id="btnLimpiarFiltros" class="btn-text">
-                        <i class="fas fa-times"></i> Limpiar
-                    </button>
-                </div>
-            </section>
-
+        <button id="btnLimpiarFiltros" class="btn-text">
+            <i class="fas fa-times"></i> Limpiar
+        </button>
+    </div>
+</section>
             <!-- BUSCADOR (Score 25+) -->
             <section id="seccionBuscador" class="seccion-componente oculto">
                 <div class="buscador-contenedor">
