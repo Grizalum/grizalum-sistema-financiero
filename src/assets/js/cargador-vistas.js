@@ -257,3 +257,34 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 console.log('✅ Sistema de cargador de vistas listo');
+// ═══════════════════════════════════════════════════════════════
+// FUNCIÓN GLOBAL DE RECARGA - FLUJO DE CAJA
+// ═══════════════════════════════════════════════════════════════
+
+window.recargarFlujoCaja = function() {
+    console.log('🔄 [recargarFlujoCaja] Ejecutando desde cargador...');
+    
+    if (!window.flujoCajaUI) {
+        console.error('❌ flujoCajaUI no disponible');
+        return;
+    }
+    
+    if (!window.flujoCajaUI.modulo) {
+        console.error('❌ Módulo no conectado');
+        return;
+    }
+    
+    try {
+        console.log('📊 Cargando balance...');
+        window.flujoCajaUI.cargarBalance();
+        
+        console.log('📋 Cargando transacciones...');
+        window.flujoCajaUI.cargarTransacciones();
+        
+        console.log('✅ Recarga completada');
+    } catch (error) {
+        console.error('❌ Error:', error);
+    }
+};
+
+console.log('✅ recargarFlujoCaja registrada desde cargador-vistas');
