@@ -690,30 +690,3 @@ window.recargarFlujoCaja = function() {
 
 console.log('✅ Función recargarFlujoCaja registrada');
 
-console.log('✅ Función recargarFlujoCaja registrada');
-
-// ═══════════════════════════════════════════════════════════════
-// FUNCIÓN DE RECARGA COMPLETA (debe estar DESPUÉS de todo)
-// ═══════════════════════════════════════════════════════════════
-
-window.recargarFlujoCaja = function() {
-    console.log('🔄 [recargarFlujoCaja] Iniciando recarga completa...');
-    
-    if (!window.flujoCajaUI) {
-        console.error('❌ flujoCajaUI no existe');
-        return;
-    }
-    
-    if (!window.flujoCajaUI.modulo) {
-        console.error('❌ Módulo no conectado');
-        return;
-    }
-    
-    try {
-        window.flujoCajaUI.cargarBalance();
-        window.flujoCajaUI.cargarTransacciones();
-        console.log('✅ [recargarFlujoCaja] Completado');
-    } catch (error) {
-        console.error('❌ Error:', error);
-    }
-};
