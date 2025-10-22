@@ -55,11 +55,17 @@ class CargadorVistas {
         
         // ═══ PASO 2: SCRIPTS (SOLO CASH-FLOW) ═══
         if (vistaId === 'cash-flow') {
-            await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-config.js');
-            await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja.js');
-            await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-ui.js');
-             await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-graficos.js'); 
-        }
+    await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-config.js');
+    await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja.js');
+    await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-ui.js');
+    
+    // Intentar cargar gráficos (opcional)
+    try {
+        await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-graficos.js');
+    } catch (error) {
+        console.warn('⚠️ Gráficos no disponibles aún');
+    }
+}
 
         // ═══ PASO 3: HTML ═══
         const response = await fetch(ruta);
