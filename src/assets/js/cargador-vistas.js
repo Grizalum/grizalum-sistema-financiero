@@ -58,6 +58,7 @@ class CargadorVistas {
             await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-config.js');
             await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja.js');
             await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-ui.js');
+             await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-graficos.js'); 
         }
 
         // ═══ PASO 3: HTML ═══
