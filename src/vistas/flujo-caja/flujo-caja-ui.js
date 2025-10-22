@@ -657,3 +657,35 @@ document.addEventListener('grizalumTransaccionAgregada', () => {
 });
 
 console.log('✅ Listeners de recarga configurados');
+
+// ═══════════════════════════════════════════════════════════════
+// FUNCIÓN DE RECARGA COMPLETA
+// ═══════════════════════════════════════════════════════════════
+
+window.recargarFlujoCaja = function() {
+    console.log('🔄 [recargarFlujoCaja] Iniciando recarga completa...');
+    
+    if (!window.flujoCajaUI) {
+        console.error('❌ [recargarFlujoCaja] flujoCajaUI no existe');
+        return;
+    }
+    
+    if (!window.flujoCajaUI.modulo) {
+        console.error('❌ [recargarFlujoCaja] Módulo no conectado');
+        return;
+    }
+    
+    try {
+        console.log('📊 [recargarFlujoCaja] Cargando balance...');
+        window.flujoCajaUI.cargarBalance();
+        
+        console.log('📋 [recargarFlujoCaja] Cargando transacciones...');
+        window.flujoCajaUI.cargarTransacciones();
+        
+        console.log('✅ [recargarFlujoCaja] Recarga completada');
+    } catch (error) {
+        console.error('❌ [recargarFlujoCaja] Error:', error);
+    }
+};
+
+console.log('✅ Función recargarFlujoCaja registrada');
