@@ -1017,6 +1017,131 @@
         
         console.log('✅ Función global recargarFlujoCaja creada');
 
+        // ═══════════════════════════════════════════════════════════════
+// GRÁFICOS CON CHART.JS
+// ═══════════════════════════════════════════════════════════════
+
+function cargarGraficos() {
+    const canvas = document.getElementById('graficoMensual');
+    if (!canvas) {
+        console.warn('⚠️ Canvas de gráfico no encontrado');
+        return;
+    }
+    
+    // Verificar si Chart.js está cargado
+    if (typeof Chart === 'undefined') {
+        console.warn('⚠️ Chart.js no está cargado');
+        // Cargar Chart.js dinámicamente
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js';
+        script.onload = () => {
+            console.log('✅ Chart.js cargado');
+            dibujarGrafico();
+        };
+        document.head.appendChild(script);
+    } else {
+        dibujarGrafico();
+    }
+}
+
+function dibujarGrafico() {
+    const canvas = document.getElementById('graficoMensual');
+    if (!canvas) return;
+    
+    // Destruir gráfico anterior si existe
+    if (window.chartFlujoCaja) {
+        window.chartFlujoCaja.destroy();
+    }
+    
+    try {
+        const datosMensuales = window.flujoCaja.calcularPorMes(6);
+        
+        window.chartFlujoCaja = new Chart(canvas, {
+            type: 'bar',
+            data: {
+                labels: datosMensuales.map(d => d.mes),
+                datasets: [
+                    {
+                        label: 'Ingresos',
+                        data: datosMensuales.map(d => d.ingresos),
+                        backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        borderWidth: 2
+                    },
+                    {
+                        label: 'Gastos',
+                        data: datosMensuales.map(d => d.gastos),
+                        backgroundColor: 'rgba(239, 68, 68, 0.8)',
+                        borderColor: 'rgba(239, 68, 68, 1)',
+                        borderWidth: 2
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            color: '#fff',
+                            font: { size: 12 }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Flujo de Caja - Últimos 6 Meses',
+                        color: '#fff',
+                        font: { size: 16, weight: 'bold' }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: '#9ca3af' },
+                        grid: { color: 'rgba(255,255,255,0.1)' }
+                    },
+                    x: {
+                        ticks: { color: '#9ca3af' },
+                        grid: { color: 'rgba(255,255,255,0.1)' }
+                    }
+                }
+            }
+        });
+        
+        console.log('📊 Gráfico dibujado correctamente');
+    } catch (error) {
+        console.error('❌ Error dibujando gráfico:', error);
+    }
+}
+
+// Agregar a la función de inicialización
+const inicializarFlujoCajaOriginal = window.inicializarFlujoCaja || function(){};
+window.inicializarFlujoCaja = function() {
+    inicializarFlujoCajaOriginal();
+    
+    // Cargar gráficos después de un delay
+    setTimeout(() => {
+        if (window.flujoCaja && document.getElementById('graficoMensual')) {
+            cargarGraficos();
+        }
+    }, 1000);
+};
+
+// También recargar gráfico cuando se actualicen transacciones
+document.addEventListener('grizalumTransaccionAgregada', () => {
+    setTimeout(cargarGraficos, 300);
+});
+
+document.addEventListener('grizalumTransaccionEditada', () => {
+    setTimeout(cargarGraficos, 300);
+});
+
+document.addEventListener('grizalumTransaccionEliminada', () => {
+    setTimeout(cargarGraficos, 300);
+});
+
     </script>
 
 </body>
