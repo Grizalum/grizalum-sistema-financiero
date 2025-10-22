@@ -310,3 +310,5 @@ window.addEventListener('flujoCajaVisible', () => {
 });
 
 console.log('✅ Módulo de gráficos premium cargado');
+
+console.log('🔥 Versión actualizada - ' + new Date().toISOString());
