@@ -2,13 +2,14 @@
  * ═══════════════════════════════════════════════════════════════════
  * GRIZALUM - MÓDULO FLUJO DE CAJA
  * Sistema adaptativo de gestión de ingresos y gastos
+ * VERSIÓN CORREGIDA: Soluciona problema de race condition con gráficos
  * ═══════════════════════════════════════════════════════════════════
  */
 
 class FlujoCaja {
     constructor() {
         this.config = {
-            version: '1.0.0',
+            version: '1.0.1', // 🔧 Incrementado
             componente: 'FlujoCaja',
             debug: true
         };
@@ -22,6 +23,9 @@ class FlujoCaja {
         this.gestor = null;
         this.sistemaNiveles = null;
         this.configuracion = null;
+
+        // 🆕 NUEVO: Flag para saber si está listo
+        this.inicializado = false;
 
         this._inicializar();
     }
@@ -42,7 +46,16 @@ class FlujoCaja {
             // Configurar eventos
             this._configurarEventos();
             
+            // 🆕 NUEVO: Marcar como inicializado
+            this.inicializado = true;
+            
             this._log('success', '✅ Flujo de Caja listo');
+            
+            // 🆕 NUEVO: Disparar evento de inicialización completa
+            this._dispararEvento('flujoCajaInicializado', {
+                transacciones: this.transacciones.length,
+                balance: this.calcularBalance()
+            });
             
         } catch (error) {
             this._log('error', 'Error inicializando Flujo de Caja:', error);
@@ -107,7 +120,7 @@ class FlujoCaja {
             
             if (datos) {
                 this.transacciones = JSON.parse(datos);
-                this._log('info', `Cargadas ${this.transacciones.length} transacciones`);
+                this._log('info', `✅ Cargadas ${this.transacciones.length} transacciones`);
             } else {
                 this.transacciones = [];
                 this._log('info', 'Sin transacciones previas');
@@ -122,9 +135,13 @@ class FlujoCaja {
         // Escuchar cambio de empresa
         document.addEventListener('grizalumCompanyChanged', (e) => {
             this._log('info', 'Empresa cambiada, recargando...');
-            this._cargarEmpresaActual();
-            this._cargarTransacciones();
-            this._renderizar();
+            this.inicializado = false; // 🔧 Marcar como no inicializado
+            this._cargarEmpresaActual().then(() => {
+                this._cargarTransacciones().then(() => {
+                    this.inicializado = true; // 🔧 Marcar como inicializado
+                    this._renderizar();
+                });
+            });
         });
 
         // Escuchar cambio de nivel
@@ -408,6 +425,26 @@ class FlujoCaja {
      * ═══════════════════════════════════════════════════════════════
      */
 
+    // 🆕 NUEVO: Verificar si está inicializado
+    estaListo() {
+        return this.inicializado;
+    }
+
+    // 🆕 NUEVO: Esperar a que esté listo
+    async esperarInicializacion() {
+        if (this.inicializado) {
+            return true;
+        }
+
+        return new Promise((resolve) => {
+            const listener = () => {
+                document.removeEventListener('grizalumFlujoCajaInicializado', listener);
+                resolve(true);
+            };
+            document.addEventListener('grizalumFlujoCajaInicializado', listener);
+        });
+    }
+
     // Obtener información del módulo
     obtenerInfo() {
         return {
@@ -449,7 +486,8 @@ window.flujoCaja = new FlujoCaja();
 
 console.log(`
 ╔═══════════════════════════════════════════════════════════════╗
-║  💰 FLUJO DE CAJA v1.0                                        ║
+║  💰 FLUJO DE CAJA v1.0.1 (FIXED)                              ║
 ║  Sistema adaptativo de gestión financiera                     ║
+║  🔧 Corregido: Race condition con gráficos                    ║
 ╚═══════════════════════════════════════════════════════════════╝
 `);
