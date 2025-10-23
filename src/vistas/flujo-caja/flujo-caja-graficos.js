@@ -51,7 +51,7 @@ class VisualizadorGraficos {
                 textoTerciario: '#d8b4fe',
                 ingresos: '#34d399',
                 gastos: '#f87171',
-                barras: ['#8b5cf6', '#a78bfa', '#c084fc', '#e879f9', '#f472b6'],
+                barras: ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#06b6d4'],   
                 gridLineas: 'rgba(255,255,255,0.1)',
                 tooltipBg: 'rgba(17, 24, 39, 0.98)',
                 tooltipTexto: '#ffffff',
