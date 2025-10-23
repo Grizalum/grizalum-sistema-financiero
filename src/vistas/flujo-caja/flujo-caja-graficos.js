@@ -2,7 +2,7 @@
  * ═══════════════════════════════════════════════════════════════════
  * GRIZALUM - VISUALIZACIÓN DE GRÁFICOS
  * Sistema de gráficos para Flujo de Caja
- * Versión: 2.1 - FIXED - Espera inicialización completa
+ * Versión: 2.3 - MEJOR CONTRASTE - Optimizado para 3 modos visuales
  * ═══════════════════════════════════════════════════════════════════
  */
 
@@ -12,7 +12,75 @@ class VisualizadorGraficos {
         this.graficoBarras = null;
         this.chartJSCargado = false;
         
-        console.log('📊 [Gráficos v2.1] Inicializado');
+        console.log('📊 [Gráficos v2.3] Inicializado con soporte multi-tema');
+    }
+
+    /**
+     * Detecta el modo visual actual de la aplicación
+     * @returns {string} 'claro', 'oscuro', o 'nocturno'
+     */
+    detectarModoVisual() {
+        const body = document.body;
+        
+        if (body.classList.contains('modo-oscuro')) {
+            return 'oscuro';
+        } else if (body.classList.contains('modo-nocturno')) {
+            return 'nocturno';
+        } else {
+            return 'claro';
+        }
+    }
+
+    /**
+     * Obtiene la paleta de colores según el modo visual
+     */
+    obtenerPaletaColores(modo) {
+        const paletas = {
+            claro: {
+                // Modo claro (fondo blanco)
+                textoTitulo: '#111827',
+                textoPrincipal: '#1f2937',
+                textoSecundario: '#4b5563',
+                textoTerciario: '#6b7280',
+                ingresos: '#059669',      // Verde más oscuro
+                gastos: '#dc2626',        // Rojo más oscuro
+                barras: ['#2563eb', '#7c3aed', '#db2777', '#ea580c', '#0d9488'],
+                gridLineas: 'rgba(0,0,0,0.08)',
+                tooltipBg: 'rgba(255, 255, 255, 0.98)',
+                tooltipTexto: '#111827',
+                tooltipBorde: '#e5e7eb'
+            },
+            oscuro: {
+                // Modo oscuro (fondo gris oscuro/negro)
+                textoTitulo: '#f9fafb',
+                textoPrincipal: '#f3f4f6',
+                textoSecundario: '#d1d5db',
+                textoTerciario: '#9ca3af',
+                ingresos: '#10b981',      // Verde brillante
+                gastos: '#ef4444',        // Rojo brillante
+                barras: ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#14b8a6'],
+                gridLineas: 'rgba(255,255,255,0.06)',
+                tooltipBg: 'rgba(17, 24, 39, 0.98)',
+                tooltipTexto: '#f9fafb',
+                tooltipBorde: '#374151'
+            },
+            nocturno: {
+                // Modo nocturno (similar a oscuro pero con tonos más suaves)
+                textoTitulo: '#f9fafb',
+                textoPrincipal: '#f3f4f6',
+                textoSecundario: '#d1d5db',
+                textoTerciario: '#9ca3af',
+                ingresos: '#10b981',
+                gastos: '#ef4444',
+                barras: ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#14b8a6'],
+                gridLineas: 'rgba(255,255,255,0.05)',
+                tooltipBg: 'rgba(17, 24, 39, 0.98)',
+                tooltipTexto: '#f9fafb',
+                tooltipBorde: '#374151'
+            }
+        };
+
+        return paletas[modo] || paletas.oscuro;
     }
 
     async dibujarGraficos() {
@@ -32,7 +100,7 @@ class VisualizadorGraficos {
                 await this.cargarChartJS();
             }
 
-            // 3. 🔧 NUEVO: Esperar a que FlujoCaja esté listo
+            // 3. Esperar a que FlujoCaja esté listo
             if (!window.flujoCaja) {
                 console.error('❌ [Gráficos] flujoCaja no disponible');
                 return false;
@@ -53,6 +121,9 @@ class VisualizadorGraficos {
             const porCategoria = window.flujoCaja.calcularPorCategoria();
             const top5 = porCategoria.sort((a, b) => b.monto - a.monto).slice(0, 5);
 
+            // 6. Detectar modo visual
+            const modoVisual = this.detectarModoVisual();
+            console.log('📊 [Gráficos] Modo visual:', modoVisual);
             console.log('📊 [Gráficos] Datos leídos:', { 
                 ingresos: totalIngresos, 
                 gastos: totalGastos,
@@ -60,16 +131,17 @@ class VisualizadorGraficos {
                 transaccionesTotales: window.flujoCaja.transacciones.length
             });
 
-            // 6. Validar que haya datos
+            // 7. Validar que haya datos
             if (totalIngresos === 0 && totalGastos === 0 && top5.length === 0) {
                 console.warn('⚠️ [Gráficos] No hay datos para mostrar');
+                const colores = this.obtenerPaletaColores(modoVisual);
                 container.innerHTML = `
                     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; min-height: 320px;">
                         <div style="font-size: 64px; margin-bottom: 20px;">📊</div>
-                        <h3 style="color: #9ca3af; font-size: 16px; font-weight: 600; margin: 0 0 8px 0;">
+                        <h3 style="color: ${colores.textoSecundario}; font-size: 16px; font-weight: 600; margin: 0 0 8px 0;">
                             Sin datos para mostrar
                         </h3>
-                        <p style="color: #6b7280; font-size: 14px; margin: 0; text-align: center; max-width: 400px;">
+                        <p style="color: ${colores.textoTerciario}; font-size: 14px; margin: 0; text-align: center; max-width: 400px;">
                             Agrega tu primera transacción para ver los gráficos
                         </p>
                     </div>
@@ -77,12 +149,13 @@ class VisualizadorGraficos {
                 return false;
             }
 
-            // 7. Crear estructura HTML
+            // 8. Crear estructura HTML con colores adaptados
+            const colores = this.obtenerPaletaColores(modoVisual);
             container.innerHTML = `
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; padding: 20px; min-height: 320px;">
                     <!-- COLUMNA 1: GRÁFICO DE DONA -->
                     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <h3 style="color: #f3f4f6; font-size: 14px; font-weight: 700; margin: 0 0 15px 0; text-align: center;">
+                        <h3 style="color: ${colores.textoPrincipal}; font-size: 15px; font-weight: 700; margin: 0 0 15px 0; text-align: center;">
                             💰 Composición Financiera
                         </h3>
                         <div style="width: 260px; height: 260px;">
@@ -92,7 +165,7 @@ class VisualizadorGraficos {
                     
                     <!-- COLUMNA 2: GRÁFICO DE BARRAS -->
                     <div style="display: flex; flex-direction: column;">
-                        <h3 style="color: #f3f4f6; font-size: 14px; font-weight: 700; margin: 0 0 15px 0; text-align: center;">
+                        <h3 style="color: ${colores.textoPrincipal}; font-size: 15px; font-weight: 700; margin: 0 0 15px 0; text-align: center;">
                             📊 Top 5 Categorías
                         </h3>
                         <div style="height: 260px;">
@@ -102,17 +175,15 @@ class VisualizadorGraficos {
                 </div>
             `;
 
-            // 8. Esperar un momento a que el DOM se actualice
+            // 9. Esperar un momento a que el DOM se actualice
             await new Promise(resolve => setTimeout(resolve, 100));
 
-            // 9. Dibujar gráficos
-            const isDark = document.body.classList.contains('modo-oscuro');
-            
-            this.crearGraficoDona(totalIngresos, totalGastos, isDark);
+            // 10. Dibujar gráficos con la paleta de colores
+            this.crearGraficoDona(totalIngresos, totalGastos, modoVisual, colores);
             
             // Solo crear gráfico de barras si hay categorías
             if (top5.length > 0) {
-                this.crearGraficoBarras(top5, isDark);
+                this.crearGraficoBarras(top5, modoVisual, colores);
             }
 
             console.log('✅ [Gráficos] Creados exitosamente');
@@ -124,7 +195,7 @@ class VisualizadorGraficos {
         }
     }
 
-    crearGraficoDona(ingresos, gastos, isDark) {
+    crearGraficoDona(ingresos, gastos, modo, colores) {
         const canvas = document.getElementById('canvasGraficoDona');
         if (!canvas) {
             console.error('❌ Canvas dona no encontrado');
@@ -144,7 +215,7 @@ class VisualizadorGraficos {
                 labels: ['Ingresos', 'Gastos'],
                 datasets: [{
                     data: [ingresos, gastos],
-                    backgroundColor: ['#10b981', '#ef4444'],
+                    backgroundColor: [colores.ingresos, colores.gastos],
                     borderWidth: 0,
                     spacing: 3
                 }]
@@ -158,25 +229,34 @@ class VisualizadorGraficos {
                         display: true,
                         position: 'bottom',
                         labels: {
-                            color: isDark ? '#f3f4f6' : '#1f2937',
-                            font: { size: 12, weight: '600' },
-                            padding: 12,
+                            color: colores.textoPrincipal,
+                            font: { 
+                                size: 13,
+                                weight: '700',
+                                family: 'system-ui, -apple-system, sans-serif'
+                            },
+                            padding: 14,
                             usePointStyle: true,
                             pointStyle: 'circle',
-                            boxWidth: 8
+                            boxWidth: 10,
+                            boxHeight: 10
                         }
                     },
                     tooltip: {
-                        backgroundColor: 'rgba(17, 24, 39, 0.95)',
-                        titleColor: '#fff',
-                        bodyColor: '#e5e7eb',
+                        backgroundColor: colores.tooltipBg,
+                        titleColor: colores.tooltipTexto,
+                        bodyColor: colores.tooltipTexto,
+                        borderColor: colores.tooltipBorde,
+                        borderWidth: 1,
                         padding: 12,
                         displayColors: true,
+                        titleFont: { weight: '700', size: 13 },
+                        bodyFont: { size: 12 },
                         callbacks: {
                             label: (ctx) => {
                                 const total = ingresos + gastos;
                                 const pct = total > 0 ? ((ctx.parsed / total) * 100).toFixed(1) : 0;
-                                return `  ${ctx.label}: S/. ${ctx.parsed.toLocaleString('es-PE')} (${pct}%)`;
+                                return `  ${ctx.label}: S/ ${ctx.parsed.toLocaleString('es-PE')} (${pct}%)`;
                             }
                         }
                     }
@@ -189,7 +269,6 @@ class VisualizadorGraficos {
             plugins: [{
                 id: 'centerText',
                 beforeDraw: (chart) => {
-                    // Verificar que chartArea exista
                     if (!chart.chartArea) return;
                     
                     const ctx = chart.ctx;
@@ -200,14 +279,14 @@ class VisualizadorGraficos {
                     const centerY = (top + bottom) / 2;
                     
                     // Emoji
-                    ctx.font = '26px system-ui';
+                    ctx.font = '28px system-ui';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillText('💎', centerX, centerY - 12);
                     
                     // Texto
-                    ctx.font = '500 11px system-ui';
-                    ctx.fillStyle = isDark ? '#9ca3af' : '#6b7280';
+                    ctx.font = '700 12px system-ui';
+                    ctx.fillStyle = colores.textoSecundario;
                     ctx.fillText('6 Meses', centerX, centerY + 13);
                     
                     ctx.restore();
@@ -218,7 +297,7 @@ class VisualizadorGraficos {
         console.log('✅ Gráfico de dona creado');
     }
 
-    crearGraficoBarras(categorias, isDark) {
+    crearGraficoBarras(categorias, modo, colores) {
         const canvas = document.getElementById('canvasGraficoBarras');
         if (!canvas) {
             console.error('❌ Canvas barras no encontrado');
@@ -232,8 +311,6 @@ class VisualizadorGraficos {
             this.graficoBarras.destroy();
         }
 
-        const colores = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#14b8a6'];
-
         this.graficoBarras = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -241,9 +318,9 @@ class VisualizadorGraficos {
                 datasets: [{
                     label: 'Monto',
                     data: categorias.map(c => c.monto),
-                    backgroundColor: colores.slice(0, categorias.length),
-                    borderRadius: 5,
-                    barThickness: 24
+                    backgroundColor: colores.barras.slice(0, categorias.length),
+                    borderRadius: 6,
+                    barThickness: 26
                 }]
             },
             options: {
@@ -253,15 +330,19 @@ class VisualizadorGraficos {
                 plugins: {
                     legend: { display: false },
                     tooltip: {
-                        backgroundColor: 'rgba(17, 24, 39, 0.95)',
-                        titleColor: '#fff',
-                        bodyColor: '#e5e7eb',
+                        backgroundColor: colores.tooltipBg,
+                        titleColor: colores.tooltipTexto,
+                        bodyColor: colores.tooltipTexto,
+                        borderColor: colores.tooltipBorde,
+                        borderWidth: 1,
                         padding: 12,
+                        titleFont: { weight: '700', size: 13 },
+                        bodyFont: { size: 12 },
                         callbacks: {
                             label: (ctx) => {
                                 const cat = categorias[ctx.dataIndex];
                                 return [
-                                    `Monto: S/. ${ctx.parsed.x.toLocaleString('es-PE')}`,
+                                    `Monto: S/ ${ctx.parsed.x.toLocaleString('es-PE')}`,
                                     `Movimientos: ${cat.cantidad}`
                                 ];
                             }
@@ -272,21 +353,32 @@ class VisualizadorGraficos {
                     x: {
                         beginAtZero: true,
                         ticks: {
-                            color: isDark ? '#9ca3af' : '#6b7280',
-                            font: { size: 10 },
-                            callback: (v) => v >= 1000 ? `S/. ${(v/1000).toFixed(0)}k` : `S/. ${v}`
+                            color: colores.textoTerciario,
+                            font: { 
+                                size: 11,
+                                weight: '600',
+                                family: 'system-ui, -apple-system, sans-serif'
+                            },
+                            padding: 6,
+                            callback: (v) => v >= 1000 ? `S/ ${(v/1000).toFixed(0)}k` : `S/ ${v}`
                         },
                         grid: {
-                            color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
-                            drawBorder: false
+                            color: colores.gridLineas,
+                            drawBorder: false,
+                            lineWidth: 1
                         },
                         border: { display: false }
                     },
                     y: {
                         ticks: {
-                            color: isDark ? '#f3f4f6' : '#1f2937',
-                            font: { size: 12, weight: '600' },
-                            padding: 8
+                            color: colores.textoPrincipal,
+                            font: { 
+                                size: 13,
+                                weight: '700',
+                                family: 'system-ui, -apple-system, sans-serif'
+                            },
+                            padding: 10,
+                            autoSkip: false
                         },
                         grid: { display: false },
                         border: { display: false }
@@ -348,10 +440,9 @@ window.addEventListener('flujoCajaVisible', () => {
     }, 500);
 });
 
-// 🆕 NUEVO: Evento cuando FlujoCaja está inicializado
+// Evento cuando FlujoCaja está inicializado
 document.addEventListener('grizalumFlujoCajaInicializado', () => {
     console.log('✅ [Gráficos] FlujoCaja inicializado - Datos disponibles');
-    // Si la vista de gráficos está visible, dibujarlos
     if (document.getElementById('seccionGraficos')) {
         setTimeout(() => window.visualizadorGraficos.dibujarGraficos(), 300);
     }
@@ -366,4 +457,34 @@ eventos.forEach(evento => {
     });
 });
 
-console.log('✅ [Gráficos v2.1 FIXED] Módulo cargado - ' + new Date().toISOString());
+// 🆕 NUEVO: Escuchar cambio de modo visual
+document.addEventListener('grizalumCambioTema', () => {
+    console.log('🎨 [Gráficos] Cambio de tema detectado, redibujando...');
+    setTimeout(() => window.visualizadorGraficos.actualizar(), 200);
+});
+
+// También escuchar click en botones de tema (si existen)
+const observarCambiosTema = () => {
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.attributeName === 'class' && mutation.target === document.body) {
+                console.log('🎨 [Gráficos] Clase del body cambió, redibujando...');
+                setTimeout(() => window.visualizadorGraficos.actualizar(), 200);
+            }
+        });
+    });
+    
+    observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class']
+    });
+};
+
+// Iniciar observador cuando el DOM esté listo
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', observarCambiosTema);
+} else {
+    observarCambiosTema();
+}
+
+console.log('✅ [Gráficos v2.3 MULTI-TEMA] Módulo cargado - ' + new Date().toISOString());
