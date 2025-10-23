@@ -2,7 +2,13 @@
  * ═══════════════════════════════════════════════════════════════════
  * GRIZALUM - VISUALIZACIÓN DE GRÁFICOS
  * Sistema de gráficos para Flujo de Caja
- * Versión: 2.3 - MULTI-TEMA - Para theme-purple
+ * Versión: 3.0 - TEXTOS LEGIBLES + SOPORTE THEME-PURPLE
+ * 
+ * ✅ CORRECCIONES APLICADAS:
+ * - Soporte para theme-purple (tu tema actual)
+ * - Textos más grandes (16px para categorías, 13px para valores)
+ * - Colores con mejor contraste
+ * - Configuración optimizada para pantallas HD
  * ═══════════════════════════════════════════════════════════════════
  */
 
@@ -12,23 +18,45 @@ class VisualizadorGraficos {
         this.graficoBarras = null;
         this.chartJSCargado = false;
         
-        console.log('📊 [Gráficos v2.3] Inicializado');
+        console.log('📊 [Gráficos v3.0 MEJORADO] Inicializado');
     }
 
     detectarModoVisual() {
         const body = document.body;
         
+        // ✅ NUEVO: Detectar theme-purple
+        if (body.classList.contains('theme-purple')) {
+            return 'theme-purple';
+        }
+        
         if (body.classList.contains('modo-neutro')) {
             return 'neutro';
         } else if (body.classList.contains('modo-claro')) {
             return 'claro';
-        } else {
+        } else if (body.classList.contains('modo-oscuro')) {
             return 'oscuro';
         }
+        
+        // ✅ Por defecto usar theme-purple si no encuentra nada
+        return 'theme-purple';
     }
 
     obtenerPaletaColores(modo) {
         const paletas = {
+            // ✅ NUEVO: Paleta para theme-purple (tu tema actual)
+            'theme-purple': {
+                textoTitulo: '#ffffff',
+                textoPrincipal: '#ffffff',
+                textoSecundario: '#e9d5ff',
+                textoTerciario: '#d8b4fe',
+                ingresos: '#34d399',
+                gastos: '#f87171',
+                barras: ['#8b5cf6', '#a78bfa', '#c084fc', '#e879f9', '#f472b6'],
+                gridLineas: 'rgba(255,255,255,0.1)',
+                tooltipBg: 'rgba(17, 24, 39, 0.98)',
+                tooltipTexto: '#ffffff',
+                tooltipBorde: '#8b5cf6'
+            },
             claro: {
                 textoTitulo: '#111827',
                 textoPrincipal: '#1f2937',
@@ -37,20 +65,20 @@ class VisualizadorGraficos {
                 ingresos: '#059669',
                 gastos: '#dc2626',
                 barras: ['#2563eb', '#7c3aed', '#db2777', '#ea580c', '#0d9488'],
-                gridLineas: 'rgba(0,0,0,0.1)',
+                gridLineas: 'rgba(0,0,0,0.15)',
                 tooltipBg: 'rgba(255, 255, 255, 0.98)',
                 tooltipTexto: '#111827',
                 tooltipBorde: '#e5e7eb'
             },
             oscuro: {
-                textoTitulo: '#f9fafb',
+                textoTitulo: '#ffffff',
                 textoPrincipal: '#f9fafb',
                 textoSecundario: '#e5e7eb',
                 textoTerciario: '#d1d5db',
                 ingresos: '#10b981',
                 gastos: '#ef4444',
                 barras: ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#14b8a6'],
-                gridLineas: 'rgba(255,255,255,0.08)',
+                gridLineas: 'rgba(255,255,255,0.15)',
                 tooltipBg: 'rgba(17, 24, 39, 0.98)',
                 tooltipTexto: '#f9fafb',
                 tooltipBorde: '#4b5563'
@@ -70,7 +98,7 @@ class VisualizadorGraficos {
             }
         };
 
-        return paletas[modo] || paletas.oscuro;
+        return paletas[modo] || paletas['theme-purple'];
     }
 
     async dibujarGraficos() {
@@ -136,19 +164,19 @@ class VisualizadorGraficos {
             container.innerHTML = `
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; padding: 20px; min-height: 320px;">
                     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <h3 style="color: ${colores.textoPrincipal}; font-size: 15px; font-weight: 700; margin: 0 0 15px 0; text-align: center;">
+                        <h3 style="color: ${colores.textoPrincipal}; font-size: 16px; font-weight: 700; margin: 0 0 20px 0; text-align: center;">
                             💰 Composición Financiera
                         </h3>
-                        <div style="width: 260px; height: 260px;">
+                        <div style="width: 280px; height: 280px;">
                             <canvas id="canvasGraficoDona"></canvas>
                         </div>
                     </div>
                     
                     <div style="display: flex; flex-direction: column;">
-                        <h3 style="color: ${colores.textoPrincipal}; font-size: 15px; font-weight: 700; margin: 0 0 15px 0; text-align: center;">
+                        <h3 style="color: ${colores.textoPrincipal}; font-size: 16px; font-weight: 700; margin: 0 0 20px 0; text-align: center;">
                             📊 Top 5 Categorías
                         </h3>
-                        <div style="height: 260px;">
+                        <div style="height: 280px;">
                             <canvas id="canvasGraficoBarras"></canvas>
                         </div>
                     </div>
@@ -206,16 +234,14 @@ class VisualizadorGraficos {
                         position: 'bottom',
                         labels: {
                             color: colores.textoPrincipal,
-                            font: { 
-                                size: 14,
+                            font: {
+                                size: 14,  // ✅ AUMENTADO de 12 a 14
                                 weight: '700',
                                 family: 'system-ui, -apple-system, sans-serif'
                             },
-                            padding: 14,
+                            padding: 15,
                             usePointStyle: true,
-                            pointStyle: 'circle',
-                            boxWidth: 10,
-                            boxHeight: 10
+                            pointStyle: 'circle'
                         }
                     },
                     tooltip: {
@@ -224,15 +250,19 @@ class VisualizadorGraficos {
                         bodyColor: colores.tooltipTexto,
                         borderColor: colores.tooltipBorde,
                         borderWidth: 1,
-                        padding: 12,
-                        displayColors: true,
-                        titleFont: { weight: '700', size: 13 },
-                        bodyFont: { size: 12 },
+                        padding: 14,
+                        titleFont: { 
+                            weight: '700', 
+                            size: 14  // ✅ AUMENTADO de 13 a 14
+                        },
+                        bodyFont: { 
+                            size: 13  // ✅ AUMENTADO de 12 a 13
+                        },
                         callbacks: {
                             label: (ctx) => {
                                 const total = ingresos + gastos;
-                                const pct = total > 0 ? ((ctx.parsed / total) * 100).toFixed(1) : 0;
-                                return `  ${ctx.label}: S/ ${ctx.parsed.toLocaleString('es-PE')} (${pct}%)`;
+                                const porcentaje = ((ctx.parsed / total) * 100).toFixed(1);
+                                return `${ctx.label}: S/ ${ctx.parsed.toLocaleString('es-PE')} (${porcentaje}%)`;
                             }
                         }
                     }
@@ -254,14 +284,14 @@ class VisualizadorGraficos {
                     const centerX = (left + right) / 2;
                     const centerY = (top + bottom) / 2;
                     
-                    ctx.font = '28px system-ui';
+                    ctx.font = '32px system-ui';  // ✅ AUMENTADO de 28px a 32px
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    ctx.fillText('💎', centerX, centerY - 12);
+                    ctx.fillText('💎', centerX, centerY - 14);
                     
-                    ctx.font = '700 12px system-ui';
+                    ctx.font = '700 13px system-ui';  // ✅ AUMENTADO de 12px a 13px
                     ctx.fillStyle = colores.textoSecundario;
-                    ctx.fillText('6 Meses', centerX, centerY + 13);
+                    ctx.fillText('6 Meses', centerX, centerY + 15);
                     
                     ctx.restore();
                 }
@@ -292,14 +322,22 @@ class VisualizadorGraficos {
                     label: 'Monto',
                     data: categorias.map(c => c.monto),
                     backgroundColor: colores.barras.slice(0, categorias.length),
-                    borderRadius: 6,
-                    barThickness: 26
+                    borderRadius: 8,  // ✅ AUMENTADO de 6 a 8
+                    barThickness: 32  // ✅ AUMENTADO de 26 a 32
                 }]
             },
             options: {
                 indexAxis: 'y',
                 responsive: true,
                 maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        left: 10,
+                        right: 20,
+                        top: 10,
+                        bottom: 10
+                    }
+                },
                 plugins: {
                     legend: { display: false },
                     tooltip: {
@@ -308,9 +346,14 @@ class VisualizadorGraficos {
                         bodyColor: colores.tooltipTexto,
                         borderColor: colores.tooltipBorde,
                         borderWidth: 1,
-                        padding: 12,
-                        titleFont: { weight: '700', size: 13 },
-                        bodyFont: { size: 12 },
+                        padding: 14,
+                        titleFont: { 
+                            weight: '700', 
+                            size: 14  // ✅ AUMENTADO de 13 a 14
+                        },
+                        bodyFont: { 
+                            size: 13  // ✅ AUMENTADO de 12 a 13
+                        },
                         callbacks: {
                             label: (ctx) => {
                                 const cat = categorias[ctx.dataIndex];
@@ -328,11 +371,11 @@ class VisualizadorGraficos {
                         ticks: {
                             color: colores.textoTerciario,
                             font: { 
-                                size: 11,
+                                size: 13,  // ✅ AUMENTADO de 11 a 13
                                 weight: '600',
                                 family: 'system-ui, -apple-system, sans-serif'
                             },
-                            padding: 6,
+                            padding: 8,
                             callback: (v) => v >= 1000 ? `S/ ${(v/1000).toFixed(0)}k` : `S/ ${v}`
                         },
                         grid: {
@@ -346,11 +389,11 @@ class VisualizadorGraficos {
                         ticks: {
                             color: colores.textoPrincipal,
                             font: { 
-                                size: 14,
+                                size: 16,  // ✅ AUMENTADO de 14 a 16 (CLAVE PARA LEGIBILIDAD)
                                 weight: '700',
                                 family: 'system-ui, -apple-system, sans-serif'
                             },
-                            padding: 10,
+                            padding: 12,  // ✅ AUMENTADO de 10 a 12
                             autoSkip: false
                         },
                         grid: { display: false },
@@ -444,4 +487,4 @@ if (document.readyState === 'loading') {
     observarCambiosTema();
 }
 
-console.log('✅ [Gráficos v2.3 THEME-PURPLE] Módulo cargado - ' + new Date().toISOString());
+console.log('✅ [Gráficos v3.0 THEME-PURPLE + TEXTOS GRANDES] Módulo cargado - ' + new Date().toISOString());
