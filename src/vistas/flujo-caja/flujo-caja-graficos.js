@@ -20,68 +20,89 @@ class VisualizadorGraficos {
      * @returns {string} 'claro', 'oscuro', o 'nocturno'
      */
     detectarModoVisual() {
-        const body = document.body;
-        
-        if (body.classList.contains('modo-oscuro')) {
-            return 'oscuro';
-        } else if (body.classList.contains('modo-nocturno')) {
-            return 'nocturno';
-        } else {
-            return 'claro';
-        }
+    const body = document.body;
+    
+    // Tu app usa: theme-purple, modo-claro, modo-neutro
+    if (body.classList.contains('modo-neutro')) {
+        return 'neutro';
+    } else if (body.classList.contains('modo-claro')) {
+        return 'claro';
+    } else {
+        // Si no tiene clase, es theme-purple (oscuro por defecto)
+        return 'oscuro';
     }
+}
 
     /**
      * Obtiene la paleta de colores según el modo visual
      */
     obtenerPaletaColores(modo) {
-        const paletas = {
-            claro: {
-                // Modo claro (fondo blanco)
-                textoTitulo: '#111827',
-                textoPrincipal: '#1f2937',
-                textoSecundario: '#4b5563',
-                textoTerciario: '#6b7280',
-                ingresos: '#059669',      // Verde más oscuro
-                gastos: '#dc2626',        // Rojo más oscuro
-                barras: ['#2563eb', '#7c3aed', '#db2777', '#ea580c', '#0d9488'],
-                gridLineas: 'rgba(0,0,0,0.08)',
-                tooltipBg: 'rgba(255, 255, 255, 0.98)',
-                tooltipTexto: '#111827',
-                tooltipBorde: '#e5e7eb'
-            },
-            oscuro: {
-                // Modo oscuro (fondo gris oscuro/negro)
-                textoTitulo: '#f9fafb',
-                textoPrincipal: '#f3f4f6',
-                textoSecundario: '#d1d5db',
-                textoTerciario: '#9ca3af',
-                ingresos: '#10b981',      // Verde brillante
-                gastos: '#ef4444',        // Rojo brillante
-                barras: ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#14b8a6'],
-                gridLineas: 'rgba(255,255,255,0.06)',
-                tooltipBg: 'rgba(17, 24, 39, 0.98)',
-                tooltipTexto: '#f9fafb',
-                tooltipBorde: '#374151'
-            },
-            nocturno: {
-                // Modo nocturno (similar a oscuro pero con tonos más suaves)
-                textoTitulo: '#f9fafb',
-                textoPrincipal: '#f3f4f6',
-                textoSecundario: '#d1d5db',
-                textoTerciario: '#9ca3af',
-                ingresos: '#10b981',
-                gastos: '#ef4444',
-                barras: ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#14b8a6'],
-                gridLineas: 'rgba(255,255,255,0.05)',
-                tooltipBg: 'rgba(17, 24, 39, 0.98)',
-                tooltipTexto: '#f9fafb',
-                tooltipBorde: '#374151'
-            }
-        };
+    const paletas = {
+        claro: {
+            // Modo claro (fondo blanco)
+            textoTitulo: '#111827',
+            textoPrincipal: '#1f2937',
+            textoSecundario: '#374151',
+            textoTerciario: '#4b5563',
+            ingresos: '#059669',
+            gastos: '#dc2626',
+            barras: ['#2563eb', '#7c3aed', '#db2777', '#ea580c', '#0d9488'],
+            gridLineas: 'rgba(0,0,0,0.1)',
+            tooltipBg: 'rgba(255, 255, 255, 0.98)',
+            tooltipTexto: '#111827',
+            tooltipBorde: '#e5e7eb'
+        },
+        oscuro: {
+            // Modo oscuro/theme-purple (fondo morado oscuro)
+            textoTitulo: '#f9fafb',
+            textoPrincipal: '#f9fafb',
+            textoSecundario: '#e5e7eb',
+            textoTerciario: '#d1d5db',
+            ingresos: '#10b981',
+            gastos: '#ef4444',
+            barras: ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#14b8a6'],
+            gridLineas: 'rgba(255,255,255,0.08)',
+            tooltipBg: 'rgba(17, 24, 39, 0.98)',
+            tooltipTexto: '#f9fafb',
+            tooltipBorde: '#4b5563'
+        },
+        neutro: {
+            // Modo neutro (gris oscuro/negro) - CONTRASTE MÁXIMO
+            textoTitulo: '#ffffff',
+            textoPrincipal: '#ffffff',
+            textoSecundario: '#f3f4f6',
+            textoTerciario: '#e5e7eb',
+            ingresos: '#34d399',      // Verde más brillante
+            gastos: '#f87171',        // Rojo más brillante
+            barras: ['#60a5fa', '#a78bfa', '#f472b6', '#fbbf24', '#2dd4bf'],
+            gridLineas: 'rgba(255,255,255,0.12)',
+            tooltipBg: 'rgba(0, 0, 0, 0.95)',
+            tooltipTexto: '#ffffff',
+            tooltipBorde: '#6b7280'
+        }
+    };
 
-        return paletas[modo] || paletas.oscuro;
-    }
+    return paletas[modo] || paletas.oscuro;
+}
+```
+
+---
+
+## PASO 4: GUARDAR Y PROBAR
+
+1. **Guarda:** `Ctrl + S`
+2. **Recarga:** `Ctrl + Shift + R`
+3. **Cambia entre los 3 modos** y verifica
+
+---
+
+## ✅ RESULTADO ESPERADO:
+
+En **Console** deberías ver:
+```
+📊 [Gráficos] Modo visual: claro     (cuando esté en blanco)
+📊 [Gráficos] Modo visual: oscuro    (cuando esté en morado)
+📊 [Gráficos] Modo visual: neutro    (cuando esté en gris/negro)
 
     async dibujarGraficos() {
         console.log('🎨 [Gráficos] Iniciando dibujo...');
