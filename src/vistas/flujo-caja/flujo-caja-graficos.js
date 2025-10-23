@@ -2,7 +2,7 @@
  * ═══════════════════════════════════════════════════════════════════
  * GRIZALUM - VISUALIZACIÓN DE GRÁFICOS
  * Sistema de gráficos para Flujo de Caja
- * Versión: 2.0 - Definitiva
+ * Versión: 2.1 - FIXED - Espera inicialización completa
  * ═══════════════════════════════════════════════════════════════════
  */
 
@@ -12,7 +12,7 @@ class VisualizadorGraficos {
         this.graficoBarras = null;
         this.chartJSCargado = false;
         
-        console.log('📊 [Gráficos v2.0] Inicializado');
+        console.log('📊 [Gráficos v2.1] Inicializado');
     }
 
     async dibujarGraficos() {
@@ -32,27 +32,52 @@ class VisualizadorGraficos {
                 await this.cargarChartJS();
             }
 
-            // 3. Obtener datos
+            // 3. 🔧 NUEVO: Esperar a que FlujoCaja esté listo
             if (!window.flujoCaja) {
                 console.error('❌ [Gráficos] flujoCaja no disponible');
                 return false;
             }
 
+            if (!window.flujoCaja.estaListo()) {
+                console.log('⏳ [Gráficos] Esperando a que FlujoCaja termine de cargar...');
+                await window.flujoCaja.esperarInicializacion();
+                console.log('✅ [Gráficos] FlujoCaja listo, continuando...');
+            }
+
+            // 4. Obtener datos
             const datos = window.flujoCaja.calcularPorMes(6);
             const totalIngresos = datos.reduce((sum, d) => sum + d.ingresos, 0);
             const totalGastos = datos.reduce((sum, d) => sum + d.gastos, 0);
             
-            // 4. Obtener categorías
+            // 5. Obtener categorías
             const porCategoria = window.flujoCaja.calcularPorCategoria();
             const top5 = porCategoria.sort((a, b) => b.monto - a.monto).slice(0, 5);
 
-            console.log('📊 [Gráficos] Datos:', { 
+            console.log('📊 [Gráficos] Datos leídos:', { 
                 ingresos: totalIngresos, 
                 gastos: totalGastos,
-                categorias: top5.length 
+                categorias: top5.length,
+                transaccionesTotales: window.flujoCaja.transacciones.length
             });
 
-            // 5. Crear estructura HTML
+            // 6. Validar que haya datos
+            if (totalIngresos === 0 && totalGastos === 0 && top5.length === 0) {
+                console.warn('⚠️ [Gráficos] No hay datos para mostrar');
+                container.innerHTML = `
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; min-height: 320px;">
+                        <div style="font-size: 64px; margin-bottom: 20px;">📊</div>
+                        <h3 style="color: #9ca3af; font-size: 16px; font-weight: 600; margin: 0 0 8px 0;">
+                            Sin datos para mostrar
+                        </h3>
+                        <p style="color: #6b7280; font-size: 14px; margin: 0; text-align: center; max-width: 400px;">
+                            Agrega tu primera transacción para ver los gráficos
+                        </p>
+                    </div>
+                `;
+                return false;
+            }
+
+            // 7. Crear estructura HTML
             container.innerHTML = `
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; padding: 20px; min-height: 320px;">
                     <!-- COLUMNA 1: GRÁFICO DE DONA -->
@@ -77,14 +102,18 @@ class VisualizadorGraficos {
                 </div>
             `;
 
-            // 6. Esperar un momento a que el DOM se actualice
+            // 8. Esperar un momento a que el DOM se actualice
             await new Promise(resolve => setTimeout(resolve, 100));
 
-            // 7. Dibujar gráficos
+            // 9. Dibujar gráficos
             const isDark = document.body.classList.contains('modo-oscuro');
             
             this.crearGraficoDona(totalIngresos, totalGastos, isDark);
-            this.crearGraficoBarras(top5, isDark);
+            
+            // Solo crear gráfico de barras si hay categorías
+            if (top5.length > 0) {
+                this.crearGraficoBarras(top5, isDark);
+            }
 
             console.log('✅ [Gráficos] Creados exitosamente');
             return true;
@@ -146,7 +175,7 @@ class VisualizadorGraficos {
                         callbacks: {
                             label: (ctx) => {
                                 const total = ingresos + gastos;
-                                const pct = ((ctx.parsed / total) * 100).toFixed(1);
+                                const pct = total > 0 ? ((ctx.parsed / total) * 100).toFixed(1) : 0;
                                 return `  ${ctx.label}: S/. ${ctx.parsed.toLocaleString('es-PE')} (${pct}%)`;
                             }
                         }
@@ -160,8 +189,11 @@ class VisualizadorGraficos {
             plugins: [{
                 id: 'centerText',
                 beforeDraw: (chart) => {
-                    const { ctx, chartArea: { left, right, top, bottom } } = chart;
-                    if (!chartArea) return;
+                    // Verificar que chartArea exista
+                    if (!chart.chartArea) return;
+                    
+                    const ctx = chart.ctx;
+                    const { left, right, top, bottom } = chart.chartArea;
                     
                     ctx.save();
                     const centerX = (left + right) / 2;
@@ -312,10 +344,17 @@ window.visualizadorGraficos = new VisualizadorGraficos();
 window.addEventListener('flujoCajaVisible', () => {
     console.log('👁️ [Gráficos] Vista visible detectada');
     setTimeout(() => {
-        if (window.flujoCaja && document.getElementById('graficoMensual')) {
-            window.visualizadorGraficos.dibujarGraficos();
-        }
+        window.visualizadorGraficos.dibujarGraficos();
     }, 500);
+});
+
+// 🆕 NUEVO: Evento cuando FlujoCaja está inicializado
+document.addEventListener('grizalumFlujoCajaInicializado', () => {
+    console.log('✅ [Gráficos] FlujoCaja inicializado - Datos disponibles');
+    // Si la vista de gráficos está visible, dibujarlos
+    if (document.getElementById('seccionGraficos')) {
+        setTimeout(() => window.visualizadorGraficos.dibujarGraficos(), 300);
+    }
 });
 
 // Eventos: Actualizar al modificar transacciones
@@ -327,4 +366,4 @@ eventos.forEach(evento => {
     });
 });
 
-console.log('✅ [Gráficos v2.0] Módulo cargado - ' + new Date().toISOString());
+console.log('✅ [Gráficos v2.1 FIXED] Módulo cargado - ' + new Date().toISOString());
