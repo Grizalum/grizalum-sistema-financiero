@@ -1,348 +1,493 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * FLUJO DE CAJA - SISTEMA DE VALIDACIONES
- * Validación robusta de datos antes de guardar transacciones
- * VERSION: 1.0.0
+ * GRIZALUM - MÓDULO FLUJO DE CAJA
+ * Sistema adaptativo de gestión de ingresos y gastos
+ * VERSIÓN CORREGIDA: Soluciona problema de race condition con gráficos
  * ═══════════════════════════════════════════════════════════════════
  */
 
-class FlujoCajaValidador {
+class FlujoCaja {
     constructor() {
         this.config = {
-            montoMinimo: 0.01,
-            montoMaximo: 999999999,
-            descripcionMaxLength: 200,
-            diasMaximosFuturo: 0, // No permitir fechas futuras
-            diasMaximosPasado: 3650 // Máximo 10 años atrás
+            version: '1.0.1', // 🔧 Incrementado
+            componente: 'FlujoCaja',
+            debug: true
         };
-    }
 
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * VALIDACIÓN COMPLETA DE TRANSACCIÓN
-     * ═══════════════════════════════════════════════════════════════
-     */
-    validarTransaccion(datos) {
-        const errores = [];
-
-        // Validar cada campo
-        errores.push(...this.validarTipo(datos.tipo));
-        errores.push(...this.validarMonto(datos.monto));
-        errores.push(...this.validarCategoria(datos.categoria));
-        errores.push(...this.validarFecha(datos.fecha));
+        this.empresaActual = null;
+        this.nivel = null;
+        this.componentesActivos = null;
+        this.transacciones = [];
+        this.categorias = {};
         
-        // Validaciones opcionales
-        if (datos.descripcion) {
-            errores.push(...this.validarDescripcion(datos.descripcion));
-        }
+        this.gestor = null;
+        this.sistemaNiveles = null;
+        this.configuracion = null;
 
-        return {
-            valido: errores.length === 0,
-            errores: errores,
-            datos: this.limpiarDatos(datos)
-        };
+        // 🆕 NUEVO: Flag para saber si está listo
+        this.inicializado = false;
+
+        this._inicializar();
     }
 
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * VALIDACIONES INDIVIDUALES
-     * ═══════════════════════════════════════════════════════════════
-     */
-
-    validarTipo(tipo) {
-        const errores = [];
-
-        if (!tipo) {
-            errores.push({
-                campo: 'tipo',
-                mensaje: 'El tipo de transacción es obligatorio',
-                codigo: 'TIPO_REQUERIDO'
+    async _inicializar() {
+        try {
+            this._log('info', '💰 Flujo de Caja inicializando...');
+            
+            // Esperar dependencias
+            await this._esperarDependencias();
+            
+            // Cargar empresa actual
+            await this._cargarEmpresaActual();
+            
+            // Cargar transacciones
+            await this._cargarTransacciones();
+            
+            // Configurar eventos
+            this._configurarEventos();
+            
+            // 🆕 NUEVO: Marcar como inicializado
+            this.inicializado = true;
+            
+            this._log('success', '✅ Flujo de Caja listo');
+            
+            // 🆕 NUEVO: Disparar evento de inicialización completa
+            this._dispararEvento('flujoCajaInicializado', {
+                transacciones: this.transacciones.length,
+                balance: this.calcularBalance()
             });
-            return errores;
+            
+        } catch (error) {
+            this._log('error', 'Error inicializando Flujo de Caja:', error);
         }
-
-        if (!['ingreso', 'gasto'].includes(tipo)) {
-            errores.push({
-                campo: 'tipo',
-                mensaje: 'El tipo debe ser "ingreso" o "gasto"',
-                codigo: 'TIPO_INVALIDO'
-            });
-        }
-
-        return errores;
     }
 
-    validarMonto(monto) {
-        const errores = [];
-
-        // Verificar que existe
-        if (monto === null || monto === undefined || monto === '') {
-            errores.push({
-                campo: 'monto',
-                mensaje: 'El monto es obligatorio',
-                codigo: 'MONTO_REQUERIDO'
-            });
-            return errores;
-        }
-
-        // Convertir a número
-        const montoNum = parseFloat(monto);
-
-        // Verificar que es un número válido
-        if (isNaN(montoNum)) {
-            errores.push({
-                campo: 'monto',
-                mensaje: 'El monto debe ser un número válido',
-                codigo: 'MONTO_NO_NUMERICO'
-            });
-            return errores;
-        }
-
-        // Verificar monto mínimo
-        if (montoNum < this.config.montoMinimo) {
-            errores.push({
-                campo: 'monto',
-                mensaje: `El monto debe ser mayor a S/. ${this.config.montoMinimo}`,
-                codigo: 'MONTO_MUY_PEQUENO'
-            });
-        }
-
-        // Verificar monto máximo
-        if (montoNum > this.config.montoMaximo) {
-            errores.push({
-                campo: 'monto',
-                mensaje: `El monto no puede superar S/. ${this.config.montoMaximo.toLocaleString()}`,
-                codigo: 'MONTO_MUY_GRANDE'
-            });
-        }
-
-        // Verificar decimales (máximo 2)
-        if (!/^\d+(\.\d{1,2})?$/.test(monto.toString())) {
-            errores.push({
-                campo: 'monto',
-                mensaje: 'El monto solo puede tener hasta 2 decimales',
-                codigo: 'MONTO_DECIMALES_INVALIDOS'
-            });
-        }
-
-        return errores;
+    async _esperarDependencias() {
+        return new Promise((resolve) => {
+            const verificar = () => {
+                if (window.gestorEmpresas && window.sistemaNiveles && window.FlujoCajaConfig) {
+                    this.gestor = window.gestorEmpresas;
+                    this.sistemaNiveles = window.sistemaNiveles;
+                    this.configuracion = window.FlujoCajaConfig;
+                    
+                    this._log('info', '✅ Dependencias conectadas');
+                    resolve();
+                } else {
+                    setTimeout(verificar, 500);
+                }
+            };
+            verificar();
+        });
     }
 
-    validarCategoria(categoria) {
-        const errores = [];
-
-        if (!categoria || categoria.trim() === '') {
-            errores.push({
-                campo: 'categoria',
-                mensaje: 'Debe seleccionar una categoría',
-                codigo: 'CATEGORIA_REQUERIDA'
-            });
-            return errores;
-        }
-
-        // Validar longitud
-        if (categoria.length > 100) {
-            errores.push({
-                campo: 'categoria',
-                mensaje: 'La categoría es demasiado larga (máximo 100 caracteres)',
-                codigo: 'CATEGORIA_MUY_LARGA'
-            });
-        }
-
-        return errores;
-    }
-
-    validarFecha(fecha) {
-        const errores = [];
-
-        if (!fecha) {
-            errores.push({
-                campo: 'fecha',
-                mensaje: 'La fecha es obligatoria',
-                codigo: 'FECHA_REQUERIDA'
-            });
-            return errores;
-        }
-
-        // Convertir a fecha
-        const fechaObj = new Date(fecha);
+    async _cargarEmpresaActual() {
+        this.empresaActual = this.gestor.estado.empresaActual;
         
-        // Verificar que es una fecha válida
-        if (isNaN(fechaObj.getTime())) {
-            errores.push({
-                campo: 'fecha',
-                mensaje: 'La fecha no es válida',
-                codigo: 'FECHA_INVALIDA'
-            });
-            return errores;
+        if (!this.empresaActual) {
+            this._log('warn', 'No hay empresa seleccionada');
+            return;
         }
 
-        const hoy = new Date();
-        hoy.setHours(0, 0, 0, 0);
+        // Obtener nivel de la empresa
+        this.nivel = this.sistemaNiveles.obtenerNivelEmpresa(this.empresaActual);
         
-        const fechaInput = new Date(fechaObj);
-        fechaInput.setHours(0, 0, 0, 0);
-
-        // Verificar que no es fecha futura
-        if (fechaInput > hoy) {
-            errores.push({
-                campo: 'fecha',
-                mensaje: 'No se permiten fechas futuras',
-                codigo: 'FECHA_FUTURA'
-            });
+        if (!this.nivel) {
+            this._log('warn', 'Empresa sin nivel asignado');
+            return;
         }
 
-        // Verificar que no es muy antigua
-        const diasDiferencia = Math.floor((hoy - fechaInput) / (1000 * 60 * 60 * 24));
-        if (diasDiferencia > this.config.diasMaximosPasado) {
-            errores.push({
-                campo: 'fecha',
-                mensaje: `La fecha no puede ser mayor a ${Math.floor(this.config.diasMaximosPasado / 365)} años atrás`,
-                codigo: 'FECHA_MUY_ANTIGUA'
-            });
-        }
+        // Obtener componentes activos según score
+        const componentesOcultos = this.nivel.componentesOcultos || [];
+        this.componentesActivos = this.configuracion.obtenerComponentesActivos(
+            this.nivel.score,
+            componentesOcultos
+        );
 
-        return errores;
+        // Obtener categorías según industria
+        const empresa = this.gestor.estado.empresas[this.empresaActual];
+        const industriaId = empresa?.perfilIndustrial || 'default';
+        this.categorias = this.configuracion.obtenerCategorias(industriaId);
+
+        this._log('info', `Empresa cargada: ${this.empresaActual}`);
+        this._log('info', `Nivel: ${this.nivel.nivel.nombre} (Score: ${this.nivel.score})`);
+        this._log('info', `Categorías cargadas:`, this.categorias);
     }
 
-    validarDescripcion(descripcion) {
-        const errores = [];
-
-        if (descripcion && descripcion.length > this.config.descripcionMaxLength) {
-            errores.push({
-                campo: 'descripcion',
-                mensaje: `La descripción no puede superar ${this.config.descripcionMaxLength} caracteres`,
-                codigo: 'DESCRIPCION_MUY_LARGA'
-            });
-        }
-
-        return errores;
-    }
-
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * LIMPIEZA DE DATOS
-     * ═══════════════════════════════════════════════════════════════
-     */
-    limpiarDatos(datos) {
-        return {
-            tipo: datos.tipo?.trim().toLowerCase(),
-            monto: parseFloat(parseFloat(datos.monto).toFixed(2)),
-            categoria: datos.categoria?.trim(),
-            descripcion: datos.descripcion?.trim() || '',
-            fecha: datos.fecha,
-            metodoPago: datos.metodoPago?.trim() || 'efectivo',
-            comprobante: datos.comprobante || null,
-            notas: datos.notas?.trim() || ''
-        };
-    }
-
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * FORMATEAR MENSAJES DE ERROR PARA UI
-     * ═══════════════════════════════════════════════════════════════
-     */
-    formatearErroresParaUI(errores) {
-        if (errores.length === 0) {
-            return '';
-        }
-
-        if (errores.length === 1) {
-            return errores[0].mensaje;
-        }
-
-        return '• ' + errores.map(e => e.mensaje).join('\n• ');
-    }
-
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * VALIDACIONES RÁPIDAS (para uso en formularios)
-     * ═══════════════════════════════════════════════════════════════
-     */
-    
-    esMontoDec(valor) {
-        return /^\d+(\.\d{1,2})?$/.test(valor.toString());
-    }
-
-    esMontoPositivo(valor) {
-        return parseFloat(valor) > 0;
-    }
-
-    esFechaValida(fecha) {
-        const fechaObj = new Date(fecha);
-        return !isNaN(fechaObj.getTime());
-    }
-
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * VALIDACIÓN EN TIEMPO REAL (para inputs)
-     * ═══════════════════════════════════════════════════════════════
-     */
-    validarCampoEnTiempoReal(campo, valor) {
-        switch (campo) {
-            case 'monto':
-                return this.validarMonto(valor);
-            case 'categoria':
-                return this.validarCategoria(valor);
-            case 'fecha':
-                return this.validarFecha(valor);
-            case 'descripcion':
-                return this.validarDescripcion(valor);
-            default:
-                return [];
+    async _cargarTransacciones() {
+        try {
+            const key = `grizalum_flujo_caja_${this.empresaActual}`;
+            const datos = localStorage.getItem(key);
+            
+            if (datos) {
+                this.transacciones = JSON.parse(datos);
+                this._log('info', `✅ Cargadas ${this.transacciones.length} transacciones`);
+            } else {
+                this.transacciones = [];
+                this._log('info', 'Sin transacciones previas');
+            }
+        } catch (error) {
+            this._log('error', 'Error cargando transacciones:', error);
+            this.transacciones = [];
         }
     }
 
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * VALIDAR MÚLTIPLES TRANSACCIONES (para importación)
-     * ═══════════════════════════════════════════════════════════════
-     */
-    validarLote(transacciones) {
-        const resultados = [];
-        
-        transacciones.forEach((transaccion, index) => {
-            const validacion = this.validarTransaccion(transaccion);
-            resultados.push({
-                indice: index,
-                ...validacion
+    _configurarEventos() {
+        // Escuchar cambio de empresa
+        document.addEventListener('grizalumCompanyChanged', (e) => {
+            this._log('info', 'Empresa cambiada, recargando...');
+            this.inicializado = false; // 🔧 Marcar como no inicializado
+            this._cargarEmpresaActual().then(() => {
+                this._cargarTransacciones().then(() => {
+                    this.inicializado = true; // 🔧 Marcar como inicializado
+                    this._renderizar();
+                });
             });
         });
 
-        const validas = resultados.filter(r => r.valido).length;
-        const invalidas = resultados.filter(r => !r.valido).length;
+        // Escuchar cambio de nivel
+        document.addEventListener('grizalumCambioNivel', (e) => {
+            if (e.detail.empresaId === this.empresaActual) {
+                this._log('success', '🎉 Nivel actualizado, nuevos componentes disponibles');
+                this._cargarEmpresaActual();
+                this._renderizar();
+            }
+        });
 
-        return {
-            total: transacciones.length,
-            validas,
-            invalidas,
-            resultados
-        };
+        // Escuchar componente oculto/mostrado
+        document.addEventListener('grizalumComponenteOculto', (e) => {
+            this._actualizarComponentesActivos();
+        });
+
+        document.addEventListener('grizalumComponenteMostrado', (e) => {
+            this._actualizarComponentesActivos();
+        });
     }
 
     /**
      * ═══════════════════════════════════════════════════════════════
-     * CONFIGURACIÓN PERSONALIZADA
+     * CRUD DE TRANSACCIONES
      * ═══════════════════════════════════════════════════════════════
      */
-    configurar(opciones) {
-        this.config = {
-            ...this.config,
-            ...opciones
+
+    agregarTransaccion(datos) {
+        const transaccion = {
+            id: this._generarId(),
+            empresaId: this.empresaActual,
+            tipo: datos.tipo, // 'ingreso' o 'gasto'
+            monto: parseFloat(datos.monto),
+            categoria: datos.categoria,
+            descripcion: datos.descripcion || '',
+            fecha: datos.fecha || new Date().toISOString(),
+            metodoPago: datos.metodoPago || 'efectivo',
+            comprobante: datos.comprobante || null,
+            notas: datos.notas || '',
+            meta: {
+                creadoPor: 'usuario',
+                fechaCreacion: new Date().toISOString(),
+                fechaModificacion: new Date().toISOString()
+            }
+        };
+
+        this.transacciones.unshift(transaccion);
+        this._guardarTransacciones();
+        
+        // Registrar uso del componente
+        this.sistemaNiveles.registrarUso(this.empresaActual, 'registroRapido');
+        
+        this._log('success', `✅ ${datos.tipo} agregado: S/. ${datos.monto}`);
+        
+        // Disparar evento
+        this._dispararEvento('transaccionAgregada', transaccion);
+        
+        return transaccion;
+    }
+
+    editarTransaccion(id, datosNuevos) {
+        const index = this.transacciones.findIndex(t => t.id === id);
+        
+        if (index === -1) {
+            this._log('error', 'Transacción no encontrada');
+            return false;
+        }
+
+        this.transacciones[index] = {
+            ...this.transacciones[index],
+            ...datosNuevos,
+            meta: {
+                ...this.transacciones[index].meta,
+                fechaModificacion: new Date().toISOString()
+            }
+        };
+
+        this._guardarTransacciones();
+        
+        this._log('info', `Transacción ${id} editada`);
+        
+        this._dispararEvento('transaccionEditada', this.transacciones[index]);
+        
+        return this.transacciones[index];
+    }
+
+    eliminarTransaccion(id) {
+        const index = this.transacciones.findIndex(t => t.id === id);
+        
+        if (index === -1) {
+            this._log('error', 'Transacción no encontrada');
+            return false;
+        }
+
+        const transaccionEliminada = this.transacciones[index];
+        this.transacciones.splice(index, 1);
+        
+        this._guardarTransacciones();
+        
+        this._log('info', `Transacción ${id} eliminada`);
+        
+        this._dispararEvento('transaccionEliminada', transaccionEliminada);
+        
+        return true;
+    }
+
+    obtenerTransaccion(id) {
+        return this.transacciones.find(t => t.id === id);
+    }
+
+    obtenerTransacciones(filtros = {}) {
+        let resultado = [...this.transacciones];
+
+        // Filtrar por tipo
+        if (filtros.tipo) {
+            resultado = resultado.filter(t => t.tipo === filtros.tipo);
+        }
+
+        // Filtrar por categoría
+        if (filtros.categoria) {
+            resultado = resultado.filter(t => t.categoria === filtros.categoria);
+        }
+
+        // Filtrar por rango de fechas
+        if (filtros.fechaInicio) {
+            resultado = resultado.filter(t => new Date(t.fecha) >= new Date(filtros.fechaInicio));
+        }
+
+        if (filtros.fechaFin) {
+            resultado = resultado.filter(t => new Date(t.fecha) <= new Date(filtros.fechaFin));
+        }
+
+        // Búsqueda por texto
+        if (filtros.busqueda) {
+            const busqueda = filtros.busqueda.toLowerCase();
+            resultado = resultado.filter(t => 
+                t.descripcion.toLowerCase().includes(busqueda) ||
+                t.categoria.toLowerCase().includes(busqueda)
+            );
+        }
+
+        return resultado;
+    }
+
+    /**
+     * ═══════════════════════════════════════════════════════════════
+     * CÁLCULOS Y ANÁLISIS
+     * ═══════════════════════════════════════════════════════════════
+     */
+
+    calcularBalance(filtros = {}) {
+        const transacciones = this.obtenerTransacciones(filtros);
+        
+        const ingresos = transacciones
+            .filter(t => t.tipo === 'ingreso')
+            .reduce((sum, t) => sum + t.monto, 0);
+        
+        const gastos = transacciones
+            .filter(t => t.tipo === 'gasto')
+            .reduce((sum, t) => sum + t.monto, 0);
+        
+        const balance = ingresos - gastos;
+
+        return {
+            ingresos,
+            gastos,
+            balance,
+            cantidadIngresos: transacciones.filter(t => t.tipo === 'ingreso').length,
+            cantidadGastos: transacciones.filter(t => t.tipo === 'gasto').length,
+            total: transacciones.length
         };
     }
 
-    obtenerConfiguracion() {
-        return { ...this.config };
+    calcularPorCategoria(tipo = null) {
+        const transacciones = tipo 
+            ? this.transacciones.filter(t => t.tipo === tipo)
+            : this.transacciones;
+
+        const porCategoria = {};
+
+        transacciones.forEach(t => {
+            if (!porCategoria[t.categoria]) {
+                porCategoria[t.categoria] = {
+                    categoria: t.categoria,
+                    monto: 0,
+                    cantidad: 0,
+                    transacciones: []
+                };
+            }
+
+            porCategoria[t.categoria].monto += t.monto;
+            porCategoria[t.categoria].cantidad++;
+            porCategoria[t.categoria].transacciones.push(t);
+        });
+
+        return Object.values(porCategoria).sort((a, b) => b.monto - a.monto);
+    }
+
+    calcularPorMes(meses = 6) {
+        const ahora = new Date();
+        const resultado = [];
+
+        for (let i = meses - 1; i >= 0; i--) {
+            const fecha = new Date(ahora.getFullYear(), ahora.getMonth() - i, 1);
+            const mesInicio = new Date(fecha.getFullYear(), fecha.getMonth(), 1);
+            const mesFin = new Date(fecha.getFullYear(), fecha.getMonth() + 1, 0, 23, 59, 59);
+
+            const balance = this.calcularBalance({
+                fechaInicio: mesInicio.toISOString(),
+                fechaFin: mesFin.toISOString()
+            });
+
+            resultado.push({
+                mes: fecha.toLocaleDateString('es-PE', { month: 'short', year: 'numeric' }),
+                fecha: fecha.toISOString(),
+                ...balance
+            });
+        }
+
+        return resultado;
+    }
+
+    /**
+     * ═══════════════════════════════════════════════════════════════
+     * UTILIDADES
+     * ═══════════════════════════════════════════════════════════════
+     */
+
+    _guardarTransacciones() {
+        try {
+            const key = `grizalum_flujo_caja_${this.empresaActual}`;
+            localStorage.setItem(key, JSON.stringify(this.transacciones));
+        } catch (error) {
+            this._log('error', 'Error guardando transacciones:', error);
+        }
+    }
+
+    _generarId() {
+        return `tx_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    }
+
+    _actualizarComponentesActivos() {
+        this._cargarEmpresaActual();
+    }
+
+    _renderizar() {
+        this._dispararEvento('flujoCajaActualizado', {
+            nivel: this.nivel,
+            componentesActivos: this.componentesActivos,
+            balance: this.calcularBalance()
+        });
+    }
+
+    _dispararEvento(nombre, datos) {
+        const evento = new CustomEvent(`grizalum${nombre.charAt(0).toUpperCase() + nombre.slice(1)}`, {
+            detail: datos,
+            bubbles: true,
+            cancelable: true
+        });
+        document.dispatchEvent(evento);
+    }
+
+    _log(nivel, mensaje, datos = null) {
+        if (!this.config.debug && nivel !== 'error' && nivel !== 'success') return;
+        
+        const timestamp = new Date().toISOString();
+        const prefijo = `[${timestamp}] [${this.config.componente}]`;
+        
+        if (nivel === 'error') {
+            console.error(`${prefijo}`, mensaje, datos);
+        } else if (nivel === 'warn') {
+            console.warn(`${prefijo}`, mensaje, datos);
+        } else {
+            console.log(`${prefijo}`, mensaje, datos);
+        }
+    }
+
+    /**
+     * ═══════════════════════════════════════════════════════════════
+     * API PÚBLICA
+     * ═══════════════════════════════════════════════════════════════
+     */
+
+    // 🆕 NUEVO: Verificar si está inicializado
+    estaListo() {
+        return this.inicializado;
+    }
+
+    // 🆕 NUEVO: Esperar a que esté listo
+    async esperarInicializacion() {
+        if (this.inicializado) {
+            return true;
+        }
+
+        return new Promise((resolve) => {
+            const listener = () => {
+                document.removeEventListener('grizalumFlujoCajaInicializado', listener);
+                resolve(true);
+            };
+            document.addEventListener('grizalumFlujoCajaInicializado', listener);
+        });
+    }
+
+    // Obtener información del módulo
+    obtenerInfo() {
+        return {
+            empresaActual: this.empresaActual,
+            nivel: this.nivel,
+            componentesActivos: this.componentesActivos,
+            categorias: this.categorias,
+            balance: this.calcularBalance(),
+            totalTransacciones: this.transacciones.length
+        };
+    }
+
+    // Verificar si un componente está activo
+    componenteActivo(componenteId) {
+        for (const grupo of Object.values(this.componentesActivos)) {
+            for (const componente of Object.values(grupo)) {
+                if (componente.id === componenteId) {
+                    return componente.activo === true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // Exportar datos a JSON
+    exportarJSON() {
+        return {
+            empresa: this.empresaActual,
+            fecha: new Date().toISOString(),
+            transacciones: this.transacciones,
+            balance: this.calcularBalance(),
+            porCategoria: this.calcularPorCategoria()
+        };
     }
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// EXPORTAR CLASE GLOBALMENTE
-// ═══════════════════════════════════════════════════════════════════
-window.FlujoCajaValidador = FlujoCajaValidador;
+// Inicialización global
+window.flujoCaja = new FlujoCaja();
 
-// Crear instancia global
-window.flujoCajaValidador = new FlujoCajaValidador();
-
-console.log('✅ Sistema de validaciones de Flujo de Caja cargado');
+console.log(`
+╔═══════════════════════════════════════════════════════════════╗
+║  💰 FLUJO DE CAJA v1.0.1 (FIXED)                              ║
+║  Sistema adaptativo de gestión financiera                     ║
+║  🔧 Corregido: Race condition con gráficos                    ║
+╚═══════════════════════════════════════════════════════════════╝
+`);
