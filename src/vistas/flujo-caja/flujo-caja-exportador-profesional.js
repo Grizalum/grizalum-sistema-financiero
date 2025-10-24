@@ -176,12 +176,20 @@ class ExportadorExcelProfesional {
         sheet.getCell('D9').value = this._porcentaje(balance.gastos, balance.ingresos + balance.gastos);
         sheet.getCell('E9').value = '⚠️ NEGATIVO';
 
-        ['B9', 'C9', 'D9', 'E9'].forEach(cell => {
-            const c = sheet.getCell(cell);
-            c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEF4444' } };
-            c.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-            c.alignment = { horizontal: cell === 'B9' ? 'right' : 'center' };
-        });
+       ['A9', 'B9', 'C9', 'D9', 'E9'].forEach(cell => {
+    const c = sheet.getCell(cell);
+    if (cell !== 'A9') {
+        c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEF4444' } };
+        c.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+        c.alignment = { horizontal: cell === 'B9' ? 'right' : 'center' };
+    }
+    c.border = {
+        top: { style: 'medium', color: { argb: 'FFEF4444' } },
+        bottom: { style: 'medium', color: { argb: 'FFEF4444' } },
+        left: { style: 'medium', color: { argb: 'FFEF4444' } },
+        right: { style: 'medium', color: { argb: 'FFEF4444' } }
+    };
+});
 
         // ═══ BALANCE FINAL ═══
         sheet.getCell('A11').value = '💰 BALANCE FINAL';
