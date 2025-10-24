@@ -1,631 +1,346 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
  * EXPORTADOR PROFESIONAL DE EXCEL - FLUJO DE CAJA GRIZALUM
- * Genera archivos Excel con formato ejecutivo premium
- * VERSION: 2.0 PROFESSIONAL
+ * Usa ExcelJS para estilos REALES con colores
+ * VERSION: 3.0 PREMIUM
  * ═══════════════════════════════════════════════════════════════════
  */
 
 class ExportadorExcelProfesional {
     constructor() {
-        // Paleta de colores GRIZALUM (modo oscuro de tu app)
+        // Colores GRIZALUM (tu app)
         this.colores = {
-            // Colores principales
-            primario: 'FF667EEA',        // Morado/Azul principal
-            secundario: 'FF764BA2',      // Morado secundario
-            
-            // Colores de datos
-            ingreso: 'FF10B981',         // Verde (ingresos)
-            gasto: 'FFEF4444',           // Rojo (gastos)
-            balance: 'FF8B5CF6',         // Morado (balance)
-            
-            // Colores de fondo
-            header: 'FF1F2937',          // Gris oscuro header
-            subheader: 'FF374151',       // Gris medio
-            background: 'FF111827',      // Fondo oscuro
-            card: 'FF1F2937',            // Card background
-            
-            // Textos
-            textoBlanco: 'FFFFFFFF',
-            textoGris: 'FFD1D5DB',
-            textoOscuro: 'FF111827',
-            
-            // Bordes
-            borde: 'FF4B5563',
-            
-            // Acentos
-            warning: 'FFF59E0B',
-            info: 'FF3B82F6',
-            success: 'FF10B981',
-            danger: 'FFEF4444'
-        };
-        
-        // Estilos base
-        this.estilos = this._crearEstilos();
-    }
-
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * CREAR ESTILOS BASE
-     * ═══════════════════════════════════════════════════════════════
-     */
-    _crearEstilos() {
-        return {
-            // Título principal (H1)
-            tituloPrincipal: {
-                font: { 
-                    name: 'Inter',
-                    sz: 24, 
-                    bold: true, 
-                    color: { rgb: this.colores.textoBlanco } 
-                },
-                fill: { 
-                    fgColor: { rgb: this.colores.primario } 
-                },
-                alignment: { 
-                    vertical: 'center', 
-                    horizontal: 'center' 
-                },
-                border: {
-                    bottom: { style: 'thick', color: { rgb: this.colores.primario } }
-                }
-            },
-            
-            // Subtítulo (H2)
-            subtitulo: {
-                font: { 
-                    name: 'Inter',
-                    sz: 18, 
-                    bold: true, 
-                    color: { rgb: this.colores.textoBlanco } 
-                },
-                fill: { 
-                    fgColor: { rgb: this.colores.secundario } 
-                },
-                alignment: { 
-                    vertical: 'center', 
-                    horizontal: 'center' 
-                }
-            },
-            
-            // Header de tabla
-            headerTabla: {
-                font: { 
-                    name: 'Inter',
-                    sz: 12, 
-                    bold: true, 
-                    color: { rgb: this.colores.textoBlanco } 
-                },
-                fill: { 
-                    fgColor: { rgb: this.colores.header } 
-                },
-                alignment: { 
-                    vertical: 'center', 
-                    horizontal: 'center' 
-                },
-                border: {
-                    top: { style: 'thin', color: { rgb: this.colores.borde } },
-                    bottom: { style: 'thin', color: { rgb: this.colores.borde } },
-                    left: { style: 'thin', color: { rgb: this.colores.borde } },
-                    right: { style: 'thin', color: { rgb: this.colores.borde } }
-                }
-            },
-            
-            // Celda normal
-            celdaNormal: {
-                font: { 
-                    name: 'Inter',
-                    sz: 11, 
-                    color: { rgb: this.colores.textoOscuro } 
-                },
-                alignment: { 
-                    vertical: 'center' 
-                },
-                border: {
-                    top: { style: 'thin', color: { rgb: this.colores.borde } },
-                    bottom: { style: 'thin', color: { rgb: this.colores.borde } },
-                    left: { style: 'thin', color: { rgb: this.colores.borde } },
-                    right: { style: 'thin', color: { rgb: this.colores.borde } }
-                }
-            },
-            
-            // Celda de ingreso (verde)
-            celdaIngreso: {
-                font: { 
-                    name: 'Inter',
-                    sz: 11, 
-                    bold: true,
-                    color: { rgb: this.colores.textoBlanco } 
-                },
-                fill: { 
-                    fgColor: { rgb: this.colores.ingreso } 
-                },
-                alignment: { 
-                    vertical: 'center', 
-                    horizontal: 'right' 
-                },
-                border: {
-                    top: { style: 'thin', color: { rgb: this.colores.borde } },
-                    bottom: { style: 'thin', color: { rgb: this.colores.borde } },
-                    left: { style: 'thin', color: { rgb: this.colores.borde } },
-                    right: { style: 'thin', color: { rgb: this.colores.borde } }
-                },
-                numFmt: '"S/. "#,##0.00'
-            },
-            
-            // Celda de gasto (rojo)
-            celdaGasto: {
-                font: { 
-                    name: 'Inter',
-                    sz: 11, 
-                    bold: true,
-                    color: { rgb: this.colores.textoBlanco } 
-                },
-                fill: { 
-                    fgColor: { rgb: this.colores.gasto } 
-                },
-                alignment: { 
-                    vertical: 'center', 
-                    horizontal: 'right' 
-                },
-                border: {
-                    top: { style: 'thin', color: { rgb: this.colores.borde } },
-                    bottom: { style: 'thin', color: { rgb: this.colores.borde } },
-                    left: { style: 'thin', color: { rgb: this.colores.borde } },
-                    right: { style: 'thin', color: { rgb: this.colores.borde } }
-                },
-                numFmt: '"S/. "#,##0.00'
-            },
-            
-            // Total destacado
-            totalDestacado: {
-                font: { 
-                    name: 'Inter',
-                    sz: 14, 
-                    bold: true, 
-                    color: { rgb: this.colores.textoBlanco } 
-                },
-                fill: { 
-                    fgColor: { rgb: this.colores.balance } 
-                },
-                alignment: { 
-                    vertical: 'center', 
-                    horizontal: 'right' 
-                },
-                border: {
-                    top: { style: 'thick', color: { rgb: this.colores.primario } },
-                    bottom: { style: 'thick', color: { rgb: this.colores.primario } }
-                },
-                numFmt: '"S/. "#,##0.00'
-            },
-            
-            // Metadatos (info de empresa)
-            metadata: {
-                font: { 
-                    name: 'Inter',
-                    sz: 10, 
-                    italic: true,
-                    color: { rgb: this.colores.textoGris } 
-                },
-                alignment: { 
-                    vertical: 'center' 
-                }
-            }
+            primario: '667EEA',      // Morado principal
+            verde: '10B981',         // Verde ingresos
+            rojo: 'EF4444',          // Rojo gastos
+            morado: '8B5CF6',        // Morado balance
+            fondoOscuro: '1F2937',   // Fondo oscuro
+            blanco: 'FFFFFF',
+            gris: 'D1D5DB'
         };
     }
 
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * EXPORTAR A EXCEL PROFESIONAL
-     * ═══════════════════════════════════════════════════════════════
-     */
     async exportar(datos) {
         try {
-            console.log('📊 Iniciando exportación profesional...');
-            
-            // Crear libro de trabajo
-            const wb = XLSX.utils.book_new();
-            wb.Props = {
-                Title: 'Flujo de Caja - GRIZALUM',
-                Subject: 'Reporte Financiero',
-                Author: 'GRIZALUM Sistema Financiero',
-                CreatedDate: new Date()
-            };
+            console.log('📊 Generando Excel profesional con ExcelJS...');
+
+            // Crear libro
+            const workbook = new ExcelJS.Workbook();
+            workbook.creator = 'GRIZALUM Sistema Financiero';
+            workbook.created = new Date();
 
             // ═══════════════════════════════════════════════════════════
             // HOJA 1: DASHBOARD EJECUTIVO
             // ═══════════════════════════════════════════════════════════
-            const hojaDashboard = this._crearHojaDashboard(datos);
-            XLSX.utils.book_append_sheet(wb, hojaDashboard, '📊 Dashboard');
-
-            // ═══════════════════════════════════════════════════════════
-            // HOJA 2: TRANSACCIONES DETALLADAS
-            // ═══════════════════════════════════════════════════════════
-            const hojaTransacciones = this._crearHojaTransacciones(datos);
-            XLSX.utils.book_append_sheet(wb, hojaTransacciones, '📋 Transacciones');
-
-            // ═══════════════════════════════════════════════════════════
-            // HOJA 3: ANÁLISIS POR CATEGORÍA
-            // ═══════════════════════════════════════════════════════════
-            const hojaCategorias = this._crearHojaCategorias(datos);
-            XLSX.utils.book_append_sheet(wb, hojaCategorias, '🏷️ Categorías');
-
-            // ═══════════════════════════════════════════════════════════
-            // HOJA 4: GRÁFICOS Y TENDENCIAS
-            // ═══════════════════════════════════════════════════════════
-            const hojaGraficos = this._crearHojaGraficos(datos);
-            XLSX.utils.book_append_sheet(wb, hojaGraficos, '📈 Análisis');
-
-            // ═══════════════════════════════════════════════════════════
-            // GENERAR Y DESCARGAR
-            // ═══════════════════════════════════════════════════════════
-            const nombreArchivo = `GRIZALUM_FlujoCaja_${datos.empresa}_${this._formatearFecha()}.xlsx`;
-            
-            XLSX.writeFile(wb, nombreArchivo, {
-                bookType: 'xlsx',
-                bookSST: false,
-                type: 'binary'
+            const hoja1 = workbook.addWorksheet('📊 Dashboard', {
+                views: [{ showGridLines: false }]
             });
 
-            console.log('✅ Excel profesional generado:', nombreArchivo);
-            
+            this._crearDashboard(hoja1, datos);
+
+            // ═══════════════════════════════════════════════════════════
+            // HOJA 2: TRANSACCIONES
+            // ═══════════════════════════════════════════════════════════
+            const hoja2 = workbook.addWorksheet('📋 Transacciones', {
+                views: [{ showGridLines: false }]
+            });
+
+            this._crearTransacciones(hoja2, datos);
+
+            // ═══════════════════════════════════════════════════════════
+            // HOJA 3: CATEGORÍAS
+            // ═══════════════════════════════════════════════════════════
+            const hoja3 = workbook.addWorksheet('🏷️ Categorías', {
+                views: [{ showGridLines: false }]
+            });
+
+            this._crearCategorias(hoja3, datos);
+
+            // ═══════════════════════════════════════════════════════════
+            // HOJA 4: ANÁLISIS
+            // ═══════════════════════════════════════════════════════════
+            const hoja4 = workbook.addWorksheet('📈 Análisis', {
+                views: [{ showGridLines: false }]
+            });
+
+            this._crearAnalisis(hoja4, datos);
+
+            // ═══════════════════════════════════════════════════════════
+            // DESCARGAR
+            // ═══════════════════════════════════════════════════════════
+            const buffer = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([buffer], { 
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+            });
+
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `GRIZALUM_FlujoCaja_${datos.empresa}_${this._fecha()}.xlsx`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+
+            console.log('✅ Excel profesional generado');
             return true;
-            
+
         } catch (error) {
-            console.error('❌ Error generando Excel:', error);
+            console.error('❌ Error:', error);
             throw error;
         }
     }
 
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * CREAR HOJA DASHBOARD EJECUTIVO
-     * ═══════════════════════════════════════════════════════════════
-     */
-    _crearHojaDashboard(datos) {
-        const ws = {};
-        const balance = datos.balance || { ingresos: 0, gastos: 0, balance: 0 };
-        
+    _crearDashboard(sheet, datos) {
+        const balance = datos.balance || {};
+
         // ═══ TÍTULO PRINCIPAL ═══
-        ws['A1'] = { 
-            v: '💰 FLUJO DE CAJA - DASHBOARD EJECUTIVO', 
-            t: 's',
-            s: this.estilos.tituloPrincipal
+        sheet.mergeCells('A1:F1');
+        const titulo = sheet.getCell('A1');
+        titulo.value = '💰 FLUJO DE CAJA - DASHBOARD EJECUTIVO';
+        titulo.font = { name: 'Inter', size: 18, bold: true, color: { argb: 'FFFFFFFF' } };
+        titulo.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF667EEA' } };
+        titulo.alignment = { horizontal: 'center', vertical: 'middle' };
+        titulo.border = {
+            bottom: { style: 'thick', color: { argb: 'FF667EEA' } }
         };
-        ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 5 } }];
+        sheet.getRow(1).height = 40;
 
         // ═══ METADATOS ═══
-        ws['A3'] = { v: 'Empresa:', t: 's', s: this.estilos.metadata };
-        ws['B3'] = { v: datos.empresa || 'N/A', t: 's', s: this.estilos.celdaNormal };
+        sheet.getCell('A3').value = 'Empresa:';
+        sheet.getCell('B3').value = datos.empresa || 'N/A';
+        sheet.getCell('D3').value = 'Fecha:';
+        sheet.getCell('E3').value = new Date().toLocaleDateString('es-PE');
         
-        ws['A4'] = { v: 'Fecha Exportación:', t: 's', s: this.estilos.metadata };
-        ws['B4'] = { v: this._formatearFechaCompleta(), t: 's', s: this.estilos.celdaNormal };
-        
-        ws['A5'] = { v: 'Total Transacciones:', t: 's', s: this.estilos.metadata };
-        ws['B5'] = { v: datos.transacciones?.length || 0, t: 'n', s: this.estilos.celdaNormal };
-
         // ═══ RESUMEN FINANCIERO ═══
-        ws['A7'] = { 
-            v: '💎 RESUMEN FINANCIERO', 
-            t: 's',
-            s: this.estilos.subtitulo
-        };
-        ws['!merges'].push({ s: { r: 6, c: 0 }, e: { r: 6, c: 5 } });
+        sheet.mergeCells('A5:F5');
+        const subtitulo = sheet.getCell('A5');
+        subtitulo.value = '💎 RESUMEN FINANCIERO';
+        subtitulo.font = { size: 14, bold: true, color: { argb: 'FFFFFFFF' } };
+        subtitulo.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF764BA2' } };
+        subtitulo.alignment = { horizontal: 'center', vertical: 'middle' };
+        sheet.getRow(5).height = 30;
 
-        // Headers
-        const row = 8;
-        ws[`A${row}`] = { v: 'CONCEPTO', t: 's', s: this.estilos.headerTabla };
-        ws[`B${row}`] = { v: 'MONTO (S/.)', t: 's', s: this.estilos.headerTabla };
-        ws[`C${row}`] = { v: 'CANTIDAD', t: 's', s: this.estilos.headerTabla };
-        ws[`D${row}`] = { v: '% DEL TOTAL', t: 's', s: this.estilos.headerTabla };
-        ws[`E${row}`] = { v: 'ESTADO', t: 's', s: this.estilos.headerTabla };
-
-        // Ingresos
-        const rowIngresos = 9;
-        ws[`A${rowIngresos}`] = { v: '📈 INGRESOS TOTALES', t: 's', s: this.estilos.celdaNormal };
-        ws[`B${rowIngresos}`] = { v: balance.ingresos, t: 'n', s: this.estilos.celdaIngreso };
-        ws[`C${rowIngresos}`] = { v: balance.cantidadIngresos || 0, t: 'n', s: this.estilos.celdaNormal };
-        ws[`D${rowIngresos}`] = { 
-            v: this._calcularPorcentaje(balance.ingresos, balance.ingresos + balance.gastos), 
-            t: 's', 
-            s: this.estilos.celdaIngreso 
-        };
-        ws[`E${rowIngresos}`] = { v: '✅ POSITIVO', t: 's', s: this.estilos.celdaIngreso };
-
-        // Gastos
-        const rowGastos = 10;
-        ws[`A${rowGastos}`] = { v: '📉 GASTOS TOTALES', t: 's', s: this.estilos.celdaNormal };
-        ws[`B${rowGastos}`] = { v: balance.gastos, t: 'n', s: this.estilos.celdaGasto };
-        ws[`C${rowGastos}`] = { v: balance.cantidadGastos || 0, t: 'n', s: this.estilos.celdaNormal };
-        ws[`D${rowGastos}`] = { 
-            v: this._calcularPorcentaje(balance.gastos, balance.ingresos + balance.gastos), 
-            t: 's', 
-            s: this.estilos.celdaGasto 
-        };
-        ws[`E${rowGastos}`] = { v: '⚠️ NEGATIVO', t: 's', s: this.estilos.celdaGasto };
-
-        // Balance Final
-        const rowBalance = 12;
-        const esPositivo = balance.balance >= 0;
-        ws[`A${rowBalance}`] = { v: '💰 BALANCE FINAL', t: 's', s: this.estilos.totalDestacado };
-        ws[`B${rowBalance}`] = { v: balance.balance, t: 'n', s: this.estilos.totalDestacado };
-        ws[`C${rowBalance}`] = { v: balance.total || 0, t: 'n', s: this.estilos.totalDestacado };
-        ws[`D${rowBalance}`] = { v: '100%', t: 's', s: this.estilos.totalDestacado };
-        ws[`E${rowBalance}`] = { 
-            v: esPositivo ? '✅ SUPERÁVIT' : '❌ DÉFICIT', 
-            t: 's', 
-            s: esPositivo ? this.estilos.celdaIngreso : this.estilos.celdaGasto 
-        };
-
-        // ═══ INDICADORES CLAVE ═══
-        ws['A14'] = { 
-            v: '📊 INDICADORES CLAVE (KPIs)', 
-            t: 's',
-            s: this.estilos.subtitulo
-        };
-        ws['!merges'].push({ s: { r: 13, c: 0 }, e: { r: 13, c: 5 } });
-
-        // KPI 1: Ratio Ingresos/Gastos
-        ws['A16'] = { v: 'Ratio Ingresos/Gastos:', t: 's', s: this.estilos.celdaNormal };
-        const ratio = balance.gastos > 0 ? (balance.ingresos / balance.gastos).toFixed(2) : 'N/A';
-        ws['B16'] = { v: ratio, t: 's', s: this.estilos.totalDestacado };
-        ws['C16'] = { 
-            v: ratio >= 1.5 ? '🟢 Excelente' : ratio >= 1 ? '🟡 Aceptable' : '🔴 Crítico', 
-            t: 's', 
-            s: this.estilos.celdaNormal 
-        };
-
-        // KPI 2: Promedio de Ingresos
-        ws['A17'] = { v: 'Promedio por Ingreso:', t: 's', s: this.estilos.celdaNormal };
-        const promedioIngreso = balance.cantidadIngresos > 0 ? balance.ingresos / balance.cantidadIngresos : 0;
-        ws['B17'] = { v: promedioIngreso, t: 'n', s: this.estilos.celdaIngreso };
-
-        // KPI 3: Promedio de Gastos
-        ws['A18'] = { v: 'Promedio por Gasto:', t: 's', s: this.estilos.celdaNormal };
-        const promedioGasto = balance.cantidadGastos > 0 ? balance.gastos / balance.cantidadGastos : 0;
-        ws['B18'] = { v: promedioGasto, t: 'n', s: this.estilos.celdaGasto };
-
-        // Anchos de columna
-        ws['!cols'] = [
-            { wch: 30 },  // A
-            { wch: 20 },  // B
-            { wch: 15 },  // C
-            { wch: 15 },  // D
-            { wch: 20 }   // E
-        ];
-
-        // Altura de filas importantes
-        ws['!rows'] = [
-            { hpt: 40 },  // Fila 1 (título)
-            {},
-            {},
-            {},
-            {},
-            {},
-            { hpt: 35 },  // Fila 7 (subtítulo)
-        ];
-
-        return ws;
-    }
-
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * CREAR HOJA DE TRANSACCIONES
-     * ═══════════════════════════════════════════════════════════════
-     */
-    _crearHojaTransacciones(datos) {
-        const transacciones = datos.transacciones || [];
-        
-        // Crear array de datos
-        const datosArray = [
-            ['📋 LISTADO COMPLETO DE TRANSACCIONES'],
-            [],
-            ['Fecha', 'Tipo', 'Categoría', 'Descripción', 'Monto (S/.)', 'Método de Pago'],
-            ...transacciones.map(t => [
-                new Date(t.fecha).toLocaleDateString('es-PE'),
-                t.tipo.toUpperCase(),
-                t.categoria,
-                t.descripcion || '-',
-                t.monto,
-                t.metodoPago || 'Efectivo'
-            ])
-        ];
-
-        // Agregar totales al final
-        const balance = datos.balance || {};
-        datosArray.push([]);
-        datosArray.push(['', '', '', 'TOTAL INGRESOS:', balance.ingresos]);
-        datosArray.push(['', '', '', 'TOTAL GASTOS:', balance.gastos]);
-        datosArray.push(['', '', '', 'BALANCE FINAL:', balance.balance]);
-
-        // Crear worksheet
-        const ws = XLSX.utils.aoa_to_sheet(datosArray);
-
-        // Aplicar estilos
-        // Título
-        ws['A1'].s = this.estilos.tituloPrincipal;
-        
-        // Headers (fila 3)
-        ['A3', 'B3', 'C3', 'D3', 'E3', 'F3'].forEach(cell => {
-            if (ws[cell]) ws[cell].s = this.estilos.headerTabla;
+        // ═══ HEADERS ═══
+        const headers = ['CONCEPTO', 'MONTO (S/.)', 'CANTIDAD', '% DEL TOTAL', 'ESTADO'];
+        headers.forEach((header, i) => {
+            const cell = sheet.getCell(7, i + 1);
+            cell.value = header;
+            cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F2937' } };
+            cell.alignment = { horizontal: 'center', vertical: 'middle' };
+            cell.border = {
+                top: { style: 'thin' },
+                bottom: { style: 'thin' },
+                left: { style: 'thin' },
+                right: { style: 'thin' }
+            };
         });
 
-        // Aplicar estilos a las transacciones
-        for (let i = 4; i < 4 + transacciones.length; i++) {
-            const tipo = ws[`B${i}`]?.v;
-            
-            // Estilo según tipo
-            if (tipo === 'INGRESO') {
-                ws[`E${i}`].s = this.estilos.celdaIngreso;
-                ws[`E${i}`].z = '"S/. "#,##0.00';
-            } else if (tipo === 'GASTO') {
-                ws[`E${i}`].s = this.estilos.celdaGasto;
-                ws[`E${i}`].z = '"S/. "#,##0.00';
-            }
-        }
+        // ═══ INGRESOS ═══
+        sheet.getCell('A8').value = '📈 INGRESOS TOTALES';
+        sheet.getCell('B8').value = balance.ingresos;
+        sheet.getCell('B8').numFmt = '"S/. "#,##0.00';
+        sheet.getCell('C8').value = balance.cantidadIngresos || 0;
+        sheet.getCell('D8').value = this._porcentaje(balance.ingresos, balance.ingresos + balance.gastos);
+        sheet.getCell('E8').value = '✅ POSITIVO';
 
-        // Merge del título
-        ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 5 } }];
+        ['B8', 'C8', 'D8', 'E8'].forEach(cell => {
+            const c = sheet.getCell(cell);
+            c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF10B981' } };
+            c.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+            c.alignment = { horizontal: cell === 'B8' ? 'right' : 'center' };
+        });
+
+        // ═══ GASTOS ═══
+        sheet.getCell('A9').value = '📉 GASTOS TOTALES';
+        sheet.getCell('B9').value = balance.gastos;
+        sheet.getCell('B9').numFmt = '"S/. "#,##0.00';
+        sheet.getCell('C9').value = balance.cantidadGastos || 0;
+        sheet.getCell('D9').value = this._porcentaje(balance.gastos, balance.ingresos + balance.gastos);
+        sheet.getCell('E9').value = '⚠️ NEGATIVO';
+
+        ['B9', 'C9', 'D9', 'E9'].forEach(cell => {
+            const c = sheet.getCell(cell);
+            c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEF4444' } };
+            c.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+            c.alignment = { horizontal: cell === 'B9' ? 'right' : 'center' };
+        });
+
+        // ═══ BALANCE FINAL ═══
+        sheet.getCell('A11').value = '💰 BALANCE FINAL';
+        sheet.getCell('B11').value = balance.balance;
+        sheet.getCell('B11').numFmt = '"S/. "#,##0.00';
+        sheet.getCell('C11').value = balance.total || 0;
+        sheet.getCell('D11').value = '100%';
+        sheet.getCell('E11').value = balance.balance >= 0 ? '✅ SUPERÁVIT' : '❌ DÉFICIT';
+
+        ['A11', 'B11', 'C11', 'D11', 'E11'].forEach(cell => {
+            const c = sheet.getCell(cell);
+            c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF8B5CF6' } };
+            c.font = { size: 12, bold: true, color: { argb: 'FFFFFFFF' } };
+            c.alignment = { horizontal: cell === 'B11' ? 'right' : 'center' };
+            c.border = {
+                top: { style: 'thick', color: { argb: 'FF667EEA' } },
+                bottom: { style: 'thick', color: { argb: 'FF667EEA' } }
+            };
+        });
 
         // Anchos de columna
-        ws['!cols'] = [
-            { wch: 12 },  // Fecha
-            { wch: 10 },  // Tipo
-            { wch: 20 },  // Categoría
-            { wch: 35 },  // Descripción
-            { wch: 15 },  // Monto
-            { wch: 15 }   // Método de Pago
-        ];
-
-        return ws;
+        sheet.getColumn(1).width = 30;
+        sheet.getColumn(2).width = 20;
+        sheet.getColumn(3).width = 15;
+        sheet.getColumn(4).width = 15;
+        sheet.getColumn(5).width = 20;
     }
 
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * CREAR HOJA DE CATEGORÍAS
-     * ═══════════════════════════════════════════════════════════════
-     */
-    _crearHojaCategorias(datos) {
+    _crearTransacciones(sheet, datos) {
+        const transacciones = datos.transacciones || [];
+
+        // Título
+        sheet.mergeCells('A1:F1');
+        const titulo = sheet.getCell('A1');
+        titulo.value = '📋 LISTADO COMPLETO DE TRANSACCIONES';
+        titulo.font = { size: 16, bold: true, color: { argb: 'FFFFFFFF' } };
+        titulo.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF667EEA' } };
+        titulo.alignment = { horizontal: 'center', vertical: 'middle' };
+        sheet.getRow(1).height = 35;
+
+        // Headers
+        const headers = ['Fecha', 'Tipo', 'Categoría', 'Descripción', 'Monto (S/.)', 'Método'];
+        headers.forEach((h, i) => {
+            const cell = sheet.getCell(3, i + 1);
+            cell.value = h;
+            cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F2937' } };
+            cell.alignment = { horizontal: 'center' };
+        });
+
+        // Datos
+        transacciones.forEach((t, i) => {
+            const row = i + 4;
+            sheet.getCell(row, 1).value = new Date(t.fecha).toLocaleDateString('es-PE');
+            sheet.getCell(row, 2).value = t.tipo.toUpperCase();
+            sheet.getCell(row, 3).value = t.categoria;
+            sheet.getCell(row, 4).value = t.descripcion || '-';
+            sheet.getCell(row, 5).value = t.monto;
+            sheet.getCell(row, 5).numFmt = '"S/. "#,##0.00';
+            sheet.getCell(row, 6).value = t.metodoPago || 'Efectivo';
+
+            // Color según tipo
+            const colorCell = sheet.getCell(row, 5);
+            if (t.tipo === 'ingreso') {
+                colorCell.font = { bold: true, color: { argb: 'FF10B981' } };
+            } else {
+                colorCell.font = { bold: true, color: { argb: 'FFEF4444' } };
+            }
+        });
+
+        // Anchos
+        sheet.getColumn(1).width = 12;
+        sheet.getColumn(2).width = 10;
+        sheet.getColumn(3).width = 20;
+        sheet.getColumn(4).width = 35;
+        sheet.getColumn(5).width = 15;
+        sheet.getColumn(6).width = 15;
+    }
+
+    _crearCategorias(sheet, datos) {
         const transacciones = datos.transacciones || [];
         
         // Agrupar por categoría
         const porCategoria = {};
-        
         transacciones.forEach(t => {
             if (!porCategoria[t.categoria]) {
-                porCategoria[t.categoria] = {
-                    categoria: t.categoria,
-                    monto: 0,
-                    cantidad: 0,
-                    tipo: t.tipo
-                };
+                porCategoria[t.categoria] = { monto: 0, cantidad: 0, tipo: t.tipo };
             }
             porCategoria[t.categoria].monto += t.monto;
             porCategoria[t.categoria].cantidad++;
         });
 
-        // Convertir a array y ordenar
-        const categorias = Object.values(porCategoria).sort((a, b) => b.monto - a.monto);
+        const categorias = Object.keys(porCategoria).map(cat => ({
+            categoria: cat,
+            ...porCategoria[cat]
+        })).sort((a, b) => b.monto - a.monto);
 
-        // Crear datos
-        const datosArray = [
-            ['🏷️ ANÁLISIS POR CATEGORÍA'],
-            [],
-            ['Categoría', 'Monto Total (S/.)', 'Cantidad', 'Promedio (S/.)', 'Tipo'],
-            ...categorias.map(c => [
-                c.categoria,
-                c.monto,
-                c.cantidad,
-                c.monto / c.cantidad,
-                c.tipo.toUpperCase()
-            ])
-        ];
+        // Título
+        sheet.mergeCells('A1:E1');
+        const titulo = sheet.getCell('A1');
+        titulo.value = '🏷️ ANÁLISIS POR CATEGORÍA';
+        titulo.font = { size: 16, bold: true, color: { argb: 'FFFFFFFF' } };
+        titulo.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF667EEA' } };
+        titulo.alignment = { horizontal: 'center', vertical: 'middle' };
+        sheet.getRow(1).height = 35;
 
-        const ws = XLSX.utils.aoa_to_sheet(datosArray);
-
-        // Aplicar estilos
-        ws['A1'].s = this.estilos.tituloPrincipal;
-        ['A3', 'B3', 'C3', 'D3', 'E3'].forEach(cell => {
-            if (ws[cell]) ws[cell].s = this.estilos.headerTabla;
+        // Headers
+        ['Categoría', 'Monto Total', 'Cantidad', 'Promedio', 'Tipo'].forEach((h, i) => {
+            const cell = sheet.getCell(3, i + 1);
+            cell.value = h;
+            cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F2937' } };
         });
 
-        // Estilos a datos
-        for (let i = 4; i < 4 + categorias.length; i++) {
-            const tipo = ws[`E${i}`]?.v;
-            if (tipo === 'INGRESO') {
-                ws[`B${i}`].s = this.estilos.celdaIngreso;
-                ws[`D${i}`].s = this.estilos.celdaIngreso;
-            } else {
-                ws[`B${i}`].s = this.estilos.celdaGasto;
-                ws[`D${i}`].s = this.estilos.celdaGasto;
-            }
-            
-            ws[`B${i}`].z = '"S/. "#,##0.00';
-            ws[`D${i}`].z = '"S/. "#,##0.00';
-        }
+        // Datos
+        categorias.forEach((c, i) => {
+            const row = i + 4;
+            sheet.getCell(row, 1).value = c.categoria;
+            sheet.getCell(row, 2).value = c.monto;
+            sheet.getCell(row, 2).numFmt = '"S/. "#,##0.00';
+            sheet.getCell(row, 3).value = c.cantidad;
+            sheet.getCell(row, 4).value = c.monto / c.cantidad;
+            sheet.getCell(row, 4).numFmt = '"S/. "#,##0.00';
+            sheet.getCell(row, 5).value = c.tipo.toUpperCase();
 
-        ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }];
+            // Color
+            const color = c.tipo === 'ingreso' ? 'FF10B981' : 'FFEF4444';
+            [2, 4].forEach(col => {
+                sheet.getCell(row, col).font = { bold: true, color: { argb: color } };
+            });
+        });
 
-        ws['!cols'] = [
-            { wch: 25 },  // Categoría
-            { wch: 18 },  // Monto Total
-            { wch: 12 },  // Cantidad
-            { wch: 18 },  // Promedio
-            { wch: 12 }   // Tipo
-        ];
-
-        return ws;
+        sheet.getColumn(1).width = 25;
+        sheet.getColumn(2).width = 18;
+        sheet.getColumn(3).width = 12;
+        sheet.getColumn(4).width = 18;
+        sheet.getColumn(5).width = 12;
     }
 
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * CREAR HOJA DE GRÁFICOS Y ANÁLISIS
-     * ═══════════════════════════════════════════════════════════════
-     */
-    _crearHojaGraficos(datos) {
+    _crearAnalisis(sheet, datos) {
         const balance = datos.balance || {};
-        
-        // Datos para gráficos (formato texto ya que XLSX no soporta gráficos nativos)
-        const datosArray = [
-            ['📈 DATOS PARA GRÁFICOS'],
-            [],
-            ['NOTA: Copia estos datos y crea un gráfico en Excel usando Insertar > Gráfico'],
-            [],
-            ['RESUMEN GENERAL'],
-            ['Concepto', 'Monto'],
-            ['Ingresos', balance.ingresos],
-            ['Gastos', balance.gastos],
-            ['Balance', balance.balance],
-            [],
-            ['DISTRIBUCIÓN PORCENTUAL'],
-            ['Tipo', 'Porcentaje'],
-            ['Ingresos', this._calcularPorcentaje(balance.ingresos, balance.ingresos + balance.gastos)],
-            ['Gastos', this._calcularPorcentaje(balance.gastos, balance.ingresos + balance.gastos)]
-        ];
 
-        const ws = XLSX.utils.aoa_to_sheet(datosArray);
-        
-        ws['A1'].s = this.estilos.tituloPrincipal;
-        ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 5 } }];
-        
-        ws['!cols'] = [
-            { wch: 25 },
-            { wch: 20 }
-        ];
+        sheet.mergeCells('A1:C1');
+        const titulo = sheet.getCell('A1');
+        titulo.value = '📈 ANÁLISIS Y GRÁFICOS';
+        titulo.font = { size: 16, bold: true, color: { argb: 'FFFFFFFF' } };
+        titulo.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF667EEA' } };
+        titulo.alignment = { horizontal: 'center' };
+        sheet.getRow(1).height = 35;
 
-        return ws;
+        // Datos para gráficos
+        sheet.getCell('A3').value = 'Concepto';
+        sheet.getCell('B3').value = 'Monto';
+        
+        sheet.getCell('A4').value = 'Ingresos';
+        sheet.getCell('B4').value = balance.ingresos;
+        
+        sheet.getCell('A5').value = 'Gastos';
+        sheet.getCell('B5').value = balance.gastos;
+        
+        sheet.getCell('A6').value = 'Balance';
+        sheet.getCell('B6').value = balance.balance;
+
+        sheet.getColumn(1).width = 20;
+        sheet.getColumn(2).width = 15;
     }
 
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * UTILIDADES
-     * ═══════════════════════════════════════════════════════════════
-     */
-    _formatearFecha() {
-        const ahora = new Date();
-        const año = ahora.getFullYear();
-        const mes = String(ahora.getMonth() + 1).padStart(2, '0');
-        const dia = String(ahora.getDate()).padStart(2, '0');
-        return `${año}-${mes}-${dia}`;
-    }
-
-    _formatearFechaCompleta() {
-        return new Date().toLocaleString('es-PE', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    }
-
-    _calcularPorcentaje(parte, total) {
+    _porcentaje(parte, total) {
         if (total === 0) return '0%';
         return `${((parte / total) * 100).toFixed(1)}%`;
     }
+
+    _fecha() {
+        const hoy = new Date();
+        return `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+    }
 }
 
-// Exportar clase
 window.ExportadorExcelProfesional = ExportadorExcelProfesional;
-
-console.log('✅ Exportador Excel Profesional cargado');
+console.log('✅ Exportador Excel Profesional v3.0 cargado');
