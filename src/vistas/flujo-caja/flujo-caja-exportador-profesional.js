@@ -100,7 +100,7 @@ class ExportadorExcelProfesional {
         titulo.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF667EEA' } };
         titulo.alignment = { horizontal: 'center', vertical: 'middle' };
         titulo.border = {
-            bottom: { style: 'thick', color: { argb: 'FF667EEA' } }
+            bottom: { style: 'thin', color: { argb: 'FF667EEA' } }
         };
         sheet.getRow(1).height = 40;
 
@@ -205,10 +205,10 @@ class ExportadorExcelProfesional {
     c.font = { size: 12, bold: true, color: { argb: 'FFFFFFFF' } };
     c.alignment = { horizontal: cell === 'B11' ? 'right' : 'center' };
     c.border = {
-        top: { style: 'thick', color: { argb: 'FF000000' } },
-        bottom: { style: 'thick', color: { argb: 'FF000000' } },
-        left: { style: 'thick', color: { argb: 'FF000000' } },
-        right: { style: 'thick', color: { argb: 'FF000000' } }
+        top: { style: 'thin', color: { argb: 'FF000000' } },
+        bottom: { style: 'thin', color: { argb: 'FF000000' } },
+        left: { style: 'thin', color: { argb: 'FF000000' } },
+        right: { style: 'thin', color: { argb: 'FF000000' } }
     };
 });
 
