@@ -2,6 +2,7 @@
  * ═══════════════════════════════════════════════════════════════════
  * GRIZALUM - FLUJO DE CAJA - INTERFAZ DE USUARIO
  * Maneja toda la interacción con el DOM
+ * VERSION CORREGIDA - Con Excel Profesional
  * ═══════════════════════════════════════════════════════════════════
  */
 
@@ -14,20 +15,18 @@ class FlujoCajaUI {
     }
 
     async _inicializar() {
-    console.log('🎨 Inicializando interfaz Flujo de Caja...');
-    
-    // Esperar a que el módulo esté listo
-    await this._esperarModulo();
-    
-    // ⬇️⬇️⬇️ AGREGAR ESTAS LÍNEAS ⬇️⬇️⬇️
-    // Esperar a que el DOM esté completamente listo
-    await new Promise(resolve => setTimeout(resolve, 300));
-    console.log('✅ DOM listo, cargando datos...');
-    // ⬆️⬆️⬆️ HASTA AQUÍ ⬆️⬆️⬆️
-    
-    // Configurar fecha actual por defecto
-    this._configurarFechaActual();
+        console.log('🎨 Inicializando interfaz Flujo de Caja...');
         
+        // Esperar a que el módulo esté listo
+        await this._esperarModulo();
+        
+        // Esperar a que el DOM esté completamente listo
+        await new Promise(resolve => setTimeout(resolve, 300));
+        console.log('✅ DOM listo, cargando datos...');
+        
+        // Configurar fecha actual por defecto
+        this._configurarFechaActual();
+            
         // Cargar datos iniciales
         this.cargarNivel();
         this.cargarCategorias();
@@ -61,22 +60,25 @@ class FlujoCajaUI {
             inputFecha.valueAsDate = new Date();
         }
     }
-    
-      configurarEventos() {
-    // Botón nueva transacción
-    const btnNueva = document.getElementById('btnNuevaTransaccion');
-    if (btnNueva) {
-        btnNueva.addEventListener('click', () => this.abrirModalTransaccion());
-    }
 
-    // ✅ NUEVO: Botón exportar
-    const btnExportar = document.getElementById('btnExportarRapido');
-    if (btnExportar) {
-        btnExportar.addEventListener('click', () => this.exportarDatos());
-    }
+    configurarEventos() {
+        // Botón nueva transacción
+        const btnNueva = document.getElementById('btnNuevaTransaccion');
+        if (btnNueva) {
+            btnNueva.addEventListener('click', () => this.abrirModalTransaccion());
+        }
 
-    // Form transacción
-    const form = document.getElementById('formTransaccion');
+        // ✅ NUEVO: Botón exportar
+        const btnExportar = document.getElementById('btnExportarRapido');
+        if (btnExportar) {
+            btnExportar.addEventListener('click', () => this.exportarDatos());
+        }
+
+        // Form transacción
+        const form = document.getElementById('formTransaccion');
+        if (form) {
+            form.addEventListener('submit', (e) => this.guardarTransaccion(e));
+        }
 
         // Cambio de tipo (ingreso/gasto)
         document.querySelectorAll('input[name="tipo"]').forEach(radio => {
@@ -104,10 +106,10 @@ class FlujoCajaUI {
             });
         }
 
-        // Exportar
-        const btnExportar = document.getElementById('btnExportar');
-        if (btnExportar) {
-            btnExportar.addEventListener('click', () => this.exportarDatos());
+        // Exportar (botón secundario si existe)
+        const btnExportarOld = document.getElementById('btnExportar');
+        if (btnExportarOld) {
+            btnExportarOld.addEventListener('click', () => this.exportarDatos());
         }
 
         // Escuchar eventos del módulo
@@ -237,28 +239,13 @@ class FlujoCajaUI {
     }
 
     cargarBalance() {
-    console.log('💰 [cargarBalance] Iniciando...');
-    
-    try {
-        if (!this.modulo) {
-            console.error('❌ [cargarBalance] No hay módulo disponible');
-            return;
-        }
-        
         const balance = this.modulo.calcularBalance();
-        console.log('📊 [cargarBalance] Balance calculado:', balance);
         
         const balanceTotal = document.getElementById('balanceTotal');
         const totalIngresos = document.getElementById('totalIngresos');
         const totalGastos = document.getElementById('totalGastos');
         const cantidadIngresos = document.getElementById('cantidadIngresos');
         const cantidadGastos = document.getElementById('cantidadGastos');
-
-        console.log('🎯 [cargarBalance] Elementos encontrados:', {
-            balanceTotal: !!balanceTotal,
-            totalIngresos: !!totalIngresos,
-            totalGastos: !!totalGastos
-        });
 
         if (balanceTotal) balanceTotal.textContent = this.formatearMoneda(balance.balance);
         if (totalIngresos) totalIngresos.textContent = this.formatearMoneda(balance.ingresos);
@@ -267,16 +254,11 @@ class FlujoCajaUI {
         if (cantidadIngresos) {
             cantidadIngresos.textContent = `${balance.cantidadIngresos} transacción${balance.cantidadIngresos !== 1 ? 'es' : ''}`;
         }
+        
         if (cantidadGastos) {
             cantidadGastos.textContent = `${balance.cantidadGastos} transacción${balance.cantidadGastos !== 1 ? 'es' : ''}`;
         }
-        
-        console.log('✅ [cargarBalance] Completado');
-        
-    } catch (error) {
-        console.error('❌ [cargarBalance] Error:', error);
     }
-}
 
     cargarTransacciones(filtros = {}) {
         const transacciones = this.modulo.obtenerTransacciones(filtros);
@@ -284,71 +266,72 @@ class FlujoCajaUI {
         const sinDatos = document.getElementById('sinTransacciones');
         const totalBadge = document.getElementById('totalTransacciones');
 
+        if (!lista) return;
+
         if (totalBadge) totalBadge.textContent = transacciones.length;
 
         if (transacciones.length === 0) {
-            if (lista) lista.style.display = 'none';
+            lista.style.display = 'none';
             if (sinDatos) sinDatos.style.display = 'flex';
             return;
         }
 
-        if (lista) {
-            lista.style.display = 'block';
-            lista.innerHTML = transacciones.map(t => this.crearTarjetaTransaccion(t)).join('');
-        }
+        lista.style.display = 'block';
         if (sinDatos) sinDatos.style.display = 'none';
-    }
 
-    crearTarjetaTransaccion(transaccion) {
-        const fecha = new Date(transaccion.fecha);
-        const esIngreso = transaccion.tipo === 'ingreso';
-        
-        return `
-            <div class="transaccion-card ${transaccion.tipo}">
-                <div class="transaccion-icono ${transaccion.tipo}">
-                    <i class="fas fa-arrow-${esIngreso ? 'up' : 'down'}"></i>
-                </div>
-                <div class="transaccion-info">
-                    <div class="transaccion-descripcion">${transaccion.descripcion || transaccion.categoria}</div>
-                    <div class="transaccion-detalles">
-                        <span class="transaccion-categoria">${transaccion.categoria}</span>
-                        <span class="transaccion-fecha">${fecha.toLocaleDateString('es-PE')}</span>
+        lista.innerHTML = transacciones.map(t => {
+            const fecha = new Date(t.fecha);
+            const esIngreso = t.tipo === 'ingreso';
+            
+            return `
+                <div class="transaccion-card ${t.tipo}">
+                    <div class="transaccion-icono ${t.tipo}">
+                        <i class="fas fa-arrow-${esIngreso ? 'up' : 'down'}"></i>
+                    </div>
+                    <div class="transaccion-info">
+                        <div class="transaccion-descripcion">${t.descripcion || t.categoria}</div>
+                        <div class="transaccion-detalles">
+                            <span class="transaccion-categoria">${t.categoria}</span>
+                            <span class="transaccion-fecha">${fecha.toLocaleDateString('es-PE')}</span>
+                        </div>
+                    </div>
+                    <div class="transaccion-monto ${t.tipo}">
+                        ${esIngreso ? '+' : '-'} ${this.formatearMoneda(t.monto)}
+                    </div>
+                    <div class="transaccion-acciones">
+                        <button class="btn-icono" onclick="editarTransaccion('${t.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-icono" onclick="eliminarTransaccion('${t.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </div>
                 </div>
-                <div class="transaccion-monto ${transaccion.tipo}">
-                    ${esIngreso ? '+' : '-'} ${this.formatearMoneda(transaccion.monto)}
-                </div>
-                <div class="transaccion-acciones">
-                    <button class="btn-icono" onclick="flujoCajaUI.editarTransaccion('${transaccion.id}')" title="Editar">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn-icono" onclick="flujoCajaUI.eliminarTransaccion('${transaccion.id}')" title="Eliminar">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            </div>
-        `;
+            `;
+        }).join('');
     }
 
     abrirModalTransaccion() {
         this.transaccionEditando = null;
         
-        const modalTitulo = document.getElementById('modalTitulo');
+        // Limpiar formulario
         const form = document.getElementById('formTransaccion');
-        const modal = document.getElementById('modalTransaccion');
-
-        if (modalTitulo) modalTitulo.textContent = 'Nueva Transacción';
-        if (form) {
-            form.reset();
-            const inputFecha = document.getElementById('inputFecha');
-            if (inputFecha) inputFecha.valueAsDate = new Date();
+        if (form) form.reset();
+        
+        // Fecha actual por defecto
+        const inputFecha = document.getElementById('inputFecha');
+        if (inputFecha) inputFecha.valueAsDate = new Date();
+        
+        // Tipo ingreso por defecto
+        const radioIngreso = document.querySelector('input[name="tipo"][value="ingreso"]');
+        if (radioIngreso) {
+            radioIngreso.checked = true;
+            this.actualizarCategoriasSegunTipo();
         }
         
-        this.actualizarCategoriasSegunTipo();
-        
+        // Mostrar modal
+        const modal = document.getElementById('modalTransaccion');
         if (modal) modal.classList.add('show');
-        
-        console.log('📝 Modal abierto');
     }
 
     cerrarModalTransaccion() {
@@ -357,107 +340,54 @@ class FlujoCajaUI {
         this.transaccionEditando = null;
     }
 
-    guardarTransaccion(e) {
-    e.preventDefault();
-    
-    console.log('💾 Intentando guardar transacción...');
-    
-    // Obtener valores
-    const tipoElement = document.querySelector('input[name="tipo"]:checked');
-    const montoElement = document.getElementById('inputMonto');
-    const categoriaElement = document.getElementById('selectCategoria');
-    const descripcionElement = document.getElementById('inputDescripcion');
-    const fechaElement = document.getElementById('inputFecha');
-    const metodoElement = document.getElementById('selectMetodo');
-    const notasElement = document.getElementById('inputNotas');
-    
-    // Validaciones
-    if (!tipoElement) {
-        alert('❌ Selecciona el tipo (Ingreso o Gasto)');
-        return;
-    }
-    
-    if (!montoElement || !montoElement.value || parseFloat(montoElement.value) <= 0) {
-        alert('❌ Ingresa un monto válido mayor a 0');
-        montoElement?.focus();
-        return;
-    }
-    
-    if (!categoriaElement || !categoriaElement.value) {
-        alert('❌ Selecciona una categoría');
-        categoriaElement?.focus();
-        return;
-    }
-    
-    if (!fechaElement || !fechaElement.value) {
-        alert('❌ Selecciona una fecha');
-        fechaElement?.focus();
-        return;
-    }
-    
-    // Construir datos
-    const datos = {
-        tipo: tipoElement.value,
-        monto: parseFloat(montoElement.value),
-        categoria: categoriaElement.value,
-        descripcion: descripcionElement?.value || '',
-        fecha: new Date(fechaElement.value).toISOString(),
-        metodoPago: metodoElement?.value || 'efectivo',
-        notas: notasElement?.value || ''
-    };
-    
-    console.log('📝 Datos a guardar:', datos);
-    
-    try {
+    guardarTransaccion(event) {
+        event.preventDefault();
+        
+        const form = event.target;
+        const datos = {
+            tipo: form.tipo.value,
+            monto: parseFloat(form.monto.value),
+            categoria: form.categoria.value,
+            descripcion: form.descripcion.value,
+            fecha: form.fecha.value ? new Date(form.fecha.value).toISOString() : new Date().toISOString(),
+            metodoPago: form.metodoPago?.value || 'efectivo',
+            notas: form.notas?.value || ''
+        };
+
         if (this.transaccionEditando) {
             this.modulo.editarTransaccion(this.transaccionEditando, datos);
-            console.log('✅ Transacción editada');
         } else {
             this.modulo.agregarTransaccion(datos);
-            console.log('✅ Transacción agregada');
         }
-        
+
         this.cerrarModalTransaccion();
-        
-        // Mostrar mensaje de éxito
-        this.mostrarNotificacion('✅ Transacción guardada correctamente', 'success');
-        
-    } catch (error) {
-        console.error('❌ Error al guardar:', error);
-        alert('❌ Error al guardar la transacción. Revisa la consola.');
     }
-}
 
     editarTransaccion(id) {
-        const transaccion = this.modulo.obtenerTransaccion(id);
+        const transaccion = this.modulo.obtenerTransacciones().find(t => t.id === id);
         if (!transaccion) return;
 
         this.transaccionEditando = id;
-        
-        const modalTitulo = document.getElementById('modalTitulo');
-        if (modalTitulo) modalTitulo.textContent = 'Editar Transacción';
-        
-        const tipoRadio = document.querySelector(`input[name="tipo"][value="${transaccion.tipo}"]`);
-        if (tipoRadio) tipoRadio.checked = true;
-        
+
+        // Rellenar formulario
+        const radioTipo = document.querySelector(`input[name="tipo"][value="${transaccion.tipo}"]`);
+        if (radioTipo) {
+            radioTipo.checked = true;
+            this.actualizarCategoriasSegunTipo();
+        }
+
         const inputMonto = document.getElementById('inputMonto');
-        if (inputMonto) inputMonto.value = transaccion.monto;
-        
-        this.actualizarCategoriasSegunTipo();
-        
         const selectCategoria = document.getElementById('selectCategoria');
-        if (selectCategoria) selectCategoria.value = transaccion.categoria;
-        
         const inputDescripcion = document.getElementById('inputDescripcion');
-        if (inputDescripcion) inputDescripcion.value = transaccion.descripcion;
-        
         const inputFecha = document.getElementById('inputFecha');
-        if (inputFecha) inputFecha.valueAsDate = new Date(transaccion.fecha);
-        
-        const selectMetodo = document.getElementById('selectMetodo');
-        if (selectMetodo) selectMetodo.value = transaccion.metodoPago;
-        
+        const selectMetodoPago = document.getElementById('selectMetodoPago');
         const inputNotas = document.getElementById('inputNotas');
+
+        if (inputMonto) inputMonto.value = transaccion.monto;
+        if (selectCategoria) selectCategoria.value = transaccion.categoria;
+        if (inputDescripcion) inputDescripcion.value = transaccion.descripcion;
+        if (inputFecha) inputFecha.value = transaccion.fecha.split('T')[0];
+        if (selectMetodoPago) selectMetodoPago.value = transaccion.metodoPago;
         if (inputNotas) inputNotas.value = transaccion.notas;
         
         const modal = document.getElementById('modalTransaccion');
@@ -499,158 +429,153 @@ class FlujoCajaUI {
         this.cargarTransacciones({ busqueda: texto });
     }
 
-    // ═══════════════════════════════════════════════════════════════
-// FUNCIÓN MEJORADA DE EXPORTAR A EXCEL PROFESIONAL
-// Reemplaza la función exportarDatos() en flujo-caja-ui.js
-// ═══════════════════════════════════════════════════════════════
-
-exportarDatos() {
-    try {
-        console.log('📊 Iniciando exportación a Excel...');
-        
-        // Verificar que XLSX esté cargado
-        if (typeof XLSX === 'undefined') {
-            alert('⚠️ La librería de Excel no está cargada. Por favor, recarga la página.');
-            return;
-        }
-
-        const datos = this.modulo.exportarJSON();
-        const transacciones = this.modulo.obtenerTransacciones();
-        const balance = this.modulo.calcularBalance();
-        const porCategoria = this.modulo.calcularPorCategoria();
-
-        // ═══════════════════════════════════════════════════════════
-        // HOJA 1: RESUMEN EJECUTIVO
-        // ═══════════════════════════════════════════════════════════
-        const hojaResumen = [
-            ['FLUJO DE CAJA - RESUMEN EJECUTIVO'],
-            [''],
-            ['Empresa:', datos.empresa],
-            ['Fecha de Exportación:', new Date().toLocaleString('es-PE')],
-            [''],
-            ['═══════════════════════════════════════'],
-            ['BALANCE GENERAL'],
-            ['═══════════════════════════════════════'],
-            [''],
-            ['Concepto', 'Monto', 'Cantidad'],
-            ['Ingresos Totales', balance.ingresos, balance.cantidadIngresos],
-            ['Gastos Totales', balance.gastos, balance.cantidadGastos],
-            [''],
-            ['BALANCE FINAL', balance.balance, balance.total + ' transacciones'],
-        ];
-
-        // ═══════════════════════════════════════════════════════════
-        // HOJA 2: TRANSACCIONES DETALLADAS
-        // ═══════════════════════════════════════════════════════════
-        const hojaTransacciones = [
-            ['LISTADO COMPLETO DE TRANSACCIONES'],
-            [''],
-            ['Fecha', 'Tipo', 'Categoría', 'Descripción', 'Monto', 'Método de Pago']
-        ];
-
-        transacciones.forEach(t => {
-            const fecha = new Date(t.fecha).toLocaleDateString('es-PE');
-            const tipo = t.tipo === 'ingreso' ? 'INGRESO' : 'GASTO';
-            const monto = t.tipo === 'ingreso' ? t.monto : -t.monto;
+    exportarDatos() {
+        try {
+            console.log('📊 Iniciando exportación a Excel...');
             
-            hojaTransacciones.push([
-                fecha,
-                tipo,
-                t.categoria,
-                t.descripcion || '-',
-                monto,
-                t.metodoPago || '-'
-            ]);
-        });
+            // Verificar que XLSX esté cargado
+            if (typeof XLSX === 'undefined') {
+                alert('⚠️ La librería de Excel no está cargada. Por favor, recarga la página.');
+                return;
+            }
 
-        // Total al final
-        hojaTransacciones.push([]);
-        hojaTransacciones.push(['', '', '', 'TOTAL INGRESOS:', balance.ingresos]);
-        hojaTransacciones.push(['', '', '', 'TOTAL GASTOS:', -balance.gastos]);
-        hojaTransacciones.push(['', '', '', 'BALANCE FINAL:', balance.balance]);
+            const datos = this.modulo.exportarJSON();
+            const transacciones = this.modulo.obtenerTransacciones();
+            const balance = this.modulo.calcularBalance();
+            const porCategoria = this.modulo.calcularPorCategoria();
 
-        // ═══════════════════════════════════════════════════════════
-        // HOJA 3: POR CATEGORÍA
-        // ═══════════════════════════════════════════════════════════
-        const hojaCategorias = [
-            ['ANÁLISIS POR CATEGORÍA'],
-            [''],
-            ['Categoría', 'Monto Total', 'Cantidad de Movimientos', 'Promedio']
-        ];
+            // ═══════════════════════════════════════════════════════════
+            // HOJA 1: RESUMEN EJECUTIVO
+            // ═══════════════════════════════════════════════════════════
+            const hojaResumen = [
+                ['FLUJO DE CAJA - RESUMEN EJECUTIVO'],
+                [''],
+                ['Empresa:', datos.empresa],
+                ['Fecha de Exportación:', new Date().toLocaleString('es-PE')],
+                [''],
+                ['═══════════════════════════════════════'],
+                ['BALANCE GENERAL'],
+                ['═══════════════════════════════════════'],
+                [''],
+                ['Concepto', 'Monto', 'Cantidad'],
+                ['Ingresos Totales', balance.ingresos, balance.cantidadIngresos],
+                ['Gastos Totales', balance.gastos, balance.cantidadGastos],
+                [''],
+                ['BALANCE FINAL', balance.balance, balance.total + ' transacciones'],
+            ];
 
-        porCategoria.forEach(cat => {
-            const promedio = cat.monto / cat.cantidad;
-            hojaCategorias.push([
-                cat.categoria,
-                cat.monto,
-                cat.cantidad,
-                promedio.toFixed(2)
-            ]);
-        });
+            // ═══════════════════════════════════════════════════════════
+            // HOJA 2: TRANSACCIONES DETALLADAS
+            // ═══════════════════════════════════════════════════════════
+            const hojaTransacciones = [
+                ['LISTADO COMPLETO DE TRANSACCIONES'],
+                [''],
+                ['Fecha', 'Tipo', 'Categoría', 'Descripción', 'Monto', 'Método de Pago']
+            ];
 
-        // ═══════════════════════════════════════════════════════════
-        // CREAR EL LIBRO DE EXCEL
-        // ═══════════════════════════════════════════════════════════
-        const wb = XLSX.utils.book_new();
+            transacciones.forEach(t => {
+                const fecha = new Date(t.fecha).toLocaleDateString('es-PE');
+                const tipo = t.tipo === 'ingreso' ? 'INGRESO' : 'GASTO';
+                const monto = t.tipo === 'ingreso' ? t.monto : -t.monto;
+                
+                hojaTransacciones.push([
+                    fecha,
+                    tipo,
+                    t.categoria,
+                    t.descripcion || '-',
+                    monto,
+                    t.metodoPago || '-'
+                ]);
+            });
 
-        // Convertir arrays a hojas
-        const ws1 = XLSX.utils.aoa_to_sheet(hojaResumen);
-        const ws2 = XLSX.utils.aoa_to_sheet(hojaTransacciones);
-        const ws3 = XLSX.utils.aoa_to_sheet(hojaCategorias);
+            // Total al final
+            hojaTransacciones.push([]);
+            hojaTransacciones.push(['', '', '', 'TOTAL INGRESOS:', balance.ingresos]);
+            hojaTransacciones.push(['', '', '', 'TOTAL GASTOS:', -balance.gastos]);
+            hojaTransacciones.push(['', '', '', 'BALANCE FINAL:', balance.balance]);
 
-        // ═══════════════════════════════════════════════════════════
-        // APLICAR FORMATO PROFESIONAL
-        // ═══════════════════════════════════════════════════════════
-        
-        // Anchos de columna para Hoja 1
-        ws1['!cols'] = [
-            { wch: 25 }, // Columna A
-            { wch: 20 }, // Columna B
-            { wch: 15 }  // Columna C
-        ];
+            // ═══════════════════════════════════════════════════════════
+            // HOJA 3: POR CATEGORÍA
+            // ═══════════════════════════════════════════════════════════
+            const hojaCategorias = [
+                ['ANÁLISIS POR CATEGORÍA'],
+                [''],
+                ['Categoría', 'Monto Total', 'Cantidad de Movimientos', 'Promedio']
+            ];
 
-        // Anchos de columna para Hoja 2
-        ws2['!cols'] = [
-            { wch: 12 }, // Fecha
-            { wch: 10 }, // Tipo
-            { wch: 20 }, // Categoría
-            { wch: 35 }, // Descripción
-            { wch: 15 }, // Monto
-            { wch: 15 }  // Método de Pago
-        ];
+            porCategoria.forEach(cat => {
+                const promedio = cat.monto / cat.cantidad;
+                hojaCategorias.push([
+                    cat.categoria,
+                    cat.monto,
+                    cat.cantidad,
+                    promedio.toFixed(2)
+                ]);
+            });
 
-        // Anchos de columna para Hoja 3
-        ws3['!cols'] = [
-            { wch: 25 }, // Categoría
-            { wch: 15 }, // Monto Total
-            { wch: 20 }, // Cantidad
-            { wch: 15 }  // Promedio
-        ];
+            // ═══════════════════════════════════════════════════════════
+            // CREAR EL LIBRO DE EXCEL
+            // ═══════════════════════════════════════════════════════════
+            const wb = XLSX.utils.book_new();
 
-        // Agregar las hojas al libro
-        XLSX.utils.book_append_sheet(wb, ws1, '📊 Resumen');
-        XLSX.utils.book_append_sheet(wb, ws2, '📋 Transacciones');
-        XLSX.utils.book_append_sheet(wb, ws3, '🏷️ Por Categoría');
+            // Convertir arrays a hojas
+            const ws1 = XLSX.utils.aoa_to_sheet(hojaResumen);
+            const ws2 = XLSX.utils.aoa_to_sheet(hojaTransacciones);
+            const ws3 = XLSX.utils.aoa_to_sheet(hojaCategorias);
 
-        // ═══════════════════════════════════════════════════════════
-        // GENERAR Y DESCARGAR EL ARCHIVO
-        // ═══════════════════════════════════════════════════════════
-        const nombreArchivo = `FlujoCaja_${datos.empresa}_${new Date().toISOString().split('T')[0]}.xlsx`;
-        
-        XLSX.writeFile(wb, nombreArchivo);
+            // ═══════════════════════════════════════════════════════════
+            // APLICAR FORMATO PROFESIONAL
+            // ═══════════════════════════════════════════════════════════
+            
+            // Anchos de columna para Hoja 1
+            ws1['!cols'] = [
+                { wch: 25 }, // Columna A
+                { wch: 20 }, // Columna B
+                { wch: 15 }  // Columna C
+            ];
 
-        console.log('✅ Excel exportado exitosamente:', nombreArchivo);
-        
-        // Mostrar notificación de éxito
-        if (typeof this.mostrarNotificacion === 'function') {
-            this.mostrarNotificacion('✅ Excel exportado correctamente', 'success');
+            // Anchos de columna para Hoja 2
+            ws2['!cols'] = [
+                { wch: 12 }, // Fecha
+                { wch: 10 }, // Tipo
+                { wch: 20 }, // Categoría
+                { wch: 35 }, // Descripción
+                { wch: 15 }, // Monto
+                { wch: 15 }  // Método de Pago
+            ];
+
+            // Anchos de columna para Hoja 3
+            ws3['!cols'] = [
+                { wch: 25 }, // Categoría
+                { wch: 15 }, // Monto Total
+                { wch: 20 }, // Cantidad
+                { wch: 15 }  // Promedio
+            ];
+
+            // Agregar las hojas al libro
+            XLSX.utils.book_append_sheet(wb, ws1, '📊 Resumen');
+            XLSX.utils.book_append_sheet(wb, ws2, '📋 Transacciones');
+            XLSX.utils.book_append_sheet(wb, ws3, '🏷️ Por Categoría');
+
+            // ═══════════════════════════════════════════════════════════
+            // GENERAR Y DESCARGAR EL ARCHIVO
+            // ═══════════════════════════════════════════════════════════
+            const nombreArchivo = `FlujoCaja_${datos.empresa}_${new Date().toISOString().split('T')[0]}.xlsx`;
+            
+            XLSX.writeFile(wb, nombreArchivo);
+
+            console.log('✅ Excel exportado exitosamente:', nombreArchivo);
+            
+            // Mostrar notificación de éxito
+            if (typeof this.mostrarNotificacion === 'function') {
+                this.mostrarNotificacion('✅ Excel exportado correctamente', 'success');
+            }
+
+        } catch (error) {
+            console.error('❌ Error exportando a Excel:', error);
+            alert('❌ Error al exportar. Por favor, intenta de nuevo.');
         }
-
-    } catch (error) {
-        console.error('❌ Error exportando a Excel:', error);
-        alert('❌ Error al exportar. Por favor, intenta de nuevo.');
     }
-}
 
     formatearMoneda(valor) {
         return new Intl.NumberFormat('es-PE', {
@@ -658,7 +583,7 @@ exportarDatos() {
             currency: 'PEN'
         }).format(valor);
     }
-     // ⬇️⬇️⬇️ AGREGAR ESTA FUNCIÓN AQUÍ ⬇️⬇️⬇️
+
     mostrarNotificacion(mensaje, tipo = 'info') {
         // Crear notificación
         const notif = document.createElement('div');
@@ -687,7 +612,8 @@ exportarDatos() {
         }, 3000);
     }
 }
-/ ✅ EXPORTAR CLASE GLOBALMENTE
+
+// ✅ EXPORTAR CLASE GLOBALMENTE
 window.FlujoCajaUI = FlujoCajaUI;
 
 // ═══════════════════════════════════════════════════════════════
@@ -726,10 +652,6 @@ if (document.readyState === 'complete') {
 }
 
 console.log('🎨 UI de Flujo de Caja lista para inicializar');
-
-// Funciones globales
-window.cargarBalance = () => window.flujoCajaUI?.cargarBalance();
-window.cargarTransacciones = (filtros) => window.flujoCajaUI?.cargarTransacciones(filtros);
 
 // ═══════════════════════════════════════════════════════════════
 // EXPORTAR FUNCIONES COMO GLOBALES (para compatibilidad con HTML)
@@ -835,6 +757,5 @@ window.recargarFlujoCaja = function() {
     }
 };
 
- console.log('✅ Función recargarFlujoCaja registrada');
-}           
-
+console.log('✅ Función recargarFlujoCaja registrada');
+console.log('✅ [flujo-caja-ui.js CORREGIDO v2.0] Módulo cargado - ' + new Date().toISOString());
