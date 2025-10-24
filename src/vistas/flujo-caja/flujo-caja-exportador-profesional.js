@@ -243,24 +243,35 @@ class ExportadorExcelProfesional {
         });
 
         // Datos
-        transacciones.forEach((t, i) => {
-            const row = i + 4;
-            sheet.getCell(row, 1).value = new Date(t.fecha).toLocaleDateString('es-PE');
-            sheet.getCell(row, 2).value = t.tipo.toUpperCase();
-            sheet.getCell(row, 3).value = t.categoria;
-            sheet.getCell(row, 4).value = t.descripcion || '-';
-            sheet.getCell(row, 5).value = t.monto;
-            sheet.getCell(row, 5).numFmt = '"S/. "#,##0.00';
-            sheet.getCell(row, 6).value = t.metodoPago || 'Efectivo';
+transacciones.forEach((t, i) => {
+    const row = i + 4;
+    
+    sheet.getCell(row, 1).value = new Date(t.fecha).toLocaleDateString('es-PE');
+    sheet.getCell(row, 2).value = t.tipo.toUpperCase();
+    sheet.getCell(row, 3).value = t.categoria;
+    sheet.getCell(row, 4).value = t.descripcion || '-';
+    sheet.getCell(row, 5).value = t.monto;
+    sheet.getCell(row, 5).numFmt = '"S/. "#,##0.00';
+    sheet.getCell(row, 6).value = t.metodoPago || 'Efectivo';
 
-            // Color según tipo
-            const colorCell = sheet.getCell(row, 5);
-            if (t.tipo === 'ingreso') {
-                colorCell.font = { bold: true, color: { argb: 'FF10B981' } };
-            } else {
-                colorCell.font = { bold: true, color: { argb: 'FFEF4444' } };
-            }
-        });
+    // Color según tipo
+    const colorCell = sheet.getCell(row, 5);
+    if (t.tipo === 'ingreso') {
+        colorCell.font = { bold: true, color: { argb: 'FF10B981' } };
+    } else {
+        colorCell.font = { bold: true, color: { argb: 'FFEF4444' } };
+    }
+
+    // Bordes para todas las celdas de la fila
+    for (let col = 1; col <= 6; col++) {
+        sheet.getCell(row, col).border = {
+            top: { style: 'thin', color: { argb: 'FF000000' } },
+            bottom: { style: 'thin', color: { argb: 'FF000000' } },
+            left: { style: 'thin', color: { argb: 'FF000000' } },
+            right: { style: 'thin', color: { argb: 'FF000000' } }
+        };
+    }
+});
 
         // Anchos
         sheet.getColumn(1).width = 12;
