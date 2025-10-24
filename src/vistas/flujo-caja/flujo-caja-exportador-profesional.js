@@ -153,12 +153,20 @@ class ExportadorExcelProfesional {
         sheet.getCell('D8').value = this._porcentaje(balance.ingresos, balance.ingresos + balance.gastos);
         sheet.getCell('E8').value = '✅ POSITIVO';
 
-        ['B8', 'C8', 'D8', 'E8'].forEach(cell => {
-            const c = sheet.getCell(cell);
-            c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF10B981' } };
-            c.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-            c.alignment = { horizontal: cell === 'B8' ? 'right' : 'center' };
-        });
+        ['A8', 'B8', 'C8', 'D8', 'E8'].forEach(cell => {
+    const c = sheet.getCell(cell);
+    if (cell !== 'A8') {
+        c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF10B981' } };
+        c.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+        c.alignment = { horizontal: cell === 'B8' ? 'right' : 'center' };
+    }
+    c.border = {
+        top: { style: 'medium', color: { argb: 'FF10B981' } },
+        bottom: { style: 'medium', color: { argb: 'FF10B981' } },
+        left: { style: 'medium', color: { argb: 'FF10B981' } },
+        right: { style: 'medium', color: { argb: 'FF10B981' } }
+    };
+});
 
         // ═══ GASTOS ═══
         sheet.getCell('A9').value = '📉 GASTOS TOTALES';
