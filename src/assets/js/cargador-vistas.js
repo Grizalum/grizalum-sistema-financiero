@@ -56,11 +56,48 @@ class CargadorVistas {
 
         // ═══ PASO 3: HTML ═══
         const response = await fetch(ruta);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        
-        const html = await response.text();
-        this.contenedor.innerHTML = html;
-        this.vistaActual = vistaId;
+if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+const html = await response.text();
+
+// Crear un div temporal para parsear el HTML
+const temp = document.createElement('div');
+temp.innerHTML = html;
+
+// Extraer los scripts
+const scripts = temp.querySelectorAll('script');
+const scriptsArray = Array.from(scripts);
+
+// Remover scripts del HTML temporalmente
+scriptsArray.forEach(s => s.remove());
+
+// Insertar el HTML sin scripts
+this.contenedor.innerHTML = temp.innerHTML;
+this.vistaActual = vistaId;
+
+// ✅ CARGAR SCRIPTS MANUALMENTE (para que se ejecuten)
+for (const scriptOriginal of scriptsArray) {
+    const script = document.createElement('script');
+    
+    if (scriptOriginal.src) {
+        // Script externo
+        script.src = scriptOriginal.src;
+        script.async = false;
+    } else {
+        // Script inline
+        script.textContent = scriptOriginal.textContent;
+    }
+    
+    document.body.appendChild(script);
+    
+    // Esperar a que cargue si es externo
+    if (scriptOriginal.src) {
+        await new Promise((resolve, reject) => {
+            script.onload = resolve;
+            script.onerror = reject;
+        });
+    }
+}
 
         // ═══ PASO 4: JS NORMAL (otras vistas) ═══
         if (vistaId !== 'cash-flow') {
