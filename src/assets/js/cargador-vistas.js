@@ -55,9 +55,9 @@ class CargadorVistas {
         
         // ═══ PASO 2: SCRIPTS (SOLO CASH-FLOW) ═══
         if (vistaId === 'cash-flow') {
-    await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-config.js');
-    await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja.js');
-    await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-ui.js');
+    await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-config.js?v=1.0');
+    await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja.js?v=1.0');
+    await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-ui.js?v=1.0');
     
     // Intentar cargar gráficos (opcional)
     try {
