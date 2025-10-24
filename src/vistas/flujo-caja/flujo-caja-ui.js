@@ -61,7 +61,8 @@ class FlujoCajaUI {
             inputFecha.valueAsDate = new Date();
         }
     }
-
+    
+      configurarEventos() {
     // Botón nueva transacción
     const btnNueva = document.getElementById('btnNuevaTransaccion');
     if (btnNueva) {
@@ -834,5 +835,6 @@ window.recargarFlujoCaja = function() {
     }
 };
 
-console.log('✅ Función recargarFlujoCaja registrada');
+ console.log('✅ Función recargarFlujoCaja registrada');
+}           
 
