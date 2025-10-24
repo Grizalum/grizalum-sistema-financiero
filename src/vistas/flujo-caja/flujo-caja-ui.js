@@ -429,154 +429,121 @@ class FlujoCajaUI {
         this.cargarTransacciones({ busqueda: texto });
     }
 
-    exportarDatos() {
-        try {
-            console.log('📊 Iniciando exportación a Excel...');
-            
-            // Verificar que XLSX esté cargado
-            if (typeof XLSX === 'undefined') {
-                alert('⚠️ La librería de Excel no está cargada. Por favor, recarga la página.');
-                return;
-            }
-
-            const datos = this.modulo.exportarJSON();
-            const transacciones = this.modulo.obtenerTransacciones();
-            const balance = this.modulo.calcularBalance();
-            const porCategoria = this.modulo.calcularPorCategoria();
-
-            // ═══════════════════════════════════════════════════════════
-            // HOJA 1: RESUMEN EJECUTIVO
-            // ═══════════════════════════════════════════════════════════
-            const hojaResumen = [
-                ['FLUJO DE CAJA - RESUMEN EJECUTIVO'],
-                [''],
-                ['Empresa:', datos.empresa],
-                ['Fecha de Exportación:', new Date().toLocaleString('es-PE')],
-                [''],
-                ['═══════════════════════════════════════'],
-                ['BALANCE GENERAL'],
-                ['═══════════════════════════════════════'],
-                [''],
-                ['Concepto', 'Monto', 'Cantidad'],
-                ['Ingresos Totales', balance.ingresos, balance.cantidadIngresos],
-                ['Gastos Totales', balance.gastos, balance.cantidadGastos],
-                [''],
-                ['BALANCE FINAL', balance.balance, balance.total + ' transacciones'],
-            ];
-
-            // ═══════════════════════════════════════════════════════════
-            // HOJA 2: TRANSACCIONES DETALLADAS
-            // ═══════════════════════════════════════════════════════════
-            const hojaTransacciones = [
-                ['LISTADO COMPLETO DE TRANSACCIONES'],
-                [''],
-                ['Fecha', 'Tipo', 'Categoría', 'Descripción', 'Monto', 'Método de Pago']
-            ];
-
-            transacciones.forEach(t => {
-                const fecha = new Date(t.fecha).toLocaleDateString('es-PE');
-                const tipo = t.tipo === 'ingreso' ? 'INGRESO' : 'GASTO';
-                const monto = t.tipo === 'ingreso' ? t.monto : -t.monto;
-                
-                hojaTransacciones.push([
-                    fecha,
-                    tipo,
-                    t.categoria,
-                    t.descripcion || '-',
-                    monto,
-                    t.metodoPago || '-'
-                ]);
-            });
-
-            // Total al final
-            hojaTransacciones.push([]);
-            hojaTransacciones.push(['', '', '', 'TOTAL INGRESOS:', balance.ingresos]);
-            hojaTransacciones.push(['', '', '', 'TOTAL GASTOS:', -balance.gastos]);
-            hojaTransacciones.push(['', '', '', 'BALANCE FINAL:', balance.balance]);
-
-            // ═══════════════════════════════════════════════════════════
-            // HOJA 3: POR CATEGORÍA
-            // ═══════════════════════════════════════════════════════════
-            const hojaCategorias = [
-                ['ANÁLISIS POR CATEGORÍA'],
-                [''],
-                ['Categoría', 'Monto Total', 'Cantidad de Movimientos', 'Promedio']
-            ];
-
-            porCategoria.forEach(cat => {
-                const promedio = cat.monto / cat.cantidad;
-                hojaCategorias.push([
-                    cat.categoria,
-                    cat.monto,
-                    cat.cantidad,
-                    promedio.toFixed(2)
-                ]);
-            });
-
-            // ═══════════════════════════════════════════════════════════
-            // CREAR EL LIBRO DE EXCEL
-            // ═══════════════════════════════════════════════════════════
-            const wb = XLSX.utils.book_new();
-
-            // Convertir arrays a hojas
-            const ws1 = XLSX.utils.aoa_to_sheet(hojaResumen);
-            const ws2 = XLSX.utils.aoa_to_sheet(hojaTransacciones);
-            const ws3 = XLSX.utils.aoa_to_sheet(hojaCategorias);
-
-            // ═══════════════════════════════════════════════════════════
-            // APLICAR FORMATO PROFESIONAL
-            // ═══════════════════════════════════════════════════════════
-            
-            // Anchos de columna para Hoja 1
-            ws1['!cols'] = [
-                { wch: 25 }, // Columna A
-                { wch: 20 }, // Columna B
-                { wch: 15 }  // Columna C
-            ];
-
-            // Anchos de columna para Hoja 2
-            ws2['!cols'] = [
-                { wch: 12 }, // Fecha
-                { wch: 10 }, // Tipo
-                { wch: 20 }, // Categoría
-                { wch: 35 }, // Descripción
-                { wch: 15 }, // Monto
-                { wch: 15 }  // Método de Pago
-            ];
-
-            // Anchos de columna para Hoja 3
-            ws3['!cols'] = [
-                { wch: 25 }, // Categoría
-                { wch: 15 }, // Monto Total
-                { wch: 20 }, // Cantidad
-                { wch: 15 }  // Promedio
-            ];
-
-            // Agregar las hojas al libro
-            XLSX.utils.book_append_sheet(wb, ws1, '📊 Resumen');
-            XLSX.utils.book_append_sheet(wb, ws2, '📋 Transacciones');
-            XLSX.utils.book_append_sheet(wb, ws3, '🏷️ Por Categoría');
-
-            // ═══════════════════════════════════════════════════════════
-            // GENERAR Y DESCARGAR EL ARCHIVO
-            // ═══════════════════════════════════════════════════════════
-            const nombreArchivo = `FlujoCaja_${datos.empresa}_${new Date().toISOString().split('T')[0]}.xlsx`;
-            
-            XLSX.writeFile(wb, nombreArchivo);
-
-            console.log('✅ Excel exportado exitosamente:', nombreArchivo);
-            
-            // Mostrar notificación de éxito
-            if (typeof this.mostrarNotificacion === 'function') {
-                this.mostrarNotificacion('✅ Excel exportado correctamente', 'success');
-            }
-
-        } catch (error) {
-            console.error('❌ Error exportando a Excel:', error);
-            alert('❌ Error al exportar. Por favor, intenta de nuevo.');
+   async exportarDatos() {
+    console.log('📊 Exportando datos con formato profesional...');
+    
+    try {
+        if (typeof XLSX === 'undefined') {
+            alert('❌ Error: Librería XLSX no disponible');
+            return;
         }
-    }
 
+        if (typeof ExportadorExcelProfesional === 'undefined') {
+            console.warn('⚠️ Exportador profesional no disponible, usando método básico');
+            this._exportarBasico();
+            return;
+        }
+
+        const info = this.modulo.obtenerInfo();
+        const transacciones = this.modulo.obtenerTransacciones();
+        const balance = this.modulo.calcularBalance();
+        const porCategoria = this.modulo.calcularPorCategoria();
+
+        const datosExport = {
+            empresa: info.empresaActual || 'Sin Nombre',
+            balance: balance,
+            transacciones: transacciones,
+            porCategoria: porCategoria,
+            nivel: info.nivel?.nivel?.nombre || 'N/A',
+            score: info.nivel?.score || 0
+        };
+
+        const exportador = new ExportadorExcelProfesional();
+        
+        const btnExportar = document.getElementById('btnExportarRapido');
+        if (btnExportar) {
+            btnExportar.disabled = true;
+            btnExportar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando Excel...';
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 300));
+        await exportador.exportar(datosExport);
+
+        if (btnExportar) {
+            btnExportar.disabled = false;
+            btnExportar.innerHTML = '<i class="fas fa-download"></i> Exportar a Excel';
+        }
+
+        this.mostrarNotificacion('✅ Excel exportado exitosamente', 'success');
+
+    } catch (error) {
+        console.error('❌ Error exportando:', error);
+        
+        const btnExportar = document.getElementById('btnExportarRapido');
+        if (btnExportar) {
+            btnExportar.disabled = false;
+            btnExportar.innerHTML = '<i class="fas fa-download"></i> Exportar a Excel';
+        }
+        
+        alert('❌ Error al exportar');
+    }
+}
+
+_exportarBasico() {
+    console.log('📊 Usando exportador básico...');
+    
+    try {
+        const transacciones = this.modulo.obtenerTransacciones();
+        const balance = this.modulo.calcularBalance();
+        const info = this.modulo.obtenerInfo();
+
+        const wb = XLSX.utils.book_new();
+
+        const resumenData = [
+            ['FLUJO DE CAJA - RESUMEN EJECUTIVO'],
+            [],
+            ['Empresa:', info.empresaActual || 'N/A'],
+            ['Fecha:', new Date().toLocaleString('es-PE')],
+            [],
+            ['BALANCE GENERAL'],
+            [],
+            ['Concepto', 'Monto', 'Cantidad'],
+            ['Ingresos', balance.ingresos, balance.cantidadIngresos],
+            ['Gastos', balance.gastos, balance.cantidadGastos],
+            [],
+            ['BALANCE', balance.balance, balance.total]
+        ];
+
+        const ws1 = XLSX.utils.aoa_to_sheet(resumenData);
+        
+        const transaccionesData = [
+            ['TRANSACCIONES'],
+            [],
+            ['Fecha', 'Tipo', 'Categoría', 'Descripción', 'Monto'],
+            ...transacciones.map(t => [
+                new Date(t.fecha).toLocaleDateString('es-PE'),
+                t.tipo,
+                t.categoria,
+                t.descripcion || '',
+                t.monto
+            ])
+        ];
+
+        const ws2 = XLSX.utils.aoa_to_sheet(transaccionesData);
+
+        XLSX.utils.book_append_sheet(wb, ws1, 'Resumen');
+        XLSX.utils.book_append_sheet(wb, ws2, 'Transacciones');
+
+        const nombreArchivo = `FlujoCaja_${info.empresaActual}_${new Date().toISOString().split('T')[0]}.xlsx`;
+        XLSX.writeFile(wb, nombreArchivo);
+
+        this.mostrarNotificacion('✅ Excel exportado', 'success');
+        
+    } catch (error) {
+        console.error('❌ Error:', error);
+        alert('❌ Error al exportar');
+    }
+}
     formatearMoneda(valor) {
         return new Intl.NumberFormat('es-PE', {
             style: 'currency',
