@@ -62,18 +62,20 @@ class FlujoCajaUI {
         }
     }
 
-    configurarEventos() {
-        // Botón nueva transacción
-        const btnNueva = document.getElementById('btnNuevaTransaccion');
-        if (btnNueva) {
-            btnNueva.addEventListener('click', () => this.abrirModalTransaccion());
-        }
+    // Botón nueva transacción
+    const btnNueva = document.getElementById('btnNuevaTransaccion');
+    if (btnNueva) {
+        btnNueva.addEventListener('click', () => this.abrirModalTransaccion());
+    }
 
-        // Form transacción
-        const form = document.getElementById('formTransaccion');
-        if (form) {
-            form.addEventListener('submit', (e) => this.guardarTransaccion(e));
-        }
+    // ✅ NUEVO: Botón exportar
+    const btnExportar = document.getElementById('btnExportarRapido');
+    if (btnExportar) {
+        btnExportar.addEventListener('click', () => this.exportarDatos());
+    }
+
+    // Form transacción
+    const form = document.getElementById('formTransaccion');
 
         // Cambio de tipo (ingreso/gasto)
         document.querySelectorAll('input[name="tipo"]').forEach(radio => {
