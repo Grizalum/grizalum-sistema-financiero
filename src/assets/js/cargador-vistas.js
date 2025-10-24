@@ -295,3 +295,18 @@ window.recargarFlujoCaja = function() {
 };
 
 console.log('✅ recargarFlujoCaja registrada desde cargador-vistas');
+
+// ═══════════════════════════════════════════════════════════════
+// FORZAR RECARGA EN DESARROLLO (quitar en producción)
+// ═══════════════════════════════════════════════════════════════
+if (window.location.hostname === 'localhost' || window.location.hostname.includes('vercel.app')) {
+    console.log('🔄 Modo desarrollo: forzando recarga sin caché');
+    
+    // Sobrescribir cargarScriptEspecial para agregar timestamp
+    const originalCargar = CargadorVistas.prototype.cargarScriptEspecial;
+    CargadorVistas.prototype.cargarScriptEspecial = async function(src) {
+        const timestamp = Date.now();
+        const srcConTimestamp = src + '?t=' + timestamp;
+        return originalCargar.call(this, srcConTimestamp);
+    };
+}
