@@ -53,20 +53,6 @@ class CargadorVistas {
         // Esperar a que CSS se aplique
         await new Promise(resolve => setTimeout(resolve, 100));
         
-        // ═══ PASO 2: SCRIPTS (SOLO CASH-FLOW) ═══
-        if (vistaId === 'cash-flow') {
-    await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-config.js?v=1.0');
-    await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja.js?v=1.0');
-    await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-exportador-profesional.js?v=1.0');
-    await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-ui.js?v=1.0');
-    
-    // Intentar cargar gráficos (opcional)
-    try {
-        await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-graficos.js?v=1.1');
-    } catch (error) {
-        console.warn('⚠️ Gráficos no disponibles aún');
-    }
-}
 
         // ═══ PASO 3: HTML ═══
         const response = await fetch(ruta);
