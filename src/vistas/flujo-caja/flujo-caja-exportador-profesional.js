@@ -109,16 +109,17 @@ class ExportadorExcelProfesional {
         sheet.getCell('B3').value = datos.empresa || 'N/A';
         sheet.getCell('D3').value = 'Fecha:';
         sheet.getCell('E3').value = new Date().toLocaleDateString('es-PE');
+        
         // Bordes para metadatos
-        ['A3', 'B3', 'D3', 'E3'].forEach(cell => {
-           const c = sheet.getCell(cell);
-           c.border = {
-              top: { style: 'thin', color: { argb: 'FF4B5563' } },
-              bottom: { style: 'thin', color: { argb: 'FF4B5563' } },
-              left: { style: 'thin', color: { argb: 'FF4B5563' } },
-              right: { style: 'thin', color: { argb: 'FF4B5563' } }
-           };
-       });
+['A3', 'B3', 'D3', 'E3'].forEach(cell => {
+    const c = sheet.getCell(cell);
+    c.border = {
+        top: { style: 'medium', color: { argb: 'FF000000' } },
+        bottom: { style: 'medium', color: { argb: 'FF000000' } },
+        left: { style: 'medium', color: { argb: 'FF000000' } },
+        right: { style: 'medium', color: { argb: 'FF000000' } }
+    };
+});
         
         // ═══ RESUMEN FINANCIERO ═══
         sheet.mergeCells('A5:F5');
@@ -153,7 +154,7 @@ class ExportadorExcelProfesional {
         sheet.getCell('D8').value = this._porcentaje(balance.ingresos, balance.ingresos + balance.gastos);
         sheet.getCell('E8').value = '✅ POSITIVO';
 
-        ['A8', 'B8', 'C8', 'D8', 'E8'].forEach(cell => {
+      ['A8', 'B8', 'C8', 'D8', 'E8'].forEach(cell => {
     const c = sheet.getCell(cell);
     if (cell !== 'A8') {
         c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF10B981' } };
@@ -161,13 +162,12 @@ class ExportadorExcelProfesional {
         c.alignment = { horizontal: cell === 'B8' ? 'right' : 'center' };
     }
     c.border = {
-        top: { style: 'medium', color: { argb: 'FF10B981' } },
-        bottom: { style: 'medium', color: { argb: 'FF10B981' } },
-        left: { style: 'medium', color: { argb: 'FF10B981' } },
-        right: { style: 'medium', color: { argb: 'FF10B981' } }
+        top: { style: 'medium', color: { argb: 'FF000000' } },
+        bottom: { style: 'medium', color: { argb: 'FF000000' } },
+        left: { style: 'medium', color: { argb: 'FF000000' } },
+        right: { style: 'medium', color: { argb: 'FF000000' } }
     };
 });
-
         // ═══ GASTOS ═══
         sheet.getCell('A9').value = '📉 GASTOS TOTALES';
         sheet.getCell('B9').value = balance.gastos;
@@ -176,7 +176,7 @@ class ExportadorExcelProfesional {
         sheet.getCell('D9').value = this._porcentaje(balance.gastos, balance.ingresos + balance.gastos);
         sheet.getCell('E9').value = '⚠️ NEGATIVO';
 
-       ['A9', 'B9', 'C9', 'D9', 'E9'].forEach(cell => {
+      ['A9', 'B9', 'C9', 'D9', 'E9'].forEach(cell => {
     const c = sheet.getCell(cell);
     if (cell !== 'A9') {
         c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEF4444' } };
@@ -184,10 +184,10 @@ class ExportadorExcelProfesional {
         c.alignment = { horizontal: cell === 'B9' ? 'right' : 'center' };
     }
     c.border = {
-        top: { style: 'medium', color: { argb: 'FFEF4444' } },
-        bottom: { style: 'medium', color: { argb: 'FFEF4444' } },
-        left: { style: 'medium', color: { argb: 'FFEF4444' } },
-        right: { style: 'medium', color: { argb: 'FFEF4444' } }
+        top: { style: 'medium', color: { argb: 'FF000000' } },
+        bottom: { style: 'medium', color: { argb: 'FF000000' } },
+        left: { style: 'medium', color: { argb: 'FF000000' } },
+        right: { style: 'medium', color: { argb: 'FF000000' } }
     };
 });
 
@@ -200,15 +200,17 @@ class ExportadorExcelProfesional {
         sheet.getCell('E11').value = balance.balance >= 0 ? '✅ SUPERÁVIT' : '❌ DÉFICIT';
 
         ['A11', 'B11', 'C11', 'D11', 'E11'].forEach(cell => {
-            const c = sheet.getCell(cell);
-            c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF8B5CF6' } };
-            c.font = { size: 12, bold: true, color: { argb: 'FFFFFFFF' } };
-            c.alignment = { horizontal: cell === 'B11' ? 'right' : 'center' };
-            c.border = {
-                top: { style: 'thick', color: { argb: 'FF667EEA' } },
-                bottom: { style: 'thick', color: { argb: 'FF667EEA' } }
-            };
-        });
+    const c = sheet.getCell(cell);
+    c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF8B5CF6' } };
+    c.font = { size: 12, bold: true, color: { argb: 'FFFFFFFF' } };
+    c.alignment = { horizontal: cell === 'B11' ? 'right' : 'center' };
+    c.border = {
+        top: { style: 'thick', color: { argb: 'FF000000' } },
+        bottom: { style: 'thick', color: { argb: 'FF000000' } },
+        left: { style: 'thick', color: { argb: 'FF000000' } },
+        right: { style: 'thick', color: { argb: 'FF000000' } }
+    };
+});
 
         // Anchos de columna
         sheet.getColumn(1).width = 30;
