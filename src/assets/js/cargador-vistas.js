@@ -61,7 +61,7 @@ class CargadorVistas {
     
     // Intentar cargar gráficos (opcional)
     try {
-        await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-graficos.js');
+        await this.cargarScriptEspecial('src/vistas/flujo-caja/flujo-caja-graficos.js?v=1.1');
     } catch (error) {
         console.warn('⚠️ Gráficos no disponibles aún');
     }
