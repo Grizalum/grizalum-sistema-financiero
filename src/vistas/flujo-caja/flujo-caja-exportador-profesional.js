@@ -95,7 +95,7 @@ class ExportadorExcelProfesional {
         // ═══ TÍTULO PRINCIPAL ═══
         sheet.mergeCells('A1:F1');
         const titulo = sheet.getCell('A1');
-        titulo.value = '💰 FLUJO DE CAJA - DASHBOARD EJECUTIVO';
+        titulo.value = 'FLUJO DE CAJA - DASHBOARD EJECUTIVO';
         titulo.font = { name: 'Inter', size: 18, bold: true, color: { argb: 'FFFFFFFF' } };
         titulo.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF667EEA' } };
         titulo.alignment = { horizontal: 'center', vertical: 'middle' };
@@ -109,6 +109,16 @@ class ExportadorExcelProfesional {
         sheet.getCell('B3').value = datos.empresa || 'N/A';
         sheet.getCell('D3').value = 'Fecha:';
         sheet.getCell('E3').value = new Date().toLocaleDateString('es-PE');
+        // Bordes para metadatos
+        ['A3', 'B3', 'D3', 'E3'].forEach(cell => {
+           const c = sheet.getCell(cell);
+           c.border = {
+              top: { style: 'thin', color: { argb: 'FF4B5563' } },
+              bottom: { style: 'thin', color: { argb: 'FF4B5563' } },
+              left: { style: 'thin', color: { argb: 'FF4B5563' } },
+              right: { style: 'thin', color: { argb: 'FF4B5563' } }
+           };
+       });
         
         // ═══ RESUMEN FINANCIERO ═══
         sheet.mergeCells('A5:F5');
