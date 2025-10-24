@@ -337,6 +337,15 @@ transacciones.forEach(t => {
                 sheet.getCell(row, col).font = { bold: true, color: { argb: color } };
             });
         });
+        // Bordes para todas las celdas de la fila
+    for (let col = 1; col <= 5; col++) {
+        sheet.getCell(row, col).border = {
+            top: { style: 'thin', color: { argb: 'FF000000' } },
+            bottom: { style: 'thin', color: { argb: 'FF000000' } },
+            left: { style: 'thin', color: { argb: 'FF000000' } },
+            right: { style: 'thin', color: { argb: 'FF000000' } }
+        };
+    }
 
         sheet.getColumn(1).width = 25;
         sheet.getColumn(2).width = 18;
