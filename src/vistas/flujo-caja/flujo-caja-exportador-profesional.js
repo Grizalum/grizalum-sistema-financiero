@@ -114,10 +114,10 @@ class ExportadorExcelProfesional {
 ['A3', 'B3', 'D3', 'E3'].forEach(cell => {
     const c = sheet.getCell(cell);
     c.border = {
-        top: { style: 'medium', color: { argb: 'FF000000' } },
-        bottom: { style: 'medium', color: { argb: 'FF000000' } },
-        left: { style: 'medium', color: { argb: 'FF000000' } },
-        right: { style: 'medium', color: { argb: 'FF000000' } }
+        top: { style: 'thin', color: { argb: 'FF000000' } },
+        bottom: { style: 'thin', color: { argb: 'FF000000' } },
+        left: { style: 'thin', color: { argb: 'FF000000' } },
+        right: { style: 'thin', color: { argb: 'FF000000' } }
     };
 });
         
@@ -162,10 +162,10 @@ class ExportadorExcelProfesional {
         c.alignment = { horizontal: cell === 'B8' ? 'right' : 'center' };
     }
     c.border = {
-        top: { style: 'medium', color: { argb: 'FF000000' } },
-        bottom: { style: 'medium', color: { argb: 'FF000000' } },
-        left: { style: 'medium', color: { argb: 'FF000000' } },
-        right: { style: 'medium', color: { argb: 'FF000000' } }
+        top: { style: 'thin', color: { argb: 'FF000000' } },
+        bottom: { style: 'thin', color: { argb: 'FF000000' } },
+        left: { style: 'thin', color: { argb: 'FF000000' } },
+        right: { style: 'thin', color: { argb: 'FF000000' } }
     };
 });
         // ═══ GASTOS ═══
@@ -184,10 +184,10 @@ class ExportadorExcelProfesional {
         c.alignment = { horizontal: cell === 'B9' ? 'right' : 'center' };
     }
     c.border = {
-        top: { style: 'medium', color: { argb: 'FF000000' } },
-        bottom: { style: 'medium', color: { argb: 'FF000000' } },
-        left: { style: 'medium', color: { argb: 'FF000000' } },
-        right: { style: 'medium', color: { argb: 'FF000000' } }
+        top: { style: 'thin', color: { argb: 'FF000000' } },
+        bottom: { style: 'thin', color: { argb: 'FF000000' } },
+        left: { style: 'thin', color: { argb: 'FF000000' } },
+        right: { style: 'thin', color: { argb: 'FF000000' } }
     };
 });
 
