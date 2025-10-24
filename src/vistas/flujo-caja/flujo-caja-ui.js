@@ -686,6 +686,8 @@ exportarDatos() {
         }, 3000);
     }
 }
+/ ✅ EXPORTAR CLASE GLOBALMENTE
+window.FlujoCajaUI = FlujoCajaUI;
 
 // ═══════════════════════════════════════════════════════════════
 // INICIALIZACIÓN INTELIGENTE
