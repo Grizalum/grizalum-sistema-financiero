@@ -285,20 +285,23 @@ transacciones.forEach((t, i) => {
     _crearCategorias(sheet, datos) {
         const transacciones = datos.transacciones || [];
         
-        // Agrupar por categoría
-        const porCategoria = {};
-        transacciones.forEach(t => {
-            if (!porCategoria[t.categoria]) {
-                porCategoria[t.categoria] = { monto: 0, cantidad: 0, tipo: t.tipo };
-            }
-            porCategoria[t.categoria].monto += t.monto;
-            porCategoria[t.categoria].cantidad++;
-        });
+        /// Agrupar por categoría + tipo
+const porCategoria = {};
+transacciones.forEach(t => {
+    const clave = `${t.categoria}|||${t.tipo}`; // Separador único
+    if (!porCategoria[clave]) {
+        porCategoria[clave] = { 
+            categoria: t.categoria,
+            monto: 0, 
+            cantidad: 0, 
+            tipo: t.tipo 
+        };
+    }
+    porCategoria[clave].monto += t.monto;
+    porCategoria[clave].cantidad++;
+});
 
-        const categorias = Object.keys(porCategoria).map(cat => ({
-            categoria: cat,
-            ...porCategoria[cat]
-        })).sort((a, b) => b.monto - a.monto);
+       const categorias = Object.values(porCategoria).sort((a, b) => b.monto - a.monto);
 
         // Título
         sheet.mergeCells('A1:E1');
