@@ -501,7 +501,7 @@ class ExportadorExcelProfesional {
     sheet.getColumn(3).width = 20;
 }
 
-_crearGraficoCircular(balance) {
+        _crearGraficoCircular(balance) {
     // Crear canvas temporal
     const canvas = document.createElement('canvas');
     canvas.width = 400;
@@ -553,12 +553,12 @@ _crearGraficoCircular(balance) {
     // Convertir a base64
     return canvas.toDataURL().split(',')[1];
 }
-    _porcentaje(parte, total) {
+        _porcentaje(parte, total) {
         if (total === 0) return '0%';
         return `${((parte / total) * 100).toFixed(1)}%`;
     }
 
-    _fecha() {
+        _fecha() {
         const hoy = new Date();
         return `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
     }
