@@ -2,14 +2,14 @@
  * ═══════════════════════════════════════════════════════════════════
  * GRIZALUM - FLUJO DE CAJA - INTERFAZ DE USUARIO
  * Maneja toda la interacción con el DOM
- * VERSION CORREGIDA - Con Excel Profesional
+ * VERSION CORREGIDA - Problema de edición solucionado
  * ═══════════════════════════════════════════════════════════════════
  */
 
 class FlujoCajaUI {
     constructor() {
         this.modulo = null;
-        this.transaccionEditando = null;
+        this.transaccionEditando = null; // ✅ Variable de instancia
         
         this._inicializar();
     }
@@ -311,69 +311,91 @@ class FlujoCajaUI {
         }).join('');
     }
 
-    abrirModalTransaccion() {
-        this.transaccionEditando = null;
-        
-        // Limpiar formulario
-        const form = document.getElementById('formTransaccion');
-        if (form) form.reset();
-        
-        // Fecha actual por defecto
-        const inputFecha = document.getElementById('inputFecha');
-        if (inputFecha) inputFecha.valueAsDate = new Date();
-        
-        // Tipo ingreso por defecto
-        const radioIngreso = document.querySelector('input[name="tipo"][value="ingreso"]');
-        if (radioIngreso) {
-            radioIngreso.checked = true;
-            this.actualizarCategoriasSegunTipo();
+    // ✅ CORREGIDO: abrirModalTransaccion ahora respeta el modo de edición
+    abrirModalTransaccion(modoEdicion = false) {
+        // ✅ IMPORTANTE: Solo resetear si NO estamos editando
+        if (!modoEdicion) {
+            this.transaccionEditando = null;
+            
+            // Limpiar formulario
+            const form = document.getElementById('formTransaccion');
+            if (form) form.reset();
+            
+            // Fecha actual por defecto
+            const inputFecha = document.getElementById('inputFecha');
+            if (inputFecha) inputFecha.valueAsDate = new Date();
+            
+            // Tipo ingreso por defecto
+            const radioIngreso = document.querySelector('input[name="tipo"][value="ingreso"]');
+            if (radioIngreso) {
+                radioIngreso.checked = true;
+                this.actualizarCategoriasSegunTipo();
+            }
         }
         
         // Mostrar modal
         const modal = document.getElementById('modalTransaccion');
         if (modal) modal.classList.add('show');
+        
+        console.log('📋 Modal abierto - Modo:', modoEdicion ? 'EDICIÓN' : 'NUEVA', 'ID:', this.transaccionEditando);
     }
 
     cerrarModalTransaccion() {
         const modal = document.getElementById('modalTransaccion');
         if (modal) modal.classList.remove('show');
         this.transaccionEditando = null;
+        console.log('✅ Modal cerrado - transaccionEditando limpiado');
     }
 
+    // ✅ CORREGIDO: guardarTransaccion con mejor logging
     guardarTransaccion(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    
-    console.log('🔍 guardarTransaccion - transaccionEditando:', this.transaccionEditando);
-    
-    const form = event.target;
-    const datos = {
-        tipo: form.tipo.value,
-        monto: parseFloat(form.monto.value),
-        categoria: form.categoria.value,
-        descripcion: form.descripcion.value,
-        fecha: form.fecha.value ? new Date(form.fecha.value).toISOString() : new Date().toISOString(),
-        metodoPago: form.metodoPago?.value || 'efectivo',
-        notas: form.notas?.value || ''
-    };
+        event.preventDefault();
+        event.stopPropagation();
+        
+        console.log('💾 guardarTransaccion iniciado');
+        console.log('🔍 Estado transaccionEditando:', this.transaccionEditando);
+        
+        const form = event.target;
+        const datos = {
+            tipo: form.tipo.value,
+            monto: parseFloat(form.monto.value),
+            categoria: form.categoria.value,
+            descripcion: form.descripcion.value,
+            fecha: form.fecha.value ? new Date(form.fecha.value).toISOString() : new Date().toISOString(),
+            metodoPago: form.metodoPago?.value || 'efectivo',
+            notas: form.notas?.value || ''
+        };
 
-    if (this.transaccionEditando) {
-        console.log('✅ EDITANDO transacción:', this.transaccionEditando);
-        this.modulo.editarTransaccion(this.transaccionEditando, datos);
-        this.transaccionEditando = null; // Limpiar después de editar
-    } else {
-        console.log('➕ AGREGANDO nueva transacción');
-        this.modulo.agregarTransaccion(datos);
+        console.log('📦 Datos del formulario:', datos);
+
+        if (this.transaccionEditando) {
+            console.log('✏️ MODO EDICIÓN - ID:', this.transaccionEditando);
+            this.modulo.editarTransaccion(this.transaccionEditando, datos);
+            this.mostrarNotificacion('✅ Transacción actualizada', 'success');
+        } else {
+            console.log('➕ MODO NUEVA TRANSACCIÓN');
+            this.modulo.agregarTransaccion(datos);
+            this.mostrarNotificacion('✅ Transacción agregada', 'success');
+        }
+
+        this.cerrarModalTransaccion();
     }
 
-    this.cerrarModalTransaccion();
-}
-
+    // ✅ CORREGIDO: editarTransaccion con modo de edición explícito
     editarTransaccion(id) {
+        console.log('✏️ editarTransaccion llamado con ID:', id);
+        
         const transaccion = this.modulo.obtenerTransacciones().find(t => t.id === id);
-        if (!transaccion) return;
+        if (!transaccion) {
+            console.error('❌ Transacción no encontrada:', id);
+            return;
+        }
 
+        console.log('📄 Transacción encontrada:', transaccion);
+
+        // ✅ IMPORTANTE: Establecer el ID ANTES de rellenar el formulario
         this.transaccionEditando = id;
+        console.log('✅ transaccionEditando establecido:', this.transaccionEditando);
 
         // Rellenar formulario
         const radioTipo = document.querySelector(`input[name="tipo"][value="${transaccion.tipo}"]`);
@@ -396,13 +418,16 @@ class FlujoCajaUI {
         if (selectMetodoPago) selectMetodoPago.value = transaccion.metodoPago;
         if (inputNotas) inputNotas.value = transaccion.notas;
         
-        const modal = document.getElementById('modalTransaccion');
-        if (modal) modal.classList.add('show');
+        // ✅ IMPORTANTE: Abrir en modo edición (sin resetear)
+        this.abrirModalTransaccion(true);
+        
+        console.log('✅ Modal abierto para edición - ID guardado:', this.transaccionEditando);
     }
 
     eliminarTransaccion(id) {
         if (confirm('¿Seguro que quieres eliminar esta transacción?')) {
             this.modulo.eliminarTransaccion(id);
+            this.mostrarNotificacion('✅ Transacción eliminada', 'success');
         }
     }
 
@@ -435,107 +460,71 @@ class FlujoCajaUI {
         this.cargarTransacciones({ busqueda: texto });
     }
 
-   async exportarDatos() {
-    console.log('📊 Exportando datos con formato profesional...');
-    
-    try {
-        if (typeof XLSX === 'undefined') {
-            alert('❌ Error: Librería XLSX no disponible');
-            return;
-        }
-
-        if (typeof ExportadorExcelProfesional === 'undefined') {
-            console.warn('⚠️ Exportador profesional no disponible, usando método básico');
-            this._exportarBasico();
-            return;
-        }
-
-        const info = this.modulo.obtenerInfo();
-        const transacciones = this.modulo.obtenerTransacciones();
-        const balance = this.modulo.calcularBalance();
-        const porCategoria = this.modulo.calcularPorCategoria();
-
-        const datosExport = {
-            empresa: info.empresaActual || 'Sin Nombre',
-            balance: balance,
-            transacciones: transacciones,
-            porCategoria: porCategoria,
-            nivel: info.nivel?.nivel?.nombre || 'N/A',
-            score: info.nivel?.score || 0
-        };
-
-        const exportador = new ExportadorExcelProfesional();
+    async exportarDatos() {
+        console.log('📊 Exportando datos con formato profesional...');
         
-        const btnExportar = document.getElementById('btnExportarRapido');
-        if (btnExportar) {
-            btnExportar.disabled = true;
-            btnExportar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando Excel...';
+        try {
+            if (typeof XLSX === 'undefined') {
+                alert('❌ Error: Librería XLSX no disponible');
+                return;
+            }
+
+            if (typeof ExportadorExcelProfesional === 'undefined') {
+                console.warn('⚠️ Exportador profesional no disponible, usando método básico');
+                this._exportarBasico();
+                return;
+            }
+
+            // ✅ USAR EXPORTADOR PROFESIONAL
+            const exportador = new ExportadorExcelProfesional();
+            const info = this.modulo.obtenerInfo();
+            
+            // Generar Excel con Chart.js
+            await exportador.generarExcelProfesional(
+                info,
+                this.modulo.obtenerTransacciones(),
+                this.modulo.calcularPorCategoria(),
+                this.modulo.calcularPorMes(6)
+            );
+            
+            this.mostrarNotificacion('✅ Excel exportado exitosamente', 'success');
+            
+        } catch (error) {
+            console.error('❌ Error exportando:', error);
+            this.mostrarNotificacion('❌ Error al exportar', 'error');
         }
-
-        await new Promise(resolve => setTimeout(resolve, 300));
-        await exportador.exportar(datosExport);
-
-        if (btnExportar) {
-            btnExportar.disabled = false;
-            btnExportar.innerHTML = '<i class="fas fa-download"></i> Exportar a Excel';
-        }
-
-        this.mostrarNotificacion('✅ Excel exportado exitosamente', 'success');
-
-    } catch (error) {
-        console.error('❌ Error exportando:', error);
-        
-        const btnExportar = document.getElementById('btnExportarRapido');
-        if (btnExportar) {
-            btnExportar.disabled = false;
-            btnExportar.innerHTML = '<i class="fas fa-download"></i> Exportar a Excel';
-        }
-        
-        alert('❌ Error al exportar');
     }
-}
 
-_exportarBasico() {
-    console.log('📊 Usando exportador básico...');
-    
-    try {
-        const transacciones = this.modulo.obtenerTransacciones();
-        const balance = this.modulo.calcularBalance();
-        const info = this.modulo.obtenerInfo();
-
+    _exportarBasico() {
+        // Método de respaldo si no hay exportador profesional
         const wb = XLSX.utils.book_new();
-
-        const resumenData = [
-            ['FLUJO DE CAJA - RESUMEN EJECUTIVO'],
-            [],
-            ['Empresa:', info.empresaActual || 'N/A'],
-            ['Fecha:', new Date().toLocaleString('es-PE')],
-            [],
-            ['BALANCE GENERAL'],
-            [],
-            ['Concepto', 'Monto', 'Cantidad'],
-            ['Ingresos', balance.ingresos, balance.cantidadIngresos],
-            ['Gastos', balance.gastos, balance.cantidadGastos],
-            [],
-            ['BALANCE', balance.balance, balance.total]
-        ];
-
-        const ws1 = XLSX.utils.aoa_to_sheet(resumenData);
+        const info = this.modulo.obtenerInfo();
         
-        const transaccionesData = [
-            ['TRANSACCIONES'],
+        // Hoja 1: Resumen
+        const resumen = [
+            ['FLUJO DE CAJA - RESUMEN'],
+            ['Empresa', info.empresaActual],
+            ['Fecha', new Date().toLocaleDateString('es-PE')],
             [],
-            ['Fecha', 'Tipo', 'Categoría', 'Descripción', 'Monto'],
-            ...transacciones.map(t => [
-                new Date(t.fecha).toLocaleDateString('es-PE'),
-                t.tipo,
-                t.categoria,
-                t.descripcion || '',
-                t.monto
-            ])
+            ['BALANCE'],
+            ['Ingresos', info.balance.ingresos],
+            ['Gastos', info.balance.gastos],
+            ['Balance', info.balance.balance]
         ];
+        
+        const ws1 = XLSX.utils.aoa_to_sheet(resumen);
 
-        const ws2 = XLSX.utils.aoa_to_sheet(transaccionesData);
+        // Hoja 2: Transacciones
+        const transacciones = this.modulo.obtenerTransacciones().map(t => ({
+            Tipo: t.tipo,
+            Monto: t.monto,
+            Categoría: t.categoria,
+            Descripción: t.descripcion,
+            Fecha: new Date(t.fecha).toLocaleDateString('es-PE'),
+            'Método de Pago': t.metodoPago
+        }));
+        
+        const ws2 = XLSX.utils.json_to_sheet(transacciones);
 
         XLSX.utils.book_append_sheet(wb, ws1, 'Resumen');
         XLSX.utils.book_append_sheet(wb, ws2, 'Transacciones');
@@ -544,12 +533,8 @@ _exportarBasico() {
         XLSX.writeFile(wb, nombreArchivo);
 
         this.mostrarNotificacion('✅ Excel exportado', 'success');
-        
-    } catch (error) {
-        console.error('❌ Error:', error);
-        alert('❌ Error al exportar');
     }
-}
+
     formatearMoneda(valor) {
         return new Intl.NumberFormat('es-PE', {
             style: 'currency',
@@ -731,41 +716,4 @@ window.recargarFlujoCaja = function() {
 };
 
 console.log('✅ Función recargarFlujoCaja registrada');
-console.log('✅ [flujo-caja-ui.js CORREGIDO v2.0] Módulo cargado - ' + new Date().toISOString());
-
-// ═══════════════════════════════════════════════════════════════
-// FUNCIONES GLOBALES PARA EVENTOS ONCLICK
-// ═══════════════════════════════════════════════════════════════
-window.editarTransaccion = (id) => {
-    if (window.flujoCajaUI) {
-        window.flujoCajaUI.editarTransaccion(id);
-    }
-};
-
-window.eliminarTransaccion = (id) => {
-    if (window.flujoCajaUI) {
-        window.flujoCajaUI.eliminarTransaccion(id);
-    }
-};
-
-console.log('✅ Funciones globales editarTransaccion y eliminarTransaccion creadas');
-
-// ═══════════════════════════════════════════════════════════════
-// SINCRONIZACIÓN PARA COMPATIBILIDAD CON ONCLICK DEL HTML
-// ═══════════════════════════════════════════════════════════════
-
-// Sobrescribir editarTransaccion para sincronizar con variable global
-const originalEditarTransaccion = FlujoCajaUI.prototype.editarTransaccion;
-FlujoCajaUI.prototype.editarTransaccion = function(id) {
-    window.transaccionEditando = id; // Guardar en global también
-    return originalEditarTransaccion.call(this, id);
-};
-
-// Sobrescribir cerrarModalTransaccion para limpiar variable global
-const originalCerrarModal = FlujoCajaUI.prototype.cerrarModalTransaccion;
-FlujoCajaUI.prototype.cerrarModalTransaccion = function() {
-    window.transaccionEditando = null;
-    return originalCerrarModal.call(this);
-};
-
-console.log('✅ [FlujoCaja-UI] Sincronización window.transaccionEditando instalada');
+console.log('✅ [flujo-caja-ui.js CORREGIDO v3.0] Módulo cargado - ' + new Date().toISOString());
