@@ -398,16 +398,20 @@ class ExportadorExcelProfesional {
         }
 
         try {
-            const imageBase64 = this._crearGraficoCircular(balance);
-            const imageId = workbook.addImage({
-                base64: imageBase64,
-                extension: 'png',
-            });
-            
-            sheet.addImage(imageId, 'D4:H15');
-        } catch (error) {
-            console.log('⚠️ No se pudo agregar el gráfico:', error.message);
-        }
+    const imageBase64 = this._crearGraficoCircular(balance);
+    const imageId = workbook.addImage({
+        base64: imageBase64,
+        extension: 'png',
+    });
+    
+    sheet.addImage(imageId, {
+        tl: { col: 3, row: 3 },
+        ext: { width: 400, height: 300 }
+    });
+    console.log('✅ Gráfico agregado exitosamente');
+} catch (error) {
+    console.log('⚠️ No se pudo agregar el gráfico:', error.message);
+}
 
         sheet.getCell('A9').value = 'DISTRIBUCIÓN PORCENTUAL';
         sheet.getCell('A9').font = { bold: true, size: 12 };
