@@ -335,8 +335,8 @@
                     notas: document.getElementById('inputNotas').value
                 };
 
-                if (window.transaccionEditando) {
-                    window.flujoCaja.editarTransaccion(window.transaccionEditando, datos);
+                if(window.flujoCajaUI.transaccionEditando){
+                    window.flujoCaja.editarTransaccion(window.flujoCajaUI.transaccionEditando,datos);
                 } else {
                     window.flujoCaja.agregarTransaccion(datos);
                 }
