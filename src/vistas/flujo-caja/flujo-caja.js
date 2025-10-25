@@ -131,19 +131,49 @@ class FlujoCaja {
         }
     }
 
-    _configurarEventos() {
+_configurarEventos() {
         // Escuchar cambio de empresa
         document.addEventListener('grizalumCompanyChanged', (e) => {
-            this._log('info', 'Empresa cambiada, recargando...');
-            this.inicializado = false; // 🔧 Marcar como no inicializado
+            this._log('info', '🔄 Empresa cambiada, recargando...');
+            console.log('🔄 [FlujoCaja] Empresa cambiada:', e.detail);
+            
+            this.inicializado = false;
+            
+            // Limpiar transacciones actuales en memoria
+            this.transacciones = [];
+            
+            // Recargar datos de la nueva empresa
             this._cargarEmpresaActual().then(() => {
+                console.log('📊 [FlujoCaja] Empresa cargada:', this.empresaActual);
+                
                 this._cargarTransacciones().then(() => {
-                    this.inicializado = true; // 🔧 Marcar como inicializado
-                    this._renderizar();
+                    console.log(`📋 [FlujoCaja] Cargadas ${this.transacciones.length} transacciones`);
+                    
+                    this.inicializado = true;
+                    
+                    // ✅ CRÍTICO: Forzar actualización de UI
+                    console.log('🎨 [FlujoCaja] Actualizando UI...');
+                    
+                    if (window.flujoCajaUI) {
+                        window.flujoCajaUI.cargarBalance();
+                        window.flujoCajaUI.cargarTransacciones();
+                        window.flujoCajaUI.cargarNivel();
+                        window.flujoCajaUI.cargarCategorias();
+                        console.log('✅ [FlujoCaja] UI actualizada correctamente');
+                    } else {
+                        console.warn('⚠️ [FlujoCaja] flujoCajaUI no disponible');
+                    }
+                    
+                    // Disparar evento para otros componentes
+                    this._dispararEvento('flujoCajaActualizado', {
+                        empresaActual: this.empresaActual,
+                        transacciones: this.transacciones.length,
+                        balance: this.calcularBalance()
+                    });
                 });
             });
         });
-
+        
         // Escuchar cambio de nivel
         document.addEventListener('grizalumCambioNivel', (e) => {
             if (e.detail.empresaId === this.empresaActual) {
@@ -152,12 +182,12 @@ class FlujoCaja {
                 this._renderizar();
             }
         });
-
+        
         // Escuchar componente oculto/mostrado
         document.addEventListener('grizalumComponenteOculto', (e) => {
             this._actualizarComponentesActivos();
         });
-
+        
         document.addEventListener('grizalumComponenteMostrado', (e) => {
             this._actualizarComponentesActivos();
         });
