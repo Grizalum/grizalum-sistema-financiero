@@ -726,3 +726,20 @@ window.recargarFlujoCaja = function() {
 
 console.log('✅ Función recargarFlujoCaja registrada');
 console.log('✅ [flujo-caja-ui.js CORREGIDO v2.0] Módulo cargado - ' + new Date().toISOString());
+
+// ═══════════════════════════════════════════════════════════════
+// FUNCIONES GLOBALES PARA EVENTOS ONCLICK
+// ═══════════════════════════════════════════════════════════════
+window.editarTransaccion = (id) => {
+    if (window.flujoCajaUI) {
+        window.flujoCajaUI.editarTransaccion(id);
+    }
+};
+
+window.eliminarTransaccion = (id) => {
+    if (window.flujoCajaUI) {
+        window.flujoCajaUI.eliminarTransaccion(id);
+    }
+};
+
+console.log('✅ Funciones globales editarTransaccion y eliminarTransaccion creadas');
