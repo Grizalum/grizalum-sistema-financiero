@@ -162,6 +162,10 @@ if (inputDescripcion) {
         // ✅ NUEVO: Listener para cambio de empresa
         document.addEventListener('grizalumCompanyChanged', (e) => {
             console.log('🔄 [UI] Empresa cambiada detectada:', e.detail);
+             // ✅ NUEVO: Actualizar historial a nueva empresa
+             if (e.detail && e.detail.empresaId) {
+                  this.historial.setEmpresa(e.detail.empresaId);
+             }
             
             // Limpiar UI inmediatamente
             const listaTransacciones = document.getElementById('listaTransacciones');
