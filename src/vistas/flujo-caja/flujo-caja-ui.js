@@ -341,27 +341,33 @@ class FlujoCajaUI {
     }
 
     guardarTransaccion(event) {
-        event.preventDefault();
-        
-        const form = event.target;
-        const datos = {
-            tipo: form.tipo.value,
-            monto: parseFloat(form.monto.value),
-            categoria: form.categoria.value,
-            descripcion: form.descripcion.value,
-            fecha: form.fecha.value ? new Date(form.fecha.value).toISOString() : new Date().toISOString(),
-            metodoPago: form.metodoPago?.value || 'efectivo',
-            notas: form.notas?.value || ''
-        };
+    event.preventDefault();
+    event.stopPropagation();
+    
+    console.log('🔍 guardarTransaccion - transaccionEditando:', this.transaccionEditando);
+    
+    const form = event.target;
+    const datos = {
+        tipo: form.tipo.value,
+        monto: parseFloat(form.monto.value),
+        categoria: form.categoria.value,
+        descripcion: form.descripcion.value,
+        fecha: form.fecha.value ? new Date(form.fecha.value).toISOString() : new Date().toISOString(),
+        metodoPago: form.metodoPago?.value || 'efectivo',
+        notas: form.notas?.value || ''
+    };
 
-        if (this.transaccionEditando) {
-            this.modulo.editarTransaccion(this.transaccionEditando, datos);
-        } else {
-            this.modulo.agregarTransaccion(datos);
-        }
-
-        this.cerrarModalTransaccion();
+    if (this.transaccionEditando) {
+        console.log('✅ EDITANDO transacción:', this.transaccionEditando);
+        this.modulo.editarTransaccion(this.transaccionEditando, datos);
+        this.transaccionEditando = null; // Limpiar después de editar
+    } else {
+        console.log('➕ AGREGANDO nueva transacción');
+        this.modulo.agregarTransaccion(datos);
     }
+
+    this.cerrarModalTransaccion();
+}
 
     editarTransaccion(id) {
         const transaccion = this.modulo.obtenerTransacciones().find(t => t.id === id);
