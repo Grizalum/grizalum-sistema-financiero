@@ -299,10 +299,10 @@ class FlujoCajaUI {
                         ${esIngreso ? '+' : '-'} ${this.formatearMoneda(t.monto)}
                     </div>
                     <div class="transaccion-acciones">
-                        <button class="btn-icono" onclick="editarTransaccion('${t.id}')">
+                        <button class="btn-icono" onclick="window.flujoCajaUI.editarTransaccion('${t.id}')">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="btn-icono" onclick="eliminarTransaccion('${t.id}')">
+                        <button class="btn-icono" onclick="window.flujoCajaUI.eliminarTransaccion('${t.id}')">    
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
