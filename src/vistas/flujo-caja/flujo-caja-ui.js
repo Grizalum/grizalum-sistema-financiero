@@ -9,7 +9,8 @@
 class FlujoCajaUI {
     constructor() {
         this.modulo = null;
-        this.transaccionEditando = null; // ✅ Variable de instancia
+        this.transaccionEditando = null; 
+        this.historial = new HistorialDescripciones();
         
         this._inicializar();
     }
@@ -19,6 +20,12 @@ class FlujoCajaUI {
         
         // Esperar a que el módulo esté listo
         await this._esperarModulo();
+
+        // ✅ NUEVO: Configurar historial con empresa actual
+    const info = this.modulo.obtenerInfo();
+    if (info.empresaActual) {
+        this.historial.setEmpresa(info.empresaActual);
+    }
         
         // Esperar a que el DOM esté completamente listo
         await new Promise(resolve => setTimeout(resolve, 300));
@@ -81,9 +88,33 @@ class FlujoCajaUI {
         }
 
         // Cambio de tipo (ingreso/gasto)
-        document.querySelectorAll('input[name="tipo"]').forEach(radio => {
-            radio.addEventListener('change', () => this.actualizarCategoriasSegunTipo());
-        });
+document.querySelectorAll('input[name="tipo"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+        this.actualizarCategoriasSegunTipo();
+        this.ocultarSugerencias(); // ✅ NUEVO: Ocultar sugerencias al cambiar tipo
+    });
+});
+
+// ✅ NUEVO: Eventos para sugerencias de descripción
+const inputDescripcion = document.getElementById('inputDescripcion');
+if (inputDescripcion) {
+    // Mostrar sugerencias al hacer focus
+    inputDescripcion.addEventListener('focus', () => {
+        this.mostrarSugerencias();
+    });
+
+    // Filtrar sugerencias mientras escribe
+    inputDescripcion.addEventListener('input', (e) => {
+        this.filtrarSugerencias(e.target.value);
+    });
+
+    // Ocultar sugerencias al hacer click fuera
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('#inputDescripcion') && !e.target.closest('#sugerenciasDescripcion')) {
+            this.ocultarSugerencias();
+        }
+    });
+}
 
         // Filtros
         const btnAplicar = document.getElementById('btnAplicarFiltros');
@@ -389,40 +420,44 @@ class FlujoCajaUI {
 
     // ✅ CORREGIDO: guardarTransaccion con acceso correcto a campos
     guardarTransaccion(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        
-        console.log('💾 guardarTransaccion iniciado');
-        console.log('🔍 Estado transaccionEditando:', this.transaccionEditando);
-        
-        // ✅ Acceder a los campos por ID (como están en el HTML)
-        const form = event.target;
-        const tipoSeleccionado = form.querySelector('input[name="tipo"]:checked');
-        
-        const datos = {
-            tipo: tipoSeleccionado ? tipoSeleccionado.value : 'ingreso',
-            monto: parseFloat(document.getElementById('inputMonto').value),
-            categoria: document.getElementById('selectCategoria').value,
-            descripcion: document.getElementById('inputDescripcion').value || '',
-            fecha: document.getElementById('inputFecha').value ? new Date(document.getElementById('inputFecha').value).toISOString() : new Date().toISOString(),
-            metodoPago: document.getElementById('selectMetodo')?.value || 'efectivo',
-            notas: document.getElementById('inputNotas')?.value || ''
-        };
+    event.preventDefault();
+    event.stopPropagation();
+    
+    console.log('💾 guardarTransaccion iniciado');
+    console.log('🔍 Estado transaccionEditando:', this.transaccionEditando);
+    
+    const form = event.target;
+    const tipoSeleccionado = form.querySelector('input[name="tipo"]:checked');
+    
+    const datos = {
+        tipo: tipoSeleccionado ? tipoSeleccionado.value : 'ingreso',
+        monto: parseFloat(document.getElementById('inputMonto').value),
+        categoria: document.getElementById('selectCategoria').value,
+        descripcion: document.getElementById('inputDescripcion').value || '',
+        fecha: document.getElementById('inputFecha').value ? new Date(document.getElementById('inputFecha').value).toISOString() : new Date().toISOString(),
+        metodoPago: document.getElementById('selectMetodo')?.value || 'efectivo',
+        notas: document.getElementById('inputNotas')?.value || ''
+    };
 
-        console.log('📦 Datos del formulario:', datos);
+    console.log('📦 Datos del formulario:', datos);
 
-        if (this.transaccionEditando) {
-            console.log('✏️ MODO EDICIÓN - ID:', this.transaccionEditando);
-            this.modulo.editarTransaccion(this.transaccionEditando, datos);
-            this.mostrarNotificacion('✅ Transacción actualizada', 'success');
-        } else {
-            console.log('➕ MODO NUEVA TRANSACCIÓN');
-            this.modulo.agregarTransaccion(datos);
-            this.mostrarNotificacion('✅ Transacción agregada', 'success');
-        }
-
-        this.cerrarModalTransaccion();
+    // ✅ NUEVO: Guardar descripción en historial
+    if (datos.descripcion.trim()) {
+        this.historial.agregar(datos.descripcion, datos.tipo);
     }
+
+    if (this.transaccionEditando) {
+        console.log('✏️ MODO EDICIÓN - ID:', this.transaccionEditando);
+        this.modulo.editarTransaccion(this.transaccionEditando, datos);
+        this.mostrarNotificacion('✅ Transacción actualizada', 'success');
+    } else {
+        console.log('➕ MODO NUEVA TRANSACCIÓN');
+        this.modulo.agregarTransaccion(datos);
+        this.mostrarNotificacion('✅ Transacción agregada', 'success');
+    }
+
+    this.cerrarModalTransaccion();
+}
 
     // ✅ CORREGIDO: editarTransaccion con IDs correctos del formulario
     editarTransaccion(id) {
@@ -612,6 +647,120 @@ class FlujoCajaUI {
             notif.style.animation = 'slideOut 0.3s ease';
             setTimeout(() => notif.remove(), 300);
         }, 3000);
+    }
+    /**
+     * Mostrar sugerencias de descripción
+     */
+    mostrarSugerencias() {
+        const tipo = document.querySelector('input[name="tipo"]:checked')?.value || 'ingreso';
+        const inputDescripcion = document.getElementById('inputDescripcion');
+        const contenedor = document.getElementById('sugerenciasDescripcion');
+        
+        if (!contenedor) return;
+
+        const sugerencias = this.historial.obtener(tipo);
+        
+        if (sugerencias.length === 0) {
+            contenedor.innerHTML = '<div class="sugerencias-vacio">Sin historial aún. Las descripciones que agregues aparecerán aquí.</div>';
+        } else {
+            contenedor.innerHTML = sugerencias.map(desc => `
+                <div class="sugerencia-item" data-descripcion="${desc}">
+                    <span class="sugerencia-texto">${desc}</span>
+                    <button class="sugerencia-eliminar" data-descripcion="${desc}" title="Eliminar">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+
+            // Eventos: Click en sugerencia
+            contenedor.querySelectorAll('.sugerencia-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    if (!e.target.closest('.sugerencia-eliminar')) {
+                        const descripcion = item.dataset.descripcion;
+                        inputDescripcion.value = descripcion;
+                        this.ocultarSugerencias();
+                    }
+                });
+            });
+
+            // Eventos: Click en eliminar
+            contenedor.querySelectorAll('.sugerencia-eliminar').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const descripcion = btn.dataset.descripcion;
+                    this.eliminarSugerencia(descripcion, tipo);
+                });
+            });
+        }
+
+        contenedor.style.display = 'block';
+    }
+
+    /**
+     * Filtrar sugerencias mientras escribe
+     */
+    filtrarSugerencias(texto) {
+        const tipo = document.querySelector('input[name="tipo"]:checked')?.value || 'ingreso';
+        const contenedor = document.getElementById('sugerenciasDescripcion');
+        
+        if (!contenedor) return;
+
+        const sugerencias = this.historial.buscar(texto, tipo);
+        
+        if (sugerencias.length === 0) {
+            contenedor.innerHTML = '<div class="sugerencias-vacio">No hay coincidencias</div>';
+        } else {
+            contenedor.innerHTML = sugerencias.map(desc => `
+                <div class="sugerencia-item" data-descripcion="${desc}">
+                    <span class="sugerencia-texto">${desc}</span>
+                    <button class="sugerencia-eliminar" data-descripcion="${desc}" title="Eliminar">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+
+            // Re-agregar eventos
+            contenedor.querySelectorAll('.sugerencia-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    if (!e.target.closest('.sugerencia-eliminar')) {
+                        const descripcion = item.dataset.descripcion;
+                        document.getElementById('inputDescripcion').value = descripcion;
+                        this.ocultarSugerencias();
+                    }
+                });
+            });
+
+            contenedor.querySelectorAll('.sugerencia-eliminar').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const descripcion = btn.dataset.descripcion;
+                    this.eliminarSugerencia(descripcion, tipo);
+                });
+            });
+        }
+
+        contenedor.style.display = 'block';
+    }
+
+    /**
+     * Ocultar sugerencias
+     */
+    ocultarSugerencias() {
+        const contenedor = document.getElementById('sugerenciasDescripcion');
+        if (contenedor) {
+            contenedor.style.display = 'none';
+        }
+    }
+
+    /**
+     * Eliminar una sugerencia del historial
+     */
+    eliminarSugerencia(descripcion, tipo) {
+        if (confirm(`¿Eliminar "${descripcion}" del historial?`)) {
+            this.historial.eliminar(descripcion, tipo);
+            this.mostrarSugerencias(); // Recargar lista
+            this.mostrarNotificacion(`🗑️ "${descripcion}" eliminado`, 'success');
+        }
     }
 }
 
