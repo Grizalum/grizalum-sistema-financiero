@@ -258,14 +258,12 @@
                     <textarea id="inputNotas" class="form-textarea" rows="3" 
                               placeholder="Información adicional..."></textarea>
                 </div>
-
             </form>
-
             <div class="modal-footer">
-                <button type="button" class="btn-secondary" onclick="document.getElementById('modalTransaccion').classList.remove('show')">
+                <button type="button" class="btn-secondary" onclick="window.flujoCajaUI.cerrarModalTransaccion()">
                     <i class="fas fa-times"></i> Cancelar
                 </button>
-                <button type="button" class="btn-primary" onclick="(function(){try{const m=document.getElementById('inputMonto').value;const c=document.getElementById('selectCategoria').value;const f=document.getElementById('inputFecha').value;if(!m||!c||!f){alert('⚠️ Completa campos obligatorios');return;}const datos={tipo:document.querySelector('input[name=tipo]:checked').value,monto:parseFloat(m),categoria:c,descripcion:document.getElementById('inputDescripcion').value||'',fecha:new Date(f).toISOString(),metodoPago:document.getElementById('selectMetodo').value||'efectivo',notas:document.getElementById('inputNotas').value||''};if(window.transaccionEditando){window.flujoCaja.editarTransaccion(window.transaccionEditando,datos);window.transaccionEditando=null;}else{window.flujoCaja.agregarTransaccion(datos);}document.getElementById('modalTransaccion').classList.remove('show');document.getElementById('formTransaccion').reset();document.getElementById('inputFecha').valueAsDate=new Date();const n=document.createElement('div');n.style.cssText='position:fixed;top:20px;right:20px;background:#10b981;color:white;padding:1rem 1.5rem;border-radius:12px;z-index:999999;font-weight:700;';n.innerHTML='✅ Guardado';document.body.appendChild(n);setTimeout(()=>n.remove(),3000);if(typeof cargarBalance==='function')setTimeout(cargarBalance,100);if(typeof cargarTransacciones==='function')setTimeout(cargarTransacciones,100);}catch(e){alert('❌ Error: '+e.message)}}())">
+                <button type="submit" class="btn-primary" form="formTransaccion">
                     <i class="fas fa-save"></i> Guardar
                 </button>
             </div>
