@@ -347,7 +347,7 @@ class FlujoCajaUI {
         console.log('✅ Modal cerrado - transaccionEditando limpiado');
     }
 
-    // ✅ CORREGIDO: guardarTransaccion con mejor logging
+    // ✅ CORREGIDO: guardarTransaccion con acceso correcto a campos
     guardarTransaccion(event) {
         event.preventDefault();
         event.stopPropagation();
@@ -355,15 +355,18 @@ class FlujoCajaUI {
         console.log('💾 guardarTransaccion iniciado');
         console.log('🔍 Estado transaccionEditando:', this.transaccionEditando);
         
+        // ✅ Acceder a los campos por ID (como están en el HTML)
         const form = event.target;
+        const tipoSeleccionado = form.querySelector('input[name="tipo"]:checked');
+        
         const datos = {
-            tipo: form.tipo.value,
-            monto: parseFloat(form.monto.value),
-            categoria: form.categoria.value,
-            descripcion: form.descripcion.value,
-            fecha: form.fecha.value ? new Date(form.fecha.value).toISOString() : new Date().toISOString(),
-            metodoPago: form.metodoPago?.value || 'efectivo',
-            notas: form.notas?.value || ''
+            tipo: tipoSeleccionado ? tipoSeleccionado.value : 'ingreso',
+            monto: parseFloat(document.getElementById('inputMonto').value),
+            categoria: document.getElementById('selectCategoria').value,
+            descripcion: document.getElementById('inputDescripcion').value || '',
+            fecha: document.getElementById('inputFecha').value ? new Date(document.getElementById('inputFecha').value).toISOString() : new Date().toISOString(),
+            metodoPago: document.getElementById('selectMetodo')?.value || 'efectivo',
+            notas: document.getElementById('inputNotas')?.value || ''
         };
 
         console.log('📦 Datos del formulario:', datos);
@@ -381,7 +384,7 @@ class FlujoCajaUI {
         this.cerrarModalTransaccion();
     }
 
-    // ✅ CORREGIDO: editarTransaccion con modo de edición explícito
+    // ✅ CORREGIDO: editarTransaccion con IDs correctos del formulario
     editarTransaccion(id) {
         console.log('✏️ editarTransaccion llamado con ID:', id);
         
@@ -397,26 +400,27 @@ class FlujoCajaUI {
         this.transaccionEditando = id;
         console.log('✅ transaccionEditando establecido:', this.transaccionEditando);
 
-        // Rellenar formulario
+        // Rellenar formulario con IDs correctos
         const radioTipo = document.querySelector(`input[name="tipo"][value="${transaccion.tipo}"]`);
         if (radioTipo) {
             radioTipo.checked = true;
             this.actualizarCategoriasSegunTipo();
         }
 
+        // ✅ Usar los IDs correctos del HTML
         const inputMonto = document.getElementById('inputMonto');
         const selectCategoria = document.getElementById('selectCategoria');
         const inputDescripcion = document.getElementById('inputDescripcion');
         const inputFecha = document.getElementById('inputFecha');
-        const selectMetodoPago = document.getElementById('selectMetodoPago');
+        const selectMetodo = document.getElementById('selectMetodo');
         const inputNotas = document.getElementById('inputNotas');
 
         if (inputMonto) inputMonto.value = transaccion.monto;
         if (selectCategoria) selectCategoria.value = transaccion.categoria;
         if (inputDescripcion) inputDescripcion.value = transaccion.descripcion;
         if (inputFecha) inputFecha.value = transaccion.fecha.split('T')[0];
-        if (selectMetodoPago) selectMetodoPago.value = transaccion.metodoPago;
-        if (inputNotas) inputNotas.value = transaccion.notas;
+        if (selectMetodo) selectMetodo.value = transaccion.metodoPago || 'efectivo';
+        if (inputNotas) inputNotas.value = transaccion.notas || '';
         
         // ✅ IMPORTANTE: Abrir en modo edición (sin resetear)
         this.abrirModalTransaccion(true);
