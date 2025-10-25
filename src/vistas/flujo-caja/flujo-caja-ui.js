@@ -749,3 +749,23 @@ window.eliminarTransaccion = (id) => {
 };
 
 console.log('✅ Funciones globales editarTransaccion y eliminarTransaccion creadas');
+
+// ═══════════════════════════════════════════════════════════════
+// SINCRONIZACIÓN PARA COMPATIBILIDAD CON ONCLICK DEL HTML
+// ═══════════════════════════════════════════════════════════════
+
+// Sobrescribir editarTransaccion para sincronizar con variable global
+const originalEditarTransaccion = FlujoCajaUI.prototype.editarTransaccion;
+FlujoCajaUI.prototype.editarTransaccion = function(id) {
+    window.transaccionEditando = id; // Guardar en global también
+    return originalEditarTransaccion.call(this, id);
+};
+
+// Sobrescribir cerrarModalTransaccion para limpiar variable global
+const originalCerrarModal = FlujoCajaUI.prototype.cerrarModalTransaccion;
+FlujoCajaUI.prototype.cerrarModalTransaccion = function() {
+    window.transaccionEditando = null;
+    return originalCerrarModal.call(this);
+};
+
+console.log('✅ [FlujoCaja-UI] Sincronización window.transaccionEditando instalada');
