@@ -2,7 +2,7 @@
  * ═══════════════════════════════════════════════════════════════════
  * EXPORTADOR PROFESIONAL DE EXCEL - FLUJO DE CAJA GRIZALUM
  * Usa ExcelJS para estilos REALES con colores
- * VERSION: 3.0 PREMIUM
+ * VERSION: 3.0 PREMIUM CON GRÁFICOS
  * ═══════════════════════════════════════════════════════════════════
  */
 
@@ -45,7 +45,7 @@ class ExportadorExcelProfesional {
             const hoja4 = workbook.addWorksheet('📈 Análisis', {
                 views: [{ showGridLines: false }]
             });
-            this._crearAnalisis(hoja4, datos);
+            await this._crearAnalisis(hoja4, datos, workbook);
 
             const buffer = await workbook.xlsx.writeBuffer();
             const blob = new Blob([buffer], { 
@@ -59,7 +59,7 @@ class ExportadorExcelProfesional {
             a.click();
             window.URL.revokeObjectURL(url);
 
-            console.log('✅ Excel profesional generado exitosamente');
+            console.log('✅ Excel profesional generado exitosamente con gráfico');
             return true;
 
         } catch (error) {
@@ -328,241 +328,261 @@ class ExportadorExcelProfesional {
         sheet.getColumn(5).width = 15;
     }
 
-    _crearAnalisis(sheet, datos) {
-    const balance = datos.balance || {};
-    const transacciones = datos.transacciones || [];
+    async _crearAnalisis(sheet, datos, workbook) {
+        const balance = datos.balance || {};
+        const transacciones = datos.transacciones || [];
 
-    sheet.mergeCells('A1:D1');
-    const titulo = sheet.getCell('A1');
-    titulo.value = '📈 ANÁLISIS Y GRÁFICOS';
-    titulo.font = { size: 16, bold: true, color: { argb: 'FFFFFFFF' } };
-    titulo.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF667EEA' } };
-    titulo.alignment = { horizontal: 'center', vertical: 'middle' };
-    sheet.getRow(1).height = 35;
+        sheet.mergeCells('A1:D1');
+        const titulo = sheet.getCell('A1');
+        titulo.value = '📈 ANÁLISIS Y GRÁFICOS';
+        titulo.font = { size: 16, bold: true, color: { argb: 'FFFFFFFF' } };
+        titulo.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF667EEA' } };
+        titulo.alignment = { horizontal: 'center', vertical: 'middle' };
+        sheet.getRow(1).height = 35;
 
-    sheet.getCell('A3').value = 'RESUMEN GENERAL';
-    sheet.getCell('A3').font = { bold: true, size: 12 };
-    sheet.getCell('A3').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD1D5DB' } };
-    
-    sheet.getCell('A4').value = 'Concepto';
-    sheet.getCell('B4').value = 'Monto (S/.)';
-    ['A4', 'B4'].forEach(cell => {
-        const c = sheet.getCell(cell);
-        c.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-        c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F2937' } };
-        c.alignment = { horizontal: 'center' };
-        c.border = {
-            top: { style: 'thin', color: { argb: 'FF000000' } },
-            bottom: { style: 'thin', color: { argb: 'FF000000' } },
-            left: { style: 'thin', color: { argb: 'FF000000' } },
-            right: { style: 'thin', color: { argb: 'FF000000' } }
-        };
-    });
-
-    sheet.getCell('A5').value = 'Ingresos';
-    sheet.getCell('B5').value = balance.ingresos;
-    sheet.getCell('B5').numFmt = '"S/. "#,##0.00';
-    sheet.getCell('A5').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF10B981' } };
-    sheet.getCell('A5').font = { bold: true, color: { argb: 'FFFFFFFF' } };
-    sheet.getCell('B5').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF10B981' } };
-    sheet.getCell('B5').font = { bold: true, color: { argb: 'FFFFFFFF' } };
-    sheet.getCell('B5').alignment = { horizontal: 'right' };
-
-    sheet.getCell('A6').value = 'Gastos';
-    sheet.getCell('B6').value = balance.gastos;
-    sheet.getCell('B6').numFmt = '"S/. "#,##0.00';
-    sheet.getCell('A6').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEF4444' } };
-    sheet.getCell('A6').font = { bold: true, color: { argb: 'FFFFFFFF' } };
-    sheet.getCell('B6').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEF4444' } };
-    sheet.getCell('B6').font = { bold: true, color: { argb: 'FFFFFFFF' } };
-    sheet.getCell('B6').alignment = { horizontal: 'right' };
-
-    sheet.getCell('A7').value = 'Balance';
-    sheet.getCell('B7').value = balance.balance;
-    sheet.getCell('B7').numFmt = '"S/. "#,##0.00';
-    sheet.getCell('A7').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF8B5CF6' } };
-    sheet.getCell('A7').font = { bold: true, color: { argb: 'FFFFFFFF' } };
-    sheet.getCell('B7').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF8B5CF6' } };
-    sheet.getCell('B7').font = { bold: true, color: { argb: 'FFFFFFFF' } };
-    sheet.getCell('B7').alignment = { horizontal: 'right' };
-
-    for (let row = 5; row <= 7; row++) {
-        for (let col = 1; col <= 2; col++) {
-            sheet.getCell(row, col).border = {
+        sheet.getCell('A3').value = 'RESUMEN GENERAL';
+        sheet.getCell('A3').font = { bold: true, size: 12 };
+        sheet.getCell('A3').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD1D5DB' } };
+        
+        sheet.getCell('A4').value = 'Concepto';
+        sheet.getCell('B4').value = 'Monto (S/.)';
+        ['A4', 'B4'].forEach(cell => {
+            const c = sheet.getCell(cell);
+            c.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+            c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F2937' } };
+            c.alignment = { horizontal: 'center' };
+            c.border = {
                 top: { style: 'thin', color: { argb: 'FF000000' } },
                 bottom: { style: 'thin', color: { argb: 'FF000000' } },
                 left: { style: 'thin', color: { argb: 'FF000000' } },
                 right: { style: 'thin', color: { argb: 'FF000000' } }
             };
+        });
+
+        sheet.getCell('A5').value = 'Ingresos';
+        sheet.getCell('B5').value = balance.ingresos;
+        sheet.getCell('B5').numFmt = '"S/. "#,##0.00';
+        sheet.getCell('A5').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF10B981' } };
+        sheet.getCell('A5').font = { bold: true, color: { argb: 'FFFFFFFF' } };
+        sheet.getCell('B5').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF10B981' } };
+        sheet.getCell('B5').font = { bold: true, color: { argb: 'FFFFFFFF' } };
+        sheet.getCell('B5').alignment = { horizontal: 'right' };
+
+        sheet.getCell('A6').value = 'Gastos';
+        sheet.getCell('B6').value = balance.gastos;
+        sheet.getCell('B6').numFmt = '"S/. "#,##0.00';
+        sheet.getCell('A6').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEF4444' } };
+        sheet.getCell('A6').font = { bold: true, color: { argb: 'FFFFFFFF' } };
+        sheet.getCell('B6').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEF4444' } };
+        sheet.getCell('B6').font = { bold: true, color: { argb: 'FFFFFFFF' } };
+        sheet.getCell('B6').alignment = { horizontal: 'right' };
+
+        sheet.getCell('A7').value = 'Balance';
+        sheet.getCell('B7').value = balance.balance;
+        sheet.getCell('B7').numFmt = '"S/. "#,##0.00';
+        sheet.getCell('A7').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF8B5CF6' } };
+        sheet.getCell('A7').font = { bold: true, color: { argb: 'FFFFFFFF' } };
+        sheet.getCell('B7').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF8B5CF6' } };
+        sheet.getCell('B7').font = { bold: true, color: { argb: 'FFFFFFFF' } };
+        sheet.getCell('B7').alignment = { horizontal: 'right' };
+
+        for (let row = 5; row <= 7; row++) {
+            for (let col = 1; col <= 2; col++) {
+                sheet.getCell(row, col).border = {
+                    top: { style: 'thin', color: { argb: 'FF000000' } },
+                    bottom: { style: 'thin', color: { argb: 'FF000000' } },
+                    left: { style: 'thin', color: { argb: 'FF000000' } },
+                    right: { style: 'thin', color: { argb: 'FF000000' } }
+                };
+            }
         }
-    }
 
-    // ═══════════════════════════════════════
-    // GRÁFICO CIRCULAR AUTOMÁTICO
-    // ═══════════════════════════════════════
-    sheet.addImage({
-        base64: this._crearGraficoCircular(balance),
-        extension: 'png',
-        tl: { col: 3.5, row: 3 },
-        ext: { width: 400, height: 300 }
-    });
+        try {
+            const imageBase64 = this._crearGraficoCircular(balance);
+            const imageId = workbook.addImage({
+                base64: imageBase64,
+                extension: 'png',
+            });
+            
+            sheet.addImage(imageId, 'D4:H15');
+        } catch (error) {
+            console.log('⚠️ No se pudo agregar el gráfico:', error.message);
+        }
 
-    sheet.getCell('A9').value = 'DISTRIBUCIÓN PORCENTUAL';
-    sheet.getCell('A9').font = { bold: true, size: 12 };
-    sheet.getCell('A9').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD1D5DB' } };
+        sheet.getCell('A9').value = 'DISTRIBUCIÓN PORCENTUAL';
+        sheet.getCell('A9').font = { bold: true, size: 12 };
+        sheet.getCell('A9').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD1D5DB' } };
 
-    sheet.getCell('A10').value = 'Tipo';
-    sheet.getCell('B10').value = 'Porcentaje';
-    ['A10', 'B10'].forEach(cell => {
-        const c = sheet.getCell(cell);
-        c.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-        c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F2937' } };
-        c.alignment = { horizontal: 'center' };
-        c.border = {
-            top: { style: 'thin', color: { argb: 'FF000000' } },
-            bottom: { style: 'thin', color: { argb: 'FF000000' } },
-            left: { style: 'thin', color: { argb: 'FF000000' } },
-            right: { style: 'thin', color: { argb: 'FF000000' } }
-        };
-    });
-
-    const total = balance.ingresos + balance.gastos;
-    const pctIngresos = total > 0 ? ((balance.ingresos / total) * 100).toFixed(1) : 0;
-    const pctGastos = total > 0 ? ((balance.gastos / total) * 100).toFixed(1) : 0;
-
-    sheet.getCell('A11').value = 'Ingresos';
-    sheet.getCell('B11').value = `${pctIngresos}%`;
-    sheet.getCell('B11').alignment = { horizontal: 'right' };
-    
-    sheet.getCell('A12').value = 'Gastos';
-    sheet.getCell('B12').value = `${pctGastos}%`;
-    sheet.getCell('B12').alignment = { horizontal: 'right' };
-
-    for (let row = 11; row <= 12; row++) {
-        for (let col = 1; col <= 2; col++) {
-            sheet.getCell(row, col).border = {
+        sheet.getCell('A10').value = 'Tipo';
+        sheet.getCell('B10').value = 'Porcentaje';
+        ['A10', 'B10'].forEach(cell => {
+            const c = sheet.getCell(cell);
+            c.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+            c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F2937' } };
+            c.alignment = { horizontal: 'center' };
+            c.border = {
                 top: { style: 'thin', color: { argb: 'FF000000' } },
                 bottom: { style: 'thin', color: { argb: 'FF000000' } },
                 left: { style: 'thin', color: { argb: 'FF000000' } },
                 right: { style: 'thin', color: { argb: 'FF000000' } }
             };
+        });
+
+        const total = balance.ingresos + balance.gastos;
+        const pctIngresos = total > 0 ? ((balance.ingresos / total) * 100).toFixed(1) : 0;
+        const pctGastos = total > 0 ? ((balance.gastos / total) * 100).toFixed(1) : 0;
+
+        sheet.getCell('A11').value = 'Ingresos';
+        sheet.getCell('B11').value = `${pctIngresos}%`;
+        sheet.getCell('B11').alignment = { horizontal: 'right' };
+        
+        sheet.getCell('A12').value = 'Gastos';
+        sheet.getCell('B12').value = `${pctGastos}%`;
+        sheet.getCell('B12').alignment = { horizontal: 'right' };
+
+        for (let row = 11; row <= 12; row++) {
+            for (let col = 1; col <= 2; col++) {
+                sheet.getCell(row, col).border = {
+                    top: { style: 'thin', color: { argb: 'FF000000' } },
+                    bottom: { style: 'thin', color: { argb: 'FF000000' } },
+                    left: { style: 'thin', color: { argb: 'FF000000' } },
+                    right: { style: 'thin', color: { argb: 'FF000000' } }
+                };
+            }
         }
-    }
 
-    sheet.getCell('A14').value = 'INDICADORES CLAVE (KPIs)';
-    sheet.getCell('A14').font = { bold: true, size: 12 };
-    sheet.getCell('A14').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD1D5DB' } };
+        sheet.getCell('A14').value = 'INDICADORES CLAVE (KPIs)';
+        sheet.getCell('A14').font = { bold: true, size: 12 };
+        sheet.getCell('A14').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD1D5DB' } };
 
-    sheet.getCell('A15').value = 'Indicador';
-    sheet.getCell('B15').value = 'Valor';
-    sheet.getCell('C15').value = 'Estado';
-    ['A15', 'B15', 'C15'].forEach(cell => {
-        const c = sheet.getCell(cell);
-        c.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-        c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F2937' } };
-        c.alignment = { horizontal: 'center' };
-        c.border = {
-            top: { style: 'thin', color: { argb: 'FF000000' } },
-            bottom: { style: 'thin', color: { argb: 'FF000000' } },
-            left: { style: 'thin', color: { argb: 'FF000000' } },
-            right: { style: 'thin', color: { argb: 'FF000000' } }
-        };
-    });
-
-    const ratio = balance.gastos > 0 ? (balance.ingresos / balance.gastos).toFixed(2) : 'N/A';
-    sheet.getCell('A16').value = 'Ratio Ingresos/Gastos';
-    sheet.getCell('B16').value = ratio;
-    sheet.getCell('C16').value = ratio >= 1.5 ? '🟢 Excelente' : ratio >= 1 ? '🟡 Aceptable' : '🔴 Crítico';
-
-    const promedioTrans = transacciones.length > 0 ? ((balance.ingresos + balance.gastos) / transacciones.length) : 0;
-    sheet.getCell('A17').value = 'Promedio por Transacción';
-    sheet.getCell('B17').value = promedioTrans;
-    sheet.getCell('B17').numFmt = '"S/. "#,##0.00';
-    sheet.getCell('C17').value = '📊 Informativo';
-
-    const tasaAhorro = balance.ingresos > 0 ? ((balance.balance / balance.ingresos) * 100).toFixed(1) : 0;
-    sheet.getCell('A18').value = 'Tasa de Ahorro';
-    sheet.getCell('B18').value = `${tasaAhorro}%`;
-    sheet.getCell('C18').value = tasaAhorro > 20 ? '🟢 Muy bien' : tasaAhorro > 0 ? '🟡 Mejorable' : '🔴 Déficit';
-
-    for (let row = 16; row <= 18; row++) {
-        for (let col = 1; col <= 3; col++) {
-            sheet.getCell(row, col).border = {
+        sheet.getCell('A15').value = 'Indicador';
+        sheet.getCell('B15').value = 'Valor';
+        sheet.getCell('C15').value = 'Estado';
+        ['A15', 'B15', 'C15'].forEach(cell => {
+            const c = sheet.getCell(cell);
+            c.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+            c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F2937' } };
+            c.alignment = { horizontal: 'center' };
+            c.border = {
                 top: { style: 'thin', color: { argb: 'FF000000' } },
                 bottom: { style: 'thin', color: { argb: 'FF000000' } },
                 left: { style: 'thin', color: { argb: 'FF000000' } },
                 right: { style: 'thin', color: { argb: 'FF000000' } }
             };
+        });
+
+        const ratio = balance.gastos > 0 ? (balance.ingresos / balance.gastos).toFixed(2) : 'N/A';
+        sheet.getCell('A16').value = 'Ratio Ingresos/Gastos';
+        sheet.getCell('B16').value = ratio;
+        sheet.getCell('C16').value = ratio >= 1.5 ? '🟢 Excelente' : ratio >= 1 ? '🟡 Aceptable' : '🔴 Crítico';
+
+        const promedioTrans = transacciones.length > 0 ? ((balance.ingresos + balance.gastos) / transacciones.length) : 0;
+        sheet.getCell('A17').value = 'Promedio por Transacción';
+        sheet.getCell('B17').value = promedioTrans;
+        sheet.getCell('B17').numFmt = '"S/. "#,##0.00';
+        sheet.getCell('C17').value = '📊 Informativo';
+
+        const tasaAhorro = balance.ingresos > 0 ? ((balance.balance / balance.ingresos) * 100).toFixed(1) : 0;
+        sheet.getCell('A18').value = 'Tasa de Ahorro';
+        sheet.getCell('B18').value = `${tasaAhorro}%`;
+        sheet.getCell('C18').value = tasaAhorro > 20 ? '🟢 Muy bien' : tasaAhorro > 0 ? '🟡 Mejorable' : '🔴 Déficit';
+
+        for (let row = 16; row <= 18; row++) {
+            for (let col = 1; col <= 3; col++) {
+                sheet.getCell(row, col).border = {
+                    top: { style: 'thin', color: { argb: 'FF000000' } },
+                    bottom: { style: 'thin', color: { argb: 'FF000000' } },
+                    left: { style: 'thin', color: { argb: 'FF000000' } },
+                    right: { style: 'thin', color: { argb: 'FF000000' } }
+                };
+            }
         }
+
+        sheet.getColumn(1).width = 30;
+        sheet.getColumn(2).width = 20;
+        sheet.getColumn(3).width = 20;
     }
 
-    sheet.getColumn(1).width = 30;
-    sheet.getColumn(2).width = 20;
-    sheet.getColumn(3).width = 20;
-}
+    _crearGraficoCircular(balance) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 500;
+        canvas.height = 400;
+        const ctx = canvas.getContext('2d');
 
-        _crearGraficoCircular(balance) {
-    // Crear canvas temporal
-    const canvas = document.createElement('canvas');
-    canvas.width = 400;
-    canvas.height = 300;
-    const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, 500, 400);
 
-    // Fondo blanco
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(0, 0, 400, 300);
+        const total = balance.ingresos + balance.gastos;
+        if (total === 0) {
+            ctx.fillStyle = '#000000';
+            ctx.font = '16px Arial';
+            ctx.fillText('Sin datos', 220, 200);
+            return canvas.toDataURL().split(',')[1];
+        }
 
-    // Datos
-    const total = balance.ingresos + balance.gastos;
-    const pctIngresos = balance.ingresos / total;
-    const pctGastos = balance.gastos / total;
+        const pctIngresos = balance.ingresos / total;
+        const pctGastos = balance.gastos / total;
 
-    // Dibujar gráfico circular
-    const centerX = 200;
-    const centerY = 150;
-    const radius = 80;
+        const centerX = 250;
+        const centerY = 180;
+        const radius = 100;
 
-    // Ingresos (verde)
-    ctx.beginPath();
-    ctx.moveTo(centerX, centerY);
-    ctx.arc(centerX, centerY, radius, 0, pctIngresos * 2 * Math.PI);
-    ctx.closePath();
-    ctx.fillStyle = '#10B981';
-    ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, 0, pctIngresos * 2 * Math.PI);
+        ctx.closePath();
+        ctx.fillStyle = '#10B981';
+        ctx.fill();
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 2;
+        ctx.stroke();
 
-    // Gastos (rojo)
-    ctx.beginPath();
-    ctx.moveTo(centerX, centerY);
-    ctx.arc(centerX, centerY, radius, pctIngresos * 2 * Math.PI, 2 * Math.PI);
-    ctx.closePath();
-    ctx.fillStyle = '#EF4444';
-    ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, pctIngresos * 2 * Math.PI, 2 * Math.PI);
+        ctx.closePath();
+        ctx.fillStyle = '#EF4444';
+        ctx.fill();
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 2;
+        ctx.stroke();
 
-    // Leyenda
-    ctx.fillStyle = '#10B981';
-    ctx.fillRect(50, 250, 20, 20);
-    ctx.fillStyle = '#000000';
-    ctx.font = '14px Arial';
-    ctx.fillText(`Ingresos ${(pctIngresos * 100).toFixed(1)}%`, 80, 265);
+        ctx.fillStyle = '#10B981';
+        ctx.fillRect(80, 320, 25, 25);
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(80, 320, 25, 25);
+        ctx.fillStyle = '#000000';
+        ctx.font = 'bold 16px Arial';
+        ctx.fillText(`Ingresos: S/. ${balance.ingresos.toFixed(2)} (${(pctIngresos * 100).toFixed(1)}%)`, 115, 338);
 
-    ctx.fillStyle = '#EF4444';
-    ctx.fillRect(220, 250, 20, 20);
-    ctx.fillStyle = '#000000';
-    ctx.fillText(`Gastos ${(pctGastos * 100).toFixed(1)}%`, 250, 265);
+        ctx.fillStyle = '#EF4444';
+        ctx.fillRect(80, 355, 25, 25);
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(80, 355, 25, 25);
+        ctx.fillStyle = '#000000';
+        ctx.font = 'bold 16px Arial';
+        ctx.fillText(`Gastos: S/. ${balance.gastos.toFixed(2)} (${(pctGastos * 100).toFixed(1)}%)`, 115, 373);
 
-    // Convertir a base64
-    return canvas.toDataURL().split(',')[1];
-}
-        _porcentaje(parte, total) {
+        ctx.fillStyle = '#667EEA';
+        ctx.font = 'bold 18px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('DISTRIBUCIÓN FINANCIERA', 250, 30);
+
+        return canvas.toDataURL().split(',')[1];
+    }
+
+    _porcentaje(parte, total) {
         if (total === 0) return '0%';
         return `${((parte / total) * 100).toFixed(1)}%`;
     }
 
-        _fecha() {
+    _fecha() {
         const hoy = new Date();
         return `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
     }
 }
 
 window.ExportadorExcelProfesional = ExportadorExcelProfesional;
-console.log('✅ Exportador Excel Profesional v3.0 cargado');
+console.log('✅ Exportador Excel Profesional v3.0 con gráficos cargado');
