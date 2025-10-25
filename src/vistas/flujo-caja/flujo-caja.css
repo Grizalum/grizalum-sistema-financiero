@@ -1693,3 +1693,74 @@
 .balance-total .balance-icono {
     animation: brilloCompleto 8s ease-in-out infinite;
 }
+/* ═══════════════════════════════════════════════════════════════
+   SUGERENCIAS DE DESCRIPCIÓN
+   ═══════════════════════════════════════════════════════════════ */
+.sugerencias-container {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--fondo-card);
+    border: 2px solid var(--borde-principal);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: var(--shadow-lg);
+}
+
+.sugerencia-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    border-bottom: 1px solid var(--borde-principal);
+}
+
+.sugerencia-item:last-child {
+    border-bottom: none;
+}
+
+.sugerencia-item:hover {
+    background: var(--fondo-hover);
+}
+
+.sugerencia-texto {
+    flex: 1;
+    color: var(--texto-principal);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.sugerencia-eliminar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--gradient-danger);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    transition: all var(--transition-normal);
+    margin-left: 0.5rem;
+    flex-shrink: 0;
+}
+
+.sugerencia-eliminar:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+}
+
+.sugerencias-vacio {
+    padding: 1rem;
+    text-align: center;
+    color: var(--texto-terciario);
+    font-size: 0.875rem;
+}
