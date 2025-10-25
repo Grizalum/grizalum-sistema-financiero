@@ -70,11 +70,6 @@
     font-weight: 800;
     color: var(--color-primario);
 }
-    margin: 0;
-    font-size: 2rem;
-    font-weight: 800;
-    color: var(--color-primario);
-}
 
 .header-subtitulo {
     margin: 0.25rem 0 0 0;
