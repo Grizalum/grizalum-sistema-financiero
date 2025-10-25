@@ -316,30 +316,32 @@ class FlujoCaja {
     }
 
     calcularPorCategoria(tipo = null) {
-        const transacciones = tipo 
-            ? this.transacciones.filter(t => t.tipo === tipo)
-            : this.transacciones;
+    const transacciones = tipo 
+        ? this.transacciones.filter(t => t.tipo === tipo)
+        : this.transacciones;
 
-        const porCategoria = {};
+    const porCategoria = {};
 
-        transacciones.forEach(t => {
-            if (!porCategoria[t.categoria]) {
-                porCategoria[t.categoria] = {
-                    categoria: t.categoria,
-                    monto: 0,
-                    cantidad: 0,
-                    transacciones: []
-                };
-            }
+    transacciones.forEach(t => {
+        // ✅ NORMALIZAR: convertir a minúsculas para agrupar
+        const categoriaNormalizada = t.categoria.toLowerCase();
+        
+        if (!porCategoria[categoriaNormalizada]) {
+            porCategoria[categoriaNormalizada] = {
+                categoria: t.categoria, // Mantener el nombre original (primera ocurrencia)
+                monto: 0,
+                cantidad: 0,
+                transacciones: []
+            };
+        }
 
-            porCategoria[t.categoria].monto += t.monto;
-            porCategoria[t.categoria].cantidad++;
-            porCategoria[t.categoria].transacciones.push(t);
-        });
+        porCategoria[categoriaNormalizada].monto += t.monto;
+        porCategoria[categoriaNormalizada].cantidad++;
+        porCategoria[categoriaNormalizada].transacciones.push(t);
+    });
 
-        return Object.values(porCategoria).sort((a, b) => b.monto - a.monto);
-    }
-
+    return Object.values(porCategoria).sort((a, b) => b.monto - a.monto);
+}
     calcularPorMes(meses = 6) {
         const ahora = new Date();
         const resultado = [];
