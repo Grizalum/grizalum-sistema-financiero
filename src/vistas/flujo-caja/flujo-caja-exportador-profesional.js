@@ -20,12 +20,6 @@ class ExportadorExcelProfesional {
     }
 
     async exportar(datos) {
-         // Validar que hay datos
-         if (!datos || !datos.balance) {
-            console.error('❌ No hay datos para exportar');
-            alert('No hay datos disponibles para exportar');
-            return false;
-        }
         try {
             console.log('📊 Generando Excel profesional con ExcelJS...');
 
@@ -70,7 +64,6 @@ class ExportadorExcelProfesional {
 
         } catch (error) {
             console.error('❌ Error exportando:', error);
-            alert('Error al generar el Excel. Por favor intenta nuevamente.');
             throw error;
         }
     }
@@ -404,18 +397,19 @@ class ExportadorExcelProfesional {
             }
         }
 
-     try {
-            const imageBase64 = this._crearGraficoCircular(balance);
-            const imageId = workbook.addImage({
-                base64: imageBase64,
-                extension: 'png',
-            });
-            
-            sheet.addImage(imageId, 'D4:H16');
-            console.log('✅ Gráfico agregado exitosamente');
-        } catch (error) {
-            console.error('⚠️ Error al agregar gráfico:', error);
-        }
+      try {
+    const imageBase64 = this._crearGraficoCircular(balance);
+    const imageId = workbook.addImage({
+        base64: imageBase64,
+        extension: 'png',
+    });
+    
+    sheet.addImage(imageId, 'D4:H16');
+    console.log('✅ Gráfico agregado exitosamente');
+} catch (error) {
+    console.error('⚠️ Error al agregar gráfico:', error);
+}
+
         sheet.getCell('A9').value = 'DISTRIBUCIÓN PORCENTUAL';
         sheet.getCell('A9').font = { bold: true, size: 12 };
         sheet.getCell('A9').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD1D5DB' } };
