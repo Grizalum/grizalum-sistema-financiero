@@ -397,20 +397,17 @@ class ExportadorExcelProfesional {
             }
         }
 
-        try {
+      try {
     const imageBase64 = this._crearGraficoCircular(balance);
     const imageId = workbook.addImage({
         base64: imageBase64,
         extension: 'png',
     });
     
-    sheet.addImage(imageId, {
-        tl: { col: 3, row: 3 },
-        ext: { width: 400, height: 300 }
-    });
+    sheet.addImage(imageId, 'D4:H16');
     console.log('✅ Gráfico agregado exitosamente');
 } catch (error) {
-    console.log('⚠️ No se pudo agregar el gráfico:', error.message);
+    console.error('⚠️ Error al agregar gráfico:', error);
 }
 
         sheet.getCell('A9').value = 'DISTRIBUCIÓN PORCENTUAL';
