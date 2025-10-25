@@ -226,13 +226,19 @@
                     </select>
                 </div>
 
-                <!-- DESCRIPCIÓN -->
+             <!-- DESCRIPCIÓN -->
                 <div class="form-grupo">
                     <label for="inputDescripcion" class="form-label">Descripción</label>
-                    <input type="text" id="inputDescripcion" class="form-input" 
-                           placeholder="Ej: Venta de productos">
+                    <div style="position: relative;">
+                        <input type="text" id="inputDescripcion" class="form-input" 
+                               placeholder="Ej: Venta de productos"
+                               autocomplete="off">
+                        <!-- Lista de sugerencias -->
+                        <div id="sugerenciasDescripcion" class="sugerencias-container" style="display: none;">
+                            <!-- Aquí se cargarán las sugerencias dinámicamente -->
+                        </div>
+                    </div>
                 </div>
-
                 <!-- FECHA -->
                 <div class="form-grupo">
                     <label for="inputFecha" class="form-label">Fecha *</label>
