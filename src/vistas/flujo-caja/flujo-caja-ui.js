@@ -112,7 +112,7 @@ class FlujoCajaUI {
             btnExportarOld.addEventListener('click', () => this.exportarDatos());
         }
 
-        // Escuchar eventos del módulo
+       // Escuchar eventos del módulo
         document.addEventListener('grizalumTransaccionAgregada', () => {
             this.cargarBalance();
             this.cargarTransacciones();
@@ -124,6 +124,46 @@ class FlujoCajaUI {
         });
 
         document.addEventListener('grizalumTransaccionEliminada', () => {
+            this.cargarBalance();
+            this.cargarTransacciones();
+        });
+
+        // ✅ NUEVO: Listener para cambio de empresa
+        document.addEventListener('grizalumCompanyChanged', (e) => {
+            console.log('🔄 [UI] Empresa cambiada detectada:', e.detail);
+            
+            // Limpiar UI inmediatamente
+            const listaTransacciones = document.getElementById('listaTransacciones');
+            if (listaTransacciones) {
+                listaTransacciones.innerHTML = '<div class="cargando" style="text-align: center; padding: 2rem; color: var(--texto-terciario);">🔄 Cargando datos de la nueva empresa...</div>';
+            }
+            
+            // Esperar a que el módulo cargue los datos
+            setTimeout(() => {
+                if (this.modulo && this.modulo.inicializado) {
+                    console.log('🎨 [UI] Actualizando interfaz...');
+                    this.cargarBalance();
+                    this.cargarTransacciones();
+                    this.cargarNivel();
+                    this.cargarCategorias();
+                    console.log('✅ [UI] Interfaz actualizada');
+                } else {
+                    console.warn('⚠️ [UI] Módulo no inicializado, reintentando...');
+                    setTimeout(() => {
+                        if (this.modulo) {
+                            this.cargarBalance();
+                            this.cargarTransacciones();
+                            this.cargarNivel();
+                            this.cargarCategorias();
+                        }
+                    }, 300);
+                }
+            }, 200);
+        });
+
+        // ✅ NUEVO: Listener para actualización del flujo de caja
+        document.addEventListener('grizalumFlujoCajaActualizado', (e) => {
+            console.log('📊 [UI] Actualización del flujo detectada:', e.detail);
             this.cargarBalance();
             this.cargarTransacciones();
         });
