@@ -5,7 +5,9 @@
  * ═══════════════════════════════════════════════════════════════════
  */
 
-const EstadoResultadosGraficos = {
+if (!window.EstadoResultadosGraficos) {
+    window.EstadoResultadosGraficos = {
+        
     graficos: {},
     
     /**
@@ -264,9 +266,8 @@ const EstadoResultadosGraficos = {
         this.graficos = {};
         console.log('🗑️ Gráficos destruidos');
     }
-};
+    };
+}
 
-// Exportar globalmente
-window.EstadoResultadosGraficos = EstadoResultadosGraficos;
 
 console.log('📊 Módulo de gráficos Estado de Resultados cargado');
