@@ -1,1 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estado de Resultados - GRIZALUM</title>
+    
+    <!-- Estilos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- ✅ LIBRERÍAS PARA EXCEL Y GRÁFICOS -->
+    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+</head>
+<body>
 
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- CONTENEDOR PRINCIPAL -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div id="estadoResultadosApp" class="estado-resultados-container">
+        
+        <!-- HEADER -->
+        <header class="er-header">
+            <div class="er-titulo">
+                <div class="er-icono">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <div>
+                    <h1>Estado de Resultados</h1>
+                    <p class="er-subtitulo" id="erPeriodoActual">Mes actual</p>
+                </div>
+            </div>
+            
+            <div class="er-acciones">
+                <button id="btnExportarER" class="btn-secondary">
+                    <i class="fas fa-download"></i>
+                    <span>Exportar Excel</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- FILTROS DE PERÍODO -->
+        <section id="seccionFiltrosPeriodo" class="er-filtros oculto">
+            <button class="er-filtro-btn activo" data-periodo="hoy">
+                <i class="fas fa-calendar-day"></i> Hoy
+            </button>
+            <button class="er-filtro-btn" data-periodo="semana">
+                <i class="fas fa-calendar-week"></i> Semana
+            </button>
+            <button class="er-filtro-btn" data-periodo="mes">
+                <i class="fas fa-calendar"></i> Mes
+            </button>
+            <button class="er-filtro-btn" data-periodo="trimestre">
+                <i class="fas fa-calendar-alt"></i> Trimestre
+            </button>
+            <button class="er-filtro-btn" data-periodo="año">
+                <i class="fas fa-calendar-check"></i> Año
+            </button>
+        </section>
+
+        <!-- TARJETAS RESUMEN -->
+        <section class="er-resumen">
+            <!-- Ingresos -->
+            <div class="er-card-resumen">
+                <div class="er-card-header">
+                    <span class="er-card-label">Ingresos Totales</span>
+                    <div class="er-card-icono ingresos">
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                </div>
+                <div class="er-card-monto" id="erIngresosTotales">S/. 0.00</div>
+                <div class="er-card-comparacion" id="erIngresosComparacion">
+                    <i class="fas fa-minus"></i>
+                    <span>Sin datos anteriores</span>
+                </div>
+            </div>
+
+            <!-- Costos -->
+            <div class="er-card-resumen">
+                <div class="er-card-header">
+                    <span class="er-card-label">Costos de Venta</span>
+                    <div class="er-card-icono costos">
+                        <i class="fas fa-box"></i>
+                    </div>
+                </div>
+                <div class="er-card-monto" id="erCostosTotales">S/. 0.00</div>
+                <div class="er-card-comparacion" id="erCostosComparacion">
+                    <i class="fas fa-minus"></i>
+                    <span>Sin datos anteriores</span>
+                </div>
+            </div>
+
+            <!-- Gastos -->
+            <div class="er-card-resumen">
+                <div class="er-card-header">
+                    <span class="er-card-label">Gastos Operativos</span>
+                    <div class="er-card-icono gastos">
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+                </div>
+                <div class="er-card-monto" id="erGastosTotales">S/. 0.00</div>
+                <div class="er-card-comparacion" id="erGastosComparacion">
+                    <i class="fas fa-minus"></i>
+                    <span>Sin datos anteriores</span>
+                </div>
+            </div>
+
+            <!-- Utilidad Neta -->
+            <div class="er-card-resumen">
+                <div class="er-card-header">
+                    <span class="er-card-label">Utilidad Neta</span>
+                    <div class="er-card-icono utilidad">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                </div>
+                <div class="er-card-monto" id="erUtilidadNeta">S/. 0.00</div>
+                <div class="er-card-comparacion" id="erUtilidadComparacion">
+                    <i class="fas fa-minus"></i>
+                    <span>Sin datos anteriores</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- TABLA ESTADO DE RESULTADOS -->
+        <section class="er-tabla-container">
+            <table class="er-tabla">
+                <thead class="er-tabla-header">
+                    <tr>
+                        <th>Concepto</th>
+                        <th>Monto (S/.)</th>
+                        <th>% Ingresos</th>
+                    </tr>
+                </thead>
+                <tbody id="erTablaBody">
+                    <!-- Contenido dinámico -->
+                    <tr class="er-fila">
+                        <td colspan="3" style="text-align: center; padding: 3rem;">
+                            <div class="skeleton-loader" style="height: 20px; margin-bottom: 1rem;"></div>
+                            <div class="skeleton-loader" style="height: 20px; width: 80%; margin: 0 auto;"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- RATIOS FINANCIEROS -->
+        <section id="seccionRatios" class="er-ratios oculto">
+            <!-- Margen Bruto -->
+            <div class="er-ratio-card">
+                <div class="er-ratio-label">Margen Bruto</div>
+                <div class="er-ratio-valor" id="erMargenBruto">0%</div>
+                <div class="er-ratio-descripcion">Utilidad Bruta / Ingresos</div>
+                <div class="er-ratio-barra">
+                    <div class="er-ratio-progreso" id="erBarraMargenBruto" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Margen Operativo -->
+            <div class="er-ratio-card">
+                <div class="er-ratio-label">Margen Operativo</div>
+                <div class="er-ratio-valor" id="erMargenOperativo">0%</div>
+                <div class="er-ratio-descripcion">Utilidad Operativa / Ingresos</div>
+                <div class="er-ratio-barra">
+                    <div class="er-ratio-progreso" id="erBarraMargenOperativo" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Margen Neto -->
+            <div class="er-ratio-card">
+                <div class="er-ratio-label">Margen Neto</div>
+                <div class="er-ratio-valor" id="erMargenNeto">0%</div>
+                <div class="er-ratio-descripcion">Utilidad Neta / Ingresos</div>
+                <div class="er-ratio-barra">
+                    <div class="er-ratio-progreso" id="erBarraMargenNeto" style="width: 0%"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GRÁFICOS -->
+        <section id="seccionGraficos" class="er-graficos oculto">
+            <!-- Gráfico de Barras -->
+            <div class="er-grafico-card">
+                <h3 class="er-grafico-titulo">📊 Composición de Resultados</h3>
+                <canvas id="erGraficoBarras" class="er-grafico-canvas"></canvas>
+            </div>
+
+            <!-- Gráfico de Torta -->
+            <div class="er-grafico-card">
+                <h3 class="er-grafico-titulo">🥧 Distribución de Gastos</h3>
+                <canvas id="erGraficoTorta" class="er-grafico-canvas"></canvas>
+            </div>
+        </section>
+
+        <!-- ESTADO VACÍO -->
+        <div id="erEstadoVacio" class="er-vacio" style="display: none;">
+            <div class="er-vacio-icono">📊</div>
+            <div class="er-vacio-titulo">No hay transacciones</div>
+            <div class="er-vacio-texto">
+                Comienza registrando ingresos y gastos en el Flujo de Caja para ver tu Estado de Resultados
+            </div>
+            <button class="btn-primary" onclick="cambiarSeccion('cash-flow')">
+                <i class="fas fa-plus"></i>
+                Ir a Flujo de Caja
+            </button>
+        </div>
+
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- SCRIPTS DEL MÓDULO (Auto-contenido) -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <script src="src/vistas/estado-resultados/estado-resultados-config.js?v=20251027"></script>
+    <script src="src/vistas/estado-resultados/estado-resultados.js?v=20251027"></script>
+    <script src="src/vistas/estado-resultados/estado-resultados-ui.js?v=20251027"></script>
+    <script src="src/vistas/estado-resultados/estado-resultados-exportador.js?v=20251027"></script>
+    <script src="src/vistas/estado-resultados/estado-resultados-graficos.js?v=20251027"></script>
+
+</body>
+</html>
