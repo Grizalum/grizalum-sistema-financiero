@@ -436,15 +436,17 @@ if (!window.EstadoResultadosUI) {
 }
 
 // Inicialización
-let estadoResultadosUIInstancia = null;
+if (!window.estadoResultadosUIInstancia) {
+    window.estadoResultadosUIInstancia = null;
+}
 
 function inicializarEstadoResultadosUI() {
     console.log('🚀 Inicializando Estado de Resultados UI...');
     
-    if (!estadoResultadosUIInstancia) {
-    estadoResultadosUIInstancia = new window.EstadoResultadosUI();
-    window.estadoResultadosUI = estadoResultadosUIInstancia;
- }
+    if (!window.estadoResultadosUIInstancia) {
+        window.estadoResultadosUIInstancia = new window.EstadoResultadosUI();
+        window.estadoResultadosUI = window.estadoResultadosUIInstancia;
+    }
 }
 
 // Escuchar cuando la vista se hace visible
