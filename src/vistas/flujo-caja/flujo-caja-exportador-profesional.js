@@ -2,7 +2,7 @@
  * ═══════════════════════════════════════════════════════════════════
  * EXPORTADOR PROFESIONAL DE EXCEL - FLUJO DE CAJA GRIZALUM
  * Usa ExcelJS para estilos REALES con colores
- * VERSION: 3.0 PREMIUM CON GRÁFICOS
+ * VERSION: 3.1 CORREGIDO - Soluciona problema de nombre de método
  * ═══════════════════════════════════════════════════════════════════
  */
 
@@ -17,6 +17,11 @@ class ExportadorExcelProfesional {
             blanco: 'FFFFFF',
             gris: 'D1D5DB'
         };
+    }
+
+    // ✅ AMBOS MÉTODOS DISPONIBLES PARA COMPATIBILIDAD
+    async generarExcelProfesional(datos) {
+        return await this.exportar(datos);
     }
 
     async exportar(datos) {
@@ -59,7 +64,7 @@ class ExportadorExcelProfesional {
             a.click();
             window.URL.revokeObjectURL(url);
 
-            console.log('✅ Excel profesional generado exitosamente con gráfico');
+            console.log('✅ Excel profesional generado exitosamente');
             return true;
 
         } catch (error) {
@@ -184,8 +189,8 @@ class ExportadorExcelProfesional {
             };
         });
 
-        sheet.getColumn(1).width = 30;
-        sheet.getColumn(2).width = 20;
+        sheet.getColumn(1).width = 25;
+        sheet.getColumn(2).width = 18;
         sheet.getColumn(3).width = 15;
         sheet.getColumn(4).width = 15;
         sheet.getColumn(5).width = 20;
@@ -194,21 +199,21 @@ class ExportadorExcelProfesional {
     _crearTransacciones(sheet, datos) {
         const transacciones = datos.transacciones || [];
 
-        sheet.mergeCells('A1:F1');
+        sheet.mergeCells('A1:G1');
         const titulo = sheet.getCell('A1');
-        titulo.value = '📋 LISTADO COMPLETO DE TRANSACCIONES';
+        titulo.value = 'REGISTRO DE TRANSACCIONES';
         titulo.font = { size: 16, bold: true, color: { argb: 'FFFFFFFF' } };
         titulo.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF667EEA' } };
         titulo.alignment = { horizontal: 'center', vertical: 'middle' };
         sheet.getRow(1).height = 35;
 
-        const headers = ['Fecha', 'Tipo', 'Categoría', 'Descripción', 'Monto (S/.)', 'Método'];
+        const headers = ['FECHA', 'TIPO', 'CATEGORÍA', 'DESCRIPCIÓN', 'MONTO (S/.)', 'MÉTODO', 'NOTAS'];
         headers.forEach((header, i) => {
             const cell = sheet.getCell(3, i + 1);
             cell.value = header;
             cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
             cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F2937' } };
-            cell.alignment = { horizontal: 'center' };
+            cell.alignment = { horizontal: 'center', vertical: 'middle' };
             cell.border = {
                 top: { style: 'thin', color: { argb: 'FF000000' } },
                 bottom: { style: 'thin', color: { argb: 'FF000000' } },
@@ -217,56 +222,78 @@ class ExportadorExcelProfesional {
             };
         });
 
-        transacciones.forEach((t, i) => {
-            const row = i + 4;
-            
+        transacciones.forEach((t, index) => {
+            const row = index + 4;
+            const esIngreso = t.tipo === 'ingreso';
+
             sheet.getCell(row, 1).value = new Date(t.fecha).toLocaleDateString('es-PE');
-            sheet.getCell(row, 2).value = t.tipo.toUpperCase();
+            sheet.getCell(row, 2).value = esIngreso ? '📈 INGRESO' : '📉 GASTO';
             sheet.getCell(row, 3).value = t.categoria;
-            sheet.getCell(row, 4).value = t.descripcion || '-';
+            sheet.getCell(row, 4).value = t.descripcion || '';
             sheet.getCell(row, 5).value = t.monto;
             sheet.getCell(row, 5).numFmt = '"S/. "#,##0.00';
             sheet.getCell(row, 6).value = t.metodoPago || 'Efectivo';
+            sheet.getCell(row, 7).value = t.notas || '';
 
-            const colorCell = sheet.getCell(row, 5);
-            if (t.tipo === 'ingreso') {
-                colorCell.font = { bold: true, color: { argb: 'FF10B981' } };
-            } else {
-                colorCell.font = { bold: true, color: { argb: 'FFEF4444' } };
-            }
-
-            for (let col = 1; col <= 6; col++) {
-                sheet.getCell(row, col).border = {
-                    top: { style: 'thin', color: { argb: 'FF000000' } },
-                    bottom: { style: 'thin', color: { argb: 'FF000000' } },
-                    left: { style: 'thin', color: { argb: 'FF000000' } },
-                    right: { style: 'thin', color: { argb: 'FF000000' } }
+            for (let col = 1; col <= 7; col++) {
+                const cell = sheet.getCell(row, col);
+                cell.border = {
+                    top: { style: 'thin', color: { argb: 'FFCCCCCC' } },
+                    bottom: { style: 'thin', color: { argb: 'FFCCCCCC' } },
+                    left: { style: 'thin', color: { argb: 'FFCCCCCC' } },
+                    right: { style: 'thin', color: { argb: 'FFCCCCCC' } }
                 };
+
+                if (col === 2) {
+                    cell.fill = { 
+                        type: 'pattern', 
+                        pattern: 'solid', 
+                        fgColor: { argb: esIngreso ? 'FFD1FAE5' : 'FFFECACA' } 
+                    };
+                    cell.font = { bold: true };
+                }
+
+                if (col === 5) {
+                    cell.font = { 
+                        bold: true, 
+                        color: { argb: esIngreso ? 'FF10B981' : 'FFEF4444' } 
+                    };
+                    cell.alignment = { horizontal: 'right' };
+                }
             }
         });
 
-        sheet.getColumn(1).width = 12;
-        sheet.getColumn(2).width = 10;
+        sheet.getColumn(1).width = 15;
+        sheet.getColumn(2).width = 15;
         sheet.getColumn(3).width = 20;
-        sheet.getColumn(4).width = 35;
-        sheet.getColumn(5).width = 15;
+        sheet.getColumn(4).width = 30;
+        sheet.getColumn(5).width = 18;
         sheet.getColumn(6).width = 15;
+        sheet.getColumn(7).width = 30;
     }
 
     _crearCategorias(sheet, datos) {
         const transacciones = datos.transacciones || [];
+        const balance = datos.balance || {};
 
         sheet.mergeCells('A1:E1');
         const titulo = sheet.getCell('A1');
-        titulo.value = '🏷️ ANÁLISIS POR CATEGORÍA';
+        titulo.value = 'ANÁLISIS POR CATEGORÍAS';
         titulo.font = { size: 16, bold: true, color: { argb: 'FFFFFFFF' } };
         titulo.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF667EEA' } };
         titulo.alignment = { horizontal: 'center', vertical: 'middle' };
         sheet.getRow(1).height = 35;
 
-        const headers = ['Categoría', 'Monto Total', 'Cantidad', 'Promedio', 'Tipo'];
-        headers.forEach((header, i) => {
-            const cell = sheet.getCell(3, i + 1);
+        const categoriasIngresos = this._agruparPorCategoria(transacciones.filter(t => t.tipo === 'ingreso'));
+        const categoriasGastos = this._agruparPorCategoria(transacciones.filter(t => t.tipo === 'gasto'));
+
+        sheet.getCell('A3').value = '📈 INGRESOS POR CATEGORÍA';
+        sheet.getCell('A3').font = { bold: true, size: 12 };
+        sheet.getCell('A3').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF10B981' } };
+
+        const headersIngresos = ['CATEGORÍA', 'MONTO (S/.)', 'CANTIDAD', '% DEL INGRESO', 'PROMEDIO'];
+        headersIngresos.forEach((header, i) => {
+            const cell = sheet.getCell(4, i + 1);
             cell.value = header;
             cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
             cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F2937' } };
@@ -279,136 +306,115 @@ class ExportadorExcelProfesional {
             };
         });
 
-        const porCategoria = {};
-        transacciones.forEach(t => {
-            const clave = `${t.categoria}|||${t.tipo}`;
-            if (!porCategoria[clave]) {
-                porCategoria[clave] = { 
-                    categoria: t.categoria,
-                    monto: 0, 
-                    cantidad: 0, 
-                    tipo: t.tipo 
-                };
-            }
-            porCategoria[clave].monto += t.monto;
-            porCategoria[clave].cantidad++;
-        });
-
-        const categorias = Object.values(porCategoria).sort((a, b) => b.monto - a.monto);
-
-        categorias.forEach((c, i) => {
-            const row = i + 4;
-            sheet.getCell(row, 1).value = c.categoria;
-            sheet.getCell(row, 2).value = c.monto;
+        let row = 5;
+        categoriasIngresos.forEach(cat => {
+            sheet.getCell(row, 1).value = cat.categoria;
+            sheet.getCell(row, 2).value = cat.monto;
             sheet.getCell(row, 2).numFmt = '"S/. "#,##0.00';
-            sheet.getCell(row, 3).value = c.cantidad;
-            sheet.getCell(row, 4).value = c.monto / c.cantidad;
-            sheet.getCell(row, 4).numFmt = '"S/. "#,##0.00';
-            sheet.getCell(row, 5).value = c.tipo.toUpperCase();
-
-            const color = c.tipo === 'ingreso' ? 'FF10B981' : 'FFEF4444';
-            [2, 4].forEach(col => {
-                sheet.getCell(row, col).font = { bold: true, color: { argb: color } };
-            });
+            sheet.getCell(row, 3).value = cat.cantidad;
+            sheet.getCell(row, 4).value = this._porcentaje(cat.monto, balance.ingresos);
+            sheet.getCell(row, 5).value = cat.monto / cat.cantidad;
+            sheet.getCell(row, 5).numFmt = '"S/. "#,##0.00';
 
             for (let col = 1; col <= 5; col++) {
-                sheet.getCell(row, col).border = {
-                    top: { style: 'thin', color: { argb: 'FF000000' } },
-                    bottom: { style: 'thin', color: { argb: 'FF000000' } },
-                    left: { style: 'thin', color: { argb: 'FF000000' } },
-                    right: { style: 'thin', color: { argb: 'FF000000' } }
+                const cell = sheet.getCell(row, col);
+                cell.border = {
+                    top: { style: 'thin', color: { argb: 'FFCCCCCC' } },
+                    bottom: { style: 'thin', color: { argb: 'FFCCCCCC' } },
+                    left: { style: 'thin', color: { argb: 'FFCCCCCC' } },
+                    right: { style: 'thin', color: { argb: 'FFCCCCCC' } }
                 };
+                if (col >= 2) {
+                    cell.alignment = { horizontal: 'right' };
+                }
             }
+            row++;
         });
 
-        sheet.getColumn(1).width = 20;
+        row += 2;
+        sheet.getCell(row, 1).value = '📉 GASTOS POR CATEGORÍA';
+        sheet.getCell(row, 1).font = { bold: true, size: 12 };
+        sheet.getCell(row, 1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEF4444' } };
+
+        row++;
+        headersIngresos.forEach((header, i) => {
+            const cell = sheet.getCell(row, i + 1);
+            cell.value = header;
+            cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F2937' } };
+            cell.alignment = { horizontal: 'center' };
+            cell.border = {
+                top: { style: 'thin', color: { argb: 'FF000000' } },
+                bottom: { style: 'thin', color: { argb: 'FF000000' } },
+                left: { style: 'thin', color: { argb: 'FF000000' } },
+                right: { style: 'thin', color: { argb: 'FF000000' } }
+            };
+        });
+
+        row++;
+        categoriasGastos.forEach(cat => {
+            sheet.getCell(row, 1).value = cat.categoria;
+            sheet.getCell(row, 2).value = cat.monto;
+            sheet.getCell(row, 2).numFmt = '"S/. "#,##0.00';
+            sheet.getCell(row, 3).value = cat.cantidad;
+            sheet.getCell(row, 4).value = this._porcentaje(cat.monto, balance.gastos);
+            sheet.getCell(row, 5).value = cat.monto / cat.cantidad;
+            sheet.getCell(row, 5).numFmt = '"S/. "#,##0.00';
+
+            for (let col = 1; col <= 5; col++) {
+                const cell = sheet.getCell(row, col);
+                cell.border = {
+                    top: { style: 'thin', color: { argb: 'FFCCCCCC' } },
+                    bottom: { style: 'thin', color: { argb: 'FFCCCCCC' } },
+                    left: { style: 'thin', color: { argb: 'FFCCCCCC' } },
+                    right: { style: 'thin', color: { argb: 'FFCCCCCC' } }
+                };
+                if (col >= 2) {
+                    cell.alignment = { horizontal: 'right' };
+                }
+            }
+            row++;
+        });
+
+        sheet.getColumn(1).width = 30;
         sheet.getColumn(2).width = 18;
-        sheet.getColumn(3).width = 12;
-        sheet.getColumn(4).width = 15;
-        sheet.getColumn(5).width = 15;
+        sheet.getColumn(3).width = 15;
+        sheet.getColumn(4).width = 18;
+        sheet.getColumn(5).width = 18;
     }
 
     async _crearAnalisis(sheet, datos, workbook) {
         const balance = datos.balance || {};
         const transacciones = datos.transacciones || [];
 
-        sheet.mergeCells('A1:D1');
+        sheet.mergeCells('A1:C1');
         const titulo = sheet.getCell('A1');
-        titulo.value = '📈 ANÁLISIS Y GRÁFICOS';
+        titulo.value = 'ANÁLISIS FINANCIERO';
         titulo.font = { size: 16, bold: true, color: { argb: 'FFFFFFFF' } };
         titulo.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF667EEA' } };
         titulo.alignment = { horizontal: 'center', vertical: 'middle' };
         sheet.getRow(1).height = 35;
 
-        sheet.getCell('A3').value = 'RESUMEN GENERAL';
+        sheet.getCell('A3').value = 'GRÁFICO CIRCULAR - DISTRIBUCIÓN';
         sheet.getCell('A3').font = { bold: true, size: 12 };
         sheet.getCell('A3').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD1D5DB' } };
-        
-        sheet.getCell('A4').value = 'Concepto';
-        sheet.getCell('B4').value = 'Monto (S/.)';
-        ['A4', 'B4'].forEach(cell => {
-            const c = sheet.getCell(cell);
-            c.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-            c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F2937' } };
-            c.alignment = { horizontal: 'center' };
-            c.border = {
-                top: { style: 'thin', color: { argb: 'FF000000' } },
-                bottom: { style: 'thin', color: { argb: 'FF000000' } },
-                left: { style: 'thin', color: { argb: 'FF000000' } },
-                right: { style: 'thin', color: { argb: 'FF000000' } }
-            };
-        });
 
-        sheet.getCell('A5').value = 'Ingresos';
-        sheet.getCell('B5').value = balance.ingresos;
-        sheet.getCell('B5').numFmt = '"S/. "#,##0.00';
-        sheet.getCell('A5').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF10B981' } };
-        sheet.getCell('A5').font = { bold: true, color: { argb: 'FFFFFFFF' } };
-        sheet.getCell('B5').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF10B981' } };
-        sheet.getCell('B5').font = { bold: true, color: { argb: 'FFFFFFFF' } };
-        sheet.getCell('B5').alignment = { horizontal: 'right' };
+        try {
+            const imagenBase64 = this._crearGraficoCircular(balance);
+            const imageId = workbook.addImage({
+                base64: imagenBase64,
+                extension: 'png'
+            });
 
-        sheet.getCell('A6').value = 'Gastos';
-        sheet.getCell('B6').value = balance.gastos;
-        sheet.getCell('B6').numFmt = '"S/. "#,##0.00';
-        sheet.getCell('A6').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEF4444' } };
-        sheet.getCell('A6').font = { bold: true, color: { argb: 'FFFFFFFF' } };
-        sheet.getCell('B6').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEF4444' } };
-        sheet.getCell('B6').font = { bold: true, color: { argb: 'FFFFFFFF' } };
-        sheet.getCell('B6').alignment = { horizontal: 'right' };
+            sheet.addImage(imageId, {
+                tl: { col: 0, row: 3 },
+                ext: { width: 500, height: 400 }
+            });
 
-        sheet.getCell('A7').value = 'Balance';
-        sheet.getCell('B7').value = balance.balance;
-        sheet.getCell('B7').numFmt = '"S/. "#,##0.00';
-        sheet.getCell('A7').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF8B5CF6' } };
-        sheet.getCell('A7').font = { bold: true, color: { argb: 'FFFFFFFF' } };
-        sheet.getCell('B7').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF8B5CF6' } };
-        sheet.getCell('B7').font = { bold: true, color: { argb: 'FFFFFFFF' } };
-        sheet.getCell('B7').alignment = { horizontal: 'right' };
-
-        for (let row = 5; row <= 7; row++) {
-            for (let col = 1; col <= 2; col++) {
-                sheet.getCell(row, col).border = {
-                    top: { style: 'thin', color: { argb: 'FF000000' } },
-                    bottom: { style: 'thin', color: { argb: 'FF000000' } },
-                    left: { style: 'thin', color: { argb: 'FF000000' } },
-                    right: { style: 'thin', color: { argb: 'FF000000' } }
-                };
-            }
+            console.log('✅ Gráfico agregado exitosamente');
+        } catch (error) {
+            console.error('⚠️ Error al agregar gráfico:', error);
         }
-
-      try {
-    const imageBase64 = this._crearGraficoCircular(balance);
-    const imageId = workbook.addImage({
-        base64: imageBase64,
-        extension: 'png',
-    });
-    
-    sheet.addImage(imageId, 'D4:H16');
-    console.log('✅ Gráfico agregado exitosamente');
-} catch (error) {
-    console.error('⚠️ Error al agregar gráfico:', error);
-}
 
         sheet.getCell('A9').value = 'DISTRIBUCIÓN PORCENTUAL';
         sheet.getCell('A9').font = { bold: true, size: 12 };
@@ -574,6 +580,24 @@ class ExportadorExcelProfesional {
         return canvas.toDataURL().split(',')[1];
     }
 
+    _agruparPorCategoria(transacciones) {
+        const categorias = {};
+        
+        transacciones.forEach(t => {
+            if (!categorias[t.categoria]) {
+                categorias[t.categoria] = {
+                    categoria: t.categoria,
+                    monto: 0,
+                    cantidad: 0
+                };
+            }
+            categorias[t.categoria].monto += t.monto;
+            categorias[t.categoria].cantidad++;
+        });
+
+        return Object.values(categorias).sort((a, b) => b.monto - a.monto);
+    }
+
     _porcentaje(parte, total) {
         if (total === 0) return '0%';
         return `${((parte / total) * 100).toFixed(1)}%`;
@@ -586,4 +610,4 @@ class ExportadorExcelProfesional {
 }
 
 window.ExportadorExcelProfesional = ExportadorExcelProfesional;
-console.log('✅ Exportador Excel Profesional v3.0 con gráficos cargado');
+console.log('✅ Exportador Excel Profesional v3.1 CORREGIDO cargado - Soporta ambos métodos');
