@@ -5,7 +5,9 @@
  * ═══════════════════════════════════════════════════════════════════
  */
 
-class EstadoResultados {
+if (!window.EstadoResultados) {
+    class EstadoResultados {
+      
     constructor() {
         this.config = {
             version: '1.0.0',
@@ -388,9 +390,15 @@ class EstadoResultados {
         this.calcularResultados();
     }
 }
+    
+    // Guardar la clase globalmente
+    window.EstadoResultados = EstadoResultados;
+}
 
-// Inicialización global
-window.estadoResultados = new EstadoResultados();
+// Inicialización global - solo si no existe
+if (!window.estadoResultados) {
+    window.estadoResultados = new window.EstadoResultados();
+}
 
 console.log(`
 ╔═══════════════════════════════════════════════════════════════╗
