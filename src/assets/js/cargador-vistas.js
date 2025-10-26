@@ -100,9 +100,11 @@ for (const scriptOriginal of scriptsArray) {
 }
 
         // ═══ PASO 4: JS NORMAL (otras vistas) ═══
-        if (vistaId !== 'cash-flow') {
-            await this.cargarJS(vistaId);
-        }
+// No cargar JS adicional si la vista ya tiene scripts en el HTML
+const vistasConScripts = ['cash-flow', 'income-statement'];
+if (!vistasConScripts.includes(vistaId)) {
+    await this.cargarJS(vistaId);
+}
 
         // ═══ PASO 5: FORZAR APLICACIÓN DE ESTILOS ═══
         // Esperar 2 frames del navegador para que aplique CSS
