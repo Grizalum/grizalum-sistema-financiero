@@ -183,7 +183,7 @@
         <div class="modal-contenido">
             <div class="modal-header">
                 <h2 id="modalTitulo">Nueva Transacción</h2>
-                <button class="modal-cerrar" onclick="document.getElementById('modalTransaccion').classList.remove('show')">
+                <button class="modal-cerrar" onclick="window.flujoCajaUI.cerrarModalTransaccion()">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -215,7 +215,7 @@
                 <div class="form-grupo">
                     <label for="inputMonto" class="form-label">Monto (S/.) *</label>
                     <input type="number" id="inputMonto" class="form-input" 
-                           placeholder="0.00" step="0.01" min="0" required>
+                            placeholder="0.00" step="0.01" min="0.01" required>
                 </div>
 
                 <!-- CATEGORÍA -->
@@ -245,7 +245,7 @@
                 <!-- FECHA -->
                 <div class="form-grupo">
                     <label for="inputFecha" class="form-label">Fecha *</label>
-                    <input type="date" id="inputFecha" class="form-input" required>
+                    <input type="date" id="inputFecha" class="form-input" required max="">
                 </div>
 
                 <!-- MÉTODO DE PAGO -->
@@ -849,8 +849,10 @@
             // Configurar fecha actual por defecto
             const fechaInput = document.getElementById('inputFecha');
             if (fechaInput) {
-                fechaInput.valueAsDate = new Date();
-            }
+            const hoy = new Date().toISOString().split('T')[0];
+            fechaInput.valueAsDate = new Date();
+            fechaInput.max = hoy;
+          }
             
             // Configurar eventos SIEMPRE
             configurarEventos();
