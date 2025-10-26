@@ -544,40 +544,50 @@ if (inputDescripcion) {
     }
 
     async exportarDatos() {
-        console.log('📊 Exportando datos con formato profesional...');
-        
-        try {
-            if (typeof XLSX === 'undefined') {
-                alert('❌ Error: Librería XLSX no disponible');
-                return;
-            }
-
-            if (typeof ExportadorExcelProfesional === 'undefined') {
-                console.warn('⚠️ Exportador profesional no disponible, usando método básico');
-                this._exportarBasico();
-                return;
-            }
-
-            // ✅ USAR EXPORTADOR PROFESIONAL
-            const exportador = new ExportadorExcelProfesional();
-            const info = this.modulo.obtenerInfo();
-            
-            // Generar Excel con Chart.js
-            await exportador.generarExcelProfesional(
-                info,
-                this.modulo.obtenerTransacciones(),
-                this.modulo.calcularPorCategoria(),
-                this.modulo.calcularPorMes(6)
-            );
-            
-            this.mostrarNotificacion('✅ Excel exportado exitosamente', 'success');
-            
-        } catch (error) {
-            console.error('❌ Error exportando:', error);
-            this.mostrarNotificacion('❌ Error al exportar', 'error');
+    console.log('📊 Exportando datos con formato profesional...');
+    
+    try {
+        // Verificar que ExcelJS esté disponible
+        if (typeof ExcelJS === 'undefined') {
+            alert('❌ Error: Librería ExcelJS no disponible. Recarga la página.');
+            console.error('ExcelJS no está cargado');
+            return;
         }
-    }
 
+        // Verificar que el exportador profesional esté disponible
+        if (typeof ExportadorExcelProfesional === 'undefined') {
+            console.error('⚠️ Exportador profesional no disponible');
+            alert('❌ Error: Exportador no disponible. Verifica que el archivo esté cargado.');
+            return;
+        }
+
+        // Obtener datos del módulo
+        const info = this.modulo.obtenerInfo();
+        const transacciones = this.modulo.obtenerTransacciones();
+        const balance = this.modulo.calcularBalance();
+
+        // Preparar datos para exportar
+        const datosExportar = {
+            empresa: info.empresaActual || 'Sin nombre',
+            balance: balance,
+            transacciones: transacciones,
+            nivel: info.nivel
+        };
+
+        console.log('📦 Datos preparados para exportar:', datosExportar);
+
+        // Crear exportador y exportar
+        const exportador = new ExportadorExcelProfesional();
+        await exportador.exportar(datosExportar);
+        
+        this.mostrarNotificacion('✅ Excel exportado exitosamente', 'success');
+        console.log('✅ Exportación completada');
+        
+    } catch (error) {
+        console.error('❌ Error exportando:', error);
+        this.mostrarNotificacion('❌ Error al exportar: ' + error.message, 'error');
+    }
+}
     _exportarBasico() {
         // Método de respaldo si no hay exportador profesional
         const wb = XLSX.utils.book_new();
