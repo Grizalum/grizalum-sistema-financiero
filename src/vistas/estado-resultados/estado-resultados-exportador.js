@@ -5,7 +5,9 @@
  * ═══════════════════════════════════════════════════════════════════
  */
 
-class ExportadorEstadoResultados {
+if (!window.ExportadorEstadoResultados) {
+    class ExportadorEstadoResultados {
+        
     constructor() {
         this.colores = {
             primario: '667EEA',
@@ -332,6 +334,8 @@ class ExportadorEstadoResultados {
         return `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
     }
 }
+    
+    window.ExportadorEstadoResultados = ExportadorEstadoResultados;
+}
 
-window.ExportadorEstadoResultados = ExportadorEstadoResultados;
 console.log('✅ Exportador Estado de Resultados cargado');
