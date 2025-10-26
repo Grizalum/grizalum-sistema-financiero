@@ -5,7 +5,9 @@
  * ═══════════════════════════════════════════════════════════════════
  */
 
-class EstadoResultadosUI {
+if (!window.EstadoResultadosUI) {
+    class EstadoResultadosUI {
+        
     constructor() {
         this.modulo = null;
         this._inicializar();
@@ -429,9 +431,9 @@ class EstadoResultadosUI {
         }
     }
 }
-
-// Exportar clase
-window.EstadoResultadosUI = EstadoResultadosUI;
+    
+    window.EstadoResultadosUI = EstadoResultadosUI;
+}
 
 // Inicialización
 let estadoResultadosUIInstancia = null;
@@ -440,9 +442,9 @@ function inicializarEstadoResultadosUI() {
     console.log('🚀 Inicializando Estado de Resultados UI...');
     
     if (!estadoResultadosUIInstancia) {
-        estadoResultadosUIInstancia = new EstadoResultadosUI();
-        window.estadoResultadosUI = estadoResultadosUIInstancia;
-    }
+    estadoResultadosUIInstancia = new window.EstadoResultadosUI();
+    window.estadoResultadosUI = estadoResultadosUIInstancia;
+ }
 }
 
 // Escuchar cuando la vista se hace visible
