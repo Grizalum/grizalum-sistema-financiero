@@ -1,405 +1,220 @@
-/**
- * ═══════════════════════════════════════════════════════════════════
- * ESTADO DE RESULTADOS - CONFIGURACIÓN ADAPTATIVA
- * Sistema de componentes progresivos según score empresarial
- * ═══════════════════════════════════════════════════════════════════
- */
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estado de Resultados - GRIZALUM</title>
+    
+    <!-- Estilos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- ✅ LIBRERÍAS PARA EXCEL Y GRÁFICOS -->
+    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+</head>
+<body>
 
-const EstadoResultadosConfig = {
-    version: '1.0.0',
-    
-    // ═══════════════════════════════════════════════════════════
-    // COMPONENTES ADAPTATIVOS DEL MÓDULO
-    // ═══════════════════════════════════════════════════════════
-    componentes: {
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- CONTENEDOR PRINCIPAL -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div id="estadoResultadosApp" class="estado-resultados-container">
         
-        // NÚCLEO (Score 0+) - Siempre activo
-        core: {
-            reporteBasico: {
-                id: 'reporteBasico',
-                nombre: 'Reporte Básico',
-                descripcion: 'Ingresos, Costos, Gastos y Utilidad',
-                icono: '📊',
-                scoreMinimo: 0,
-                obligatorio: true,
-                categoria: 'core'
-            },
+        <!-- HEADER -->
+        <header class="er-header">
+            <div class="er-titulo">
+                <div class="er-icono">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <div>
+                    <h1>Estado de Resultados</h1>
+                    <p class="er-subtitulo" id="erPeriodoActual">Mes actual</p>
+                </div>
+            </div>
             
-            visualizacionSimple: {
-                id: 'visualizacionSimple',
-                nombre: 'Vista Simple',
-                descripcion: 'Resumen de resultados del período',
-                icono: '💼',
-                scoreMinimo: 0,
-                obligatorio: true,
-                categoria: 'core'
-            }
-        },
-        
-        // MEJORAS BÁSICAS (Score 15-30)
-        mejorasBasicas: {
-            filtrosPeriodo: {
-                id: 'filtrosPeriodo',
-                nombre: 'Filtros de Período',
-                descripcion: 'Hoy, Semana, Mes, Trimestre, Año',
-                icono: '📅',
-                scoreMinimo: 15,
-                obligatorio: false,
-                categoria: 'filtros'
-            },
-            
-            desgloseCategorias: {
-                id: 'desgloseCategorias',
-                nombre: 'Desglose por Categorías',
-                descripcion: 'Ver detalle de cada categoría',
-                icono: '🏷️',
-                scoreMinimo: 20,
-                obligatorio: false,
-                categoria: 'organizacion'
-            },
-            
-            comparacionPeriodos: {
-                id: 'comparacionPeriodos',
-                nombre: 'Comparación vs Anterior',
-                descripcion: 'Comparar con período previo',
-                icono: '📈',
-                scoreMinimo: 25,
-                obligatorio: false,
-                categoria: 'analisis'
-            }
-        },
-        
-        // VISUALIZACIÓN AVANZADA (Score 30-50)
-        visualizacionAvanzada: {
-            ratiosFinancieros: {
-                id: 'ratiosFinancieros',
-                nombre: 'Ratios Financieros',
-                descripcion: 'Margen Bruto, Operativo, Neto',
-                icono: '📊',
-                scoreMinimo: 30,
-                obligatorio: false,
-                categoria: 'metricas'
-            },
-            
-            graficosBasicos: {
-                id: 'graficosBasicos',
-                nombre: 'Gráficos Básicos',
-                descripcion: 'Barras y tortas de resultados',
-                icono: '📉',
-                scoreMinimo: 35,
-                obligatorio: false,
-                categoria: 'visualizacion'
-            },
-            
-            exportarExcel: {
-                id: 'exportarExcel',
-                nombre: 'Exportar a Excel',
-                descripcion: 'Descargar Estado de Resultados',
-                icono: '📥',
-                scoreMinimo: 40,
-                obligatorio: false,
-                categoria: 'utilidades'
-            }
-        },
-        
-        // ANÁLISIS INTERMEDIO (Score 50-70)
-        analisisIntermedio: {
-            analisisVertical: {
-                id: 'analisisVertical',
-                nombre: 'Análisis Vertical',
-                descripcion: 'Porcentaje sobre ingresos totales',
-                icono: '📊',
-                scoreMinimo: 50,
-                obligatorio: false,
-                categoria: 'analisis'
-            },
-            
-            puntoEquilibrio: {
-                id: 'puntoEquilibrio',
-                nombre: 'Punto de Equilibrio',
-                descripcion: 'Calcular punto de equilibrio',
-                icono: '⚖️',
-                scoreMinimo: 55,
-                obligatorio: false,
-                categoria: 'analisis'
-            },
-            
-            tendenciasHistoricas: {
-                id: 'tendenciasHistoricas',
-                nombre: 'Tendencias Históricas',
-                descripcion: 'Evolución últimos 6-12 meses',
-                icono: '📈',
-                scoreMinimo: 60,
-                obligatorio: false,
-                categoria: 'analisis'
-            }
-        },
-        
-        // PROFESIONAL (Score 70-85)
-        profesional: {
-            analisisHorizontal: {
-                id: 'analisisHorizontal',
-                nombre: 'Análisis Horizontal',
-                descripcion: 'Variación entre períodos',
-                icono: '📊',
-                scoreMinimo: 70,
-                obligatorio: false,
-                categoria: 'profesional'
-            },
-            
-            proyecciones: {
-                id: 'proyecciones',
-                nombre: 'Proyecciones',
-                descripcion: 'Proyectar próximos períodos',
-                icono: '🔮',
-                scoreMinimo: 75,
-                obligatorio: false,
-                categoria: 'profesional',
-                requiereIA: true
-            },
-            
-            kpisAvanzados: {
-                id: 'kpisAvanzados',
-                nombre: 'KPIs Avanzados',
-                descripcion: 'ROE, ROA, EBITDA',
-                icono: '🎯',
-                scoreMinimo: 80,
-                obligatorio: false,
-                categoria: 'profesional'
-            }
-        },
-        
-        // ELITE (Score 85-100)
-        elite: {
-            analisisComparativo: {
-                id: 'analisisComparativo',
-                nombre: 'Análisis Comparativo',
-                descripcion: 'Comparar múltiples empresas',
-                icono: '🏆',
-                scoreMinimo: 85,
-                obligatorio: false,
-                categoria: 'elite'
-            },
-            
-            presupuestoVsReal: {
-                id: 'presupuestoVsReal',
-                nombre: 'Presupuesto vs Real',
-                descripcion: 'Comparar con presupuesto',
-                icono: '🎯',
-                scoreMinimo: 90,
-                obligatorio: false,
-                categoria: 'elite'
-            },
-            
-            analisisIA: {
-                id: 'analisisIA',
-                nombre: 'Análisis con IA',
-                descripcion: 'Insights y recomendaciones IA',
-                icono: '🤖',
-                scoreMinimo: 95,
-                obligatorio: false,
-                categoria: 'elite',
-                requiereIA: true
-            }
-        }
-    },
-    
-    // ═══════════════════════════════════════════════════════════
-    // MAPEO DE CATEGORÍAS - FLUJO DE CAJA A ESTADO DE RESULTADOS
-    // ═══════════════════════════════════════════════════════════
-    mapeoCategoriasER: {
-        // INGRESOS
-        ingresos: {
-            seccion: 'INGRESOS OPERACIONALES',
-            categorias: ['ventas', 'servicios', 'venta pollos', 'venta huevos', 'venta pollitos bb', 
-                        'ventas local', 'delivery', 'eventos', 'ventas efectivo', 'ventas tarjeta', 
-                        'ventas online', 'contratos', 'adelantos', 'extras', 'otros ingresos'],
-            tipo: 'ingreso',
-            color: '#10B981'
-        },
-        
-        // COSTOS DE VENTA (directos)
-        costos: {
-            seccion: 'COSTOS DE VENTA',
-            categorias: ['alimento', 'medicinas', 'insumos', 'compra mercadería', 'materiales', 
-                        'mano obra', 'mano de obra', 'costo de productos', 'costo de servicios'],
-            tipo: 'gasto',
-            color: '#F59E0B'
-        },
-        
-        // GASTOS OPERATIVOS
-        gastosOperativos: {
-            seccion: 'GASTOS OPERATIVOS',
-            categorias: ['sueldos', 'salarios', 'personal', 'alquiler', 'servicios', 'marketing', 
-                        'publicidad', 'mantenimiento', 'transporte', 'administrativos', 
-                        'luz', 'agua', 'internet', 'teléfono', 'limpieza', 'seguridad',
-                        'papelería', 'útiles', 'permisos', 'otros gastos', 'otros'],
-            tipo: 'gasto',
-            color: '#EF4444'
-        },
-        
-        // GASTOS FINANCIEROS
-        gastosFinancieros: {
-            seccion: 'GASTOS FINANCIEROS',
-            categorias: ['intereses', 'comisiones', 'comisiones bancarias', 'gastos bancarios'],
-            tipo: 'gasto',
-            color: '#8B5CF6'
-        }
-    },
-    
-    // ═══════════════════════════════════════════════════════════
-    // CLASIFICACIÓN AUTOMÁTICA
-    // ═══════════════════════════════════════════════════════════
-    clasificarCategoria(nombreCategoria) {
-        const categoriaLower = nombreCategoria.toLowerCase().trim();
-        
-        // Buscar en cada sección
-        for (const [seccion, config] of Object.entries(this.mapeoCategoriasER)) {
-            if (config.categorias.some(cat => categoriaLower.includes(cat) || cat.includes(categoriaLower))) {
-                return {
-                    seccion: config.seccion,
-                    tipo: config.tipo,
-                    color: config.color,
-                    grupo: seccion
-                };
-            }
-        }
-        
-        // Por defecto, si no se encuentra
-        return {
-            seccion: 'OTROS',
-            tipo: 'gasto',
-            color: '#6B7280',
-            grupo: 'otros'
-        };
-    },
-    
-    // ═══════════════════════════════════════════════════════════
-    // CONFIGURACIÓN DE PERÍODOS
-    // ═══════════════════════════════════════════════════════════
-    periodos: {
-        hoy: {
-            id: 'hoy',
-            nombre: 'Hoy',
-            icono: '📅',
-            calcularRango: () => {
-                const hoy = new Date();
-                hoy.setHours(0, 0, 0, 0);
-                const fin = new Date(hoy);
-                fin.setHours(23, 59, 59, 999);
-                return { inicio: hoy, fin: fin };
-            }
-        },
-        
-        semana: {
-            id: 'semana',
-            nombre: 'Semana',
-            icono: '📆',
-            calcularRango: () => {
-                const hoy = new Date();
-                const diaSemana = hoy.getDay();
-                const inicio = new Date(hoy);
-                inicio.setDate(hoy.getDate() - diaSemana);
-                inicio.setHours(0, 0, 0, 0);
-                const fin = new Date(inicio);
-                fin.setDate(inicio.getDate() + 6);
-                fin.setHours(23, 59, 59, 999);
-                return { inicio, fin };
-            }
-        },
-        
-        mes: {
-            id: 'mes',
-            nombre: 'Mes',
-            icono: '📊',
-            calcularRango: () => {
-                const hoy = new Date();
-                const inicio = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-                const fin = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0, 23, 59, 59, 999);
-                return { inicio, fin };
-            }
-        },
-        
-        trimestre: {
-            id: 'trimestre',
-            nombre: 'Trimestre',
-            icono: '📈',
-            calcularRango: () => {
-                const hoy = new Date();
-                const mesActual = hoy.getMonth();
-                const trimestreInicio = Math.floor(mesActual / 3) * 3;
-                const inicio = new Date(hoy.getFullYear(), trimestreInicio, 1);
-                const fin = new Date(hoy.getFullYear(), trimestreInicio + 3, 0, 23, 59, 59, 999);
-                return { inicio, fin };
-            }
-        },
-        
-        año: {
-            id: 'año',
-            nombre: 'Año',
-            icono: '📅',
-            calcularRango: () => {
-                const hoy = new Date();
-                const inicio = new Date(hoy.getFullYear(), 0, 1);
-                const fin = new Date(hoy.getFullYear(), 11, 31, 23, 59, 59, 999);
-                return { inicio, fin };
-            }
-        }
-    },
-    
-    // ═══════════════════════════════════════════════════════════
-    // MÉTODOS AUXILIARES
-    // ═══════════════════════════════════════════════════════════
-    
-    obtenerComponentesActivos(score, componentesOcultos = []) {
-        const activos = {
-            core: {},
-            mejorasBasicas: {},
-            visualizacionAvanzada: {},
-            analisisIntermedio: {},
-            profesional: {},
-            elite: {}
-        };
-        
-        Object.entries(this.componentes).forEach(([grupo, componentes]) => {
-            Object.entries(componentes).forEach(([key, componente]) => {
-                const cumpleScore = score >= componente.scoreMinimo;
-                const noOculto = !componentesOcultos.includes(componente.id);
-                
-                activos[grupo][key] = {
-                    ...componente,
-                    activo: cumpleScore && (componente.obligatorio || noOculto)
-                };
-            });
-        });
-        
-        return activos;
-    },
-    
-    obtenerRangoPeriodo(periodoId) {
-        const periodo = this.periodos[periodoId];
-        if (!periodo) {
-            console.warn(`Período ${periodoId} no encontrado, usando 'mes'`);
-            return this.periodos.mes.calcularRango();
-        }
-        return periodo.calcularRango();
-    },
-    
-    calcularPeriodoAnterior(periodoId) {
-        const rangoActual = this.obtenerRangoPeriodo(periodoId);
-        const dias = Math.ceil((rangoActual.fin - rangoActual.inicio) / (1000 * 60 * 60 * 24));
-        
-        const inicioAnterior = new Date(rangoActual.inicio);
-        inicioAnterior.setDate(inicioAnterior.getDate() - dias);
-        
-        const finAnterior = new Date(rangoActual.fin);
-        finAnterior.setDate(finAnterior.getDate() - dias);
-        
-        return { inicio: inicioAnterior, fin: finAnterior };
-    }
-};
+            <div class="er-acciones">
+                <button id="btnExportarER" class="btn-secondary">
+                    <i class="fas fa-download"></i>
+                    <span>Exportar Excel</span>
+                </button>
+            </div>
+        </header>
 
-// Exportar globalmente
-window.EstadoResultadosConfig = EstadoResultadosConfig;
+        <!-- FILTROS DE PERÍODO -->
+        <section id="seccionFiltrosPeriodo" class="er-filtros oculto">
+            <button class="er-filtro-btn activo" data-periodo="hoy">
+                <i class="fas fa-calendar-day"></i> Hoy
+            </button>
+            <button class="er-filtro-btn" data-periodo="semana">
+                <i class="fas fa-calendar-week"></i> Semana
+            </button>
+            <button class="er-filtro-btn" data-periodo="mes">
+                <i class="fas fa-calendar"></i> Mes
+            </button>
+            <button class="er-filtro-btn" data-periodo="trimestre">
+                <i class="fas fa-calendar-alt"></i> Trimestre
+            </button>
+            <button class="er-filtro-btn" data-periodo="año">
+                <i class="fas fa-calendar-check"></i> Año
+            </button>
+        </section>
 
-console.log('⚙️ [Estado de Resultados] Configuración cargada v1.0.0');
+        <!-- TARJETAS RESUMEN -->
+        <section class="er-resumen">
+            <!-- Ingresos -->
+            <div class="er-card-resumen">
+                <div class="er-card-header">
+                    <span class="er-card-label">Ingresos Totales</span>
+                    <div class="er-card-icono ingresos">
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                </div>
+                <div class="er-card-monto" id="erIngresosTotales">S/. 0.00</div>
+                <div class="er-card-comparacion" id="erIngresosComparacion">
+                    <i class="fas fa-minus"></i>
+                    <span>Sin datos anteriores</span>
+                </div>
+            </div>
+
+            <!-- Costos -->
+            <div class="er-card-resumen">
+                <div class="er-card-header">
+                    <span class="er-card-label">Costos de Venta</span>
+                    <div class="er-card-icono costos">
+                        <i class="fas fa-box"></i>
+                    </div>
+                </div>
+                <div class="er-card-monto" id="erCostosTotales">S/. 0.00</div>
+                <div class="er-card-comparacion" id="erCostosComparacion">
+                    <i class="fas fa-minus"></i>
+                    <span>Sin datos anteriores</span>
+                </div>
+            </div>
+
+            <!-- Gastos -->
+            <div class="er-card-resumen">
+                <div class="er-card-header">
+                    <span class="er-card-label">Gastos Operativos</span>
+                    <div class="er-card-icono gastos">
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+                </div>
+                <div class="er-card-monto" id="erGastosTotales">S/. 0.00</div>
+                <div class="er-card-comparacion" id="erGastosComparacion">
+                    <i class="fas fa-minus"></i>
+                    <span>Sin datos anteriores</span>
+                </div>
+            </div>
+
+            <!-- Utilidad Neta -->
+            <div class="er-card-resumen">
+                <div class="er-card-header">
+                    <span class="er-card-label">Utilidad Neta</span>
+                    <div class="er-card-icono utilidad">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                </div>
+                <div class="er-card-monto" id="erUtilidadNeta">S/. 0.00</div>
+                <div class="er-card-comparacion" id="erUtilidadComparacion">
+                    <i class="fas fa-minus"></i>
+                    <span>Sin datos anteriores</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- TABLA ESTADO DE RESULTADOS -->
+        <section class="er-tabla-container">
+            <table class="er-tabla">
+                <thead class="er-tabla-header">
+                    <tr>
+                        <th>Concepto</th>
+                        <th>Monto (S/.)</th>
+                        <th>% Ingresos</th>
+                    </tr>
+                </thead>
+                <tbody id="erTablaBody">
+                    <!-- Contenido dinámico -->
+                    <tr class="er-fila">
+                        <td colspan="3" style="text-align: center; padding: 3rem;">
+                            <div class="skeleton-loader" style="height: 20px; margin-bottom: 1rem;"></div>
+                            <div class="skeleton-loader" style="height: 20px; width: 80%; margin: 0 auto;"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- RATIOS FINANCIEROS -->
+        <section id="seccionRatios" class="er-ratios oculto">
+            <!-- Margen Bruto -->
+            <div class="er-ratio-card">
+                <div class="er-ratio-label">Margen Bruto</div>
+                <div class="er-ratio-valor" id="erMargenBruto">0%</div>
+                <div class="er-ratio-descripcion">Utilidad Bruta / Ingresos</div>
+                <div class="er-ratio-barra">
+                    <div class="er-ratio-progreso" id="erBarraMargenBruto" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Margen Operativo -->
+            <div class="er-ratio-card">
+                <div class="er-ratio-label">Margen Operativo</div>
+                <div class="er-ratio-valor" id="erMargenOperativo">0%</div>
+                <div class="er-ratio-descripcion">Utilidad Operativa / Ingresos</div>
+                <div class="er-ratio-barra">
+                    <div class="er-ratio-progreso" id="erBarraMargenOperativo" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Margen Neto -->
+            <div class="er-ratio-card">
+                <div class="er-ratio-label">Margen Neto</div>
+                <div class="er-ratio-valor" id="erMargenNeto">0%</div>
+                <div class="er-ratio-descripcion">Utilidad Neta / Ingresos</div>
+                <div class="er-ratio-barra">
+                    <div class="er-ratio-progreso" id="erBarraMargenNeto" style="width: 0%"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GRÁFICOS -->
+        <section id="seccionGraficos" class="er-graficos oculto">
+            <!-- Gráfico de Barras -->
+            <div class="er-grafico-card">
+                <h3 class="er-grafico-titulo">📊 Composición de Resultados</h3>
+                <canvas id="erGraficoBarras" class="er-grafico-canvas"></canvas>
+            </div>
+
+            <!-- Gráfico de Torta -->
+            <div class="er-grafico-card">
+                <h3 class="er-grafico-titulo">🥧 Distribución de Gastos</h3>
+                <canvas id="erGraficoTorta" class="er-grafico-canvas"></canvas>
+            </div>
+        </section>
+
+        <!-- ESTADO VACÍO -->
+        <div id="erEstadoVacio" class="er-vacio" style="display: none;">
+            <div class="er-vacio-icono">📊</div>
+            <div class="er-vacio-titulo">No hay transacciones</div>
+            <div class="er-vacio-texto">
+                Comienza registrando ingresos y gastos en el Flujo de Caja para ver tu Estado de Resultados
+            </div>
+            <button class="btn-primary" onclick="cambiarSeccion('cash-flow')">
+                <i class="fas fa-plus"></i>
+                Ir a Flujo de Caja
+            </button>
+        </div>
+
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- SCRIPTS DEL MÓDULO (Auto-contenido) -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <script src="src/vistas/estado-resultados/estado-resultados-config.js?v=20251027"></script>
+    <script src="src/vistas/estado-resultados/estado-resultados.js?v=20251027"></script>
+    <script src="src/vistas/estado-resultados/estado-resultados-ui.js?v=20251027"></script>
+    <script src="src/vistas/estado-resultados/estado-resultados-exportador.js?v=20251027"></script>
+    <script src="src/vistas/estado-resultados/estado-resultados-graficos.js?v=20251027"></script>
+
+</body>
+</html>
