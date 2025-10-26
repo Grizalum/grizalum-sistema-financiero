@@ -5,7 +5,9 @@
  * ═══════════════════════════════════════════════════════════════════
  */
 
-const EstadoResultadosConfig = {
+// ✅ CAMBIO: Agregar if para evitar duplicados
+if (!window.EstadoResultadosConfig) {
+    window.EstadoResultadosConfig = {
     version: '1.0.0',
     
     // ═══════════════════════════════════════════════════════════
@@ -397,9 +399,7 @@ const EstadoResultadosConfig = {
         
         return { inicio: inicioAnterior, fin: finAnterior };
     }
-};
-
-// Exportar globalmente
-window.EstadoResultadosConfig = EstadoResultadosConfig;
+    };  // ✅ Cierra el objeto
+}  // ✅ Cierra el if
 
 console.log('⚙️ [Estado de Resultados] Configuración cargada v1.0.0');
