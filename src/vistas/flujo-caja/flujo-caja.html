@@ -10,6 +10,9 @@
     
     <!-- ✅ LIBRERÍA PARA EXCEL PROFESIONAL -->
     <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
+    <!-- ✅ LIBRERÍA PARA GRÁFICOS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
 </head>
 <body class="modo-oscuro">
 
@@ -739,27 +742,11 @@
             cargarTransacciones({ busqueda: texto });
         }
 
-        function exportarDatos() {
-            try {
-                const datos = window.flujoCaja.exportarJSON();
-                const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `flujo-caja-${datos.empresa}-${new Date().toISOString().split('T')[0]}.json`;
-                a.click();
-                URL.revokeObjectURL(url);
-                console.log('✅ Datos exportados');
-            } catch (error) {
-                console.error('❌ Error exportando datos:', error);
-            }
-        }
-
         function formatearMoneda(valor) {
             return new Intl.NumberFormat('es-PE', {
                 style: 'currency',
                 currency: 'PEN'
-            }).format(valor);
+            }).format(valor);    
         }
 
         // ═══════════════════════════════════════════════════════════════
@@ -1022,11 +1009,11 @@
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <!-- SCRIPTS DEL MÓDULO FLUJO DE CAJA (Auto-contenido) -->
     <!-- ═══════════════════════════════════════════════════════════════ -->
-<script src="src/vistas/flujo-caja/flujo-caja-config.js?v=20251025"></script>
-<script src="src/vistas/flujo-caja/historial-descripciones.js?v=20251025g"></script>
-<script src="src/vistas/flujo-caja/flujo-caja.js?v=20251025"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-exportador-profesional.js?v=20251025"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-ui.js?v=20251025f"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-graficos.js?v=20251025"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-config.js?v=20251026h"></script>
+<script src="src/vistas/flujo-caja/historial-descripciones.js?v=20251026h"></script>
+<script src="src/vistas/flujo-caja/flujo-caja.js?v=20251026h"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-exportador-profesional.js?v=20251026h"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-ui.js?v=20251026h"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-graficos.js?v=20251026h"></script>
 </body>
 </html>
