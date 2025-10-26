@@ -46,6 +46,7 @@ class CargadorVistas {
         // Limpiar vista anterior
         this.contenedor.innerHTML = '';
         this.contenedor.style.opacity = '0';
+        this.contenedor.style.display = 'block';
         
         // ═══ PASO 1: CSS PRIMERO ═══
         await this.cargarCSS(vistaId);
