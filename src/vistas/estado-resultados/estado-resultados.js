@@ -121,11 +121,12 @@ if (!window.EstadoResultados) {
         // Obtener rango del período
         const rango = this.configuracion.obtenerRangoPeriodo(this.periodoActual);
         
-        // Obtener transacciones del Flujo de Caja
-        const transacciones = this.flujoCaja?.obtenerTransacciones?.({
-            fechaInicio: rango.inicio.toISOString(),
-            fechaFin: rango.fin.toISOString()
-        }) || [];
+        // Obtener transacciones desde localStorage
+         const transacciones = this._obtenerTransaccionesDesdeLocalStorage(
+           this.empresaActual,
+           rango.inicio,
+           rango.fin
+          );
 
         this._log('info', `Calculando resultados para ${this.periodoActual} (${transacciones.length} transacciones)`);
 
@@ -249,6 +250,47 @@ if (!window.EstadoResultados) {
             margenNeto: Math.max(-100, Math.min(100, margenNeto))
         };
     }
+    /**
+     * ═══════════════════════════════════════════════════════════════
+     * OBTENER TRANSACCIONES DESDE LOCALSTORAGE
+     * ═══════════════════════════════════════════════════════════════
+     */
+    _obtenerTransaccionesDesdeLocalStorage(empresaId, fechaInicio, fechaFin) {
+        try {
+            // Construir la clave del localStorage
+            const key = `grizalum_flujo_caja_${empresaId}`;
+            const dataStr = localStorage.getItem(key);
+            
+            if (!dataStr) {
+                this._log('info', `No hay transacciones guardadas para ${empresaId}`);
+                return [];
+            }
+            
+            // Parsear las transacciones
+            const allTransacciones = JSON.parse(dataStr);
+            
+            if (!Array.isArray(allTransacciones)) {
+                this._log('warn', 'Datos de transacciones inválidos');
+                return [];
+            }
+            
+            // Filtrar por rango de fechas
+            const transaccionesFiltradas = allTransacciones.filter(t => {
+                if (!t.fecha) return false;
+                
+                const fechaTransaccion = new Date(t.fecha);
+                return fechaTransaccion >= fechaInicio && fechaTransaccion <= fechaFin;
+            });
+            
+            this._log('info', `📊 ${transaccionesFiltradas.length} de ${allTransacciones.length} transacciones en el período`);
+            
+            return transaccionesFiltradas;
+            
+        } catch (error) {
+            this._log('error', 'Error leyendo transacciones de localStorage:', error);
+            return [];
+        }
+    }
 
     /**
      * ═══════════════════════════════════════════════════════════════
@@ -260,11 +302,12 @@ if (!window.EstadoResultados) {
         // Obtener rango del período anterior
         const rangoAnterior = this.configuracion.calcularPeriodoAnterior(this.periodoActual);
         
-        // Obtener transacciones del período anterior (con protección)
-        const transaccionesAnteriores = this.flujoCaja?.obtenerTransacciones?.({
-            fechaInicio: rangoAnterior.inicio.toISOString(),
-            fechaFin: rangoAnterior.fin.toISOString()
-        }) || [];  // ← PROTECCIÓN AGREGADA
+       // Obtener transacciones del período anterior desde localStorage
+        const transaccionesAnteriores = this._obtenerTransaccionesDesdeLocalStorage(
+          this.empresaActual,
+          rangoAnterior.inicio,
+          rangoAnterior.fin
+      );
 
         // Clasificar y calcular
         const clasificadas = this._clasificarTransacciones(transaccionesAnteriores);
