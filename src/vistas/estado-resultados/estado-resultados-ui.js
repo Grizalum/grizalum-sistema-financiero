@@ -450,7 +450,32 @@ function inicializarEstadoResultadosUI() {
 }
 
 // Escuchar cuando la vista se hace visible
-window.addEventListener('estadoResultadosVisible', inicializarEstadoResultadosUI);
+window.addEventListener('estadoResultadosVisible', () => {
+    console.log('👁️ Vista Estado de Resultados visible');
+    inicializarEstadoResultadosUI();
+});
+
+// NUEVO: Recargar cuando el contenedor se muestra
+document.addEventListener('DOMContentLoaded', () => {
+    const observer = new MutationObserver(() => {
+        const app = document.getElementById('estadoResultadosApp');
+        if (app && window.getComputedStyle(app).display !== 'none') {
+            if (window.estadoResultadosUI && window.estadoResultadosUI.cargarResultados) {
+                console.log('🔄 Recargando datos de Estado de Resultados');
+                window.estadoResultadosUI.cargarResultados();
+            }
+        }
+    });
+    
+    const app = document.getElementById('estadoResultadosApp');
+    if (app) {
+        observer.observe(app.parentElement || document.body, {
+            attributes: true,
+            attributeFilter: ['style', 'class'],
+            subtree: true
+        });
+    }
+});
 
 // También intentar inicializar al cargar
 if (document.readyState === 'complete') {
