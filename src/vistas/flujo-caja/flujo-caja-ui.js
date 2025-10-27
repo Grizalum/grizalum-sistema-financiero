@@ -930,7 +930,7 @@ setInterval(() => {
     const app = document.getElementById('flujoCajaApp');
     if (app && window.getComputedStyle(app).display !== 'none') {
         if (window.flujoCajaUI && window.flujoCajaUI.modulo) {
-            const balance = document.getElementById('balanceActual');
+            const balance = document.getElementById('balanceTotal'); // ← CAMBIADO
             const ingresos = document.getElementById('totalIngresos');
             
             // Si están en S/ 0 pero hay transacciones, recargar
