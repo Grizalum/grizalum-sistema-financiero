@@ -925,27 +925,18 @@ window.recargarFlujoCaja = function() {
 console.log('✅ Función recargarFlujoCaja registrada');
 console.log('✅ [flujo-caja-ui.js CORREGIDO v3.0] Módulo cargado - ' + new Date().toISOString());
 
-// FORZAR RECARGA si datos en 0
 setInterval(() => {
     const app = document.getElementById('flujoCajaApp');
     if (app && window.getComputedStyle(app).display !== 'none') {
         if (window.flujoCajaUI && window.flujoCajaUI.modulo) {
-            const balance = document.getElementById('balanceTotal'); // ← CAMBIADO
-            const ingresos = document.getElementById('totalIngresos');
+            // Verificar si hay transacciones en módulo pero NO en DOM
+            const transaccionesModulo = window.flujoCajaUI.modulo.obtenerTransacciones();
+            const transaccionesDOM = document.querySelectorAll('.transaccion-card');
             
-            // Si están en S/ 0 pero hay transacciones, recargar
-            if (balance && ingresos) {
-                const balanceTexto = balance.textContent;
-                const ingresosTexto = ingresos.textContent;
-                
-                const transacciones = window.flujoCajaUI.modulo.obtenerTransacciones();
-                if (transacciones && transacciones.length > 0) {
-                    if (balanceTexto.includes('S/ 0') || ingresosTexto.includes('S/ 0')) {
-                        console.log('🔄 Forzando recarga de Flujo de Caja...');
-                        window.flujoCajaUI.cargarBalance();
-                        window.flujoCajaUI.cargarTransacciones();
-                    }
-                }
+            if (transaccionesModulo.length > 0 && transaccionesDOM.length === 0) {
+                console.log('🔄 Recargando Flujo de Caja (DOM vacío)...');
+                window.flujoCajaUI.cargarBalance();
+                window.flujoCajaUI.cargarTransacciones();
             }
         }
     }
