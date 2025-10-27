@@ -131,6 +131,11 @@ if (!vistasConScripts.includes(vistaId)) {
                 window.dispatchEvent(new Event('flujoCajaVisible'));
                 console.log('   📢 Evento flujoCajaVisible disparado');
             }
+                
+            if (vistaId === 'income-statement') {
+               window.dispatchEvent(new Event('vistaEstadoResultadosCargada'));
+              console.log('   📢 Evento vistaEstadoResultadosCargada disparado');
+            }
         }, 350); // Esperar a que termine la animación
         
        console.log(`✅ Vista ${vistaId} lista`);
