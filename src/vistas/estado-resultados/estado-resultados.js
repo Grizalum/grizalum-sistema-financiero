@@ -1,4 +1,4 @@
-  /**
+/**
  * ═══════════════════════════════════════════════════════════════════
  * ESTADO DE RESULTADOS - MÓDULO PRINCIPAL
  * Genera reportes financieros desde transacciones del Flujo de Caja
@@ -17,7 +17,7 @@ if (!window.EstadoResultados) {
 
         this.empresaActual = null;
         this.nivel = null;
-        this.componentesActivos = null;
+        this.componentesActivos = {};  // ← INICIALIZAR COMO OBJETO VACÍO
         this.periodoActual = 'mes';
         this.resultados = null;
         
@@ -65,7 +65,7 @@ if (!window.EstadoResultados) {
             const verificar = () => {
                 if (window.gestorEmpresas && 
                     window.sistemaNiveles && 
-                    window.EstadoResultadosConfig &&
+                    window.EstadoResultadosConfig) {  // ← CORREGIDO: Agregado paréntesis y llave
                     
                     this.gestor = window.gestorEmpresas;
                     this.sistemaNiveles = window.sistemaNiveles;
@@ -102,7 +102,7 @@ if (!window.EstadoResultados) {
         this.componentesActivos = this.configuracion.obtenerComponentesActivos(
             this.nivel.score,
             componentesOcultos
-        );
+        ) || {};  // ← PROTECCIÓN: Si falla, usar objeto vacío
 
         this._log('info', `Empresa: ${this.empresaActual}, Nivel: ${this.nivel.nivel.nombre} (Score: ${this.nivel.score})`);
     }
@@ -122,10 +122,10 @@ if (!window.EstadoResultados) {
         const rango = this.configuracion.obtenerRangoPeriodo(this.periodoActual);
         
         // Obtener transacciones del Flujo de Caja
-       const transacciones = this.flujoCaja?.obtenerTransacciones?.({
-          fechaInicio: rango.inicio.toISOString(),
-          fechaFin: rango.fin.toISOString()
-      }) || [];
+        const transacciones = this.flujoCaja?.obtenerTransacciones?.({
+            fechaInicio: rango.inicio.toISOString(),
+            fechaFin: rango.fin.toISOString()
+        }) || [];
 
         this._log('info', `Calculando resultados para ${this.periodoActual} (${transacciones.length} transacciones)`);
 
@@ -260,11 +260,11 @@ if (!window.EstadoResultados) {
         // Obtener rango del período anterior
         const rangoAnterior = this.configuracion.calcularPeriodoAnterior(this.periodoActual);
         
-        // Obtener transacciones del período anterior
-        const transaccionesAnteriores = this.flujoCaja.obtenerTransacciones({
+        // Obtener transacciones del período anterior (con protección)
+        const transaccionesAnteriores = this.flujoCaja?.obtenerTransacciones?.({
             fechaInicio: rangoAnterior.inicio.toISOString(),
             fechaFin: rangoAnterior.fin.toISOString()
-        });
+        }) || [];  // ← PROTECCIÓN AGREGADA
 
         // Clasificar y calcular
         const clasificadas = this._clasificarTransacciones(transaccionesAnteriores);
@@ -329,9 +329,17 @@ if (!window.EstadoResultados) {
     }
 
     componenteActivo(componenteId) {
+        // ← PROTECCIÓN AGREGADA: Verificar que componentesActivos no sea null
+        if (!this.componentesActivos || typeof this.componentesActivos !== 'object') {
+            return false;
+        }
+        
         for (const grupo of Object.values(this.componentesActivos)) {
+            // ← PROTECCIÓN ADICIONAL: Verificar que grupo no sea null
+            if (!grupo || typeof grupo !== 'object') continue;
+            
             for (const componente of Object.values(grupo)) {
-                if (componente.id === componenteId) {
+                if (componente && componente.id === componenteId) {
                     return componente.activo === true;
                 }
             }
