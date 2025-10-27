@@ -503,34 +503,33 @@ setInterval(() => {
         }
     }, 1000);
     
-   let graficosYaCargados = false;
+   let graficosInicializados = false;
 
-const observador = new MutationObserver(() => {
+const cargarGraficosUnaVez = () => {
+    if (graficosInicializados) return;
+    
     const app = document.getElementById('estadoResultadosApp');
-    if (app && window.getComputedStyle(app).display !== 'none') {
-        if (!graficosYaCargados && window.estadoResultadosUI && window.estadoResultadosUI.modulo) {
-            const resultados = window.estadoResultadosUI.modulo.obtenerResultados();
-            if (resultados && resultados.totalTransacciones > 0) {
-                if (window.estadoResultadosUI.modulo.componenteActivo('graficosBasicos')) {
-                    console.log('🎨 Cargando gráficos (primera vez)...');
-                    window.estadoResultadosUI.cargarGraficos(resultados);
-                    graficosYaCargados = true;
-                    
-                    // Desconectar observer después de cargar
-                    observador.disconnect();
-                }
+    if (!app || window.getComputedStyle(app).display === 'none') return;
+    
+    if (window.estadoResultadosUI && window.estadoResultadosUI.modulo) {
+        const resultados = window.estadoResultadosUI.modulo.obtenerResultados();
+        if (resultados && resultados.totalTransacciones > 0) {
+            if (window.estadoResultadosUI.modulo.componenteActivo('graficosBasicos')) {
+                console.log('🎨 Cargando gráficos inicial...');
+                window.estadoResultadosUI.cargarGraficos(resultados);
+                graficosInicializados = true;
             }
         }
-    } else {
-        // Resetear cuando se oculta la vista
-        graficosYaCargados = false;
     }
+};
+
+// Ejecutar una vez cuando la vista está lista
+setTimeout(cargarGraficosUnaVez, 1500);
+
+// Escuchar cuando se muestre la vista
+window.addEventListener('estadoResultadosVisible', () => {
+    graficosInicializados = false;
+    setTimeout(cargarGraficosUnaVez, 500);
 });
 
-if (document.body) {
-    observador.observe(document.body, {
-        attributes: true,
-        subtree: true,
-        attributeFilter: ['style', 'class']
-    });
-}
+console.log('✅ Gráficos configurados para carga única');
