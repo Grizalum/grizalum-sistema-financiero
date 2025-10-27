@@ -495,31 +495,38 @@ setInterval(() => {
             if (resultados && resultados.totalTransacciones > 0) {
                 const elementoIngresos = document.getElementById('erIngresosTotales');
                 if (elementoIngresos && elementoIngresos.textContent === 'S/. 0.00') {
-                    console.log('🔄 Forzando recarga de UI...');
-                    window.estadoResultadosUI.cargarResultados();
+                        console.log('🔄 Forzando recarga de UI...');
+                        window.estadoResultadosUI.cargarResultados();
+                    }
                 }
             }
         }
-    }
-}, 1000);
+    }, 1000);
+    
+   let graficosYaCargados = false;
 
 const observador = new MutationObserver(() => {
     const app = document.getElementById('estadoResultadosApp');
     if (app && window.getComputedStyle(app).display !== 'none') {
-        if (window.estadoResultadosUI && window.estadoResultadosUI.modulo) {
+        if (!graficosYaCargados && window.estadoResultadosUI && window.estadoResultadosUI.modulo) {
             const resultados = window.estadoResultadosUI.modulo.obtenerResultados();
             if (resultados && resultados.totalTransacciones > 0) {
-                // Forzar carga de gráficos
                 if (window.estadoResultadosUI.modulo.componenteActivo('graficosBasicos')) {
-                    console.log('🎨 Cargando gráficos...');
+                    console.log('🎨 Cargando gráficos (primera vez)...');
                     window.estadoResultadosUI.cargarGraficos(resultados);
+                    graficosYaCargados = true;
+                    
+                    // Desconectar observer después de cargar
+                    observador.disconnect();
                 }
             }
         }
+    } else {
+        // Resetear cuando se oculta la vista
+        graficosYaCargados = false;
     }
 });
 
-// Observar cambios en el DOM
 if (document.body) {
     observador.observe(document.body, {
         attributes: true,
