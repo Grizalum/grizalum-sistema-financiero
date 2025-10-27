@@ -502,34 +502,26 @@ setInterval(() => {
             }
         }
     }, 1000);
-    
-   let graficosInicializados = false;
 
-const cargarGraficosUnaVez = () => {
-    if (graficosInicializados) return;
-    
-    const app = document.getElementById('estadoResultadosApp');
-    if (!app || window.getComputedStyle(app).display === 'none') return;
-    
-    if (window.estadoResultadosUI && window.estadoResultadosUI.modulo) {
+// ══════════════════════════════════════════════════════════
+// GRÁFICOS - SOLUCIÓN FINAL
+// ══════════════════════════════════════════════════════════
+
+let graficosYaCargados = false;
+
+window.addEventListener('estadoResultadosVisible', () => {
+    if (!graficosYaCargados && window.estadoResultadosUI && window.estadoResultadosUI.modulo) {
         const resultados = window.estadoResultadosUI.modulo.obtenerResultados();
         if (resultados && resultados.totalTransacciones > 0) {
             if (window.estadoResultadosUI.modulo.componenteActivo('graficosBasicos')) {
-                console.log('🎨 Cargando gráficos inicial...');
-                window.estadoResultadosUI.cargarGraficos(resultados);
-                graficosInicializados = true;
+                setTimeout(() => {
+                    console.log('🎨 Cargando gráficos...');
+                    window.estadoResultadosUI.cargarGraficos(resultados);
+                    graficosYaCargados = true;
+                }, 800);
             }
         }
     }
-};
-
-// Ejecutar una vez cuando la vista está lista
-setTimeout(cargarGraficosUnaVez, 1500);
-
-// Escuchar cuando se muestre la vista
-window.addEventListener('estadoResultadosVisible', () => {
-    graficosInicializados = false;
-    setTimeout(cargarGraficosUnaVez, 500);
 });
 
-console.log('✅ Gráficos configurados para carga única');
+console.log('✅ Sistema de gráficos listo');
