@@ -66,12 +66,10 @@ if (!window.EstadoResultados) {
                 if (window.gestorEmpresas && 
                     window.sistemaNiveles && 
                     window.EstadoResultadosConfig &&
-                    window.flujoCaja) {
                     
                     this.gestor = window.gestorEmpresas;
                     this.sistemaNiveles = window.sistemaNiveles;
                     this.configuracion = window.EstadoResultadosConfig;
-                    this.flujoCaja = window.flujoCaja;
                     
                     this._log('info', '✅ Dependencias conectadas');
                     resolve();
@@ -124,10 +122,10 @@ if (!window.EstadoResultados) {
         const rango = this.configuracion.obtenerRangoPeriodo(this.periodoActual);
         
         // Obtener transacciones del Flujo de Caja
-        const transacciones = this.flujoCaja.obtenerTransacciones({
-            fechaInicio: rango.inicio.toISOString(),
-            fechaFin: rango.fin.toISOString()
-        });
+       const transacciones = this.flujoCaja?.obtenerTransacciones?.({
+          fechaInicio: rango.inicio.toISOString(),
+          fechaFin: rango.fin.toISOString()
+      }) || [];
 
         this._log('info', `Calculando resultados para ${this.periodoActual} (${transacciones.length} transacciones)`);
 
