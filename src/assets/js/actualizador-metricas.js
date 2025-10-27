@@ -345,18 +345,45 @@ class GrizalumMetricsUpdater {
         }
     }
 
-    // NUEVA FUNCIÓN: Obtener datos del gestor real
-    obtenerDatosDelGestor() {
-        if (window.obtenerDatosActuales && typeof window.obtenerDatosActuales === 'function') {
-            const datos = window.obtenerDatosActuales();
-            if (datos && datos.financiero) {
-                return datos.financiero;
-            }
-        }
+ // NUEVA FUNCIÓN: Obtener datos del gestor real
+obtenerDatosDelGestor() {
+    try {
+        const empresaId = window.gestorEmpresas?.estado?.empresaActual;
+        if (!empresaId) return this.defaultData;
+
+        const clave = `transacciones_${empresaId}`;
+        const transacciones = JSON.parse(localStorage.getItem(clave) || '[]');
         
-        // Fallback: devolver datos en 0
+        if (transacciones.length === 0) return this.defaultData;
+
+        // Calcular métricas reales
+        let ingresos = 0;
+        let gastos = 0;
+
+        transacciones.forEach(t => {
+            if (t.tipo === 'ingreso') {
+                ingresos += Math.abs(t.monto || 0);
+            } else if (t.tipo === 'gasto') {
+                gastos += Math.abs(t.monto || 0);
+            }
+        });
+
+        const utilidad = ingresos - gastos;
+        const flujoCaja = utilidad; // Balance actual
+
+        return {
+            ingresos: ingresos,
+            gastos: gastos,
+            utilidad: utilidad,
+            flujoCaja: flujoCaja,
+            crecimiento: 0 // Calcular después si es necesario
+        };
+        
+    } catch (error) {
+        console.error('Error obteniendo datos:', error);
         return this.defaultData;
     }
+}
 
     getCurrentMetrics() {
         const metrics = {};
