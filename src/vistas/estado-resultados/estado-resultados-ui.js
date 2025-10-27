@@ -485,3 +485,20 @@ if (document.readyState === 'complete') {
 }
 
 console.log('🎨 UI de Estado de Resultados lista para inicializar');
+
+// FORZAR RECARGA
+setInterval(() => {
+    const app = document.getElementById('estadoResultadosApp');
+    if (app && window.getComputedStyle(app).display !== 'none') {
+        if (window.estadoResultadosUI && window.estadoResultadosUI.modulo) {
+            const resultados = window.estadoResultadosUI.modulo.obtenerResultados();
+            if (resultados && resultados.totalTransacciones > 0) {
+                const elementoIngresos = document.getElementById('erIngresosTotales');
+                if (elementoIngresos && elementoIngresos.textContent === 'S/. 0.00') {
+                    console.log('🔄 Forzando recarga de UI...');
+                    window.estadoResultadosUI.cargarResultados();
+                }
+            }
+        }
+    }
+}, 1000);
