@@ -502,3 +502,28 @@ setInterval(() => {
         }
     }
 }, 1000);
+
+const observador = new MutationObserver(() => {
+    const app = document.getElementById('estadoResultadosApp');
+    if (app && window.getComputedStyle(app).display !== 'none') {
+        if (window.estadoResultadosUI && window.estadoResultadosUI.modulo) {
+            const resultados = window.estadoResultadosUI.modulo.obtenerResultados();
+            if (resultados && resultados.totalTransacciones > 0) {
+                // Forzar carga de gráficos
+                if (window.estadoResultadosUI.modulo.componenteActivo('graficosBasicos')) {
+                    console.log('🎨 Cargando gráficos...');
+                    window.estadoResultadosUI.cargarGraficos(resultados);
+                }
+            }
+        }
+    }
+});
+
+// Observar cambios en el DOM
+if (document.body) {
+    observador.observe(document.body, {
+        attributes: true,
+        subtree: true,
+        attributeFilter: ['style', 'class']
+    });
+}
