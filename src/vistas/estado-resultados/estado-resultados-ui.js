@@ -504,24 +504,24 @@ setInterval(() => {
     }, 1000);
 
 // ══════════════════════════════════════════════════════════
-// GRÁFICOS - SOLUCIÓN FINAL
+// GRÁFICOS - SOLUCIÓN DEFINITIVA
 // ══════════════════════════════════════════════════════════
 
-let graficosYaCargados = false;
-
-window.addEventListener('estadoResultadosVisible', () => {
-    if (!graficosYaCargados && window.estadoResultadosUI && window.estadoResultadosUI.modulo) {
-        const resultados = window.estadoResultadosUI.modulo.obtenerResultados();
-        if (resultados && resultados.totalTransacciones > 0) {
-            if (window.estadoResultadosUI.modulo.componenteActivo('graficosBasicos')) {
-                setTimeout(() => {
-                    console.log('🎨 Cargando gráficos...');
+// Escuchar el evento que SÍ se dispara desde cargador-vistas.js
+document.addEventListener('vistaEstadoResultadosCargada', () => {
+    console.log('👁️ Vista Estado de Resultados visible');
+    
+    setTimeout(() => {
+        if (window.estadoResultadosUI && window.estadoResultadosUI.modulo) {
+            const resultados = window.estadoResultadosUI.modulo.obtenerResultados();
+            if (resultados && resultados.totalTransacciones > 0) {
+                if (window.estadoResultadosUI.modulo.componenteActivo('graficosBasicos')) {
+                    console.log('🎨 Cargando gráficos automáticamente...');
                     window.estadoResultadosUI.cargarGraficos(resultados);
-                    graficosYaCargados = true;
-                }, 800);
+                }
             }
         }
-    }
+    }, 1000);
 });
 
 console.log('✅ Sistema de gráficos listo');
