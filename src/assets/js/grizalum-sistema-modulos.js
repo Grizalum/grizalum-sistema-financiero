@@ -106,7 +106,7 @@ class SistemaModulos {
      * Verificar si el usuario tiene acceso al módulo
      */
     _verificarAcceso(modulo) {
-        if (!window.sistemaNiveles) {
+        if (!window.grizalumNiveles) {
             console.warn('⚠️ Sistema de niveles no disponible, permitiendo acceso');
             return true;
         }
@@ -117,7 +117,7 @@ class SistemaModulos {
             return false;
         }
 
-        const nivelEmpresa = window.sistemaNiveles.obtenerNivelEmpresa(empresaActual);
+        const nivelEmpresa = window.grizalumNiveles.obtenerNivelEmpresa(empresaActual);
         const scoreEmpresa = nivelEmpresa?.score || 0;
 
         // Si el módulo requiere nivel, verificar
@@ -381,10 +381,10 @@ class SistemaModulos {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// INSTANCIA GLOBAL
+// INSTANCIA GLOBAL (nombre único para evitar conflictos)
 // ═══════════════════════════════════════════════════════════════════
 
-window.sistemaModulos = new SistemaModulos();
+window.grizalumModulos = new SistemaModulos();
 
 console.log(`
 ╔═══════════════════════════════════════════════════════════════╗
