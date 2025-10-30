@@ -222,7 +222,9 @@ _configurarEventos() {
         this._guardarTransacciones();
         
         // Registrar uso del componente
-        this.sistemaNiveles.registrarUso(this.empresaActual, 'registroRapido');
+         if (this.sistemaNiveles) {
+           this.sistemaNiveles.registrarUso(this.empresaActual, 'registroRapido');
+        }
         
         this._log('success', `✅ ${datos.tipo} agregado: S/. ${datos.monto}`);
         
