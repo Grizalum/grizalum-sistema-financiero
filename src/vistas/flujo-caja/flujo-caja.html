@@ -793,15 +793,23 @@
                 });
             }
 
-            // Exportar
+           // Exportar
             const btnExportar = document.getElementById('btnExportar');
             if (btnExportar) {
-                btnExportar.addEventListener('click', exportarDatos);
+                btnExportar.addEventListener('click', () => {
+                    if (window.flujoCajaUI && window.flujoCajaUI.exportarDatos) {
+                        window.flujoCajaUI.exportarDatos();
+                    }
+                });
             }
             
             const btnExportarRapido = document.getElementById('btnExportarRapido');
             if (btnExportarRapido) {
-                btnExportarRapido.addEventListener('click', exportarDatos);
+                btnExportarRapido.addEventListener('click', () => {
+                    if (window.flujoCajaUI && window.flujoCajaUI.exportarDatos) {
+                        window.flujoCajaUI.exportarDatos();
+                    }
+                });
             }
 
             // Escuchar eventos del módulo
