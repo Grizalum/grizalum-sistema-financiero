@@ -110,22 +110,36 @@ onMostrar: async function() {
                 });
             });
             
-            for (const scriptOriginal of scriptsArray) {
-                const script = document.createElement('script');
-                if (scriptOriginal.src) {
-                    script.src = scriptOriginal.src;
-                    script.async = false;
-                } else {
-                    script.textContent = scriptOriginal.textContent;
-                }
-                document.body.appendChild(script);
-                if (scriptOriginal.src) {
-                    await new Promise((resolve, reject) => {
-                        script.onload = resolve;
-                        script.onerror = reject;
-                    });
-                }
-            }
+            // Ejecutar scripts
+for (const scriptOriginal of scriptsArray) {
+    // Si es un script externo, verificar si ya existe
+    if (scriptOriginal.src) {
+        const srcSinQuery = scriptOriginal.src.split('?')[0];
+        const yaExiste = Array.from(document.querySelectorAll('script[src]')).some(s => 
+            s.src.split('?')[0] === srcSinQuery
+        );
+        
+        if (yaExiste) {
+            console.log(`⏭️ Script ya cargado: ${scriptOriginal.src}`);
+            continue; // Saltar este script
+        }
+        
+        const script = document.createElement('script');
+        script.src = scriptOriginal.src;
+        script.async = false;
+        document.body.appendChild(script);
+        
+        await new Promise((resolve, reject) => {
+            script.onload = resolve;
+            script.onerror = reject;
+        });
+    } else {
+        // Scripts inline siempre se ejecutan
+        const script = document.createElement('script');
+        script.textContent = scriptOriginal.textContent;
+        document.body.appendChild(script);
+    }
+}
             
             contenedor.style.opacity = '1';
             contenedor.style.display = 'block';
