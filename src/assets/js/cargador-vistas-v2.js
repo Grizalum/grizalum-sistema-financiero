@@ -15,7 +15,7 @@ function registrarModulos() {
     // ───────────────────────────────────────────────────────────────
     // PANEL DE CONTROL (DASHBOARD)
     // ───────────────────────────────────────────────────────────────
-    window.sistemaModulos.registrar({
+    window.grizalumModulos.registrar({
         id: 'dashboard',
         nombre: 'Panel de Control',
         ruta: 'src/vistas/panel-control/panel-control.html',
@@ -48,7 +48,7 @@ function registrarModulos() {
     // ───────────────────────────────────────────────────────────────
     // FLUJO DE CAJA
     // ───────────────────────────────────────────────────────────────
-    window.sistemaModulos.registrar({
+    window.grizalumModulos.registrar({
         id: 'cash-flow',
         nombre: 'Flujo de Caja',
         ruta: 'src/vistas/flujo-caja/flujo-caja.html',
@@ -158,7 +158,7 @@ function registrarModulos() {
     // ───────────────────────────────────────────────────────────────
     // ESTADO DE RESULTADOS
     // ───────────────────────────────────────────────────────────────
-    window.sistemaModulos.registrar({
+    window.grizalumModulos.registrar({
         id: 'income-statement',
         nombre: 'Estado de Resultados',
         ruta: 'src/vistas/estado-resultados/estado-resultados.html',
@@ -231,7 +231,7 @@ function registrarModulos() {
     // ───────────────────────────────────────────────────────────────
     // BALANCE GENERAL
     // ───────────────────────────────────────────────────────────────
-    window.sistemaModulos.registrar({
+    window.grizalumModulos.registrar({
         id: 'balance-sheet',
         nombre: 'Balance General',
         ruta: 'src/vistas/balance-general/balance-general.html',
@@ -255,7 +255,7 @@ function registrarModulos() {
     // ───────────────────────────────────────────────────────────────
     // CUENTAS BANCARIAS
     // ───────────────────────────────────────────────────────────────
-    window.sistemaModulos.registrar({
+    window.grizalumModulos.registrar({
         id: 'cuentas-bancarias',
         nombre: 'Cuentas Bancarias',
         ruta: 'src/vistas/cuentas-bancarias/cuentas-bancarias.html',
@@ -285,7 +285,7 @@ function registrarModulos() {
     // ───────────────────────────────────────────────────────────────
     // INVENTARIO
     // ───────────────────────────────────────────────────────────────
-    window.sistemaModulos.registrar({
+    window.grizalumModulos.registrar({
         id: 'inventory',
         nombre: 'Inventario',
         ruta: 'src/vistas/inventario/inventario.html',
@@ -309,7 +309,7 @@ function registrarModulos() {
     // ───────────────────────────────────────────────────────────────
     // VENTAS
     // ───────────────────────────────────────────────────────────────
-    window.sistemaModulos.registrar({
+    window.grizalumModulos.registrar({
         id: 'sales',
         nombre: 'Ventas',
         ruta: 'src/vistas/ventas/ventas.html',
@@ -423,7 +423,7 @@ async function cambiarSeccion(seccionId, event) {
     }
     
     // Activar módulo
-    await window.sistemaModulos.activar(seccionId);
+    await window.grizalumModulos.activar(seccionId);
 }
 
 // Hacer global
@@ -468,7 +468,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Esperar a que Sistema de Módulos esté listo
     const verificar = () => {
-        if (window.sistemaModulos) {
+        if (window.grizalumModulos) {
             registrarModulos();
             
             // Cargar vista inicial después de un delay
