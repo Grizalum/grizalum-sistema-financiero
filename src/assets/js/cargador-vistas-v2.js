@@ -72,27 +72,47 @@ function registrarModulos() {
         onMostrar: async function() {
             console.log('   👁️ Mostrando Flujo de Caja...');
             
+            const contenedor = document.getElementById('contenedorVistas');
+            
+            // ✅ LOADING OVERLAY
+            contenedor.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: center; 
+                            min-height: 400px; animation: fadeIn 0.2s ease;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; animation: spin 1s linear infinite;">⚙️</div>
+                        <p style="color: var(--texto-terciario); margin-top: 1rem; font-size: 1rem;">
+                            Cargando Flujo de Caja...
+                        </p>
+                    </div>
+                </div>
+                <style>
+                    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+                    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+                </style>
+            `;
+            contenedor.style.display = 'block';
+            contenedor.style.opacity = '1';
+            
             // Cargar HTML
             const html = await fetch('src/vistas/flujo-caja/flujo-caja.html').then(r => r.text());
-            const contenedor = document.getElementById('contenedorVistas');
-contenedor.innerHTML = '';
-            contenedor.style.display = 'block';
-            contenedor.style.opacity = '0';
             
-            // Parsear HTML y extraer scripts
+            // Parsear y preparar
             const temp = document.createElement('div');
             temp.innerHTML = html;
-            
             const scripts = temp.querySelectorAll('script');
             const scriptsArray = Array.from(scripts);
-            
-            // Remover scripts del HTML
             scriptsArray.forEach(s => s.remove());
             
-            // Insertar HTML sin scripts
-            contenedor.innerHTML = temp.innerHTML;
+            // Fade out loading
+            contenedor.style.transition = 'opacity 0.15s ease';
+            contenedor.style.opacity = '0';
+            await new Promise(resolve => setTimeout(resolve, 150));
             
-            // ✅ ESPERAR A QUE EL DOM ESTÉ LISTO
+            // Insertar contenido
+            contenedor.innerHTML = temp.innerHTML;
+            contenedor.style.opacity = '0';
+            
+            // Esperar DOM
             await new Promise(resolve => {
                 requestAnimationFrame(() => {
                     requestAnimationFrame(() => {
@@ -101,19 +121,16 @@ contenedor.innerHTML = '';
                 });
             });
             
-            // ✅ EJECUTAR SCRIPTS MANUALMENTE
+            // Ejecutar scripts
             for (const scriptOriginal of scriptsArray) {
                 const script = document.createElement('script');
-                
                 if (scriptOriginal.src) {
                     script.src = scriptOriginal.src;
                     script.async = false;
                 } else {
                     script.textContent = scriptOriginal.textContent;
                 }
-                
                 document.body.appendChild(script);
-                
                 if (scriptOriginal.src) {
                     await new Promise((resolve, reject) => {
                         script.onload = resolve;
@@ -122,18 +139,12 @@ contenedor.innerHTML = '';
                 }
             }
             
-            // Esperar a que se apliquen estilos
-            await new Promise(resolve => {
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(resolve);
-                });
-            });
-            
-            // Fade in
-            contenedor.style.transition = 'opacity 0.2s ease';
+            // Fade in suave
+            await new Promise(resolve => setTimeout(resolve, 50));
+            contenedor.style.transition = 'opacity 0.3s ease';
             contenedor.style.opacity = '1';
             
-            // ✅ CRÍTICO: Esperar a que FlujoCaja esté inicializado
+            // Esperar inicialización
             if (window.flujoCaja) {
                 await window.flujoCaja.esperarInicializacion();
             }
@@ -141,13 +152,10 @@ contenedor.innerHTML = '';
             // Disparar evento
             setTimeout(() => {
                 window.dispatchEvent(new Event('flujoCajaVisible'));
-                console.log('   📢 Evento flujoCajaVisible disparado');
-                
-                // Recargar datos
                 if (window.recargarFlujoCaja) {
                     window.recargarFlujoCaja();
                 }
-            }, 350);
+            }, 200);
         },
 
         onOcultar: function() {
@@ -203,7 +211,6 @@ contenedor.innerHTML = '';
             scriptsArray.forEach(s => s.remove());
             
             contenedor.innerHTML = temp.innerHTML;
-            
             
             for (const scriptOriginal of scriptsArray) {
                 const script = document.createElement('script');
