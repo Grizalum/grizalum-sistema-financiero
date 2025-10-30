@@ -508,27 +508,26 @@
         // FUNCIONES DE CARGA DE DATOS
         // ═══════════════════════════════════════════════════════════════
         window.cargarNivel = function() {
-    try {
-        const info = window.flujoCaja?.obtenerInfo();
-        const nivelBanner = document.getElementById('nivelBanner');
-        
-        // Si no existe el banner o no hay info, salir
-        if (!nivelBanner) {
-            console.warn('⚠️ Banner de nivel no encontrado');
-            return;
-        }
-        
-        // Si no hay info, ocultar el banner
-        if (!info || !info.nivel) {
-            nivelBanner.style.display = 'none';
-            return;
-        }
+            try {
+                const info = window.flujoCaja?.obtenerInfo();
+                const nivelBanner = document.getElementById('nivelBanner');
+                
+                // Si no existe el banner o no hay info, salir
+                if (!nivelBanner) {
+                    console.warn('⚠️ Banner de nivel no encontrado');
+                    return;
+                }
+                
+                // Si no hay info, ocultar el banner
+                if (!info || !info.nivel) {
+                    nivelBanner.style.display = 'none';
+                    return;
+                }
 
-        // Mostrar banner si hay datos
-        banner.style.display = 'flex';
+                // Mostrar banner si hay datos
+                nivelBanner.style.display = 'flex';
 
-                const banner = document.getElementById('nivelBanner');
-                banner.innerHTML = `
+                nivelBanner.innerHTML = `
                     <div class="nivel-info">
                         <span class="nivel-icono" style="font-size: 2.5rem;">${info.nivel.nivel.icono}</span>
                         <div class="nivel-textos">
@@ -550,10 +549,12 @@
                 mostrarComponentesSegunNivel(info.componentesActivos);
             } catch (error) {
                 console.warn('No se pudo cargar nivel:', error);
-                document.getElementById('nivelBanner').style.display = 'none';
+                const nivelBanner = document.getElementById('nivelBanner');
+                if (nivelBanner) {
+                    nivelBanner.style.display = 'none';
+                }
             }
         }
-
         function mostrarComponentesSegunNivel(componentes) {
             try {
                 // Filtros
