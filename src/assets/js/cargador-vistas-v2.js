@@ -170,6 +170,15 @@ for (const scriptOriginal of scriptsArray) {
                 }, 200);
                 
             }, 300);
+        
+            // ✅ FORZAR SCROLL AL INICIO
+            setTimeout(() => {
+                const contenedor = document.getElementById('contenedorVistas');
+                if (contenedor) {
+                    contenedor.scrollTo({ top: 0, behavior: 'instant' });
+                    console.log('✅ Scroll reseteado');
+                }
+            }, 400);
         },
         onOcultar: function() {
             console.log('   👁️‍🗨️ Ocultando Flujo de Caja');
