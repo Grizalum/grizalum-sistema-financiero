@@ -546,6 +546,7 @@ class EvaluadorNiveles {
 // ═══════════════════════════════════════════════════════════════════
 
 window.grizalumNiveles = new SistemaNivelesProfesional();
+window.sistemaNiveles = window.grizalumNiveles;
 
 console.log(`
 ╔═══════════════════════════════════════════════════════════════╗
