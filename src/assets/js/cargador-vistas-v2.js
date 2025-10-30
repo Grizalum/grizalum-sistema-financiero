@@ -75,7 +75,7 @@ function registrarModulos() {
             // Cargar HTML
             const html = await fetch('src/vistas/flujo-caja/flujo-caja.html').then(r => r.text());
             const contenedor = document.getElementById('contenedorVistas');
-            contenedor.innerHTML = '';
+contenedor.innerHTML = '';
             contenedor.style.display = 'block';
             contenedor.style.opacity = '0';
             
@@ -91,6 +91,15 @@ function registrarModulos() {
             
             // Insertar HTML sin scripts
             contenedor.innerHTML = temp.innerHTML;
+            
+            // ✅ ESPERAR A QUE EL DOM ESTÉ LISTO
+            await new Promise(resolve => {
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        setTimeout(resolve, 50);
+                    });
+                });
+            });
             
             // ✅ EJECUTAR SCRIPTS MANUALMENTE
             for (const scriptOriginal of scriptsArray) {
@@ -194,6 +203,7 @@ function registrarModulos() {
             scriptsArray.forEach(s => s.remove());
             
             contenedor.innerHTML = temp.innerHTML;
+            
             
             for (const scriptOriginal of scriptsArray) {
                 const script = document.createElement('script');
