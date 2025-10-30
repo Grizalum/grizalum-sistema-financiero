@@ -69,59 +69,47 @@ function registrarModulos() {
             // porque ya está en el HTML como script inline
         },
 
-        onMostrar: async function() {
+onMostrar: async function() {
             console.log('   👁️ Mostrando Flujo de Caja...');
             
             const contenedor = document.getElementById('contenedorVistas');
             
-            // ✅ LOADING OVERLAY
+            contenedor.style.opacity = '1';
             contenedor.innerHTML = `
                 <div style="display: flex; align-items: center; justify-content: center; 
-                            min-height: 400px; animation: fadeIn 0.2s ease;">
+                            min-height: 400px;">
                     <div style="text-align: center;">
                         <div style="font-size: 3rem; animation: spin 1s linear infinite;">⚙️</div>
-                        <p style="color: var(--texto-terciario); margin-top: 1rem; font-size: 1rem;">
+                        <p style="color: var(--texto-terciario); margin-top: 1rem;">
                             Cargando Flujo de Caja...
                         </p>
                     </div>
                 </div>
                 <style>
                     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-                    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
                 </style>
             `;
-            contenedor.style.display = 'block';
-            contenedor.style.opacity = '1';
             
-            // Cargar HTML
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
             const html = await fetch('src/vistas/flujo-caja/flujo-caja.html').then(r => r.text());
             
-            // Parsear y preparar
             const temp = document.createElement('div');
             temp.innerHTML = html;
             const scripts = temp.querySelectorAll('script');
             const scriptsArray = Array.from(scripts);
             scriptsArray.forEach(s => s.remove());
             
-            // Fade out loading
-            contenedor.style.transition = 'opacity 0.15s ease';
-            contenedor.style.opacity = '0';
-            await new Promise(resolve => setTimeout(resolve, 150));
-            
-            // Insertar contenido
             contenedor.innerHTML = temp.innerHTML;
-            contenedor.style.opacity = '0';
             
-            // Esperar DOM
             await new Promise(resolve => {
                 requestAnimationFrame(() => {
                     requestAnimationFrame(() => {
-                        setTimeout(resolve, 50);
+                        setTimeout(resolve, 100);
                     });
                 });
             });
             
-            // Ejecutar scripts
             for (const scriptOriginal of scriptsArray) {
                 const script = document.createElement('script');
                 if (scriptOriginal.src) {
@@ -139,25 +127,36 @@ function registrarModulos() {
                 }
             }
             
-            // Fade in suave
-            await new Promise(resolve => setTimeout(resolve, 50));
-            contenedor.style.transition = 'opacity 0.3s ease';
             contenedor.style.opacity = '1';
+            contenedor.style.display = 'block';
             
-            // Esperar inicialización
             if (window.flujoCaja) {
                 await window.flujoCaja.esperarInicializacion();
             }
             
-            // Disparar evento
             setTimeout(() => {
                 window.dispatchEvent(new Event('flujoCajaVisible'));
-                if (window.recargarFlujoCaja) {
-                    window.recargarFlujoCaja();
-                }
-            }, 200);
+                
+                console.log('🔄 Forzando recarga de datos...');
+                
+                let intentos = 0;
+                const forzarRecarga = setInterval(() => {
+                    intentos++;
+                    
+                    if (window.flujoCajaUI && window.flujoCajaUI.modulo) {
+                        console.log('✅ Recargando datos (intento ' + intentos + ')');
+                        window.flujoCajaUI.cargarBalance();
+                        window.flujoCajaUI.cargarTransacciones();
+                        window.flujoCajaUI.cargarNivel();
+                        clearInterval(forzarRecarga);
+                    } else if (intentos > 10) {
+                        console.error('❌ No se pudo recargar datos después de 10 intentos');
+                        clearInterval(forzarRecarga);
+                    }
+                }, 200);
+                
+            }, 300);
         },
-
         onOcultar: function() {
             console.log('   👁️‍🗨️ Ocultando Flujo de Caja');
             
