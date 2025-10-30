@@ -211,68 +211,105 @@ for (const scriptOriginal of scriptsArray) {
 
         onCargar: async function() {
             console.log('   📊 Cargando Estado de Resultados...');
-            
             await cargarEstilos('src/vistas/estado-resultados/estado-resultados.css');
         },
 
         onMostrar: async function() {
             console.log('   👁️ Mostrando Estado de Resultados...');
             
-            const html = await fetch('src/vistas/estado-resultados/estado-resultados.html').then(r => r.text());
             const contenedor = document.getElementById('contenedorVistas');
-            contenedor.innerHTML = '';
-            contenedor.style.display = 'block';
-            contenedor.style.opacity = '0';
             
-            // Parsear y ejecutar scripts
+            // Loading inicial
+            contenedor.style.opacity = '1';
+            contenedor.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: center; 
+                            min-height: 400px;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; animation: spin 1s linear infinite;">📊</div>
+                        <p style="color: var(--texto-terciario); margin-top: 1rem;">
+                            Cargando Estado de Resultados...
+                        </p>
+                    </div>
+                </div>
+                <style>
+                    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+                </style>
+            `;
+            
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            // Cargar HTML
+            const html = await fetch('src/vistas/estado-resultados/estado-resultados.html').then(r => r.text());
+            
             const temp = document.createElement('div');
             temp.innerHTML = html;
-            
             const scripts = temp.querySelectorAll('script');
             const scriptsArray = Array.from(scripts);
             scriptsArray.forEach(s => s.remove());
             
             contenedor.innerHTML = temp.innerHTML;
             
+            await new Promise(resolve => {
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        setTimeout(resolve, 100);
+                    });
+                });
+            });
+            
+            // Ejecutar scripts (evitar duplicados)
             for (const scriptOriginal of scriptsArray) {
-                const script = document.createElement('script');
-                
                 if (scriptOriginal.src) {
+                    const srcSinQuery = scriptOriginal.src.split('?')[0];
+                    const yaExiste = Array.from(document.querySelectorAll('script[src]')).some(s => 
+                        s.src.split('?')[0] === srcSinQuery
+                    );
+                    
+                    if (yaExiste) {
+                        console.log(`⏭️ Script ya cargado: ${scriptOriginal.src}`);
+                        continue;
+                    }
+                    
+                    const script = document.createElement('script');
                     script.src = scriptOriginal.src;
                     script.async = false;
-                } else {
-                    script.textContent = scriptOriginal.textContent;
-                }
-                
-                document.body.appendChild(script);
-                
-                if (scriptOriginal.src) {
+                    document.body.appendChild(script);
+                    
                     await new Promise((resolve, reject) => {
                         script.onload = resolve;
                         script.onerror = reject;
                     });
+                } else {
+                    const script = document.createElement('script');
+                    script.textContent = scriptOriginal.textContent;
+                    document.body.appendChild(script);
                 }
             }
             
-            await new Promise(resolve => {
-                requestAnimationFrame(() => requestAnimationFrame(resolve));
-            });
-            
-            contenedor.style.transition = 'opacity 0.2s ease';
             contenedor.style.opacity = '1';
+            contenedor.style.display = 'block';
             
+            // Disparar evento y scroll
             setTimeout(() => {
                 window.dispatchEvent(new Event('vistaEstadoResultadosCargada'));
+                
+                // Scroll al inicio
+                setTimeout(() => {
+                    const contenedor = document.getElementById('contenedorVistas');
+                    if (contenedor) {
+                        contenedor.scrollTo({ top: 0, behavior: 'instant' });
+                        console.log('✅ Estado de Resultados: Scroll al inicio');
+                    }
+                }, 100);
             }, 350);
-        }
-    });
+        });
 
     // ───────────────────────────────────────────────────────────────
     // BALANCE GENERAL
     // ───────────────────────────────────────────────────────────────
     window.grizalumModulos.registrar({
         id: 'balance-sheet',
-        nombre: 'Balance General',
+        nombre: 'Balance General',    
         ruta: 'src/vistas/balance-general/balance-general.html',
         nivel: 25, // Requiere PROFESIONAL
 
