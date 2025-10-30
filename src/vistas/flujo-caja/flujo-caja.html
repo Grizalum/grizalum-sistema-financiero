@@ -508,17 +508,24 @@
         // FUNCIONES DE CARGA DE DATOS
         // ═══════════════════════════════════════════════════════════════
         window.cargarNivel = function() {
-            try {
-                const info = window.flujoCaja?.obtenerInfo();
-                
-                // Si no hay info, ocultar el banner
-                if (!info || !info.nivel) {
-                    document.getElementById('nivelBanner').style.display = 'none';
-                    return;
-                }
+    try {
+        const info = window.flujoCaja?.obtenerInfo();
+        const banner = document.getElementById('nivelBanner');
+        
+        // Si no existe el banner o no hay info, salir
+        if (!banner) {
+            console.warn('⚠️ Banner de nivel no encontrado');
+            return;
+        }
+        
+        // Si no hay info, ocultar el banner
+        if (!info || !info.nivel) {
+            banner.style.display = 'none';
+            return;
+        }
 
-                // Mostrar banner si hay datos
-                document.getElementById('nivelBanner').style.display = 'flex';
+        // Mostrar banner si hay datos
+        banner.style.display = 'flex';
 
                 const banner = document.getElementById('nivelBanner');
                 banner.innerHTML = `
