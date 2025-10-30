@@ -1,0 +1,139 @@
+/**
+ * ═══════════════════════════════════════════════════════════════════
+ * FIX CSS - PREVENIR OVERLAYS PERMANENTES
+ * ═══════════════════════════════════════════════════════════════════
+ * 
+ * Agrega esto a tu archivo CSS principal o crea un nuevo archivo:
+ * /src/assets/css/fix-overlays.css
+ * 
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   PANTALLAS DE CARGA - Deben desaparecer automáticamente
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.loading-content,
+.loading-logo,
+.loading-bar,
+.loading-progress,
+.loading-version,
+#loading-screen,
+#pantalla-carga {
+    /* Asegurar que se puedan ocultar fácilmente */
+    transition: opacity 0.3s ease-in-out !important;
+}
+
+/* Cuando la página está cargada, ocultar pantallas de carga */
+body.loaded .loading-content,
+body.loaded .loading-logo,
+body.loaded .loading-bar,
+body.loaded .loading-progress,
+body.loaded .loading-version,
+body.loaded #loading-screen,
+body.loaded #pantalla-carga {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    z-index: -1 !important;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   MODALES - No deben quedarse visibles
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.modal {
+    /* Por defecto ocultos */
+    display: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.modal.show {
+    /* Solo visibles cuando tienen la clase .show */
+    display: flex;
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   CONTENEDOR DE VISTAS - Siempre visible y sin transiciones problemáticas
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+#contenedorVistas {
+    /* Asegurar visibilidad permanente */
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    
+    /* Sin transiciones que puedan causar problemas */
+    transition: none !important;
+    
+    /* Asegurar posicionamiento correcto */
+    position: relative;
+    z-index: 1;
+    
+    /* Dimensiones correctas */
+    min-height: 100vh;
+    width: 100%;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   PREVENIR Z-INDEX PROBLEMÁTICOS
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* Overlays de carga nunca deben estar por encima del contenido */
+.loading-content,
+.loading-logo,
+.loading-bar,
+#loading-screen {
+    z-index: 9999 !important; /* Alto, pero se ocultan rápido */
+}
+
+/* Modales sobre todo */
+.modal {
+    z-index: 10000 !important;
+}
+
+/* Contenido principal siempre accesible */
+#contenedorVistas {
+    z-index: 1 !important;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   ANIMACIÓN SUAVE DE CARGA (OPCIONAL)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        visibility: visible;
+    }
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+/* Aplicar fade out automático después de 2 segundos */
+body.loaded .loading-content,
+body.loaded #loading-screen {
+    animation: fadeOut 0.5s ease-in-out forwards;
+    animation-delay: 0.5s;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   MODO DEBUG (OPCIONAL - Desactivar en producción)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* Descomentar para ver bordes de debug */
+/*
+#contenedorVistas {
+    border: 3px solid lime !important;
+}
+
+.loading-content,
+.modal {
+    border: 3px solid red !important;
+}
+*/
