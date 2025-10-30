@@ -8,6 +8,7 @@
    <!-- ================================================================
      🎨 ESTILOS MODULARES GRIZALUM v4.0 - ORDEN ESPECÍFICO
      ================================================================ -->
+<link rel="stylesheet" href="src/assets/css/fix-overlays.css">
 <link rel="stylesheet" href="src/assets/css/01-base-sistema.css">
 <link rel="stylesheet" href="src/assets/css/02-estructura-general.css">
 <link rel="stylesheet" href="src/assets/css/03-menu-lateral.css">
@@ -383,6 +384,21 @@
 
 <script src="src/assets/js/principal.js" defer></script>
 <script src="src/assets/js/gestor-empresas-admin-new.js"></script>
+<script src="src/assets/js/fix-overlays-permanente.js"></script>
+    
+
+<script>
+window.addEventListener('load', function() {
+    document.body.classList.add('loaded');
+    
+    setTimeout(function() {
+        document.querySelectorAll('.loading-content, .loading-logo, #loading-screen').forEach(function(el) {
+            el.style.opacity = '0';
+            setTimeout(function() { el.remove(); }, 300);
+        });
+    }, 1000);
+});
+</script>
 
 </body>
 </html>
