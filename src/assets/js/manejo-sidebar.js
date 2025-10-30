@@ -632,3 +632,148 @@ console.log('Cambios clave:');
 console.log('  • Navegación delegada a principal.js');
 console.log('  • Sin conflictos de secciones');
 console.log('  • Sincronización perfecta');
+
+/**
+ * ═══════════════════════════════════════════════════════════════════
+ * FIX PERMANENTE - REMOVER OVERLAYS DE CARGA
+ * ═══════════════════════════════════════════════════════════════════
+ * 
+ * Este código debe agregarse al FINAL de tu archivo principal
+ * (index.html o main.js)
+ * 
+ * ═══════════════════════════════════════════════════════════════════
+ */
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// FUNCIÓN: Remover pantallas de carga
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+function removerPantallaDeCarga() {
+    console.log('🧹 Limpiando overlays de carga...');
+    
+    const selectores = [
+        '.loading-content',
+        '.loading-logo',
+        '.loading-bar',
+        '.loading-progress',
+        '.loading-version',
+        '.brand-icon.loading-logo',
+        '#loading-screen',
+        '#pantalla-carga',
+        '[class*="loading"]'
+    ];
+    
+    let removidos = 0;
+    
+    selectores.forEach(selector => {
+        const elementos = document.querySelectorAll(selector);
+        elementos.forEach(el => {
+            // Solo remover si es un overlay de carga, no parte del contenido
+            if (!el.closest('#contenedorVistas')) {
+                el.style.opacity = '0';
+                el.style.transition = 'opacity 0.3s';
+                
+                setTimeout(() => {
+                    el.remove();
+                }, 300);
+                
+                removidos++;
+            }
+        });
+    });
+    
+    console.log(`✅ ${removidos} overlays de carga removidos`);
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// FUNCIÓN: Asegurar que los modales se cierren correctamente
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+function limpiarModalesAbiertos() {
+    console.log('🧹 Limpiando modales...');
+    
+    const modales = document.querySelectorAll('.modal, [class*="modal-"]');
+    
+    modales.forEach(modal => {
+        // Solo cerrar modales que NO están dentro del contenido
+        if (!modal.closest('#contenedorVistas')) {
+            const styles = window.getComputedStyle(modal);
+            
+            if (styles.display !== 'none' && parseFloat(styles.opacity) > 0) {
+                modal.style.display = 'none';
+                console.log(`  ✅ Modal cerrado: ${modal.className}`);
+            }
+        }
+    });
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// FUNCIÓN: Limpiar al cambiar de módulo
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+function limpiarOverlaysAlNavegar() {
+    console.log('🔄 Limpiando al navegar...');
+    
+    removerPantallaDeCarga();
+    limpiarModalesAbiertos();
+    
+    // Asegurar que el contenedor no tenga transiciones problemáticas
+    const contenedor = document.getElementById('contenedorVistas');
+    if (contenedor) {
+        // Remover transiciones solo si están causando problemas
+        const styles = window.getComputedStyle(contenedor);
+        if (styles.transition.includes('opacity') || styles.transition.includes('all')) {
+            contenedor.style.transition = 'none';
+            console.log('  ✅ Transiciones del contenedor desactivadas');
+        }
+    }
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// EVENTOS: Ejecutar limpieza automáticamente
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// Al cargar la página
+window.addEventListener('DOMContentLoaded', () => {
+    console.log('🚀 Iniciando limpieza automática de overlays...');
+    
+    // Esperar un poco para que todo cargue
+    setTimeout(() => {
+        removerPantallaDeCarga();
+    }, 2000);
+});
+
+// Al cambiar de módulo
+if (window.grizalumModulos) {
+    window.addEventListener('grizalumModuloMostrado', (e) => {
+        console.log(`📺 Módulo mostrado: ${e.detail.moduloId}`);
+        
+        // Limpiar overlays después de un breve delay
+        setTimeout(() => {
+            limpiarOverlaysAlNavegar();
+        }, 500);
+    });
+}
+
+// Al hacer clic en los links de navegación
+document.addEventListener('click', (e) => {
+    const link = e.target.closest('[data-section]');
+    if (link) {
+        // Limpiar antes de cambiar de vista
+        setTimeout(() => {
+            limpiarOverlaysAlNavegar();
+        }, 800);
+    }
+});
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// FUNCIÓN GLOBAL: Para limpiar manualmente
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+window.limpiarOverlays = function() {
+    limpiarOverlaysAlNavegar();
+    console.log('✅ Limpieza manual completada');
+};
+
+console.log('✅ Sistema de limpieza de overlays activado');
+console.log('💡 Función disponible: window.limpiarOverlays()');
