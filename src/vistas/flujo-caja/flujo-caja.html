@@ -857,6 +857,28 @@
             fechaInput.valueAsDate = new Date();
             fechaInput.max = hoy;
           }
+            // ═══════════════════════════════════════════════════════════════
+    // CARGAR CATEGORÍAS DEL CONFIG
+    // ═══════════════════════════════════════════════════════════════
+    console.log('📂 Cargando categorías del config...');
+    
+    if (window.FlujoCajaConfig) {
+        const industriaActual = localStorage.getItem('grizalum_industria_actual') || 'default';
+        const categoriasConfig = window.FlujoCajaConfig.obtenerCategorias(industriaActual);
+        
+        // Asignar al módulo
+        window.flujoCaja.categorias = categoriasConfig;
+        
+        console.log('✅ Categorías cargadas desde config:', categoriasConfig);
+    } else {
+        console.warn('⚠️ FlujoCajaConfig no disponible, usando categorías por defecto');
+        
+        // Categorías por defecto
+        window.flujoCaja.categorias = {
+            ingresos: ['Ventas', 'Servicios', 'Otros Ingresos'],
+            gastos: ['Compras', 'Operaciones', 'Personal', 'Servicios', 'Otros']
+        };
+    }
             
             // Configurar eventos SIEMPRE
             configurarEventos();
