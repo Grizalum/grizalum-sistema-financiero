@@ -2,14 +2,14 @@
  * ═══════════════════════════════════════════════════════════════════
  * GRIZALUM - MÓDULO FLUJO DE CAJA
  * Sistema adaptativo de gestión de ingresos y gastos
- * VERSIÓN CORREGIDA: Soluciona problema de race condition con gráficos
+ * VERSIÓN CORREGIDA: Fix registrarUso inexistente
  * ═══════════════════════════════════════════════════════════════════
  */
 
 class FlujoCaja {
     constructor() {
         this.config = {
-            version: '1.0.1', // 🔧 Incrementado
+            version: '1.0.2', // 🔧 Incrementado - Fix registrarUso
             componente: 'FlujoCaja',
             debug: true
         };
@@ -81,52 +81,38 @@ class FlujoCaja {
     }
 
     async _cargarEmpresaActual() {
-    // ═══════════════════════════════════════════════════════════════
-    // ✅ MEJORADO: Detectar empresa con fallback a localStorage
-    // ═══════════════════════════════════════════════════════════════
-    
-    // Intentar obtener empresa desde gestor primero
-    this.empresaActual = this.gestor?.estado?.empresaActual;
-    
-    // Si gestor no tiene empresa, intentar desde localStorage
-    if (!this.empresaActual) {
-        this.empresaActual = localStorage.getItem('grizalum_empresa_actual');
-        this._log('warn', '⚠️ Empresa obtenida desde localStorage (fallback):', this.empresaActual);
+        this.empresaActual = this.gestor.estado.empresaActual;
+        
+        if (!this.empresaActual) {
+            this._log('warn', 'No hay empresa seleccionada');
+            return;
+        }
+
+        // Obtener nivel de la empresa
+        this.nivel = this.sistemaNiveles.obtenerNivelEmpresa(this.empresaActual);
+        
+        if (!this.nivel) {
+            this._log('warn', 'Empresa sin nivel asignado');
+            return;
+        }
+
+        // Obtener componentes activos según score
+        const componentesOcultos = this.nivel.componentesOcultos || [];
+        this.componentesActivos = this.configuracion.obtenerComponentesActivos(
+            this.nivel.score,
+            componentesOcultos
+        );
+
+        // Obtener categorías según industria
+        const empresa = this.gestor.estado.empresas[this.empresaActual];
+        const industriaId = empresa?.perfilIndustrial || 'default';
+        this.categorias = this.configuracion.obtenerCategorias(industriaId);
+
+        this._log('info', `Empresa cargada: ${this.empresaActual}`);
+        this._log('info', `Nivel: ${this.nivel.nivel.nombre} (Score: ${this.nivel.score})`);
+        this._log('info', `Categorías cargadas:`, this.categorias);
     }
-    
-    // Si no hay empresa en ningún lado, salir
-    if (!this.empresaActual) {
-        this._log('warn', 'No hay empresa seleccionada');
-        return;
-    }
 
-    this._log('info', `✅ Empresa detectada: ${this.empresaActual}`);
-
-    // Obtener nivel de la empresa (con verificación)
-    this.nivel = this.sistemaNiveles?.obtenerNivelEmpresa(this.empresaActual);
-    
-    if (!this.nivel) {
-        this._log('warn', 'Empresa sin nivel asignado - continuando sin nivel');
-        // ✅ MEJORADO: No hacer return, continuar aunque no haya nivel
-    }
-
-    // Obtener componentes activos según score
-    const componentesOcultos = this.nivel?.componentesOcultos || [];
-    const score = this.nivel?.score || 0; // ✅ MEJORADO: Usar 0 si no hay nivel
-    
-    this.componentesActivos = this.configuracion.obtenerComponentesActivos(
-        score,
-        componentesOcultos
-    );
-
-    // Obtener categorías según industria
-    const empresa = this.gestor?.estado?.empresas?.[this.empresaActual];
-    const industriaId = empresa?.perfilIndustrial || 'default';
-    this.categorias = this.configuracion.obtenerCategorias(industriaId);
-
-    this._log('info', `Nivel: ${this.nivel?.nivel?.nombre || 'Sin nivel'} (Score: ${score})`);
-    this._log('info', `Categorías cargadas:`, this.categorias);
-}
     async _cargarTransacciones() {
         try {
             const key = `grizalum_flujo_caja_${this.empresaActual}`;
@@ -235,9 +221,9 @@ _configurarEventos() {
         this.transacciones.unshift(transaccion);
         this._guardarTransacciones();
         
-        // Registrar uso del componente
-         if (this.sistemaNiveles) {
-           this.sistemaNiveles.registrarUso(this.empresaActual, 'registroRapido');
+        // ✅ FIX: Verificar que el método exista antes de llamarlo
+        if (this.sistemaNiveles && typeof this.sistemaNiveles.registrarUso === 'function') {
+            this.sistemaNiveles.registrarUso(this.empresaActual, 'registroRapido');
         }
         
         this._log('success', `✅ ${datos.tipo} agregado: S/. ${datos.monto}`);
@@ -534,8 +520,8 @@ window.flujoCaja = new FlujoCaja();
 
 console.log(`
 ╔═══════════════════════════════════════════════════════════════╗
-║  💰 FLUJO DE CAJA v1.0.1 (FIXED)                              ║
+║  💰 FLUJO DE CAJA v1.0.2 (FIXED)                              ║
 ║  Sistema adaptativo de gestión financiera                     ║
-║  🔧 Corregido: Race condition con gráficos                    ║
+║  🔧 Corregido: registrarUso opcional                          ║
 ╚═══════════════════════════════════════════════════════════════╝
 `);
