@@ -146,44 +146,52 @@
             }
         }
     </style>
+    
     <!-- ══════════════════════════════════════════════════════════ -->
-<!-- LOADING HELPER GLOBAL -->
-<!-- ══════════════════════════════════════════════════════════ -->
-<script>
-window.LoadingHelper = {
-    show: function(btn, txt) {
-        var t = txt || 'Cargando...';
-        var b = typeof btn === 'string' ? document.getElementById(btn) : btn;
-        if (!b) return;
-        b.setAttribute('data-html', b.innerHTML);
-        b.disabled = true;
-        b.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + t;
-        b.style.opacity = '0.7';
-    },
-    hide: function(btn) {
-        var b = typeof btn === 'string' ? document.getElementById(btn) : btn;
-        if (!b) return;
-        var h = b.getAttribute('data-html');
-        if (h) b.innerHTML = h;
-        b.disabled = false;
-        b.style.opacity = '1';
-    },
-    showOverlay: function(txt) {
-        var t = txt || 'Procesando...';
-        this.hideOverlay();
-        var o = document.createElement('div');
-        o.id = 'loadingOverlay';
-        o.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:999999;display:flex;align-items:center;justify-content:center;';
-        o.innerHTML = '<div style="text-align:center;color:white;"><i class="fas fa-spinner fa-spin" style="font-size:3rem;"></i><p style="font-size:1.25rem;">' + t + '</p></div>';
-        document.body.appendChild(o);
-    },
-    hideOverlay: function() {
-        var o = document.getElementById('loadingOverlay');
-        if (o) o.remove();
-    }
-};
-console.log('✅ LoadingHelper listo');
-</script>
+    <!-- LOADING HELPER GLOBAL -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <script>
+    window.LoadingHelper = {
+        show: function(btn, txt) {
+            var t = txt || 'Cargando...';
+            var b = typeof btn === 'string' ? document.getElementById(btn) : btn;
+            if (!b) return;
+            b.setAttribute('data-html', b.innerHTML);
+            b.disabled = true;
+            b.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + t;
+            b.style.opacity = '0.7';
+        },
+        hide: function(btn) {
+            var b = typeof btn === 'string' ? document.getElementById(btn) : btn;
+            if (!b) return;
+            var h = b.getAttribute('data-html');
+            if (h) b.innerHTML = h;
+            b.disabled = false;
+            b.style.opacity = '1';
+        },
+        showOverlay: function(txt) {
+            var t = txt || 'Procesando...';
+            this.hideOverlay();
+            var o = document.createElement('div');
+            o.id = 'loadingOverlay';
+            o.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:999999;display:flex;align-items:center;justify-content:center;';
+            o.innerHTML = '<div style="text-align:center;color:white;"><i class="fas fa-spinner fa-spin" style="font-size:3rem;"></i><p style="font-size:1.25rem;">' + t + '</p></div>';
+            document.body.appendChild(o);
+        },
+        hideOverlay: function() {
+            var o = document.getElementById('loadingOverlay');
+            if (o) o.remove();
+        }
+    };
+    console.log('✅ LoadingHelper listo');
+    </script>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- ✅ NUEVO: SISTEMA DE MÓDULOS Y NIVELES v2.0 -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <script src="src/assets/js/grizalum-sistema-modulos.js"></script>
+    <script src="src/assets/js/grizalum-sistema-niveles.js"></script>
+    <script src="src/assets/js/cargador-vistas-v2.js"></script>
 
 </head>
 <body>
@@ -233,7 +241,6 @@ console.log('✅ LoadingHelper listo');
                        Panel Principal
                    </div>
                    
-                   <!-- ✅ CORREGIDO: Agregado onclick a Panel de Control -->
                    <div class="nav-item">
                        <a href="#" class="nav-link active" data-section="dashboard" onclick="cambiarSeccion('dashboard', event)">
                            <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -241,7 +248,6 @@ console.log('✅ LoadingHelper listo');
                        </a>
                    </div>
                    
-                   <!-- ✅ CORREGIDO: Agregado onclick a Flujo de Caja -->
                    <div class="nav-item">
                        <a href="#" class="nav-link" data-section="cash-flow" onclick="cambiarSeccion('cash-flow', event)">
                            <i class="nav-icon fas fa-water"></i>
@@ -256,7 +262,6 @@ console.log('✅ LoadingHelper listo');
                        Contabilidad
                    </div>
                    
-                   <!-- ✅ CORREGIDO: Agregado onclick a Estado de Resultados -->
                    <div class="nav-item">
                        <a href="#" class="nav-link" data-section="income-statement" onclick="cambiarSeccion('income-statement', event)">
                            <i class="nav-icon fas fa-chart-pie"></i>
@@ -264,7 +269,6 @@ console.log('✅ LoadingHelper listo');
                        </a>
                    </div>
                    
-                   <!-- ✅ CORREGIDO: Agregado onclick a Balance General -->
                    <div class="nav-item">
                        <a href="#" class="nav-link" data-section="balance-sheet" onclick="cambiarSeccion('balance-sheet', event)">
                            <i class="nav-icon fas fa-balance-scale"></i>
@@ -272,7 +276,6 @@ console.log('✅ LoadingHelper listo');
                        </a>
                    </div>
                    
-                   <!-- ✅ CRÍTICO: Corregido Cuentas Bancarias -->
                    <div class="nav-item">
                        <a href="#" class="nav-link" data-section="cuentas-bancarias" onclick="cambiarSeccion('cuentas-bancarias', event)">
                            <i class="nav-icon fas fa-university"></i>
@@ -287,7 +290,6 @@ console.log('✅ LoadingHelper listo');
                        Operaciones
                    </div>
                    
-                   <!-- ✅ CORREGIDO: Agregado onclick a Inventario -->
                    <div class="nav-item">
                        <a href="#" class="nav-link" data-section="inventory" onclick="cambiarSeccion('inventory', event)">
                            <i class="nav-icon fas fa-boxes"></i>
@@ -295,7 +297,6 @@ console.log('✅ LoadingHelper listo');
                        </a>
                    </div>
                    
-                   <!-- ✅ CORREGIDO: Agregado onclick a Ventas -->
                    <div class="nav-item">
                        <a href="#" class="nav-link" data-section="sales" onclick="cambiarSeccion('sales', event)">
                            <i class="nav-icon fas fa-shopping-cart"></i>
@@ -305,6 +306,7 @@ console.log('✅ LoadingHelper listo');
                </div>
            </div>
        </nav>
+
        <main class="main-content">
            
            <header class="executive-header">
@@ -342,12 +344,15 @@ console.log('✅ LoadingHelper listo');
                </div>
            </header>
 
-              <!-- Contenedor dinámico para cargar vistas -->
+           <!-- Contenedor dinámico para cargar vistas -->
            <div id="contenedorVistas" class="contenedor-vistas"></div>
 
-     </main>  
+       </main>  
     </div>  
     
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SCRIPTS DE LA APLICACIÓN -->
+<!-- ═══════════════════════════════════════════════════════════ -->
 <script src="src/assets/js/compatibilidad-navegadores.js"></script>
 <script src="src/assets/js/config.js" defer></script>
 <script src="src/assets/js/paletas-automaticas.js" defer></script>    
@@ -362,7 +367,6 @@ console.log('✅ LoadingHelper listo');
 <script src="src/assets/js/gestor-empresas-emojis.js" defer></script>    
 <script src="src/assets/js/gestor-empresas-reportes.js" defer></script>
 <script src="src/assets/js/perfiles-industriales.js" defer></script>
-<script src="src/assets/js/sistema-niveles.js" defer></script> 
 <script src="src/assets/js/onboarding-inteligente.js" defer></script>
 <script src="src/assets/js/sugerencias-ia.js" defer></script>
 <script src="src/assets/js/dashboard-personalizable.js" defer></script>
@@ -378,8 +382,6 @@ console.log('✅ LoadingHelper listo');
 <script src="src/assets/js/asistente-ia-avanzado.js" defer></script>
 
 <script src="src/assets/js/principal.js" defer></script>
-<script src="src/assets/js/navegacion.js" defer></script>
-<script src="src/assets/js/cargador-vistas.js" defer></script>
 <script src="src/assets/js/gestor-empresas-admin-new.js"></script>
 
 </body>
