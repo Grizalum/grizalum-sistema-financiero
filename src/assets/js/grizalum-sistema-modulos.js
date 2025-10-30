@@ -1,7 +1,14 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * GRIZALUM - SISTEMA DE MÓDULOS UNIFICADO v2.0
- * Gestiona el ciclo de vida de todos los módulos de la aplicación
+ * GRIZALUM - SISTEMA DE MÓDULOS v2.1 (FIX NAVEGACIÓN)
+ * Arregla el problema de los 3 botones principales
+ * ═══════════════════════════════════════════════════════════════════
+ * 
+ * PROBLEMA SOLUCIONADO:
+ * - Los módulos ya no se destruyen al cambiar de vista
+ * - Se mantiene el estado entre navegaciones
+ * - Los 3 botones funcionan correctamente desde el inicio
+ * 
  * ═══════════════════════════════════════════════════════════════════
  */
 
@@ -11,7 +18,7 @@ class SistemaModulos {
         this.moduloActual = null;
         this.inicializado = false;
         
-        console.log('🎯 Sistema de Módulos inicializado');
+        console.log('🎯 Sistema de Módulos v2.1 inicializado');
     }
 
     /**
@@ -19,17 +26,15 @@ class SistemaModulos {
      */
     registrar(config) {
         const {
-            id,                  // 'flujo-caja', 'estado-resultados', etc
-            nombre,              // Nombre legible
-            ruta,                // Ruta del HTML
-            nivel,               // Nivel mínimo requerido
-            dependencias = [],   // Scripts que necesita
-            
-            // Callbacks del ciclo de vida
-            onCargar,           // Se ejecuta AL CARGAR el módulo
-            onMostrar,          // Se ejecuta AL MOSTRAR (puede ser múltiples veces)
-            onOcultar,          // Se ejecuta AL OCULTAR
-            onDestruir          // Se ejecuta AL DESTRUIR/CAMBIAR de módulo
+            id,
+            nombre,
+            ruta,
+            nivel,
+            dependencias = [],
+            onCargar,
+            onMostrar,
+            onOcultar,
+            onDestruir
         } = config;
 
         this.modulos.set(id, {
@@ -51,7 +56,7 @@ class SistemaModulos {
     }
 
     /**
-     * Cargar y mostrar un módulo
+     * Activar módulo (MEJORADO - NO destruye)
      */
     async activar(moduloId) {
         console.log(`\n🔄 Activando módulo: ${moduloId}`);
@@ -65,7 +70,7 @@ class SistemaModulos {
 
         try {
             // ═══════════════════════════════════════════════════════
-            // PASO 1: Verificar nivel de acceso
+            // PASO 1: Verificar nivel (solo si existe sistema de niveles)
             // ═══════════════════════════════════════════════════════
             if (!this._verificarAcceso(modulo)) {
                 this._mostrarBloqueado(modulo);
@@ -73,10 +78,20 @@ class SistemaModulos {
             }
 
             // ═══════════════════════════════════════════════════════
-            // PASO 2: Destruir módulo actual si existe
+            // PASO 2: SOLO OCULTAR módulo actual (NO destruir)
             // ═══════════════════════════════════════════════════════
             if (this.moduloActual && this.moduloActual !== moduloId) {
-                await this._destruirModulo(this.moduloActual);
+                const moduloAnterior = this.modulos.get(this.moduloActual);
+                if (moduloAnterior && moduloAnterior.activo) {
+                    console.log(`   👁️‍🗨️ Ocultando: ${this.moduloActual}`);
+                    
+                    // Ejecutar callback onOcultar
+                    if (moduloAnterior.onOcultar) {
+                        await moduloAnterior.onOcultar();
+                    }
+                    
+                    moduloAnterior.activo = false;
+                }
             }
 
             // ═══════════════════════════════════════════════════════
@@ -84,6 +99,8 @@ class SistemaModulos {
             // ═══════════════════════════════════════════════════════
             if (!modulo.cargado) {
                 await this._cargarModulo(modulo);
+            } else {
+                console.log(`   ℹ️ Módulo ${moduloId} ya estaba cargado (reutilizando)`);
             }
 
             // ═══════════════════════════════════════════════════════
@@ -93,7 +110,7 @@ class SistemaModulos {
 
             this.moduloActual = moduloId;
             
-            console.log(`✅ Módulo ${moduloId} activado correctamente`);
+            console.log(`✅ Módulo ${moduloId} activado\n`);
             return true;
             
         } catch (error) {
@@ -103,26 +120,49 @@ class SistemaModulos {
     }
 
     /**
-     * Verificar si el usuario tiene acceso al módulo
+     * Verificar acceso (compatible con sistema de niveles)
      */
     _verificarAcceso(modulo) {
-        if (!window.grizalumNiveles) {
+        // Si no requiere nivel, siempre disponible
+        if (!modulo.nivel || modulo.nivel === 0) {
+            return true;
+        }
+
+        // Si no hay sistema de niveles, permitir acceso
+        if (!window.grizalumNiveles && !window.sistemaNiveles) {
             console.warn('⚠️ Sistema de niveles no disponible, permitiendo acceso');
             return true;
         }
 
+        const sistemaNiveles = window.grizalumNiveles || window.sistemaNiveles;
+
+        // Obtener empresa actual
         const empresaActual = window.gestorEmpresas?.estado?.empresaActual;
+        
         if (!empresaActual) {
+            // Si no hay empresa, verificar si estamos en modo dev
+            if (sistemaNiveles.modoDev) {
+                console.log(`   🔧 Modo dev: Acceso permitido sin empresa`);
+                return true;
+            }
+            
             console.warn('⚠️ No hay empresa seleccionada');
             return false;
         }
 
-        const nivelEmpresa = window.grizalumNiveles.obtenerNivelEmpresa(empresaActual);
-        const scoreEmpresa = nivelEmpresa?.score || 0;
+        // Obtener nivel de la empresa
+        const nivelEmpresa = sistemaNiveles.obtenerNivelEmpresa(empresaActual);
+        
+        if (!nivelEmpresa) {
+            console.warn('⚠️ No se pudo determinar nivel de empresa');
+            return true; // Permitir por defecto
+        }
 
-        // Si el módulo requiere nivel, verificar
-        if (modulo.nivel && scoreEmpresa < modulo.nivel) {
-            console.warn(`🔒 Módulo ${modulo.id} bloqueado. Requiere nivel ${modulo.nivel}, tienes ${scoreEmpresa}`);
+        const scoreEmpresa = nivelEmpresa.score || nivelEmpresa.nivel?.scoreMin || 0;
+
+        // Verificar si tiene el nivel requerido
+        if (scoreEmpresa < modulo.nivel) {
+            console.warn(`🔒 Módulo ${modulo.id} bloqueado. Requiere ${modulo.nivel}, tienes ${scoreEmpresa}`);
             return false;
         }
 
@@ -130,13 +170,11 @@ class SistemaModulos {
     }
 
     /**
-     * Mostrar pantalla de módulo bloqueado
+     * Mostrar módulo bloqueado
      */
     _mostrarBloqueado(modulo) {
         const contenedor = document.getElementById('contenedorVistas');
         if (!contenedor) return;
-
-        const nivelRequerido = this._obtenerNombreNivel(modulo.nivel);
 
         contenedor.innerHTML = `
             <div style="
@@ -178,54 +216,26 @@ class SistemaModulos {
                     line-height: 1.6;
                     margin-bottom: 25px;
                 ">
-                    Este módulo requiere <strong>Nivel ${nivelRequerido}</strong>.<br>
-                    Continúa usando GRIZALUM y la IA te notificará cuando estés listo para desbloquearlo.
+                    Este módulo requiere un nivel superior.<br>
+                    Continúa usando GRIZALUM para desbloquearlo.
                 </p>
-                
-                <div style="
-                    background: var(--color-card-bg);
-                    padding: 20px 30px;
-                    border-radius: 12px;
-                    border-left: 4px solid var(--color-accent);
-                    max-width: 500px;
-                    text-align: left;
-                ">
-                    <p style="
-                        font-size: 14px;
-                        color: var(--color-text-secondary);
-                        margin: 0 0 10px 0;
-                    ">
-                        <i class="fas fa-lightbulb" style="color: var(--color-accent); margin-right: 8px;"></i>
-                        <strong>¿Cómo desbloquear?</strong>
-                    </p>
-                    <ul style="
-                        font-size: 14px;
-                        color: var(--color-text-secondary);
-                        margin: 0;
-                        padding-left: 20px;
-                    ">
-                        <li>Usa más funciones de GRIZALUM</li>
-                        <li>Registra más transacciones</li>
-                        <li>Completa tareas sugeridas por la IA</li>
-                    </ul>
-                </div>
             </div>
         `;
     }
 
     /**
-     * Cargar un módulo (HTML + CSS + JS + Dependencias)
+     * Cargar módulo
      */
     async _cargarModulo(modulo) {
         console.log(`   📦 Cargando módulo: ${modulo.id}`);
         
         try {
-            // 1. Cargar dependencias
+            // Cargar dependencias
             for (const dep of modulo.dependencias) {
                 await this._cargarDependencia(dep);
             }
 
-            // 2. Ejecutar callback onCargar si existe
+            // Ejecutar callback onCargar
             if (modulo.onCargar) {
                 console.log(`   🎯 Ejecutando onCargar de ${modulo.id}`);
                 await modulo.onCargar();
@@ -241,7 +251,7 @@ class SistemaModulos {
     }
 
     /**
-     * Mostrar un módulo ya cargado
+     * Mostrar módulo
      */
     async _mostrarModulo(modulo) {
         console.log(`   👁️ Mostrando módulo: ${modulo.id}`);
@@ -254,7 +264,7 @@ class SistemaModulos {
 
             modulo.activo = true;
             
-            // Disparar evento global
+            // Disparar evento
             window.dispatchEvent(new CustomEvent('grizalumModuloMostrado', {
                 detail: { moduloId: modulo.id }
             }));
@@ -266,41 +276,7 @@ class SistemaModulos {
     }
 
     /**
-     * Destruir módulo actual
-     */
-    async _destruirModulo(moduloId) {
-        const modulo = this.modulos.get(moduloId);
-        if (!modulo || !modulo.activo) return;
-
-        console.log(`   🗑️ Destruyendo módulo: ${moduloId}`);
-
-        try {
-            // Ejecutar callback onOcultar
-            if (modulo.onOcultar) {
-                await modulo.onOcultar();
-            }
-
-            // Ejecutar callback onDestruir
-            if (modulo.onDestruir) {
-                await modulo.onDestruir();
-            }
-
-            modulo.activo = false;
-
-            // Limpiar instancia si existe
-            if (modulo.instancia) {
-                modulo.instancia = null;
-            }
-
-            console.log(`   ✅ Módulo ${moduloId} destruido`);
-            
-        } catch (error) {
-            console.error(`   ❌ Error destruyendo módulo:`, error);
-        }
-    }
-
-    /**
-     * Cargar una dependencia (script externo)
+     * Cargar dependencia
      */
     async _cargarDependencia(url) {
         return new Promise((resolve, reject) => {
@@ -330,16 +306,6 @@ class SistemaModulos {
     }
 
     /**
-     * Obtener nombre legible del nivel
-     */
-    _obtenerNombreNivel(score) {
-        if (score <= 25) return 'INDIVIDUAL';
-        if (score <= 50) return 'PROFESIONAL';
-        if (score <= 75) return 'EMPRESARIAL';
-        return 'CORPORATIVO';
-    }
-
-    /**
      * Recargar módulo actual
      */
     async recargar() {
@@ -350,7 +316,6 @@ class SistemaModulos {
 
         console.log(`🔄 Recargando módulo: ${this.moduloActual}`);
         
-        // Ejecutar onMostrar de nuevo (simula recarga)
         if (modulo.onMostrar) {
             await modulo.onMostrar();
         }
@@ -364,7 +329,7 @@ class SistemaModulos {
     }
 
     /**
-     * Verificar si un módulo está cargado
+     * Verificar si módulo está cargado
      */
     estaCargado(moduloId) {
         const modulo = this.modulos.get(moduloId);
@@ -372,23 +337,50 @@ class SistemaModulos {
     }
 
     /**
-     * Verificar si un módulo está activo
+     * Verificar si módulo está activo
      */
     estaActivo(moduloId) {
         const modulo = this.modulos.get(moduloId);
         return modulo ? modulo.activo : false;
     }
+
+    /**
+     * Listar módulos (útil para debug)
+     */
+    listarModulos() {
+        const lista = [];
+        this.modulos.forEach((modulo, id) => {
+            lista.push({
+                id: id,
+                nombre: modulo.nombre,
+                nivel: modulo.nivel || 0,
+                cargado: modulo.cargado,
+                activo: modulo.activo
+            });
+        });
+        return lista;
+    }
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// INSTANCIA GLOBAL (nombre único para evitar conflictos)
+// INSTANCIA GLOBAL
 // ═══════════════════════════════════════════════════════════════════
 
 window.grizalumModulos = new SistemaModulos();
 
+// Debug helpers
+window.debugModulos = {
+    listar: () => console.table(window.grizalumModulos.listarModulos()),
+    recargar: () => window.grizalumModulos.recargar(),
+    moduloActual: () => window.grizalumModulos.obtenerModuloActual()
+};
+
 console.log(`
 ╔═══════════════════════════════════════════════════════════════╗
-║  🎯 SISTEMA DE MÓDULOS v2.0                                   ║
-║  Gestión unificada del ciclo de vida                          ║
+║  🎯 SISTEMA DE MÓDULOS v2.1 (FIX NAVEGACIÓN)                  ║
+║  ✅ No destruye módulos al cambiar                            ║
+║  ✅ Mantiene estado entre vistas                              ║
+║  ✅ Los 3 botones funcionan correctamente                     ║
+║  💡 Debug: window.debugModulos.listar()                       ║
 ╚═══════════════════════════════════════════════════════════════╝
 `);
