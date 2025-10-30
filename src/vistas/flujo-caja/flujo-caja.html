@@ -510,17 +510,17 @@
         window.cargarNivel = function() {
     try {
         const info = window.flujoCaja?.obtenerInfo();
-        const banner = document.getElementById('nivelBanner');
+        const nivelBanner = document.getElementById('nivelBanner');
         
         // Si no existe el banner o no hay info, salir
-        if (!banner) {
+        if (!nivelBanner) {
             console.warn('⚠️ Banner de nivel no encontrado');
             return;
         }
         
         // Si no hay info, ocultar el banner
         if (!info || !info.nivel) {
-            banner.style.display = 'none';
+            nivelBanner.style.display = 'none';
             return;
         }
 
