@@ -171,12 +171,12 @@ for (const scriptOriginal of scriptsArray) {
                 
             }, 300);
         
-            // ✅ FORZAR SCROLL AL INICIO
+            // ✅ SCROLL SUAVE AL INICIO
             setTimeout(() => {
                 const contenedor = document.getElementById('contenedorVistas');
                 if (contenedor) {
-                    contenedor.scrollTo({ top: 0, behavior: 'instant' });
-                    console.log('✅ Scroll reseteado');
+                    contenedor.scrollTo({ top: 0, behavior: 'smooth' });
+                    console.log('✅ Scroll al inicio');
                 }
             }, 400);
         },
