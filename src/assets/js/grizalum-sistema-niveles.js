@@ -363,7 +363,7 @@ class EvaluadorNiveles {
         }
 
         const score = empresa.score || 0;
-        const nivelActual = window.sistemaNiveles.obtenerNivelPorScore(score);
+        const nivelActual = window.grizalumNiveles.obtenerNivelPorScore(score);
         
         // Determinar siguiente nivel
         const nivelSiguiente = this._obtenerSiguienteNivel(nivelActual.id);
@@ -529,7 +529,7 @@ class EvaluadorNiveles {
      * Obtener siguiente nivel
      */
     _obtenerSiguienteNivel(nivelActualId) {
-        const niveles = window.sistemaNiveles.niveles;
+        const niveles = window.grizalumNiveles.niveles;
         const orden = ['INDIVIDUAL', 'PROFESIONAL', 'EMPRESARIAL', 'CORPORATIVO'];
         const index = orden.indexOf(nivelActualId);
         
@@ -542,10 +542,10 @@ class EvaluadorNiveles {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// INSTANCIA GLOBAL
+// INSTANCIA GLOBAL (nombre único para evitar conflictos)
 // ═══════════════════════════════════════════════════════════════════
 
-window.sistemaNiveles = new SistemaNivelesProfesional();
+window.grizalumNiveles = new SistemaNivelesProfesional();
 
 console.log(`
 ╔═══════════════════════════════════════════════════════════════╗
