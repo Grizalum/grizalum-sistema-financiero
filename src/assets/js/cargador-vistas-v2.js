@@ -1,7 +1,13 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * GRIZALUM - CARGADOR DE VISTAS v2.0 (MEJORADO)
+ * GRIZALUM - CARGADOR DE VISTAS v2.1 (PROFESIONAL - SIN BUGS)
  * Usa el Sistema de Módulos para gestionar el ciclo de vida
+ * ═══════════════════════════════════════════════════════════════════
+ * 
+ * ✅ CORREGIDO: Contenedor siempre visible
+ * ✅ OPTIMIZADO: Sin manipulaciones innecesarias de opacidad
+ * ✅ PROFESIONAL: Código limpio y mantenible
+ * 
  * ═══════════════════════════════════════════════════════════════════
  */
 
@@ -19,40 +25,32 @@ function registrarModulos() {
         id: 'dashboard',
         nombre: 'Panel de Control',
         ruta: 'src/vistas/panel-control/panel-control.html',
-        nivel: 0, // Siempre disponible
+        nivel: 0,
 
         onCargar: async function() {
-            // Cargar CSS
             await cargarEstilos('src/vistas/panel-control/panel-control.css');
-            
-            // Cargar dependencias
             await cargarScript('src/vistas/panel-control/panel-control.js');
         },
 
         onMostrar: async function() {
-            // Cargar HTML
             const html = await fetch('src/vistas/panel-control/panel-control.html').then(r => r.text());
-            document.getElementById('contenedorVistas').innerHTML = html;
+            const contenedor = document.getElementById('contenedorVistas');
+            contenedor.innerHTML = html;
             
-            // Inicializar módulo
             if (window.inicializarPanelControl) {
                 window.inicializarPanelControl();
             }
-        },
-
-        onOcultar: function() {
-            // Limpiar si es necesario
         }
     });
 
     // ───────────────────────────────────────────────────────────────
-    // FLUJO DE CAJA
+    // FLUJO DE CAJA (CORREGIDO - SIN BUG DE OPACIDAD)
     // ───────────────────────────────────────────────────────────────
     window.grizalumModulos.registrar({
         id: 'cash-flow',
         nombre: 'Flujo de Caja',
         ruta: 'src/vistas/flujo-caja/flujo-caja.html',
-        nivel: 0, // Disponible desde INDIVIDUAL
+        nivel: 0,
 
         dependencias: [
             'src/vistas/flujo-caja/flujo-caja-categorias.js',
@@ -61,25 +59,20 @@ function registrarModulos() {
 
         onCargar: async function() {
             console.log('   💰 Cargando Flujo de Caja...');
-            
-            // Cargar CSS
             await cargarEstilos('src/vistas/flujo-caja/flujo-caja.css');
-            
-            // ⚠️ IMPORTANTE: NO cargar flujo-caja.js aquí
-            // porque ya está en el HTML como script inline
         },
 
-onMostrar: async function() {
+        onMostrar: async function() {
             console.log('   👁️ Mostrando Flujo de Caja...');
             
             const contenedor = document.getElementById('contenedorVistas');
             
-            contenedor.style.opacity = '1';
+            // Loading inicial
             contenedor.innerHTML = `
                 <div style="display: flex; align-items: center; justify-content: center; 
                             min-height: 400px;">
                     <div style="text-align: center;">
-                        <div style="font-size: 3rem; animation: spin 1s linear infinite;">⚙️</div>
+                        <div style="font-size: 3rem; animation: spin 1s linear infinite;">💰</div>
                         <p style="color: var(--texto-terciario); margin-top: 1rem;">
                             Cargando Flujo de Caja...
                         </p>
@@ -92,14 +85,17 @@ onMostrar: async function() {
             
             await new Promise(resolve => setTimeout(resolve, 100));
             
+            // Cargar HTML
             const html = await fetch('src/vistas/flujo-caja/flujo-caja.html').then(r => r.text());
             
+            // Separar scripts del HTML
             const temp = document.createElement('div');
             temp.innerHTML = html;
             const scripts = temp.querySelectorAll('script');
             const scriptsArray = Array.from(scripts);
             scriptsArray.forEach(s => s.remove());
             
+            // Insertar HTML
             contenedor.innerHTML = temp.innerHTML;
             
             await new Promise(resolve => {
@@ -110,44 +106,41 @@ onMostrar: async function() {
                 });
             });
             
-            // Ejecutar scripts
-for (const scriptOriginal of scriptsArray) {
-    // Si es un script externo, verificar si ya existe
-    if (scriptOriginal.src) {
-        const srcSinQuery = scriptOriginal.src.split('?')[0];
-        const yaExiste = Array.from(document.querySelectorAll('script[src]')).some(s => 
-            s.src.split('?')[0] === srcSinQuery
-        );
-        
-        if (yaExiste) {
-            console.log(`⏭️ Script ya cargado: ${scriptOriginal.src}`);
-            continue; // Saltar este script
-        }
-        
-        const script = document.createElement('script');
-        script.src = scriptOriginal.src;
-        script.async = false;
-        document.body.appendChild(script);
-        
-        await new Promise((resolve, reject) => {
-            script.onload = resolve;
-            script.onerror = reject;
-        });
-    } else {
-        // Scripts inline siempre se ejecutan
-        const script = document.createElement('script');
-        script.textContent = scriptOriginal.textContent;
-        document.body.appendChild(script);
-    }
-}
+            // Ejecutar scripts (evitar duplicados)
+            for (const scriptOriginal of scriptsArray) {
+                if (scriptOriginal.src) {
+                    const srcSinQuery = scriptOriginal.src.split('?')[0];
+                    const yaExiste = Array.from(document.querySelectorAll('script[src]')).some(s => 
+                        s.src.split('?')[0] === srcSinQuery
+                    );
+                    
+                    if (yaExiste) {
+                        console.log(`⏭️ Script ya cargado: ${scriptOriginal.src}`);
+                        continue;
+                    }
+                    
+                    const script = document.createElement('script');
+                    script.src = scriptOriginal.src;
+                    script.async = false;
+                    document.body.appendChild(script);
+                    
+                    await new Promise((resolve, reject) => {
+                        script.onload = resolve;
+                        script.onerror = reject;
+                    });
+                } else {
+                    const script = document.createElement('script');
+                    script.textContent = scriptOriginal.textContent;
+                    document.body.appendChild(script);
+                }
+            }
             
-            contenedor.style.opacity = '1';
-            contenedor.style.display = 'block';
-            
+            // Esperar inicialización
             if (window.flujoCaja) {
                 await window.flujoCaja.esperarInicializacion();
             }
             
+            // Recargar datos
             setTimeout(() => {
                 window.dispatchEvent(new Event('flujoCajaVisible'));
                 
@@ -171,26 +164,15 @@ for (const scriptOriginal of scriptsArray) {
                 
             }, 300);
         
-            // ✅ SCROLL SUAVE AL INICIO
+            // Scroll al inicio
             setTimeout(() => {
-                const contenedor = document.getElementById('contenedorVistas');
-                if (contenedor) {
-                    contenedor.scrollTo({ top: 0, behavior: 'smooth' });
-                    console.log('✅ Scroll al inicio');
-                }
+                contenedor.scrollTo({ top: 0, behavior: 'smooth' });
+                console.log('✅ Flujo de Caja cargado');
             }, 400);
         },
+        
         onOcultar: function() {
             console.log('   👁️‍🗨️ Ocultando Flujo de Caja');
-            
-            // Limpiar listeners si es necesario
-        },
-
-        onDestruir: function() {
-            console.log('   🗑️ Destruyendo Flujo de Caja');
-            
-            // Limpiar instancias si es necesario
-            // (pero NO destruir window.flujoCaja, solo limpiarlo)
         }
     });
 
@@ -201,7 +183,7 @@ for (const scriptOriginal of scriptsArray) {
         id: 'income-statement',
         nombre: 'Estado de Resultados',
         ruta: 'src/vistas/estado-resultados/estado-resultados.html',
-        nivel: 25, // Requiere PROFESIONAL
+        nivel: 25,
 
         dependencias: [
             'src/vistas/estado-resultados/estado-resultados-config.js',
@@ -220,7 +202,6 @@ for (const scriptOriginal of scriptsArray) {
             const contenedor = document.getElementById('contenedorVistas');
             
             // Loading inicial
-            contenedor.style.opacity = '1';
             contenedor.innerHTML = `
                 <div style="display: flex; align-items: center; justify-content: center; 
                             min-height: 400px;">
@@ -286,24 +267,14 @@ for (const scriptOriginal of scriptsArray) {
                 }
             }
             
-            contenedor.style.opacity = '1';
-            contenedor.style.display = 'block';
-            
             // Disparar evento y scroll
             setTimeout(() => {
                 window.dispatchEvent(new Event('vistaEstadoResultadosCargada'));
-                
-                // Scroll al inicio
-                setTimeout(() => {
-                    const contenedor = document.getElementById('contenedorVistas');
-                    if (contenedor) {
-                        contenedor.scrollTo({ top: 0, behavior: 'instant' });
-                        console.log('✅ Estado de Resultados: Scroll al inicio');
-                    }
-                }, 100);
+                contenedor.scrollTo({ top: 0, behavior: 'instant' });
+                console.log('✅ Estado de Resultados cargado');
             }, 350);
-          } 
-        });
+        }
+    });
 
     // ───────────────────────────────────────────────────────────────
     // BALANCE GENERAL
@@ -312,7 +283,7 @@ for (const scriptOriginal of scriptsArray) {
         id: 'balance-sheet',
         nombre: 'Balance General',    
         ruta: 'src/vistas/balance-general/balance-general.html',
-        nivel: 25, // Requiere PROFESIONAL
+        nivel: 25,
 
         onCargar: async function() {
             await cargarEstilos('src/vistas/balance-general/balance-general.css');
@@ -336,7 +307,7 @@ for (const scriptOriginal of scriptsArray) {
         id: 'cuentas-bancarias',
         nombre: 'Cuentas Bancarias',
         ruta: 'src/vistas/cuentas-bancarias/cuentas-bancarias.html',
-        nivel: 0, // Disponible desde INDIVIDUAL
+        nivel: 0,
 
         dependencias: [
             'src/assets/js/gestor-cuentas-bancarias.js',
@@ -366,7 +337,7 @@ for (const scriptOriginal of scriptsArray) {
         id: 'inventory',
         nombre: 'Inventario',
         ruta: 'src/vistas/inventario/inventario.html',
-        nivel: 50, // Requiere EMPRESARIAL
+        nivel: 50,
 
         onCargar: async function() {
             await cargarEstilos('src/vistas/inventario/inventario.css');
@@ -390,7 +361,7 @@ for (const scriptOriginal of scriptsArray) {
         id: 'sales',
         nombre: 'Ventas',
         ruta: 'src/vistas/ventas/ventas.html',
-        nivel: 50, // Requiere EMPRESARIAL
+        nivel: 50,
 
         onCargar: async function() {
             await cargarEstilos('src/vistas/ventas/ventas.css');
@@ -433,7 +404,6 @@ async function cargarEstilos(url) {
             
             console.log(`   ✅ CSS cargado: ${url.split('/').pop()}`);
             
-            // Esperar a que se aplique
             await new Promise(resolve => setTimeout(resolve, 50));
         } else {
             console.warn(`   ⚠️ CSS no encontrado: ${url}`);
@@ -445,7 +415,6 @@ async function cargarEstilos(url) {
 
 async function cargarScript(url) {
     return new Promise((resolve, reject) => {
-        // Verificar si ya existe
         const existente = document.querySelector(`script[src="${url}"]`);
         if (existente) {
             console.log(`   ℹ️ Script ya cargado: ${url.split('/').pop()}`);
@@ -494,7 +463,6 @@ async function cambiarSeccion(seccionId, event) {
         linkActual.classList.add('active');
     }
     
-    // Si event.currentTarget existe, también activarlo
     if (event && event.currentTarget) {
         event.currentTarget.classList.add('active');
     }
@@ -503,7 +471,6 @@ async function cambiarSeccion(seccionId, event) {
     await window.grizalumModulos.activar(seccionId);
 }
 
-// Hacer global
 window.cambiarSeccion = cambiarSeccion;
 
 // ═══════════════════════════════════════════════════════════════════
@@ -543,12 +510,10 @@ window.recargarFlujoCaja = function() {
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 Inicializando sistema de navegación...');
     
-    // Esperar a que Sistema de Módulos esté listo
     const verificar = () => {
         if (window.grizalumModulos) {
             registrarModulos();
             
-            // Cargar vista inicial después de un delay
             setTimeout(() => {
                 cambiarSeccion('dashboard');
             }, 500);
@@ -560,7 +525,7 @@ document.addEventListener('DOMContentLoaded', () => {
     verificar();
 });
 
-console.log('✅ Cargador de vistas v2.0 inicializado');
+console.log('✅ Cargador de vistas v2.1 (PROFESIONAL) inicializado');
 
 // ═══════════════════════════════════════════════════════════════════
 // MODO DESARROLLO: Forzar recarga sin caché
