@@ -902,15 +902,15 @@
 
         cargarDatosIniciales();
         
-     // ✅ NUEVO: Escuchar cuando FlujoCaja esté completamente listo
-       document.addEventListener('grizalumFlujoCajaInicializado', () => {
-           console.log('🎯 FlujoCaja inicializado desde evento, recargando nivel...');
-              setTimeout(() => {
-                  cargarNivel();
-             }, 100);
-         });
+    // ✅ Escuchar evento de inicialización completa
+        document.addEventListener('grizalumFlujoCajaInicializado', () => {
+            console.log('🎯 FlujoCaja inicializado desde evento, recargando nivel...');
+            setTimeout(() => {
+                cargarNivel();
+            }, 100);
+        });
     }
-
+    
     function cargarDatosIniciales() {
         console.log('📊 Cargando datos iniciales...');
         
