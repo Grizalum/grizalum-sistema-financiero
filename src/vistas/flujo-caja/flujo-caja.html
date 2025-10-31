@@ -902,14 +902,23 @@
 
         cargarDatosIniciales();
         
-    // ✅ Escuchar evento de inicialización completa
-        document.addEventListener('grizalumFlujoCajaInicializado', () => {
-            console.log('🎯 FlujoCaja inicializado desde evento, recargando nivel...');
-            setTimeout(() => {
-                cargarNivel();
-            }, 100);
-        });
+    
+    // ✅ Si FlujoCaja ya está listo, cargar nivel AHORA
+    if (window.flujoCaja && window.flujoCaja.inicializado) {
+        console.log('🎯 FlujoCaja ya inicializado, cargando nivel...');
+        setTimeout(() => {
+            cargarNivel();
+        }, 200);
     }
+    
+    // ✅ También escuchar evento para futuras veces
+    document.addEventListener('grizalumFlujoCajaInicializado', () => {
+        console.log('🎯 FlujoCaja inicializado desde evento, recargando nivel...');
+        setTimeout(() => {
+            cargarNivel();
+        }, 100);
+    });
+}
     
     function cargarDatosIniciales() {
         console.log('📊 Cargando datos iniciales...');
