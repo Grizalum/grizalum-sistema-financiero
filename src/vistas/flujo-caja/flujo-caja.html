@@ -494,54 +494,62 @@
     // ═══════════════════════════════════════════════════════════════
     // FUNCIONES DE CARGA DE DATOS
     // ═══════════════════════════════════════════════════════════════
-    window.cargarNivel = function() {
-        try {
-            const info = window.flujoCaja?.obtenerInfo();
-            const nivelBanner = document.getElementById('nivelBanner');
-            
-            // Si no existe el banner o no hay info, salir
-            if (!nivelBanner) {
-                console.warn('⚠️ Banner de nivel no encontrado');
-                return;
-            }
-            
-            // Si no hay info, ocultar el banner
-            if (!info || !info.nivel) {
-                nivelBanner.style.display = 'none';
-                return;
-            }
+   window.cargarNivel = function() {
+    try {
+        const info = window.flujoCaja?.obtenerInfo();
+        const nivelBanner = document.getElementById('nivelBanner');
+        
+        console.log('🎯 [cargarNivel] Ejecutando...', {
+            tieneInfo: !!info,
+            tieneNivel: !!info?.nivel,
+            info: info
+        });
+        
+        // Si no existe el banner, salir
+        if (!nivelBanner) {
+            console.warn('⚠️ Banner de nivel no encontrado');
+            return;
+        }
+        
+        // Si no hay info O no hay nivel, ocultar el banner
+        if (!info || !info.nivel) {
+            console.warn('⚠️ No hay info de nivel, ocultando banner');
+            nivelBanner.style.display = 'none';
+            return;
+        }
 
-            // Mostrar banner si hay datos
-            nivelBanner.style.display = 'flex';
+        // ✅ MOSTRAR banner si hay datos
+        console.log('✅ [cargarNivel] Mostrando nivel:', info.nivel.nivel.nombre);
+        nivelBanner.style.display = 'flex';
 
-            nivelBanner.innerHTML = `
-                <div class="nivel-info">
-                    <span class="nivel-icono" style="font-size: 2.5rem;">${info.nivel.nivel.icono}</span>
-                    <div class="nivel-textos">
-                        <div class="nivel-nombre" style="font-size: 1.25rem; font-weight: 700; color: var(--texto-principal);">
-                            Nivel ${info.nivel.nivel.nombre}
-                        </div>
-                        <div class="nivel-score" style="font-size: 0.875rem; color: var(--texto-terciario);">
-                            Score: ${info.nivel.score}/100
-                        </div>
+        nivelBanner.innerHTML = `
+            <div class="nivel-info">
+                <span class="nivel-icono" style="font-size: 2.5rem;">${info.nivel.nivel.icono}</span>
+                <div class="nivel-textos">
+                    <div class="nivel-nombre" style="font-size: 1.25rem; font-weight: 700; color: var(--texto-principal);">
+                        Nivel ${info.nivel.nivel.nombre}
+                    </div>
+                    <div class="nivel-score" style="font-size: 0.875rem; color: var(--texto-terciario);">
+                        Score: ${info.nivel.score}/100
                     </div>
                 </div>
-                <div class="nivel-progreso">
-                    <div class="progreso-bar">
-                        <div class="progreso-fill" style="width: ${info.nivel.score}%"></div>
-                    </div>
+            </div>
+            <div class="nivel-progreso">
+                <div class="progreso-bar">
+                    <div class="progreso-fill" style="width: ${info.nivel.score}%"></div>
                 </div>
-            `;
-            
-            mostrarComponentesSegunNivel(info.componentesActivos);
-        } catch (error) {
-            console.warn('No se pudo cargar nivel:', error);
-            const nivelBanner = document.getElementById('nivelBanner');
-            if (nivelBanner) {
-                nivelBanner.style.display = 'none';
-            }
+            </div>
+        `;
+        
+        mostrarComponentesSegunNivel(info.componentesActivos);
+    } catch (error) {
+        console.error('❌ Error cargando nivel:', error);
+        const nivelBanner = document.getElementById('nivelBanner');
+        if (nivelBanner) {
+            nivelBanner.style.display = 'none';
         }
     }
+}
     function mostrarComponentesSegunNivel(componentes) {
         try {
             // Filtros
