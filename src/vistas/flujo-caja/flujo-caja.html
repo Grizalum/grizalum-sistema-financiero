@@ -419,7 +419,7 @@
                 
                 console.log('✅ Modal de edición cargado con ID:', window.transaccionEditando);
                 
-            }, 200); // Aumentado de 100ms a 200ms
+            }, 200);
             
         } catch (error) {
             console.error('❌ Error editando transacción:', error);
@@ -494,80 +494,74 @@
     // ═══════════════════════════════════════════════════════════════
     // FUNCIONES DE CARGA DE DATOS
     // ═══════════════════════════════════════════════════════════════
-   window.cargarNivel = function() {
-    try {
-        const info = window.flujoCaja?.obtenerInfo();
-        const nivelBanner = document.getElementById('nivelBanner');
-        
-        console.log('🎯 [cargarNivel] Ejecutando...', {
-            tieneInfo: !!info,
-            tieneNivel: !!info?.nivel,
-            info: info
-        });
-        
-        // Si no existe el banner, salir
-        if (!nivelBanner) {
-            console.warn('⚠️ Banner de nivel no encontrado');
-            return;
-        }
-        
-        // Si no hay info O no hay nivel, ocultar el banner
-        if (!info || !info.nivel) {
-            console.warn('⚠️ No hay info de nivel, ocultando banner');
-            nivelBanner.style.display = 'none';
-            return;
-        }
+    window.cargarNivel = function() {
+        try {
+            const info = window.flujoCaja?.obtenerInfo();
+            const nivelBanner = document.getElementById('nivelBanner');
+            
+            console.log('🎯 [cargarNivel] Ejecutando...', {
+                tieneInfo: !!info,
+                tieneNivel: !!info?.nivel,
+                nivel: info?.nivel?.nivel?.nombre
+            });
+            
+            if (!nivelBanner) {
+                console.warn('⚠️ Banner de nivel no encontrado');
+                return;
+            }
+            
+            if (!info || !info.nivel) {
+                console.warn('⚠️ No hay info de nivel, ocultando banner');
+                nivelBanner.style.display = 'none';
+                return;
+            }
 
-        // ✅ MOSTRAR banner si hay datos
-        console.log('✅ [cargarNivel] Mostrando nivel:', info.nivel.nivel.nombre);
-        nivelBanner.style.display = 'flex';
+            console.log('✅ [cargarNivel] Mostrando nivel:', info.nivel.nivel.nombre);
+            nivelBanner.style.display = 'flex';
 
-        nivelBanner.innerHTML = `
-            <div class="nivel-info">
-                <span class="nivel-icono" style="font-size: 2.5rem;">${info.nivel.nivel.icono}</span>
-                <div class="nivel-textos">
-                    <div class="nivel-nombre" style="font-size: 1.25rem; font-weight: 700; color: var(--texto-principal);">
-                        Nivel ${info.nivel.nivel.nombre}
-                    </div>
-                    <div class="nivel-score" style="font-size: 0.875rem; color: var(--texto-terciario);">
-                        Score: ${info.nivel.score}/100
+            nivelBanner.innerHTML = `
+                <div class="nivel-info">
+                    <span class="nivel-icono" style="font-size: 2.5rem;">${info.nivel.nivel.icono}</span>
+                    <div class="nivel-textos">
+                        <div class="nivel-nombre" style="font-size: 1.25rem; font-weight: 700; color: var(--texto-principal);">
+                            Nivel ${info.nivel.nivel.nombre}
+                        </div>
+                        <div class="nivel-score" style="font-size: 0.875rem; color: var(--texto-terciario);">
+                            Score: ${info.nivel.score}/100
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="nivel-progreso">
-                <div class="progreso-bar">
-                    <div class="progreso-fill" style="width: ${info.nivel.score}%"></div>
+                <div class="nivel-progreso">
+                    <div class="progreso-bar">
+                        <div class="progreso-fill" style="width: ${info.nivel.score}%"></div>
+                    </div>
                 </div>
-            </div>
-        `;
-        
-        mostrarComponentesSegunNivel(info.componentesActivos);
-    } catch (error) {
-        console.error('❌ Error cargando nivel:', error);
-        const nivelBanner = document.getElementById('nivelBanner');
-        if (nivelBanner) {
-            nivelBanner.style.display = 'none';
+            `;
+            
+            mostrarComponentesSegunNivel(info.componentesActivos);
+        } catch (error) {
+            console.error('❌ Error cargando nivel:', error);
+            const nivelBanner = document.getElementById('nivelBanner');
+            if (nivelBanner) {
+                nivelBanner.style.display = 'none';
+            }
         }
     }
-}
+
     function mostrarComponentesSegunNivel(componentes) {
         try {
-            // Filtros
             if (componentes.mejorasBasicas?.filtrosFecha?.activo) {
                 document.getElementById('seccionFiltros')?.classList.remove('oculto');
             }
 
-            // Buscador
             if (componentes.mejorasBasicas?.busqueda?.activo) {
                 document.getElementById('seccionBuscador')?.classList.remove('oculto');
             }
 
-            // Gráficos
             if (componentes.visualizacionAvanzada?.graficosBasicos?.activo) {
                 document.getElementById('seccionGraficos')?.classList.remove('oculto');
             }
 
-            // Exportar
             if (componentes.visualizacionAvanzada?.exportarExcel?.activo) {
                 document.getElementById('seccionExportar')?.classList.remove('oculto');
             }
@@ -624,7 +618,6 @@
             select.appendChild(option);
         });
 
-        // También actualizar filtro de categorías
         const filtroSelect = document.getElementById('filtroCategoria');
         if (filtroSelect && window.flujoCaja) {
             const valorActual = filtroSelect.value;
@@ -719,9 +712,6 @@
         `;
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // FUNCIONES DE FILTROS Y BÚSQUEDA
-    // ═══════════════════════════════════════════════════════════════
     function aplicarFiltros() {
         const filtros = {
             tipo: document.getElementById('filtroTipo').value,
@@ -752,30 +742,23 @@
         }).format(valor);    
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // CONFIGURACIÓN DE EVENTOS
-    // ═══════════════════════════════════════════════════════════════
     function configurarEventos() {
         console.log('⚙️ Configurando eventos...');
         
-        // Botón nueva transacción (header)
         const btnNueva = document.getElementById('btnNuevaTransaccion');
         if (btnNueva) {
             btnNueva.addEventListener('click', abrirModalTransaccion);
         }
         
-        // Botón primera transacción (estado vacío)
         const btnPrimera = document.getElementById('btnPrimeraTransaccion');
         if (btnPrimera) {
             btnPrimera.addEventListener('click', abrirModalTransaccion);
         }
 
-        // Cambio de tipo (ingreso/gasto)
         document.querySelectorAll('input[name="tipo"]').forEach(radio => {
             radio.addEventListener('change', actualizarCategoriasSegunTipo);
         });
 
-        // Filtros
         const btnAplicar = document.getElementById('btnAplicarFiltros');
         if (btnAplicar) {
             btnAplicar.addEventListener('click', aplicarFiltros);
@@ -786,7 +769,6 @@
             btnLimpiar.addEventListener('click', limpiarFiltros);
         }
 
-        // Buscador
         let timeoutBusqueda;
         const inputBusqueda = document.getElementById('inputBusqueda');
         if (inputBusqueda) {
@@ -796,7 +778,6 @@
             });
         }
 
-       // Exportar
         const btnExportar = document.getElementById('btnExportar');
         if (btnExportar) {
             btnExportar.addEventListener('click', () => {
@@ -815,7 +796,6 @@
             });
         }
 
-        // Escuchar eventos del módulo
         document.addEventListener('grizalumTransaccionAgregada', () => {
             cargarBalance();
             cargarTransacciones();
@@ -831,14 +811,12 @@
             cargarTransacciones();
         });
         
-        // Cerrar modal con ESC
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 cerrarModalTransaccion();
             }
         });
         
-        // Cerrar modal al hacer click fuera
         const modal = document.getElementById('modalTransaccion');
         if (modal) {
             modal.addEventListener('click', function(e) {
@@ -851,13 +829,9 @@
         console.log('✅ Eventos configurados');
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // INICIALIZACIÓN
-    // ═══════════════════════════════════════════════════════════════
     function inicializarFlujoCaja() {
         console.log('🚀 Inicializando Flujo de Caja...');
         
-        // Configurar fecha actual por defecto
         const fechaInput = document.getElementById('inputFecha');
         if (fechaInput) {
             const hoy = new Date().toISOString().split('T')[0];
@@ -865,33 +839,23 @@
             fechaInput.max = hoy;
         }
         
-        // ═══════════════════════════════════════════════════════════════
-        // CARGAR CATEGORÍAS DEL CONFIG
-        // ═══════════════════════════════════════════════════════════════
         console.log('📂 Cargando categorías del config...');
         
         if (window.FlujoCajaConfig) {
             const industriaActual = localStorage.getItem('grizalum_industria_actual') || 'default';
             const categoriasConfig = window.FlujoCajaConfig.obtenerCategorias(industriaActual);
-            
-            // Asignar al módulo
             window.flujoCaja.categorias = categoriasConfig;
-            
             console.log('✅ Categorías cargadas desde config:', categoriasConfig);
         } else {
-            console.warn('⚠️ FlujoCajaConfig no disponible, usando categorías por defecto');
-            
-            // Categorías por defecto
+            console.warn('⚠️ FlujoCajaConfig no disponible');
             window.flujoCaja.categorias = {
                 ingresos: ['Ventas', 'Servicios', 'Otros Ingresos'],
                 gastos: ['Compras', 'Operaciones', 'Personal', 'Servicios', 'Otros']
             };
         }
         
-        // Configurar eventos SIEMPRE
         configurarEventos();
         
-        // Esperar a que el módulo esté listo para cargar datos
         if (!window.flujoCaja) {
             console.warn('⚠️ Esperando módulo flujoCaja...');
             let intentos = 0;
@@ -902,7 +866,7 @@
                     cargarDatosIniciales();
                 } else if (intentos > 10) {
                     clearInterval(esperarModulo);
-                    console.error('❌ Módulo flujoCaja no disponible después de 5 segundos');
+                    console.error('❌ Módulo flujoCaja no disponible');
                 }
             }, 500);
             return;
@@ -910,23 +874,20 @@
 
         cargarDatosIniciales();
         
-    
-    // ✅ Si FlujoCaja ya está listo, cargar nivel AHORA
-    if (window.flujoCaja && window.flujoCaja.inicializado) {
-        console.log('🎯 FlujoCaja ya inicializado, cargando nivel...');
-        setTimeout(() => {
-            cargarNivel();
-        }, 200);
+        if (window.flujoCaja && window.flujoCaja.inicializado) {
+            console.log('🎯 FlujoCaja ya listo, cargando nivel inmediatamente...');
+            setTimeout(() => {
+                cargarNivel();
+            }, 200);
+        }
+        
+        document.addEventListener('grizalumFlujoCajaInicializado', () => {
+            console.log('🎯 Evento FlujoCaja inicializado, cargando nivel...');
+            setTimeout(() => {
+                cargarNivel();
+            }, 100);
+        });
     }
-    
-    // ✅ También escuchar evento para futuras veces
-    document.addEventListener('grizalumFlujoCajaInicializado', () => {
-        console.log('🎯 FlujoCaja inicializado desde evento, recargando nivel...');
-        setTimeout(() => {
-            cargarNivel();
-        }, 100);
-    });
-}
     
     function cargarDatosIniciales() {
         console.log('📊 Cargando datos iniciales...');
@@ -939,25 +900,20 @@
             
             console.log('✅ Flujo de Caja listo');
             
-            // Verificar que se cargaron las transacciones
             const transacciones = window.flujoCaja.obtenerTransacciones();
-            console.log(`📋 ${transacciones.length} transacciones cargadas desde localStorage`);
+            console.log(`📋 ${transacciones.length} transacciones cargadas`);
             
         } catch (error) {
             console.error('❌ Error cargando datos iniciales:', error);
         }
     }
 
-    // Iniciar cuando el DOM esté listo
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', inicializarFlujoCaja);
     } else {
         inicializarFlujoCaja();
     }
 
-   // ═══════════════════════════════════════════════════════════════
-    // FUNCIÓN GLOBAL DE RECARGA
-    // ═══════════════════════════════════════════════════════════════
     window.recargarFlujoCaja = function() {
         console.log('🔄 Recargando Flujo de Caja...');
         
@@ -967,7 +923,6 @@
         }
         
         try {
-            // Cargar transacciones
             const transacciones = window.flujoCaja.obtenerTransacciones();
             const lista = document.getElementById('listaTransacciones');
             const sinDatos = document.getElementById('sinTransacciones');
@@ -1019,7 +974,6 @@
                 `;
             }).join('');
             
-            // Cargar balance
             const balance = window.flujoCaja.calcularBalance();
             document.getElementById('balanceTotal').textContent = new Intl.NumberFormat('es-PE', {style: 'currency', currency: 'PEN'}).format(balance.balance);
             document.getElementById('totalIngresos').textContent = new Intl.NumberFormat('es-PE', {style: 'currency', currency: 'PEN'}).format(balance.ingresos);
@@ -1038,14 +992,11 @@
 
 </script>
 
-<!-- ═══════════════════════════════════════════════════════════════ -->
-<!-- SCRIPTS DEL MÓDULO FLUJO DE CAJA (Auto-contenido) -->
-<!-- ═══════════════════════════════════════════════════════════════ -->
-<script src="src/vistas/flujo-caja/flujo-caja-config.js?v=20251026h"></script>
-<script src="src/vistas/flujo-caja/historial-descripciones.js?v=20251026h"></script>
-<script src="src/vistas/flujo-caja/flujo-caja.js?v=20251030-1730587000"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-exportador-profesional.js?v=20251027"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-ui.js?v=20251026h"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-graficos.js?v=20251026h"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-categorias.js"></script>
-
+<!-- SCRIPTS DEL MÓDULO CON TIMESTAMP ÚNICO -->
+<script src="src/vistas/flujo-caja/flujo-caja-config.js?v=1761876700"></script>
+<script src="src/vistas/flujo-caja/historial-descripciones.js?v=1761876700"></script>
+<script src="src/vistas/flujo-caja/flujo-caja.js?v=1761876700"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-exportador-profesional.js?v=1761876700"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-ui.js?v=1761876700"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-graficos.js?v=1761876700"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-categorias.js?v=1761876700"></script>
