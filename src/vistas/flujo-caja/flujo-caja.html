@@ -856,45 +856,50 @@
         }, 100);
     }
     
-   function cargarDatosIniciales() {
-    console.log('📊 Cargando datos iniciales...');
-    
-    try {
-        cargarCategorias();
-        cargarBalance();
-        cargarTransacciones();
+    function cargarDatosIniciales() {
+        console.log('📊 Cargando datos iniciales...');
         
-        // ✅ INTENTAR CARGAR NIVEL CON RETRY
-        let intentosNivel = 0;
-        const cargarNivelConRetry = () => {
-            intentosNivel++;
-            console.log(`🎯 Intento ${intentosNivel} de cargar nivel...`);
+        try {
+            cargarCategorias();
+            cargarBalance();
+            cargarTransacciones();
             
-            const banner = document.getElementById('nivelBanner');
-            const info = window.flujoCaja?.obtenerInfo();
+            // ✅ CARGAR NIVEL CON RETRY AUTOMÁTICO
+            let intentosNivel = 0;
+            const maxIntentos = 10;
             
-            if (banner && info?.nivel) {
-                cargarNivel();
-                console.log('✅ Nivel cargado exitosamente');
-            } else if (intentosNivel < 5) {
-                console.warn(`⚠️ Banner o info no listos, reintentando en 200ms...`);
-                setTimeout(cargarNivelConRetry, 200);
-            } else {
-                console.error('❌ No se pudo cargar el nivel después de 5 intentos');
-            }
-        };
-        
-        setTimeout(cargarNivelConRetry, 100);
-        
-        console.log('✅ Flujo de Caja listo');
-        
-        const transacciones = window.flujoCaja.obtenerTransacciones();
-        console.log(`📋 ${transacciones.length} transacciones cargadas`);
-        
-    } catch (error) {
-        console.error('❌ Error cargando datos iniciales:', error);
+            const cargarNivelConRetry = () => {
+                intentosNivel++;
+                console.log(`🎯 Intento ${intentosNivel}/${maxIntentos} de cargar nivel...`);
+                
+                const banner = document.getElementById('nivelBanner');
+                const info = window.flujoCaja?.obtenerInfo();
+                
+                if (banner && info?.nivel) {
+                    console.log('✅ Banner y datos listos, cargando nivel...');
+                    cargarNivel();
+                } else {
+                    console.warn(`⚠️ Banner: ${!!banner}, Info: ${!!info?.nivel}`);
+                    if (intentosNivel < maxIntentos) {
+                        setTimeout(cargarNivelConRetry, 150);
+                    } else {
+                        console.error('❌ No se pudo cargar el nivel después de ' + maxIntentos + ' intentos');
+                    }
+                }
+            };
+            
+            // Iniciar retry después de 100ms
+            setTimeout(cargarNivelConRetry, 100);
+            
+            console.log('✅ Flujo de Caja listo');
+            
+            const transacciones = window.flujoCaja.obtenerTransacciones();
+            console.log(`📋 ${transacciones.length} transacciones cargadas`);
+            
+        } catch (error) {
+            console.error('❌ Error cargando datos iniciales:', error);
+        }
     }
-}
 
     // ✅ LISTENER PARA CUANDO SE INICIALIZA EL MÓDULO
     document.addEventListener('grizalumFlujoCajaInicializado', () => {
