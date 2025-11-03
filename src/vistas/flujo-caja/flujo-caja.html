@@ -856,24 +856,45 @@
         }, 100);
     }
     
-    function cargarDatosIniciales() {
-        console.log('📊 Cargando datos iniciales...');
+   function cargarDatosIniciales() {
+    console.log('📊 Cargando datos iniciales...');
+    
+    try {
+        cargarCategorias();
+        cargarBalance();
+        cargarTransacciones();
         
-        try {
-            cargarNivel();
-            cargarCategorias();
-            cargarBalance();
-            cargarTransacciones();
+        // ✅ INTENTAR CARGAR NIVEL CON RETRY
+        let intentosNivel = 0;
+        const cargarNivelConRetry = () => {
+            intentosNivel++;
+            console.log(`🎯 Intento ${intentosNivel} de cargar nivel...`);
             
-            console.log('✅ Flujo de Caja listo');
+            const banner = document.getElementById('nivelBanner');
+            const info = window.flujoCaja?.obtenerInfo();
             
-            const transacciones = window.flujoCaja.obtenerTransacciones();
-            console.log(`📋 ${transacciones.length} transacciones cargadas`);
-            
-        } catch (error) {
-            console.error('❌ Error cargando datos iniciales:', error);
-        }
+            if (banner && info?.nivel) {
+                cargarNivel();
+                console.log('✅ Nivel cargado exitosamente');
+            } else if (intentosNivel < 5) {
+                console.warn(`⚠️ Banner o info no listos, reintentando en 200ms...`);
+                setTimeout(cargarNivelConRetry, 200);
+            } else {
+                console.error('❌ No se pudo cargar el nivel después de 5 intentos');
+            }
+        };
+        
+        setTimeout(cargarNivelConRetry, 100);
+        
+        console.log('✅ Flujo de Caja listo');
+        
+        const transacciones = window.flujoCaja.obtenerTransacciones();
+        console.log(`📋 ${transacciones.length} transacciones cargadas`);
+        
+    } catch (error) {
+        console.error('❌ Error cargando datos iniciales:', error);
     }
+}
 
     // ✅ LISTENER PARA CUANDO SE INICIALIZA EL MÓDULO
     document.addEventListener('grizalumFlujoCajaInicializado', () => {
