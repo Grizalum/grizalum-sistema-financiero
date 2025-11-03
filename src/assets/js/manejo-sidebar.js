@@ -190,13 +190,23 @@ class ManejadorSidebarGRIZALUM {
             this.aplicarEstilosDinamicos();
         });
 
-        // NUEVO: Escuchar cuando principal.js cambie de sección
+               // NUEVO: Escuchar cuando principal.js cambie de sección
         document.addEventListener('sectionChanged', (evento) => {
             this.seccionActual = evento.detail.to;
             this.actualizarEnlaceActivo(this.encontrarEnlacePorSeccion(evento.detail.to));
             this.guardarEstadoPersistente();
-        });
-    }
+            
+            // ✅ CARGAR NIVEL DE FLUJO DE CAJA
+            if (evento.detail.to === 'flujo-caja') {
+                setTimeout(() => {
+                    if (window.cargarNivel && window.flujoCaja?.inicializado) {
+                        console.log('🎯 Cargando nivel al entrar a Flujo de Caja...');
+                        window.cargarNivel();
+                     }
+                 }, 300);
+             }
+          });
+        }
 
     configurarAccesibilidad() {
         if (!this.sidebar) return;
