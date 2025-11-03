@@ -844,10 +844,19 @@
         if (window.FlujoCajaConfig) {
             const industriaActual = localStorage.getItem('grizalum_industria_actual') || 'default';
             const categoriasConfig = window.FlujoCajaConfig.obtenerCategorias(industriaActual);
-            window.flujoCaja.categorias = categoriasConfig;
+            // ✅ Verificar que flujoCaja exista antes de asignar
+            if (window.flujoCaja) {
+                window.flujoCaja.categorias = categoriasConfig;
+            } else {
+                console.warn('⚠️ window.flujoCaja no existe aún, creándolo...');
+                window.flujoCaja = { categorias: categoriasConfig };
+            }
             console.log('✅ Categorías cargadas desde config:', categoriasConfig);
         } else {
             console.warn('⚠️ FlujoCajaConfig no disponible');
+            if (!window.flujoCaja) {
+                window.flujoCaja = {};
+            }
             window.flujoCaja.categorias = {
                 ingresos: ['Ventas', 'Servicios', 'Otros Ingresos'],
                 gastos: ['Compras', 'Operaciones', 'Personal', 'Servicios', 'Otros']
