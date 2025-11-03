@@ -902,75 +902,41 @@
     }
 
     // ✅ LISTENER PARA CUANDO SE INICIALIZA EL MÓDULO
-    document.addEventListener('grizalumFlujoCajaInicializado', () => {
-        console.log('🎯 Evento FlujoCaja inicializado detectado');
-        setTimeout(() => {
-            if (window.cargarNivel) {
-                cargarNivel();
-            }
-        }, 100);
-    });
-    
-    // ✅ LISTENER PARA CUANDO SE CAMBIA A ESTA VISTA - CON RETRY AUTOMÁTICO
-    document.addEventListener('sectionChanged', (evento) => {
-        if (evento.detail.to === 'flujo-caja') {
-            console.log('🚀 [sectionChanged] Entrando a flujo-caja, iniciando carga de nivel...');
-            
-            let intentos = 0;
-            const maxIntentos = 15;
-            
-            const mostrarNivelConRetry = () => {
-                intentos++;
-                console.log(`🎯 [sectionChanged] Intento ${intentos}/${maxIntentos} de mostrar nivel`);
-                
-                const banner = document.getElementById('nivelBanner');
-                const info = window.flujoCaja?.obtenerInfo();
-                
-                if (banner && info?.nivel) {
-                    console.log('✅ [sectionChanged] Banner y datos listos, mostrando nivel:', info.nivel.nivel.nombre);
-                    
-                    banner.style.display = 'flex';
-                    banner.innerHTML = `
-                        <div class="nivel-info">
-                            <span class="nivel-icono" style="font-size: 2.5rem;">${info.nivel.nivel.icono}</span>
-                            <div class="nivel-textos">
-                                <div class="nivel-nombre" style="font-size: 1.25rem; font-weight: 700; color: var(--texto-principal);">
-                                    Nivel ${info.nivel.nivel.nombre}
-                                </div>
-                                <div class="nivel-score" style="font-size: 0.875rem; color: var(--texto-terciario);">
-                                    Score: ${info.nivel.score}/100
-                                </div>
-                            </div>
-                        </div>
-                        <div class="nivel-progreso">
-                            <div class="progreso-bar">
-                                <div class="progreso-fill" style="width: ${info.nivel.score}%"></div>
-                            </div>
-                        </div>
-                    `;
-                    
-                    console.log('✅ [sectionChanged] Nivel mostrado exitosamente');
-                } else {
-                    console.warn(`⚠️ [sectionChanged] Banner: ${!!banner}, Info: ${!!info}, Nivel: ${!!info?.nivel}`);
-                    if (intentos < maxIntentos) {
-                        setTimeout(mostrarNivelConRetry, 100);
-                    } else {
-                        console.error('❌ [sectionChanged] No se pudo mostrar nivel después de ' + maxIntentos + ' intentos');
-                    }
-                }
-            };
-            
-            // Iniciar inmediatamente
-            setTimeout(mostrarNivelConRetry, 50);
+document.addEventListener('grizalumFlujoCajaInicializado', () => {
+    console.log('🎯 Evento FlujoCaja inicializado detectado');
+    setTimeout(() => {
+        if (window.cargarNivel) {
+            cargarNivel();
         }
-    });
+    }, 100);
+});
 
-    // ✅ INICIAR TODO
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', inicializarFlujoCaja);
-    } else {
-        inicializarFlujoCaja();
+// ✅ LISTENER PARA CUANDO SE CAMBIA A ESTA VISTA - CON RETRY
+document.addEventListener('sectionChanged', (evento) => {
+    if (evento.detail.to === 'flujo-caja') {
+        let intentos = 0;
+        const mostrar = () => {
+            intentos++;
+            const banner = document.getElementById('nivelBanner');
+            const info = window.flujoCaja?.obtenerInfo();
+            
+            if (banner && info?.nivel) {
+                banner.style.display = 'flex';
+                banner.innerHTML = `<div class="nivel-info"><span class="nivel-icono" style="font-size: 2.5rem;">${info.nivel.nivel.icono}</span><div class="nivel-textos"><div class="nivel-nombre" style="font-size: 1.25rem; font-weight: 700;">Nivel ${info.nivel.nivel.nombre}</div><div class="nivel-score" style="font-size: 0.875rem;">Score: ${info.nivel.score}/100</div></div></div>`;
+            } else if (intentos < 10) {
+                setTimeout(mostrar, 100);
+            }
+        };
+        setTimeout(mostrar, 50);
     }
+});
+
+// ✅ INICIAR TODO
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', inicializarFlujoCaja);
+} else {
+    inicializarFlujoCaja();
+}
 
     // ✅ FUNCIÓN DE RECARGA GLOBAL
     window.recargarFlujoCaja = function() {
