@@ -196,14 +196,63 @@ class ManejadorSidebarGRIZALUM {
             this.actualizarEnlaceActivo(this.encontrarEnlacePorSeccion(evento.detail.to));
             this.guardarEstadoPersistente();
             
-            // ✅ CARGAR NIVEL DE FLUJO DE CAJA
+             // ✅ CARGAR NIVEL DE FLUJO DE CAJA (FUNCIÓN COMPLETA)
             if (evento.detail.to === 'flujo-caja') {
                 setTimeout(() => {
-                    if (window.cargarNivel && window.flujoCaja?.inicializado) {
-                        console.log('🎯 Cargando nivel al entrar a Flujo de Caja...');
-                        window.cargarNivel();
-                     }
-                 }, 300);
+                    console.log('🎯 Forzando carga de nivel desde sidebar...');
+                    
+                    // Definir la función aquí mismo para evitar problemas de cache
+                    const cargarNivelForzado = function() {
+                        try {
+                            const info = window.flujoCaja?.obtenerInfo();
+                            const nivelBanner = document.getElementById('nivelBanner');
+                            
+                            console.log('🎯 [cargarNivel-FORZADO] Ejecutando...', {
+                                tieneInfo: !!info,
+                                tieneNivel: !!info?.nivel
+                            });
+                            
+                            if (!nivelBanner) {
+                                console.warn('⚠️ Banner no encontrado');
+                                return;
+                            }
+                            
+                            if (!info || !info.nivel) {
+                                console.warn('⚠️ Sin info de nivel');
+                                nivelBanner.style.display = 'none';
+                                return;
+                            }
+
+                            console.log('✅ [FORZADO] Mostrando nivel:', info.nivel.nivel.nombre);
+                            nivelBanner.style.display = 'flex';
+
+                            nivelBanner.innerHTML = `
+                                <div class="nivel-info">
+                                    <span class="nivel-icono" style="font-size: 2.5rem;">${info.nivel.nivel.icono}</span>
+                                    <div class="nivel-textos">
+                                        <div class="nivel-nombre" style="font-size: 1.25rem; font-weight: 700;">
+                                            Nivel ${info.nivel.nivel.nombre}
+                                        </div>
+                                        <div class="nivel-score" style="font-size: 0.875rem;">
+                                            Score: ${info.nivel.score}/100
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="nivel-progreso">
+                                    <div class="progreso-bar">
+                                        <div class="progreso-fill" style="width: ${info.nivel.score}%"></div>
+                                    </div>
+                                </div>
+                            `;
+                        } catch (error) {
+                            console.error('❌ Error cargando nivel forzado:', error);
+                        }
+                    };
+                    
+                    if (window.flujoCaja?.inicializado) {
+                        cargarNivelForzado();
+                    }
+                }, 300);
              }
           });
         }
