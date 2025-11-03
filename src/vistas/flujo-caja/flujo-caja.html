@@ -829,7 +829,7 @@
         console.log('✅ Eventos configurados');
     }
 
-   function inicializarFlujoCaja() {
+    function inicializarFlujoCaja() {
         console.log('🚀 Inicializando Flujo de Caja...');
         
         const fechaInput = document.getElementById('inputFecha');
@@ -842,50 +842,18 @@
         configurarEventos();
         
         // ✅ ESPERAR a que window.flujoCaja exista ANTES de cargar datos
+        let intentos = 0;
         const esperarFlujoCaja = setInterval(() => {
+            intentos++;
             if (window.flujoCaja && typeof window.flujoCaja.obtenerInfo === 'function') {
                 clearInterval(esperarFlujoCaja);
                 console.log('✅ FlujoCaja detectado, cargando datos...');
                 cargarDatosIniciales();
-            }
-        }, 100);
-        
-        // Timeout de seguridad (10 segundos)
-        setTimeout(() => {
-            clearInterval(esperarFlujoCaja);
-            if (!window.flujoCaja || typeof window.flujoCaja.obtenerInfo !== 'function') {
+            } else if (intentos > 100) {
+                clearInterval(esperarFlujoCaja);
                 console.error('❌ Timeout: FlujoCaja no se cargó en 10 segundos');
             }
-        }, 10000);
-    }
-
-        cargarDatosIniciales();
-        
-        if (window.flujoCaja && window.flujoCaja.inicializado) {
-            console.log('🎯 FlujoCaja ya listo, cargando nivel inmediatamente...');
-            setTimeout(() => {
-                cargarNivel();
-            }, 200);
-        }
-        
-        document.addEventListener('grizalumFlujoCajaInicializado', () => {
-            console.log('🎯 Evento FlujoCaja inicializado, cargando nivel...');
-            setTimeout(() => {
-                cargarNivel();
-            }, 100);
-        });
-        
-        // ✅ CARGAR NIVEL AL CAMBIAR A ESTA VISTA
-        document.addEventListener('sectionChanged', (evento) => {
-            if (evento.detail.to === 'flujo-caja') {
-                setTimeout(() => {
-                    if (window.flujoCaja?.inicializado && window.cargarNivel) {
-                        console.log('🎯 Vista flujo-caja cargada, mostrando nivel...');
-                        window.cargarNivel();
-                    }
-                }, 300);
-            }
-        });
+        }, 100);
     }
     
     function cargarDatosIniciales() {
@@ -907,12 +875,36 @@
         }
     }
 
+    // ✅ LISTENER PARA CUANDO SE INICIALIZA EL MÓDULO
+    document.addEventListener('grizalumFlujoCajaInicializado', () => {
+        console.log('🎯 Evento FlujoCaja inicializado detectado');
+        setTimeout(() => {
+            if (window.cargarNivel) {
+                cargarNivel();
+            }
+        }, 100);
+    });
+    
+    // ✅ LISTENER PARA CUANDO SE CAMBIA A ESTA VISTA
+    document.addEventListener('sectionChanged', (evento) => {
+        if (evento.detail.to === 'flujo-caja') {
+            setTimeout(() => {
+                if (window.flujoCaja?.inicializado && window.cargarNivel) {
+                    console.log('🎯 Vista flujo-caja cargada, mostrando nivel...');
+                    window.cargarNivel();
+                }
+            }, 300);
+        }
+    });
+
+    // ✅ INICIAR TODO
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', inicializarFlujoCaja);
     } else {
         inicializarFlujoCaja();
     }
 
+    // ✅ FUNCIÓN DE RECARGA GLOBAL
     window.recargarFlujoCaja = function() {
         console.log('🔄 Recargando Flujo de Caja...');
         
