@@ -887,6 +887,18 @@
                 cargarNivel();
             }, 100);
         });
+        
+        // ✅ CARGAR NIVEL AL CAMBIAR A ESTA VISTA
+        document.addEventListener('sectionChanged', (evento) => {
+            if (evento.detail.to === 'flujo-caja') {
+                setTimeout(() => {
+                    if (window.flujoCaja?.inicializado && window.cargarNivel) {
+                        console.log('🎯 Vista flujo-caja cargada, mostrando nivel...');
+                        window.cargarNivel();
+                    }
+                }, 300);
+            }
+        });
     }
     
     function cargarDatosIniciales() {
