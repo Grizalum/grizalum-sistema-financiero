@@ -255,6 +255,7 @@ class ManejadorSidebarGRIZALUM {
                 }, 300);
              }
       });
+ }
        
     configurarAccesibilidad() {
         if (!this.sidebar) return;
