@@ -829,7 +829,7 @@
         console.log('✅ Eventos configurados');
     }
 
-    function inicializarFlujoCaja() {
+   function inicializarFlujoCaja() {
         console.log('🚀 Inicializando Flujo de Caja...');
         
         const fechaInput = document.getElementById('inputFecha');
@@ -839,34 +839,25 @@
             fechaInput.max = hoy;
         }
         
-        console.log('📂 Cargando categorías del config...');
-        
-        if (window.FlujoCajaConfig && window.flujoCaja && typeof window.flujoCaja.obtenerInfo === 'function') {
-            const industriaActual = localStorage.getItem('grizalum_industria_actual') || 'default';
-            const categoriasConfig = window.FlujoCajaConfig.obtenerCategorias(industriaActual);
-            window.flujoCaja.categorias = categoriasConfig;
-            console.log('✅ Categorías cargadas desde config:', categoriasConfig);
-        } else {
-            console.warn('⚠️ FlujoCaja o FlujoCajaConfig no disponibles aún, usando valores por defecto');
-        }
-        
         configurarEventos();
         
-        if (!window.flujoCaja) {
-            console.warn('⚠️ Esperando módulo flujoCaja...');
-            let intentos = 0;
-            const esperarModulo = setInterval(() => {
-                intentos++;
-                if (window.flujoCaja) {
-                    clearInterval(esperarModulo);
-                    cargarDatosIniciales();
-                } else if (intentos > 10) {
-                    clearInterval(esperarModulo);
-                    console.error('❌ Módulo flujoCaja no disponible');
-                }
-            }, 500);
-            return;
-        }
+        // ✅ ESPERAR a que window.flujoCaja exista ANTES de cargar datos
+        const esperarFlujoCaja = setInterval(() => {
+            if (window.flujoCaja && typeof window.flujoCaja.obtenerInfo === 'function') {
+                clearInterval(esperarFlujoCaja);
+                console.log('✅ FlujoCaja detectado, cargando datos...');
+                cargarDatosIniciales();
+            }
+        }, 100);
+        
+        // Timeout de seguridad (10 segundos)
+        setTimeout(() => {
+            clearInterval(esperarFlujoCaja);
+            if (!window.flujoCaja || typeof window.flujoCaja.obtenerInfo !== 'function') {
+                console.error('❌ Timeout: FlujoCaja no se cargó en 10 segundos');
+            }
+        }, 10000);
+    }
 
         cargarDatosIniciales();
         
