@@ -9,7 +9,7 @@
     console.log('🎯 [PlanLoader] Módulo cargado');
     
     // Función para mostrar el plan actual
-    function mostrarPlan() {
+function mostrarPlan() {
         const banner = document.getElementById('nivelBanner');
         
         if (!banner) {
@@ -17,15 +17,24 @@
             return false;
         }
         
-        // Esperar a que FlujoCajaPlanes esté disponible
-        if (!window.FlujoCajaPlanes) {
-            console.warn('⚠️ [PlanLoader] FlujoCajaPlanes no disponible aún');
+        // ✅ PRIORIDAD 1: Leer plan de localStorage
+        const planGuardado = localStorage.getItem('grizalum_planActual');
+        
+        let plan;
+        if (planGuardado && window.FlujoCajaPlanes && window.FlujoCajaPlanes.PLANES[planGuardado]) {
+            plan = window.FlujoCajaPlanes.PLANES[planGuardado];
+            console.log('✅ [PlanLoader] Plan desde localStorage:', plan.nombre);
+        } 
+        // ✅ PRIORIDAD 2: Usar FlujoCajaPlanes
+        else if (window.FlujoCajaPlanes) {
+            plan = window.FlujoCajaPlanes.obtenerPlanActual();
+            console.log('✅ [PlanLoader] Plan desde FlujoCajaPlanes:', plan.nombre);
+        } 
+        // ✅ PRIORIDAD 3: No mostrar nada si no hay plan
+        else {
+            console.warn('⚠️ [PlanLoader] No se pudo obtener el plan');
             return false;
         }
-        
-        const plan = window.FlujoCajaPlanes.obtenerPlanActual();
-        
-        console.log('✅ [PlanLoader] Mostrando plan:', plan.nombre);
         
         banner.style.display = 'flex';
         banner.innerHTML = `
