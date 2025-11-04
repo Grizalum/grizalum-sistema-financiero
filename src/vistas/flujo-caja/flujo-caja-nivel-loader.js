@@ -1,4 +1,3 @@
-
 /**
  * GRIZALUM - Cargador de Nivel para Flujo de Caja
  * Se ejecuta DESPUÉS de todos los demás módulos
@@ -47,8 +46,6 @@
                     console.log('✅ [NivelLoader] Nivel cargado en intento', intentos);
                 } else if (intentos < 15) {
                     setTimeout(retry, 100);
-                } else {
-                    console.error('❌ [NivelLoader] Timeout después de 15 intentos');
                 }
             };
             
@@ -57,5 +54,26 @@
     });
     
     console.log('✅ [NivelLoader] Listener registrado');
+    
+    // ✅ DETECCIÓN INICIAL - Si ya estamos en flujo-caja al cargar
+    setTimeout(() => {
+        const estaEnFlujoCaja = document.getElementById('flujoCajaApp')?.offsetParent !== null;
+        
+        if (estaEnFlujoCaja) {
+            console.log('⚡ [NivelLoader] Ya estamos en flujo-caja, cargando nivel inmediatamente');
+            
+            let intentos = 0;
+            const retry = () => {
+                intentos++;
+                if (mostrarNivel()) {
+                    console.log('✅ [NivelLoader] Nivel cargado (detección inicial) en intento', intentos);
+                } else if (intentos < 15) {
+                    setTimeout(retry, 100);
+                }
+            };
+            
+            retry();
+        }
+    }, 200);
     
 })();
