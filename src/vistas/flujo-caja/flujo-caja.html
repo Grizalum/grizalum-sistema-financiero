@@ -1015,44 +1015,6 @@ if (document.readyState === 'loading') {
     
     console.log('✅ Función global recargarFlujoCaja creada');
     
-    // ═══════════════════════════════════════════════════════════════
-    // CARGADOR DE NIVEL - DIRECTO EN HTML
-    // ═══════════════════════════════════════════════════════════════
-    (function() {
-        console.log('🎯 [NivelLoader-HTML] Iniciando...');
-        
-        function mostrarNivel() {
-            const banner = document.getElementById('nivelBanner');
-            const info = window.flujoCaja?.obtenerInfo();
-            
-            if (banner && info?.nivel) {
-                banner.style.display = 'flex';
-                banner.innerHTML = `<div class="nivel-info"><span class="nivel-icono" style="font-size: 2.5rem;">${info.nivel.nivel.icono}</span><div class="nivel-textos"><div class="nivel-nombre" style="font-size: 1.25rem; font-weight: 700;">Nivel ${info.nivel.nivel.nombre}</div><div class="nivel-score" style="font-size: 0.875rem;">Score: ${info.nivel.score}/100</div></div></div>`;
-                return true;
-            }
-            return false;
-        }
-        
-        document.addEventListener('sectionChanged', function(e) {
-            if (e.detail.to === 'flujo-caja') {
-                console.log('🚀 [NivelLoader-HTML] Cargando nivel...');
-                let i = 0;
-                const r = () => { if (!mostrarNivel() && i++ < 15) setTimeout(r, 100); };
-                setTimeout(r, 50);
-            }
-        });
-        
-        setTimeout(() => {
-            if (document.getElementById('flujoCajaApp')?.offsetParent !== null) {
-                console.log('⚡ [NivelLoader-HTML] Detección inicial');
-                let i = 0;
-                const r = () => { if (!mostrarNivel() && i++ < 15) setTimeout(r, 100); };
-                r();
-            }
-        }, 200);
-        
-        console.log('✅ [NivelLoader-HTML] Listo');
-    })();
 
 </script>
 
