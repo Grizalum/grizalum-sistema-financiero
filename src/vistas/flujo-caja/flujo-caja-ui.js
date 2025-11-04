@@ -415,10 +415,29 @@ if (inputDescripcion) {
     }
 
     cerrarModalTransaccion() {
+        console.log('🔒 Cerrando modal...');
+        
         const modal = document.getElementById('modalTransaccion');
-        if (modal) modal.classList.remove('show');
+        if (modal) {
+            modal.classList.remove('show');
+        }
+        
+        // Limpiar estado
         this.transaccionEditando = null;
-        console.log('✅ Modal cerrado - transaccionEditando limpiado');
+        
+        // Resetear formulario
+        const form = document.getElementById('formTransaccion');
+        if (form) {
+            form.reset();
+        }
+        
+        // Limpiar título
+        const titulo = document.getElementById('modalTitulo');
+        if (titulo) {
+            titulo.textContent = 'Nueva Transacción';
+        }
+        
+        console.log('✅ Modal cerrado y limpiado');
     }
 
     // ✅ CORREGIDO: guardarTransaccion con acceso correcto a campos
