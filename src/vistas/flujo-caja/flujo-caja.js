@@ -65,12 +65,14 @@ class FlujoCaja {
     async _esperarDependencias() {
         return new Promise((resolve) => {
             const verificar = () => {
-                if (window.gestorEmpresas && window.sistemaNiveles && window.FlujoCajaConfig) {
+                // ✅ NUEVO: También esperar FlujoCajaPlanes
+                if (window.gestorEmpresas && window.sistemaNiveles && window.FlujoCajaConfig && window.FlujoCajaPlanes) {
                     this.gestor = window.gestorEmpresas;
                     this.sistemaNiveles = window.sistemaNiveles;
                     this.configuracion = window.FlujoCajaConfig;
+                    this.planes = window.FlujoCajaPlanes;
                     
-                    this._log('info', '✅ Dependencias conectadas');
+                    this._log('info', '✅ Dependencias conectadas (incluido FlujoCajaPlanes)');
                     resolve();
                 } else {
                     setTimeout(verificar, 500);
