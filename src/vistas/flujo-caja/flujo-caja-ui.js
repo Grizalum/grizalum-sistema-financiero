@@ -224,7 +224,6 @@ if (inputDescripcion) {
 
         if (icono) icono.textContent = info.nivel.nivel.icono;
         if (nombre) nombre.textContent = `Nivel ${info.nivel.nivel.nombre}`;
-        if (scoreTexto) scoreTexto.textContent = `Score: ${info.nivel.score}/100`;
         if (progreso) progreso.style.width = `${info.nivel.score}%`;
 
         // Mostrar/ocultar componentes según score
