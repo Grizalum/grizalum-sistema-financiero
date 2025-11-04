@@ -98,12 +98,20 @@ class FlujoCaja {
             return;
         }
 
-      // ✅ NUEVO: Usar sistema de planes en lugar de score
-        if (window.FlujoCajaPlanes) {
+     // ✅ PRIORIDAD 1: Leer de localStorage (componentes forzados)
+        const componentesForzados = localStorage.getItem('grizalum_componentes_forzados');
+        
+        if (componentesForzados) {
+            console.log('🎯 Usando componentes FORZADOS de localStorage');
+            this.componentesActivos = JSON.parse(componentesForzados);
+        } 
+        // ✅ PRIORIDAD 2: Usar sistema de planes
+        else if (window.FlujoCajaPlanes) {
             console.log('🎯 Usando sistema de PLANES');
             this.componentesActivos = window.FlujoCajaPlanes.obtenerComponentesActivos();
-        } else {
-            // Fallback: usar sistema de score antiguo
+        } 
+        // ✅ PRIORIDAD 3: Fallback al sistema de score antiguo
+        else {
             console.log('⚠️ Fallback: usando sistema de SCORE');
             const componentesOcultos = this.nivel.componentesOcultos || [];
             this.componentesActivos = this.configuracion.obtenerComponentesActivos(
