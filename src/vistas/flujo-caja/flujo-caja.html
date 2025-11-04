@@ -1014,6 +1014,77 @@ if (document.readyState === 'loading') {
     };
     
     console.log('✅ Función global recargarFlujoCaja creada');
+
+    // ═══════════════════════════════════════════════════════════════
+    // SISTEMA DE PLANES - DIRECTO EN HTML
+    // ═══════════════════════════════════════════════════════════════
+    window.FlujoCajaPlanes = {
+        PLANES: {
+            individual: { nombre: 'Individual', icono: '👤', precio: 19, color: '#6366f1' },
+            profesional: { nombre: 'Profesional', icono: '💼', precio: 49, color: '#8b5cf6' },
+            empresarial: { nombre: 'Empresarial', icono: '🏢', precio: 99, color: '#ec4899' },
+            corporativo: { nombre: 'Corporativo', icono: '🌐', precio: 299, color: '#f59e0b' }
+        },
+        obtenerPlanActual() {
+            const planId = localStorage.getItem('grizalum_planActual') || 'individual';
+            return this.PLANES[planId] || this.PLANES.individual;
+        },
+        cambiarPlan(planId) {
+            if (this.PLANES[planId]) {
+                localStorage.setItem('grizalum_planActual', planId);
+                location.reload();
+            }
+        }
+    };
+    
+    // Cargador de Plan
+    (function() {
+        console.log('🎯 [Plan-HTML] Iniciando...');
+        
+        function mostrarPlan() {
+            const banner = document.getElementById('nivelBanner');
+            const plan = window.FlujoCajaPlanes.obtenerPlanActual();
+            
+            if (banner && plan) {
+                banner.style.display = 'flex';
+                banner.innerHTML = `
+                    <div class="nivel-info">
+                        <span class="nivel-icono" style="font-size: 2.5rem;">${plan.icono}</span>
+                        <div class="nivel-textos">
+                            <div class="nivel-nombre" style="font-size: 1.25rem; font-weight: 700;">
+                                Plan ${plan.nombre}
+                            </div>
+                            <div class="nivel-score" style="font-size: 0.875rem;">
+                                $${plan.precio}/mes
+                            </div>
+                        </div>
+                    </div>
+                `;
+                return true;
+            }
+            return false;
+        }
+        
+        document.addEventListener('sectionChanged', function(e) {
+            if (e.detail.to === 'flujo-caja') {
+                console.log('🚀 [Plan-HTML] Cargando plan...');
+                let i = 0;
+                const r = () => { if (!mostrarPlan() && i++ < 15) setTimeout(r, 100); };
+                setTimeout(r, 50);
+            }
+        });
+        
+        setTimeout(() => {
+            if (document.getElementById('flujoCajaApp')?.offsetParent !== null) {
+                console.log('⚡ [Plan-HTML] Detección inicial');
+                let i = 0;
+                const r = () => { if (!mostrarPlan() && i++ < 15) setTimeout(r, 100); };
+                r();
+            }
+        }, 200);
+        
+        console.log('✅ [Plan-HTML] Listo');
+    })();
     
 
 </script>
