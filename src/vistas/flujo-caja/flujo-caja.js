@@ -96,13 +96,19 @@ class FlujoCaja {
             return;
         }
 
-        // Obtener componentes activos según score
-        const componentesOcultos = this.nivel.componentesOcultos || [];
-        this.componentesActivos = this.configuracion.obtenerComponentesActivos(
-            this.nivel.score,
-            componentesOcultos
-        );
-
+      // ✅ NUEVO: Usar sistema de planes en lugar de score
+        if (window.FlujoCajaPlanes) {
+            console.log('🎯 Usando sistema de PLANES');
+            this.componentesActivos = window.FlujoCajaPlanes.obtenerComponentesActivos();
+        } else {
+            // Fallback: usar sistema de score antiguo
+            console.log('⚠️ Fallback: usando sistema de SCORE');
+            const componentesOcultos = this.nivel.componentesOcultos || [];
+            this.componentesActivos = this.configuracion.obtenerComponentesActivos(
+                this.nivel.score,
+                componentesOcultos
+            );
+        }
         // Obtener categorías según industria
         const empresa = this.gestor.estado.empresas[this.empresaActual];
         const industriaId = empresa?.perfilIndustrial || 'default';
