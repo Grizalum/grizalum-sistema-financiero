@@ -281,57 +281,9 @@
     // FUNCIONES DE CARGA DE DATOS
     // ═══════════════════════════════════════════════════════════════
     window.cargarNivel = function() {
-        try {
-            const info = window.flujoCaja?.obtenerInfo();
-            const nivelBanner = document.getElementById('nivelBanner');
-            
-            console.log('🎯 [cargarNivel] Ejecutando...', {
-                tieneInfo: !!info,
-                tieneNivel: !!info?.nivel,
-                nivel: info?.nivel?.nivel?.nombre
-            });
-            
-            if (!nivelBanner) {
-                console.warn('⚠️ Banner de nivel no encontrado');
-                return;
-            }
-            
-            if (!info || !info.nivel) {
-                console.warn('⚠️ No hay info de nivel, ocultando banner');
-                nivelBanner.style.display = 'none';
-                return;
-            }
-
-            console.log('✅ [cargarNivel] Mostrando nivel:', info.nivel.nivel.nombre);
-            nivelBanner.style.display = 'flex';
-
-            nivelBanner.innerHTML = `
-                <div class="nivel-info">
-                    <span class="nivel-icono" style="font-size: 2.5rem;">${info.nivel.nivel.icono}</span>
-                    <div class="nivel-textos">
-                        <div class="nivel-nombre" style="font-size: 1.25rem; font-weight: 700; color: var(--texto-principal);">
-                            Nivel ${info.nivel.nivel.nombre}
-                        </div>
-                        <div class="nivel-score" style="font-size: 0.875rem; color: var(--texto-terciario);">
-                            Score: ${info.nivel.score}/100
-                        </div>
-                    </div>
-                </div>
-                <div class="nivel-progreso">
-                    <div class="progreso-bar">
-                        <div class="progreso-fill" style="width: ${info.nivel.score}%"></div>
-                    </div>
-                </div>
-            `;
-            
-            mostrarComponentesSegunNivel(info.componentesActivos);
-        } catch (error) {
-            console.error('❌ Error cargando nivel:', error);
-            const nivelBanner = document.getElementById('nivelBanner');
-            if (nivelBanner) {
-                nivelBanner.style.display = 'none';
-            }
-        }
+        // ✅ DESACTIVADO: Ahora usa flujo-caja-plan-loader.js
+        console.log('⚠️ [cargarNivel] DESACTIVADA - Usando plan-loader');
+        return;
     }
 
     function mostrarComponentesSegunNivel(componentes) {
