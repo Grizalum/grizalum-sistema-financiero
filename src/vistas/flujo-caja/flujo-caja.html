@@ -777,7 +777,7 @@ if (document.readyState === 'loading') {
 <script>
 // ✅ PROTECCIÓN DE BANNER - FORZAR PLAN CORPORATIVO
 (function() {
-    console.log('🛡️ Protección de banner activada (inline)');
+    console.log('🛡️ Protección de banner activada (inline v2)');
     
     function forzarPlanCorporativo() {
         const banner = document.getElementById('nivelBanner');
@@ -808,7 +808,20 @@ if (document.readyState === 'loading') {
         }
     }
     
+    // Protección continua
     setInterval(forzarPlanCorporativo, 200);
     setTimeout(forzarPlanCorporativo, 500);
+    
+    // ✅ NUEVO: Escuchar cuando se cambia a flujo-caja
+    document.addEventListener('sectionChanged', function(e) {
+        if (e.detail.to === 'flujo-caja') {
+            console.log('🚀 Entrando a Flujo de Caja - Forzando banner');
+            setTimeout(forzarPlanCorporativo, 100);
+            setTimeout(forzarPlanCorporativo, 500);
+            setTimeout(forzarPlanCorporativo, 1000);
+        }
+    });
+    
+    console.log('✅ Protección lista - Escuchando eventos');
 })();
 </script>
