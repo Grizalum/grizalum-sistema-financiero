@@ -207,27 +207,14 @@ if (inputDescripcion) {
     }
 
     cargarNivel() {
-        const info = this.modulo.obtenerInfo();
+        // ✅ DESACTIVADO: Ahora usa flujo-caja-plan-loader.js
+        console.log('⚠️ [UI] cargarNivel() DESACTIVADA - Usando plan-loader');
         
-        if (!info.nivel) {
-            console.warn('Sin nivel disponible');
-            return;
+        // Solo mostrar componentes, NO tocar el banner
+        const info = this.modulo?.obtenerInfo();
+        if (info?.componentesActivos) {
+            this.mostrarComponentesSegunNivel(info.componentesActivos);
         }
-
-        const banner = document.getElementById('nivelBanner');
-        if (!banner) return;
-
-        const icono = banner.querySelector('.nivel-icono');
-        const nombre = banner.querySelector('.nivel-nombre');
-        const scoreTexto = banner.querySelector('.nivel-score');
-        const progreso = document.getElementById('progresoFill');
-
-        if (icono) icono.textContent = info.nivel.nivel.icono;
-        if (nombre) nombre.textContent = `Nivel ${info.nivel.nivel.nombre}`;
-        if (progreso) progreso.style.width = `${info.nivel.score}%`;
-
-        // Mostrar/ocultar componentes según score
-        this.mostrarComponentesSegunNivel(info.componentesActivos);
     }
 
     mostrarComponentesSegunNivel(componentes) {
