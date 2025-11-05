@@ -9,7 +9,7 @@
     console.log('🎯 [PlanLoader] Módulo cargado');
     
     // Función para mostrar el plan actual
-function mostrarPlan() {
+    function mostrarPlan() {
         const banner = document.getElementById('nivelBanner');
         
         if (!banner) {
@@ -116,5 +116,22 @@ function mostrarPlan() {
             retry();
         }
     }, 200);
+    
+    // ✅ NUEVO: Proteger el banner constantemente
+    setInterval(() => {
+        const planGuardado = localStorage.getItem('grizalum_planActual');
+        const banner = document.getElementById('nivelBanner');
+        
+        // Solo actualizar si el banner existe y el plan es corporativo
+        if (banner && planGuardado === 'corporativo') {
+            const nombreActual = banner.querySelector('.nivel-nombre')?.textContent || '';
+            
+            // Si el banner NO dice "Plan Corporativo", corregirlo
+            if (!nombreActual.includes('Corporativo')) {
+                console.log('🛡️ [PlanLoader] Defendiendo banner - Restaurando Plan Corporativo');
+                mostrarPlan();
+            }
+        }
+    }, 500);
     
 })();
