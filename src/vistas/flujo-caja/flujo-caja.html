@@ -775,23 +775,27 @@ if (document.readyState === 'loading') {
 <script src="src/vistas/flujo-caja/flujo-caja-plan-loader.js?v=1762235000"></script>
 
 <script>
-// ✅ PROTECCIÓN DE BANNER - FORZAR PLAN CORPORATIVO
+// ✅ PROTECCIÓN DE BANNER - FORZAR PLAN CORPORATIVO (VERSIÓN DEFINITIVA)
 (function() {
-    console.log('🛡️ Protección de banner activada (inline v2)');
+    console.log('🛡️ Protección de banner activada (v3 - MutationObserver)');
     
     function forzarPlanCorporativo() {
         const banner = document.getElementById('nivelBanner');
         const planGuardado = localStorage.getItem('grizalum_planActual');
         
-        if (!banner || planGuardado !== 'corporativo') return;
+        if (!banner || planGuardado !== 'corporativo') return false;
         
         const plan = window.FlujoCajaPlanes?.PLANES?.corporativo;
-        if (!plan) return;
+        if (!plan) return false;
         
         const nombreActual = banner.querySelector('.nivel-nombre')?.textContent || '';
+        const visible = banner.offsetParent !== null;
         
-        if (!nombreActual.includes('Corporativo')) {
-            console.log('🚨 Restaurando Plan Corporativo');
+        // Si el banner no es visible o no dice Corporativo
+        if (!visible || !nombreActual.includes('Corporativo')) {
+            console.log('🚨 Restaurando Plan Corporativo', { visible, nombre: nombreActual });
+            
+            banner.style.display = 'flex';
             banner.innerHTML = `
                 <div class="nivel-info">
                     <span class="nivel-icono" style="font-size: 2.5rem;">${plan.icono}</span>
@@ -805,23 +809,57 @@ if (document.readyState === 'loading') {
                     </div>
                 </div>
             `;
+            return true;
         }
+        return false;
     }
     
-    // Protección continua
-    setInterval(forzarPlanCorporativo, 200);
-    setTimeout(forzarPlanCorporativo, 500);
+    // Protección continua cada 150ms
+    setInterval(forzarPlanCorporativo, 150);
     
-    // ✅ NUEVO: Escuchar cuando se cambia a flujo-caja
-    document.addEventListener('sectionChanged', function(e) {
-        if (e.detail.to === 'flujo-caja') {
-            console.log('🚀 Entrando a Flujo de Caja - Forzando banner');
+    // Ejecutar inmediatamente
+    setTimeout(forzarPlanCorporativo, 100);
+    setTimeout(forzarPlanCorporativo, 500);
+    setTimeout(forzarPlanCorporativo, 1000);
+    
+    // ✅ MutationObserver para detectar cambios en el DOM
+    const observer = new MutationObserver(() => {
+        const banner = document.getElementById('nivelBanner');
+        const flujoCajaVisible = document.getElementById('flujoCajaApp')?.offsetParent !== null;
+        
+        if (flujoCajaVisible && banner) {
+            forzarPlanCorporativo();
+        }
+    });
+    
+    // Observar cambios en el contenedor principal
+    const observarContenedor = () => {
+        const contenedor = document.getElementById('main-content') || document.body;
+        
+        observer.observe(contenedor, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['style', 'class']
+        });
+        
+        console.log('👁️ Observador activado en:', contenedor.id || 'body');
+    };
+    
+    setTimeout(observarContenedor, 500);
+    
+    // ✅ Escuchar clicks en el menú de Flujo de Caja
+    document.addEventListener('click', function(e) {
+        const target = e.target.closest('a, button');
+        if (target && target.textContent.includes('Flujo de Caja')) {
+            console.log('🎯 Click detectado en Flujo de Caja');
             setTimeout(forzarPlanCorporativo, 100);
-            setTimeout(forzarPlanCorporativo, 500);
+            setTimeout(forzarPlanCorporativo, 300);
+            setTimeout(forzarPlanCorporativo, 600);
             setTimeout(forzarPlanCorporativo, 1000);
         }
     });
     
-    console.log('✅ Protección lista - Escuchando eventos');
+    console.log('✅ Protección completa activada');
 })();
 </script>
