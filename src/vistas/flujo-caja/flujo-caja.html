@@ -758,9 +758,10 @@ if (document.readyState === 'loading') {
     };
     
     console.log('✅ Función global recargarFlujoCaja creada');
+    
 
 
-</script>
+</script>    
 
 <!-- SCRIPTS DEL MÓDULO CON TIMESTAMP ÚNICO -->
 <script src="src/vistas/flujo-caja/flujo-caja-config.js?v=1761876700"></script>
@@ -772,3 +773,42 @@ if (document.readyState === 'loading') {
 <script src="src/vistas/flujo-caja/flujo-caja-categorias.js?v=1761876700"></script>
 <script src="src/vistas/flujo-caja/flujo-caja-planes.js?v=1762235000"></script>
 <script src="src/vistas/flujo-caja/flujo-caja-plan-loader.js?v=1762235000"></script>
+
+<script>
+// ✅ PROTECCIÓN DE BANNER - FORZAR PLAN CORPORATIVO
+(function() {
+    console.log('🛡️ Protección de banner activada (inline)');
+    
+    function forzarPlanCorporativo() {
+        const banner = document.getElementById('nivelBanner');
+        const planGuardado = localStorage.getItem('grizalum_planActual');
+        
+        if (!banner || planGuardado !== 'corporativo') return;
+        
+        const plan = window.FlujoCajaPlanes?.PLANES?.corporativo;
+        if (!plan) return;
+        
+        const nombreActual = banner.querySelector('.nivel-nombre')?.textContent || '';
+        
+        if (!nombreActual.includes('Corporativo')) {
+            console.log('🚨 Restaurando Plan Corporativo');
+            banner.innerHTML = `
+                <div class="nivel-info">
+                    <span class="nivel-icono" style="font-size: 2.5rem;">${plan.icono}</span>
+                    <div class="nivel-textos">
+                        <div class="nivel-nombre" style="font-size: 1.25rem; font-weight: 700; color: var(--texto-principal);">
+                            Plan ${plan.nombre}
+                        </div>
+                        <div class="nivel-score" style="font-size: 0.875rem; color: var(--texto-terciario);">
+                            $${plan.precio}/mes
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    }
+    
+    setInterval(forzarPlanCorporativo, 200);
+    setTimeout(forzarPlanCorporativo, 500);
+})();
+</script>
