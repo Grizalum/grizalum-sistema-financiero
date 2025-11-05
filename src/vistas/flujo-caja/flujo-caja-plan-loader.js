@@ -6,14 +6,13 @@
 (function() {
     'use strict';
     
-    console.log('🎯 [PlanLoader] Módulo cargado');
+    console.log('🎯 [PlanLoader] Módulo cargado v2.0');
     
     // Función para mostrar el plan actual
     function mostrarPlan() {
         const banner = document.getElementById('nivelBanner');
         
         if (!banner) {
-            console.warn('⚠️ [PlanLoader] Banner no encontrado');
             return false;
         }
         
@@ -23,16 +22,11 @@
         let plan;
         if (planGuardado && window.FlujoCajaPlanes && window.FlujoCajaPlanes.PLANES[planGuardado]) {
             plan = window.FlujoCajaPlanes.PLANES[planGuardado];
-            console.log('✅ [PlanLoader] Plan desde localStorage:', plan.nombre);
         } 
-        // ✅ PRIORIDAD 2: Usar FlujoCajaPlanes
         else if (window.FlujoCajaPlanes) {
             plan = window.FlujoCajaPlanes.obtenerPlanActual();
-            console.log('✅ [PlanLoader] Plan desde FlujoCajaPlanes:', plan.nombre);
         } 
-        // ✅ PRIORIDAD 3: No mostrar nada si no hay plan
         else {
-            console.warn('⚠️ [PlanLoader] No se pudo obtener el plan');
             return false;
         }
         
@@ -49,89 +43,67 @@
                     </div>
                 </div>
             </div>
-            <button onclick="window.FlujoCajaPlanes.mostrarModalUpgrade('upgrade', 'profesional')" style="
-                background: ${plan.color};
-                color: white;
-                border: none;
-                padding: 0.5rem 1rem;
-                border-radius: 8px;
-                font-weight: 600;
-                cursor: pointer;
-                font-size: 0.875rem;
-                transition: all 0.3s;
-            " onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
-                Mejorar Plan
-            </button>
         `;
         
         return true;
     }
     
-    // Listener para cuando se cambia de vista
-    document.addEventListener('sectionChanged', function(e) {
-        if (e.detail.to === 'flujo-caja') {
-            console.log('🚀 [PlanLoader] Entrando a flujo-caja');
-            
-            let intentos = 0;
-            const retry = () => {
-                intentos++;
-                if (mostrarPlan()) {
-                    console.log('✅ [PlanLoader] Plan cargado en intento', intentos);
-                } else if (intentos < 15) {
-                    setTimeout(retry, 100);
-                } else {
-                    console.error('❌ [PlanLoader] Timeout después de 15 intentos');
-                }
-            };
-            
-            setTimeout(retry, 50);
-        }
-    });
-    
-    // Listener para cuando cambia el plan
-    document.addEventListener('grizalumPlanCambiado', function(e) {
-        console.log('🔄 [PlanLoader] Plan cambiado, actualizando banner');
-        setTimeout(mostrarPlan, 100);
-    });
-    
-    console.log('✅ [PlanLoader] Listeners registrados');
-    
-    // Detección inicial - Si ya estamos en flujo-caja al cargar
-    setTimeout(() => {
-        const estaEnFlujoCaja = document.getElementById('flujoCajaApp')?.offsetParent !== null;
-        
-        if (estaEnFlujoCaja) {
-            console.log('⚡ [PlanLoader] Ya estamos en flujo-caja, cargando plan inmediatamente');
-            
-            let intentos = 0;
-            const retry = () => {
-                intentos++;
-                if (mostrarPlan()) {
-                    console.log('✅ [PlanLoader] Plan cargado (detección inicial) en intento', intentos);
-                } else if (intentos < 15) {
-                    setTimeout(retry, 100);
-                }
-            };
-            
-            retry();
-        }
-    }, 200);
-    
-    // ✅ NUEVO: Proteger el banner constantemente
-    setInterval(() => {
-        const planGuardado = localStorage.getItem('grizalum_planActual');
+    // ✅ NUEVO: MutationObserver para proteger el banner
+    function iniciarProteccion() {
         const banner = document.getElementById('nivelBanner');
+        if (!banner) {
+            setTimeout(iniciarProteccion, 500);
+            return;
+        }
         
-        // Solo actualizar si el banner existe y el plan es corporativo
-        if (banner && planGuardado === 'corporativo') {
+        console.log('🛡️ [PlanLoader] Protección activada con MutationObserver');
+        
+        const planGuardado = localStorage.getItem('grizalum_planActual');
+        
+        // Crear observador
+        const observer = new MutationObserver((mutations) => {
             const nombreActual = banner.querySelector('.nivel-nombre')?.textContent || '';
             
-            // Si el banner NO dice "Plan Corporativo", corregirlo
-            if (!nombreActual.includes('Corporativo')) {
-                console.log('🛡️ [PlanLoader] Defendiendo banner - Restaurando Plan Corporativo');
+            // Si cambió y NO es corporativo, restaurar
+            if (planGuardado === 'corporativo' && !nombreActual.includes('Corporativo')) {
+                console.log('🚨 [PlanLoader] Banner modificado! Restaurando...', nombreActual);
                 mostrarPlan();
             }
-        }
-    }, 500);
+        });
+        
+        // Observar cambios en el banner
+        observer.observe(banner, {
+            childList: true,
+            subtree: true,
+            characterData: true
+        });
+        
+        // También verificar cada 300ms por si acaso
+        setInterval(() => {
+            const nombreActual = banner.querySelector('.nivel-nombre')?.textContent || '';
+            if (planGuardado === 'corporativo' && !nombreActual.includes('Corporativo')) {
+                console.log('⏱️ [PlanLoader] Verificación periódica - Restaurando banner');
+                mostrarPlan();
+            }
+        }, 300);
+    }
+    
+    // Detección inicial
+    setTimeout(() => {
+        console.log('⚡ [PlanLoader] Iniciando carga...');
+        
+        let intentos = 0;
+        const retry = () => {
+            intentos++;
+            if (mostrarPlan()) {
+                console.log('✅ [PlanLoader] Plan cargado en intento', intentos);
+                iniciarProteccion();
+            } else if (intentos < 20) {
+                setTimeout(retry, 100);
+            }
+        };
+        
+        retry();
+    }, 100);
     
 })();
