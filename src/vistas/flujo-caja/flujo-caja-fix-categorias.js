@@ -1,49 +1,39 @@
 /**
  * GRIZALUM - Fix de carga automática de categorías
- * Asegura que las categorías se carguen al iniciar
+ * Refuerza la inicialización del módulo principal
  */
 
 (function() {
     'use strict';
     
-    console.log('🔧 Fix categorías cargado v2');
+    console.log('🔧 Fix categorías cargado');
     
     function forzarCargaCategorias() {
-        // Usar la función global expuesta por flujo-caja-categorias.js
         if (window.GRIZALUM_inicializarCategorias) {
-            console.log('✅ Ejecutando GRIZALUM_inicializarCategorias()');
+            console.log('✅ [Fix] Ejecutando GRIZALUM_inicializarCategorias()');
             window.GRIZALUM_inicializarCategorias();
             return true;
         }
         return false;
     }
     
-    // Ejecutar inmediatamente
-    setTimeout(() => {
-        let intentos = 0;
-        const intervalo = setInterval(() => {
-            intentos++;
-            if (forzarCargaCategorias()) {
-                clearInterval(intervalo);
-                console.log('✅ Categorías inicializadas automáticamente');
-            } else if (intentos >= 20) {
-                clearInterval(intervalo);
-                console.warn('⚠️ No se pudo forzar carga de categorías');
-            }
-        }, 200);
-    }, 500);
+    // Ejecutar varias veces para asegurar
+    setTimeout(forzarCargaCategorias, 300);
+    setTimeout(forzarCargaCategorias, 800);
+    setTimeout(forzarCargaCategorias, 1500);
     
-    // También al cambiar a flujo-caja
+    // Escuchar eventos
     document.addEventListener('sectionChanged', function(e) {
         if (e.detail && e.detail.to === 'flujo-caja') {
-            console.log('🔄 Sección cambiada a flujo-caja, recargando categorías');
+            console.log('🔄 [Fix] Sección cambiada, recargando categorías');
             setTimeout(forzarCargaCategorias, 300);
         }
     });
     
-    // Y al evento específico de flujo-caja
     window.addEventListener('flujoCajaVisible', function() {
-        console.log('🔄 Evento flujoCajaVisible, recargando categorías');
+        console.log('🔄 [Fix] Evento flujoCajaVisible, recargando categorías');
         setTimeout(forzarCargaCategorias, 300);
     });
+    
+    console.log('✅ [Fix] Protección de categorías activada');
 })();
