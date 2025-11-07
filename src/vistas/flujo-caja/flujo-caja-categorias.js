@@ -46,6 +46,22 @@
     function inicializarCategorias() {
         console.log('🔧 [Categorías] Buscando select...');
         
+        // ✅ NUEVO: Intentar INMEDIATAMENTE primero
+        const selectInmediato = document.getElementById('selectCategoria');
+        
+        if (selectInmediato) {
+            console.log('✅ [Categorías] Select encontrado inmediatamente');
+            configurarSelectCategorias(selectInmediato);
+            configurarEventosTipo(selectInmediato);
+            
+            const tipoInicial = document.querySelector('input[name="tipo"]:checked');
+            const tipo = tipoInicial ? tipoInicial.value : 'ingreso';
+            cargarCategoriasSegunTipo(tipo, selectInmediato);
+            
+            return true;
+        }
+        
+        // Si no existe, buscar con reintentos
         let intentos = 0;
         const maxIntentos = 30;
         
@@ -65,7 +81,6 @@
                 if (tipoInicial) {
                     cargarCategoriasSegunTipo(tipoInicial.value, selectCategoria);
                 } else {
-                    // Si no hay tipo seleccionado, cargar ingresos por defecto
                     cargarCategoriasSegunTipo('ingreso', selectCategoria);
                 }
                 
@@ -74,6 +89,8 @@
                 console.warn('⚠️ [Categorías] Select no encontrado después de', maxIntentos, 'intentos');
             }
         }, 100);
+        
+        return false;
     }
 
     // ═══════════════════════════════════════════════════════════════
