@@ -2,6 +2,8 @@
  * ═══════════════════════════════════════════════════════════════════
  * 💰 GRIZALUM - INICIALIZADOR DE CATEGORÍAS FLUJO DE CAJA
  * ═══════════════════════════════════════════════════════════════════
+ * VERSIÓN CORREGIDA: Carga AMBOS selects (modal + filtro)
+ * ═══════════════════════════════════════════════════════════════════
  */
 
 (function() {
@@ -44,22 +46,22 @@
     // 🎯 FUNCIÓN PRINCIPAL: INICIALIZAR CATEGORÍAS
     // ═══════════════════════════════════════════════════════════════
     function inicializarCategorias() {
-        console.log('🔧 [Categorías] Buscando select...');
-
-        // ✅ CARGAR SELECT DEL MODAL
-        const selectInmediato = document.getElementById('selectCategoria');
+        console.log('🔧 [Categorías] Buscando selects...');
         
-        if (selectInmediato) {
+        // ✅ CARGAR SELECT DEL MODAL
+        const selectModal = document.getElementById('selectCategoria');
+        
+        if (selectModal) {
             console.log('✅ [Categorías] Select del modal encontrado');
-            configurarSelectCategorias(selectInmediato);
-            configurarEventosTipo(selectInmediato);
+            configurarSelectCategorias(selectModal);
+            configurarEventosTipo(selectModal);
             
             const tipoInicial = document.querySelector('input[name="tipo"]:checked');
             const tipo = tipoInicial ? tipoInicial.value : 'ingreso';
-            cargarCategoriasSegunTipo(tipo, selectInmediato);
+            cargarCategoriasSegunTipo(tipo, selectModal);
         }
         
-        // ✅ NUEVO: CARGAR SELECT DEL FILTRO
+        // ✅ CARGAR SELECT DEL FILTRO
         const selectFiltro = document.getElementById('filtroCategoria');
         
         if (selectFiltro) {
@@ -67,58 +69,70 @@
             cargarCategoriasEnFiltro(selectFiltro);
         }
         
-        // ✅ NUEVO: Intentar INMEDIATAMENTE primero
-        const selectInmediato = document.getElementById('selectCategoria');
-        
-        if (selectInmediato) {
-            console.log('✅ [Categorías] Select encontrado inmediatamente');
-            configurarSelectCategorias(selectInmediato);
-            configurarEventosTipo(selectInmediato);
-            
-            const tipoInicial = document.querySelector('input[name="tipo"]:checked');
-            const tipo = tipoInicial ? tipoInicial.value : 'ingreso';
-            cargarCategoriasSegunTipo(tipo, selectInmediato);
-            
-            return true;
+        // Si alguno no existe, buscar con reintentos
+        if (!selectModal || !selectFiltro) {
+            buscarSelectsConReintentos();
         }
         
-        // Si no existe, buscar con reintentos
+        return (selectModal && selectFiltro);
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // 🔄 BUSCAR SELECTS CON REINTENTOS
+    // ═══════════════════════════════════════════════════════════════
+    function buscarSelectsConReintentos() {
         let intentos = 0;
         const maxIntentos = 30;
         
-        const buscarSelect = setInterval(function() {
+        const buscarSelects = setInterval(function() {
             intentos++;
             
-            const selectCategoria = document.getElementById('selectCategoria');
+            const selectModal = document.getElementById('selectCategoria');
+            const selectFiltro = document.getElementById('filtroCategoria');
             
-            if (selectCategoria) {
-                clearInterval(buscarSelect);
-                console.log('✅ [Categorías] Select encontrado en intento', intentos);
-                
-                configurarSelectCategorias(selectCategoria);
-                configurarEventosTipo(selectCategoria);
+            let modalCargado = false;
+            let filtroCargado = false;
+            
+            // Cargar select del modal si existe y no está cargado
+            if (selectModal && selectModal.options.length <= 1) {
+                configurarSelectCategorias(selectModal);
+                configurarEventosTipo(selectModal);
                 
                 const tipoInicial = document.querySelector('input[name="tipo"]:checked');
-                if (tipoInicial) {
-                    cargarCategoriasSegunTipo(tipoInicial.value, selectCategoria);
-                } else {
-                    cargarCategoriasSegunTipo('ingreso', selectCategoria);
-                }
+                const tipo = tipoInicial ? tipoInicial.value : 'ingreso';
+                cargarCategoriasSegunTipo(tipo, selectModal);
                 
-            } else if (intentos >= maxIntentos) {
-                clearInterval(buscarSelect);
-                console.warn('⚠️ [Categorías] Select no encontrado después de', maxIntentos, 'intentos');
+                modalCargado = true;
+                console.log('✅ [Categorías] Select del modal cargado en intento', intentos);
+            }
+            
+            // Cargar select del filtro si existe y no está cargado
+            if (selectFiltro && selectFiltro.options.length <= 1) {
+                cargarCategoriasEnFiltro(selectFiltro);
+                filtroCargado = true;
+                console.log('✅ [Categorías] Select del filtro cargado en intento', intentos);
+            }
+            
+            // Si ambos están cargados, detener
+            if ((selectModal && selectModal.options.length > 1) && 
+                (selectFiltro && selectFiltro.options.length > 1)) {
+                clearInterval(buscarSelects);
+                console.log('✅ [Categorías] Ambos selects cargados completamente');
+            }
+            
+            // Si se alcanzó el máximo de intentos
+            if (intentos >= maxIntentos) {
+                clearInterval(buscarSelects);
+                console.warn('⚠️ [Categorías] Máximo de intentos alcanzado');
             }
         }, 100);
-        
-        return false;
     }
 
     // ═══════════════════════════════════════════════════════════════
     // ⚙️ CONFIGURAR SELECT
     // ═══════════════════════════════════════════════════════════════
     function configurarSelectCategorias(select) {
-        console.log('⚙️ [Categorías] Configurando select...');
+        console.log('⚙️ [Categorías] Configurando select del modal...');
         
         window.__GRIZALUM_SELECT_CATEGORIA__ = select;
         
@@ -130,7 +144,7 @@
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // 🔄 CARGAR CATEGORÍAS SEGÚN TIPO
+    // 🔄 CARGAR CATEGORÍAS SEGÚN TIPO (PARA EL MODAL)
     // ═══════════════════════════════════════════════════════════════
     function cargarCategoriasSegunTipo(tipo, select) {
         console.log(`📋 [Categorías] Cargando para tipo: ${tipo}`);
@@ -140,7 +154,7 @@
         }
         
         if (!select) {
-            console.error('❌ [Categorías] Select no disponible');
+            console.error('❌ [Categorías] Select del modal no disponible');
             return;
         }
         
@@ -173,7 +187,7 @@
             select.selectedIndex = 0;
         });
         
-        console.log(`✅ [Categorías] ${categorias.length} categorías de ${tipo} cargadas`);
+        console.log(`✅ [Categorías] ${categorias.length} categorías de ${tipo} cargadas en modal`);
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -181,6 +195,15 @@
     // ═══════════════════════════════════════════════════════════════
     function cargarCategoriasEnFiltro(select) {
         console.log('📋 [Categorías] Cargando en filtro...');
+        
+        if (!select) {
+            select = document.getElementById('filtroCategoria');
+        }
+        
+        if (!select) {
+            console.error('❌ [Categorías] Select del filtro no disponible');
+            return;
+        }
         
         // Obtener TODAS las categorías (ingresos + gastos)
         const todasCategorias = [
@@ -205,9 +228,16 @@
             select.appendChild(option);
         });
         
+        // Forzar re-render (compatibilidad Safari)
+        select.blur();
+        select.style.display = 'none';
+        
+        requestAnimationFrame(function() {
+            select.style.display = '';
+        });
+        
         console.log(`✅ [Categorías] ${todasCategorias.length} categorías cargadas en filtro`);
     }
-    
 
     // ═══════════════════════════════════════════════════════════════
     // 🎛️ CONFIGURAR EVENTOS
@@ -250,6 +280,7 @@
     // Exponer funciones globales PRIMERO
     window.GRIZALUM_inicializarCategorias = inicializarCategorias;
     window.GRIZALUM_CATEGORIAS = CATEGORIAS_FLUJO_CAJA;
+    window.GRIZALUM_cargarCategoriasEnFiltro = cargarCategoriasEnFiltro;
     
     // CRÍTICO: Ejecutar MÚLTIPLES veces para asegurar que se cargue
     setTimeout(iniciar, 100);
