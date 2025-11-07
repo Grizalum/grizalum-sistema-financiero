@@ -45,6 +45,27 @@
     // ═══════════════════════════════════════════════════════════════
     function inicializarCategorias() {
         console.log('🔧 [Categorías] Buscando select...');
+
+        // ✅ CARGAR SELECT DEL MODAL
+        const selectInmediato = document.getElementById('selectCategoria');
+        
+        if (selectInmediato) {
+            console.log('✅ [Categorías] Select del modal encontrado');
+            configurarSelectCategorias(selectInmediato);
+            configurarEventosTipo(selectInmediato);
+            
+            const tipoInicial = document.querySelector('input[name="tipo"]:checked');
+            const tipo = tipoInicial ? tipoInicial.value : 'ingreso';
+            cargarCategoriasSegunTipo(tipo, selectInmediato);
+        }
+        
+        // ✅ NUEVO: CARGAR SELECT DEL FILTRO
+        const selectFiltro = document.getElementById('filtroCategoria');
+        
+        if (selectFiltro) {
+            console.log('✅ [Categorías] Select del filtro encontrado');
+            cargarCategoriasEnFiltro(selectFiltro);
+        }
         
         // ✅ NUEVO: Intentar INMEDIATAMENTE primero
         const selectInmediato = document.getElementById('selectCategoria');
@@ -154,6 +175,39 @@
         
         console.log(`✅ [Categorías] ${categorias.length} categorías de ${tipo} cargadas`);
     }
+
+    // ═══════════════════════════════════════════════════════════════
+    // 🔍 CARGAR CATEGORÍAS EN FILTRO (TODAS)
+    // ═══════════════════════════════════════════════════════════════
+    function cargarCategoriasEnFiltro(select) {
+        console.log('📋 [Categorías] Cargando en filtro...');
+        
+        // Obtener TODAS las categorías (ingresos + gastos)
+        const todasCategorias = [
+            ...CATEGORIAS_FLUJO_CAJA.ingresos,
+            ...CATEGORIAS_FLUJO_CAJA.gastos
+        ];
+        
+        // Limpiar select
+        select.innerHTML = '';
+        
+        // Opción "Todas"
+        const optionTodas = document.createElement('option');
+        optionTodas.value = '';
+        optionTodas.textContent = 'Todas las categorías';
+        select.appendChild(optionTodas);
+        
+        // Agregar todas las categorías
+        todasCategorias.forEach(function(categoria) {
+            const option = document.createElement('option');
+            option.value = categoria;
+            option.textContent = categoria;
+            select.appendChild(option);
+        });
+        
+        console.log(`✅ [Categorías] ${todasCategorias.length} categorías cargadas en filtro`);
+    }
+    
 
     // ═══════════════════════════════════════════════════════════════
     // 🎛️ CONFIGURAR EVENTOS
