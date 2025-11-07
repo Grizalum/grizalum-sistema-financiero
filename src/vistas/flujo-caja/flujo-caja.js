@@ -534,6 +534,22 @@ _configurarEventos() {
 // Inicialización global
 window.flujoCaja = new FlujoCaja();
 
+// ✅ FIX: Crear funciones compatibles del modal
+if (!window.flujoCaja.abrirModal) {
+    window.flujoCaja.abrirModal = function(tipo, transaccion) {
+        if (window.abrirModalTransaccion) {
+            window.abrirModalTransaccion(tipo, transaccion);
+        }
+    };
+}
+
+if (!window.flujoCaja.abrirModalTransaccion) {
+    window.flujoCaja.abrirModalTransaccion = window.flujoCaja.abrirModal;
+}
+
+console.log('✅ [FlujoCaja] Funciones de modal exportadas');
+
+
 console.log(`
 ╔═══════════════════════════════════════════════════════════════╗
 ║  💰 FLUJO DE CAJA v1.0.2 (FIXED)                              ║
