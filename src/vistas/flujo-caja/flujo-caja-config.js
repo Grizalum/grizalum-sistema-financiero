@@ -2,11 +2,12 @@
  * ═══════════════════════════════════════════════════════════════════
  * FLUJO DE CAJA - CONFIGURACIÓN DE COMPONENTES ADAPTATIVOS
  * Define qué mostrar según el nivel de la empresa (Score 0-100)
+ * VERSIÓN CORREGIDA: Categorías completas
  * ═══════════════════════════════════════════════════════════════════
  */
 
 const FlujoCajaConfig = {
-    version: '1.0.0',
+    version: '1.0.1',
     
     // COMPONENTES DEL MÓDULO
     // Cada componente tiene un scoreMinimo para activarse
@@ -231,6 +232,7 @@ const FlujoCajaConfig = {
     
     // ═══════════════════════════════════════════════════════════
     // CONFIGURACIÓN POR INDUSTRIA
+    // ✅ CORREGIDO: Categorías completas (8 ingresos, 12 gastos)
     // ═══════════════════════════════════════════════════════════
     categoriasPorIndustria: {
         'avicola': {
@@ -250,12 +252,56 @@ const FlujoCajaConfig = {
             gastos: ['Materiales', 'Mano Obra', 'Maquinaria', 'Transporte', 'Permisos', 'Otros']
         },
         'personalizada': {
-            ingresos: ['Ventas', 'Servicios', 'Otros Ingresos'],
-            gastos: ['Compras', 'Operaciones', 'Personal', 'Servicios', 'Otros Gastos']
+            ingresos: [
+                'Ventas',
+                'Servicios', 
+                'Cobros a clientes',
+                'Intereses bancarios',
+                'Ingresos por inversión',
+                'Préstamo recibido',
+                'Subsidios/Donaciones',
+                'Otros Ingresos'
+            ],
+            gastos: [
+                'Compras de inventario',
+                'Sueldos y salarios',
+                'Alquiler',
+                'Servicios (luz, agua, internet)',
+                'Transporte y logística',
+                'Marketing y publicidad',
+                'Mantenimiento',
+                'Impuestos y tasas',
+                'Seguros',
+                'Pago de préstamo',
+                'Gastos Operativos',
+                'Otros Gastos'
+            ]
         },
         'default': {
-            ingresos: ['Ventas', 'Servicios', 'Otros Ingresos'],
-            gastos: ['Compras', 'Operaciones', 'Personal', 'Servicios', 'Otros']
+            ingresos: [
+                'Ventas',
+                'Servicios', 
+                'Cobros a clientes',
+                'Intereses bancarios',
+                'Ingresos por inversión',
+                'Préstamo recibido',
+                'Subsidios/Donaciones',
+                'Otros Ingresos'
+            ],
+            gastos: [
+                'Compras de inventario',
+                'Sueldos y salarios',
+                'Alquiler',
+                'Servicios (luz, agua, internet)',
+                'Transporte y logística',
+                'Marketing y publicidad',
+                'Mantenimiento',
+                'Impuestos y tasas',
+                'Seguros',
+                'Pago de préstamo',
+                'Gastos Operativos',
+                'Otros Gastos'
+            ]
         }
     },
     
@@ -300,4 +346,4 @@ const FlujoCajaConfig = {
 // Exportar globalmente
 window.FlujoCajaConfig = FlujoCajaConfig;
 
-console.log('⚙️ Configuración de Flujo de Caja cargada');
+console.log('⚙️ Configuración de Flujo de Caja cargada v1.0.1 - Categorías completas');
