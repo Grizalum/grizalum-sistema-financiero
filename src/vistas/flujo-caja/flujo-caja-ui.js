@@ -21,11 +21,17 @@ class FlujoCajaUI {
         // Esperar a que el módulo esté listo
         await this._esperarModulo();
 
-        // ✅ NUEVO: Configurar historial con empresa actual
-    const info = this.modulo.obtenerInfo();
-    if (info.empresaActual) {
-        this.historial.setEmpresa(info.empresaActual);
-    }
+       // ✅ CORREGIDO: Configurar historial con empresa actual
+const info = this.modulo.obtenerInfo();
+
+// Intentar obtener el ID de empresa de múltiples fuentes
+let empresaId = info.empresaActual 
+    || (typeof gestorDatos !== 'undefined' && gestorDatos.obtenerEmpresaActual?.())
+    || (typeof window.empresaActual !== 'undefined' && window.empresaActual)
+    || 'default';
+
+console.log('🏢 Configurando historial para empresa:', empresaId);
+this.historial.setEmpresa(empresaId);
         
         // Esperar a que el DOM esté completamente listo
         await new Promise(resolve => setTimeout(resolve, 300));
@@ -162,10 +168,14 @@ if (inputDescripcion) {
         // ✅ NUEVO: Listener para cambio de empresa
         document.addEventListener('grizalumCompanyChanged', (e) => {
             console.log('🔄 [UI] Empresa cambiada detectada:', e.detail);
-             // ✅ NUEVO: Actualizar historial a nueva empresa
-             if (e.detail && e.detail.empresaId) {
-                  this.historial.setEmpresa(e.detail.empresaId);
-             }
+             // ✅ CORREGIDO: Actualizar historial a nueva empresa
+      const nuevaEmpresaId = e.detail?.empresaId 
+         || e.detail?.empresa 
+         || (typeof gestorDatos !== 'undefined' && gestorDatos.obtenerEmpresaActual?.())
+         || 'default';
+
+      console.log('🔄 Historial cambiando a empresa:', nuevaEmpresaId);
+      this.historial.setEmpresa(nuevaEmpresaId);
             
             // Limpiar UI inmediatamente
             const listaTransacciones = document.getElementById('listaTransacciones');
