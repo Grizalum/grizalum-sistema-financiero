@@ -373,7 +373,7 @@ if (inputDescripcion) {
     }
 
     // ✅ CORREGIDO: abrirModalTransaccion ahora respeta el modo de edición
-    abrirModalTransaccion(modoEdicion = false) {
+   abrirModalTransaccion(modoEdicion = false) {
         // ✅ IMPORTANTE: Solo resetear si NO estamos editando
         if (!modoEdicion) {
             this.transaccionEditando = null;
@@ -394,13 +394,25 @@ if (inputDescripcion) {
             }
         }
         
-        // Mostrar modal
-        const modal = document.getElementById('modalTransaccion');
-        if (modal) modal.classList.add('show');
-        
-        console.log('📋 Modal abierto - Modo:', modoEdicion ? 'EDICIÓN' : 'NUEVA', 'ID:', this.transaccionEditando);
+        // ✅ CORREGIDO: Usar Bootstrap Modal API
+        const modalElement = document.getElementById('modalTransaccion');
+        if (modalElement) {
+            // Crear instancia de Bootstrap Modal
+            let modalInstance = bootstrap.Modal.getInstance(modalElement);
+            
+            if (!modalInstance) {
+                modalInstance = new bootstrap.Modal(modalElement, {
+                    backdrop: true,
+                    keyboard: true  // Permitir cerrar con ESC
+                });
+            }
+            
+            // Mostrar modal
+            modalInstance.show();
+            
+            console.log('📋 Modal abierto - Modo:', modoEdicion ? 'EDICIÓN' : 'NUEVA', 'ID:', this.transaccionEditando);
+        }
     }
-
     cerrarModalTransaccion() {
         console.log('🔒 Cerrando modal...');
         
