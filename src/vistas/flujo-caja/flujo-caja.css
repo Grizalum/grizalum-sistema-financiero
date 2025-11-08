@@ -1764,3 +1764,23 @@
     color: var(--texto-terciario);
     font-size: 0.875rem;
 }
+
+/* ✅ FIX: Modal centrado correctamente */
+.modal.show {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 1050 !important;
+    overflow: auto;
+}
+
+.modal-dialog {
+    margin: auto;
+    max-width: 600px;
+    width: 90%;
+}
