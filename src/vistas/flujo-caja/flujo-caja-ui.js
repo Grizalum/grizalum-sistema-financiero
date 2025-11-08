@@ -398,14 +398,8 @@ if (inputDescripcion) {
         const modalElement = document.getElementById('modalTransaccion');
         if (modalElement) {
             // Mostrar modal
-            // Mostrar modal con posicionamiento correcto
             modalElement.classList.add('show');
             modalElement.style.display = 'block';
-            modalElement.style.position = 'fixed';
-            modalElement.style.top = '50%';
-            modalElement.style.left = '50%';
-            modalElement.style.transform = 'translate(-50%, -50%)';
-            modalElement.style.zIndex = '1050';
             modalElement.setAttribute('aria-modal', 'true');
             modalElement.removeAttribute('aria-hidden');
             
