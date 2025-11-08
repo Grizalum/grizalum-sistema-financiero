@@ -394,51 +394,60 @@ if (inputDescripcion) {
             }
         }
         
-        // ✅ CORREGIDO: Usar Bootstrap Modal API
+        // ✅ CORREGIDO: Abrir modal sin Bootstrap API
         const modalElement = document.getElementById('modalTransaccion');
         if (modalElement) {
-            // Crear instancia de Bootstrap Modal
-            let modalInstance = bootstrap.Modal.getInstance(modalElement);
+            // Mostrar modal
+            modalElement.classList.add('show');
+            modalElement.style.display = 'block';
+            modalElement.setAttribute('aria-modal', 'true');
+            modalElement.removeAttribute('aria-hidden');
             
-            if (!modalInstance) {
-                modalInstance = new bootstrap.Modal(modalElement, {
-                    backdrop: true,
-                    keyboard: true  // Permitir cerrar con ESC
-                });
+            // Agregar backdrop
+            let backdrop = document.querySelector('.modal-backdrop');
+            if (!backdrop) {
+                backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                document.body.appendChild(backdrop);
             }
             
-            // Mostrar modal
-            modalInstance.show();
+            // Agregar clase al body
+            document.body.classList.add('modal-open');
+            
+            // ✅ CRÍTICO: Escuchar tecla ESC para cerrar
+            const cerrarConESC = (e) => {
+                if (e.key === 'Escape') {
+                    this.cerrarModalTransaccion();
+                    document.removeEventListener('keydown', cerrarConESC);
+                }
+            };
+            document.addEventListener('keydown', cerrarConESC);
             
             console.log('📋 Modal abierto - Modo:', modoEdicion ? 'EDICIÓN' : 'NUEVA', 'ID:', this.transaccionEditando);
         }
     }
     cerrarModalTransaccion() {
-        console.log('🔒 Cerrando modal...');
-        
-        const modal = document.getElementById('modalTransaccion');
-        if (modal) {
-            modal.classList.remove('show');
+        const modalElement = document.getElementById('modalTransaccion');
+        if (modalElement) {
+            // Ocultar modal
+            modalElement.classList.remove('show');
+            modalElement.style.display = 'none';
+            modalElement.setAttribute('aria-hidden', 'true');
+            modalElement.removeAttribute('aria-modal');
+            
+            // Remover backdrop
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) backdrop.remove();
+            
+            // Remover clase del body
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+            
+            console.log('✅ Modal cerrado y limpiado');
         }
-        
-        // Limpiar estado
-        this.transaccionEditando = null;
-        
-        // Resetear formulario
-        const form = document.getElementById('formTransaccion');
-        if (form) {
-            form.reset();
-        }
-        
-        // Limpiar título
-        const titulo = document.getElementById('modalTitulo');
-        if (titulo) {
-            titulo.textContent = 'Nueva Transacción';
-        }
-        
-        console.log('✅ Modal cerrado y limpiado');
     }
-
+    
     // ✅ CORREGIDO: guardarTransaccion con acceso correcto a campos
     guardarTransaccion(event) {
     event.preventDefault();
