@@ -580,100 +580,60 @@ if (inputDescripcion) {
     }
 
 async exportarDatos() {
-    console.log('📊 Exportando datos con formato profesional...');
+    console.log('📊 Exportando datos...');
     
     try {
-        // Verificar que ExcelJS esté disponible
         if (typeof ExcelJS === 'undefined') {
-            alert('❌ Error: Librería ExcelJS no disponible. Recarga la página.');
-            console.error('ExcelJS no está cargado');
+            alert('❌ ExcelJS no disponible. Recarga la página.');
             return;
         }
 
-        // Verificar que el exportador profesional esté disponible
         if (typeof ExportadorExcelProfesional === 'undefined') {
-            console.error('⚠️ Exportador profesional no disponible');
-            alert('❌ Error: Exportador no disponible. Verifica que el archivo esté cargado.');
+            alert('❌ Exportador no disponible.');
             return;
         }
 
-        // Obtener datos del módulo
-        const info = this.modulo.obtenerInfo();
         const transacciones = this.modulo.obtenerTransacciones();
         const balance = this.modulo.calcularBalance();
 
-        // ✅ CORREGIDO: Obtener nivel/score como NÚMERO
+        // ✅ OBTENER SCORE DEL LOCALSTORAGE DIRECTAMENTE
         let nivel = 0;
-        
-        // Estrategia 1: Desde info.nivel.score (si nivel es objeto)
-        if (info.nivel && typeof info.nivel === 'object' && info.nivel.score !== undefined) {
-            nivel = parseInt(info.nivel.score);
-            console.log('📊 Nivel obtenido de info.nivel.score:', nivel);
-        }
-        // Estrategia 2: Desde info.nivel directo (si es número)
-        else if (typeof info.nivel === 'number') {
-            nivel = info.nivel;
-            console.log('📊 Nivel obtenido de info.nivel:', nivel);
-        }
-        // Estrategia 3: Desde info.score
-        else if (info.score !== undefined) {
-            nivel = parseInt(info.score);
-            console.log('📊 Nivel obtenido de info.score:', nivel);
-        }
-        
-        // Estrategia 4: Desde gestorDatos
-        if (nivel === 0 || isNaN(nivel)) {
-            const empresaId = info.empresaActual || info.empresaId;
-            if (empresaId && typeof gestorDatos !== 'undefined') {
-                const empresa = gestorDatos.obtenerEmpresa(empresaId);
-                if (empresa && empresa.score !== undefined) {
-                    nivel = parseInt(empresa.score);
-                    console.log('📊 Nivel obtenido de gestorDatos:', nivel);
+        let empresaId = 'default';
+
+        // Buscar la clave de empresa activa
+        for (let key of Object.keys(localStorage)) {
+            if (key.startsWith('grizalum_empresa_')) {
+                try {
+                    const empresa = JSON.parse(localStorage.getItem(key));
+                    if (empresa && empresa.id) {
+                        empresaId = empresa.id;
+                        nivel = parseInt(empresa.score) || 0;
+                        console.log('✅ Empresa encontrada:', empresaId, 'Score:', nivel);
+                        break;
+                    }
+                } catch (e) {
+                    // Continuar con la siguiente
                 }
             }
         }
 
-        // Estrategia 5: Desde el DOM (banner visible)
-        if (nivel === 0 || isNaN(nivel)) {
-            const bannerPlan = document.querySelector('.plan-banner-info');
-            if (bannerPlan) {
-                const textoNivel = bannerPlan.textContent;
-                const match = textoNivel.match(/Nivel:\s*(\d+)/);
-                if (match) {
-                    nivel = parseInt(match[1]);
-                    console.log('📊 Nivel obtenido del banner DOM:', nivel);
-                }
-            }
-        }
+        console.log('📊 EXPORTANDO - Empresa:', empresaId, 'Nivel:', nivel);
 
-        // Asegurar que nivel sea un número válido
-        nivel = parseInt(nivel) || 0;
-        console.log('📊 ✅ Nivel FINAL para exportar (número):', nivel);
-
-        // Preparar datos para exportar
         const datosExportar = {
-            empresa: info.empresaActual || info.empresaId || 'Sin nombre',
+            empresa: empresaId,
             balance: balance,
             transacciones: transacciones,
-            nivel: nivel  // ✅ Ahora sí es un número
+            nivel: nivel
         };
 
-        console.log('📦 Datos preparados:', {
-            empresa: datosExportar.empresa,
-            nivel: datosExportar.nivel,
-            transacciones: datosExportar.transacciones.length
-        });
-
-        // Crear exportador y exportar
         const exportador = new ExportadorExcelProfesional();
         await exportador.exportar(datosExportar);
         
-        this.mostrarNotificacion('✅ Excel exportado exitosamente', 'success');
-        console.log('✅ Exportación completada');
+        this.mostrarNotificacion('✅ Excel exportado', 'success');
         
     } catch (error) {
-        console.error('❌ Error exportando:', error);
-        this.mostrarNotificacion('❌ Error al exportar: ' + error.message, 'error');
+        console.error('❌ Error:', error);
+        alert('Error al exportar: ' + error.message);
     }
 }
     _exportarBasico() {
