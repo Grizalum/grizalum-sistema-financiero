@@ -602,41 +602,67 @@ async exportarDatos() {
         const transacciones = this.modulo.obtenerTransacciones();
         const balance = this.modulo.calcularBalance();
 
-        // ✅ CORREGIDO: Obtener nivel del sistema de planes
-        let nivel = info.nivel || 0;
+        // ✅ CORREGIDO: Obtener nivel/score como NÚMERO
+        let nivel = 0;
         
-        // Si el nivel es 0, intentar obtenerlo del localStorage o del sistema de empresas
-        if (nivel === 0) {
-            const empresaId = info.empresaActual;
+        // Estrategia 1: Desde info.nivel.score (si nivel es objeto)
+        if (info.nivel && typeof info.nivel === 'object' && info.nivel.score !== undefined) {
+            nivel = parseInt(info.nivel.score);
+            console.log('📊 Nivel obtenido de info.nivel.score:', nivel);
+        }
+        // Estrategia 2: Desde info.nivel directo (si es número)
+        else if (typeof info.nivel === 'number') {
+            nivel = info.nivel;
+            console.log('📊 Nivel obtenido de info.nivel:', nivel);
+        }
+        // Estrategia 3: Desde info.score
+        else if (info.score !== undefined) {
+            nivel = parseInt(info.score);
+            console.log('📊 Nivel obtenido de info.score:', nivel);
+        }
+        
+        // Estrategia 4: Desde gestorDatos
+        if (nivel === 0 || isNaN(nivel)) {
+            const empresaId = info.empresaActual || info.empresaId;
             if (empresaId && typeof gestorDatos !== 'undefined') {
                 const empresa = gestorDatos.obtenerEmpresa(empresaId);
                 if (empresa && empresa.score !== undefined) {
-                    nivel = empresa.score;
-                    console.log('📊 Nivel obtenido de empresa:', nivel);
+                    nivel = parseInt(empresa.score);
+                    console.log('📊 Nivel obtenido de gestorDatos:', nivel);
                 }
             }
         }
 
-        // Si aún es 0, intentar del banner visible
-        if (nivel === 0) {
-            const bannerNivel = document.querySelector('[data-plan-nivel]');
-            if (bannerNivel) {
-                nivel = parseInt(bannerNivel.dataset.planNivel) || 0;
-                console.log('📊 Nivel obtenido del banner:', nivel);
+        // Estrategia 5: Desde el DOM (banner visible)
+        if (nivel === 0 || isNaN(nivel)) {
+            const bannerPlan = document.querySelector('.plan-banner-info');
+            if (bannerPlan) {
+                const textoNivel = bannerPlan.textContent;
+                const match = textoNivel.match(/Nivel:\s*(\d+)/);
+                if (match) {
+                    nivel = parseInt(match[1]);
+                    console.log('📊 Nivel obtenido del banner DOM:', nivel);
+                }
             }
         }
 
-        console.log('📊 Nivel final para exportar:', nivel);
+        // Asegurar que nivel sea un número válido
+        nivel = parseInt(nivel) || 0;
+        console.log('📊 ✅ Nivel FINAL para exportar (número):', nivel);
 
         // Preparar datos para exportar
         const datosExportar = {
-            empresa: info.empresaActual || 'Sin nombre',
+            empresa: info.empresaActual || info.empresaId || 'Sin nombre',
             balance: balance,
             transacciones: transacciones,
-            nivel: nivel  // ✅ Ahora sí tiene el nivel correcto
+            nivel: nivel  // ✅ Ahora sí es un número
         };
 
-        console.log('📦 Datos preparados para exportar:', datosExportar);
+        console.log('📦 Datos preparados:', {
+            empresa: datosExportar.empresa,
+            nivel: datosExportar.nivel,
+            transacciones: datosExportar.transacciones.length
+        });
 
         // Crear exportador y exportar
         const exportador = new ExportadorExcelProfesional();
