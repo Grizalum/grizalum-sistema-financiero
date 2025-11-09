@@ -584,7 +584,7 @@ async exportarDatos() {
     
     try {
         if (typeof ExcelJS === 'undefined') {
-            alert('❌ ExcelJS no disponible. Recarga la página.');
+            alert('❌ ExcelJS no disponible.');
             return;
         }
 
@@ -596,25 +596,39 @@ async exportarDatos() {
         const transacciones = this.modulo.obtenerTransacciones();
         const balance = this.modulo.calcularBalance();
 
-        // ✅ OBTENER SCORE DEL LOCALSTORAGE DIRECTAMENTE
+        // ✅ SOLUCIÓN CORRECTA: Leer desde grizalum_empresas
         let nivel = 0;
         let empresaId = 'default';
 
-        // Buscar la clave de empresa activa
-        for (let key of Object.keys(localStorage)) {
-            if (key.startsWith('grizalum_empresa_')) {
-                try {
-                    const empresa = JSON.parse(localStorage.getItem(key));
-                    if (empresa && empresa.id) {
-                        empresaId = empresa.id;
-                        nivel = parseInt(empresa.score) || 0;
-                        console.log('✅ Empresa encontrada:', empresaId, 'Score:', nivel);
-                        break;
+        try {
+            // 1. Obtener empresa actual
+            const empresaActualKey = localStorage.getItem('grizalum_empresa_actual');
+            console.log('🔑 Empresa actual key:', empresaActualKey);
+
+            // 2. Obtener array de empresas
+            const empresasData = localStorage.getItem('grizalum_empresas');
+            if (empresasData) {
+                const empresas = JSON.parse(empresasData);
+                console.log('📋 Total empresas:', empresas.length);
+
+                // 3. Buscar la empresa activa
+                const empresaActiva = empresas.find(e => e.id === empresaActualKey);
+                
+                if (empresaActiva) {
+                    empresaId = empresaActiva.id || empresaActiva.nombre;
+                    nivel = parseInt(empresaActiva.score) || 0;
+                    console.log('✅ Empresa encontrada:', empresaId);
+                    console.log('📊 Score:', nivel);
+                } else {
+                    console.log('⚠️ Empresa activa no encontrada, usando primera empresa');
+                    if (empresas.length > 0) {
+                        empresaId = empresas[0].id || empresas[0].nombre;
+                        nivel = parseInt(empresas[0].score) || 0;
                     }
-                } catch (e) {
-                    // Continuar con la siguiente
                 }
             }
+        } catch (e) {
+            console.error('❌ Error leyendo empresas:', e);
         }
 
         console.log('📊 EXPORTANDO - Empresa:', empresaId, 'Nivel:', nivel);
@@ -633,7 +647,7 @@ async exportarDatos() {
         
     } catch (error) {
         console.error('❌ Error:', error);
-        alert('Error al exportar: ' + error.message);
+        alert('Error: ' + error.message);
     }
 }
     _exportarBasico() {
