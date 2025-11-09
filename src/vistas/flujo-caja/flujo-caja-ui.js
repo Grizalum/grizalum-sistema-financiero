@@ -579,7 +579,7 @@ if (inputDescripcion) {
         this.cargarTransacciones({ busqueda: texto });
     }
 
-    async exportarDatos() {
+async exportarDatos() {
     console.log('📊 Exportando datos con formato profesional...');
     
     try {
@@ -602,12 +602,38 @@ if (inputDescripcion) {
         const transacciones = this.modulo.obtenerTransacciones();
         const balance = this.modulo.calcularBalance();
 
+        // ✅ CORREGIDO: Obtener nivel del sistema de planes
+        let nivel = info.nivel || 0;
+        
+        // Si el nivel es 0, intentar obtenerlo del localStorage o del sistema de empresas
+        if (nivel === 0) {
+            const empresaId = info.empresaActual;
+            if (empresaId && typeof gestorDatos !== 'undefined') {
+                const empresa = gestorDatos.obtenerEmpresa(empresaId);
+                if (empresa && empresa.score !== undefined) {
+                    nivel = empresa.score;
+                    console.log('📊 Nivel obtenido de empresa:', nivel);
+                }
+            }
+        }
+
+        // Si aún es 0, intentar del banner visible
+        if (nivel === 0) {
+            const bannerNivel = document.querySelector('[data-plan-nivel]');
+            if (bannerNivel) {
+                nivel = parseInt(bannerNivel.dataset.planNivel) || 0;
+                console.log('📊 Nivel obtenido del banner:', nivel);
+            }
+        }
+
+        console.log('📊 Nivel final para exportar:', nivel);
+
         // Preparar datos para exportar
         const datosExportar = {
             empresa: info.empresaActual || 'Sin nombre',
             balance: balance,
             transacciones: transacciones,
-            nivel: info.nivel
+            nivel: nivel  // ✅ Ahora sí tiene el nivel correcto
         };
 
         console.log('📦 Datos preparados para exportar:', datosExportar);
