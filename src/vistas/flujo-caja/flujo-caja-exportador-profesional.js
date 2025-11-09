@@ -2,7 +2,7 @@
  * ═══════════════════════════════════════════════════════════════════
  * EXPORTADOR PROFESIONAL DE EXCEL - FLUJO DE CAJA GRIZALUM
  * Usa ExcelJS para estilos REALES con colores
- * VERSION: 3.1 CORREGIDO - Soluciona problema de nombre de método
+ * VERSION: 4.0 - Adaptativo por plan + Gráfico posicionado correctamente
  * ═══════════════════════════════════════════════════════════════════
  */
 
@@ -28,29 +28,42 @@ class ExportadorExcelProfesional {
         try {
             console.log('📊 Generando Excel profesional con ExcelJS...');
 
+            // ✅ NUEVO: Determinar plan/nivel
+            const nivel = datos.nivel || 0;
+            const plan = this._determinarPlan(nivel);
+            console.log(`📋 Exportando para plan: ${plan} (nivel ${nivel})`);
+
             const workbook = new ExcelJS.Workbook();
             workbook.creator = 'GRIZALUM Sistema Financiero';
             workbook.created = new Date();
 
+            // ✅ Dashboard (TODOS los planes)
             const hoja1 = workbook.addWorksheet('📊 Dashboard', {
                 views: [{ showGridLines: false }]
             });
-            this._crearDashboard(hoja1, datos);
+            this._crearDashboard(hoja1, datos, plan);
 
+            // ✅ Transacciones (TODOS los planes)
             const hoja2 = workbook.addWorksheet('📋 Transacciones', {
                 views: [{ showGridLines: false }]
             });
-            this._crearTransacciones(hoja2, datos);
+            this._crearTransacciones(hoja2, datos, plan);
 
-            const hoja3 = workbook.addWorksheet('🏷️ Categorías', {
-                views: [{ showGridLines: false }]
-            });
-            this._crearCategorias(hoja3, datos);
+            // ✅ Categorías (Profesional+)
+            if (plan !== 'Individual') {
+                const hoja3 = workbook.addWorksheet('🏷️ Categorías', {
+                    views: [{ showGridLines: false }]
+                });
+                this._crearCategorias(hoja3, datos, plan);
+            }
 
-            const hoja4 = workbook.addWorksheet('📈 Análisis', {
-                views: [{ showGridLines: false }]
-            });
-            await this._crearAnalisis(hoja4, datos, workbook);
+            // ✅ Análisis (Empresarial+)
+            if (plan === 'Empresarial' || plan === 'Corporativo') {
+                const hoja4 = workbook.addWorksheet('📈 Análisis', {
+                    views: [{ showGridLines: false }]
+                });
+                await this._crearAnalisis(hoja4, datos, workbook, plan);
+            }
 
             const buffer = await workbook.xlsx.writeBuffer();
             const blob = new Blob([buffer], { 
@@ -60,7 +73,7 @@ class ExportadorExcelProfesional {
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `GRIZALUM_FlujoCaja_${datos.empresa}_${this._fecha()}.xlsx`;
+            a.download = `GRIZALUM_FlujoCaja_${datos.empresa}_${plan}_${this._fecha()}.xlsx`;
             a.click();
             window.URL.revokeObjectURL(url);
 
@@ -73,12 +86,23 @@ class ExportadorExcelProfesional {
         }
     }
 
-    _crearDashboard(sheet, datos) {
+    /**
+     * Determinar plan según nivel
+     */
+    _determinarPlan(nivel) {
+        if (nivel >= 70) return 'Corporativo';
+        if (nivel >= 50) return 'Empresarial';
+        if (nivel >= 30) return 'Profesional';
+        return 'Individual';
+    }
+
+    _crearDashboard(sheet, datos, plan) {
         const balance = datos.balance || {};
 
+        // Título con indicador de plan
         sheet.mergeCells('A1:F1');
         const titulo = sheet.getCell('A1');
-        titulo.value = 'FLUJO DE CAJA - DASHBOARD EJECUTIVO';
+        titulo.value = `FLUJO DE CAJA - DASHBOARD EJECUTIVO [${plan.toUpperCase()}]`;
         titulo.font = { name: 'Inter', size: 18, bold: true, color: { argb: 'FFFFFFFF' } };
         titulo.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF667EEA' } };
         titulo.alignment = { horizontal: 'center', vertical: 'middle' };
@@ -196,7 +220,7 @@ class ExportadorExcelProfesional {
         sheet.getColumn(5).width = 20;
     }
 
-    _crearTransacciones(sheet, datos) {
+    _crearTransacciones(sheet, datos, plan) {
         const transacciones = datos.transacciones || [];
 
         sheet.mergeCells('A1:G1');
@@ -272,7 +296,7 @@ class ExportadorExcelProfesional {
         sheet.getColumn(7).width = 30;
     }
 
-    _crearCategorias(sheet, datos) {
+    _crearCategorias(sheet, datos, plan) {
         const transacciones = datos.transacciones || [];
         const balance = datos.balance || {};
 
@@ -383,7 +407,7 @@ class ExportadorExcelProfesional {
         sheet.getColumn(5).width = 18;
     }
 
-    async _crearAnalisis(sheet, datos, workbook) {
+    async _crearAnalisis(sheet, datos, workbook, plan) {
         const balance = datos.balance || {};
         const transacciones = datos.transacciones || [];
 
@@ -395,34 +419,14 @@ class ExportadorExcelProfesional {
         titulo.alignment = { horizontal: 'center', vertical: 'middle' };
         sheet.getRow(1).height = 35;
 
-        sheet.getCell('A3').value = 'GRÁFICO CIRCULAR - DISTRIBUCIÓN';
+        // ✅ SECCIÓN 1: DISTRIBUCIÓN PORCENTUAL (Lado izquierdo)
+        sheet.getCell('A3').value = 'DISTRIBUCIÓN PORCENTUAL';
         sheet.getCell('A3').font = { bold: true, size: 12 };
         sheet.getCell('A3').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD1D5DB' } };
 
-        try {
-            const imagenBase64 = this._crearGraficoCircular(balance);
-            const imageId = workbook.addImage({
-                base64: imagenBase64,
-                extension: 'png'
-            });
-
-            sheet.addImage(imageId, {
-                tl: { col: 0, row: 3 },
-                ext: { width: 500, height: 400 }
-            });
-
-            console.log('✅ Gráfico agregado exitosamente');
-        } catch (error) {
-            console.error('⚠️ Error al agregar gráfico:', error);
-        }
-
-        sheet.getCell('A9').value = 'DISTRIBUCIÓN PORCENTUAL';
-        sheet.getCell('A9').font = { bold: true, size: 12 };
-        sheet.getCell('A9').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD1D5DB' } };
-
-        sheet.getCell('A10').value = 'Tipo';
-        sheet.getCell('B10').value = 'Porcentaje';
-        ['A10', 'B10'].forEach(cell => {
+        sheet.getCell('A4').value = 'Tipo';
+        sheet.getCell('B4').value = 'Porcentaje';
+        ['A4', 'B4'].forEach(cell => {
             const c = sheet.getCell(cell);
             c.font = { bold: true, color: { argb: 'FFFFFFFF' } };
             c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F2937' } };
@@ -439,15 +443,15 @@ class ExportadorExcelProfesional {
         const pctIngresos = total > 0 ? ((balance.ingresos / total) * 100).toFixed(1) : 0;
         const pctGastos = total > 0 ? ((balance.gastos / total) * 100).toFixed(1) : 0;
 
-        sheet.getCell('A11').value = 'Ingresos';
-        sheet.getCell('B11').value = `${pctIngresos}%`;
-        sheet.getCell('B11').alignment = { horizontal: 'right' };
+        sheet.getCell('A5').value = 'Ingresos';
+        sheet.getCell('B5').value = `${pctIngresos}%`;
+        sheet.getCell('B5').alignment = { horizontal: 'right' };
         
-        sheet.getCell('A12').value = 'Gastos';
-        sheet.getCell('B12').value = `${pctGastos}%`;
-        sheet.getCell('B12').alignment = { horizontal: 'right' };
+        sheet.getCell('A6').value = 'Gastos';
+        sheet.getCell('B6').value = `${pctGastos}%`;
+        sheet.getCell('B6').alignment = { horizontal: 'right' };
 
-        for (let row = 11; row <= 12; row++) {
+        for (let row = 5; row <= 6; row++) {
             for (let col = 1; col <= 2; col++) {
                 sheet.getCell(row, col).border = {
                     top: { style: 'thin', color: { argb: 'FF000000' } },
@@ -458,14 +462,15 @@ class ExportadorExcelProfesional {
             }
         }
 
-        sheet.getCell('A14').value = 'INDICADORES CLAVE (KPIs)';
-        sheet.getCell('A14').font = { bold: true, size: 12 };
-        sheet.getCell('A14').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD1D5DB' } };
+        // ✅ SECCIÓN 2: INDICADORES CLAVE (Lado izquierdo, debajo)
+        sheet.getCell('A9').value = 'INDICADORES CLAVE (KPIs)';
+        sheet.getCell('A9').font = { bold: true, size: 12 };
+        sheet.getCell('A9').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD1D5DB' } };
 
-        sheet.getCell('A15').value = 'Indicador';
-        sheet.getCell('B15').value = 'Valor';
-        sheet.getCell('C15').value = 'Estado';
-        ['A15', 'B15', 'C15'].forEach(cell => {
+        sheet.getCell('A10').value = 'Indicador';
+        sheet.getCell('B10').value = 'Valor';
+        sheet.getCell('C10').value = 'Estado';
+        ['A10', 'B10', 'C10'].forEach(cell => {
             const c = sheet.getCell(cell);
             c.font = { bold: true, color: { argb: 'FFFFFFFF' } };
             c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F2937' } };
@@ -479,22 +484,22 @@ class ExportadorExcelProfesional {
         });
 
         const ratio = balance.gastos > 0 ? (balance.ingresos / balance.gastos).toFixed(2) : 'N/A';
-        sheet.getCell('A16').value = 'Ratio Ingresos/Gastos';
-        sheet.getCell('B16').value = ratio;
-        sheet.getCell('C16').value = ratio >= 1.5 ? '🟢 Excelente' : ratio >= 1 ? '🟡 Aceptable' : '🔴 Crítico';
+        sheet.getCell('A11').value = 'Ratio Ingresos/Gastos';
+        sheet.getCell('B11').value = ratio;
+        sheet.getCell('C11').value = ratio >= 1.5 ? '🟢 Excelente' : ratio >= 1 ? '🟡 Aceptable' : '🔴 Crítico';
 
         const promedioTrans = transacciones.length > 0 ? ((balance.ingresos + balance.gastos) / transacciones.length) : 0;
-        sheet.getCell('A17').value = 'Promedio por Transacción';
-        sheet.getCell('B17').value = promedioTrans;
-        sheet.getCell('B17').numFmt = '"S/. "#,##0.00';
-        sheet.getCell('C17').value = '📊 Informativo';
+        sheet.getCell('A12').value = 'Promedio por Transacción';
+        sheet.getCell('B12').value = promedioTrans;
+        sheet.getCell('B12').numFmt = '"S/. "#,##0.00';
+        sheet.getCell('C12').value = '📊 Informativo';
 
         const tasaAhorro = balance.ingresos > 0 ? ((balance.balance / balance.ingresos) * 100).toFixed(1) : 0;
-        sheet.getCell('A18').value = 'Tasa de Ahorro';
-        sheet.getCell('B18').value = `${tasaAhorro}%`;
-        sheet.getCell('C18').value = tasaAhorro > 20 ? '🟢 Muy bien' : tasaAhorro > 0 ? '🟡 Mejorable' : '🔴 Déficit';
+        sheet.getCell('A13').value = 'Tasa de Ahorro';
+        sheet.getCell('B13').value = `${tasaAhorro}%`;
+        sheet.getCell('C13').value = tasaAhorro > 20 ? '🟢 Muy bien' : tasaAhorro > 0 ? '🟡 Mejorable' : '🔴 Déficit';
 
-        for (let row = 16; row <= 18; row++) {
+        for (let row = 11; row <= 13; row++) {
             for (let col = 1; col <= 3; col++) {
                 sheet.getCell(row, col).border = {
                     top: { style: 'thin', color: { argb: 'FF000000' } },
@@ -505,9 +510,35 @@ class ExportadorExcelProfesional {
             }
         }
 
+        // ✅ CORREGIDO: GRÁFICO EN COLUMNA H (al lado derecho)
+        sheet.getCell('H3').value = 'DISTRIBUCIÓN FINANCIERA';
+        sheet.getCell('H3').font = { bold: true, size: 12 };
+        sheet.getCell('H3').fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD1D5DB' } };
+
+        try {
+            const imagenBase64 = this._crearGraficoCircular(balance);
+            const imageId = workbook.addImage({
+                base64: imagenBase64,
+                extension: 'png'
+            });
+
+            // ✅ POSICIÓN CORREGIDA: Columna H (índice 7), fila 4
+            sheet.addImage(imageId, {
+                tl: { col: 7, row: 3 },  // Columna H = índice 7, fila 4 = índice 3
+                ext: { width: 500, height: 400 }
+            });
+
+            console.log('✅ Gráfico agregado exitosamente en columna H');
+        } catch (error) {
+            console.error('⚠️ Error al agregar gráfico:', error);
+        }
+
+        // Ajustar anchos de columna
         sheet.getColumn(1).width = 30;
         sheet.getColumn(2).width = 20;
         sheet.getColumn(3).width = 20;
+        sheet.getColumn(7).width = 5;  // Separación
+        sheet.getColumn(8).width = 40; // Gráfico
     }
 
     _crearGraficoCircular(balance) {
@@ -610,4 +641,4 @@ class ExportadorExcelProfesional {
 }
 
 window.ExportadorExcelProfesional = ExportadorExcelProfesional;
-console.log('✅ Exportador Excel Profesional v3.1 CORREGIDO cargado - Soporta ambos métodos');
+console.log('✅ Exportador Excel Profesional v4.0 - Adaptativo por plan + Gráfico corregido');
