@@ -757,22 +757,34 @@ if (document.readyState === 'loading') {
         }
     };
     
-    console.log('✅ Función global recargarFlujoCaja creada');
+  console.log('✅ Función global recargarFlujoCaja creada');
     
-
-
 </script>    
+<!-- SCRIPTS DEL MÓDULO CON TIMESTAMP DINÁMICO -->
+<script>
+// Generar timestamp único al cargar
+const CACHE_BUSTER = Date.now();
 
-<!-- SCRIPTS DEL MÓDULO CON TIMESTAMP ÚNICO -->
-<script src="src/vistas/flujo-caja/flujo-caja-config.js?v=1762491400"></script>
-<script src="src/vistas/flujo-caja/historial-descripciones.js?v=1761876700"></script>
-<script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
-<script src="src/vistas/flujo-caja/flujo-caja.js?v=1761876700"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-exportador-profesional.js?v=1762582100"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-ui.js?v=1762672000"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-graficos.js?v=1761876700"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-categorias.js?v=1761876700"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-planes.js?v=1762235000"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-plan-loader.js?v=1762235000"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-fix-banner.js?v=1762446500"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-fix-categorias.js?v=1762446500"></script>
+// Lista de scripts a cargar
+const scripts = [
+    'src/vistas/flujo-caja/flujo-caja-config.js',
+    'src/vistas/flujo-caja/historial-descripciones.js',
+    'https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js',
+    'src/vistas/flujo-caja/flujo-caja.js',
+    'src/vistas/flujo-caja/flujo-caja-exportador-profesional.js',
+    'src/vistas/flujo-caja/flujo-caja-ui.js',
+    'src/vistas/flujo-caja/flujo-caja-graficos.js',
+    'src/vistas/flujo-caja/flujo-caja-categorias.js',
+    'src/vistas/flujo-caja/flujo-caja-planes.js',
+    'src/vistas/flujo-caja/flujo-caja-plan-loader.js',
+    'src/vistas/flujo-caja/flujo-caja-fix-banner.js',
+    'src/vistas/flujo-caja/flujo-caja-fix-categorias.js'
+];
+
+// Cargar scripts con timestamp dinámico
+scripts.forEach(src => {
+    // Solo agregar timestamp a scripts locales (no CDN)
+    const url = src.includes('://') ? src : `${src}?v=${CACHE_BUSTER}`;
+    document.write(`<script src="${url}"><\/script>`);
+});
+</script>
