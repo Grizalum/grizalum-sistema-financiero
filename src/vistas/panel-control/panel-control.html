@@ -127,4 +127,68 @@
         </div>
     </section>
 
+     <!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SCRIPTS DEL PANEL DE CONTROL CON TIMESTAMP -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<!-- 1. Módulo principal -->
+<script src="src/vistas/panel-control/panel-control.js?v=1762812500"></script>
+
+<!-- 2. Sistema de planes y restricciones -->
+<script src="src/vistas/panel-control/panel-control-planes.js?v=1762812500"></script>
+
+<!-- 3. Loader del banner -->
+<script src="src/vistas/panel-control/panel-control-plan-loader.js?v=1762812500"></script>
+
+<!-- 4. Interfaz visual -->
+<script src="src/vistas/panel-control/panel-control-ui.js?v=1762812500"></script>
+
+<!-- 5. ExcelJS (externo) -->
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+
+<!-- 6. Exportador Excel -->
+<script src="src/vistas/panel-control/panel-control-exportador.js?v=1762812500"></script>
+
+<!-- 7. Correcciones y fixes -->
+<script src="src/vistas/panel-control/panel-control-fix.js?v=1762812500"></script>
+
+<!-- 8. Función de exportación -->
+<script>
+async function exportarPanelControl() {
+    try {
+        console.log('📊 Iniciando exportación...');
+        
+        if (!window.panelControl || !window.panelControl.estaListo()) {
+            alert('⚠️ Panel de Control aún está cargando. Espera un momento.');
+            return;
+        }
+
+        const info = window.panelControl.obtenerInfo();
+        const flujoCaja = window.panelControl.obtenerDatosFlujoCaja(6);
+        
+        const datosExportar = {
+            empresa: info.empresaActual || 'default',
+            nivel: info.nivel?.score || 0,
+            plan: info.plan?.nombre || 'Individual',
+            datos: info.datos,
+            flujoCaja: flujoCaja,
+            categoriasIngresos: window.panelControl.obtenerDatosCategoria('ingreso'),
+            categoriasGastos: window.panelControl.obtenerDatosCategoria('gasto')
+        };
+
+        const exportador = new ExportadorPanelControl();
+        await exportador.exportar(datosExportar);
+        
+        alert('✅ Excel exportado exitosamente');
+        
+    } catch (error) {
+        console.error('❌ Error exportando:', error);
+        alert('❌ Error al exportar: ' + error.message);
+    }
+}
+
+window.exportarPanelControl = exportarPanelControl;
+console.log('✅ Función exportarPanelControl registrada');
+</script>
+
 </div>
