@@ -481,18 +481,18 @@
     }
 
     function configurarEventos() {
-        console.log('⚙️ Configurando eventos...');
+    console.log('⚙️ Configurando eventos...');
+    
+    const btnNueva = document.getElementById('btnNuevaTransaccion');
+    if (btnNueva) {
+        btnNueva.addEventListener('click', () => window.abrirModalTransaccion());  // ✅ CORREGIDO
+    }
+    
+    const btnPrimera = document.getElementById('btnPrimeraTransaccion');
+    if (btnPrimera) {
+        btnPrimera.addEventListener('click', () => window.abrirModalTransaccion());  // ✅ CORREGIDO
+    }
         
-        const btnNueva = document.getElementById('btnNuevaTransaccion');
-        if (btnNueva) {
-            btnNueva.addEventListener('click', abrirModalTransaccion);
-        }
-        
-        const btnPrimera = document.getElementById('btnPrimeraTransaccion');
-        if (btnPrimera) {
-            btnPrimera.addEventListener('click', abrirModalTransaccion);
-        }
-
       document.querySelectorAll('input[name="tipo"]').forEach(radio => {
             radio.addEventListener('change', function() {
                 if (window.flujoCajaUI && window.flujoCajaUI.actualizarCategoriasSegunTipo) {
