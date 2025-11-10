@@ -596,42 +596,48 @@ async exportarDatos() {
         const transacciones = this.modulo.obtenerTransacciones();
         const balance = this.modulo.calcularBalance();
 
-        // ✅ SOLUCIÓN CORRECTA: Leer desde grizalum_empresas
         let nivel = 0;
         let empresaId = 'default';
+        let planNombre = 'Individual';
 
         try {
-            // 1. Obtener empresa actual
-            const empresaActualKey = localStorage.getItem('grizalum_empresa_actual');
-            console.log('🔑 Empresa actual key:', empresaActualKey);
-
-            // 2. Obtener array de empresas
-            const empresasData = localStorage.getItem('grizalum_empresas');
-            if (empresasData) {
-                const empresas = JSON.parse(empresasData);
-                console.log('📋 Total empresas:', empresas.length);
-
-                // 3. Buscar la empresa activa
-                const empresaActiva = empresas.find(e => e.id === empresaActualKey);
+            const info = this.modulo.obtenerInfo();
+            empresaId = info?.empresaActual || 'default';
+            
+            // ✅ PRIORIDAD 1: Usar FlujoCajaPlanes (sistema de planes de pago)
+            if (window.FlujoCajaPlanes) {
+                const planActual = window.FlujoCajaPlanes.obtenerPlanActual();
+                planNombre = planActual.nombre;
                 
-                if (empresaActiva) {
-                    empresaId = empresaActiva.id || empresaActiva.nombre;
-                    nivel = parseInt(empresaActiva.score) || 0;
-                    console.log('✅ Empresa encontrada:', empresaId);
-                    console.log('📊 Score:', nivel);
-                } else {
-                    console.log('⚠️ Empresa activa no encontrada, usando primera empresa');
-                    if (empresas.length > 0) {
-                        empresaId = empresas[0].id || empresas[0].nombre;
-                        nivel = parseInt(empresas[0].score) || 0;
-                    }
-                }
+                console.log('✅ Plan desde FlujoCajaPlanes:', planNombre);
+                
+                // Convertir plan a nivel numérico para el exportador
+                const mapaPlanNivel = {
+                    'individual': 0,
+                    'profesional': 30,
+                    'empresarial': 50,
+                    'corporativo': 70
+                };
+                
+                nivel = mapaPlanNivel[planActual.id] || 0;
+                console.log('📊 Nivel calculado desde plan:', nivel);
             }
+            // ✅ PRIORIDAD 2: Fallback al sistema de score
+            else if (info?.nivel?.score !== undefined) {
+                nivel = parseInt(info.nivel.score) || 0;
+                console.log('✅ Nivel obtenido del score:', nivel);
+                
+                // Determinar nombre del plan desde el nivel
+                if (nivel >= 70) planNombre = 'Corporativo';
+                else if (nivel >= 50) planNombre = 'Empresarial';
+                else if (nivel >= 30) planNombre = 'Profesional';
+            }
+            
         } catch (e) {
-            console.error('❌ Error leyendo empresas:', e);
+            console.error('❌ Error leyendo nivel:', e);
         }
 
-        console.log('📊 EXPORTANDO - Empresa:', empresaId, 'Nivel:', nivel);
+        console.log('📊 EXPORTANDO - Empresa:', empresaId, 'Nivel:', nivel, 'Plan:', planNombre);
 
         const datosExportar = {
             empresa: empresaId,
@@ -643,7 +649,7 @@ async exportarDatos() {
         const exportador = new ExportadorExcelProfesional();
         await exportador.exportar(datosExportar);
         
-        this.mostrarNotificacion('✅ Excel exportado', 'success');
+        this.mostrarNotificacion(`✅ Excel exportado (${planNombre})`, 'success');
         
     } catch (error) {
         console.error('❌ Error:', error);
