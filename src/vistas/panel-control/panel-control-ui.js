@@ -177,29 +177,44 @@ class PanelControlUI {
      * ═══════════════════════════════════════════════════════════════
      */
 
-    inicializarGraficos() {
-        console.log('📊 Inicializando gráficos...');
+   inicializarGraficos() {
+    console.log('📊 Inicializando gráficos...');
 
-        if (typeof Chart === 'undefined') {
-            console.error('❌ Chart.js no está cargado');
-            return;
-        }
-
-        // Configuración global de Chart.js
-        Chart.defaults.color = 'rgba(255, 255, 255, 0.7)';
-        Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
-        Chart.defaults.font.family = "'Inter', sans-serif";
-
-        // Crear gráficos
-        this._crearGraficoFlujoCaja();
-        this._crearGraficoGastos();
-        this._crearGraficoIngresosVsGastos();
-        this._crearGraficoAntiguedad();
-        this._crearGraficoFlujoDiario();
-
-        console.log('✅ Gráficos inicializados');
+    if (typeof Chart === 'undefined') {
+        console.error('❌ Chart.js no está cargado');
+        return;
     }
 
+    // ✅ DESTRUIR GRÁFICOS EXISTENTES PRIMERO
+    if (this.graficos && Object.keys(this.graficos).length > 0) {
+        console.log('🧹 Destruyendo gráficos anteriores...');
+        Object.values(this.graficos).forEach(grafico => {
+            if (grafico && typeof grafico.destroy === 'function') {
+                try {
+                    grafico.destroy();
+                } catch (e) {
+                    console.warn('⚠️ Error destruyendo gráfico:', e);
+                }
+            }
+        });
+        this.graficos = {};
+        console.log('✅ Gráficos anteriores destruidos');
+    }
+
+    // Configuración global de Chart.js
+    Chart.defaults.color = 'rgba(255, 255, 255, 0.7)';
+    Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+    Chart.defaults.font.family = "'Inter', sans-serif";
+
+    // Crear gráficos
+    this._crearGraficoFlujoCaja();
+    this._crearGraficoGastos();
+    this._crearGraficoIngresosVsGastos();
+    this._crearGraficoAntiguedad();
+    this._crearGraficoFlujoDiario();
+
+    console.log('✅ Gráficos inicializados');
+}
     _crearGraficoFlujoCaja() {
         const ctx = document.getElementById('mainCashFlowChart');
         if (!ctx) return;
