@@ -34,35 +34,41 @@ window.grizalumModulos.registrar({
     ],
 
     onCargar: async function() {
-        console.log('   📊 Cargando Panel de Control...');
-        
-        // 1. Cargar dependencias del Flujo de Caja PRIMERO
-        console.log('   📦 Cargando dependencias del Flujo de Caja...');
-        await cargarScript('src/vistas/flujo-caja/flujo-caja.js');
-        await cargarScript('src/vistas/flujo-caja/flujo-caja-ui.js');
-        await cargarScript('src/vistas/flujo-caja/flujo-caja-planes.js');
-        await cargarScript('src/vistas/flujo-caja/flujo-caja-categorias.js');
-        
-        // Esperar a que FlujoCaja se inicialice
-        if (window.flujoCaja) {
-            await window.flujoCaja.esperarInicializacion();
-            console.log('   ✅ Flujo de Caja inicializado');
-        }
-        
-        // 2. Cargar estilos del Panel de Control
-        await cargarEstilos('src/vistas/panel-control/panel-control.css');
-        
-        // 3. Cargar módulos del Panel de Control
-        await cargarScript('src/vistas/panel-control/panel-control.js');
-        await cargarScript('src/vistas/panel-control/panel-control-planes.js');
-        await cargarScript('src/vistas/panel-control/panel-control-plan-loader.js');
-        await cargarScript('src/vistas/panel-control/panel-control-ui.js');
-        await cargarScript('src/vistas/panel-control/panel-control-exportador.js');
-        await cargarScript('src/vistas/panel-control/panel-control-fix.js');
-        
-        console.log('   ✅ Panel de Control cargado');
-    },
-
+    console.log('   📊 Cargando Panel de Control...');
+    
+    // 1. Cargar dependencias del Flujo de Caja PRIMERO
+    console.log('   📦 Cargando dependencias del Flujo de Caja...');
+    await cargarScript('src/vistas/flujo-caja/flujo-caja.js');
+    await cargarScript('src/vistas/flujo-caja/flujo-caja-ui.js');
+    await cargarScript('src/vistas/flujo-caja/flujo-caja-planes.js');
+    await cargarScript('src/vistas/flujo-caja/flujo-caja-categorias.js');
+    
+    // Esperar a que FlujoCaja se inicialice
+    if (window.flujoCaja) {
+        await window.flujoCaja.esperarInicializacion();
+        console.log('   ✅ Flujo de Caja inicializado');
+    }
+    
+    // 2. Cargar estilos del Panel de Control
+    await cargarEstilos('src/vistas/panel-control/panel-control.css');
+    
+    // ✅ 2.5 Cargar ExcelJS (NUEVO - AGREGAR ESTO)
+    if (typeof ExcelJS === 'undefined') {
+        console.log('   📦 Cargando ExcelJS...');
+        await cargarScript('https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js');
+        console.log('   ✅ ExcelJS cargado');
+    }
+    
+    // 3. Cargar módulos del Panel de Control
+    await cargarScript('src/vistas/panel-control/panel-control.js');
+    await cargarScript('src/vistas/panel-control/panel-control-planes.js');
+    await cargarScript('src/vistas/panel-control/panel-control-plan-loader.js');
+    await cargarScript('src/vistas/panel-control/panel-control-ui.js');
+    await cargarScript('src/vistas/panel-control/panel-control-exportador.js');
+    await cargarScript('src/vistas/panel-control/panel-control-fix.js');
+    
+    console.log('   ✅ Panel de Control cargado');
+},
     onMostrar: async function() {
         console.log('   👁️ Mostrando Panel de Control...');
         
