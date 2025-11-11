@@ -28,9 +28,9 @@ class ExportadorPanelControl {
                 throw new Error('ExcelJS no está disponible');
             }
 
-            // Determinar plan/nivel
+            // Obtener plan directamente (sin calcular por nivel)
+            const plan = datos.plan || 'Individual';
             const nivel = datos.nivel || 0;
-            const plan = this._determinarPlan(nivel);
             console.log(`📋 Exportando para plan: ${plan} (nivel ${nivel})`);
 
             const workbook = new ExcelJS.Workbook();
@@ -86,12 +86,6 @@ class ExportadorPanelControl {
         }
     }
 
-    _determinarPlan(nivel) {
-        if (nivel >= 70) return 'Corporativo';
-        if (nivel >= 50) return 'Empresarial';
-        if (nivel >= 30) return 'Profesional';
-        return 'Individual';
-    }
 
     _crearDashboard(sheet, datos, plan) {
         // Título principal
