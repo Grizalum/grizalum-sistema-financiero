@@ -3,8 +3,17 @@
      ============================================ -->
 
 <div class="panel-control-contenedor">
-     <!-- Agregar botón aquí arriba -->
-    <div style="display: flex; justify-content: flex-end; margin-bottom: 16px;">
+    <!-- Botones superiores -->
+    <div style="display: flex; justify-content: flex-end; gap: 12px; margin-bottom: 16px;">
+        <!-- Botón Exportar -->
+        <button onclick="exportarPanelControl()" 
+                style="padding: 12px 24px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+                       color: white; border: none; border-radius: 10px; font-weight: 700; 
+                       cursor: pointer; display: flex; align-items: center; gap: 8px;">
+            <span>📊</span> Exportar a Excel
+        </button>
+        
+        <!-- Botón Personalizar -->
         <button onclick="dashboardPersonalizable.activarModoEdicion()" 
                 style="padding: 12px 24px; background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); 
                        color: white; border: none; border-radius: 10px; font-weight: 700; 
@@ -72,7 +81,7 @@
         </div>
     </section>
 
-     <div id="dashboardWidgetsContainer"></div>
+    <div id="dashboardWidgetsContainer"></div>
 
     <!-- Sección de Gráficos -->
     <section class="graficos-seccion">
@@ -127,32 +136,27 @@
         </div>
     </section>
 
-     <!-- ═══════════════════════════════════════════════════════════════ -->
-<!-- SCRIPTS DEL PANEL DE CONTROL CON TIMESTAMP -->
+</div>
+
 <!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- DEPENDENCIAS: FLUJO DE CAJA (necesario para leer datos) -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<script src="src/vistas/flujo-caja/flujo-caja.js?v=1762841000"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-ui.js?v=1762841000"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-planes.js?v=1762841000"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-categorias.js?v=1762841000"></script>
 
-<!-- 1. Módulo principal -->
-<script src="src/vistas/panel-control/panel-control.js?v=1762812500"></script>
-
-<!-- 2. Sistema de planes y restricciones -->
-<script src="src/vistas/panel-control/panel-control-planes.js?v=1762812500"></script>
-
-<!-- 3. Loader del banner -->
-<script src="src/vistas/panel-control/panel-control-plan-loader.js?v=1762812500"></script>
-
-<!-- 4. Interfaz visual -->
-<script src="src/vistas/panel-control/panel-control-ui.js?v=1762812500"></script>
-
-<!-- 5. ExcelJS (externo) -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SCRIPTS DEL PANEL DE CONTROL -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<script src="src/vistas/panel-control/panel-control.js?v=1762841000"></script>
+<script src="src/vistas/panel-control/panel-control-planes.js?v=1762841000"></script>
+<script src="src/vistas/panel-control/panel-control-plan-loader.js?v=1762841000"></script>
+<script src="src/vistas/panel-control/panel-control-ui.js?v=1762841000"></script>
 <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+<script src="src/vistas/panel-control/panel-control-exportador.js?v=1762841000"></script>
+<script src="src/vistas/panel-control/panel-control-fix.js?v=1762841000"></script>
 
-<!-- 6. Exportador Excel -->
-<script src="src/vistas/panel-control/panel-control-exportador.js?v=1762812500"></script>
-
-<!-- 7. Correcciones y fixes -->
-<script src="src/vistas/panel-control/panel-control-fix.js?v=1762812500"></script>
-
-<!-- 8. Función de exportación -->
 <script>
 async function exportarPanelControl() {
     try {
@@ -191,4 +195,5 @@ window.exportarPanelControl = exportarPanelControl;
 console.log('✅ Función exportarPanelControl registrada');
 </script>
 
-</div>
+
+window.FlujoCajaPlanes = "object"  ✅
