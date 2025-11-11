@@ -6,20 +6,20 @@
     <!-- Botones superiores -->
     <div style="display: flex; justify-content: flex-end; gap: 12px; margin-bottom: 16px;">
         <!-- Botón Exportar -->
-        <button onclick="exportarPanelControl()" 
+         <button id="btnExportarPanel"
                 style="padding: 12px 24px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
-                       color: white; border: none; border-radius: 10px; font-weight: 700; 
-                       cursor: pointer; display: flex; align-items: center; gap: 8px;">
-            <span>📊</span> Exportar a Excel
-        </button>
+                      color: white; border: none; border-radius: 10px; font-weight: 700; 
+                      cursor: pointer; display: flex; align-items: center; gap: 8px;">
+         <span>📊</span> Exportar a Excel
+     </button>
         
         <!-- Botón Personalizar -->
-        <button onclick="dashboardPersonalizable.activarModoEdicion()" 
+        <button id="btnPersonalizarPanel"
                 style="padding: 12px 24px; background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); 
-                       color: white; border: none; border-radius: 10px; font-weight: 700; 
-                       cursor: pointer; display: flex; align-items: center; gap: 8px;">
-            <span>🎨</span> Personalizar Dashboard
-        </button>
+                      color: white; border: none; border-radius: 10px; font-weight: 700; 
+                      cursor: pointer; display: flex; align-items: center; gap: 8px;">
+         <span>🎨</span> Personalizar Dashboard
+       </button>
     </div>
     
     <!-- Sección de Métricas -->
@@ -158,42 +158,113 @@
 <script src="src/vistas/panel-control/panel-control-fix.js?v=1762841000"></script>
 
 <script>
-async function exportarPanelControl() {
-    try {
-        console.log('📊 Iniciando exportación...');
-        
-        if (!window.panelControl || !window.panelControl.estaListo()) {
-            alert('⚠️ Panel de Control aún está cargando. Espera un momento.');
-            return;
+// ═══════════════════════════════════════════════════════════════
+// CONFIGURACIÓN DE BOTONES DEL PANEL DE CONTROL
+// ═══════════════════════════════════════════════════════════════
+
+(function() {
+    'use strict';
+    
+    console.log('🔧 Configurando botones del Panel de Control...');
+    
+    // Esperar a que el DOM esté listo
+    function configurarBotones() {
+        // Botón de Exportar
+        const btnExportar = document.getElementById('btnExportarPanel');
+        if (btnExportar) {
+            btnExportar.addEventListener('click', async function() {
+                try {
+                    console.log('📊 Iniciando exportación...');
+                    
+                    // Verificar que panelControl esté listo
+                    if (!window.panelControl || !window.panelControl.estaListo()) {
+                        alert('⚠️ Panel de Control aún está cargando. Espera un momento.');
+                        return;
+                    }
+                    
+                    // Verificar ExportadorPanelControl
+                    if (typeof ExportadorPanelControl === 'undefined') {
+                        alert('⚠️ Sistema de exportación no está disponible. Recarga la página.');
+                        console.error('ExportadorPanelControl no está definido');
+                        return;
+                    }
+
+                    const info = window.panelControl.obtenerInfo();
+                    const flujoCaja = window.panelControl.obtenerDatosFlujoCaja(6);
+                    
+                    const datosExportar = {
+                        empresa: info.empresaActual || 'default',
+                        nivel: info.nivel?.score || 0,
+                        plan: info.plan?.nombre || 'Individual',
+                        datos: info.datos,
+                        flujoCaja: flujoCaja,
+                        categoriasIngresos: window.panelControl.obtenerDatosCategoria('ingreso'),
+                        categoriasGastos: window.panelControl.obtenerDatosCategoria('gasto')
+                    };
+
+                    const exportador = new ExportadorPanelControl();
+                    await exportador.exportar(datosExportar);
+                    
+                    alert('✅ Excel exportado exitosamente');
+                    
+                } catch (error) {
+                    console.error('❌ Error exportando:', error);
+                    alert('❌ Error al exportar: ' + error.message);
+                }
+            });
+            console.log('✅ Botón Exportar configurado');
+        } else {
+            console.warn('⚠️ Botón exportar no encontrado');
         }
 
-        const info = window.panelControl.obtenerInfo();
-        const flujoCaja = window.panelControl.obtenerDatosFlujoCaja(6);
+        // Botón de Personalizar
+        const btnPersonalizar = document.getElementById('btnPersonalizarPanel');
+        if (btnPersonalizar) {
+            btnPersonalizar.addEventListener('click', function() {
+                // Verificar plan
+                if (!window.PanelControlPlanes) {
+                    alert('⚠️ Sistema de planes no está cargado');
+                    return;
+                }
+                
+                const tieneFuncionalidad = window.PanelControlPlanes.tieneFuncionalidad('personalizarDashboard');
+                
+                if (!tieneFuncionalidad) {
+                    alert('⚠️ La personalización del dashboard requiere plan Empresarial o superior');
+                    if (window.PanelControlPlanes.mostrarModalUpgrade) {
+                        window.PanelControlPlanes.mostrarModalUpgrade('personalizarDashboard');
+                    }
+                    return;
+                }
+                
+                // Si tiene la funcionalidad, activar personalización
+                if (window.dashboardPersonalizable && window.dashboardPersonalizable.activarModoEdicion) {
+                    window.dashboardPersonalizable.activarModoEdicion();
+                } else {
+                    alert('🎨 Sistema de personalización en desarrollo');
+                }
+            });
+            console.log('✅ Botón Personalizar configurado');
+        } else {
+            console.warn('⚠️ Botón personalizar no encontrado');
+        }
         
-        const datosExportar = {
-            empresa: info.empresaActual || 'default',
-            nivel: info.nivel?.score || 0,
-            plan: info.plan?.nombre || 'Individual',
-            datos: info.datos,
-            flujoCaja: flujoCaja,
-            categoriasIngresos: window.panelControl.obtenerDatosCategoria('ingreso'),
-            categoriasGastos: window.panelControl.obtenerDatosCategoria('gasto')
-        };
-
-        const exportador = new ExportadorPanelControl();
-        await exportador.exportar(datosExportar);
-        
-        alert('✅ Excel exportado exitosamente');
-        
-    } catch (error) {
-        console.error('❌ Error exportando:', error);
-        alert('❌ Error al exportar: ' + error.message);
+        // Aplicar restricciones según plan
+        setTimeout(() => {
+            if (window.PanelControlPlanes) {
+                window.PanelControlPlanes.aplicarRestricciones();
+            }
+        }, 1000);
     }
-}
+    
+    // Ejecutar cuando el DOM esté listo
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', configurarBotones);
+    } else {
+        setTimeout(configurarBotones, 500);
+    }
+    
+})();
 
-window.exportarPanelControl = exportarPanelControl;
-console.log('✅ Función exportarPanelControl registrada');
+console.log('✅ Script de botones del Panel de Control cargado');
 </script>
-
-
-window.FlujoCajaPlanes = "object"  ✅
