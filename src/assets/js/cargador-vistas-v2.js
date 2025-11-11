@@ -19,30 +19,116 @@ function registrarModulos() {
     console.log('📦 Registrando módulos...');
 
     // ───────────────────────────────────────────────────────────────
-    // PANEL DE CONTROL (DASHBOARD)
-    // ───────────────────────────────────────────────────────────────
-    window.grizalumModulos.registrar({
-        id: 'dashboard',
-        nombre: 'Panel de Control',
-        ruta: 'src/vistas/panel-control/panel-control.html',
-        nivel: 0,
+// PANEL DE CONTROL (DASHBOARD) - CON DEPENDENCIAS DE FLUJO DE CAJA
+// ───────────────────────────────────────────────────────────────
+window.grizalumModulos.registrar({
+    id: 'dashboard',
+    nombre: 'Panel de Control',
+    ruta: 'src/vistas/panel-control/panel-control.html',
+    nivel: 0,
 
-        onCargar: async function() {
-            await cargarEstilos('src/vistas/panel-control/panel-control.css');
-            await cargarScript('src/vistas/panel-control/panel-control.js');
-        },
+    // ✅ DEPENDENCIAS DEL FLUJO DE CAJA (necesarias para leer datos)
+    dependencias: [
+        'src/vistas/flujo-caja/flujo-caja-categorias.js',
+        'src/vistas/flujo-caja/flujo-caja-config.js'
+    ],
 
-        onMostrar: async function() {
-            const html = await fetch('src/vistas/panel-control/panel-control.html').then(r => r.text());
-            const contenedor = document.getElementById('contenedorVistas');
-            contenedor.innerHTML = html;
-            
-            if (window.inicializarPanelControl) {
-                window.inicializarPanelControl();
+    onCargar: async function() {
+        console.log('   📊 Cargando Panel de Control...');
+        
+        // 1. Cargar dependencias del Flujo de Caja PRIMERO
+        console.log('   📦 Cargando dependencias del Flujo de Caja...');
+        await cargarScript('src/vistas/flujo-caja/flujo-caja.js');
+        await cargarScript('src/vistas/flujo-caja/flujo-caja-ui.js');
+        await cargarScript('src/vistas/flujo-caja/flujo-caja-planes.js');
+        await cargarScript('src/vistas/flujo-caja/flujo-caja-categorias.js');
+        
+        // Esperar a que FlujoCaja se inicialice
+        if (window.flujoCaja) {
+            await window.flujoCaja.esperarInicializacion();
+            console.log('   ✅ Flujo de Caja inicializado');
+        }
+        
+        // 2. Cargar estilos del Panel de Control
+        await cargarEstilos('src/vistas/panel-control/panel-control.css');
+        
+        // 3. Cargar módulos del Panel de Control
+        await cargarScript('src/vistas/panel-control/panel-control.js');
+        await cargarScript('src/vistas/panel-control/panel-control-planes.js');
+        await cargarScript('src/vistas/panel-control/panel-control-plan-loader.js');
+        await cargarScript('src/vistas/panel-control/panel-control-ui.js');
+        await cargarScript('src/vistas/panel-control/panel-control-exportador.js');
+        await cargarScript('src/vistas/panel-control/panel-control-fix.js');
+        
+        console.log('   ✅ Panel de Control cargado');
+    },
+
+    onMostrar: async function() {
+        console.log('   👁️ Mostrando Panel de Control...');
+        
+        const contenedor = document.getElementById('contenedorVistas');
+        
+        // Loading inicial
+        contenedor.innerHTML = `
+            <div style="display: flex; align-items: center; justify-content: center; 
+                        min-height: 400px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 3rem; animation: spin 1s linear infinite;">📊</div>
+                    <p style="color: var(--texto-terciario); margin-top: 1rem;">
+                        Cargando Panel de Control...
+                    </p>
+                </div>
+            </div>
+            <style>
+                @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+            </style>
+        `;
+        
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Cargar HTML
+        const html = await fetch('src/vistas/panel-control/panel-control.html').then(r => r.text());
+        
+        // Separar scripts del HTML
+        const temp = document.createElement('div');
+        temp.innerHTML = html;
+        const scripts = temp.querySelectorAll('script');
+        const scriptsArray = Array.from(scripts);
+        scriptsArray.forEach(s => s.remove());
+        
+        // Insertar HTML
+        contenedor.innerHTML = temp.innerHTML;
+        
+        await new Promise(resolve => {
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    setTimeout(resolve, 100);
+                });
+            });
+        });
+        
+        // Ejecutar scripts inline del HTML
+        for (const scriptOriginal of scriptsArray) {
+            if (!scriptOriginal.src) {
+                const script = document.createElement('script');
+                script.textContent = scriptOriginal.textContent;
+                document.body.appendChild(script);
             }
         }
-    });
-
+        
+        // Esperar a que panelControl esté listo
+        if (window.panelControl) {
+            await window.panelControl.esperarInicializacion();
+        }
+        
+        // Disparar evento
+        setTimeout(() => {
+            window.dispatchEvent(new Event('vistaPanelControlCargada'));
+            contenedor.scrollTo({ top: 0, behavior: 'smooth' });
+            console.log('✅ Panel de Control mostrado');
+        }, 300);
+    }
+});
     // ───────────────────────────────────────────────────────────────
     // FLUJO DE CAJA (CORREGIDO - SIN BUG DE OPACIDAD)
     // ───────────────────────────────────────────────────────────────
