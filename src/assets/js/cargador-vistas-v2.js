@@ -117,16 +117,34 @@ window.grizalumModulos.registrar({
         }
         
         // Esperar a que panelControl esté listo
-        if (window.panelControl) {
-            await window.panelControl.esperarInicializacion();
-        }
-        
-        // Disparar evento
-        setTimeout(() => {
-            window.dispatchEvent(new Event('vistaPanelControlCargada'));
-            contenedor.scrollTo({ top: 0, behavior: 'smooth' });
-            console.log('✅ Panel de Control mostrado');
-        }, 300);
+       if (window.panelControl) {
+          await window.panelControl.esperarInicializacion();
+     }
+
+     // ✅ FORZAR CARGA DE DATOS EN LA UI
+      setTimeout(() => {
+        console.log('🔄 Inicializando UI del Panel de Control...');
+    
+       if (window.panelControlUI && window.panelControlUI.cargarDatos) {
+          window.panelControlUI.cargarDatos();
+          console.log('✅ Datos cargados en UI');
+      }
+    
+       if (window.panelControlUI && window.panelControlUI.inicializarGraficos) {
+           window.panelControlUI.inicializarGraficos();
+           console.log('✅ Gráficos inicializados');
+       }
+    
+      // Aplicar restricciones de plan
+       if (window.PanelControlPlanes && window.PanelControlPlanes.aplicarRestricciones) {
+          window.PanelControlPlanes.aplicarRestricciones();
+          console.log('✅ Restricciones aplicadas');
+      }
+    
+       window.dispatchEvent(new Event('vistaPanelControlCargada'));
+       contenedor.scrollTo({ top: 0, behavior: 'smooth' });
+       console.log('✅ Panel de Control completamente listo');
+     }, 500);
     }
 });
     // ───────────────────────────────────────────────────────────────
