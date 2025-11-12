@@ -1,45 +1,61 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * GRIZALUM - PANEL DE CONTROL UI
- * Maneja toda la interacción con el DOM
+ * GRIZALUM - PANEL DE CONTROL UI v1.0
+ * Interfaz visual que conecta datos de FlujoCaja con el dashboard
  * ═══════════════════════════════════════════════════════════════════
  */
 
 class PanelControlUI {
     constructor() {
-        this.modulo = null;
-        this.graficos = {};
-        
+        this.config = {
+            version: '1.0.0',
+            componente: 'PanelControlUI',
+            debug: true
+        };
+
+        this.panelControl = null;
+        this.graficos = {
+            principal: null,
+            distribucion: null,
+            comparativa: null,
+            tendencia: null
+        };
+
         this._inicializar();
     }
 
     async _inicializar() {
-        console.log('🎨 Inicializando interfaz Panel de Control...');
-        
-        // Esperar a que el módulo esté listo
-        await this._esperarModulo();
-        
-        // Esperar a que el DOM esté completamente listo
-        await new Promise(resolve => setTimeout(resolve, 300));
-        
-        // Cargar datos iniciales
-        this.cargarDatos();
-        
-        // Configurar eventos
-        this.configurarEventos();
-        
-        // Inicializar gráficos
-        this.inicializarGraficos();
-        
-        console.log('✅ Interfaz Panel de Control lista');
+        try {
+            this._log('info', '🎨 Panel Control UI inicializando...');
+            
+            // Esperar a que panelControl esté listo
+            await this._esperarPanelControl();
+            
+            // Cargar datos iniciales
+            this.cargarDatos();
+            
+            // Inicializar gráficos
+            this.inicializarGraficos();
+            
+            // Configurar botones
+            this._configurarBotones();
+            
+            // Configurar eventos
+            this._configurarEventos();
+            
+            this._log('success', '✅ Panel Control UI listo');
+            
+        } catch (error) {
+            this._log('error', 'Error inicializando UI:', error);
+        }
     }
 
-    async _esperarModulo() {
+    async _esperarPanelControl() {
         return new Promise((resolve) => {
             const verificar = () => {
                 if (window.panelControl && window.panelControl.estaListo()) {
-                    this.modulo = window.panelControl;
-                    console.log('✅ Módulo conectado a la UI');
+                    this.panelControl = window.panelControl;
+                    this._log('info', '✅ panelControl conectado');
                     resolve();
                 } else {
                     setTimeout(verificar, 200);
@@ -49,120 +65,472 @@ class PanelControlUI {
         });
     }
 
-    configurarEventos() {
-        // Escuchar actualizaciones del módulo
-        document.addEventListener('grizalumPanelControlActualizado', () => {
-            console.log('🔄 Panel actualizado, recargando UI...');
-            this.cargarDatos();
-            this.actualizarGraficos();
-        });
-
-        // Escuchar cambio de empresa
-        document.addEventListener('grizalumCompanyChanged', () => {
-            console.log('🏢 Empresa cambiada, actualizando panel...');
-            setTimeout(() => {
-                this.cargarDatos();
-                this.actualizarGraficos();
-            }, 500);
-        });
-
-        // Escuchar cambio de plan
-        document.addEventListener('grizalumPanelControlPlanCambiado', (e) => {
-            console.log('📊 Plan cambiado:', e.detail.plan.nombre);
-            this.aplicarRestricciones();
-        });
-
-        // Botones de filtro de tiempo
-        document.querySelectorAll('.filtro-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('activo'));
-                e.target.classList.add('activo');
-                // Aquí se pueden agregar filtros en el futuro
-            });
-        });
-
-        console.log('✅ Eventos configurados');
-    }
+    /**
+     * ═══════════════════════════════════════════════════════════════
+     * CARGA DE DATOS EN MÉTRICAS
+     * ═══════════════════════════════════════════════════════════════
+     */
 
     cargarDatos() {
-        const datos = this.modulo.obtenerDatos();
-        
-        // Actualizar métricas
-        this.actualizarMetricas(datos);
-        
-        console.log('📊 Datos cargados en UI');
-    }
+        this._log('info', '📊 Cargando datos en métricas...');
 
-    actualizarMetricas(datos) {
-        // Actualizar valores con animación
-        this._actualizarValor('revenueValue', datos.ingresos, true);
-        this._actualizarValor('expensesValue', datos.gastos, true);
-        this._actualizarValor('profitValue', datos.utilidad, true);
-        this._actualizarValor('growthValue', datos.crecimiento, false, '%');
-
-        // Actualizar indicadores de cambio (calcular vs mes anterior)
-        this._actualizarCambios(datos);
-    }
-
-    _actualizarValor(elementId, valor, esMoneda = false, sufijo = '') {
-        const elemento = document.getElementById(elementId);
-        if (!elemento) return;
-
-        let valorFormateado;
-        if (esMoneda) {
-            valorFormateado = `S/. ${this._formatearNumero(valor)}`;
-        } else if (sufijo === '%') {
-            const signo = valor >= 0 ? '+' : '';
-            valorFormateado = `${signo}${valor}${sufijo}`;
-        } else {
-            valorFormateado = this._formatearNumero(valor);
+        if (!this.panelControl) {
+            this._log('error', 'panelControl no disponible');
+            return;
         }
 
-        // Animación de conteo
-        this._animarConteo(elemento, valorFormateado);
-    }
-
-    _animarConteo(elemento, valorFinal) {
-        elemento.textContent = valorFinal;
-        elemento.style.transform = 'scale(1.05)';
-        setTimeout(() => {
-            elemento.style.transform = 'scale(1)';
-        }, 300);
-    }
-
-    _actualizarCambios(datos) {
-        // Por ahora usar crecimiento como indicador
-        // En el futuro se puede calcular cambios específicos por métrica
+        const datos = this.panelControl.obtenerDatos();
         
-        const cambios = {
-            gastos: Math.abs(datos.crecimiento * 0.3), // Estimado
-            utilidad: Math.abs(datos.crecimiento * 1.2), // Estimado
-            crecimiento: datos.crecimiento,
-            ingresos: datos.crecimiento
-        };
+        this._log('info', 'Datos obtenidos:', datos);
 
-        // Actualizar cada tarjeta
-        Object.entries(cambios).forEach(([tipo, cambio]) => {
-            const tarjeta = document.querySelector(`.metrica-tarjeta.${tipo}`);
-            if (!tarjeta) return;
+        // Actualizar métricas
+        this._actualizarMetrica('ingresos', datos.ingresos);
+        this._actualizarMetrica('gastos', datos.gastos);
+        this._actualizarMetrica('utilidad', datos.utilidad);
+        this._actualizarMetrica('crecimiento', datos.crecimiento);
 
-            const cambioElement = tarjeta.querySelector('.metrica-cambio');
-            if (!cambioElement) return;
+        // Actualizar badges de variación
+        this._actualizarBadges(datos);
 
-            const esPositivo = cambio >= 0;
-            cambioElement.className = `metrica-cambio ${esPositivo ? 'positivo' : 'negativo'}`;
-            
-            const icono = cambioElement.querySelector('i');
-            if (icono) {
-                icono.className = `fas fa-arrow-${esPositivo ? 'up' : 'down'}`;
+        this._log('success', '✅ Métricas actualizadas');
+    }
+
+    _actualizarMetrica(tipo, valor) {
+        const elemento = document.getElementById(`metrica-${tipo}`);
+        
+        if (!elemento) {
+            this._log('warn', `Elemento metrica-${tipo} no encontrado`);
+            return;
+        }
+
+        // Formatear valor según tipo
+        let valorFormateado;
+        
+        if (tipo === 'crecimiento') {
+            valorFormateado = `${valor >= 0 ? '+' : ''}${valor.toFixed(1)}%`;
+        } else {
+            valorFormateado = `S/. ${this._formatearNumero(Math.abs(valor))}`;
+            if (valor < 0 && tipo === 'utilidad') {
+                valorFormateado = `-${valorFormateado}`;
             }
+        }
 
-            const texto = cambioElement.querySelector('span');
-            if (texto) {
-                texto.textContent = `${esPositivo ? '+' : ''}${Math.abs(cambio).toFixed(1)}% vs mes anterior`;
+        elemento.textContent = valorFormateado;
+
+        // Aplicar color según el valor
+        if (tipo === 'utilidad') {
+            elemento.style.color = valor >= 0 ? 'var(--success)' : 'var(--danger)';
+        }
+    }
+
+    _actualizarBadges(datos) {
+        // Badge de ingresos (positivo si hay ingresos)
+        const badgeIngresos = document.getElementById('badge-ingresos');
+        if (badgeIngresos && datos.ingresos > 0) {
+            badgeIngresos.innerHTML = '<i class="fas fa-arrow-up"></i> Activo';
+            badgeIngresos.className = 'metrica-badge badge-positivo';
+        }
+
+        // Badge de gastos (negativo si hay gastos)
+        const badgeGastos = document.getElementById('badge-gastos');
+        if (badgeGastos && datos.gastos > 0) {
+            badgeGastos.innerHTML = `<i class="fas fa-arrow-down"></i> ${datos.cantidadGastos || 0} registros`;
+            badgeGastos.className = 'metrica-badge badge-negativo';
+        }
+
+        // Badge de utilidad (según balance)
+        const badgeUtilidad = document.getElementById('badge-utilidad');
+        if (badgeUtilidad) {
+            if (datos.utilidad > 0) {
+                badgeUtilidad.innerHTML = '<i class="fas fa-arrow-up"></i> Positivo';
+                badgeUtilidad.className = 'metrica-badge badge-positivo';
+            } else if (datos.utilidad < 0) {
+                badgeUtilidad.innerHTML = '<i class="fas fa-arrow-down"></i> Negativo';
+                badgeUtilidad.className = 'metrica-badge badge-negativo';
+            } else {
+                badgeUtilidad.innerHTML = '<i class="fas fa-minus"></i> Neutral';
+                badgeUtilidad.className = 'metrica-badge badge-neutral';
+            }
+        }
+    }
+
+    /**
+     * ═══════════════════════════════════════════════════════════════
+     * INICIALIZACIÓN DE GRÁFICOS
+     * ═══════════════════════════════════════════════════════════════
+     */
+
+    inicializarGraficos() {
+        this._log('info', '📈 Inicializando gráficos...');
+
+        if (typeof Chart === 'undefined') {
+            this._log('error', 'Chart.js no está cargado');
+            return;
+        }
+
+        // Configuración global de Chart.js
+        Chart.defaults.font.family = "'Inter', 'Segoe UI', sans-serif";
+        Chart.defaults.color = '#8b92a7';
+
+        // Inicializar cada gráfico
+        this._inicializarGraficoPrincipal();
+        this._inicializarGraficoDistribucion();
+        this._inicializarGraficoComparativa();
+        this._inicializarGraficoTendencia();
+
+        this._log('success', '✅ Gráficos inicializados');
+    }
+
+    _inicializarGraficoPrincipal() {
+        const canvas = document.getElementById('graficoFlujoCajaPrincipal');
+        if (!canvas) return;
+
+        // Destruir gráfico anterior si existe
+        if (this.graficos.principal) {
+            this.graficos.principal.destroy();
+        }
+
+        const datos = this.panelControl.obtenerDatosFlujoCaja(6);
+
+        const ctx = canvas.getContext('2d');
+        this.graficos.principal = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: datos.map(d => d.mes),
+                datasets: [
+                    {
+                        label: 'Ingresos',
+                        data: datos.map(d => d.ingresos),
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Gastos',
+                        data: datos.map(d => d.gastos),
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Balance',
+                        data: datos.map(d => d.balance),
+                        borderColor: '#8b5cf6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: (context) => {
+                                return `${context.dataset.label}: S/. ${this._formatearNumero(context.parsed.y)}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(139, 146, 167, 0.1)'
+                        },
+                        ticks: {
+                            callback: (value) => `S/. ${this._formatearNumero(value)}`
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
             }
         });
     }
+
+    _inicializarGraficoDistribucion() {
+        const canvas = document.getElementById('graficoDistribucionGastos');
+        if (!canvas) return;
+
+        if (this.graficos.distribucion) {
+            this.graficos.distribucion.destroy();
+        }
+
+        const categorias = this.panelControl.obtenerDatosCategoria('gasto');
+        const top5 = categorias.slice(0, 5);
+
+        const ctx = canvas.getContext('2d');
+        this.graficos.distribucion = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: top5.map(c => c.categoria),
+                datasets: [{
+                    data: top5.map(c => c.monto),
+                    backgroundColor: [
+                        '#ef4444',
+                        '#f59e0b',
+                        '#8b5cf6',
+                        '#06b6d4',
+                        '#ec4899'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => {
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const porcentaje = ((context.parsed / total) * 100).toFixed(1);
+                                return `${context.label}: S/. ${this._formatearNumero(context.parsed)} (${porcentaje}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    _inicializarGraficoComparativa() {
+        const canvas = document.getElementById('graficoIngresosVsGastos');
+        if (!canvas) return;
+
+        if (this.graficos.comparativa) {
+            this.graficos.comparativa.destroy();
+        }
+
+        const datos = this.panelControl.obtenerComparativaIngresosGastos(6);
+
+        const ctx = canvas.getContext('2d');
+        this.graficos.comparativa = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: datos.labels,
+                datasets: [
+                    {
+                        label: 'Ingresos',
+                        data: datos.ingresos,
+                        backgroundColor: '#10b981'
+                    },
+                    {
+                        label: 'Gastos',
+                        data: datos.gastos,
+                        backgroundColor: '#ef4444'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => {
+                                return `${context.dataset.label}: S/. ${this._formatearNumero(context.parsed.y)}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(139, 146, 167, 0.1)'
+                        },
+                        ticks: {
+                            callback: (value) => `S/. ${this._formatearNumero(value)}`
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    _inicializarGraficoTendencia() {
+        const canvas = document.getElementById('graficoTendenciaMensual');
+        if (!canvas) return;
+
+        if (this.graficos.tendencia) {
+            this.graficos.tendencia.destroy();
+        }
+
+        const datos = this.panelControl.obtenerDatosFlujoCaja(6);
+
+        const ctx = canvas.getContext('2d');
+        this.graficos.tendencia = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: datos.map(d => d.mes),
+                datasets: [{
+                    label: 'Balance Mensual',
+                    data: datos.map(d => d.balance),
+                    borderColor: '#8b5cf6',
+                    backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 5,
+                    pointHoverRadius: 7
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => {
+                                return `Balance: S/. ${this._formatearNumero(context.parsed.y)}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        grid: {
+                            color: 'rgba(139, 146, 167, 0.1)'
+                        },
+                        ticks: {
+                            callback: (value) => `S/. ${this._formatearNumero(value)}`
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * ═══════════════════════════════════════════════════════════════
+     * CONFIGURACIÓN DE BOTONES Y EVENTOS
+     * ═══════════════════════════════════════════════════════════════
+     */
+
+    _configurarBotones() {
+        // Botón Exportar a Excel
+        const btnExportar = document.getElementById('btnExportarPanel');
+        if (btnExportar) {
+            btnExportar.addEventListener('click', () => {
+                this._log('info', '📥 Exportando a Excel...');
+                
+                if (window.PanelControlExportador && window.PanelControlExportador.exportarExcel) {
+                    window.PanelControlExportador.exportarExcel();
+                } else {
+                    this._mostrarNotificacion('Exportador no disponible', 'error');
+                }
+            });
+        }
+
+        // Botón Personalizar Dashboard
+        const btnPersonalizar = document.getElementById('btnPersonalizarPanel');
+        if (btnPersonalizar) {
+            btnPersonalizar.addEventListener('click', () => {
+                this._mostrarNotificacion('Función de personalización próximamente', 'info');
+            });
+        }
+
+        // Botones de período del gráfico principal
+        document.querySelectorAll('.control-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.control-btn').forEach(b => b.classList.remove('activo'));
+                e.target.classList.add('activo');
+                
+                const periodo = e.target.dataset.periodo;
+                this._cambiarPeriodoGrafico(periodo);
+            });
+        });
+    }
+
+    _cambiarPeriodoGrafico(periodo) {
+        let meses;
+        
+        switch(periodo) {
+            case '6m':
+                meses = 6;
+                break;
+            case '1a':
+                meses = 12;
+                break;
+            case '2a':
+                meses = 24;
+                break;
+            default:
+                meses = 6;
+        }
+
+        this._log('info', `Cambiando período a ${meses} meses`);
+        
+        // Actualizar gráfico principal con nuevo período
+        const canvas = document.getElementById('graficoFlujoCajaPrincipal');
+        if (!canvas || !this.graficos.principal) return;
+
+        const datos = this.panelControl.obtenerDatosFlujoCaja(meses);
+
+        this.graficos.principal.data.labels = datos.map(d => d.mes);
+        this.graficos.principal.data.datasets[0].data = datos.map(d => d.ingresos);
+        this.graficos.principal.data.datasets[1].data = datos.map(d => d.gastos);
+        this.graficos.principal.data.datasets[2].data = datos.map(d => d.balance);
+        
+        this.graficos.principal.update();
+    }
+
+    _configurarEventos() {
+        // Escuchar actualizaciones del Panel de Control
+        document.addEventListener('grizalumPanelControlActualizado', () => {
+            this._log('info', '🔄 Panel actualizado, recargando datos...');
+            this.cargarDatos();
+            this.inicializarGraficos();
+        });
+
+        // Escuchar cambios de empresa
+        document.addEventListener('grizalumCompanyChanged', () => {
+            this._log('info', '🔄 Empresa cambiada, recargando...');
+            setTimeout(() => {
+                this.cargarDatos();
+                this.inicializarGraficos();
+            }, 1000);
+        });
+    }
+
+    /**
+     * ═══════════════════════════════════════════════════════════════
+     * UTILIDADES
+     * ═══════════════════════════════════════════════════════════════
+     */
 
     _formatearNumero(numero) {
         return new Intl.NumberFormat('es-PE', {
@@ -171,425 +539,65 @@ class PanelControlUI {
         }).format(numero);
     }
 
+    _mostrarNotificacion(mensaje, tipo = 'info') {
+        // Usar sistema de notificaciones si existe
+        if (window.mostrarNotificacion) {
+            window.mostrarNotificacion(mensaje, tipo);
+        } else {
+            console.log(`[${tipo.toUpperCase()}] ${mensaje}`);
+        }
+    }
+
+    _log(nivel, mensaje, datos = null) {
+        if (!this.config.debug && nivel !== 'error' && nivel !== 'success') return;
+        
+        const timestamp = new Date().toISOString();
+        const prefijo = `[${timestamp}] [${this.config.componente}]`;
+        
+        if (nivel === 'error') {
+            console.error(`${prefijo}`, mensaje, datos);
+        } else if (nivel === 'warn') {
+            console.warn(`${prefijo}`, mensaje, datos);
+        } else {
+            console.log(`${prefijo}`, mensaje, datos);
+        }
+    }
+
     /**
      * ═══════════════════════════════════════════════════════════════
-     * GRÁFICOS
+     * API PÚBLICA
      * ═══════════════════════════════════════════════════════════════
      */
 
-   inicializarGraficos() {
-    console.log('📊 Inicializando gráficos...');
-
-    if (typeof Chart === 'undefined') {
-        console.error('❌ Chart.js no está cargado');
-        return;
+    actualizar() {
+        this.cargarDatos();
+        this.inicializarGraficos();
     }
 
-    // ✅ DESTRUIR GRÁFICOS EXISTENTES PRIMERO
-    if (this.graficos && Object.keys(this.graficos).length > 0) {
-        console.log('🧹 Destruyendo gráficos anteriores...');
+    destruirGraficos() {
         Object.values(this.graficos).forEach(grafico => {
-            if (grafico && typeof grafico.destroy === 'function') {
-                try {
-                    grafico.destroy();
-                } catch (e) {
-                    console.warn('⚠️ Error destruyendo gráfico:', e);
-                }
+            if (grafico) {
+                grafico.destroy();
             }
         });
-        this.graficos = {};
-        console.log('✅ Gráficos anteriores destruidos');
-    }
-
-    // Configuración global de Chart.js
-    Chart.defaults.color = 'rgba(255, 255, 255, 0.7)';
-    Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
-    Chart.defaults.font.family = "'Inter', sans-serif";
-
-    // Crear gráficos
-    this._crearGraficoFlujoCaja();
-    this._crearGraficoGastos();
-    this._crearGraficoIngresosVsGastos();
-    this._crearGraficoAntiguedad();
-    this._crearGraficoFlujoDiario();
-
-    console.log('✅ Gráficos inicializados');
-}
-    _crearGraficoFlujoCaja() {
-        const ctx = document.getElementById('mainCashFlowChart');
-        if (!ctx) return;
-
-        const datos = this.modulo.obtenerDatosFlujoCaja(6);
-
-        this.graficos.flujoCaja = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: datos.map(d => d.mes),
-                datasets: [{
-                    label: 'Ingresos',
-                    data: datos.map(d => d.ingresos),
-                    borderColor: '#10b981',
-                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4
-                }, {
-                    label: 'Gastos',
-                    data: datos.map(d => d.gastos),
-                    borderColor: '#ef4444',
-                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4
-                }, {
-                    label: 'Balance',
-                    data: datos.map(d => d.balance),
-                    borderColor: '#8b5cf6',
-                    backgroundColor: 'rgba(139, 92, 246, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: {
-                            padding: 15,
-                            font: { size: 12, weight: '600' }
-                        }
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        padding: 12,
-                        titleFont: { size: 13, weight: '700' },
-                        bodyFont: { size: 12 },
-                        callbacks: {
-                            label: (context) => {
-                                return `${context.dataset.label}: S/. ${context.parsed.y.toFixed(2)}`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: (value) => `S/. ${value}`
-                        },
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.05)'
-                        }
-                    },
-                    x: {
-                        grid: {
-                            display: false
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    _crearGraficoGastos() {
-        const ctx = document.getElementById('expensesChart');
-        if (!ctx) return;
-
-        const datos = this.modulo.obtenerDatosCategoria('gasto');
-
-        this.graficos.gastos = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: datos.map(d => d.categoria),
-                datasets: [{
-                    data: datos.map(d => d.monto),
-                    backgroundColor: [
-                        '#ef4444',
-                        '#f59e0b',
-                        '#ec4899',
-                        '#8b5cf6',
-                        '#6366f1'
-                    ],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            padding: 12,
-                            font: { size: 11 }
-                        }
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        padding: 12,
-                        callbacks: {
-                            label: (context) => {
-                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const porcentaje = ((context.parsed / total) * 100).toFixed(1);
-                                return `${context.label}: S/. ${context.parsed.toFixed(2)} (${porcentaje}%)`;
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    _crearGraficoIngresosVsGastos() {
-        const ctx = document.getElementById('revenueChart');
-        if (!ctx) return;
-
-        const datos = this.modulo.obtenerComparativaIngresosGastos(6);
-
-        this.graficos.ingresosVsGastos = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: datos.labels,
-                datasets: [{
-                    label: 'Ingresos',
-                    data: datos.ingresos,
-                    backgroundColor: 'rgba(16, 185, 129, 0.8)',
-                    borderRadius: 6
-                }, {
-                    label: 'Gastos',
-                    data: datos.gastos,
-                    backgroundColor: 'rgba(239, 68, 68, 0.8)',
-                    borderRadius: 6
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top',
-                        labels: {
-                            font: { size: 11 }
-                        }
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        padding: 12,
-                        callbacks: {
-                            label: (context) => {
-                                return `${context.dataset.label}: S/. ${context.parsed.y.toFixed(2)}`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: (value) => `S/. ${value}`
-                        },
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.05)'
-                        }
-                    },
-                    x: {
-                        grid: {
-                            display: false
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    _crearGraficoAntiguedad() {
-        const ctx = document.getElementById('agingChart');
-        if (!ctx) return;
-
-        // Datos de ejemplo para antigüedad de cuentas
-        const datos = this.modulo.obtenerDatos();
         
-        this.graficos.antiguedad = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['0-30 días', '31-60 días', '61-90 días', '+90 días'],
-                datasets: [{
-                    label: 'Monto',
-                    data: [
-                        datos.ingresos * 0.6,
-                        datos.ingresos * 0.25,
-                        datos.ingresos * 0.1,
-                        datos.ingresos * 0.05
-                    ],
-                    backgroundColor: [
-                        'rgba(16, 185, 129, 0.8)',
-                        'rgba(245, 158, 11, 0.8)',
-                        'rgba(239, 68, 68, 0.8)',
-                        'rgba(127, 29, 29, 0.8)'
-                    ],
-                    borderRadius: 6
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        padding: 12,
-                        callbacks: {
-                            label: (context) => {
-                                return `Monto: S/. ${context.parsed.y.toFixed(2)}`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: (value) => `S/. ${value}`
-                        },
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.05)'
-                        }
-                    },
-                    x: {
-                        grid: {
-                            display: false
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    _crearGraficoFlujoDiario() {
-        const ctx = document.getElementById('cashFlowDetailChart');
-        if (!ctx) return;
-
-        const datos = this.modulo.obtenerFlujoDiario(30);
-
-        this.graficos.flujoDiario = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: datos.labels,
-                datasets: [{
-                    label: 'Balance Diario',
-                    data: datos.datos,
-                    borderColor: '#8b5cf6',
-                    backgroundColor: 'rgba(139, 92, 246, 0.1)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 0,
-                    pointHoverRadius: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        padding: 12,
-                        callbacks: {
-                            label: (context) => {
-                                return `Balance: S/. ${context.parsed.y.toFixed(2)}`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        ticks: {
-                            callback: (value) => `S/. ${value}`
-                        },
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.05)'
-                        }
-                    },
-                    x: {
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            maxRotation: 45,
-                            minRotation: 45
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    actualizarGraficos() {
-        console.log('🔄 Actualizando gráficos...');
-
-        if (this.graficos.flujoCaja) {
-            const datos = this.modulo.obtenerDatosFlujoCaja(6);
-            this.graficos.flujoCaja.data.labels = datos.map(d => d.mes);
-            this.graficos.flujoCaja.data.datasets[0].data = datos.map(d => d.ingresos);
-            this.graficos.flujoCaja.data.datasets[1].data = datos.map(d => d.gastos);
-            this.graficos.flujoCaja.data.datasets[2].data = datos.map(d => d.balance);
-            this.graficos.flujoCaja.update();
-        }
-
-        if (this.graficos.gastos) {
-            const datos = this.modulo.obtenerDatosCategoria('gasto');
-            this.graficos.gastos.data.labels = datos.map(d => d.categoria);
-            this.graficos.gastos.data.datasets[0].data = datos.map(d => d.monto);
-            this.graficos.gastos.update();
-        }
-
-        if (this.graficos.ingresosVsGastos) {
-            const datos = this.modulo.obtenerComparativaIngresosGastos(6);
-            this.graficos.ingresosVsGastos.data.labels = datos.labels;
-            this.graficos.ingresosVsGastos.data.datasets[0].data = datos.ingresos;
-            this.graficos.ingresosVsGastos.data.datasets[1].data = datos.gastos;
-            this.graficos.ingresosVsGastos.update();
-        }
-
-        if (this.graficos.flujoDiario) {
-            const datos = this.modulo.obtenerFlujoDiario(30);
-            this.graficos.flujoDiario.data.labels = datos.labels;
-            this.graficos.flujoDiario.data.datasets[0].data = datos.datos;
-            this.graficos.flujoDiario.update();
-        }
-
-        console.log('✅ Gráficos actualizados');
-    }
-
-    aplicarRestricciones() {
-        const plan = this.modulo.obtenerPlan();
-        if (!plan) return;
-
-        // Mostrar/ocultar elementos según el plan
-        const graficosSecundarios = document.querySelectorAll('.grafico-tarjeta:not(.principal)');
-        
-        if (plan.id === 'individual') {
-            // Solo gráfico principal
-            graficosSecundarios.forEach(g => g.style.display = 'none');
-        } else {
-            // Mostrar todos
-            graficosSecundarios.forEach(g => g.style.display = 'flex');
-        }
-
-        console.log(`🔒 Restricciones aplicadas para plan: ${plan.nombre}`);
+        this.graficos = {
+            principal: null,
+            distribucion: null,
+            comparativa: null,
+            tendencia: null
+        };
     }
 }
 
 // Inicialización global
 window.panelControlUI = new PanelControlUI();
 
-console.log('✅ [panel-control-ui.js] Módulo cargado - ' + new Date().toISOString());
+console.log(`
+╔═══════════════════════════════════════════════════════════════╗
+║  🎨 PANEL CONTROL UI v1.0.0                                   ║
+║  Interfaz visual del dashboard ejecutivo                      ║
+║  ✅ Conectado con Panel de Control                            ║
+║  ✅ Gráficos con Chart.js                                     ║
+╚═══════════════════════════════════════════════════════════════╝
+`);
