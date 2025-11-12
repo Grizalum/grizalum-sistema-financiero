@@ -96,7 +96,16 @@ class PanelControlUI {
     }
 
     _actualizarMetrica(tipo, valor) {
-    const elemento = document.getElementById(`metrica-${tipo}`);
+  
+        // ✅ NUEVO:
+       const mapa = {
+       'ingresos': 'totalIngresos',
+       'gastos': 'totalGastos',
+      'utilidad': 'balanceTotal',
+      'crecimiento': 'metrica-crecimiento'
+   };
+  
+        const elemento = document.getElementById(mapa[tipo]);
     
     if (!elemento) {
         this._log('warn', `Elemento metrica-${tipo} no encontrado`);
