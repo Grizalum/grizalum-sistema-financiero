@@ -164,7 +164,7 @@ await cargarScript('src/vistas/panel-control/panel-control-fix.js');
        window.dispatchEvent(new Event('vistaPanelControlCargada'));
        contenedor.scrollTo({ top: 0, behavior: 'smooth' });
        console.log('✅ Panel de Control completamente listo');
-     }, 500);
+     }, 1000);
     }
 });
     // ───────────────────────────────────────────────────────────────
