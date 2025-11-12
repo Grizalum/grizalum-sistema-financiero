@@ -70,7 +70,7 @@ if (typeof Chart === 'undefined') {
 await cargarScript('src/vistas/panel-control/panel-control.js');
 await cargarScript('src/vistas/panel-control/panel-control-planes.js');
 await cargarScript('src/vistas/panel-control/panel-control-plan-loader.js');
-await cargarScript('src/vistas/panel-control/panel-control-ui-nuevo.js');  // ✅ CAMBIO AQUÍ
+await cargarScript('src/vistas/panel-control/panel-control-ui.js');  
 await cargarScript('src/vistas/panel-control/panel-control-exportador.js');
 await cargarScript('src/vistas/panel-control/panel-control-fix.js');
     
