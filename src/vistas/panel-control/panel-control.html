@@ -1,270 +1,176 @@
-<!-- ============================================
-     PANEL DE CONTROL - VISTA PRINCIPAL
-     ============================================ -->
+<!-- ═══════════════════════════════════════════════════════════════
+     PANEL DE CONTROL EJECUTIVO - VERSIÓN PROFESIONAL v2.0
+     Diseño limpio, moderno y funcional
+     ═══════════════════════════════════════════════════════════════ -->
 
 <div class="panel-control-contenedor">
-    <!-- Botones superiores -->
-    <div style="display: flex; justify-content: flex-end; gap: 12px; margin-bottom: 16px;">
-        <!-- Botón Exportar -->
-         <button id="btnExportarPanel"
-                style="padding: 12px 24px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
-                      color: white; border: none; border-radius: 10px; font-weight: 700; 
-                      cursor: pointer; display: flex; align-items: center; gap: 8px;">
-         <span>📊</span> Exportar a Excel
-     </button>
-        
-        <!-- Botón Personalizar -->
-        <button id="btnPersonalizarPanel"
-                style="padding: 12px 24px; background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); 
-                      color: white; border: none; border-radius: 10px; font-weight: 700; 
-                      cursor: pointer; display: flex; align-items: center; gap: 8px;">
-         <span>🎨</span> Personalizar Dashboard
-       </button>
-    </div>
     
-    <!-- Sección de Métricas -->
-    <section class="metricas-grid">
-        <div class="metrica-tarjeta gastos">
-            <div class="metrica-header">
-                <span class="metrica-titulo">Gastos Operativos</span>
-                <div class="metrica-icono gastos">
-                    <i class="fas fa-receipt"></i>
-                </div>
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- SECCIÓN DE MÉTRICAS PRINCIPALES -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    
+    <section class="metricas-principales">
+        
+        <!-- Métrica 1: Ingresos -->
+        <div class="metrica-card metrica-ingresos">
+            <div class="metrica-icono">
+                <i class="fas fa-arrow-trend-up"></i>
             </div>
-            <div class="metrica-valor" id="expensesValue">S/. 0</div>
-            <div class="metrica-cambio negativo">
-                <i class="fas fa-arrow-up"></i>
-                <span>+3.2% vs mes anterior</span>
-            </div>
-        </div>
-
-        <div class="metrica-tarjeta utilidad">
-            <div class="metrica-header">
-                <span class="metrica-titulo">Utilidad Neta</span>
-                <div class="metrica-icono utilidad">
-                    <i class="fas fa-coins"></i>
-                </div>
-            </div>
-            <div class="metrica-valor" id="profitValue">S/. 0</div>
-            <div class="metrica-cambio positivo">
-                <i class="fas fa-arrow-up"></i>
-                <span>+18.7% vs mes anterior</span>
+            <div class="metrica-contenido">
+                <h3 class="metrica-label">Ingresos Totales</h3>
+                <p class="metrica-valor" id="metrica-ingresos">S/. 0.00</p>
+                <span class="metrica-badge badge-positivo" id="badge-ingresos">
+                    <i class="fas fa-arrow-up"></i> 0%
+                </span>
             </div>
         </div>
 
-        <div class="metrica-tarjeta crecimiento">
-            <div class="metrica-header">
-                <span class="metrica-titulo">Crecimiento</span>
-                <div class="metrica-icono crecimiento">
-                    <i class="fas fa-chart-area"></i>
-                </div>
+        <!-- Métrica 2: Gastos -->
+        <div class="metrica-card metrica-gastos">
+            <div class="metrica-icono">
+                <i class="fas fa-receipt"></i>
             </div>
-            <div class="metrica-valor" id="growthValue">+0%</div>
-            <div class="metrica-cambio positivo">
-                <i class="fas fa-arrow-up"></i>
-                <span>Meta anual: 20%</span>
+            <div class="metrica-contenido">
+                <h3 class="metrica-label">Gastos Operativos</h3>
+                <p class="metrica-valor" id="metrica-gastos">S/. 0.00</p>
+                <span class="metrica-badge badge-negativo" id="badge-gastos">
+                    <i class="fas fa-arrow-down"></i> 0%
+                </span>
             </div>
         </div>
 
-        <div class="metrica-tarjeta ingresos">
-            <div class="metrica-header">
-                <span class="metrica-titulo">Ingresos Totales</span>
-                <div class="metrica-icono ingresos">
-                    <i class="fas fa-arrow-trend-up"></i>
-                </div>
+        <!-- Métrica 3: Utilidad -->
+        <div class="metrica-card metrica-utilidad">
+            <div class="metrica-icono">
+                <i class="fas fa-coins"></i>
             </div>
-            <div class="metrica-valor" id="revenueValue">S/. 0</div>
-            <div class="metrica-cambio positivo">
-                <i class="fas fa-arrow-up"></i>
-                <span>+12.5% vs mes anterior</span>
+            <div class="metrica-contenido">
+                <h3 class="metrica-label">Utilidad Neta</h3>
+                <p class="metrica-valor" id="metrica-utilidad">S/. 0.00</p>
+                <span class="metrica-badge badge-neutral" id="badge-utilidad">
+                    <i class="fas fa-minus"></i> 0%
+                </span>
             </div>
         </div>
+
+        <!-- Métrica 4: Crecimiento -->
+        <div class="metrica-card metrica-crecimiento">
+            <div class="metrica-icono">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="metrica-contenido">
+                <h3 class="metrica-label">Crecimiento</h3>
+                <p class="metrica-valor" id="metrica-crecimiento">+0%</p>
+                <span class="metrica-badge badge-info">
+                    Meta: 20%
+                </span>
+            </div>
+        </div>
+
     </section>
 
-    <div id="dashboardWidgetsContainer"></div>
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- BOTONES DE ACCIÓN -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    
+    <section class="panel-acciones">
+        <button id="btnExportarPanel" class="btn-accion btn-exportar">
+            <i class="fas fa-file-excel"></i>
+            <span>Exportar a Excel</span>
+        </button>
+        
+        <button id="btnPersonalizarPanel" class="btn-accion btn-personalizar">
+            <i class="fas fa-sliders"></i>
+            <span>Personalizar Dashboard</span>
+        </button>
+    </section>
 
-    <!-- Sección de Gráficos -->
-    <section class="graficos-seccion">
-        <div class="grafico-tarjeta principal">
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- SECCIÓN DE GRÁFICOS -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    
+    <section class="graficos-grid">
+        
+        <!-- Gráfico Principal: Flujo de Caja -->
+        <div class="grafico-card grafico-principal">
             <div class="grafico-header">
-                <h3 class="grafico-titulo">Flujo de Caja - Últimos 6 Meses</h3>
-                <div class="grafico-filtros">
-                    <button class="filtro-btn activo">6M</button>
-                    <button class="filtro-btn">1A</button>
-                    <button class="filtro-btn">2A</button>
+                <h3 class="grafico-titulo">
+                    <i class="fas fa-chart-area"></i>
+                    Flujo de Caja - Últimos 6 Meses
+                </h3>
+                <div class="grafico-controles">
+                    <button class="control-btn activo" data-periodo="6m">6M</button>
+                    <button class="control-btn" data-periodo="1a">1A</button>
+                    <button class="control-btn" data-periodo="2a">2A</button>
                 </div>
             </div>
             <div class="grafico-contenedor">
-                <canvas id="mainCashFlowChart"></canvas>
+                <canvas id="graficoFlujoCajaPrincipal"></canvas>
             </div>
         </div>
 
-        <div class="grafico-tarjeta">
+        <!-- Gráfico 2: Distribución de Gastos -->
+        <div class="grafico-card">
             <div class="grafico-header">
-                <h3 class="grafico-titulo">Distribución de Gastos</h3>
+                <h3 class="grafico-titulo">
+                    <i class="fas fa-chart-pie"></i>
+                    Distribución de Gastos
+                </h3>
             </div>
             <div class="grafico-contenedor">
-                <canvas id="expensesChart"></canvas>
+                <canvas id="graficoDistribucionGastos"></canvas>
             </div>
         </div>
-        
-        <div class="grafico-tarjeta">
+
+        <!-- Gráfico 3: Ingresos vs Gastos -->
+        <div class="grafico-card">
             <div class="grafico-header">
-                <h3 class="grafico-titulo">Ingresos vs Gastos</h3>
+                <h3 class="grafico-titulo">
+                    <i class="fas fa-chart-bar"></i>
+                    Ingresos vs Gastos
+                </h3>
             </div>
             <div class="grafico-contenedor">
-                <canvas id="revenueChart"></canvas>
+                <canvas id="graficoIngresosVsGastos"></canvas>
             </div>
         </div>
-        
-        <div class="grafico-tarjeta">
+
+        <!-- Gráfico 4: Tendencia Mensual -->
+        <div class="grafico-card">
             <div class="grafico-header">
-                <h3 class="grafico-titulo">Antigüedad de Cuentas</h3>
+                <h3 class="grafico-titulo">
+                    <i class="fas fa-chart-line"></i>
+                    Tendencia Mensual
+                </h3>
             </div>
             <div class="grafico-contenedor">
-                <canvas id="agingChart"></canvas>
+                <canvas id="graficoTendenciaMensual"></canvas>
             </div>
         </div>
-        
-        <div class="grafico-tarjeta">
-            <div class="grafico-header">
-                <h3 class="grafico-titulo">Flujo de Caja Diario</h3>
-            </div>
-            <div class="grafico-contenedor">
-                <canvas id="cashFlowDetailChart"></canvas>
-            </div>
-        </div>
+
     </section>
 
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════ -->
-<!-- DEPENDENCIAS: FLUJO DE CAJA (necesario para leer datos) -->
-<!-- ═══════════════════════════════════════════════════════════════ -->
-<script src="src/vistas/flujo-caja/flujo-caja.js?v=1762841000"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-ui.js?v=1762841000"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-planes.js?v=1762841000"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-categorias.js?v=1762841000"></script>
-
-<!-- ═══════════════════════════════════════════════════════════════ -->
 <!-- SCRIPTS DEL PANEL DE CONTROL -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
-<script src="src/vistas/panel-control/panel-control.js?v=1762841000"></script>
-<script src="src/vistas/panel-control/panel-control-planes.js?v=1762841000"></script>
-<script src="src/vistas/panel-control/panel-control-plan-loader.js?v=1762841000"></script>
-<script src="src/vistas/panel-control/panel-control-ui.js?v=1762841000"></script>
+
+<!-- Dependencias del Flujo de Caja -->
+<script src="src/vistas/flujo-caja/flujo-caja.js?v=1762912200"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-ui.js?v=1762912200"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-planes.js?v=1762912200"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-categorias.js?v=1762912200"></script>
+
+<!-- Módulos del Panel de Control -->
+<script src="src/vistas/panel-control/panel-control.js?v=1762912200"></script>
+<script src="src/vistas/panel-control/panel-control-planes.js?v=1762912200"></script>
+<script src="src/vistas/panel-control/panel-control-plan-loader.js?v=1762912200"></script>
+
+<!-- ExcelJS -->
 <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
-<script src="src/vistas/panel-control/panel-control-exportador.js?v=1762841000"></script>
-<script src="src/vistas/panel-control/panel-control-fix.js?v=1762841000"></script>
+<script src="src/vistas/panel-control/panel-control-exportador.js?v=1762912200"></script>
 
-<script>
-// ═══════════════════════════════════════════════════════════════
-// CONFIGURACIÓN DE BOTONES DEL PANEL DE CONTROL
-// ═══════════════════════════════════════════════════════════════
-
-(function() {
-    'use strict';
-    
-    console.log('🔧 Configurando botones del Panel de Control...');
-    
-    // Esperar a que el DOM esté listo
-    function configurarBotones() {
-        // Botón de Exportar
-        const btnExportar = document.getElementById('btnExportarPanel');
-        if (btnExportar) {
-            btnExportar.addEventListener('click', async function() {
-                try {
-                    console.log('📊 Iniciando exportación...');
-                    
-                    // Verificar que panelControl esté listo
-                    if (!window.panelControl || !window.panelControl.estaListo()) {
-                        alert('⚠️ Panel de Control aún está cargando. Espera un momento.');
-                        return;
-                    }
-                    
-                    // Verificar ExportadorPanelControl
-                    if (typeof ExportadorPanelControl === 'undefined') {
-                        alert('⚠️ Sistema de exportación no está disponible. Recarga la página.');
-                        console.error('ExportadorPanelControl no está definido');
-                        return;
-                    }
-
-                    const info = window.panelControl.obtenerInfo();
-                    const flujoCaja = window.panelControl.obtenerDatosFlujoCaja(6);
-                    
-                    const datosExportar = {
-                        empresa: info.empresaActual || 'default',
-                        nivel: info.nivel?.score || 0,
-                        plan: info.plan?.nombre || 'Individual',
-                        datos: info.datos,
-                        flujoCaja: flujoCaja,
-                        categoriasIngresos: window.panelControl.obtenerDatosCategoria('ingreso'),
-                        categoriasGastos: window.panelControl.obtenerDatosCategoria('gasto')
-                    };
-
-                    const exportador = new ExportadorPanelControl();
-                    await exportador.exportar(datosExportar);
-                    
-                    alert('✅ Excel exportado exitosamente');
-                    
-                } catch (error) {
-                    console.error('❌ Error exportando:', error);
-                    alert('❌ Error al exportar: ' + error.message);
-                }
-            });
-            console.log('✅ Botón Exportar configurado');
-        } else {
-            console.warn('⚠️ Botón exportar no encontrado');
-        }
-
-        // Botón de Personalizar
-        const btnPersonalizar = document.getElementById('btnPersonalizarPanel');
-        if (btnPersonalizar) {
-            btnPersonalizar.addEventListener('click', function() {
-                // Verificar plan
-                if (!window.PanelControlPlanes) {
-                    alert('⚠️ Sistema de planes no está cargado');
-                    return;
-                }
-                
-                const tieneFuncionalidad = window.PanelControlPlanes.tieneFuncionalidad('personalizarDashboard');
-                
-                if (!tieneFuncionalidad) {
-                    alert('⚠️ La personalización del dashboard requiere plan Empresarial o superior');
-                    if (window.PanelControlPlanes.mostrarModalUpgrade) {
-                        window.PanelControlPlanes.mostrarModalUpgrade('personalizarDashboard');
-                    }
-                    return;
-                }
-                
-                // Si tiene la funcionalidad, activar personalización
-                if (window.dashboardPersonalizable && window.dashboardPersonalizable.activarModoEdicion) {
-                    window.dashboardPersonalizable.activarModoEdicion();
-                } else {
-                    alert('🎨 Sistema de personalización en desarrollo');
-                }
-            });
-            console.log('✅ Botón Personalizar configurado');
-        } else {
-            console.warn('⚠️ Botón personalizar no encontrado');
-        }
-        
-        // Aplicar restricciones según plan
-        setTimeout(() => {
-            if (window.PanelControlPlanes) {
-                window.PanelControlPlanes.aplicarRestricciones();
-            }
-        }, 1000);
-    }
-    
-    // Ejecutar cuando el DOM esté listo
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', configurarBotones);
-    } else {
-        setTimeout(configurarBotones, 500);
-    }
-    
-})();
-
-console.log('✅ Script de botones del Panel de Control cargado');
-</script>
+<!-- UI y Fix -->
+<script src="src/vistas/panel-control/panel-control-ui-nuevo.js?v=1762912200"></script>
+<script src="src/vistas/panel-control/panel-control-fix.js?v=1762912200"></script>
