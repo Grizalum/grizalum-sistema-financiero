@@ -10,23 +10,33 @@
     
     console.log('🛡️ [PanelFix] Sistema de recarga iniciado');
     
+    // ✅ SCROLL AUTOMÁTICO ARRIBA
+    setInterval(() => {
+        const contenedorVistas = document.getElementById('contenedorVistas');
+        const panelVisible = document.querySelector('.panel-control-contenedor');
+        
+        if (panelVisible && contenedorVistas && contenedorVistas.scrollTop > 100) {
+            contenedorVistas.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }, 500);
+    
     let ultimaVezVisible = null;
     
-    /**
-     * Verificar si el panel está visible
-     */
     function panelEstaVisible() {
         const contenedor = document.querySelector('.panel-control-contenedor');
         return contenedor && contenedor.offsetParent !== null;
     }
     
-    /**
-     * Forzar recarga completa del panel
-     */
     function forzarRecarga() {
         if (!panelEstaVisible()) return;
         
         console.log('🔄 [PanelFix] Forzando recarga...');
+        
+        // Forzar scroll arriba
+        const contenedorVistas = document.getElementById('contenedorVistas');
+        if (contenedorVistas) {
+            contenedorVistas.scrollTo({ top: 0, behavior: 'instant' });
+        }
         
         // Recargar datos
         if (window.panelControlUI) {
@@ -35,11 +45,10 @@
                     window.panelControlUI.cargarDatos();
                     console.log('✅ [PanelFix] Datos recargados');
                 } catch (e) {
-                    console.error('❌ [PanelFix] Error cargando datos:', e);
+                    console.error('❌ [PanelFix] Error:', e);
                 }
             }, 500);
             
-            // Reinicializar gráficos
             setTimeout(() => {
                 try {
                     window.panelControlUI.inicializarGraficos();
@@ -49,70 +58,35 @@
                 }
             }, 1000);
         }
-        
-        // Actualizar banner
-        if (window.PanelBanner) {
-            setTimeout(() => {
-                try {
-                    window.PanelBanner.actualizarBanner?.();
-                    console.log('✅ [PanelFix] Banner actualizado');
-                } catch (e) {
-                    console.error('❌ [PanelFix] Error con banner:', e);
-                }
-            }, 300);
-        }
     }
     
-    /**
-     * Observer para detectar cuando el panel se hace visible
-     */
     const observer = new MutationObserver(() => {
         const visible = panelEstaVisible();
         
         if (visible && !ultimaVezVisible) {
-            console.log('👁️ [PanelFix] Panel ahora visible, recargando...');
+            console.log('👁️ [PanelFix] Panel visible');
             ultimaVezVisible = Date.now();
             forzarRecarga();
-        } else if (!visible && ultimaVezVisible) {
-            console.log('👁️‍🗨️ [PanelFix] Panel oculto');
+        } else if (!visible) {
             ultimaVezVisible = null;
         }
     });
     
-    // Iniciar observer
     setTimeout(() => {
         const contenedor = document.getElementById('contenedorVistas') || document.body;
         observer.observe(contenedor, {
             childList: true,
             subtree: true,
-            attributes: true,
-            attributeFilter: ['style', 'class']
+            attributes: true
         });
-        console.log('✅ [PanelFix] Observer activado');
     }, 500);
     
-    // Escuchar clicks en el botón Panel de Control
     document.addEventListener('click', (e) => {
         const target = e.target.closest('[data-section="dashboard"]');
         if (target) {
-            console.log('🖱️ [PanelFix] Click en Panel de Control detectado');
             setTimeout(forzarRecarga, 1500);
         }
     });
     
-    // Verificación periódica
-    setInterval(() => {
-        if (panelEstaVisible()) {
-            const contenedor = document.querySelector('.panel-control-contenedor');
-            const canvas = contenedor?.querySelector('canvas');
-            
-            // Si el panel está visible pero no hay gráficos, recargar
-            if (contenedor && !canvas) {
-                console.log('⚠️ [PanelFix] Panel sin gráficos, recargando...');
-                forzarRecarga();
-            }
-        }
-    }, 2000);
-    
-    console.log('✅ [PanelFix] Sistema completo activo');
+    console.log('✅ [PanelFix] Sistema activo');
 })();
