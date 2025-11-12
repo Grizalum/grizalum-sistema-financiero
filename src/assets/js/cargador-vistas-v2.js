@@ -39,6 +39,7 @@ window.grizalumModulos.registrar({
     // 1. Cargar dependencias del Flujo de Caja PRIMERO
     console.log('   📦 Cargando dependencias del Flujo de Caja...');
     await cargarScript('src/vistas/flujo-caja/flujo-caja.js');
+    await cargarScript('src/vistas/flujo-caja/historial-descripciones.js');
     await cargarScript('src/vistas/flujo-caja/flujo-caja-ui.js');
     await cargarScript('src/vistas/flujo-caja/flujo-caja-planes.js');
     await cargarScript('src/vistas/flujo-caja/flujo-caja-categorias.js');
