@@ -1,162 +1,149 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * SISTEMA DE BANNER DEL PLAN - Con frases motivacionales
+ * PANEL DE CONTROL - Banner del Plan
+ * Compatible con el sistema de Flujo de Caja
  * ═══════════════════════════════════════════════════════════════════
  */
 
-const PlanBanner = {
-    // Configuración de cada plan
-    planes: {
-        'Individual': {
-            icono: '👤',
-            color: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            frases: [
-                '¡Comienza tu viaje financiero hoy!',
-                'Cada gran empresa empezó siendo pequeña',
-                'Tu primer paso hacia el éxito profesional',
-                'Construye bases sólidas para tu futuro',
-                '¡El éxito comienza con organización!'
-            ]
-        },
-        'Profesional': {
-            icono: '💎',
-            color: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-            frases: [
-                '¡Excelente trabajo! Sigue así',
-                'Tu dedicación marca la diferencia',
-                'Cada día mejoras tu negocio',
-                '¡Estás en el camino correcto!',
-                'Profesionalismo que inspira confianza'
-            ]
-        },
-        'Empresarial': {
-            icono: '🏢',
-            color: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-            frases: [
-                '¡Tu empresa crece con cada decisión!',
-                'Liderando con visión y estrategia',
-                'Construyendo un imperio sólido',
-                '¡El éxito empresarial te espera!',
-                'Tu esfuerzo transforma vidas'
-            ]
-        },
-        'Corporativo': {
-            icono: '🌟',
-            color: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            frases: [
-                '¡Excelencia corporativa en acción!',
-                'Tus logros inspiran a todo el equipo',
-                'Innovación y éxito van de la mano',
-                '¡Alcanzando nuevas cimas cada día!',
-                'Liderazgo que marca la diferencia'
-            ]
-        }
-    },
-
-    fraseActualIndex: 0,
-    intervalo: null,
-
-    inicializar() {
-        console.log('🎯 Banner del Plan inicializando...');
+(function() {
+    'use strict';
+    
+    console.log('🎯 [Panel Control] Banner inicializando...');
+    
+    // Frases motivacionales por plan (usa los MISMOS nombres que Flujo de Caja)
+    const FRASES_POR_PLAN = {
+        'individual': [
+            '¡Comienza tu viaje financiero hoy!',
+            'Cada gran empresa empezó siendo pequeña',
+            'Tu primer paso hacia el éxito profesional',
+            'Construye bases sólidas para tu futuro'
+        ],
+        'profesional': [
+            '¡Excelente trabajo! Sigue así',
+            'Tu dedicación marca la diferencia',
+            'Cada día mejoras tu negocio',
+            'Profesionalismo que inspira confianza'
+        ],
+        'empresarial': [
+            '¡Tu empresa crece con cada decisión!',
+            'Liderando con visión y estrategia',
+            'Construyendo un imperio sólido',
+            'Tu esfuerzo transforma vidas'
+        ],
+        'corporativo': [
+            '¡Excelencia corporativa en acción!',
+            'Tus logros inspiran a todo el equipo',
+            'Innovación y éxito van de la mano',
+            'Liderazgo que marca la diferencia'
+        ]
+    };
+    
+    let fraseActualIndex = 0;
+    let intervaloFrases = null;
+    
+    function actualizarBanner() {
+        const planGuardado = localStorage.getItem('grizalum_planActual') || 'corporativo';
+        const plan = window.FlujoCajaPlanes?.PLANES?.[planGuardado];
         
-        // Cargar plan actual
-        this.actualizarBanner();
+        if (!plan) {
+            console.warn('⚠️ Plan no encontrado:', planGuardado);
+            return;
+        }
+        
+        const banner = document.getElementById('nivelBanner');
+        if (!banner) return;
+        
+        // Actualizar fondo según plan (mismo que Flujo de Caja)
+        const colores = {
+            'individual': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            'profesional': 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+            'empresarial': 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+            'corporativo': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+        };
+        
+        banner.style.background = colores[planGuardado] || colores.corporativo;
+        
+        // Actualizar icono (MISMO que Flujo de Caja)
+        const iconoElement = banner.querySelector('.nivel-icono');
+        if (iconoElement) {
+            iconoElement.textContent = plan.icono;
+        }
+        
+        // Actualizar nombre (MISMO que Flujo de Caja)
+        const nombreElement = banner.querySelector('.nivel-nombre');
+        if (nombreElement) {
+            nombreElement.textContent = `Plan ${plan.nombre}`;
+        }
+        
+        // Iniciar rotación de frases
+        iniciarRotacionFrases(planGuardado);
+        
+        console.log(`✅ Banner actualizado: Plan ${plan.nombre} ${plan.icono}`);
+    }
+    
+    function iniciarRotacionFrases(planId) {
+        // Detener rotación anterior
+        if (intervaloFrases) {
+            clearInterval(intervaloFrases);
+        }
+        
+        const frases = FRASES_POR_PLAN[planId] || FRASES_POR_PLAN.corporativo;
+        fraseActualIndex = 0;
         
         // Cambiar frase cada 8 segundos
-        this.intervalo = setInterval(() => {
-            this.rotarFrase();
+        intervaloFrases = setInterval(() => {
+            const fraseElement = document.getElementById('fraseMotivacional');
+            if (!fraseElement) return;
+            
+            // Siguiente frase
+            fraseActualIndex = (fraseActualIndex + 1) % frases.length;
+            
+            // Animación de cambio
+            fraseElement.style.opacity = '0';
+            
+            setTimeout(() => {
+                fraseElement.textContent = frases[fraseActualIndex];
+                fraseElement.style.opacity = '1';
+            }, 300);
         }, 8000);
         
-        console.log('✅ Banner del Plan listo');
-    },
-
-    actualizarBanner() {
-        // Obtener plan actual
-        const planActual = this.obtenerPlanActual();
-        const configPlan = this.planes[planActual] || this.planes['Corporativo'];
-        
-        // Actualizar elementos del DOM
-        const bannerElement = document.getElementById('planBanner');
-        const iconoElement = document.getElementById('planIcon');
-        const nombreElement = document.getElementById('planNombre');
-        const fraseElement = document.getElementById('planFrase');
-        
-        if (bannerElement) {
-            bannerElement.style.background = configPlan.color;
-        }
-        
-        if (iconoElement) {
-            iconoElement.textContent = configPlan.icono;
-        }
-        
-        if (nombreElement) {
-            nombreElement.textContent = `Plan ${planActual}`;
-        }
-        
-        if (fraseElement) {
-            // Mostrar primera frase
-            this.fraseActualIndex = 0;
-            fraseElement.textContent = configPlan.frases[0];
-        }
-        
-        console.log(`📋 Banner actualizado: ${planActual}`);
-    },
-
-    rotarFrase() {
-        const planActual = this.obtenerPlanActual();
-        const configPlan = this.planes[planActual] || this.planes['Corporativo'];
-        const fraseElement = document.getElementById('planFrase');
-        
-        if (!fraseElement) return;
-        
-        // Siguiente frase
-        this.fraseActualIndex = (this.fraseActualIndex + 1) % configPlan.frases.length;
-        
-        // Animación de salida
-        fraseElement.style.opacity = '0';
-        fraseElement.style.transform = 'translateY(-10px)';
-        
-        setTimeout(() => {
-            fraseElement.textContent = configPlan.frases[this.fraseActualIndex];
-            fraseElement.style.opacity = '1';
-            fraseElement.style.transform = 'translateY(0)';
-        }, 300);
-    },
-
-    obtenerPlanActual() {
-        // Intentar obtener plan desde el sistema
-        if (window.panelControl && window.panelControl.planActual) {
-            return window.panelControl.planActual.nombre;
-        }
-        
-        if (window.FlujoCajaPlanes && window.FlujoCajaPlanes.obtenerPlanActual) {
-            const plan = window.FlujoCajaPlanes.obtenerPlanActual();
-            return plan.nombre;
-        }
-        
-        // Fallback
-        return 'Corporativo';
-    },
-
-    detener() {
-        if (this.intervalo) {
-            clearInterval(this.intervalo);
-        }
+        console.log(`🔄 Rotación de frases iniciada (${frases.length} frases)`);
     }
-};
-
-// Inicializar cuando el panel esté listo
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        setTimeout(() => PlanBanner.inicializar(), 500);
+    
+    // Actualizar cuando cargue el panel
+    setTimeout(actualizarBanner, 500);
+    setTimeout(actualizarBanner, 1000);
+    
+    // Actualizar cuando cambie el plan
+    document.addEventListener('grizalumPlanCambiado', actualizarBanner);
+    
+    // Observer para mantener sincronizado
+    const observer = new MutationObserver(() => {
+        const banner = document.getElementById('nivelBanner');
+        const panelVisible = document.querySelector('.panel-control-contenedor')?.offsetParent !== null;
+        
+        if (panelVisible && banner) {
+            const iconoActual = banner.querySelector('.nivel-icono')?.textContent || '';
+            const planGuardado = localStorage.getItem('grizalum_planActual') || 'corporativo';
+            const plan = window.FlujoCajaPlanes?.PLANES?.[planGuardado];
+            
+            // Si el icono no coincide, actualizar
+            if (plan && iconoActual !== plan.icono) {
+                console.log('🔄 Banner desincronizado, actualizando...');
+                actualizarBanner();
+            }
+        }
     });
-} else {
-    setTimeout(() => PlanBanner.inicializar(), 500);
-}
-
-// Actualizar cuando cambie el plan
-document.addEventListener('grizalumPlanCambiado', () => {
-    PlanBanner.actualizarBanner();
-});
-
-console.log('✅ Sistema de Banner del Plan cargado');
+    
+    setTimeout(() => {
+        const contenedor = document.querySelector('.panel-control-contenedor') || document.body;
+        observer.observe(contenedor, {
+            childList: true,
+            subtree: true,
+            attributes: true
+        });
+    }, 500);
+    
+    console.log('✅ [Panel Control] Banner listo y sincronizado con Flujo de Caja');
+    
+})();
