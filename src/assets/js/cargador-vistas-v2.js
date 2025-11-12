@@ -113,6 +113,10 @@ await cargarScript('src/vistas/panel-control/panel-control-fix.js');
         // Insertar HTML
         contenedor.innerHTML = temp.innerHTML;
         
+        / ✅ NUEVO: Forzar scroll arriba INMEDIATAMENTE
+        contenedor.scrollTo({ top: 0, behavior: 'instant' });
+        console.log('📜 Scroll forzado a arriba');
+        
         await new Promise(resolve => {
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
