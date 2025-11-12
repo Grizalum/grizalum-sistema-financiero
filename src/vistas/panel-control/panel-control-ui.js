@@ -96,32 +96,33 @@ class PanelControlUI {
     }
 
     _actualizarMetrica(tipo, valor) {
-        const elemento = document.getElementById(`metrica-${tipo}`);
-        
-        if (!elemento) {
-            this._log('warn', `Elemento metrica-${tipo} no encontrado`);
-            return;
-        }
+    const elemento = document.getElementById(`metrica-${tipo}`);
+    
+    if (!elemento) {
+        this._log('warn', `Elemento metrica-${tipo} no encontrado`);
+        return;
+    }
 
-        // Formatear valor según tipo
-        let valorFormateado;
-        
-        if (tipo === 'crecimiento') {
-            valorFormateado = `${valor >= 0 ? '+' : ''}${valor.toFixed(1)}%`;
-        } else {
-            valorFormateado = `S/. ${this._formatearNumero(Math.abs(valor))}`;
-            if (valor < 0 && tipo === 'utilidad') {
-                valorFormateado = `-${valorFormateado}`;
-            }
-        }
-
-        elemento.textContent = valorFormateado;
-
-        // Aplicar color según el valor
-        if (tipo === 'utilidad') {
-            elemento.style.color = valor >= 0 ? 'var(--success)' : 'var(--danger)';
+    // Formatear valor según tipo
+    let valorFormateado;
+    
+    if (tipo === 'crecimiento') {
+        valorFormateado = `${valor >= 0 ? '+' : ''}${valor.toFixed(1)}%`;
+    } else {
+        valorFormateado = `S/. ${this._formatearNumero(Math.abs(valor))}`;
+        // ✅ NUEVO: Mostrar signo negativo
+        if (valor < 0 && tipo === 'utilidad') {
+            valorFormateado = `-S/. ${this._formatearNumero(Math.abs(valor))}`;
         }
     }
+
+    elemento.textContent = valorFormateado;
+
+    // Aplicar color según el valor
+    if (tipo === 'utilidad') {
+        elemento.style.color = valor >= 0 ? 'var(--success)' : '#ef4444';  // ✅ Rojo para negativo
+    }
+}
 
     _actualizarBadges(datos) {
         // Badge de ingresos (positivo si hay ingresos)
