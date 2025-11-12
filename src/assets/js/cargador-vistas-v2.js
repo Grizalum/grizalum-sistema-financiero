@@ -52,20 +52,27 @@ window.grizalumModulos.registrar({
     // 2. Cargar estilos del Panel de Control
     await cargarEstilos('src/vistas/panel-control/panel-control.css');
     
-    // ✅ 2.5 Cargar ExcelJS (NUEVO - AGREGAR ESTO)
-    if (typeof ExcelJS === 'undefined') {
-        console.log('   📦 Cargando ExcelJS...');
-        await cargarScript('https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js');
-        console.log('   ✅ ExcelJS cargado');
-    }
-    
-    // 3. Cargar módulos del Panel de Control
-    await cargarScript('src/vistas/panel-control/panel-control.js');
-    await cargarScript('src/vistas/panel-control/panel-control-planes.js');
-    await cargarScript('src/vistas/panel-control/panel-control-plan-loader.js');
-    await cargarScript('src/vistas/panel-control/panel-control-ui.js');
-    await cargarScript('src/vistas/panel-control/panel-control-exportador.js');
-    await cargarScript('src/vistas/panel-control/panel-control-fix.js');
+    // ✅ 2.5 Cargar ExcelJS
+if (typeof ExcelJS === 'undefined') {
+    console.log('   📦 Cargando ExcelJS...');
+    await cargarScript('https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js');
+    console.log('   ✅ ExcelJS cargado');
+}
+
+// ✅ 2.6 Cargar Chart.js (para gráficos) ⬅️ NUEVO
+if (typeof Chart === 'undefined') {
+    console.log('   📊 Cargando Chart.js...');
+    await cargarScript('https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js');
+    console.log('   ✅ Chart.js cargado');
+}
+
+// 3. Cargar módulos del Panel de Control
+await cargarScript('src/vistas/panel-control/panel-control.js');
+await cargarScript('src/vistas/panel-control/panel-control-planes.js');
+await cargarScript('src/vistas/panel-control/panel-control-plan-loader.js');
+await cargarScript('src/vistas/panel-control/panel-control-ui-nuevo.js');  // ✅ CAMBIO AQUÍ
+await cargarScript('src/vistas/panel-control/panel-control-exportador.js');
+await cargarScript('src/vistas/panel-control/panel-control-fix.js');
     
     console.log('   ✅ Panel de Control cargado');
 },
