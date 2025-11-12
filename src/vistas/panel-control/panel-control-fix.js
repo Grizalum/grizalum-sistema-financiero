@@ -1,277 +1,118 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * PANEL DE CONTROL - FIX
- * Soluciona problemas comunes y asegura estabilidad
- * VERSION: 1.0.0
+ * PANEL DE CONTROL - FIX DE RECARGA
+ * Asegura que todo se recargue correctamente al volver al panel
  * ═══════════════════════════════════════════════════════════════════
  */
 
 (function() {
     'use strict';
-
-    console.log('🛠️ [PanelFix] Módulo de correcciones cargado');
-
+    
+    console.log('🛡️ [PanelFix] Sistema de recarga iniciado');
+    
+    let ultimaVezVisible = null;
+    
     /**
-     * Fix 1: Asegurar que Chart.js esté disponible
+     * Verificar si el panel está visible
      */
-    function verificarChartJS() {
-        if (typeof Chart === 'undefined') {
-            console.error('❌ Chart.js no está cargado');
-            return false;
-        }
-        console.log('✅ [Fix] Chart.js disponible');
-        return true;
+    function panelEstaVisible() {
+        const contenedor = document.querySelector('.panel-control-contenedor');
+        return contenedor && contenedor.offsetParent !== null;
     }
-
+    
     /**
-     * Fix 2: Asegurar que ExcelJS esté disponible
+     * Forzar recarga completa del panel
      */
-    function verificarExcelJS() {
-        if (typeof ExcelJS === 'undefined') {
-            console.warn('⚠️ ExcelJS no está cargado (necesario para exportar)');
-            return false;
-        }
-        console.log('✅ [Fix] ExcelJS disponible');
-        return true;
-    }
-
-    /**
-     * Fix 3: Proteger contra errores de gráficos
-     */
-    function protegerGraficos() {
-        const canvasElements = document.querySelectorAll('canvas[id*="Chart"]');
+    function forzarRecarga() {
+        if (!panelEstaVisible()) return;
         
-        canvasElements.forEach(canvas => {
-            if (!canvas.getContext) {
-                console.warn('⚠️ Canvas no soportado en este navegador');
-                canvas.parentElement.innerHTML = '<div style="padding: 2rem; text-align: center; color: #999;">Gráfico no disponible en este navegador</div>';
-            }
-        });
-
-        console.log('✅ [Fix] Protección de gráficos activada');
-    }
-
-    /**
-     * Fix 4: Reinicializar si hay errores
-     */
-    function reinicializarSiError() {
-        let errorCount = 0;
-        const maxErrors = 3;
-
-        window.addEventListener('error', (event) => {
-            if (event.message.includes('panelControl') || 
-                event.message.includes('Chart') ||
-                event.message.includes('panel-control')) {
-                
-                errorCount++;
-                console.warn(`⚠️ [Fix] Error detectado (${errorCount}/${maxErrors}):`, event.message);
-
-                if (errorCount >= maxErrors) {
-                    console.log('🔄 [Fix] Demasiados errores, intentando reinicializar...');
-                    setTimeout(() => {
-                        if (window.panelControlUI) {
-                            window.panelControlUI.cargarDatos();
-                        }
-                    }, 2000);
-                    errorCount = 0; // Reset
+        console.log('🔄 [PanelFix] Forzando recarga...');
+        
+        // Recargar datos
+        if (window.panelControlUI) {
+            setTimeout(() => {
+                try {
+                    window.panelControlUI.cargarDatos();
+                    console.log('✅ [PanelFix] Datos recargados');
+                } catch (e) {
+                    console.error('❌ [PanelFix] Error cargando datos:', e);
                 }
-            }
-        });
-
-        console.log('✅ [Fix] Sistema de reinicio automático activado');
-    }
-
-    /**
-     * Fix 5: Asegurar que los datos se carguen
-     */
-    function verificarDatos() {
-        let intentos = 0;
-        const maxIntentos = 10;
-
-        const verificar = () => {
-            intentos++;
-
-            if (window.panelControl && window.panelControl.estaListo()) {
-                const datos = window.panelControl.obtenerDatos();
-                
-                if (datos && typeof datos.ingresos !== 'undefined') {
-                    console.log('✅ [Fix] Datos verificados correctamente');
-                    return;
-                }
-            }
-
-            if (intentos < maxIntentos) {
-                console.log(`⏳ [Fix] Verificando datos... (${intentos}/${maxIntentos})`);
-                setTimeout(verificar, 500);
-            } else {
-                console.warn('⚠️ [Fix] No se pudieron verificar los datos después de', maxIntentos, 'intentos');
-            }
-        };
-
-        setTimeout(verificar, 1000);
-    }
-
-    /**
-     * Fix 6: Sincronización con Flujo de Caja
-     */
-    function sincronizarConFlujoCaja() {
-        // Escuchar cambios en Flujo de Caja
-        const eventos = [
-            'grizalumTransaccionAgregada',
-            'grizalumTransaccionEditada',
-            'grizalumTransaccionEliminada',
-            'grizalumFlujoCajaActualizado'
-        ];
-
-        eventos.forEach(evento => {
-            document.addEventListener(evento, () => {
-                console.log(`🔄 [Fix] Evento ${evento} detectado, actualizando panel...`);
-                
-                // Esperar un momento y actualizar
-                setTimeout(() => {
-                    if (window.panelControl && window.panelControl._actualizarDatos) {
-                        window.panelControl._actualizarDatos();
-                    }
-                }, 500);
-            });
-        });
-
-        console.log('✅ [Fix] Sincronización con Flujo de Caja activada');
-    }
-
-    /**
-     * Fix 7: Asegurar que los botones funcionen
-     */
-    function verificarBotones() {
-        setTimeout(() => {
-            // Verificar botón de exportar
-            const btnExportar = document.querySelector('[onclick*="exportarPanelControl"]');
-            if (btnExportar && typeof window.exportarPanelControl !== 'function') {
-                console.warn('⚠️ [Fix] Función exportarPanelControl no encontrada');
-                
-                // Crear función temporal
-                window.exportarPanelControl = function() {
-                    alert('⚠️ Sistema de exportación aún está cargando. Espera un momento.');
-                };
-            }
-
-            // Verificar función de personalización
-            const btnPersonalizar = document.querySelector('[onclick*="dashboardPersonalizable"]');
-            if (btnPersonalizar && typeof window.dashboardPersonalizable === 'undefined') {
-                console.warn('⚠️ [Fix] dashboardPersonalizable no encontrado');
-                
-                // Crear objeto temporal
-                window.dashboardPersonalizable = {
-                    activarModoEdicion: function() {
-                        alert('⚠️ Sistema de personalización aún está cargando.');
-                    }
-                };
-            }
-
-            console.log('✅ [Fix] Verificación de botones completada');
-        }, 1000);
-    }
-
-    /**
-     * Fix 8: Limpiar memoria de gráficos
-     */
-    function limpiarGraficos() {
-        // Limpiar gráficos antiguos al cambiar de vista
-        document.addEventListener('sectionChanged', (evento) => {
-            if (evento.detail.from === 'panel-control') {
-                console.log('🧹 [Fix] Limpiando gráficos del panel...');
-                
-                if (window.panelControlUI && window.panelControlUI.graficos) {
-                    Object.values(window.panelControlUI.graficos).forEach(grafico => {
-                        if (grafico && typeof grafico.destroy === 'function') {
-                            try {
-                                grafico.destroy();
-                            } catch (e) {
-                                console.warn('⚠️ Error destruyendo gráfico:', e);
-                            }
-                        }
-                    });
-                }
-            }
-        });
-
-        console.log('✅ [Fix] Sistema de limpieza de gráficos activado');
-    }
-
-    /**
-     * Fix 9: Manejo de errores global
-     */
-    function manejarErroresGlobales() {
-        const erroresIgnorados = [
-            'ResizeObserver loop limit exceeded',
-            'ResizeObserver loop completed with undelivered notifications'
-        ];
-
-        window.addEventListener('error', (event) => {
-            const mensaje = event.message || '';
+            }, 500);
             
-            // Ignorar errores conocidos que no afectan funcionalidad
-            if (erroresIgnorados.some(err => mensaje.includes(err))) {
-                event.preventDefault();
-                return;
-            }
-
-            // Log de otros errores
-            if (mensaje.includes('panel') || mensaje.includes('Chart')) {
-                console.error('❌ [Fix] Error capturado:', {
-                    mensaje: evento.message,
-                    archivo: event.filename,
-                    linea: event.lineno
-                });
-            }
-        });
-
-        console.log('✅ [Fix] Manejo de errores globales activado');
-    }
-
-    /**
-     * Inicialización de todos los fixes
-     */
-    function inicializarTodo() {
-        console.log('🛠️ [PanelFix] Inicializando correcciones...');
-
-        // Ejecutar fixes inmediatamente
-        verificarChartJS();
-        verificarExcelJS();
-        reinicializarSiError();
-        sincronizarConFlujoCaja();
-        manejarErroresGlobales();
-
-        // Ejecutar fixes después de carga del DOM
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => {
-                protegerGraficos();
-                verificarDatos();
-                verificarBotones();
-                limpiarGraficos();
-            });
-        } else {
-            protegerGraficos();
-            verificarDatos();
-            verificarBotones();
-            limpiarGraficos();
+            // Reinicializar gráficos
+            setTimeout(() => {
+                try {
+                    window.panelControlUI.inicializarGraficos();
+                    console.log('✅ [PanelFix] Gráficos reinicializados');
+                } catch (e) {
+                    console.error('❌ [PanelFix] Error con gráficos:', e);
+                }
+            }, 1000);
         }
-
-        console.log('✅ [PanelFix] Todas las correcciones activadas');
+        
+        // Actualizar banner
+        if (window.PanelBanner) {
+            setTimeout(() => {
+                try {
+                    window.PanelBanner.actualizarBanner?.();
+                    console.log('✅ [PanelFix] Banner actualizado');
+                } catch (e) {
+                    console.error('❌ [PanelFix] Error con banner:', e);
+                }
+            }, 300);
+        }
     }
-
-    // Auto-inicializar
-    inicializarTodo();
-
-    // Exportar para uso manual si es necesario
-    window.PanelControlFix = {
-        verificarChartJS,
-        verificarExcelJS,
-        protegerGraficos,
-        verificarDatos,
-        sincronizarConFlujoCaja
-    };
-
+    
+    /**
+     * Observer para detectar cuando el panel se hace visible
+     */
+    const observer = new MutationObserver(() => {
+        const visible = panelEstaVisible();
+        
+        if (visible && !ultimaVezVisible) {
+            console.log('👁️ [PanelFix] Panel ahora visible, recargando...');
+            ultimaVezVisible = Date.now();
+            forzarRecarga();
+        } else if (!visible && ultimaVezVisible) {
+            console.log('👁️‍🗨️ [PanelFix] Panel oculto');
+            ultimaVezVisible = null;
+        }
+    });
+    
+    // Iniciar observer
+    setTimeout(() => {
+        const contenedor = document.getElementById('contenedorVistas') || document.body;
+        observer.observe(contenedor, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['style', 'class']
+        });
+        console.log('✅ [PanelFix] Observer activado');
+    }, 500);
+    
+    // Escuchar clicks en el botón Panel de Control
+    document.addEventListener('click', (e) => {
+        const target = e.target.closest('[data-section="dashboard"]');
+        if (target) {
+            console.log('🖱️ [PanelFix] Click en Panel de Control detectado');
+            setTimeout(forzarRecarga, 1500);
+        }
+    });
+    
+    // Verificación periódica
+    setInterval(() => {
+        if (panelEstaVisible()) {
+            const contenedor = document.querySelector('.panel-control-contenedor');
+            const canvas = contenedor?.querySelector('canvas');
+            
+            // Si el panel está visible pero no hay gráficos, recargar
+            if (contenedor && !canvas) {
+                console.log('⚠️ [PanelFix] Panel sin gráficos, recargando...');
+                forzarRecarga();
+            }
+        }
+    }, 2000);
+    
+    console.log('✅ [PanelFix] Sistema completo activo');
 })();
-
-console.log('✅ Panel Control Fix v1.0.0 cargado');
