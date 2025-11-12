@@ -128,6 +128,12 @@ await cargarScript('src/vistas/panel-control/panel-control-fix.js');
                 document.body.appendChild(script);
             }
         }
+         // ✅ AGREGAR ESTO:
+    // Cargar scripts externos del HTML que fueron removidos
+    const scriptsExternos = scriptsArray.filter(s => s.src && s.src.includes('panel-control-ui'));
+    for (const scriptOriginal of scriptsExternos) {
+       await cargarScript(scriptOriginal.src);
+   }
         
         // Esperar a que panelControl esté listo
        if (window.panelControl) {
