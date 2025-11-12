@@ -69,7 +69,7 @@ if (typeof Chart === 'undefined') {
 // 3. Cargar módulos del Panel de Control
 await cargarScript('src/vistas/panel-control/panel-control.js');
 await cargarScript('src/vistas/panel-control/panel-control-planes.js');
-await cargarScript('src/vistas/panel-control/panel-control-plan-loader.js');
+// await cargarScript('src/vistas/panel-control/panel-control-plan-loader.js');  //
 // await cargarScript('src/vistas/panel-control/panel-control-ui.js');  // ❌ COMENTADO - lo carga el HTML
 await cargarScript('src/vistas/panel-control/panel-control-exportador.js');
 await cargarScript('src/vistas/panel-control/panel-control-fix.js');
