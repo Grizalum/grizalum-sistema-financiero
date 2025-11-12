@@ -1,43 +1,37 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * PANEL DE CONTROL UI - VERSIÓN PROFESIONAL v2.0
- * Lógica limpia, clara y sin errores
+ * GRIZALUM - PANEL DE CONTROL UI
+ * Maneja toda la interacción con el DOM
  * ═══════════════════════════════════════════════════════════════════
  */
 
-class PanelControlUINuevo {
+class PanelControlUI {
     constructor() {
         this.modulo = null;
         this.graficos = {};
-        this.colores = {
-            primario: '#667eea',
-            ingresos: '#10b981',
-            gastos: '#ef4444',
-            utilidad: '#8b5cf6',
-            crecimiento: '#3b82f6'
-        };
         
         this._inicializar();
     }
 
     async _inicializar() {
-        console.log('🎨 [PanelUI v2.0] Inicializando...');
+        console.log('🎨 Inicializando interfaz Panel de Control...');
         
-        // Esperar módulo principal
+        // Esperar a que el módulo esté listo
         await this._esperarModulo();
         
-        // Cargar datos
+        // Esperar a que el DOM esté completamente listo
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // Cargar datos iniciales
         this.cargarDatos();
         
         // Configurar eventos
         this.configurarEventos();
         
         // Inicializar gráficos
-        setTimeout(() => {
-            this.inicializarGraficos();
-        }, 500);
+        this.inicializarGraficos();
         
-        console.log('✅ [PanelUI v2.0] Listo');
+        console.log('✅ Interfaz Panel de Control lista');
     }
 
     async _esperarModulo() {
@@ -45,7 +39,7 @@ class PanelControlUINuevo {
             const verificar = () => {
                 if (window.panelControl && window.panelControl.estaListo()) {
                     this.modulo = window.panelControl;
-                    console.log('✅ Módulo conectado');
+                    console.log('✅ Módulo conectado a la UI');
                     resolve();
                 } else {
                     setTimeout(verificar, 200);
@@ -55,88 +49,122 @@ class PanelControlUINuevo {
         });
     }
 
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * CARGAR Y ACTUALIZAR DATOS
-     * ═══════════════════════════════════════════════════════════════
-     */
+    configurarEventos() {
+        // Escuchar actualizaciones del módulo
+        document.addEventListener('grizalumPanelControlActualizado', () => {
+            console.log('🔄 Panel actualizado, recargando UI...');
+            this.cargarDatos();
+            this.actualizarGraficos();
+        });
 
-    cargarDatos() {
-        if (!this.modulo) {
-            console.warn('⚠️ Módulo no disponible');
-            return;
-        }
+        // Escuchar cambio de empresa
+        document.addEventListener('grizalumCompanyChanged', () => {
+            console.log('🏢 Empresa cambiada, actualizando panel...');
+            setTimeout(() => {
+                this.cargarDatos();
+                this.actualizarGraficos();
+            }, 500);
+        });
 
-        const datos = this.modulo.obtenerDatos();
-        console.log('📊 Cargando datos:', datos);
+        // Escuchar cambio de plan
+        document.addEventListener('grizalumPanelControlPlanCambiado', (e) => {
+            console.log('📊 Plan cambiado:', e.detail.plan.nombre);
+            this.aplicarRestricciones();
+        });
 
-        // Actualizar valores
-        this.actualizarMetrica('metrica-ingresos', datos.ingresos, true);
-        this.actualizarMetrica('metrica-gastos', datos.gastos, true);
-        this.actualizarMetrica('metrica-utilidad', datos.utilidad, true);
-        this.actualizarMetrica('metrica-crecimiento', datos.crecimiento, false, '%');
+        // Botones de filtro de tiempo
+        document.querySelectorAll('.filtro-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('activo'));
+                e.target.classList.add('activo');
+                // Aquí se pueden agregar filtros en el futuro
+            });
+        });
 
-        // Actualizar badges
-        this.actualizarBadges(datos);
-
-        console.log('✅ Datos actualizados en UI');
+        console.log('✅ Eventos configurados');
     }
 
-    actualizarMetrica(elementId, valor, esMoneda = false, sufijo = '') {
+    cargarDatos() {
+        const datos = this.modulo.obtenerDatos();
+        
+        // Actualizar métricas
+        this.actualizarMetricas(datos);
+        
+        console.log('📊 Datos cargados en UI');
+    }
+
+    actualizarMetricas(datos) {
+        // Actualizar valores con animación
+        this._actualizarValor('revenueValue', datos.ingresos, true);
+        this._actualizarValor('expensesValue', datos.gastos, true);
+        this._actualizarValor('profitValue', datos.utilidad, true);
+        this._actualizarValor('growthValue', datos.crecimiento, false, '%');
+
+        // Actualizar indicadores de cambio (calcular vs mes anterior)
+        this._actualizarCambios(datos);
+    }
+
+    _actualizarValor(elementId, valor, esMoneda = false, sufijo = '') {
         const elemento = document.getElementById(elementId);
         if (!elemento) return;
 
         let valorFormateado;
-        
         if (esMoneda) {
-            valorFormateado = `S/. ${this.formatearNumero(valor)}`;
+            valorFormateado = `S/. ${this._formatearNumero(valor)}`;
         } else if (sufijo === '%') {
             const signo = valor >= 0 ? '+' : '';
             valorFormateado = `${signo}${valor}${sufijo}`;
         } else {
-            valorFormateado = this.formatearNumero(valor);
+            valorFormateado = this._formatearNumero(valor);
         }
 
-        // Actualizar con animación
+        // Animación de conteo
+        this._animarConteo(elemento, valorFormateado);
+    }
+
+    _animarConteo(elemento, valorFinal) {
+        elemento.textContent = valorFinal;
         elemento.style.transform = 'scale(1.05)';
-        elemento.textContent = valorFormateado;
-        
         setTimeout(() => {
             elemento.style.transform = 'scale(1)';
         }, 300);
     }
 
-    actualizarBadges(datos) {
-        // Badge ingresos
-        const badgeIngresos = document.getElementById('badge-ingresos');
-        if (badgeIngresos) {
-            const cambio = this._calcularCambio(datos.ingresos, datos.crecimiento);
-            badgeIngresos.innerHTML = `<i class="fas fa-arrow-${cambio >= 0 ? 'up' : 'down'}"></i> ${Math.abs(cambio).toFixed(1)}%`;
-            badgeIngresos.className = `metrica-badge ${cambio >= 0 ? 'badge-positivo' : 'badge-negativo'}`;
-        }
+    _actualizarCambios(datos) {
+        // Por ahora usar crecimiento como indicador
+        // En el futuro se puede calcular cambios específicos por métrica
+        
+        const cambios = {
+            gastos: Math.abs(datos.crecimiento * 0.3), // Estimado
+            utilidad: Math.abs(datos.crecimiento * 1.2), // Estimado
+            crecimiento: datos.crecimiento,
+            ingresos: datos.crecimiento
+        };
 
-        // Badge gastos
-        const badgeGastos = document.getElementById('badge-gastos');
-        if (badgeGastos) {
-            const cambio = this._calcularCambio(datos.gastos, datos.crecimiento * 0.3);
-            badgeGastos.innerHTML = `<i class="fas fa-arrow-${cambio >= 0 ? 'up' : 'down'}"></i> ${Math.abs(cambio).toFixed(1)}%`;
-            badgeGastos.className = `metrica-badge ${cambio >= 0 ? 'badge-negativo' : 'badge-positivo'}`;
-        }
+        // Actualizar cada tarjeta
+        Object.entries(cambios).forEach(([tipo, cambio]) => {
+            const tarjeta = document.querySelector(`.metrica-tarjeta.${tipo}`);
+            if (!tarjeta) return;
 
-        // Badge utilidad
-        const badgeUtilidad = document.getElementById('badge-utilidad');
-        if (badgeUtilidad) {
-            const estado = datos.utilidad >= 0 ? 'Superávit' : 'Déficit';
-            badgeUtilidad.innerHTML = `<i class="fas fa-${datos.utilidad >= 0 ? 'check-circle' : 'exclamation-circle'}"></i> ${estado}`;
-            badgeUtilidad.className = `metrica-badge ${datos.utilidad >= 0 ? 'badge-positivo' : 'badge-negativo'}`;
-        }
+            const cambioElement = tarjeta.querySelector('.metrica-cambio');
+            if (!cambioElement) return;
+
+            const esPositivo = cambio >= 0;
+            cambioElement.className = `metrica-cambio ${esPositivo ? 'positivo' : 'negativo'}`;
+            
+            const icono = cambioElement.querySelector('i');
+            if (icono) {
+                icono.className = `fas fa-arrow-${esPositivo ? 'up' : 'down'}`;
+            }
+
+            const texto = cambioElement.querySelector('span');
+            if (texto) {
+                texto.textContent = `${esPositivo ? '+' : ''}${Math.abs(cambio).toFixed(1)}% vs mes anterior`;
+            }
+        });
     }
 
-    _calcularCambio(valor, crecimiento) {
-        return crecimiento || 0;
-    }
-
-    formatearNumero(numero) {
+    _formatearNumero(numero) {
         return new Intl.NumberFormat('es-PE', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
@@ -145,182 +173,79 @@ class PanelControlUINuevo {
 
     /**
      * ═══════════════════════════════════════════════════════════════
-     * CONFIGURAR EVENTOS
-     * ═══════════════════════════════════════════════════════════════
-     */
-
-    configurarEventos() {
-        // Actualización automática
-        document.addEventListener('grizalumPanelControlActualizado', () => {
-            console.log('🔄 Panel actualizado');
-            this.cargarDatos();
-            this.actualizarGraficos();
-        });
-
-        // Cambio de empresa
-        document.addEventListener('grizalumCompanyChanged', () => {
-            setTimeout(() => {
-                this.cargarDatos();
-                this.actualizarGraficos();
-            }, 500);
-        });
-
-        // Botones
-        this.configurarBotones();
-
-        console.log('✅ Eventos configurados');
-    }
-
-    configurarBotones() {
-        // Botón exportar
-        const btnExportar = document.getElementById('btnExportarPanel');
-        if (btnExportar) {
-            btnExportar.addEventListener('click', async () => {
-                await this.exportar();
-            });
-        }
-
-        // Botón personalizar
-        const btnPersonalizar = document.getElementById('btnPersonalizarPanel');
-        if (btnPersonalizar) {
-            btnPersonalizar.addEventListener('click', () => {
-                this.personalizar();
-            });
-        }
-    }
-
-    async exportar() {
-        try {
-            console.log('📊 Exportando...');
-            
-            if (!window.panelControl || !window.panelControl.estaListo()) {
-                alert('⚠️ Panel de Control no está listo');
-                return;
-            }
-            
-            if (typeof ExportadorPanelControl === 'undefined') {
-                alert('⚠️ Sistema de exportación no disponible');
-                return;
-            }
-
-            const info = window.panelControl.obtenerInfo();
-            const flujoCaja = window.panelControl.obtenerDatosFlujoCaja(6);
-            
-            const datosExportar = {
-                empresa: info.empresaActual || 'default',
-                nivel: info.nivel?.score || 0,
-                plan: info.plan?.nombre || 'Individual',
-                datos: info.datos,
-                flujoCaja: flujoCaja,
-                categoriasIngresos: window.panelControl.obtenerDatosCategoria('ingreso'),
-                categoriasGastos: window.panelControl.obtenerDatosCategoria('gasto')
-            };
-
-            const exportador = new ExportadorPanelControl();
-            await exportador.exportar(datosExportar);
-            
-            alert('✅ Excel exportado exitosamente');
-            
-        } catch (error) {
-            console.error('❌ Error exportando:', error);
-            alert('❌ Error: ' + error.message);
-        }
-    }
-
-    personalizar() {
-        if (!window.PanelControlPlanes) {
-            alert('⚠️ Sistema de planes no disponible');
-            return;
-        }
-        
-        const tieneFuncionalidad = window.PanelControlPlanes.tieneFuncionalidad('personalizarDashboard');
-        
-        if (!tieneFuncionalidad) {
-            alert('⚠️ Personalización requiere plan Empresarial o superior');
-            return;
-        }
-        
-        alert('🎨 Sistema de personalización en desarrollo');
-    }
-
-    /**
-     * ═══════════════════════════════════════════════════════════════
      * GRÁFICOS
      * ═══════════════════════════════════════════════════════════════
      */
 
-    inicializarGraficos() {
-        console.log('📊 Inicializando gráficos...');
+   inicializarGraficos() {
+    console.log('📊 Inicializando gráficos...');
 
-        if (typeof Chart === 'undefined') {
-            console.error('❌ Chart.js no disponible');
-            return;
-        }
-
-        // Destruir gráficos anteriores
-        this.destruirGraficos();
-
-        // Configurar Chart.js
-        Chart.defaults.color = 'rgba(255, 255, 255, 0.7)';
-        Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
-        Chart.defaults.font.family = "'Inter', -apple-system, sans-serif";
-
-        // Crear gráficos
-        this.crearGraficoFlujoCajaPrincipal();
-        this.crearGraficoDistribucionGastos();
-        this.crearGraficoIngresosVsGastos();
-        this.crearGraficoTendenciaMensual();
-
-        console.log('✅ Gráficos creados');
+    if (typeof Chart === 'undefined') {
+        console.error('❌ Chart.js no está cargado');
+        return;
     }
 
-    destruirGraficos() {
-        if (Object.keys(this.graficos).length > 0) {
-            console.log('🧹 Destruyendo gráficos anteriores...');
-            Object.values(this.graficos).forEach(grafico => {
-                if (grafico && typeof grafico.destroy === 'function') {
-                    try {
-                        grafico.destroy();
-                    } catch (e) {
-                        // Ignorar errores
-                    }
+    // ✅ DESTRUIR GRÁFICOS EXISTENTES PRIMERO
+    if (this.graficos && Object.keys(this.graficos).length > 0) {
+        console.log('🧹 Destruyendo gráficos anteriores...');
+        Object.values(this.graficos).forEach(grafico => {
+            if (grafico && typeof grafico.destroy === 'function') {
+                try {
+                    grafico.destroy();
+                } catch (e) {
+                    console.warn('⚠️ Error destruyendo gráfico:', e);
                 }
-            });
-            this.graficos = {};
-        }
+            }
+        });
+        this.graficos = {};
+        console.log('✅ Gráficos anteriores destruidos');
     }
 
-    crearGraficoFlujoCajaPrincipal() {
-        const ctx = document.getElementById('graficoFlujoCajaPrincipal');
+    // Configuración global de Chart.js
+    Chart.defaults.color = 'rgba(255, 255, 255, 0.7)';
+    Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+    Chart.defaults.font.family = "'Inter', sans-serif";
+
+    // Crear gráficos
+    this._crearGraficoFlujoCaja();
+    this._crearGraficoGastos();
+    this._crearGraficoIngresosVsGastos();
+    this._crearGraficoAntiguedad();
+    this._crearGraficoFlujoDiario();
+
+    console.log('✅ Gráficos inicializados');
+}
+    _crearGraficoFlujoCaja() {
+        const ctx = document.getElementById('mainCashFlowChart');
         if (!ctx) return;
 
         const datos = this.modulo.obtenerDatosFlujoCaja(6);
 
-        this.graficos.principal = new Chart(ctx, {
+        this.graficos.flujoCaja = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: datos.map(d => d.mes),
                 datasets: [{
                     label: 'Ingresos',
                     data: datos.map(d => d.ingresos),
-                    borderColor: this.colores.ingresos,
-                    backgroundColor: this.colores.ingresos + '20',
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
                     borderWidth: 3,
                     fill: true,
                     tension: 0.4
                 }, {
                     label: 'Gastos',
                     data: datos.map(d => d.gastos),
-                    borderColor: this.colores.gastos,
-                    backgroundColor: this.colores.gastos + '20',
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
                     borderWidth: 3,
                     fill: true,
                     tension: 0.4
                 }, {
                     label: 'Balance',
                     data: datos.map(d => d.balance),
-                    borderColor: this.colores.utilidad,
-                    backgroundColor: this.colores.utilidad + '20',
+                    borderColor: '#8b5cf6',
+                    backgroundColor: 'rgba(139, 92, 246, 0.1)',
                     borderWidth: 3,
                     fill: true,
                     tension: 0.4
@@ -334,15 +259,14 @@ class PanelControlUINuevo {
                         position: 'top',
                         labels: {
                             padding: 15,
-                            font: { size: 13, weight: '600' },
-                            usePointStyle: true
+                            font: { size: 12, weight: '600' }
                         }
                     },
                     tooltip: {
                         backgroundColor: 'rgba(0, 0, 0, 0.8)',
                         padding: 12,
-                        titleFont: { size: 14, weight: '700' },
-                        bodyFont: { size: 13 },
+                        titleFont: { size: 13, weight: '700' },
+                        bodyFont: { size: 12 },
                         callbacks: {
                             label: (context) => {
                                 return `${context.dataset.label}: S/. ${context.parsed.y.toFixed(2)}`;
@@ -370,8 +294,8 @@ class PanelControlUINuevo {
         });
     }
 
-    crearGraficoDistribucionGastos() {
-        const ctx = document.getElementById('graficoDistribucionGastos');
+    _crearGraficoGastos() {
+        const ctx = document.getElementById('expensesChart');
         if (!ctx) return;
 
         const datos = this.modulo.obtenerDatosCategoria('gasto');
@@ -387,7 +311,7 @@ class PanelControlUINuevo {
                         '#f59e0b',
                         '#ec4899',
                         '#8b5cf6',
-                        '#3b82f6'
+                        '#6366f1'
                     ],
                     borderWidth: 0
                 }]
@@ -400,7 +324,7 @@ class PanelControlUINuevo {
                         position: 'bottom',
                         labels: {
                             padding: 12,
-                            font: { size: 12 }
+                            font: { size: 11 }
                         }
                     },
                     tooltip: {
@@ -419,26 +343,26 @@ class PanelControlUINuevo {
         });
     }
 
-    crearGraficoIngresosVsGastos() {
-        const ctx = document.getElementById('graficoIngresosVsGastos');
+    _crearGraficoIngresosVsGastos() {
+        const ctx = document.getElementById('revenueChart');
         if (!ctx) return;
 
         const datos = this.modulo.obtenerComparativaIngresosGastos(6);
 
-        this.graficos.comparativa = new Chart(ctx, {
+        this.graficos.ingresosVsGastos = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: datos.labels,
                 datasets: [{
                     label: 'Ingresos',
                     data: datos.ingresos,
-                    backgroundColor: this.colores.ingresos + 'CC',
-                    borderRadius: 8
+                    backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                    borderRadius: 6
                 }, {
                     label: 'Gastos',
                     data: datos.gastos,
-                    backgroundColor: this.colores.gastos + 'CC',
-                    borderRadius: 8
+                    backgroundColor: 'rgba(239, 68, 68, 0.8)',
+                    borderRadius: 6
                 }]
             },
             options: {
@@ -449,7 +373,7 @@ class PanelControlUINuevo {
                         display: true,
                         position: 'top',
                         labels: {
-                            font: { size: 12 }
+                            font: { size: 11 }
                         }
                     },
                     tooltip: {
@@ -482,21 +406,86 @@ class PanelControlUINuevo {
         });
     }
 
-    crearGraficoTendenciaMensual() {
-        const ctx = document.getElementById('graficoTendenciaMensual');
+    _crearGraficoAntiguedad() {
+        const ctx = document.getElementById('agingChart');
+        if (!ctx) return;
+
+        // Datos de ejemplo para antigüedad de cuentas
+        const datos = this.modulo.obtenerDatos();
+        
+        this.graficos.antiguedad = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['0-30 días', '31-60 días', '61-90 días', '+90 días'],
+                datasets: [{
+                    label: 'Monto',
+                    data: [
+                        datos.ingresos * 0.6,
+                        datos.ingresos * 0.25,
+                        datos.ingresos * 0.1,
+                        datos.ingresos * 0.05
+                    ],
+                    backgroundColor: [
+                        'rgba(16, 185, 129, 0.8)',
+                        'rgba(245, 158, 11, 0.8)',
+                        'rgba(239, 68, 68, 0.8)',
+                        'rgba(127, 29, 29, 0.8)'
+                    ],
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 12,
+                        callbacks: {
+                            label: (context) => {
+                                return `Monto: S/. ${context.parsed.y.toFixed(2)}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: (value) => `S/. ${value}`
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    _crearGraficoFlujoDiario() {
+        const ctx = document.getElementById('cashFlowDetailChart');
         if (!ctx) return;
 
         const datos = this.modulo.obtenerFlujoDiario(30);
 
-        this.graficos.tendencia = new Chart(ctx, {
+        this.graficos.flujoDiario = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: datos.labels,
                 datasets: [{
                     label: 'Balance Diario',
                     data: datos.datos,
-                    borderColor: this.colores.crecimiento,
-                    backgroundColor: this.colores.crecimiento + '20',
+                    borderColor: '#8b5cf6',
+                    backgroundColor: 'rgba(139, 92, 246, 0.1)',
                     borderWidth: 2,
                     fill: true,
                     tension: 0.4,
@@ -547,14 +536,13 @@ class PanelControlUINuevo {
     actualizarGraficos() {
         console.log('🔄 Actualizando gráficos...');
 
-        // Actualizar cada gráfico con nuevos datos
-        if (this.graficos.principal) {
+        if (this.graficos.flujoCaja) {
             const datos = this.modulo.obtenerDatosFlujoCaja(6);
-            this.graficos.principal.data.labels = datos.map(d => d.mes);
-            this.graficos.principal.data.datasets[0].data = datos.map(d => d.ingresos);
-            this.graficos.principal.data.datasets[1].data = datos.map(d => d.gastos);
-            this.graficos.principal.data.datasets[2].data = datos.map(d => d.balance);
-            this.graficos.principal.update();
+            this.graficos.flujoCaja.data.labels = datos.map(d => d.mes);
+            this.graficos.flujoCaja.data.datasets[0].data = datos.map(d => d.ingresos);
+            this.graficos.flujoCaja.data.datasets[1].data = datos.map(d => d.gastos);
+            this.graficos.flujoCaja.data.datasets[2].data = datos.map(d => d.balance);
+            this.graficos.flujoCaja.update();
         }
 
         if (this.graficos.gastos) {
@@ -564,26 +552,44 @@ class PanelControlUINuevo {
             this.graficos.gastos.update();
         }
 
-        if (this.graficos.comparativa) {
+        if (this.graficos.ingresosVsGastos) {
             const datos = this.modulo.obtenerComparativaIngresosGastos(6);
-            this.graficos.comparativa.data.labels = datos.labels;
-            this.graficos.comparativa.data.datasets[0].data = datos.ingresos;
-            this.graficos.comparativa.data.datasets[1].data = datos.gastos;
-            this.graficos.comparativa.update();
+            this.graficos.ingresosVsGastos.data.labels = datos.labels;
+            this.graficos.ingresosVsGastos.data.datasets[0].data = datos.ingresos;
+            this.graficos.ingresosVsGastos.data.datasets[1].data = datos.gastos;
+            this.graficos.ingresosVsGastos.update();
         }
 
-        if (this.graficos.tendencia) {
+        if (this.graficos.flujoDiario) {
             const datos = this.modulo.obtenerFlujoDiario(30);
-            this.graficos.tendencia.data.labels = datos.labels;
-            this.graficos.tendencia.data.datasets[0].data = datos.datos;
-            this.graficos.tendencia.update();
+            this.graficos.flujoDiario.data.labels = datos.labels;
+            this.graficos.flujoDiario.data.datasets[0].data = datos.datos;
+            this.graficos.flujoDiario.update();
         }
 
         console.log('✅ Gráficos actualizados');
     }
+
+    aplicarRestricciones() {
+        const plan = this.modulo.obtenerPlan();
+        if (!plan) return;
+
+        // Mostrar/ocultar elementos según el plan
+        const graficosSecundarios = document.querySelectorAll('.grafico-tarjeta:not(.principal)');
+        
+        if (plan.id === 'individual') {
+            // Solo gráfico principal
+            graficosSecundarios.forEach(g => g.style.display = 'none');
+        } else {
+            // Mostrar todos
+            graficosSecundarios.forEach(g => g.style.display = 'flex');
+        }
+
+        console.log(`🔒 Restricciones aplicadas para plan: ${plan.nombre}`);
+    }
 }
 
-// Inicialización
-window.panelControlUI = new PanelControlUINuevo();
+// Inicialización global
+window.panelControlUI = new PanelControlUI();
 
-console.log('✅ [panel-control-ui-nuevo.js] v2.0 cargado');
+console.log('✅ [panel-control-ui.js] Módulo cargado - ' + new Date().toISOString());
