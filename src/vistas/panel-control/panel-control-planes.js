@@ -190,3 +190,82 @@ window.PanelControlPlanes = (function() {
 })();
 
 console.log('✅ Panel Control Planes v1.0.0 cargado');
+/**
+ * ═══════════════════════════════════════════════════════════════
+ * EXPORTADOR DE DASHBOARD A EXCEL
+ * ═══════════════════════════════════════════════════════════════
+ */
+
+async function exportarDashboard() {
+    try {
+        console.log('📊 Iniciando exportación del dashboard...');
+
+        // Verificar componentes necesarios
+        if (!window.panelControlExportador) {
+            throw new Error('Exportador no disponible');
+        }
+
+        if (!window.panelControl) {
+            throw new Error('Panel de control no disponible');
+        }
+
+        // Obtener empresa actual
+        const empresaActual = JSON.parse(localStorage.getItem('empresaActual') || '{}');
+        
+        // Preparar datos REALES del sistema
+        const datos = {
+            empresa: empresaActual.nombre || 'Mi Empresa',
+            plan: empresaActual.plan || 'Individual',
+            nivel: empresaActual.nivel || 0,
+            datos: window.panelControl.obtenerDatos(),
+            flujoCaja: window.panelControl.obtenerDatosFlujoCaja(6),
+            categoriasIngresos: window.panelControl.obtenerDatosCategoria('ingreso'),
+            categoriasGastos: window.panelControl.obtenerDatosCategoria('gasto')
+        };
+
+        console.log('📦 Datos preparados:', datos);
+
+        // Exportar
+        await window.panelControlExportador.exportar(datos);
+
+        console.log('✅ Dashboard exportado exitosamente');
+
+        // Mostrar notificación de éxito
+        if (window.mostrarNotificacion) {
+            window.mostrarNotificacion('Excel descargado exitosamente', 'success');
+        }
+
+        return true;
+
+    } catch (error) {
+        console.error('❌ Error exportando dashboard:', error);
+        
+        // Mostrar error al usuario
+        if (window.mostrarNotificacion) {
+            window.mostrarNotificacion('Error al exportar: ' + error.message, 'error');
+        } else {
+            alert('Error al exportar: ' + error.message);
+        }
+
+        return false;
+    }
+}
+
+// Exponer función globalmente
+window.exportarDashboard = exportarDashboard;
+
+// Conectar botón cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    const boton = document.querySelector('.btn-exportar-excel');
+    
+    if (boton) {
+        boton.addEventListener('click', async function(e) {
+            e.preventDefault();
+            await exportarDashboard();
+        });
+        
+        console.log('✅ Botón de exportación conectado');
+    }
+});
+
+console.log('✅ Sistema de exportación inicializado');
