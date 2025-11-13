@@ -69,16 +69,16 @@
     const observer = new MutationObserver(() => {
         const visible = panelEstaVisible();
         
-        // Panel se volvió visible
-        if (visible && !ultimaVezVisible) {
-            console.log('👁️ [PanelFix] Panel ahora visible');
-            ultimaVezVisible = Date.now();
-            
-            // Esperar un poco a que todo el DOM esté listo
-            setTimeout(() => {
-                recargarPanel();
-            }, 300);
-        } 
+    // Panel se volvió visible
+         if (visible && !ultimaVezVisible) {
+       console.log('👁️ [PanelFix] Panel ahora visible');
+       ultimaVezVisible = Date.now();
+    
+       // Esperar un poco a que todo el DOM esté listo
+       setTimeout(() => {
+           recargarPanel();
+        }, 1000); // ← CAMBIAR 300 A 1000
+     }
         // Panel se ocultó
         else if (!visible && ultimaVezVisible) {
             console.log('👋 [PanelFix] Panel ocultado');
