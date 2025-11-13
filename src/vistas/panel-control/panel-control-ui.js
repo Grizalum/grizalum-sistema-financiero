@@ -144,17 +144,42 @@ class PanelControlUI {
     }
 
     _actualizarMetricas(datos, elementos) {
-        // Actualizar con animación suave
-        elementos.totalIngresos.textContent = `S/. ${this._formatearNumero(datos.ingresos)}`;
-        
-        elementos.totalGastos.textContent = `S/. ${this._formatearNumero(datos.gastos)}`;
-        
-        elementos.balanceTotal.textContent = 
-            `${datos.balance < 0 ? '-' : ''}S/. ${this._formatearNumero(Math.abs(datos.balance))}`;
-        elementos.balanceTotal.style.color = datos.balance >= 0 ? 'var(--success)' : '#ef4444';
-        
-        elementos.metricaCrecimiento.textContent = `+${datos.crecimiento.toFixed(1)}%`;
-    }
+    // Ocultar skeletons primero
+    this._ocultarSkeletons();
+    
+    // Actualizar y mostrar valores reales
+    elementos.totalIngresos.textContent = `S/. ${this._formatearNumero(datos.ingresos)}`;
+    elementos.totalIngresos.style.display = 'block';
+    
+    elementos.totalGastos.textContent = `S/. ${this._formatearNumero(datos.gastos)}`;
+    elementos.totalGastos.style.display = 'block';
+    
+    elementos.balanceTotal.textContent = 
+        `${datos.balance < 0 ? '-' : ''}S/. ${this._formatearNumero(Math.abs(datos.balance))}`;
+    elementos.balanceTotal.style.color = datos.balance >= 0 ? 'var(--success)' : '#ef4444';
+    elementos.balanceTotal.style.display = 'block';
+    
+    elementos.metricaCrecimiento.textContent = `+${datos.crecimiento.toFixed(1)}%`;
+    elementos.metricaCrecimiento.style.display = 'block';
+}
+    _ocultarSkeletons() {
+    const skeletons = [
+        'skeleton-ingresos',
+        'skeleton-gastos', 
+        'skeleton-balance',
+        'skeleton-crecimiento',
+        'skeleton-badge-ingresos',
+        'skeleton-badge-gastos',
+        'skeleton-badge-balance'
+    ];
+    
+    skeletons.forEach(id => {
+        const skeleton = document.getElementById(id);
+        if (skeleton) {
+            skeleton.style.display = 'none';
+        }
+    });
+}
 
     _actualizarBadges(datos) {
         // Badge de ingresos
@@ -162,6 +187,7 @@ class PanelControlUI {
         if (badgeIngresos && datos.ingresos > 0) {
             badgeIngresos.innerHTML = '<i class="fas fa-arrow-up"></i> Activo';
             badgeIngresos.className = 'metrica-badge badge-positivo';
+            badgeIngresos.style.display = 'block';
         }
 
         // Badge de gastos
@@ -169,6 +195,7 @@ class PanelControlUI {
         if (badgeGastos && datos.gastos > 0) {
             badgeGastos.innerHTML = `<i class="fas fa-arrow-down"></i> ${datos.cantidadGastos || 0} registros`;
             badgeGastos.className = 'metrica-badge badge-negativo';
+            badgeGastos.style.display = 'block';
         }
 
         // Badge de utilidad
@@ -183,6 +210,8 @@ class PanelControlUI {
             } else {
                 badgeUtilidad.innerHTML = '<i class="fas fa-minus"></i> Neutral';
                 badgeUtilidad.className = 'metrica-badge badge-neutral';
+            }
+             badgeUtilidad.style.display = 'block';
             }
         }
     }
