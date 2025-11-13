@@ -137,10 +137,10 @@
     <!-- ═══════════════════════════════════════════════════════════ -->
     
     <section class="panel-acciones">
-        <button id="btnExportarPanel" class="btn-accion btn-exportar" onclick="window.exportarDashboard()">
-            <i class="fas fa-file-excel"></i>
-            <span>Exportar a Excel</span>
-        </button>
+        <button id="btnExportarPanel" class="btn-accion btn-exportar" onclick="exportarDashboardDirecto()">
+      <i class="fas fa-file-excel"></i>
+      <span>Exportar a Excel</span>
+   </button>
         
     </section>
 
@@ -233,3 +233,57 @@
 <script src="src/vistas/panel-control/panel-control-exportador.js?v=1763009600"></script>
 <script src="src/vistas/panel-control/panel-control-fix.js?v=1762995400"></script>
 <script src="src/vistas/panel-control/panel-control-banner.js?v=1762968500"></script>
+
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- EXPORTACIÓN INLINE - SIN ARCHIVOS EXTERNOS -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<script>
+async function exportarDashboardDirecto() {
+    try {
+        console.log('📊 Iniciando exportación...');
+
+        if (!window.panelControlExportador) {
+            throw new Error('Exportador no disponible');
+        }
+
+        if (!window.panelControl) {
+            throw new Error('Panel de control no disponible');
+        }
+
+        // Obtener empresa
+        const empresaActual = JSON.parse(localStorage.getItem('empresaActual') || '{}');
+        
+        // ✅ OBTENER PLAN REAL
+        const planReal = window.FlujoCajaPlanes?.obtenerPlanActual();
+        
+        console.log('🎯 Plan detectado:', planReal);
+        
+        const datos = {
+            empresa: empresaActual.nombre || 'Mi Empresa',
+            plan: planReal?.nombre || 'Individual',
+            nivel: planReal?.nivel || 0,
+            datos: window.panelControl.obtenerDatos(),
+            flujoCaja: window.panelControl.obtenerDatosFlujoCaja(6),
+            categoriasIngresos: window.panelControl.obtenerDatosCategoria('ingreso'),
+            categoriasGastos: window.panelControl.obtenerDatosCategoria('gasto')
+        };
+
+        console.log('📦 Datos preparados:', datos);
+
+        await window.panelControlExportador.exportar(datos);
+
+        console.log('✅ Excel descargado');
+
+        if (window.mostrarNotificacion) {
+            window.mostrarNotificacion('Excel descargado exitosamente', 'success');
+        }
+
+    } catch (error) {
+        console.error('❌ Error:', error);
+        alert('Error al exportar: ' + error.message);
+    }
+}
+
+console.log('✅ Función de exportación inline lista');
+</script>
