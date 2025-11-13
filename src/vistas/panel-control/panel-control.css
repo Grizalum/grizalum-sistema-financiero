@@ -127,16 +127,17 @@
 }
 
 .metrica-valor {
-    font-size: 36px;
-    font-weight: 900;
+    font-size: 28px;              
+    font-weight: 700;             
     color: #ffffff;
     margin: 0;
     line-height: 1.2;
     font-feature-settings: 'tnum';
     font-variant-numeric: tabular-nums;
-    word-break: break-all;
+    white-space: nowrap;          
+    overflow: hidden;             
+    text-overflow: ellipsis;      
 }
-
 .metrica-badge {
     display: inline-flex;
     align-items: center;
