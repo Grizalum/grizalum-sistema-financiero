@@ -71,7 +71,10 @@ function registrarModulos() {
         onMostrar: async function() {
             console.log('   👁️ Mostrando Panel de Control...');
             
-            const contenedor = document.getElementById('contenedorVistas');
+            const contenedor = document.getElementById('contenedorVistas'); 
+            
+            // ✅ AGREGAR ESTO AQUÍ - Recargar CSS cada vez que se muestra
+             await cargarEstilos('src/vistas/panel-control/panel-control.css');
             
             // Loading inicial
             contenedor.innerHTML = `
