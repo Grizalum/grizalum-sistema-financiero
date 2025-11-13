@@ -500,4 +500,5 @@ class ExportadorPanelControl {
 }
 
 window.ExportadorPanelControl = ExportadorPanelControl;
-console.log('✅ Exportador Panel Control v1.0.0 - Adaptativo por plan');
+window.panelControlExportador = new ExportadorPanelControl();
+console.log('✅ Exportador Panel Control v1.0.0 - Adaptativo por plan cargado e instanciado');
