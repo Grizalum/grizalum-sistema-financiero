@@ -96,7 +96,7 @@ class PanelControlUI {
             // Actualizar badges
             this._actualizarBadges(datos);
 
-            this._log('success', '✅ Métricas actualizadas');
+           this._log('success', '✅ Métricas actualizadas');
 
         } catch (error) {
             this._log('error', 'Error cargando datos:', error);
