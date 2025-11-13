@@ -1,135 +1,64 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
  * PANEL DE CONTROL - FIX DE RECARGA v2.0
- * Destruye y recarga correctamente gráficos al volver al panel
+ * Compatible con panel-control-ui v1.2
+ * Recarga rápida y profesional
  * ═══════════════════════════════════════════════════════════════════
  */
 (function() {
     'use strict';
     
-    console.log('🛡️ [PanelFix] Sistema de recarga v2.0 iniciado');
+    console.log('🛡️ [PanelFix] v2.0 Sistema de recarga iniciado');
     
     let ultimaVezVisible = null;
-    let graficosDestruidos = false;
+    let recargando = false;
     
     function panelEstaVisible() {
         const contenedor = document.querySelector('.panel-control-contenedor');
         return contenedor && contenedor.offsetParent !== null;
     }
     
-    function panelEstaOculto() {
-        return !panelEstaVisible();
-    }
-    
     /**
      * ═══════════════════════════════════════════════════════════════
-     * LIMPIEZA PROFUNDA - Destruye TODO antes de recrear
+     * RECARGA RÁPIDA Y PROFESIONAL
      * ═══════════════════════════════════════════════════════════════
      */
-    function destruirGraficosCompletamente() {
-        console.log('🧹 [PanelFix] Limpieza profunda iniciada...');
+    async function recargarPanel() {
+        if (!panelEstaVisible() || recargando) return;
         
-        // 1. Destruir instancias de Chart.js
-        if (window.panelControlUI && window.panelControlUI.graficos) {
-            Object.values(window.panelControlUI.graficos).forEach(grafico => {
-                if (grafico && typeof grafico.destroy === 'function') {
-                    try {
-                        grafico.destroy();
-                        console.log('   ✅ Gráfico destruido');
-                    } catch (e) {
-                        console.warn('   ⚠️ Error destruyendo:', e);
-                    }
-                }
-            });
-            
-            // Resetear objeto de gráficos
-            window.panelControlUI.graficos = {
-                principal: null,
-                distribucion: null,
-                comparativa: null,
-                tendencia: null
-            };
-        }
+        recargando = true;
+        console.log('🔄 [PanelFix] Recarga iniciada...');
         
-        // 2. Limpiar todos los canvas (por si quedaron instancias huérfanas)
-        const canvasIds = [
-            'graficoFlujoCajaPrincipal',
-            'graficoDistribucionGastos',
-            'graficoIngresosVsGastos',
-            'graficoTendenciaMensual'
-        ];
-        
-        canvasIds.forEach(id => {
-            const canvas = document.getElementById(id);
-            if (canvas) {
-                // Obtener el Chart asociado (si existe)
-                const chartInstance = Chart.getChart(canvas);
-                if (chartInstance) {
-                    chartInstance.destroy();
-                    console.log(`   ✅ Canvas ${id} limpiado`);
-                }
-                
-                // Limpiar completamente el canvas
-                const ctx = canvas.getContext('2d');
-                if (ctx) {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                }
+        try {
+            // 1. Scroll arriba instantáneo
+            const contenedorVistas = document.getElementById('contenedorVistas');
+            if (contenedorVistas) {
+                contenedorVistas.scrollTo({ top: 0, behavior: 'instant' });
             }
-        });
-        
-        graficosDestruidos = true;
-        console.log('✅ [PanelFix] Limpieza completada');
-    }
-    
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * RECARGA COMPLETA - Datos + Gráficos
-     * ═══════════════════════════════════════════════════════════════
-     */
-    function forzarRecargaCompleta() {
-        if (!panelEstaVisible()) return;
-        
-        console.log('🔄 [PanelFix] Recarga completa iniciada...');
-        
-        // 1. Scroll arriba instantáneo
-        const contenedorVistas = document.getElementById('contenedorVistas');
-        if (contenedorVistas) {
-            contenedorVistas.scrollTo({ top: 0, behavior: 'instant' });
+            
+            // 2. Verificar que panelControlUI existe
+            if (!window.panelControlUI) {
+                console.error('   ❌ panelControlUI NO existe');
+                recargando = false;
+                return;
+            }
+            
+            // 3. Usar el método limpiarYReinicializar (más eficiente)
+            if (typeof window.panelControlUI.limpiarYReinicializar === 'function') {
+                window.panelControlUI.limpiarYReinicializar();
+                console.log('   ✅ Recarga completa exitosa');
+            } else {
+                // Fallback: método manual
+                await window.panelControlUI.cargarDatos();
+                window.panelControlUI.inicializarGraficos();
+                console.log('   ✅ Recarga manual exitosa');
+            }
+            
+        } catch (error) {
+            console.error('   ❌ Error en recarga:', error);
+        } finally {
+            recargando = false;
         }
-        
-        // 2. Esperar que el DOM esté estable
-        setTimeout(() => {
-            // 3. Destruir gráficos anteriores
-            destruirGraficosCompletamente();
-            
-            // 4. Esperar un poco para que se libere memoria
-            setTimeout(() => {
-                // 5. Recargar datos
-                if (window.panelControlUI) {
-                    try {
-                        window.panelControlUI.cargarDatos();
-                        console.log('✅ [PanelFix] Datos recargados');
-                    } catch (e) {
-                        console.error('❌ [PanelFix] Error cargando datos:', e);
-                    }
-                }
-                
-                // 6. Recrear gráficos desde cero
-                setTimeout(() => {
-                    if (window.panelControlUI) {
-                        try {
-                            window.panelControlUI.inicializarGraficos();
-                            graficosDestruidos = false;
-                            console.log('✅ [PanelFix] Gráficos recreados exitosamente');
-                        } catch (e) {
-                            console.error('❌ [PanelFix] Error recreando gráficos:', e);
-                        }
-                    }
-                }, 300);
-                
-            }, 100);
-            
-        }, 200);
     }
     
     /**
@@ -142,9 +71,13 @@
         
         // Panel se volvió visible
         if (visible && !ultimaVezVisible) {
-            console.log('👁️ [PanelFix] Panel ahora visible - Iniciando recarga');
+            console.log('👁️ [PanelFix] Panel ahora visible');
             ultimaVezVisible = Date.now();
-            forzarRecargaCompleta();
+            
+            // Esperar un poco a que todo el DOM esté listo
+            setTimeout(() => {
+                recargarPanel();
+            }, 300);
         } 
         // Panel se ocultó
         else if (!visible && ultimaVezVisible) {
@@ -152,8 +85,9 @@
             ultimaVezVisible = null;
             
             // Destruir gráficos cuando se oculta para liberar memoria
-            if (!graficosDestruidos) {
-                destruirGraficosCompletamente();
+            if (window.panelControlUI && window.panelControlUI.destruirGraficos) {
+                window.panelControlUI.destruirGraficos();
+                console.log('   🧹 Gráficos destruidos para liberar memoria');
             }
         }
     });
@@ -184,10 +118,10 @@
         if (target) {
             console.log('🖱️ [PanelFix] Click en navegación a Dashboard detectado');
             setTimeout(() => {
-                if (panelEstaVisible()) {
-                    forzarRecargaCompleta();
+                if (panelEstaVisible() && !recargando) {
+                    recargarPanel();
                 }
-            }, 1000);
+            }, 800);
         }
     });
     
@@ -203,11 +137,11 @@
         if (panelVisible && contenedorVistas && contenedorVistas.scrollTop > 100) {
             contenedorVistas.scrollTo({ top: 0, behavior: 'smooth' });
         }
-    }, 500);
+    }, 1000);
     
-    console.log('✅ [PanelFix] Sistema v2.0 completamente activo');
+    console.log('✅ [PanelFix] v2.0 completamente activo');
     
-    // Exponer función de limpieza globalmente por si se necesita
-    window.limpiarPanelControl = destruirGraficosCompletamente;
+    // Exponer función de limpieza globalmente
+    window.recargarPanelControl = recargarPanel;
     
 })();
