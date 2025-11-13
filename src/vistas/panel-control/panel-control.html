@@ -37,62 +37,99 @@
     
     <section class="metricas-principales">
         
-        <!-- Métrica 1: Ingresos -->
-        <div class="metrica-card metrica-ingresos">
-            <div class="metrica-icono">
-                <i class="fas fa-arrow-trend-up"></i>
+       <!-- Métrica 1: Ingresos -->
+            <div class="metrica-card metrica-ingresos">
+                <div class="metrica-icono">
+                    <i class="fas fa-arrow-trend-up"></i>
+                </div>
+                <div class="metrica-contenido">
+                    <h3 class="metrica-label">Ingresos Totales</h3>
+                    
+                    <!-- Skeleton mientras carga -->
+                    <div class="skeleton skeleton-number" id="skeleton-ingresos"></div>
+                    
+                    <!-- Valor real (oculto inicialmente) -->
+                    <p class="metrica-valor" id="totalIngresos" style="display: none;">S/. 0.00</p>
+                    
+                    <!-- Skeleton del badge -->
+                    <div class="skeleton skeleton-badge" id="skeleton-badge-ingresos"></div>
+                    
+                    <!-- Badge real (oculto inicialmente) -->
+                    <span class="metrica-badge badge-positivo" id="badge-ingresos" style="display: none;">
+                        <i class="fas fa-arrow-up"></i> 0%
+                    </span>
+                </div>
             </div>
-            <div class="metrica-contenido">
-                <h3 class="metrica-label">Ingresos Totales</h3>
-                <p class="metrica-valor" id="totalIngresos">S/. 0.00</p>
-                <span class="metrica-badge badge-positivo" id="badge-ingresos">
-                    <i class="fas fa-arrow-up"></i> 0%
-                </span>
-            </div>
-        </div>
 
-        <!-- Métrica 2: Gastos -->
-        <div class="metrica-card metrica-gastos">
-            <div class="metrica-icono">
-                <i class="fas fa-receipt"></i>
+       <!-- Métrica 2: Gastos -->
+            <div class="metrica-card metrica-gastos">
+                <div class="metrica-icono">
+                    <i class="fas fa-receipt"></i>
+                </div>
+                <div class="metrica-contenido">
+                    <h3 class="metrica-label">Gastos Operativos</h3>
+                    
+                    <!-- Skeleton mientras carga -->
+                    <div class="skeleton skeleton-number" id="skeleton-gastos"></div>
+                    
+                    <!-- Valor real (oculto inicialmente) -->
+                    <p class="metrica-valor" id="totalGastos" style="display: none;">S/. 0.00</p>
+                    
+                    <!-- Skeleton del badge -->
+                    <div class="skeleton skeleton-badge" id="skeleton-badge-gastos"></div>
+                    
+                    <!-- Badge real (oculto inicialmente) -->
+                    <span class="metrica-badge badge-negativo" id="badge-gastos" style="display: none;">
+                        <i class="fas fa-arrow-down"></i> 0%
+                    </span>
+                </div>
             </div>
-            <div class="metrica-contenido">
-                <h3 class="metrica-label">Gastos Operativos</h3>
-               <p class="metrica-valor" id="totalGastos">S/. 0.00</p>     
-                <span class="metrica-badge badge-negativo" id="badge-gastos">
-                    <i class="fas fa-arrow-down"></i> 0%
-                </span>
-            </div>
-        </div>
 
-        <!-- Métrica 3: Utilidad -->
-        <div class="metrica-card metrica-utilidad">
-            <div class="metrica-icono">
-                <i class="fas fa-coins"></i>
+         <!-- Métrica 3: Utilidad -->
+            <div class="metrica-card metrica-utilidad">
+                <div class="metrica-icono">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <div class="metrica-contenido">
+                    <h3 class="metrica-label">Utilidad Neta</h3>
+                    
+                    <!-- Skeleton mientras carga -->
+                    <div class="skeleton skeleton-number" id="skeleton-balance"></div>
+                    
+                    <!-- Valor real (oculto inicialmente) -->
+                    <p class="metrica-valor" id="balanceTotal" style="display: none;">S/. 0.00</p>
+                    
+                    <!-- Skeleton del badge -->
+                    <div class="skeleton skeleton-badge" id="skeleton-badge-balance"></div>
+                    
+                    <!-- Badge real (oculto inicialmente) -->
+                    <span class="metrica-badge badge-neutral" id="badge-utilidad" style="display: none;">
+                        <i class="fas fa-minus"></i> 0%
+                    </span>
+                </div>
             </div>
-            <div class="metrica-contenido">
-                <h3 class="metrica-label">Utilidad Neta</h3>
-                <p class="metrica-valor" id="balanceTotal">S/. 0.00</p>
-                <span class="metrica-badge badge-neutral" id="badge-utilidad">
-                    <i class="fas fa-minus"></i> 0%
-                </span>
-            </div>
-        </div>
 
         <!-- Métrica 4: Crecimiento -->
-        <div class="metrica-card metrica-crecimiento">
-            <div class="metrica-icono">
-                <i class="fas fa-chart-line"></i>
+            <div class="metrica-card metrica-crecimiento">
+                <div class="metrica-icono">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="metrica-contenido">
+                    <h3 class="metrica-label">Crecimiento</h3>
+                    
+                    <!-- Skeleton mientras carga -->
+                    <div class="skeleton skeleton-number" id="skeleton-crecimiento"></div>
+                    
+                    <!-- Valor real (oculto inicialmente) -->
+                    <p class="metrica-valor" id="metrica-crecimiento" style="display: none;">+0%</p>
+                    
+                    <!-- Badge fijo (sin skeleton) -->
+                    <span class="metrica-badge badge-info">
+                        Meta: 20%
+                    </span>
+                </div>
             </div>
-            <div class="metrica-contenido">
-                <h3 class="metrica-label">Crecimiento</h3>
-                <p class="metrica-valor" id="metrica-crecimiento">+0%</p>
-                <span class="metrica-badge badge-info">
-                    Meta: 20%
-                </span>
-            </div>
-        </div>
-
+         
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════ -->
