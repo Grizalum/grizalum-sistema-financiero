@@ -415,3 +415,54 @@
 .grafico-card:nth-child(2) { animation-delay: 0.6s; }
 .grafico-card:nth-child(3) { animation-delay: 0.7s; }
 .grafico-card:nth-child(4) { animation-delay: 0.8s; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   SKELETON LOADER - Animación de carga profesional
+   ═══════════════════════════════════════════════════════════════════ */
+
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.05) 0%,
+        rgba(255, 255, 255, 0.15) 50%,
+        rgba(255, 255, 255, 0.05) 100%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s ease-in-out infinite;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.skeleton-text {
+    height: 1em;
+    width: 100%;
+    margin: 0.5em 0;
+}
+
+.skeleton-number {
+    height: 2.5em;
+    width: 60%;
+    margin: 0.25em 0;
+}
+
+.skeleton-badge {
+    height: 1.5em;
+    width: 40%;
+    margin-top: 0.5em;
+}
+
+/* Ocultar contenido real mientras carga */
+.loading .metrica-valor,
+.loading .metrica-badge {
+    visibility: hidden;
+    position: absolute;
+}
