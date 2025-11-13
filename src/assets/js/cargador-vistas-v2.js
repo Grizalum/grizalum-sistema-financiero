@@ -1,13 +1,7 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * GRIZALUM - CARGADOR DE VISTAS v2.1 (PROFESIONAL - SIN BUGS)
- * Usa el Sistema de Módulos para gestionar el ciclo de vida
- * ═══════════════════════════════════════════════════════════════════
- * 
- * ✅ CORREGIDO: Contenedor siempre visible
- * ✅ OPTIMIZADO: Sin manipulaciones innecesarias de opacidad
- * ✅ PROFESIONAL: Código limpio y mantenible
- * 
+ * GRIZALUM - CARGADOR DE VISTAS v2.2 (CORREGIDO - PANEL UI FIXED)
+ * ✅ AHORA CARGA CORRECTAMENTE panel-control-ui.js
  * ═══════════════════════════════════════════════════════════════════
  */
 
@@ -19,156 +13,200 @@ function registrarModulos() {
     console.log('📦 Registrando módulos...');
 
     // ───────────────────────────────────────────────────────────────
-// PANEL DE CONTROL (DASHBOARD) - CON DEPENDENCIAS DE FLUJO DE CAJA
-// ───────────────────────────────────────────────────────────────
-window.grizalumModulos.registrar({
-    id: 'dashboard',
-    nombre: 'Panel de Control',
-    ruta: 'src/vistas/panel-control/panel-control.html',
-    nivel: 0,
+    // PANEL DE CONTROL (DASHBOARD) - CORREGIDO
+    // ───────────────────────────────────────────────────────────────
+    window.grizalumModulos.registrar({
+        id: 'dashboard',
+        nombre: 'Panel de Control',
+        ruta: 'src/vistas/panel-control/panel-control.html',
+        nivel: 0,
 
-    // ✅ DEPENDENCIAS DEL FLUJO DE CAJA (necesarias para leer datos)
-    dependencias: [
-        'src/vistas/flujo-caja/flujo-caja-categorias.js',
-        'src/vistas/flujo-caja/flujo-caja-config.js'
-    ],
+        dependencias: [
+            'src/vistas/flujo-caja/flujo-caja-categorias.js',
+            'src/vistas/flujo-caja/flujo-caja-config.js'
+        ],
 
-    onCargar: async function() {
-    console.log('   📊 Cargando Panel de Control...');
-    
-    // 1. Cargar dependencias del Flujo de Caja PRIMERO
-    console.log('   📦 Cargando dependencias del Flujo de Caja...');
-    await cargarScript('src/vistas/flujo-caja/flujo-caja.js');
-    await cargarScript('src/vistas/flujo-caja/historial-descripciones.js');
-    await cargarScript('src/vistas/flujo-caja/flujo-caja-ui.js');
-    await cargarScript('src/vistas/flujo-caja/flujo-caja-planes.js');
-    await cargarScript('src/vistas/flujo-caja/flujo-caja-categorias.js');
-    
-    // Esperar a que FlujoCaja se inicialice
-    if (window.flujoCaja) {
-        await window.flujoCaja.esperarInicializacion();
-        console.log('   ✅ Flujo de Caja inicializado');
-    }
-    
-    // 2. Cargar estilos del Panel de Control
-    await cargarEstilos('src/vistas/panel-control/panel-control.css');
-    
-    // ✅ 2.5 Cargar ExcelJS
-if (typeof ExcelJS === 'undefined') {
-    console.log('   📦 Cargando ExcelJS...');
-    await cargarScript('https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js');
-    console.log('   ✅ ExcelJS cargado');
-}
+        onCargar: async function() {
+            console.log('   📊 Cargando Panel de Control...');
+            
+            // 1. Cargar dependencias del Flujo de Caja PRIMERO
+            console.log('   📦 Cargando dependencias del Flujo de Caja...');
+            await cargarScript('src/vistas/flujo-caja/flujo-caja.js');
+            await cargarScript('src/vistas/flujo-caja/historial-descripciones.js');
+            await cargarScript('src/vistas/flujo-caja/flujo-caja-ui.js');
+            await cargarScript('src/vistas/flujo-caja/flujo-caja-planes.js');
+            await cargarScript('src/vistas/flujo-caja/flujo-caja-categorias.js');
+            
+            // Esperar a que FlujoCaja se inicialice
+            if (window.flujoCaja) {
+                await window.flujoCaja.esperarInicializacion();
+                console.log('   ✅ Flujo de Caja inicializado');
+            }
+            
+            // 2. Cargar estilos del Panel de Control
+            await cargarEstilos('src/vistas/panel-control/panel-control.css');
+            
+            // 3. Cargar Chart.js (ANTES de panel-control-ui.js)
+            if (typeof Chart === 'undefined') {
+                console.log('   📊 Cargando Chart.js...');
+                await cargarScript('https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js');
+                console.log('   ✅ Chart.js cargado');
+            }
+            
+            // 4. Cargar ExcelJS
+            if (typeof ExcelJS === 'undefined') {
+                console.log('   📦 Cargando ExcelJS...');
+                await cargarScript('https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js');
+                console.log('   ✅ ExcelJS cargado');
+            }
 
-// ✅ 2.6 Cargar Chart.js (para gráficos) ⬅️ NUEVO
-if (typeof Chart === 'undefined') {
-    console.log('   📊 Cargando Chart.js...');
-    await cargarScript('https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js');
-    console.log('   ✅ Chart.js cargado');
-}
+            // 5. Cargar módulos del Panel de Control (EXCEPTO UI que lo carga el HTML)
+            await cargarScript('src/vistas/panel-control/panel-control.js');
+            await cargarScript('src/vistas/panel-control/panel-control-planes.js');
+            await cargarScript('src/vistas/panel-control/panel-control-exportador.js');
+            
+            console.log('   ✅ Panel de Control (core) cargado');
+        },
 
-// 3. Cargar módulos del Panel de Control
-await cargarScript('src/vistas/panel-control/panel-control.js');
-await cargarScript('src/vistas/panel-control/panel-control-planes.js');
-// await cargarScript('src/vistas/panel-control/panel-control-plan-loader.js');  //
-// await cargarScript('src/vistas/panel-control/panel-control-ui.js');  // ❌ COMENTADO - lo carga el HTML
-await cargarScript('src/vistas/panel-control/panel-control-exportador.js');
-await cargarScript('src/vistas/panel-control/panel-control-fix.js');
-    
-    console.log('   ✅ Panel de Control cargado');
-},
-    onMostrar: async function() {
-        console.log('   👁️ Mostrando Panel de Control...');
-        
-        const contenedor = document.getElementById('contenedorVistas');
-        
-        // Loading inicial
-        contenedor.innerHTML = `
-            <div style="display: flex; align-items: center; justify-content: center; 
-                        min-height: 400px;">
-                <div style="text-align: center;">
-                    <div style="font-size: 3rem; animation: spin 1s linear infinite;">📊</div>
-                    <p style="color: var(--texto-terciario); margin-top: 1rem;">
-                        Cargando Panel de Control...
-                    </p>
+        onMostrar: async function() {
+            console.log('   👁️ Mostrando Panel de Control...');
+            
+            const contenedor = document.getElementById('contenedorVistas');
+            
+            // Loading inicial
+            contenedor.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: center; 
+                            min-height: 400px;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; animation: spin 1s linear infinite;">📊</div>
+                        <p style="color: var(--texto-terciario); margin-top: 1rem;">
+                            Cargando Panel de Control...
+                        </p>
+                    </div>
                 </div>
-            </div>
-            <style>
-                @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-            </style>
-        `;
-        
-        await new Promise(resolve => setTimeout(resolve, 100));
-        
-        // Cargar HTML
-        const html = await fetch('src/vistas/panel-control/panel-control.html').then(r => r.text());
-        
-        // Separar scripts del HTML
-        const temp = document.createElement('div');
-        temp.innerHTML = html;
-        const scripts = temp.querySelectorAll('script');
-        const scriptsArray = Array.from(scripts);
-        scriptsArray.forEach(s => s.remove());
-        
-        // Insertar HTML
-        contenedor.innerHTML = temp.innerHTML;   
-        
-        await new Promise(resolve => {
-            requestAnimationFrame(() => {
+                <style>
+                    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+                </style>
+            `;
+            
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            // Cargar HTML
+            const html = await fetch('src/vistas/panel-control/panel-control.html').then(r => r.text());
+            
+            // Separar scripts del HTML
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+            const scripts = temp.querySelectorAll('script');
+            const scriptsArray = Array.from(scripts);
+            scriptsArray.forEach(s => s.remove());
+            
+            // Insertar HTML
+            contenedor.innerHTML = temp.innerHTML;   
+            
+            await new Promise(resolve => {
                 requestAnimationFrame(() => {
-                    setTimeout(resolve, 100);
+                    requestAnimationFrame(() => {
+                        setTimeout(resolve, 100);
+                    });
                 });
             });
-        });
-        
-        // Ejecutar scripts inline del HTML
-        for (const scriptOriginal of scriptsArray) {
-            if (!scriptOriginal.src) {
-                const script = document.createElement('script');
-                script.textContent = scriptOriginal.textContent;
-                document.body.appendChild(script);
+            
+            // ═══════════════════════════════════════════════════════════════
+            // ✅ CORRECCIÓN PRINCIPAL: CARGAR TODOS LOS SCRIPTS EXTERNOS
+            // ═══════════════════════════════════════════════════════════════
+            
+            console.log('   📦 Cargando scripts del HTML...');
+            
+            for (const scriptOriginal of scriptsArray) {
+                // Scripts inline (sin src)
+                if (!scriptOriginal.src) {
+                    const script = document.createElement('script');
+                    script.textContent = scriptOriginal.textContent;
+                    document.body.appendChild(script);
+                    console.log('   ✅ Script inline ejecutado');
+                    continue;
+                }
+                
+                // Scripts externos (con src)
+                const srcCompleto = scriptOriginal.src;
+                const srcBase = srcCompleto.split('?')[0];
+                const nombreArchivo = srcBase.split('/').pop();
+                
+                // Verificar si ya existe (evitar duplicados)
+                const yaExiste = Array.from(document.querySelectorAll('script[src]')).some(s => {
+                    const sSrcBase = s.src.split('?')[0];
+                    return sSrcBase === srcBase;
+                });
+                
+                if (yaExiste) {
+                    console.log(`   ⏭️ Ya cargado: ${nombreArchivo}`);
+                    continue;
+                }
+                
+                // Cargar el script
+                try {
+                    console.log(`   📥 Cargando: ${nombreArchivo}`);
+                    await cargarScript(srcCompleto);
+                    console.log(`   ✅ Cargado: ${nombreArchivo}`);
+                } catch (error) {
+                    console.error(`   ❌ Error cargando ${nombreArchivo}:`, error);
+                }
+            }
+            
+            // Esperar a que panelControl esté listo
+            if (window.panelControl) {
+                await window.panelControl.esperarInicializacion();
+            }
+
+            // ✅ ESPERAR A QUE panelControlUI ESTÉ DISPONIBLE
+            console.log('   ⏳ Esperando a panelControlUI...');
+            let intentos = 0;
+            while (!window.panelControlUI && intentos < 50) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                intentos++;
+            }
+            
+            if (window.panelControlUI) {
+                console.log('   ✅ panelControlUI disponible');
+                
+                // Esperar un poco más para que se inicialice completamente
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Forzar carga de datos y gráficos
+                setTimeout(() => {
+                    console.log('   🔄 Inicializando UI del Panel de Control...');
+                    
+                    if (window.panelControlUI.cargarDatos) {
+                        window.panelControlUI.cargarDatos();
+                        console.log('   ✅ Datos cargados en UI');
+                    }
+                    
+                    if (window.panelControlUI.inicializarGraficos) {
+                        window.panelControlUI.inicializarGraficos();
+                        console.log('   ✅ Gráficos inicializados');
+                    }
+                    
+                    // Aplicar restricciones de plan
+                    if (window.PanelControlPlanes && window.PanelControlPlanes.aplicarRestricciones) {
+                        window.PanelControlPlanes.aplicarRestricciones();
+                        console.log('   ✅ Restricciones aplicadas');
+                    }
+                    
+                    window.dispatchEvent(new Event('vistaPanelControlCargada'));
+                    contenedor.scrollTo({ top: 0, behavior: 'smooth' });
+                    console.log('   ✅ Panel de Control completamente listo');
+                }, 200);
+                
+            } else {
+                console.error('   ❌ panelControlUI NO se cargó después de esperar');
+                console.error('   💡 Verifica que panel-control-ui.js no tenga errores');
             }
         }
-         // ✅ AGREGAR ESTO:
-    // Cargar scripts externos del HTML que fueron removidos
-    const scriptsExternos = scriptsArray.filter(s => s.src && s.src.includes('panel-control-ui'));
-    for (const scriptOriginal of scriptsExternos) {
-       await cargarScript(scriptOriginal.src);
-   }
-        
-        // Esperar a que panelControl esté listo
-       if (window.panelControl) {
-          await window.panelControl.esperarInicializacion();
-     }
+    });
 
-     // ✅ FORZAR CARGA DE DATOS EN LA UI
-      setTimeout(() => {
-        console.log('🔄 Inicializando UI del Panel de Control...');
-    
-       if (window.panelControlUI && window.panelControlUI.cargarDatos) {
-          window.panelControlUI.cargarDatos();
-          console.log('✅ Datos cargados en UI');
-      }
-    
-       if (window.panelControlUI && window.panelControlUI.inicializarGraficos) {
-           window.panelControlUI.inicializarGraficos();
-           console.log('✅ Gráficos inicializados');
-       }
-    
-      // Aplicar restricciones de plan
-       if (window.PanelControlPlanes && window.PanelControlPlanes.aplicarRestricciones) {
-          window.PanelControlPlanes.aplicarRestricciones();
-          console.log('✅ Restricciones aplicadas');
-      }
-    
-       window.dispatchEvent(new Event('vistaPanelControlCargada'));
-       contenedor.scrollTo({ top: 0, behavior: 'smooth' });
-       console.log('✅ Panel de Control completamente listo');
-     }, 1000);
-    }
-});
     // ───────────────────────────────────────────────────────────────
-    // FLUJO DE CAJA (CORREGIDO - SIN BUG DE OPACIDAD)
+    // FLUJO DE CAJA
     // ───────────────────────────────────────────────────────────────
     window.grizalumModulos.registrar({
         id: 'cash-flow',
@@ -632,7 +670,7 @@ window.recargarFlujoCaja = function() {
 // ═══════════════════════════════════════════════════════════════════
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('🚀 Inicializando sistema de navegación...');
+    console.log('🚀 Inicializando sistema de navegación v2.2...');
     
     const verificar = () => {
         if (window.grizalumModulos) {
@@ -649,7 +687,7 @@ document.addEventListener('DOMContentLoaded', () => {
     verificar();
 });
 
-console.log('✅ Cargador de vistas v2.1 (PROFESIONAL) inicializado');
+console.log('✅ Cargador de vistas v2.2 (PANEL UI FIXED) inicializado');
 
 // ═══════════════════════════════════════════════════════════════════
 // MODO DESARROLLO: Forzar recarga sin caché
