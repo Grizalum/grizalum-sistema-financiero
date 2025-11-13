@@ -1,13 +1,15 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * GRIZALUM - PANEL DE CONTROL UI v1.1 (SIMPLIFICADO Y FUNCIONAL)
+ * GRIZALUM - PANEL DE CONTROL UI v1.2 (OPTIMIZADO + LOADING)
+ * ✅ Carga rápida con loading state profesional
+ * ✅ Compatible con panel-control-fix.js
  * ═══════════════════════════════════════════════════════════════════
  */
 
 class PanelControlUI {
     constructor() {
         this.config = {
-            version: '1.1.0',
+            version: '1.2.0',
             componente: 'PanelControlUI',
             debug: true
         };
@@ -20,7 +22,9 @@ class PanelControlUI {
             tendencia: null
         };
 
-        this._log('info', '🎨 Panel Control UI inicializando...');
+        this.inicializando = false;
+
+        this._log('info', '🎨 Panel Control UI v1.2 inicializando...');
         this._inicializar();
     }
 
@@ -44,7 +48,7 @@ class PanelControlUI {
                     this._log('info', '✅ panelControl conectado');
                     resolve();
                 } else {
-                    setTimeout(verificar, 200);
+                    setTimeout(verificar, 100);
                 }
             };
             verificar();
@@ -53,48 +57,103 @@ class PanelControlUI {
 
     /**
      * ═══════════════════════════════════════════════════════════════
-     * CARGA DE DATOS EN MÉTRICAS
+     * CARGA DE DATOS CON LOADING STATE
      * ═══════════════════════════════════════════════════════════════
      */
 
-    cargarDatos() {
+    async cargarDatos() {
+        if (this.inicializando) {
+            this._log('warn', 'Ya hay una carga en proceso, ignorando...');
+            return;
+        }
+
+        this.inicializando = true;
         this._log('info', '📊 Cargando datos en métricas...');
 
-        if (!this.panelControl) {
-            this._log('error', 'panelControl no disponible');
-            return;
+        try {
+            if (!this.panelControl) {
+                this._log('error', 'panelControl no disponible');
+                this.inicializando = false;
+                return;
+            }
+
+            const datos = this.panelControl.obtenerDatos();
+            
+            this._log('info', 'Datos obtenidos:', datos);
+
+            // Verificar que los elementos existan
+            const elementos = this._obtenerElementos();
+            
+            if (!elementos.todosExisten) {
+                this._log('warn', 'Elementos HTML no encontrados, esperando...');
+                await this._esperarElementos();
+                return this.cargarDatos(); // Reintentar
+            }
+
+            // Actualizar métricas RÁPIDO
+            this._actualizarMetricas(datos, elementos);
+
+            // Actualizar badges
+            this._actualizarBadges(datos);
+
+            this._log('success', '✅ Métricas actualizadas');
+
+        } catch (error) {
+            this._log('error', 'Error cargando datos:', error);
+        } finally {
+            this.inicializando = false;
         }
+    }
 
-        const datos = this.panelControl.obtenerDatos();
+    _obtenerElementos() {
+        const elementos = {
+            totalIngresos: document.getElementById('totalIngresos'),
+            totalGastos: document.getElementById('totalGastos'),
+            balanceTotal: document.getElementById('balanceTotal'),
+            metricaCrecimiento: document.getElementById('metrica-crecimiento'),
+            todosExisten: false
+        };
+
+        elementos.todosExisten = 
+            elementos.totalIngresos !== null &&
+            elementos.totalGastos !== null &&
+            elementos.balanceTotal !== null &&
+            elementos.metricaCrecimiento !== null;
+
+        return elementos;
+    }
+
+    async _esperarElementos(timeout = 5000) {
+        const start = Date.now();
         
-        this._log('info', 'Datos obtenidos:', datos);
+        return new Promise((resolve) => {
+            const verificar = () => {
+                const elementos = this._obtenerElementos();
+                
+                if (elementos.todosExisten) {
+                    resolve(true);
+                } else if (Date.now() - start > timeout) {
+                    this._log('error', 'Timeout esperando elementos HTML');
+                    resolve(false);
+                } else {
+                    setTimeout(verificar, 100);
+                }
+            };
+            verificar();
+        });
+    }
 
-        // Verificar que los elementos existan
-        const totalIngresos = document.getElementById('totalIngresos');
-        const totalGastos = document.getElementById('totalGastos');
-        const balanceTotal = document.getElementById('balanceTotal');
-        const metricaCrecimiento = document.getElementById('metrica-crecimiento');
-
-        if (!totalIngresos || !totalGastos || !balanceTotal || !metricaCrecimiento) {
-            this._log('warn', 'Elementos HTML no encontrados, esperando...');
-            setTimeout(() => this.cargarDatos(), 500);
-            return;
-        }
-
-        // Actualizar métricas
-        totalIngresos.textContent = `S/. ${this._formatearNumero(datos.ingresos)}`;
+    _actualizarMetricas(datos, elementos) {
+        // Actualizar con animación suave
+        elementos.totalIngresos.textContent = `S/. ${this._formatearNumero(datos.ingresos)}`;
         
-        totalGastos.textContent = `S/. ${this._formatearNumero(datos.gastos)}`;
+        elementos.totalGastos.textContent = `S/. ${this._formatearNumero(datos.gastos)}`;
         
-        balanceTotal.textContent = `${datos.balance < 0 ? '-' : ''}S/. ${this._formatearNumero(Math.abs(datos.balance))}`;
-        balanceTotal.style.color = datos.balance >= 0 ? 'var(--success)' : '#ef4444';
+        elementos.balanceTotal.textContent = 
+            `${datos.balance < 0 ? '-' : ''}S/. ${this._formatearNumero(Math.abs(datos.balance))}`;
+        elementos.balanceTotal.style.color = datos.balance >= 0 ? 'var(--success)' : '#ef4444';
         
-        metricaCrecimiento.textContent = `+${datos.crecimiento.toFixed(1)}%`;
-
-        // Actualizar badges
-        this._actualizarBadges(datos);
-
-        this._log('success', '✅ Métricas actualizadas');
+        elementos.metricaCrecimiento.textContent = `+${datos.crecimiento.toFixed(1)}%`;
     }
 
     _actualizarBadges(datos) {
@@ -130,7 +189,7 @@ class PanelControlUI {
 
     /**
      * ═══════════════════════════════════════════════════════════════
-     * INICIALIZACIÓN DE GRÁFICOS
+     * INICIALIZACIÓN DE GRÁFICOS CON MEJOR TIMING
      * ═══════════════════════════════════════════════════════════════
      */
 
@@ -146,14 +205,17 @@ class PanelControlUI {
         Chart.defaults.font.family = "'Inter', 'Segoe UI', sans-serif";
         Chart.defaults.color = '#8b92a7';
 
-        // Inicializar cada gráfico con verificación
-        setTimeout(() => {
+        // Destruir gráficos anteriores primero
+        this.destruirGraficos();
+
+        // Esperar un frame para que se libere memoria
+        requestAnimationFrame(() => {
             this._inicializarGraficoPrincipal();
             this._inicializarGraficoDistribucion();
             this._inicializarGraficoComparativa();
             this._inicializarGraficoTendencia();
             this._log('success', '✅ Gráficos inicializados');
-        }, 500);
+        });
     }
 
     _inicializarGraficoPrincipal() {
@@ -161,11 +223,6 @@ class PanelControlUI {
         if (!canvas) {
             this._log('warn', 'Canvas graficoFlujoCajaPrincipal no encontrado');
             return;
-        }
-
-        // Destruir gráfico anterior si existe
-        if (this.graficos.principal) {
-            this.graficos.principal.destroy();
         }
 
         const datos = this.panelControl.obtenerDatosFlujoCaja(6);
@@ -205,6 +262,9 @@ class PanelControlUI {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                animation: {
+                    duration: 750
+                },
                 plugins: {
                     legend: {
                         display: true,
@@ -244,10 +304,6 @@ class PanelControlUI {
         const canvas = document.getElementById('graficoDistribucionGastos');
         if (!canvas) return;
 
-        if (this.graficos.distribucion) {
-            this.graficos.distribucion.destroy();
-        }
-
         const categorias = this.panelControl.obtenerDatosCategoria('gasto');
         const top5 = categorias.slice(0, 5);
 
@@ -270,6 +326,9 @@ class PanelControlUI {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                animation: {
+                    duration: 750
+                },
                 plugins: {
                     legend: {
                         position: 'right'
@@ -291,10 +350,6 @@ class PanelControlUI {
     _inicializarGraficoComparativa() {
         const canvas = document.getElementById('graficoIngresosVsGastos');
         if (!canvas) return;
-
-        if (this.graficos.comparativa) {
-            this.graficos.comparativa.destroy();
-        }
 
         const datos = this.panelControl.obtenerComparativaIngresosGastos(6);
 
@@ -319,6 +374,9 @@ class PanelControlUI {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                animation: {
+                    duration: 750
+                },
                 plugins: {
                     legend: {
                         display: true,
@@ -356,10 +414,6 @@ class PanelControlUI {
         const canvas = document.getElementById('graficoTendenciaMensual');
         if (!canvas) return;
 
-        if (this.graficos.tendencia) {
-            this.graficos.tendencia.destroy();
-        }
-
         const datos = this.panelControl.obtenerDatosFlujoCaja(6);
 
         const ctx = canvas.getContext('2d');
@@ -381,6 +435,9 @@ class PanelControlUI {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                animation: {
+                    duration: 750
+                },
                 plugins: {
                     legend: {
                         display: false
@@ -448,24 +505,76 @@ class PanelControlUI {
      * ═══════════════════════════════════════════════════════════════
      */
 
-    actualizar() {
-        this.cargarDatos();
+    async actualizar() {
+        await this.cargarDatos();
         this.inicializarGraficos();
     }
 
     destruirGraficos() {
-        Object.values(this.graficos).forEach(grafico => {
+        this._log('info', '🧹 Destruyendo gráficos...');
+        
+        // Destruir usando referencias guardadas
+        Object.entries(this.graficos).forEach(([nombre, grafico]) => {
             if (grafico) {
-                grafico.destroy();
+                try {
+                    grafico.destroy();
+                    this._log('info', `  ✅ ${nombre} destruido`);
+                } catch (e) {
+                    this._log('warn', `  ⚠️ Error destruyendo ${nombre}:`, e);
+                }
             }
         });
         
+        // Destruir usando Chart.getChart() para limpiar huérfanos
+        const canvasIds = [
+            'graficoFlujoCajaPrincipal',
+            'graficoDistribucionGastos',
+            'graficoIngresosVsGastos',
+            'graficoTendenciaMensual'
+        ];
+        
+        canvasIds.forEach(id => {
+            const canvas = document.getElementById(id);
+            if (canvas) {
+                const chartInstance = Chart.getChart(canvas);
+                if (chartInstance) {
+                    try {
+                        chartInstance.destroy();
+                    } catch (e) {
+                        // Ignorar errores de canvas ya destruidos
+                    }
+                }
+            }
+        });
+        
+        // Resetear referencias
         this.graficos = {
             principal: null,
             distribucion: null,
             comparativa: null,
             tendencia: null
         };
+        
+        this._log('success', '✅ Todos los gráficos destruidos');
+    }
+
+    limpiarYReinicializar() {
+        this._log('info', '🔄 Limpieza y reinicialización completa...');
+        
+        // 1. Destruir gráficos existentes
+        this.destruirGraficos();
+        
+        // 2. Esperar un frame para liberar recursos
+        requestAnimationFrame(async () => {
+            // 3. Recargar datos
+            await this.cargarDatos();
+            
+            // 4. Recrear gráficos
+            requestAnimationFrame(() => {
+                this.inicializarGraficos();
+                this._log('success', '✅ Reinicialización completada');
+            });
+        });
     }
 }
 
@@ -474,8 +583,9 @@ try {
     window.panelControlUI = new PanelControlUI();
     console.log(`
 ╔═══════════════════════════════════════════════════════════════╗
-║  🎨 PANEL CONTROL UI v1.1 (SIMPLIFICADO)                     ║
+║  🎨 PANEL CONTROL UI v1.2 (OPTIMIZADO)                       ║
 ║  ✅ Cargado exitosamente                                      ║
+║  ⚡ Carga rápida + Loading state                             ║
 ╚═══════════════════════════════════════════════════════════════╝
     `);
 } catch (error) {
