@@ -182,39 +182,38 @@ class PanelControlUI {
 }
 
     _actualizarBadges(datos) {
-        // Badge de ingresos
-        const badgeIngresos = document.getElementById('badge-ingresos');
-        if (badgeIngresos && datos.ingresos > 0) {
-            badgeIngresos.innerHTML = '<i class="fas fa-arrow-up"></i> Activo';
-            badgeIngresos.className = 'metrica-badge badge-positivo';
-            badgeIngresos.style.display = 'block';
-        }
-
-        // Badge de gastos
-        const badgeGastos = document.getElementById('badge-gastos');
-        if (badgeGastos && datos.gastos > 0) {
-            badgeGastos.innerHTML = `<i class="fas fa-arrow-down"></i> ${datos.cantidadGastos || 0} registros`;
-            badgeGastos.className = 'metrica-badge badge-negativo';
-            badgeGastos.style.display = 'block';
-        }
-
-        // Badge de utilidad
-        const badgeUtilidad = document.getElementById('badge-utilidad');
-        if (badgeUtilidad) {
-            if (datos.utilidad > 0) {
-                badgeUtilidad.innerHTML = '<i class="fas fa-arrow-up"></i> Positivo';
-                badgeUtilidad.className = 'metrica-badge badge-positivo';
-            } else if (datos.utilidad < 0) {
-                badgeUtilidad.innerHTML = '<i class="fas fa-arrow-down"></i> Negativo';
-                badgeUtilidad.className = 'metrica-badge badge-negativo';
-            } else {
-                badgeUtilidad.innerHTML = '<i class="fas fa-minus"></i> Neutral';
-                badgeUtilidad.className = 'metrica-badge badge-neutral';
-            }
-             badgeUtilidad.style.display = 'block';
-            }
-        }
+    // Badge de ingresos
+    const badgeIngresos = document.getElementById('badge-ingresos');
+    if (badgeIngresos && datos.ingresos > 0) {
+        badgeIngresos.innerHTML = '<i class="fas fa-arrow-up"></i> Activo';
+        badgeIngresos.className = 'metrica-badge badge-positivo';
+        badgeIngresos.style.display = 'block';
     }
+
+    // Badge de gastos
+    const badgeGastos = document.getElementById('badge-gastos');
+    if (badgeGastos && datos.gastos > 0) {
+        badgeGastos.innerHTML = `<i class="fas fa-arrow-down"></i> ${datos.cantidadGastos || 0} registros`;
+        badgeGastos.className = 'metrica-badge badge-negativo';
+        badgeGastos.style.display = 'block';
+    }
+
+    // Badge de utilidad
+    const badgeUtilidad = document.getElementById('badge-utilidad');
+    if (badgeUtilidad) {
+        if (datos.utilidad > 0) {
+            badgeUtilidad.innerHTML = '<i class="fas fa-arrow-up"></i> Positivo';
+            badgeUtilidad.className = 'metrica-badge badge-positivo';
+        } else if (datos.utilidad < 0) {
+            badgeUtilidad.innerHTML = '<i class="fas fa-arrow-down"></i> Negativo';
+            badgeUtilidad.className = 'metrica-badge badge-negativo';
+        } else {
+            badgeUtilidad.innerHTML = '<i class="fas fa-minus"></i> Neutral';
+            badgeUtilidad.className = 'metrica-badge badge-neutral';
+        }
+        badgeUtilidad.style.display = 'block';
+    }
+}
 
     /**
      * ═══════════════════════════════════════════════════════════════
