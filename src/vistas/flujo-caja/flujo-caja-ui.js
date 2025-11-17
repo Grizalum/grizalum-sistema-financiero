@@ -2,7 +2,7 @@
  * ═══════════════════════════════════════════════════════════════════
  * GRIZALUM - FLUJO DE CAJA - INTERFAZ DE USUARIO
  * Maneja toda la interacción con el DOM
- * VERSION CORREGIDA - Problema de edición solucionado
+ * VERSION CORREGIDA - Problema de submit duplicado solucionado
  * ═══════════════════════════════════════════════════════════════════
  */
 
@@ -75,52 +75,61 @@ this.historial.setEmpresa(empresaId);
     }
 
     configurarEventos() {
+        console.log('⚙️ Configurando eventos del formulario...');
+        
         // Botón nueva transacción
         const btnNueva = document.getElementById('btnNuevaTransaccion');
         if (btnNueva) {
             btnNueva.addEventListener('click', () => this.abrirModalTransaccion());
         }
 
-        // ✅ NUEVO: Botón exportar
+        // ✅ Botón exportar
         const btnExportar = document.getElementById('btnExportarRapido');
         if (btnExportar) {
             btnExportar.addEventListener('click', () => this.exportarDatos());
         }
 
-        // Form transacción
+        // ⭐ CRÍTICO: Form transacción - SIN DUPLICADOS
         const form = document.getElementById('formTransaccion');
         if (form) {
-            form.addEventListener('submit', (e) => this.guardarTransaccion(e));
+            // ✅ Limpiar eventos previos
+            const formLimpio = form.cloneNode(true);
+            form.parentNode.replaceChild(formLimpio, form);
+            
+            // ✅ Agregar listener ÚNICO
+            formLimpio.addEventListener('submit', (e) => {
+                console.log('📝 [SUBMIT] Evento capturado por FlujoCajaUI');
+                this.guardarTransaccion(e);
+            });
+            
+            console.log('✅ Evento submit configurado correctamente');
         }
 
         // Cambio de tipo (ingreso/gasto)
-document.querySelectorAll('input[name="tipo"]').forEach(radio => {
-    radio.addEventListener('change', () => {
-        this.actualizarCategoriasSegunTipo();
-        this.ocultarSugerencias(); // ✅ NUEVO: Ocultar sugerencias al cambiar tipo
-    });
-});
+        document.querySelectorAll('input[name="tipo"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                this.actualizarCategoriasSegunTipo();
+                this.ocultarSugerencias();
+            });
+        });
 
-// ✅ NUEVO: Eventos para sugerencias de descripción
-const inputDescripcion = document.getElementById('inputDescripcion');
-if (inputDescripcion) {
-    // Mostrar sugerencias al hacer focus
-    inputDescripcion.addEventListener('focus', () => {
-        this.mostrarSugerencias();
-    });
+        // ✅ Eventos para sugerencias de descripción
+        const inputDescripcion = document.getElementById('inputDescripcion');
+        if (inputDescripcion) {
+            inputDescripcion.addEventListener('focus', () => {
+                this.mostrarSugerencias();
+            });
 
-    // Filtrar sugerencias mientras escribe
-    inputDescripcion.addEventListener('input', (e) => {
-        this.filtrarSugerencias(e.target.value);
-    });
+            inputDescripcion.addEventListener('input', (e) => {
+                this.filtrarSugerencias(e.target.value);
+            });
 
-    // Ocultar sugerencias al hacer click fuera
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('#inputDescripcion') && !e.target.closest('#sugerenciasDescripcion')) {
-            this.ocultarSugerencias();
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('#inputDescripcion') && !e.target.closest('#sugerenciasDescripcion')) {
+                    this.ocultarSugerencias();
+                }
+            });
         }
-    });
-}
 
         // Filtros
         const btnAplicar = document.getElementById('btnAplicarFiltros');
@@ -151,21 +160,24 @@ if (inputDescripcion) {
 
        // Escuchar eventos del módulo
         document.addEventListener('grizalumTransaccionAgregada', () => {
+            console.log('🎉 [EVENTO] Nueva transacción agregada');
             this.cargarBalance();
             this.cargarTransacciones();
         });
 
         document.addEventListener('grizalumTransaccionEditada', () => {
+            console.log('✏️ [EVENTO] Transacción editada');
             this.cargarBalance();
             this.cargarTransacciones();
         });
 
         document.addEventListener('grizalumTransaccionEliminada', () => {
+            console.log('🗑️ [EVENTO] Transacción eliminada');
             this.cargarBalance();
             this.cargarTransacciones();
         });
 
-        // ✅ NUEVO: Listener para cambio de empresa
+        // ✅ Listener para cambio de empresa
         document.addEventListener('grizalumCompanyChanged', (e) => {
             console.log('🔄 [UI] Empresa cambiada detectada:', e.detail);
              // ✅ CORREGIDO: Actualizar historial a nueva empresa
@@ -206,14 +218,14 @@ if (inputDescripcion) {
             }, 200);
         });
 
-        // ✅ NUEVO: Listener para actualización del flujo de caja
+        // ✅ Listener para actualización del flujo de caja
         document.addEventListener('grizalumFlujoCajaActualizado', (e) => {
             console.log('📊 [UI] Actualización del flujo detectada:', e.detail);
             this.cargarBalance();
             this.cargarTransacciones();
         });
 
-        console.log('✅ Eventos configurados');
+        console.log('✅ Todos los eventos configurados');
     }
 
     cargarNivel() {
@@ -382,9 +394,8 @@ if (inputDescripcion) {
         }).join('');
     }
 
-    // ✅ CORREGIDO: abrirModalTransaccion ahora respeta el modo de edición
-   abrirModalTransaccion(modoEdicion = false) {
-        // ✅ IMPORTANTE: Solo resetear si NO estamos editando
+    abrirModalTransaccion(modoEdicion = false) {
+        // ✅ Solo resetear si NO estamos editando
         if (!modoEdicion) {
             this.transaccionEditando = null;
             
@@ -404,10 +415,9 @@ if (inputDescripcion) {
             }
         }
         
-        // ✅ CORREGIDO: Abrir modal sin Bootstrap API
+        // Abrir modal
         const modalElement = document.getElementById('modalTransaccion');
         if (modalElement) {
-            // Mostrar modal
             modalElement.classList.add('show');
             modalElement.style.display = 'block';
             modalElement.setAttribute('aria-modal', 'true');
@@ -421,10 +431,9 @@ if (inputDescripcion) {
                 document.body.appendChild(backdrop);
             }
             
-            // Agregar clase al body
             document.body.classList.add('modal-open');
             
-            // ✅ CRÍTICO: Escuchar tecla ESC para cerrar
+            // Escuchar tecla ESC
             const cerrarConESC = (e) => {
                 if (e.key === 'Escape') {
                     this.cerrarModalTransaccion();
@@ -436,70 +445,95 @@ if (inputDescripcion) {
             console.log('📋 Modal abierto - Modo:', modoEdicion ? 'EDICIÓN' : 'NUEVA', 'ID:', this.transaccionEditando);
         }
     }
+    
     cerrarModalTransaccion() {
         const modalElement = document.getElementById('modalTransaccion');
         if (modalElement) {
-            // Ocultar modal
             modalElement.classList.remove('show');
             modalElement.style.display = 'none';
             modalElement.setAttribute('aria-hidden', 'true');
             modalElement.removeAttribute('aria-modal');
             
-            // Remover backdrop
             const backdrop = document.querySelector('.modal-backdrop');
             if (backdrop) backdrop.remove();
             
-            // Remover clase del body
             document.body.classList.remove('modal-open');
             document.body.style.overflow = '';
             document.body.style.paddingRight = '';
             
-            console.log('✅ Modal cerrado y limpiado');
+            console.log('✅ Modal cerrado');
         }
     }
     
-    // ✅ CORREGIDO: guardarTransaccion con acceso correcto a campos
+    // ⭐ MÉTODO PRINCIPAL DE GUARDADO - CORREGIDO
     guardarTransaccion(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    
-    console.log('💾 guardarTransaccion iniciado');
-    console.log('🔍 Estado transaccionEditando:', this.transaccionEditando);
-    
-    const form = event.target;
-    const tipoSeleccionado = form.querySelector('input[name="tipo"]:checked');
-    
-    const datos = {
-        tipo: tipoSeleccionado ? tipoSeleccionado.value : 'ingreso',
-        monto: parseFloat(document.getElementById('inputMonto').value),
-        categoria: document.getElementById('selectCategoria').value,
-        descripcion: document.getElementById('inputDescripcion').value || '',
-        fecha: document.getElementById('inputFecha').value ? new Date(document.getElementById('inputFecha').value).toISOString() : new Date().toISOString(),
-        metodoPago: document.getElementById('selectMetodo')?.value || 'efectivo',
-        notas: document.getElementById('inputNotas')?.value || ''
-    };
+        event.preventDefault();
+        event.stopPropagation();
+        
+        console.log('💾 [GUARDAR] Iniciando guardado de transacción');
+        console.log('🔍 [GUARDAR] Modo:', this.transaccionEditando ? 'EDICIÓN' : 'NUEVA');
+        
+        try {
+            // Obtener datos del formulario
+            const form = document.getElementById('formTransaccion');
+            const tipoSeleccionado = form.querySelector('input[name="tipo"]:checked');
+            
+            const datos = {
+                tipo: tipoSeleccionado ? tipoSeleccionado.value : 'ingreso',
+                monto: parseFloat(document.getElementById('inputMonto').value),
+                categoria: document.getElementById('selectCategoria').value,
+                descripcion: document.getElementById('inputDescripcion').value || '',
+                fecha: document.getElementById('inputFecha').value ? new Date(document.getElementById('inputFecha').value).toISOString() : new Date().toISOString(),
+                metodoPago: document.getElementById('selectMetodo')?.value || 'efectivo',
+                notas: document.getElementById('inputNotas')?.value || ''
+            };
 
-    console.log('📦 Datos del formulario:', datos);
+            console.log('📦 [GUARDAR] Datos:', datos);
 
-    // ✅ NUEVO: Guardar descripción en historial
-    if (datos.descripcion.trim()) {
-        this.historial.agregar(datos.descripcion, datos.tipo);
+            // Validaciones
+            if (!datos.tipo || !datos.categoria) {
+                alert('⚠️ Por favor selecciona un tipo y una categoría');
+                return;
+            }
+
+            if (isNaN(datos.monto) || datos.monto <= 0) {
+                alert('⚠️ El monto debe ser un número mayor a 0');
+                return;
+            }
+
+            // ✅ Guardar descripción en historial
+            if (datos.descripcion.trim()) {
+                this.historial.agregar(datos.descripcion, datos.tipo);
+            }
+
+            // ⭐ GUARDAR O EDITAR
+            if (this.transaccionEditando) {
+                console.log('✏️ [GUARDAR] Editando transacción ID:', this.transaccionEditando);
+                this.modulo.editarTransaccion(this.transaccionEditando, datos);
+                this.mostrarNotificacion('✅ Transacción actualizada', 'success');
+            } else {
+                console.log('➕ [GUARDAR] Creando nueva transacción');
+                this.modulo.agregarTransaccion(datos);
+                this.mostrarNotificacion('✅ Transacción guardada', 'success');
+            }
+
+            // ✅ Cerrar modal y actualizar UI
+            this.cerrarModalTransaccion();
+            
+            // ✅ IMPORTANTE: Esperar un poco antes de recargar
+            setTimeout(() => {
+                console.log('🔄 [GUARDAR] Recargando interfaz...');
+                this.cargarBalance();
+                this.cargarTransacciones();
+                console.log('✅ [GUARDAR] Proceso completado');
+            }, 100);
+            
+        } catch (error) {
+            console.error('❌ [GUARDAR] Error:', error);
+            alert('❌ Error al guardar: ' + error.message);
+        }
     }
 
-    if (this.transaccionEditando) {
-        console.log('✏️ MODO EDICIÓN - ID:', this.transaccionEditando);
-        this.modulo.editarTransaccion(this.transaccionEditando, datos);
-        this.mostrarNotificacion('✅ Transacción actualizada', 'success');
-    } else {
-        console.log('➕ MODO NUEVA TRANSACCIÓN');
-        this.modulo.agregarTransaccion(datos);
-        this.mostrarNotificacion('✅ Transacción agregada', 'success');
-    }
-
-    this.cerrarModalTransaccion();
-}
-
-    // ✅ CORREGIDO: editarTransaccion con IDs correctos del formulario
     editarTransaccion(id) {
         console.log('✏️ editarTransaccion llamado con ID:', id);
         
@@ -511,18 +545,17 @@ if (inputDescripcion) {
 
         console.log('📄 Transacción encontrada:', transaccion);
 
-        // ✅ IMPORTANTE: Establecer el ID ANTES de rellenar el formulario
+        // ✅ Establecer el ID ANTES de rellenar el formulario
         this.transaccionEditando = id;
         console.log('✅ transaccionEditando establecido:', this.transaccionEditando);
 
-        // Rellenar formulario con IDs correctos
+        // Rellenar formulario
         const radioTipo = document.querySelector(`input[name="tipo"][value="${transaccion.tipo}"]`);
         if (radioTipo) {
             radioTipo.checked = true;
             this.actualizarCategoriasSegunTipo();
         }
 
-        // ✅ Usar los IDs correctos del HTML
         const inputMonto = document.getElementById('inputMonto');
         const selectCategoria = document.getElementById('selectCategoria');
         const inputDescripcion = document.getElementById('inputDescripcion');
@@ -537,7 +570,7 @@ if (inputDescripcion) {
         if (selectMetodo) selectMetodo.value = transaccion.metodoPago || 'efectivo';
         if (inputNotas) inputNotas.value = transaccion.notas || '';
         
-        // ✅ IMPORTANTE: Abrir en modo edición (sin resetear)
+        // ✅ Abrir en modo edición
         this.abrirModalTransaccion(true);
         
         console.log('✅ Modal abierto para edición - ID guardado:', this.transaccionEditando);
@@ -579,121 +612,71 @@ if (inputDescripcion) {
         this.cargarTransacciones({ busqueda: texto });
     }
 
-async exportarDatos() {
-    console.log('📊 Exportando datos...');
-    
-    try {
-        if (typeof ExcelJS === 'undefined') {
-            alert('❌ ExcelJS no disponible.');
-            return;
-        }
-
-        if (typeof ExportadorExcelProfesional === 'undefined') {
-            alert('❌ Exportador no disponible.');
-            return;
-        }
-
-        const transacciones = this.modulo.obtenerTransacciones();
-        const balance = this.modulo.calcularBalance();
-
-        let nivel = 0;
-        let empresaId = 'default';
-        let planNombre = 'Individual';
-
+    async exportarDatos() {
+        console.log('📊 Exportando datos...');
+        
         try {
-            const info = this.modulo.obtenerInfo();
-            empresaId = info?.empresaActual || 'default';
-            
-            // ✅ PRIORIDAD 1: Usar FlujoCajaPlanes (sistema de planes de pago)
-            if (window.FlujoCajaPlanes) {
-                const planActual = window.FlujoCajaPlanes.obtenerPlanActual();
-                planNombre = planActual.nombre;
-                
-                console.log('✅ Plan desde FlujoCajaPlanes:', planNombre);
-                
-                // Convertir plan a nivel numérico para el exportador
-                const mapaPlanNivel = {
-                    'individual': 0,
-                    'profesional': 30,
-                    'empresarial': 50,
-                    'corporativo': 70
-                };
-                
-                nivel = mapaPlanNivel[planActual.id] || 0;
-                console.log('📊 Nivel calculado desde plan:', nivel);
+            if (typeof ExcelJS === 'undefined') {
+                alert('❌ ExcelJS no disponible.');
+                return;
             }
-            // ✅ PRIORIDAD 2: Fallback al sistema de score
-            else if (info?.nivel?.score !== undefined) {
-                nivel = parseInt(info.nivel.score) || 0;
-                console.log('✅ Nivel obtenido del score:', nivel);
-                
-                // Determinar nombre del plan desde el nivel
-                if (nivel >= 70) planNombre = 'Corporativo';
-                else if (nivel >= 50) planNombre = 'Empresarial';
-                else if (nivel >= 30) planNombre = 'Profesional';
+
+            if (typeof ExportadorExcelProfesional === 'undefined') {
+                alert('❌ Exportador no disponible.');
+                return;
             }
+
+            const transacciones = this.modulo.obtenerTransacciones();
+            const balance = this.modulo.calcularBalance();
+
+            let nivel = 0;
+            let empresaId = 'default';
+            let planNombre = 'Individual';
+
+            try {
+                const info = this.modulo.obtenerInfo();
+                empresaId = info?.empresaActual || 'default';
+                
+                if (window.FlujoCajaPlanes) {
+                    const planActual = window.FlujoCajaPlanes.obtenerPlanActual();
+                    planNombre = planActual.nombre;
+                    
+                    const mapaPlanNivel = {
+                        'individual': 0,
+                        'profesional': 30,
+                        'empresarial': 50,
+                        'corporativo': 70
+                    };
+                    
+                    nivel = mapaPlanNivel[planActual.id] || 0;
+                } else if (info?.nivel?.score !== undefined) {
+                    nivel = parseInt(info.nivel.score) || 0;
+                    
+                    if (nivel >= 70) planNombre = 'Corporativo';
+                    else if (nivel >= 50) planNombre = 'Empresarial';
+                    else if (nivel >= 30) planNombre = 'Profesional';
+                }
+                
+            } catch (e) {
+                console.error('❌ Error leyendo nivel:', e);
+            }
+
+            const datosExportar = {
+                empresa: empresaId,
+                balance: balance,
+                transacciones: transacciones,
+                nivel: nivel
+            };
+
+            const exportador = new ExportadorExcelProfesional();
+            await exportador.exportar(datosExportar);
             
-        } catch (e) {
-            console.error('❌ Error leyendo nivel:', e);
+            this.mostrarNotificacion(`✅ Excel exportado (${planNombre})`, 'success');
+            
+        } catch (error) {
+            console.error('❌ Error:', error);
+            alert('Error: ' + error.message);
         }
-
-        console.log('📊 EXPORTANDO - Empresa:', empresaId, 'Nivel:', nivel, 'Plan:', planNombre);
-
-        const datosExportar = {
-            empresa: empresaId,
-            balance: balance,
-            transacciones: transacciones,
-            nivel: nivel
-        };
-
-        const exportador = new ExportadorExcelProfesional();
-        await exportador.exportar(datosExportar);
-        
-        this.mostrarNotificacion(`✅ Excel exportado (${planNombre})`, 'success');
-        
-    } catch (error) {
-        console.error('❌ Error:', error);
-        alert('Error: ' + error.message);
-    }
-}
-    _exportarBasico() {
-        // Método de respaldo si no hay exportador profesional
-        const wb = XLSX.utils.book_new();
-        const info = this.modulo.obtenerInfo();
-        
-        // Hoja 1: Resumen
-        const resumen = [
-            ['FLUJO DE CAJA - RESUMEN'],
-            ['Empresa', info.empresaActual],
-            ['Fecha', new Date().toLocaleDateString('es-PE')],
-            [],
-            ['BALANCE'],
-            ['Ingresos', info.balance.ingresos],
-            ['Gastos', info.balance.gastos],
-            ['Balance', info.balance.balance]
-        ];
-        
-        const ws1 = XLSX.utils.aoa_to_sheet(resumen);
-
-        // Hoja 2: Transacciones
-        const transacciones = this.modulo.obtenerTransacciones().map(t => ({
-            Tipo: t.tipo,
-            Monto: t.monto,
-            Categoría: t.categoria,
-            Descripción: t.descripcion,
-            Fecha: new Date(t.fecha).toLocaleDateString('es-PE'),
-            'Método de Pago': t.metodoPago
-        }));
-        
-        const ws2 = XLSX.utils.json_to_sheet(transacciones);
-
-        XLSX.utils.book_append_sheet(wb, ws1, 'Resumen');
-        XLSX.utils.book_append_sheet(wb, ws2, 'Transacciones');
-
-        const nombreArchivo = `FlujoCaja_${info.empresaActual}_${new Date().toISOString().split('T')[0]}.xlsx`;
-        XLSX.writeFile(wb, nombreArchivo);
-
-        this.mostrarNotificacion('✅ Excel exportado', 'success');
     }
 
     formatearMoneda(valor) {
@@ -704,7 +687,6 @@ async exportarDatos() {
     }
 
     mostrarNotificacion(mensaje, tipo = 'info') {
-        // Crear notificación
         const notif = document.createElement('div');
         notif.className = `notificacion notif-${tipo}`;
         notif.textContent = mensaje;
@@ -724,15 +706,12 @@ async exportarDatos() {
         
         document.body.appendChild(notif);
         
-        // Auto-remover después de 3 segundos
         setTimeout(() => {
             notif.style.animation = 'slideOut 0.3s ease';
             setTimeout(() => notif.remove(), 300);
         }, 3000);
     }
-    /**
-     * Mostrar sugerencias de descripción
-     */
+
     mostrarSugerencias() {
         const tipo = document.querySelector('input[name="tipo"]:checked')?.value || 'ingreso';
         const inputDescripcion = document.getElementById('inputDescripcion');
@@ -754,7 +733,6 @@ async exportarDatos() {
                 </div>
             `).join('');
 
-            // Eventos: Click en sugerencia
             contenedor.querySelectorAll('.sugerencia-item').forEach(item => {
                 item.addEventListener('click', (e) => {
                     if (!e.target.closest('.sugerencia-eliminar')) {
@@ -765,7 +743,6 @@ async exportarDatos() {
                 });
             });
 
-            // Eventos: Click en eliminar
             contenedor.querySelectorAll('.sugerencia-eliminar').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -778,9 +755,6 @@ async exportarDatos() {
         contenedor.style.display = 'block';
     }
 
-    /**
-     * Filtrar sugerencias mientras escribe
-     */
     filtrarSugerencias(texto) {
         const tipo = document.querySelector('input[name="tipo"]:checked')?.value || 'ingreso';
         const contenedor = document.getElementById('sugerenciasDescripcion');
@@ -801,7 +775,6 @@ async exportarDatos() {
                 </div>
             `).join('');
 
-            // Re-agregar eventos
             contenedor.querySelectorAll('.sugerencia-item').forEach(item => {
                 item.addEventListener('click', (e) => {
                     if (!e.target.closest('.sugerencia-eliminar')) {
@@ -824,9 +797,6 @@ async exportarDatos() {
         contenedor.style.display = 'block';
     }
 
-    /**
-     * Ocultar sugerencias
-     */
     ocultarSugerencias() {
         const contenedor = document.getElementById('sugerenciasDescripcion');
         if (contenedor) {
@@ -834,26 +804,21 @@ async exportarDatos() {
         }
     }
 
-    /**
-     * Eliminar una sugerencia del historial
-     */
     eliminarSugerencia(descripcion, tipo) {
         if (confirm(`¿Eliminar "${descripcion}" del historial?`)) {
             this.historial.eliminar(descripcion, tipo);
-            this.mostrarSugerencias(); // Recargar lista
+            this.mostrarSugerencias();
             this.mostrarNotificacion(`🗑️ "${descripcion}" eliminado`, 'success');
         }
     }
 }
 
-// ✅ EXPORTAR CLASE GLOBALMENTE
+// ═══════════════════════════════════════════════════════════════
+// EXPORTAR CLASE Y FUNCIONES GLOBALES
+// ═══════════════════════════════════════════════════════════════
+
 window.FlujoCajaUI = FlujoCajaUI;
 
-// ═══════════════════════════════════════════════════════════════
-// INICIALIZACIÓN INTELIGENTE
-// ═══════════════════════════════════════════════════════════════
-
-// NO inicializar inmediatamente, esperar a que la vista esté visible
 let flujoCajaUIInstancia = null;
 
 function inicializarFlujoCajaUI() {
@@ -864,7 +829,6 @@ function inicializarFlujoCajaUI() {
         window.flujoCajaUI = flujoCajaUIInstancia;
     }
     
-    // Esperar 500ms para asegurar que el DOM está listo
     setTimeout(() => {
         if (window.flujoCajaUI?.modulo) {
             console.log('📊 Cargando datos iniciales...');
@@ -874,95 +838,43 @@ function inicializarFlujoCajaUI() {
     }, 500);
 }
 
-// Escuchar cuando la vista se hace visible
+// Listeners de inicialización
 window.addEventListener('flujoCajaVisible', inicializarFlujoCajaUI);
 
-// También intentar inicializar al cargar
 if (document.readyState === 'complete') {
     inicializarFlujoCajaUI();
 } else {
     window.addEventListener('load', inicializarFlujoCajaUI);
 }
 
-console.log('🎨 UI de Flujo de Caja lista para inicializar');
-
-// ═══════════════════════════════════════════════════════════════
-// EXPORTAR FUNCIONES COMO GLOBALES (para compatibilidad con HTML)
-// ═══════════════════════════════════════════════════════════════
-
+// Funciones globales para compatibilidad con HTML
 window.cargarBalance = function() {
-    if (window.flujoCajaUI) {
-        window.flujoCajaUI.cargarBalance();
-    }
+    if (window.flujoCajaUI) window.flujoCajaUI.cargarBalance();
 };
 
 window.cargarTransacciones = function(filtros = {}) {
-    if (window.flujoCajaUI) {
-        window.flujoCajaUI.cargarTransacciones(filtros);
-    }
+    if (window.flujoCajaUI) window.flujoCajaUI.cargarTransacciones(filtros);
 };
 
 window.cargarNivel = function() {
-    if (window.flujoCajaUI) {
-        window.flujoCajaUI.cargarNivel();
-    }
+    if (window.flujoCajaUI) window.flujoCajaUI.cargarNivel();
 };
 
 window.cargarCategorias = function() {
-    if (window.flujoCajaUI) {
-        window.flujoCajaUI.cargarCategorias();
-    }
+    if (window.flujoCajaUI) window.flujoCajaUI.cargarCategorias();
 };
 
 window.abrirModalTransaccion = function() {
-    if (window.flujoCajaUI) {
-        window.flujoCajaUI.abrirModalTransaccion();
-    }
+    if (window.flujoCajaUI) window.flujoCajaUI.abrirModalTransaccion();
 };
 
 window.editarTransaccion = function(id) {
-    if (window.flujoCajaUI) {
-        window.flujoCajaUI.editarTransaccion(id);
-    }
+    if (window.flujoCajaUI) window.flujoCajaUI.editarTransaccion(id);
 };
 
 window.eliminarTransaccion = function(id) {
-    if (window.flujoCajaUI) {
-        window.flujoCajaUI.eliminarTransaccion(id);
-    }
+    if (window.flujoCajaUI) window.flujoCajaUI.eliminarTransaccion(id);
 };
-
-console.log('✅ Funciones globales exportadas');
-
-// ═══════════════════════════════════════════════════════════════
-// ESCUCHAR EVENTO DE VISTA VISIBLE
-// ═══════════════════════════════════════════════════════════════
-
-window.addEventListener('flujoCajaVisible', function() {
-    console.log('👁️ Vista Flujo de Caja visible');
-    setTimeout(() => {
-        if (window.flujoCajaUI?.modulo) {
-            console.log('🔄 Recargando datos...');
-            window.flujoCajaUI.cargarBalance();
-            window.flujoCajaUI.cargarTransacciones();
-        }
-    }, 500);
-});
-
-// También escuchar cuando se carga cualquier transacción
-document.addEventListener('grizalumTransaccionAgregada', () => {
-    console.log('📝 Nueva transacción detectada, actualizando...');
-    if (window.flujoCajaUI?.modulo) {
-        window.flujoCajaUI.cargarBalance();
-        window.flujoCajaUI.cargarTransacciones();
-    }
-});
-
-console.log('✅ Listeners de recarga configurados');
-
-// ═══════════════════════════════════════════════════════════════
-// FUNCIÓN DE RECARGA COMPLETA
-// ═══════════════════════════════════════════════════════════════
 
 window.recargarFlujoCaja = function() {
     console.log('🔄 [recargarFlujoCaja] Iniciando recarga completa...');
@@ -990,14 +902,20 @@ window.recargarFlujoCaja = function() {
     }
 };
 
-console.log('✅ Función recargarFlujoCaja registrada');
-console.log('✅ [flujo-caja-ui.js CORREGIDO v3.0] Módulo cargado - ' + new Date().toISOString());
+// Listener para actualización automática
+document.addEventListener('grizalumTransaccionAgregada', () => {
+    console.log('📝 Nueva transacción detectada, actualizando...');
+    if (window.flujoCajaUI?.modulo) {
+        window.flujoCajaUI.cargarBalance();
+        window.flujoCajaUI.cargarTransacciones();
+    }
+});
 
+// Monitor de recarga automática
 setInterval(() => {
     const app = document.getElementById('flujoCajaApp');
     if (app && window.getComputedStyle(app).display !== 'none') {
         if (window.flujoCajaUI && window.flujoCajaUI.modulo) {
-            // Verificar si hay transacciones en módulo pero NO en DOM
             const transaccionesModulo = window.flujoCajaUI.modulo.obtenerTransacciones();
             const transaccionesDOM = document.querySelectorAll('.transaccion-card');
             
@@ -1010,114 +928,5 @@ setInterval(() => {
     }
 }, 1000);
 
-console.log('✅ Recarga automática de Flujo de Caja activada');
-
-/**
- * ═══════════════════════════════════════════════════════════
- * CONFIGURAR EVENTO SUBMIT DEL FORMULARIO
- * ═══════════════════════════════════════════════════════════
- */
-function configurarEventoSubmit() {
-    const form = document.getElementById('formTransaccion');
-    
-    if (!form) {
-        console.warn('⚠️ Formulario no encontrado para configurar submit');
-        return;
-    }
-    
-    // Remover listeners previos
-    const nuevoForm = form.cloneNode(true);
-    form.parentNode.replaceChild(nuevoForm, form);
-    
-    nuevoForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        console.log('📝 Submit del formulario capturado');
-        
-        try {
-            // Obtener datos
-            const tipo = document.querySelector('input[name="tipo"]:checked')?.value;
-            const monto = parseFloat(document.getElementById('inputMonto').value);
-            const categoria = document.getElementById('selectCategoria').value;
-            const descripcion = document.getElementById('inputDescripcion').value;
-            const fecha = document.getElementById('inputFecha').value;
-            const metodo = document.getElementById('selectMetodo').value;
-            const notas = document.getElementById('inputNotas').value;
-            
-            // Validar
-            if (!tipo || !monto || !categoria || !fecha) {
-                alert('Por favor completa todos los campos obligatorios');
-                return;
-            }
-            
-            if (isNaN(monto) || monto <= 0) {
-                alert('El monto debe ser un número mayor a 0');
-                return;
-            }
-            
-            // Crear transacción
-            const transaccion = {
-                tipo,
-                monto,
-                categoria,
-                descripcion: descripcion || categoria,
-                fecha: new Date(fecha).toISOString(),
-                metodoPago: metodo,
-                notas
-            };
-            
-            console.log('💾 Guardando transacción:', transaccion);
-            
-            // Guardar
-            const resultado = window.flujoCaja.agregarTransaccion(transaccion);
-            
-            if (resultado.exito) {
-                console.log('✅ Transacción guardada exitosamente');
-                
-                // Cerrar modal
-                const modal = document.getElementById('modalTransaccion');
-                if (modal) {
-                    modal.style.display = 'none';
-                }
-                
-                // Limpiar formulario
-                nuevoForm.reset();
-                document.getElementById('inputFecha').valueAsDate = new Date();
-                
-                // Recargar datos
-                if (window.recargarFlujoCaja) {
-                    setTimeout(() => {
-                        window.recargarFlujoCaja();
-                    }, 100);
-                }
-                
-                // Notificación
-                if (window.mostrarNotificacion) {
-                    window.mostrarNotificacion('Transacción guardada exitosamente', 'success');
-                } else {
-                    alert('✅ Transacción guardada exitosamente');
-                }
-                
-            } else {
-                throw new Error(resultado.mensaje || 'Error desconocido');
-            }
-            
-        } catch (error) {
-            console.error('❌ Error guardando transacción:', error);
-            alert('Error al guardar: ' + error.message);
-        }
-    });
-    
-    console.log('✅ Evento submit configurado correctamente');
-}
-
-// Ejecutar cuando el DOM esté listo
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', configurarEventoSubmit);
-} else {
-    configurarEventoSubmit();
-}
-
-// También ejecutar cuando la vista se cargue
-document.addEventListener('grizalumFlujoCajaInicializado', configurarEventoSubmit);
+console.log('✅ [flujo-caja-ui.js CORREGIDO v4.0 - SIN DUPLICADOS] Módulo cargado');
+console.log('🎨 UI de Flujo de Caja lista para inicializar');
