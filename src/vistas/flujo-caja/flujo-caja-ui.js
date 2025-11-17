@@ -1011,3 +1011,113 @@ setInterval(() => {
 }, 1000);
 
 console.log('✅ Recarga automática de Flujo de Caja activada');
+
+/**
+ * ═══════════════════════════════════════════════════════════
+ * CONFIGURAR EVENTO SUBMIT DEL FORMULARIO
+ * ═══════════════════════════════════════════════════════════
+ */
+function configurarEventoSubmit() {
+    const form = document.getElementById('formTransaccion');
+    
+    if (!form) {
+        console.warn('⚠️ Formulario no encontrado para configurar submit');
+        return;
+    }
+    
+    // Remover listeners previos
+    const nuevoForm = form.cloneNode(true);
+    form.parentNode.replaceChild(nuevoForm, form);
+    
+    nuevoForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        console.log('📝 Submit del formulario capturado');
+        
+        try {
+            // Obtener datos
+            const tipo = document.querySelector('input[name="tipo"]:checked')?.value;
+            const monto = parseFloat(document.getElementById('inputMonto').value);
+            const categoria = document.getElementById('selectCategoria').value;
+            const descripcion = document.getElementById('inputDescripcion').value;
+            const fecha = document.getElementById('inputFecha').value;
+            const metodo = document.getElementById('selectMetodo').value;
+            const notas = document.getElementById('inputNotas').value;
+            
+            // Validar
+            if (!tipo || !monto || !categoria || !fecha) {
+                alert('Por favor completa todos los campos obligatorios');
+                return;
+            }
+            
+            if (isNaN(monto) || monto <= 0) {
+                alert('El monto debe ser un número mayor a 0');
+                return;
+            }
+            
+            // Crear transacción
+            const transaccion = {
+                tipo,
+                monto,
+                categoria,
+                descripcion: descripcion || categoria,
+                fecha: new Date(fecha).toISOString(),
+                metodoPago: metodo,
+                notas
+            };
+            
+            console.log('💾 Guardando transacción:', transaccion);
+            
+            // Guardar
+            const resultado = window.flujoCaja.agregarTransaccion(transaccion);
+            
+            if (resultado.exito) {
+                console.log('✅ Transacción guardada exitosamente');
+                
+                // Cerrar modal
+                const modal = document.getElementById('modalTransaccion');
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+                
+                // Limpiar formulario
+                nuevoForm.reset();
+                document.getElementById('inputFecha').valueAsDate = new Date();
+                
+                // Recargar datos
+                if (window.recargarFlujoCaja) {
+                    setTimeout(() => {
+                        window.recargarFlujoCaja();
+                    }, 100);
+                }
+                
+                // Notificación
+                if (window.mostrarNotificacion) {
+                    window.mostrarNotificacion('Transacción guardada exitosamente', 'success');
+                } else {
+                    alert('✅ Transacción guardada exitosamente');
+                }
+                
+            } else {
+                throw new Error(resultado.mensaje || 'Error desconocido');
+            }
+            
+        } catch (error) {
+            console.error('❌ Error guardando transacción:', error);
+            alert('Error al guardar: ' + error.message);
+        }
+    });
+    
+    console.log('✅ Evento submit configurado correctamente');
+}
+
+// Ejecutar cuando el DOM esté listo
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', configurarEventoSubmit);
+} else {
+    configurarEventoSubmit();
+}
+
+// También ejecutar cuando la vista se cargue
+document.addEventListener('grizalumFlujoCajaInicializado', configurarEventoSubmit);
