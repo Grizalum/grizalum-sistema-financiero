@@ -115,6 +115,24 @@ function registrarModulos() {
                 });
             });
             
+            // ✅ ESPERAR A QUE PANEL CONTROL TENGA DATOS LISTOS
+          console.log('   ⏳ Esperando datos del Panel de Control...');
+
+        if (window.panelControl) {
+                let intentos = 0;
+                while (!window.panelControl.estaListo() && intentos < 30) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                intentos++;
+           }
+    
+            if (window.panelControl.estaListo()) {
+              console.log('   ✅ Panel de Control con datos cargados');
+              await new Promise(resolve => setTimeout(resolve, 200));
+           } else {
+            console.warn('   ⚠️ Timeout esperando datos del Panel');
+           }
+       }
+            
             // ═══════════════════════════════════════════════════════════════
             // ✅ CORRECCIÓN PRINCIPAL: CARGAR TODOS LOS SCRIPTS EXTERNOS
             // ═══════════════════════════════════════════════════════════════
