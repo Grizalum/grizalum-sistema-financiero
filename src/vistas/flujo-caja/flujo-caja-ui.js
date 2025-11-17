@@ -100,7 +100,7 @@ this.historial.setEmpresa(empresaId);
             formLimpio.addEventListener('submit', (e) => {
                 console.log('📝 [SUBMIT] Evento capturado por FlujoCajaUI');
                 this.guardarTransaccion(e);
-            }, true); // ⭐ TRUE = Fase de CAPTURE (máxima prioridad)
+            }, true); // ⭐⭐⭐ ESTE TRUE ES CRÍTICO ⭐⭐⭐
             
             console.log('✅ Evento submit configurado correctamente');
         }
@@ -465,73 +465,111 @@ this.historial.setEmpresa(empresaId);
         }
     }
     
-    // ⭐ MÉTODO PRINCIPAL DE GUARDADO - CORREGIDO
     guardarTransaccion(event) {
+        console.log('\n🎯 ═══════════════════════════════════════');
+        console.log('🎯 SUBMIT INTERCEPTADO');
+        console.log('🎯 ═══════════════════════════════════════\n');
+        
+        // ⭐ PREVENIR RECARGA (TRIPLE SEGURO)
         event.preventDefault();
         event.stopPropagation();
+        event.stopImmediatePropagation();
         
-        console.log('💾 [GUARDAR] Iniciando guardado de transacción');
-        console.log('🔍 [GUARDAR] Modo:', this.transaccionEditando ? 'EDICIÓN' : 'NUEVA');
+        console.log('✅ Recarga prevenida');
         
         try {
             // Obtener datos del formulario
             const form = document.getElementById('formTransaccion');
-            const tipoSeleccionado = form.querySelector('input[name="tipo"]:checked');
+            const tipo = form.querySelector('input[name="tipo"]:checked')?.value;
+            const monto = parseFloat(document.getElementById('inputMonto').value);
+            const categoria = document.getElementById('selectCategoria').value;
+            const descripcion = document.getElementById('inputDescripcion').value;
+            const fecha = document.getElementById('inputFecha').value;
             
-            const datos = {
-                tipo: tipoSeleccionado ? tipoSeleccionado.value : 'ingreso',
-                monto: parseFloat(document.getElementById('inputMonto').value),
-                categoria: document.getElementById('selectCategoria').value,
-                descripcion: document.getElementById('inputDescripcion').value || '',
-                fecha: document.getElementById('inputFecha').value ? new Date(document.getElementById('inputFecha').value).toISOString() : new Date().toISOString(),
+            console.log('📦 Datos capturados:');
+            console.log('   - Tipo:', tipo);
+            console.log('   - Monto:', monto);
+            console.log('   - Categoría:', categoria);
+            console.log('   - Descripción:', descripcion);
+            console.log('   - Fecha:', fecha);
+            
+            // Validaciones
+            if (!tipo || !monto || !categoria || !fecha) {
+                console.error('❌ Faltan datos obligatorios');
+                alert('⚠️ Por favor completa todos los campos obligatorios');
+                return false;
+            }
+            
+            if (isNaN(monto) || monto <= 0) {
+                console.error('❌ Monto inválido');
+                alert('⚠️ El monto debe ser un número mayor a 0');
+                return false;
+            }
+            
+            // Crear objeto de transacción
+            const transaccion = {
+                tipo: tipo,
+                monto: monto,
+                categoria: categoria,
+                descripcion: descripcion || categoria,
+                fecha: new Date(fecha).toISOString(),
                 metodoPago: document.getElementById('selectMetodo')?.value || 'efectivo',
                 notas: document.getElementById('inputNotas')?.value || ''
             };
-
-            console.log('📦 [GUARDAR] Datos:', datos);
-
-            // Validaciones
-            if (!datos.tipo || !datos.categoria) {
-                alert('⚠️ Por favor selecciona un tipo y una categoría');
-                return;
-            }
-
-            if (isNaN(datos.monto) || datos.monto <= 0) {
-                alert('⚠️ El monto debe ser un número mayor a 0');
-                return;
-            }
-
-            // ✅ Guardar descripción en historial
-            if (datos.descripcion.trim()) {
-                this.historial.agregar(datos.descripcion, datos.tipo);
-            }
-
-            // ⭐ GUARDAR O EDITAR
-            if (this.transaccionEditando) {
-                console.log('✏️ [GUARDAR] Editando transacción ID:', this.transaccionEditando);
-                this.modulo.editarTransaccion(this.transaccionEditando, datos);
-                this.mostrarNotificacion('✅ Transacción actualizada', 'success');
-            } else {
-                console.log('➕ [GUARDAR] Creando nueva transacción');
-                this.modulo.agregarTransaccion(datos);
-                this.mostrarNotificacion('✅ Transacción guardada', 'success');
-            }
-
-            // ✅ Cerrar modal y actualizar UI
-            this.cerrarModalTransaccion();
             
-            // ✅ IMPORTANTE: Esperar un poco antes de recargar
+            console.log('💾 Guardando transacción...');
+            
+            // Guardar en el módulo
+            const resultado = window.flujoCaja.agregarTransaccion(transaccion);
+            
+            console.log('✅ GUARDADO EXITOSO');
+            console.log('📋 Resultado:', resultado);
+            
+            // ✅ Guardar descripción en historial
+            if (descripcion.trim()) {
+                this.historial.agregar(descripcion, tipo);
+            }
+            
+            // Cerrar modal
+            const modal = document.getElementById('modalTransaccion');
+            if (modal) {
+                modal.style.display = 'none';
+                modal.classList.remove('show');
+                
+                const backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) backdrop.remove();
+                
+                document.body.classList.remove('modal-open');
+                document.body.style.overflow = '';
+            }
+            
+            // Limpiar formulario
+            form.reset();
+            document.getElementById('inputFecha').valueAsDate = new Date();
+            
+            // Recargar datos
+            console.log('🔄 Recargando interfaz...');
             setTimeout(() => {
-                console.log('🔄 [GUARDAR] Recargando interfaz...');
-                this.cargarBalance();
-                this.cargarTransacciones();
-                console.log('✅ [GUARDAR] Proceso completado');
+                if (window.flujoCajaUI) {
+                    window.flujoCajaUI.cargarBalance();
+                    window.flujoCajaUI.cargarTransacciones();
+                    console.log('✅ Interfaz actualizada');
+                }
             }, 100);
             
+            // Notificación
+            this.mostrarNotificacion('✅ Transacción guardada exitosamente', 'success');
+            
+            console.log('\n🎉 ═══════════════════════════════════════');
+            console.log('🎉 PROCESO COMPLETADO');
+            console.log('🎉 ═══════════════════════════════════════\n');
+            
         } catch (error) {
-            console.error('❌ [GUARDAR] Error:', error);
+            console.error('❌ ERROR:', error);
             alert('❌ Error al guardar: ' + error.message);
         }
+        
+        return false;
     }
 
     editarTransaccion(id) {
