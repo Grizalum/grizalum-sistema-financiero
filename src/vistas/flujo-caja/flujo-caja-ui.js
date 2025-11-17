@@ -96,11 +96,11 @@ this.historial.setEmpresa(empresaId);
             const formLimpio = form.cloneNode(true);
             form.parentNode.replaceChild(formLimpio, form);
             
-            // ✅ Agregar listener ÚNICO
+            // ✅ Agregar listener ÚNICO con fase de CAPTURE
             formLimpio.addEventListener('submit', (e) => {
                 console.log('📝 [SUBMIT] Evento capturado por FlujoCajaUI');
                 this.guardarTransaccion(e);
-            });
+            }, true); // ⭐ TRUE = Fase de CAPTURE (máxima prioridad)
             
             console.log('✅ Evento submit configurado correctamente');
         }
