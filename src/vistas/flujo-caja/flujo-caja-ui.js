@@ -2,7 +2,7 @@
  * ═══════════════════════════════════════════════════════════════════
  * GRIZALUM - FLUJO DE CAJA - INTERFAZ DE USUARIO
  * Maneja toda la interacción con el DOM
- * VERSION CORREGIDA - Problema de submit duplicado solucionado
+ * VERSION 5.0 - Multi-empresa mejorado
  * ═══════════════════════════════════════════════════════════════════
  */
 
@@ -11,6 +11,7 @@ class FlujoCajaUI {
         this.modulo = null;
         this.transaccionEditando = null; 
         this.historial = new HistorialDescripciones();
+        this.empresaActual = null;
         
         this._inicializar();
     }
@@ -18,20 +19,16 @@ class FlujoCajaUI {
     async _inicializar() {
         console.log('🎨 Inicializando interfaz Flujo de Caja...');
         
+        // ✅ OBTENER EMPRESA ACTUAL PRIMERO
+        this.empresaActual = this._obtenerEmpresaActual();
+        console.log('🏢 Empresa actual detectada:', this.empresaActual);
+        
         // Esperar a que el módulo esté listo
         await this._esperarModulo();
 
-       // ✅ CORREGIDO: Configurar historial con empresa actual
-const info = this.modulo.obtenerInfo();
-
-// Intentar obtener el ID de empresa de múltiples fuentes
-let empresaId = info.empresaActual 
-    || (typeof gestorDatos !== 'undefined' && gestorDatos.obtenerEmpresaActual?.())
-    || (typeof window.empresaActual !== 'undefined' && window.empresaActual)
-    || 'default';
-
-console.log('🏢 Configurando historial para empresa:', empresaId);
-this.historial.setEmpresa(empresaId);
+        // ✅ Configurar historial con empresa actual
+        this.historial.setEmpresa(this.empresaActual);
+        console.log('✅ Historial configurado para empresa:', this.empresaActual);
         
         // Esperar a que el DOM esté completamente listo
         await new Promise(resolve => setTimeout(resolve, 300));
@@ -52,12 +49,49 @@ this.historial.setEmpresa(empresaId);
         console.log('✅ Interfaz Flujo de Caja lista');
     }
 
+    _obtenerEmpresaActual() {
+        // Intentar múltiples fuentes para obtener empresa actual
+        let empresaId = null;
+        
+        // 1. Desde gestorEmpresas (PRIORIDAD)
+        if (window.gestorEmpresas?.estado?.empresaActual) {
+            empresaId = window.gestorEmpresas.estado.empresaActual;
+            console.log('✅ Empresa desde gestorEmpresas:', empresaId);
+        }
+        // 2. Desde localStorage
+        else if (localStorage.getItem('empresaActual')) {
+            empresaId = localStorage.getItem('empresaActual');
+            console.log('✅ Empresa desde localStorage:', empresaId);
+        }
+        // 3. Desde gestorDatos (fallback)
+        else if (typeof gestorDatos !== 'undefined' && gestorDatos.obtenerEmpresaActual) {
+            empresaId = gestorDatos.obtenerEmpresaActual();
+            console.log('✅ Empresa desde gestorDatos:', empresaId);
+        }
+        // 4. Default
+        else {
+            empresaId = 'default';
+            console.warn('⚠️ No se detectó empresa, usando default');
+        }
+        
+        return empresaId;
+    }
+
     async _esperarModulo() {
         return new Promise((resolve) => {
             const verificar = () => {
                 if (window.flujoCaja) {
                     this.modulo = window.flujoCaja;
-                    console.log('✅ Módulo conectado a la UI');
+                    
+                    // ✅ VERIFICAR que el módulo tenga la empresa correcta
+                    const infoModulo = this.modulo.obtenerInfo();
+                    if (infoModulo.empresaActual !== this.empresaActual) {
+                        console.warn('⚠️ Módulo tiene empresa diferente. Esperando sincronización...');
+                        setTimeout(verificar, 200);
+                        return;
+                    }
+                    
+                    console.log('✅ Módulo conectado a la UI con empresa:', infoModulo.empresaActual);
                     resolve();
                 } else {
                     setTimeout(verificar, 200);
@@ -89,20 +123,26 @@ this.historial.setEmpresa(empresaId);
             btnExportar.addEventListener('click', () => this.exportarDatos());
         }
 
-        // ⭐ CRÍTICO: Form transacción - SIN DUPLICADOS
+        // ⭐ CRÍTICO: Form transacción con preventDefault TRIPLE
         const form = document.getElementById('formTransaccion');
         if (form) {
-            // ✅ Limpiar eventos previos
+            // ✅ Remover listeners duplicados
             const formLimpio = form.cloneNode(true);
             form.parentNode.replaceChild(formLimpio, form);
             
-            // ✅ Agregar listener ÚNICO con fase de CAPTURE
+            // ✅ Agregar listener ÚNICO
             formLimpio.addEventListener('submit', (e) => {
-                console.log('📝 [SUBMIT] Evento capturado por FlujoCajaUI');
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                
+                console.log('📝 [SUBMIT] Evento capturado');
                 this.guardarTransaccion(e);
-            }, true); // ⭐⭐⭐ ESTE TRUE ES CRÍTICO ⭐⭐⭐
+                
+                return false;
+            }, true);
             
-            console.log('✅ Evento submit configurado correctamente');
+            console.log('✅ Evento submit configurado');
         }
 
         // Cambio de tipo (ingreso/gasto)
@@ -177,45 +217,83 @@ this.historial.setEmpresa(empresaId);
             this.cargarTransacciones();
         });
 
-        // ✅ Listener para cambio de empresa
+        // ✅ MEJORADO: Listener para cambio de empresa
         document.addEventListener('grizalumCompanyChanged', (e) => {
-            console.log('🔄 [UI] Empresa cambiada detectada:', e.detail);
-             // ✅ CORREGIDO: Actualizar historial a nueva empresa
-      const nuevaEmpresaId = e.detail?.empresaId 
-         || e.detail?.empresa 
-         || (typeof gestorDatos !== 'undefined' && gestorDatos.obtenerEmpresaActual?.())
-         || 'default';
-
-      console.log('🔄 Historial cambiando a empresa:', nuevaEmpresaId);
-      this.historial.setEmpresa(nuevaEmpresaId);
+            console.log('\n🔄 ═══════════════════════════════════════');
+            console.log('🔄 CAMBIO DE EMPRESA DETECTADO');
+            console.log('🔄 ═══════════════════════════════════════');
+            
+            const nuevaEmpresa = e.detail?.empresaId 
+                || e.detail?.empresa 
+                || this._obtenerEmpresaActual();
+            
+            console.log('📋 Empresa anterior:', this.empresaActual);
+            console.log('📋 Empresa nueva:', nuevaEmpresa);
+            
+            if (nuevaEmpresa === this.empresaActual) {
+                console.log('⚠️ Es la misma empresa, ignorando...');
+                return;
+            }
+            
+            // Actualizar empresa actual
+            this.empresaActual = nuevaEmpresa;
+            
+            // Actualizar historial
+            this.historial.setEmpresa(nuevaEmpresa);
+            console.log('✅ Historial actualizado a:', nuevaEmpresa);
             
             // Limpiar UI inmediatamente
             const listaTransacciones = document.getElementById('listaTransacciones');
             if (listaTransacciones) {
-                listaTransacciones.innerHTML = '<div class="cargando" style="text-align: center; padding: 2rem; color: var(--texto-terciario);">🔄 Cargando datos de la nueva empresa...</div>';
+                listaTransacciones.innerHTML = '<div class="cargando" style="text-align: center; padding: 2rem; color: var(--texto-terciario);">🔄 Cargando datos de ' + nuevaEmpresa + '...</div>';
             }
             
-            // Esperar a que el módulo cargue los datos
-            setTimeout(() => {
-                if (this.modulo && this.modulo.inicializado) {
-                    console.log('🎨 [UI] Actualizando interfaz...');
-                    this.cargarBalance();
-                    this.cargarTransacciones();
-                    this.cargarNivel();
-                    this.cargarCategorias();
-                    console.log('✅ [UI] Interfaz actualizada');
-                } else {
-                    console.warn('⚠️ [UI] Módulo no inicializado, reintentando...');
+            // ✅ Limpiar balance
+            const balanceTotal = document.getElementById('balanceTotal');
+            const totalIngresos = document.getElementById('totalIngresos');
+            const totalGastos = document.getElementById('totalGastos');
+            
+            if (balanceTotal) balanceTotal.textContent = 'S/. 0.00';
+            if (totalIngresos) totalIngresos.textContent = 'S/. 0.00';
+            if (totalGastos) totalGastos.textContent = 'S/. 0.00';
+            
+            // ✅ Esperar a que el módulo se actualice ANTES de recargar
+            let intentos = 0;
+            const esperarModulo = setInterval(() => {
+                intentos++;
+                
+                const infoModulo = this.modulo?.obtenerInfo();
+                const empresaModulo = infoModulo?.empresaActual;
+                
+                console.log(`🔍 Intento ${intentos}: Módulo empresa = ${empresaModulo}, Esperando = ${nuevaEmpresa}`);
+                
+                if (empresaModulo === nuevaEmpresa) {
+                    clearInterval(esperarModulo);
+                    console.log('✅ Módulo sincronizado, recargando UI...');
+                    
                     setTimeout(() => {
-                        if (this.modulo) {
-                            this.cargarBalance();
-                            this.cargarTransacciones();
-                            this.cargarNivel();
-                            this.cargarCategorias();
-                        }
-                    }, 300);
+                        this.cargarBalance();
+                        this.cargarTransacciones();
+                        this.cargarNivel();
+                        this.cargarCategorias();
+                        console.log('✅ UI actualizada para empresa:', nuevaEmpresa);
+                    }, 100);
+                    
+                } else if (intentos > 20) {
+                    clearInterval(esperarModulo);
+                    console.error('❌ Timeout esperando sincronización del módulo');
+                    
+                    // Forzar recarga de todos modos
+                    setTimeout(() => {
+                        this.cargarBalance();
+                        this.cargarTransacciones();
+                        this.cargarNivel();
+                        this.cargarCategorias();
+                    }, 100);
                 }
-            }, 200);
+            }, 150);
+            
+            console.log('🔄 ═══════════════════════════════════════\n');
         });
 
         // ✅ Listener para actualización del flujo de caja
@@ -322,6 +400,13 @@ this.historial.setEmpresa(empresaId);
     }
 
     cargarBalance() {
+        // ✅ VERIFICAR empresa antes de cargar
+        const infoModulo = this.modulo.obtenerInfo();
+        if (infoModulo.empresaActual !== this.empresaActual) {
+            console.warn('⚠️ cargarBalance: Empresa desincronizada, esperando...');
+            return;
+        }
+        
         const balance = this.modulo.calcularBalance();
         
         const balanceTotal = document.getElementById('balanceTotal');
@@ -344,6 +429,13 @@ this.historial.setEmpresa(empresaId);
     }
 
     cargarTransacciones(filtros = {}) {
+        // ✅ VERIFICAR empresa antes de cargar
+        const infoModulo = this.modulo.obtenerInfo();
+        if (infoModulo.empresaActual !== this.empresaActual) {
+            console.warn('⚠️ cargarTransacciones: Empresa desincronizada, esperando...');
+            return;
+        }
+        
         const transacciones = this.modulo.obtenerTransacciones(filtros);
         const lista = document.getElementById('listaTransacciones');
         const sinDatos = document.getElementById('sinTransacciones');
@@ -392,6 +484,8 @@ this.historial.setEmpresa(empresaId);
                 </div>
             `;
         }).join('');
+        
+        console.log(`✅ ${transacciones.length} transacciones cargadas para ${this.empresaActual}`);
     }
 
     abrirModalTransaccion(modoEdicion = false) {
@@ -442,7 +536,7 @@ this.historial.setEmpresa(empresaId);
             };
             document.addEventListener('keydown', cerrarConESC);
             
-            console.log('📋 Modal abierto - Modo:', modoEdicion ? 'EDICIÓN' : 'NUEVA', 'ID:', this.transaccionEditando);
+            console.log('📋 Modal abierto - Modo:', modoEdicion ? 'EDICIÓN' : 'NUEVA');
         }
     }
     
@@ -467,15 +561,16 @@ this.historial.setEmpresa(empresaId);
     
     guardarTransaccion(event) {
         console.log('\n🎯 ═══════════════════════════════════════');
-        console.log('🎯 SUBMIT INTERCEPTADO');
+        console.log('🎯 GUARDANDO TRANSACCIÓN');
+        console.log('🎯 Empresa actual:', this.empresaActual);
         console.log('🎯 ═══════════════════════════════════════\n');
         
         // ⭐ PREVENIR RECARGA (TRIPLE SEGURO)
-        event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
-        
-        console.log('✅ Recarga prevenida');
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+        }
         
         try {
             // Obtener datos del formulario
@@ -486,23 +581,24 @@ this.historial.setEmpresa(empresaId);
             const descripcion = document.getElementById('inputDescripcion').value;
             const fecha = document.getElementById('inputFecha').value;
             
-            console.log('📦 Datos capturados:');
-            console.log('   - Tipo:', tipo);
-            console.log('   - Monto:', monto);
-            console.log('   - Categoría:', categoria);
-            console.log('   - Descripción:', descripcion);
-            console.log('   - Fecha:', fecha);
+            console.log('📦 Datos:', {tipo, monto, categoria, descripcion, fecha});
             
             // Validaciones
             if (!tipo || !monto || !categoria || !fecha) {
-                console.error('❌ Faltan datos obligatorios');
                 alert('⚠️ Por favor completa todos los campos obligatorios');
                 return false;
             }
             
             if (isNaN(monto) || monto <= 0) {
-                console.error('❌ Monto inválido');
                 alert('⚠️ El monto debe ser un número mayor a 0');
+                return false;
+            }
+            
+            // ✅ VERIFICAR empresa ANTES de guardar
+            const infoModulo = this.modulo.obtenerInfo();
+            if (infoModulo.empresaActual !== this.empresaActual) {
+                console.error('❌ ERROR: Empresa desincronizada');
+                alert('❌ Error: La empresa cambió durante la operación. Recarga la página.');
                 return false;
             }
             
@@ -517,13 +613,14 @@ this.historial.setEmpresa(empresaId);
                 notas: document.getElementById('inputNotas')?.value || ''
             };
             
-            console.log('💾 Guardando transacción...');
+            console.log('💾 Guardando para empresa:', this.empresaActual);
             
             // Guardar en el módulo
-            const resultado = window.flujoCaja.agregarTransaccion(transaccion);
+            const resultado = this.modulo.agregarTransaccion(transaccion);
             
             console.log('✅ GUARDADO EXITOSO');
-            console.log('📋 Resultado:', resultado);
+            console.log('📋 ID:', resultado.id);
+            console.log('🏢 EmpresaId:', resultado.empresaId);
             
             // ✅ Guardar descripción en historial
             if (descripcion.trim()) {
@@ -531,37 +628,21 @@ this.historial.setEmpresa(empresaId);
             }
             
             // Cerrar modal
-            const modal = document.getElementById('modalTransaccion');
-            if (modal) {
-                modal.style.display = 'none';
-                modal.classList.remove('show');
-                
-                const backdrop = document.querySelector('.modal-backdrop');
-                if (backdrop) backdrop.remove();
-                
-                document.body.classList.remove('modal-open');
-                document.body.style.overflow = '';
-            }
+            this.cerrarModalTransaccion();
             
             // Limpiar formulario
             form.reset();
             document.getElementById('inputFecha').valueAsDate = new Date();
             
             // Recargar datos
-            console.log('🔄 Recargando interfaz...');
             setTimeout(() => {
-                if (window.flujoCajaUI) {
-                    window.flujoCajaUI.cargarBalance();
-                    window.flujoCajaUI.cargarTransacciones();
-                    console.log('✅ Interfaz actualizada');
-                }
+                this.cargarBalance();
+                this.cargarTransacciones();
             }, 100);
             
             // Notificación
-            this.mostrarNotificacion('✅ Transacción guardada exitosamente', 'success');
+            this.mostrarNotificacion('✅ Transacción guardada en ' + this.empresaActual, 'success');
             
-            console.log('\n🎉 ═══════════════════════════════════════');
-            console.log('🎉 PROCESO COMPLETADO');
             console.log('🎉 ═══════════════════════════════════════\n');
             
         } catch (error) {
@@ -573,19 +654,15 @@ this.historial.setEmpresa(empresaId);
     }
 
     editarTransaccion(id) {
-        console.log('✏️ editarTransaccion llamado con ID:', id);
+        console.log('✏️ editarTransaccion:', id);
         
         const transaccion = this.modulo.obtenerTransacciones().find(t => t.id === id);
         if (!transaccion) {
-            console.error('❌ Transacción no encontrada:', id);
+            console.error('❌ Transacción no encontrada');
             return;
         }
 
-        console.log('📄 Transacción encontrada:', transaccion);
-
-        // ✅ Establecer el ID ANTES de rellenar el formulario
         this.transaccionEditando = id;
-        console.log('✅ transaccionEditando establecido:', this.transaccionEditando);
 
         // Rellenar formulario
         const radioTipo = document.querySelector(`input[name="tipo"][value="${transaccion.tipo}"]`);
@@ -594,24 +671,14 @@ this.historial.setEmpresa(empresaId);
             this.actualizarCategoriasSegunTipo();
         }
 
-        const inputMonto = document.getElementById('inputMonto');
-        const selectCategoria = document.getElementById('selectCategoria');
-        const inputDescripcion = document.getElementById('inputDescripcion');
-        const inputFecha = document.getElementById('inputFecha');
-        const selectMetodo = document.getElementById('selectMetodo');
-        const inputNotas = document.getElementById('inputNotas');
-
-        if (inputMonto) inputMonto.value = transaccion.monto;
-        if (selectCategoria) selectCategoria.value = transaccion.categoria;
-        if (inputDescripcion) inputDescripcion.value = transaccion.descripcion;
-        if (inputFecha) inputFecha.value = transaccion.fecha.split('T')[0];
-        if (selectMetodo) selectMetodo.value = transaccion.metodoPago || 'efectivo';
-        if (inputNotas) inputNotas.value = transaccion.notas || '';
+        document.getElementById('inputMonto').value = transaccion.monto;
+        document.getElementById('selectCategoria').value = transaccion.categoria;
+        document.getElementById('inputDescripcion').value = transaccion.descripcion;
+        document.getElementById('inputFecha').value = transaccion.fecha.split('T')[0];
+        document.getElementById('selectMetodo').value = transaccion.metodoPago || 'efectivo';
+        document.getElementById('inputNotas').value = transaccion.notas || '';
         
-        // ✅ Abrir en modo edición
         this.abrirModalTransaccion(true);
-        
-        console.log('✅ Modal abierto para edición - ID guardado:', this.transaccionEditando);
     }
 
     eliminarTransaccion(id) {
@@ -651,7 +718,7 @@ this.historial.setEmpresa(empresaId);
     }
 
     async exportarDatos() {
-        console.log('📊 Exportando datos...');
+        console.log('📊 Exportando datos de', this.empresaActual);
         
         try {
             if (typeof ExcelJS === 'undefined') {
@@ -667,49 +734,17 @@ this.historial.setEmpresa(empresaId);
             const transacciones = this.modulo.obtenerTransacciones();
             const balance = this.modulo.calcularBalance();
 
-            let nivel = 0;
-            let empresaId = 'default';
-            let planNombre = 'Individual';
-
-            try {
-                const info = this.modulo.obtenerInfo();
-                empresaId = info?.empresaActual || 'default';
-                
-                if (window.FlujoCajaPlanes) {
-                    const planActual = window.FlujoCajaPlanes.obtenerPlanActual();
-                    planNombre = planActual.nombre;
-                    
-                    const mapaPlanNivel = {
-                        'individual': 0,
-                        'profesional': 30,
-                        'empresarial': 50,
-                        'corporativo': 70
-                    };
-                    
-                    nivel = mapaPlanNivel[planActual.id] || 0;
-                } else if (info?.nivel?.score !== undefined) {
-                    nivel = parseInt(info.nivel.score) || 0;
-                    
-                    if (nivel >= 70) planNombre = 'Corporativo';
-                    else if (nivel >= 50) planNombre = 'Empresarial';
-                    else if (nivel >= 30) planNombre = 'Profesional';
-                }
-                
-            } catch (e) {
-                console.error('❌ Error leyendo nivel:', e);
-            }
-
             const datosExportar = {
-                empresa: empresaId,
+                empresa: this.empresaActual,
                 balance: balance,
                 transacciones: transacciones,
-                nivel: nivel
+                nivel: 0
             };
 
             const exportador = new ExportadorExcelProfesional();
             await exportador.exportar(datosExportar);
             
-            this.mostrarNotificacion(`✅ Excel exportado (${planNombre})`, 'success');
+            this.mostrarNotificacion('✅ Excel exportado', 'success');
             
         } catch (error) {
             console.error('❌ Error:', error);
@@ -760,12 +795,12 @@ this.historial.setEmpresa(empresaId);
         const sugerencias = this.historial.obtener(tipo);
         
         if (sugerencias.length === 0) {
-            contenedor.innerHTML = '<div class="sugerencias-vacio">Sin historial aún. Las descripciones que agregues aparecerán aquí.</div>';
+            contenedor.innerHTML = '<div class="sugerencias-vacio">Sin historial aún.</div>';
         } else {
             contenedor.innerHTML = sugerencias.map(desc => `
                 <div class="sugerencia-item" data-descripcion="${desc}">
                     <span class="sugerencia-texto">${desc}</span>
-                    <button class="sugerencia-eliminar" data-descripcion="${desc}" title="Eliminar">
+                    <button class="sugerencia-eliminar" data-descripcion="${desc}">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
@@ -774,8 +809,7 @@ this.historial.setEmpresa(empresaId);
             contenedor.querySelectorAll('.sugerencia-item').forEach(item => {
                 item.addEventListener('click', (e) => {
                     if (!e.target.closest('.sugerencia-eliminar')) {
-                        const descripcion = item.dataset.descripcion;
-                        inputDescripcion.value = descripcion;
+                        inputDescripcion.value = item.dataset.descripcion;
                         this.ocultarSugerencias();
                     }
                 });
@@ -784,8 +818,7 @@ this.historial.setEmpresa(empresaId);
             contenedor.querySelectorAll('.sugerencia-eliminar').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    const descripcion = btn.dataset.descripcion;
-                    this.eliminarSugerencia(descripcion, tipo);
+                    this.eliminarSugerencia(btn.dataset.descripcion, tipo);
                 });
             });
         }
@@ -807,7 +840,7 @@ this.historial.setEmpresa(empresaId);
             contenedor.innerHTML = sugerencias.map(desc => `
                 <div class="sugerencia-item" data-descripcion="${desc}">
                     <span class="sugerencia-texto">${desc}</span>
-                    <button class="sugerencia-eliminar" data-descripcion="${desc}" title="Eliminar">
+                    <button class="sugerencia-eliminar" data-descripcion="${desc}">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
@@ -816,8 +849,7 @@ this.historial.setEmpresa(empresaId);
             contenedor.querySelectorAll('.sugerencia-item').forEach(item => {
                 item.addEventListener('click', (e) => {
                     if (!e.target.closest('.sugerencia-eliminar')) {
-                        const descripcion = item.dataset.descripcion;
-                        document.getElementById('inputDescripcion').value = descripcion;
+                        document.getElementById('inputDescripcion').value = item.dataset.descripcion;
                         this.ocultarSugerencias();
                     }
                 });
@@ -826,8 +858,7 @@ this.historial.setEmpresa(empresaId);
             contenedor.querySelectorAll('.sugerencia-eliminar').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    const descripcion = btn.dataset.descripcion;
-                    this.eliminarSugerencia(descripcion, tipo);
+                    this.eliminarSugerencia(btn.dataset.descripcion, tipo);
                 });
             });
         }
@@ -837,22 +868,20 @@ this.historial.setEmpresa(empresaId);
 
     ocultarSugerencias() {
         const contenedor = document.getElementById('sugerenciasDescripcion');
-        if (contenedor) {
-            contenedor.style.display = 'none';
-        }
+        if (contenedor) contenedor.style.display = 'none';
     }
 
     eliminarSugerencia(descripcion, tipo) {
         if (confirm(`¿Eliminar "${descripcion}" del historial?`)) {
             this.historial.eliminar(descripcion, tipo);
             this.mostrarSugerencias();
-            this.mostrarNotificacion(`🗑️ "${descripcion}" eliminado`, 'success');
+            this.mostrarNotificacion('🗑️ Eliminado', 'success');
         }
     }
 }
 
 // ═══════════════════════════════════════════════════════════════
-// EXPORTAR CLASE Y FUNCIONES GLOBALES
+// EXPORTAR E INICIALIZAR
 // ═══════════════════════════════════════════════════════════════
 
 window.FlujoCajaUI = FlujoCajaUI;
@@ -866,17 +895,8 @@ function inicializarFlujoCajaUI() {
         flujoCajaUIInstancia = new FlujoCajaUI();
         window.flujoCajaUI = flujoCajaUIInstancia;
     }
-    
-    setTimeout(() => {
-        if (window.flujoCajaUI?.modulo) {
-            console.log('📊 Cargando datos iniciales...');
-            window.flujoCajaUI.cargarBalance();
-            window.flujoCajaUI.cargarTransacciones();
-        }
-    }, 500);
 }
 
-// Listeners de inicialización
 window.addEventListener('flujoCajaVisible', inicializarFlujoCajaUI);
 
 if (document.readyState === 'complete') {
@@ -885,23 +905,7 @@ if (document.readyState === 'complete') {
     window.addEventListener('load', inicializarFlujoCajaUI);
 }
 
-// Funciones globales para compatibilidad con HTML
-window.cargarBalance = function() {
-    if (window.flujoCajaUI) window.flujoCajaUI.cargarBalance();
-};
-
-window.cargarTransacciones = function(filtros = {}) {
-    if (window.flujoCajaUI) window.flujoCajaUI.cargarTransacciones(filtros);
-};
-
-window.cargarNivel = function() {
-    if (window.flujoCajaUI) window.flujoCajaUI.cargarNivel();
-};
-
-window.cargarCategorias = function() {
-    if (window.flujoCajaUI) window.flujoCajaUI.cargarCategorias();
-};
-
+// Funciones globales
 window.abrirModalTransaccion = function() {
     if (window.flujoCajaUI) window.flujoCajaUI.abrirModalTransaccion();
 };
@@ -914,57 +918,4 @@ window.eliminarTransaccion = function(id) {
     if (window.flujoCajaUI) window.flujoCajaUI.eliminarTransaccion(id);
 };
 
-window.recargarFlujoCaja = function() {
-    console.log('🔄 [recargarFlujoCaja] Iniciando recarga completa...');
-    
-    if (!window.flujoCajaUI) {
-        console.error('❌ [recargarFlujoCaja] flujoCajaUI no existe');
-        return;
-    }
-    
-    if (!window.flujoCajaUI.modulo) {
-        console.error('❌ [recargarFlujoCaja] Módulo no conectado');
-        return;
-    }
-    
-    try {
-        console.log('📊 [recargarFlujoCaja] Cargando balance...');
-        window.flujoCajaUI.cargarBalance();
-        
-        console.log('📋 [recargarFlujoCaja] Cargando transacciones...');
-        window.flujoCajaUI.cargarTransacciones();
-        
-        console.log('✅ [recargarFlujoCaja] Recarga completada');
-    } catch (error) {
-        console.error('❌ [recargarFlujoCaja] Error:', error);
-    }
-};
-
-// Listener para actualización automática
-document.addEventListener('grizalumTransaccionAgregada', () => {
-    console.log('📝 Nueva transacción detectada, actualizando...');
-    if (window.flujoCajaUI?.modulo) {
-        window.flujoCajaUI.cargarBalance();
-        window.flujoCajaUI.cargarTransacciones();
-    }
-});
-
-// Monitor de recarga automática
-setInterval(() => {
-    const app = document.getElementById('flujoCajaApp');
-    if (app && window.getComputedStyle(app).display !== 'none') {
-        if (window.flujoCajaUI && window.flujoCajaUI.modulo) {
-            const transaccionesModulo = window.flujoCajaUI.modulo.obtenerTransacciones();
-            const transaccionesDOM = document.querySelectorAll('.transaccion-card');
-            
-            if (transaccionesModulo.length > 0 && transaccionesDOM.length === 0) {
-                console.log('🔄 Recargando Flujo de Caja (DOM vacío)...');
-                window.flujoCajaUI.cargarBalance();
-                window.flujoCajaUI.cargarTransacciones();
-            }
-        }
-    }
-}, 1000);
-
-console.log('✅ [flujo-caja-ui.js CORREGIDO v4.0 - SIN DUPLICADOS] Módulo cargado');
-console.log('🎨 UI de Flujo de Caja lista para inicializar');
+console.log('✅ [flujo-caja-ui.js v5.0 MULTI-EMPRESA] Módulo cargado');
