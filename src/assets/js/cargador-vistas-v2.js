@@ -728,7 +728,6 @@ window.recargarFlujoCaja = function() {
 // ═══════════════════════════════════════════════════════════════════
 // PASO 5: INICIALIZACIÓN
 // ═══════════════════════════════════════════════════════════════════
-
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 Inicializando sistema de navegación v2.2...');
     
@@ -737,7 +736,25 @@ document.addEventListener('DOMContentLoaded', () => {
             registrarModulos();
             
             setTimeout(() => {
-                cambiarSeccion('dashboard');
+                // ⭐ NUEVO: Cargar última vista de la empresa actual
+                let vistaInicial = 'dashboard';
+                
+                try {
+                    const empresaId = window.gestorEmpresas?.estado?.empresaActual;
+                    if (empresaId && empresaId !== 'null' && empresaId !== 'undefined') {
+                        const key = `grizalum_ultima_vista_${empresaId}`;
+                        const ultimaVista = localStorage.getItem(key);
+                        
+                        if (ultimaVista) {
+                            vistaInicial = ultimaVista;
+                            console.log(`📍 Cargando última vista de ${empresaId}: ${ultimaVista}`);
+                        }
+                    }
+                } catch (error) {
+                    console.error('❌ Error cargando última vista:', error);
+                }
+                
+                cambiarSeccion(vistaInicial);
             }, 500);
         } else {
             setTimeout(verificar, 100);
@@ -748,7 +765,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 console.log('✅ Cargador de vistas v2.2 (PANEL UI FIXED) inicializado');
-
 // ═══════════════════════════════════════════════════════════════════
 // MODO DESARROLLO: Forzar recarga sin caché
 // ═══════════════════════════════════════════════════════════════════
