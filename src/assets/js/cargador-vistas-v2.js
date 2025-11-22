@@ -666,34 +666,6 @@ async function cambiarSeccion(seccionId, event) {
     }
 }
 
-window.cambiarSeccion = cambiarSeccion;
-    if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-    }
-    
-    console.log(`\n🔄 Cambiando a sección: ${seccionId}`);
-    
-    // Remover active de todos los links
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.classList.remove('active');
-    });
-    
-    // Activar link actual
-    const linkActual = document.querySelector(`[data-section="${seccionId}"]`);
-    if (linkActual) {
-        linkActual.classList.add('active');
-    }
-    
-    if (event && event.currentTarget) {
-        event.currentTarget.classList.add('active');
-    }
-    
-    // Activar módulo
-    await window.grizalumModulos.activar(seccionId);
-}
-
-window.cambiarSeccion = cambiarSeccion;
 
 // ═══════════════════════════════════════════════════════════════════
 // PASO 4: FUNCIÓN DE RECARGA GLOBAL
