@@ -2,14 +2,14 @@
  * ═══════════════════════════════════════════════════════════════════
  * GRIZALUM - MÓDULO FLUJO DE CAJA
  * Sistema adaptativo de gestión de ingresos y gastos
- * VERSIÓN CORREGIDA: Fix registrarUso inexistente
+ * VERSIÓN CORREGIDA: Fix registrarUso inexistente + sintaxis
  * ═══════════════════════════════════════════════════════════════════
  */
 
 class FlujoCaja {
     constructor() {
         this.config = {
-            version: '1.0.2', // 🔧 Incrementado - Fix registrarUso
+            version: '1.0.3', // 🔧 Incrementado - Fix sintaxis
             componente: 'FlujoCaja',
             debug: true
         };
@@ -163,7 +163,7 @@ class FlujoCaja {
         }
     }
 
-_configurarEventos() {
+    _configurarEventos() {
         // Escuchar cambio de empresa
         document.addEventListener('grizalumCompanyChanged', (e) => {
             this._log('info', '🔄 Empresa cambiada, recargando...');
@@ -202,24 +202,24 @@ _configurarEventos() {
                         transacciones: this.transacciones.length,
                         balance: this.calcularBalance()
                     });
-                         // ⭐ NUEVO: Cambiar a la última vista de la nueva empresa
-                 setTimeout(() => {
-                   try {
-                       const nuevaEmpresaId = e.detail?.empresaId || this.empresaActual;
-                       const key = `grizalum_ultima_vista_${nuevaEmpresaId}`;
-                       const ultimaVista = localStorage.getItem(key);
-                    
-                       if (ultimaVista && window.cambiarSeccion) {
-                           console.log(`📍 Cambiando a última vista de ${nuevaEmpresaId}: ${ultimaVista}`);
-                           window.cambiarSeccion(ultimaVista);
-                      }
-                      } catch (error) {
-                        console.error('❌ Error cambiando vista:', error);
-                     }
-                    }, 1000);
-                   });  // ← Este cierra el addEventListener     
                 });
             });
+            
+            // ⭐ NUEVO: Cambiar a la última vista de la nueva empresa
+            setTimeout(() => {
+                try {
+                    const nuevaEmpresaId = e.detail?.empresaId || this.empresaActual;
+                    const key = `grizalum_ultima_vista_${nuevaEmpresaId}`;
+                    const ultimaVista = localStorage.getItem(key);
+                    
+                    if (ultimaVista && window.cambiarSeccion) {
+                        console.log(`📍 Cambiando a última vista de ${nuevaEmpresaId}: ${ultimaVista}`);
+                        window.cambiarSeccion(ultimaVista);
+                    }
+                } catch (error) {
+                    console.error('❌ Error cambiando vista:', error);
+                }
+            }, 1000);
         });
         
         // Escuchar cambio de nivel
@@ -396,32 +396,33 @@ _configurarEventos() {
     }
 
     calcularPorCategoria(tipo = null) {
-    const transacciones = tipo 
-        ? this.transacciones.filter(t => t.tipo === tipo)
-        : this.transacciones;
+        const transacciones = tipo 
+            ? this.transacciones.filter(t => t.tipo === tipo)
+            : this.transacciones;
 
-    const porCategoria = {};
+        const porCategoria = {};
 
-    transacciones.forEach(t => {
-        // ✅ NORMALIZAR: convertir a minúsculas para agrupar
-        const categoriaNormalizada = t.categoria.toLowerCase();
-        
-        if (!porCategoria[categoriaNormalizada]) {
-            porCategoria[categoriaNormalizada] = {
-                categoria: t.categoria, // Mantener el nombre original (primera ocurrencia)
-                monto: 0,
-                cantidad: 0,
-                transacciones: []
-            };
-        }
+        transacciones.forEach(t => {
+            // ✅ NORMALIZAR: convertir a minúsculas para agrupar
+            const categoriaNormalizada = t.categoria.toLowerCase();
+            
+            if (!porCategoria[categoriaNormalizada]) {
+                porCategoria[categoriaNormalizada] = {
+                    categoria: t.categoria, // Mantener el nombre original (primera ocurrencia)
+                    monto: 0,
+                    cantidad: 0,
+                    transacciones: []
+                };
+            }
 
-        porCategoria[categoriaNormalizada].monto += t.monto;
-        porCategoria[categoriaNormalizada].cantidad++;
-        porCategoria[categoriaNormalizada].transacciones.push(t);
-    });
+            porCategoria[categoriaNormalizada].monto += t.monto;
+            porCategoria[categoriaNormalizada].cantidad++;
+            porCategoria[categoriaNormalizada].transacciones.push(t);
+        });
 
-    return Object.values(porCategoria).sort((a, b) => b.monto - a.monto);
-}
+        return Object.values(porCategoria).sort((a, b) => b.monto - a.monto);
+    }
+
     calcularPorMes(meses = 6) {
         const ahora = new Date();
         const resultado = [];
@@ -498,7 +499,7 @@ _configurarEventos() {
             console.warn(`${prefijo}`, mensaje, datos);
         } else {
             console.log(`${prefijo}`, mensaje, datos);
-        }
+        } 
     }
 
     /**
@@ -581,11 +582,10 @@ if (!window.flujoCaja.abrirModalTransaccion) {
 
 console.log('✅ [FlujoCaja] Funciones de modal exportadas');
 
-
 console.log(`
 ╔═══════════════════════════════════════════════════════════════╗
-║  💰 FLUJO DE CAJA v1.0.2 (FIXED)                              ║
+║  💰 FLUJO DE CAJA v1.0.3 (FIXED)                              ║
 ║  Sistema adaptativo de gestión financiera                     ║
-║  🔧 Corregido: registrarUso opcional                          ║
+║  🔧 Corregido: sintaxis + registrarUso opcional               ║
 ╚═══════════════════════════════════════════════════════════════╝
 `);
