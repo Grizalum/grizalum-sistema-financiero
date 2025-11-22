@@ -202,6 +202,22 @@ _configurarEventos() {
                         transacciones: this.transacciones.length,
                         balance: this.calcularBalance()
                     });
+                         // ⭐ NUEVO: Cambiar a la última vista de la nueva empresa
+                 setTimeout(() => {
+                   try {
+                       const nuevaEmpresaId = e.detail?.empresaId || this.empresaActual;
+                       const key = `grizalum_ultima_vista_${nuevaEmpresaId}`;
+                       const ultimaVista = localStorage.getItem(key);
+                    
+                       if (ultimaVista && window.cambiarSeccion) {
+                           console.log(`📍 Cambiando a última vista de ${nuevaEmpresaId}: ${ultimaVista}`);
+                           window.cambiarSeccion(ultimaVista);
+                      }
+                      } catch (error) {
+                        console.error('❌ Error cambiando vista:', error);
+                     }
+                    }, 1000);
+                   });  // ← Este cierra el addEventListener     
                 });
             });
         });
