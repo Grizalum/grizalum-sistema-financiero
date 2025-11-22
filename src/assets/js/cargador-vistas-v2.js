@@ -633,6 +633,45 @@ async function cambiarSeccion(seccionId, event) {
         event.stopPropagation();
     }
     
+    console.log(`\n🔄 Cambiando a sección: ${seccionId}`); // ⭐ CORREGIDO: Paréntesis
+    
+    // Remover active de todos los links
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+    });
+    
+    // Activar link actual
+    const linkActual = document.querySelector(`[data-section="${seccionId}"]`); // ⭐ CORREGIDO: Paréntesis
+    if (linkActual) {
+        linkActual.classList.add('active');
+    }
+    
+    if (event && event.currentTarget) {
+        event.currentTarget.classList.add('active');
+    }
+    
+    // Activar módulo
+    await window.grizalumModulos.activar(seccionId);
+    
+    // ⭐ NUEVO: Guardar última vista POR empresa
+    try {
+        const empresaId = window.gestorEmpresas?.estado?.empresaActual;
+        if (empresaId && empresaId !== 'null' && empresaId !== 'undefined') {
+            const key = `grizalum_ultima_vista_${empresaId}`;
+            localStorage.setItem(key, seccionId);
+            console.log(`✅ Vista "${seccionId}" guardada para empresa: ${empresaId}`);
+        }
+    } catch (error) {
+        console.error('❌ Error guardando última vista:', error);
+    }
+}
+
+window.cambiarSeccion = cambiarSeccion;
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    
     console.log(`\n🔄 Cambiando a sección: ${seccionId}`);
     
     // Remover active de todos los links
