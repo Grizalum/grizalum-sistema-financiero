@@ -225,6 +225,13 @@ class PanelControlUI {
     inicializarGraficos() {
         this._log('info', '📈 Inicializando gráficos...');
 
+        // ⭐ CRÍTICO: Verificar que panelControl esté disponible
+        if (!this.panelControl) {
+            this._log('warn', '⚠️ panelControl no disponible aún, reintentando...');
+            setTimeout(() => this.inicializarGraficos(), 500);
+            return;
+        }
+
         if (typeof Chart === 'undefined') {
             this._log('error', 'Chart.js no está cargado');
             return;
