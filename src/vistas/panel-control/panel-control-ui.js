@@ -246,16 +246,34 @@ class PanelControlUI {
         });
     }
 
-    _inicializarGraficoPrincipal() {
+_inicializarGraficoPrincipal() {
         const canvas = document.getElementById('graficoFlujoCajaPrincipal');
         if (!canvas) {
             this._log('warn', 'Canvas graficoFlujoCajaPrincipal no encontrado');
             return;
         }
 
+        // ⭐ CRÍTICO: Destruir cualquier gráfico existente en este canvas
+        const existente = Chart.getChart(canvas);
+        if (existente) {
+            this._log('warn', '⚠️ Gráfico existente encontrado, destruyendo...');
+            try {
+                existente.destroy();
+            } catch (e) {
+                this._log('error', 'Error destruyendo gráfico existente:', e);
+            }
+            
+            // Esperar un frame para que se libere completamente
+            return requestAnimationFrame(() => this._inicializarGraficoPrincipal());
+        }
+
         const datos = this.panelControl.obtenerDatosFlujoCaja(6);
 
         const ctx = canvas.getContext('2d');
+        
+        // ⭐ Limpiar canvas antes de crear
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
         this.graficos.principal = new Chart(ctx, {
             type: 'line',
             data: {
@@ -326,6 +344,8 @@ class PanelControlUI {
                 }
             }
         });
+        
+        this._log('success', '✅ Gráfico principal creado');
     }
 
     _inicializarGraficoDistribucion() {
