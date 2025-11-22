@@ -541,19 +541,19 @@ class PanelControlUI {
     destruirGraficos() {
         this._log('info', '🧹 Destruyendo gráficos...');
         
-        // Destruir usando referencias guardadas
+        // 1. Destruir usando referencias guardadas
         Object.entries(this.graficos).forEach(([nombre, grafico]) => {
             if (grafico) {
                 try {
                     grafico.destroy();
                     this._log('info', `  ✅ ${nombre} destruido`);
                 } catch (e) {
-                    this._log('warn', `  ⚠️ Error destruyendo ${nombre}:`, e);
+                    this._log('warn', `  ⚠️ Error destruyendo ${nombre}:`, e.message);
                 }
             }
         });
         
-        // Destruir usando Chart.getChart() para limpiar huérfanos
+        // 2. Destruir usando Chart.getChart() para limpiar huérfanos
         const canvasIds = [
             'graficoFlujoCajaPrincipal',
             'graficoDistribucionGastos',
@@ -564,18 +564,31 @@ class PanelControlUI {
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
             if (canvas) {
+                // Obtener instancia de Chart.js asociada al canvas
                 const chartInstance = Chart.getChart(canvas);
                 if (chartInstance) {
                     try {
                         chartInstance.destroy();
+                        this._log('info', `  ✅ Canvas ${id} limpiado`);
                     } catch (e) {
                         // Ignorar errores de canvas ya destruidos
                     }
                 }
+                
+                // ⭐ NUEVO: Limpiar el canvas manualmente
+                try {
+                    const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    // Resetear tamaño para forzar redibujado
+                    canvas.width = canvas.width;
+                } catch (e) {
+                    // Ignorar si el canvas ya no existe
+                }
             }
         });
         
-        // Resetear referencias
+        // 3. Resetear referencias
         this.graficos = {
             principal: null,
             distribucion: null,
@@ -583,7 +596,7 @@ class PanelControlUI {
             tendencia: null
         };
         
-        this._log('success', '✅ Todos los gráficos destruidos');
+        this._log('success', '✅ Todos los gráficos destruidos y limpiados');
     }
 
     limpiarYReinicializar() {
