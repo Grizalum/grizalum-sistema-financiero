@@ -1,15 +1,16 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * GRIZALUM - PANEL DE CONTROL UI v1.2 (OPTIMIZADO + LOADING)
+ * GRIZALUM - PANEL DE CONTROL UI v1.3 (FIX CANVAS)
  * ✅ Carga rápida con loading state profesional
  * ✅ Compatible con panel-control-fix.js
+ * ✅ FIX: Canvas is already in use - Verificación antes de crear gráficos
  * ═══════════════════════════════════════════════════════════════════
  */
 
 class PanelControlUI {
     constructor() {
         this.config = {
-            version: '1.2.0',
+            version: '1.3.0',
             componente: 'PanelControlUI',
             debug: true
         };
@@ -24,7 +25,7 @@ class PanelControlUI {
 
         this.inicializando = false;
 
-        this._log('info', '🎨 Panel Control UI v1.2 inicializando...');
+        this._log('info', '🎨 Panel Control UI v1.3 inicializando...');
         this._inicializar();
     }
 
@@ -246,7 +247,7 @@ class PanelControlUI {
         });
     }
 
-_inicializarGraficoPrincipal() {
+    _inicializarGraficoPrincipal() {
         const canvas = document.getElementById('graficoFlujoCajaPrincipal');
         if (!canvas) {
             this._log('warn', 'Canvas graficoFlujoCajaPrincipal no encontrado');
@@ -350,12 +351,29 @@ _inicializarGraficoPrincipal() {
 
     _inicializarGraficoDistribucion() {
         const canvas = document.getElementById('graficoDistribucionGastos');
-        if (!canvas) return;
+        if (!canvas) {
+            this._log('warn', 'Canvas graficoDistribucionGastos no encontrado');
+            return;
+        }
+
+        // ⭐ CRÍTICO: Destruir cualquier gráfico existente en este canvas
+        const existente = Chart.getChart(canvas);
+        if (existente) {
+            this._log('warn', '⚠️ Gráfico distribución existente, destruyendo...');
+            try {
+                existente.destroy();
+            } catch (e) {
+                this._log('error', 'Error destruyendo gráfico:', e);
+            }
+            return requestAnimationFrame(() => this._inicializarGraficoDistribucion());
+        }
 
         const categorias = this.panelControl.obtenerDatosCategoria('gasto');
         const top5 = categorias.slice(0, 5);
 
         const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
         this.graficos.distribucion = new Chart(ctx, {
             type: 'doughnut',
             data: {
@@ -393,15 +411,34 @@ _inicializarGraficoPrincipal() {
                 }
             }
         });
+        
+        this._log('success', '✅ Gráfico distribución creado');
     }
 
     _inicializarGraficoComparativa() {
         const canvas = document.getElementById('graficoIngresosVsGastos');
-        if (!canvas) return;
+        if (!canvas) {
+            this._log('warn', 'Canvas graficoIngresosVsGastos no encontrado');
+            return;
+        }
+
+        // ⭐ CRÍTICO: Destruir cualquier gráfico existente en este canvas
+        const existente = Chart.getChart(canvas);
+        if (existente) {
+            this._log('warn', '⚠️ Gráfico comparativa existente, destruyendo...');
+            try {
+                existente.destroy();
+            } catch (e) {
+                this._log('error', 'Error destruyendo gráfico:', e);
+            }
+            return requestAnimationFrame(() => this._inicializarGraficoComparativa());
+        }
 
         const datos = this.panelControl.obtenerComparativaIngresosGastos(6);
 
         const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
         this.graficos.comparativa = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -456,15 +493,34 @@ _inicializarGraficoPrincipal() {
                 }
             }
         });
+        
+        this._log('success', '✅ Gráfico comparativa creado');
     }
 
     _inicializarGraficoTendencia() {
         const canvas = document.getElementById('graficoTendenciaMensual');
-        if (!canvas) return;
+        if (!canvas) {
+            this._log('warn', 'Canvas graficoTendenciaMensual no encontrado');
+            return;
+        }
+
+        // ⭐ CRÍTICO: Destruir cualquier gráfico existente en este canvas
+        const existente = Chart.getChart(canvas);
+        if (existente) {
+            this._log('warn', '⚠️ Gráfico tendencia existente, destruyendo...');
+            try {
+                existente.destroy();
+            } catch (e) {
+                this._log('error', 'Error destruyendo gráfico:', e);
+            }
+            return requestAnimationFrame(() => this._inicializarGraficoTendencia());
+        }
 
         const datos = this.panelControl.obtenerDatosFlujoCaja(6);
 
         const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
         this.graficos.tendencia = new Chart(ctx, {
             type: 'line',
             data: {
@@ -515,6 +571,8 @@ _inicializarGraficoPrincipal() {
                 }
             }
         });
+        
+        this._log('success', '✅ Gráfico tendencia creado');
     }
 
     /**
@@ -595,7 +653,7 @@ _inicializarGraficoPrincipal() {
                     }
                 }
                 
-                // ⭐ NUEVO: Limpiar el canvas manualmente
+                // ⭐ Limpiar el canvas manualmente
                 try {
                     const ctx = canvas.getContext('2d');
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -644,9 +702,10 @@ try {
     window.panelControlUI = new PanelControlUI();
     console.log(`
 ╔═══════════════════════════════════════════════════════════════╗
-║  🎨 PANEL CONTROL UI v1.2 (OPTIMIZADO)                       ║
+║  🎨 PANEL CONTROL UI v1.3 (FIX CANVAS)                       ║
 ║  ✅ Cargado exitosamente                                      ║
 ║  ⚡ Carga rápida + Loading state                             ║
+║  🔧 Canvas is already in use - RESUELTO                      ║
 ╚═══════════════════════════════════════════════════════════════╝
     `);
 } catch (error) {
