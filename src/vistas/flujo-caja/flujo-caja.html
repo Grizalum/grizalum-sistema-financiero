@@ -760,12 +760,22 @@ if (document.readyState === 'loading') {
  console.log(`✅ ${transacciones.length} transacciones mostradas`);
     
 </script>    
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SCRIPTS PRINCIPALES DEL FLUJO DE CAJA -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- ⭐ CRÍTICO: flujo-caja.js DEBE IR PRIMERO -->
+<script src="src/vistas/flujo-caja/flujo-caja.js?v=1763827700"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-ui.js?v=1763827700"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-planes.js?v=1763827700"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-categorias.js?v=1763827700"></script>
 
-<!-- SCRIPTS DEL MÓDULO CON TIMESTAMP ACTUALIZADO -->
-<script src="src/vistas/flujo-caja/flujo-caja-config.js?v=1762673000"></script>
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SCRIPTS ADICIONALES -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<script src="src/vistas/flujo-caja/flujo-caja-config.js?v=1763827700"></script>
 <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-exportador-profesional.js?v=1762673000"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-graficos.js?v=1762673000"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-plan-loader.js?v=1762673000"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-fix-banner.js?v=1762673000"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-fix-categorias.js?v=1762673000"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-exportador-profesional.js?v=1763827700"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-graficos.js?v=1763827700"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-plan-loader.js?v=1763827700"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-fix-banner.js?v=1763827700"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-fix-categorias.js?v=1763827700"></script>
