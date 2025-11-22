@@ -85,10 +85,26 @@ class FlujoCaja {
     async _cargarEmpresaActual() {
         this.empresaActual = this.gestor.estado.empresaActual;
         
-        if (!this.empresaActual) {
-            this._log('warn', 'No hay empresa seleccionada');
-            return;
+        // ⭐ CRÍTICO: Validar que NO sea null o undefined
+        if (!this.empresaActual || this.empresaActual === 'null' || this.empresaActual === 'undefined') {
+            this._log('error', '❌ Empresa actual es null/undefined, buscando fallback');
+            
+            // Buscar la primera empresa disponible
+            const empresas = Object.keys(this.gestor.estado.empresas || {});
+            if (empresas.length > 0) {
+                this.empresaActual = empresas[0];
+                this._log('warn', `⚠️ Usando empresa fallback: ${this.empresaActual}`);
+                
+                // Actualizar en gestorEmpresas
+                this.gestor.estado.empresaActual = this.empresaActual;
+                localStorage.setItem('grizalum_empresa_actual', this.empresaActual);
+            } else {
+                this._log('error', '❌ No hay empresas disponibles');
+                return;
+            }
         }
+
+        this._log('info', `🏢 Empresa cargada: ${this.empresaActual}`);
 
         // Obtener nivel de la empresa
         this.nivel = this.sistemaNiveles.obtenerNivelEmpresa(this.empresaActual);
