@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <!-- Estilos de Flujo de Caja -->
-<link rel="stylesheet" href="src/vistas/flujo-caja/flujo-caja.css?v=1762580000">
+<link rel="stylesheet" href="src/vistas/flujo-caja/flujo-caja.css?v=1763828100">
 
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <!-- CONTENEDOR PRINCIPAL -->
@@ -485,12 +485,12 @@
     
     const btnNueva = document.getElementById('btnNuevaTransaccion');
     if (btnNueva) {
-        btnNueva.addEventListener('click', () => window.abrirModalTransaccion());  // ✅ CORREGIDO
+        btnNueva.addEventListener('click', () => window.abrirModalTransaccion());
     }
     
     const btnPrimera = document.getElementById('btnPrimeraTransaccion');
     if (btnPrimera) {
-        btnPrimera.addEventListener('click', () => window.abrirModalTransaccion());  // ✅ CORREGIDO
+        btnPrimera.addEventListener('click', () => window.abrirModalTransaccion());
     }
         
       document.querySelectorAll('input[name="tipo"]').forEach(radio => {
@@ -757,25 +757,24 @@ if (document.readyState === 'loading') {
         }
     };
     
- console.log(`✅ ${transacciones.length} transacciones mostradas`);
-    
 </script>    
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <!-- SCRIPTS PRINCIPALES DEL FLUJO DE CAJA -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
-<!-- ⭐ CRÍTICO: flujo-caja.js DEBE IR PRIMERO -->
-<script src="src/vistas/flujo-caja/flujo-caja.js?v=1763827700"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-ui.js?v=1763827700"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-planes.js?v=1763827700"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-categorias.js?v=1763827700"></script>
+<!-- ⭐ CRÍTICO: Orden correcto de carga -->
+<script src="src/vistas/flujo-caja/historial-descripciones.js?v=1763828100"></script>
+<script src="src/vistas/flujo-caja/flujo-caja.js?v=1763828100"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-ui.js?v=1763828100"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-planes.js?v=1763828100"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-categorias.js?v=1763828100"></script>
 
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <!-- SCRIPTS ADICIONALES -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
-<script src="src/vistas/flujo-caja/flujo-caja-config.js?v=1763827700"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-config.js?v=1763828100"></script>
 <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-exportador-profesional.js?v=1763827700"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-graficos.js?v=1763827700"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-plan-loader.js?v=1763827700"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-fix-banner.js?v=1763827700"></script>
-<script src="src/vistas/flujo-caja/flujo-caja-fix-categorias.js?v=1763827700"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-exportador-profesional.js?v=1763828100"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-graficos.js?v=1763828100"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-plan-loader.js?v=1763828100"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-fix-banner.js?v=1763828100"></script>
+<script src="src/vistas/flujo-caja/flujo-caja-fix-categorias.js?v=1763828100"></script>
