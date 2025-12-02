@@ -564,25 +564,17 @@ class GestorEmpresasUnificado {
         this._actualizarTarjetasActivas();
         this._cerrarLista();
         
-        // ✅ DESPUÉS:
-      this._dispararEvento('grizalumCompanyChanged', {
-        empresaId: empresaId,  // ← CAMBIO 1: companyId → empresaId
-         company: {
+       this._dispararEvento('grizalumCompanyChanged', {
+        empresaId: empresaId,
+        company: {
             id: empresaId,
             name: empresa.nombre,
             data: empresa
-         }
-      });
-
-       // ✅ CAMBIO 2: Agregar esta línea DESPUÉS del _dispararEvento
-       localStorage.setItem('grizalum_empresa_actual', empresaId);Changed', {
-            companyId: empresaId,
-            company: {
-                id: empresaId,
-                name: empresa.nombre,
-                data: empresa
-            }
-        });
+        }
+    });
+    
+    // ✅ Guardar en localStorage para persistencia
+    localStorage.setItem('grizalum_empresa_actual', empresaId);
         
         if (window.actualizarInterfazCompleta) {
             setTimeout(() => window.actualizarInterfazCompleta(), 100);
