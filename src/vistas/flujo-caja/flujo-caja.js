@@ -1,15 +1,15 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * GRIZALUM - MÓDULO FLUJO DE CAJA
+ * GRIZALUM - MÓDULO FLUJO DE CAJA v2.0
  * Sistema adaptativo de gestión de ingresos y gastos
- * VERSIÓN CORREGIDA: Fix registrarUso inexistente + sintaxis
+ * VERSIÓN MULTI-EMPRESA GARANTIZADA - 100% SEPARACIÓN DE DATOS
  * ═══════════════════════════════════════════════════════════════════
  */
 
 class FlujoCaja {
     constructor() {
         this.config = {
-            version: '1.0.3', // 🔧 Incrementado - Fix sintaxis
+            version: '2.0.0', // 🔥 NUEVA VERSIÓN - Multi-empresa garantizado
             componente: 'FlujoCaja',
             debug: true
         };
@@ -27,12 +27,16 @@ class FlujoCaja {
         // 🆕 NUEVO: Flag para saber si está listo
         this.inicializado = false;
 
+        // 🔒 NUEVO: Lock para prevenir operaciones durante cambio de empresa
+        this.cambiandoEmpresa = false;
+        this.esperandoCambio = [];
+
         this._inicializar();
     }
 
     async _inicializar() {
         try {
-            this._log('info', '💰 Flujo de Caja inicializando...');
+            this._log('info', '💰 Flujo de Caja v2.0 inicializando...');
             
             // Esperar dependencias
             await this._esperarDependencias();
@@ -49,10 +53,11 @@ class FlujoCaja {
             // 🆕 NUEVO: Marcar como inicializado
             this.inicializado = true;
             
-            this._log('success', '✅ Flujo de Caja listo');
+            this._log('success', `✅ Flujo de Caja listo para empresa: ${this.empresaActual}`);
             
             // 🆕 NUEVO: Disparar evento de inicialización completa
             this._dispararEvento('flujoCajaInicializado', {
+                empresaId: this.empresaActual,
                 transacciones: this.transacciones.length,
                 balance: this.calcularBalance()
             });
@@ -65,7 +70,6 @@ class FlujoCaja {
     async _esperarDependencias() {
         return new Promise((resolve) => {
             const verificar = () => {
-                // ✅ NUEVO: También esperar FlujoCajaPlanes
                 if (window.gestorEmpresas && window.sistemaNiveles && window.FlujoCajaConfig && window.FlujoCajaPlanes) {
                     this.gestor = window.gestorEmpresas;
                     this.sistemaNiveles = window.sistemaNiveles;
@@ -82,8 +86,28 @@ class FlujoCaja {
         });
     }
 
-    async _cargarEmpresaActual() {
-        this.empresaActual = this.gestor.estado.empresaActual;
+    /**
+     * 🔥 CRÍTICO: Cargar empresa actual con múltiples fuentes de verdad
+     */
+    async _cargarEmpresaActual(empresaIdOverride = null) {
+        // 🎯 PRIORIDAD 1: Usar override si se proporciona (desde evento)
+        if (empresaIdOverride) {
+            this.empresaActual = empresaIdOverride;
+            this._log('info', `🎯 Empresa cargada desde override: ${this.empresaActual}`);
+        }
+        // 🎯 PRIORIDAD 2: Leer de gestorEmpresas
+        else if (this.gestor && this.gestor.estado && this.gestor.estado.empresaActual) {
+            this.empresaActual = this.gestor.estado.empresaActual;
+            this._log('info', `🏢 Empresa cargada desde gestor: ${this.empresaActual}`);
+        }
+        // 🎯 PRIORIDAD 3: Leer de localStorage
+        else {
+            const empresaStorage = localStorage.getItem('grizalum_empresa_actual');
+            if (empresaStorage && empresaStorage !== 'null' && empresaStorage !== 'undefined') {
+                this.empresaActual = empresaStorage;
+                this._log('warn', `⚠️ Empresa cargada desde localStorage: ${this.empresaActual}`);
+            }
+        }
         
         // ⭐ CRÍTICO: Validar que NO sea null o undefined
         if (!this.empresaActual || this.empresaActual === 'null' || this.empresaActual === 'undefined') {
@@ -104,7 +128,9 @@ class FlujoCaja {
             }
         }
 
-        this._log('info', `🏢 Empresa cargada: ${this.empresaActual}`);
+        // Obtener nombre de la empresa para logs
+        const nombreEmpresa = this._obtenerNombreEmpresa(this.empresaActual);
+        this._log('success', `✅ Empresa confirmada: ${nombreEmpresa} (${this.empresaActual})`);
 
         // Obtener nivel de la empresa
         this.nivel = this.sistemaNiveles.obtenerNivelEmpresa(this.empresaActual);
@@ -114,48 +140,73 @@ class FlujoCaja {
             return;
         }
 
-     // ✅ PRIORIDAD 1: Leer de localStorage (componentes forzados)
+        // ✅ PRIORIDAD 1: Leer de localStorage (componentes forzados)
         const componentesForzados = localStorage.getItem('grizalum_componentes_forzados');
         
         if (componentesForzados) {
-            console.log('🎯 Usando componentes FORZADOS de localStorage');
+            this._log('info', '🎯 Usando componentes FORZADOS de localStorage');
             this.componentesActivos = JSON.parse(componentesForzados);
         } 
         // ✅ PRIORIDAD 2: Usar sistema de planes
         else if (window.FlujoCajaPlanes) {
-            console.log('🎯 Usando sistema de PLANES');
+            this._log('info', '🎯 Usando sistema de PLANES');
             this.componentesActivos = window.FlujoCajaPlanes.obtenerComponentesActivos();
         } 
         // ✅ PRIORIDAD 3: Fallback al sistema de score antiguo
         else {
-            console.log('⚠️ Fallback: usando sistema de SCORE');
+            this._log('warn', '⚠️ Fallback: usando sistema de SCORE');
             const componentesOcultos = this.nivel.componentesOcultos || [];
             this.componentesActivos = this.configuracion.obtenerComponentesActivos(
                 this.nivel.score,
                 componentesOcultos
             );
         }
+
         // Obtener categorías según industria
         const empresa = this.gestor.estado.empresas[this.empresaActual];
         const industriaId = empresa?.perfilIndustrial || 'default';
         this.categorias = this.configuracion.obtenerCategorias(industriaId);
 
-        this._log('info', `Empresa cargada: ${this.empresaActual}`);
         this._log('info', `Nivel: ${this.nivel.nivel.nombre} (Score: ${this.nivel.score})`);
-        this._log('info', `Categorías cargadas:`, this.categorias);
+        this._log('info', `Categorías cargadas para industria: ${industriaId}`);
     }
 
     async _cargarTransacciones() {
         try {
+            // 🔒 VERIFICACIÓN: Asegurar que empresa actual está definida
+            if (!this.empresaActual || this.empresaActual === 'null' || this.empresaActual === 'undefined') {
+                this._log('error', '❌ No se puede cargar transacciones: empresa no definida');
+                this.transacciones = [];
+                return;
+            }
+
             const key = `grizalum_flujo_caja_${this.empresaActual}`;
             const datos = localStorage.getItem(key);
             
             if (datos) {
-                this.transacciones = JSON.parse(datos);
-                this._log('info', `✅ Cargadas ${this.transacciones.length} transacciones`);
+                const transaccionesCargadas = JSON.parse(datos);
+                
+                // 🔒 FILTRO DE SEGURIDAD: Solo cargar transacciones de esta empresa
+                this.transacciones = transaccionesCargadas.filter(t => {
+                    if (!t.empresaId || t.empresaId === this.empresaActual) {
+                        // Si no tiene empresaId, asignarlo ahora
+                        if (!t.empresaId) {
+                            t.empresaId = this.empresaActual;
+                        }
+                        return true;
+                    }
+                    
+                    // ⚠️ Transacción de otra empresa encontrada
+                    this._log('warn', `⚠️ Transacción de otra empresa encontrada y DESCARTADA: ${t.empresaId} (actual: ${this.empresaActual})`);
+                    return false;
+                });
+                
+                const nombreEmpresa = this._obtenerNombreEmpresa(this.empresaActual);
+                this._log('success', `✅ Cargadas ${this.transacciones.length} transacciones para ${nombreEmpresa}`);
             } else {
                 this.transacciones = [];
-                this._log('info', 'Sin transacciones previas');
+                const nombreEmpresa = this._obtenerNombreEmpresa(this.empresaActual);
+                this._log('info', `📋 Sin transacciones previas para ${nombreEmpresa}`);
             }
         } catch (error) {
             this._log('error', 'Error cargando transacciones:', error);
@@ -164,62 +215,88 @@ class FlujoCaja {
     }
 
     _configurarEventos() {
-        // Escuchar cambio de empresa
-        document.addEventListener('grizalumCompanyChanged', (e) => {
-            this._log('info', '🔄 Empresa cambiada, recargando...');
-            console.log('🔄 [FlujoCaja] Empresa cambiada:', e.detail);
+        // 🔥 EVENTO CRÍTICO: Cambio de empresa
+        document.addEventListener('grizalumCompanyChanged', async (e) => {
+            this._log('info', '🔄 ═════════════════════════════════════════');
+            this._log('info', '🔄 CAMBIO DE EMPRESA DETECTADO');
             
+            // 🔒 ACTIVAR LOCK: No permitir operaciones durante el cambio
+            this.cambiandoEmpresa = true;
             this.inicializado = false;
             
-            // Limpiar transacciones actuales en memoria
-            this.transacciones = [];
+            // 🎯 OBTENER NUEVA EMPRESA del evento (CRÍTICO)
+            const nuevaEmpresaId = e.detail?.empresaId || e.detail?.empresa;
             
-            // Recargar datos de la nueva empresa
-            this._cargarEmpresaActual().then(() => {
-                console.log('📊 [FlujoCaja] Empresa cargada:', this.empresaActual);
+            if (!nuevaEmpresaId) {
+                this._log('error', '❌ Evento sin empresaId, abortando cambio');
+                this.cambiandoEmpresa = false;
+                return;
+            }
+            
+            const empresaAnterior = this.empresaActual;
+            const nombreAnterior = this._obtenerNombreEmpresa(empresaAnterior);
+            const nombreNueva = this._obtenerNombreEmpresa(nuevaEmpresaId);
+            
+            this._log('info', `🔄 Cambiando de: ${nombreAnterior} → ${nombreNueva}`);
+            
+            try {
+                // 1. Limpiar transacciones actuales en memoria
+                this.transacciones = [];
+                this._log('info', '🧹 Transacciones en memoria limpiadas');
                 
-                this._cargarTransacciones().then(() => {
-                    console.log(`📋 [FlujoCaja] Cargadas ${this.transacciones.length} transacciones`);
-                    
-                    this.inicializado = true;
-                    
-                    // ✅ CRÍTICO: Forzar actualización de UI
-                    console.log('🎨 [FlujoCaja] Actualizando UI...');
-                    
-                    if (window.flujoCajaUI) {
-                        window.flujoCajaUI.cargarBalance();
-                        window.flujoCajaUI.cargarTransacciones();
-                        window.flujoCajaUI.cargarNivel();
-                        window.flujoCajaUI.cargarCategorias();
-                        console.log('✅ [FlujoCaja] UI actualizada correctamente');
-                    } else {
-                        console.warn('⚠️ [FlujoCaja] flujoCajaUI no disponible');
+                // 2. Cargar datos de la nueva empresa (USAR empresaId del evento)
+                await this._cargarEmpresaActual(nuevaEmpresaId);
+                this._log('success', `✅ Nueva empresa cargada: ${this.empresaActual}`);
+                
+                // 3. Cargar transacciones de la nueva empresa
+                await this._cargarTransacciones();
+                this._log('success', `✅ ${this.transacciones.length} transacciones cargadas para ${nombreNueva}`);
+                
+                // 4. Marcar como inicializado
+                this.inicializado = true;
+                
+                // 5. Desactivar lock
+                this.cambiandoEmpresa = false;
+                
+                // 6. Resolver promesas pendientes
+                this.esperandoCambio.forEach(resolver => resolver());
+                this.esperandoCambio = [];
+                
+                // 7. Actualizar UI
+                this._log('info', '🎨 Actualizando UI...');
+                
+                if (window.flujoCajaUI) {
+                    // Forzar sincronización de empresa en UI
+                    if (window.flujoCajaUI.empresaActual !== this.empresaActual) {
+                        window.flujoCajaUI.empresaActual = this.empresaActual;
+                        this._log('info', `🔄 UI sincronizada con empresa: ${this.empresaActual}`);
                     }
                     
-                    // Disparar evento para otros componentes
-                    this._dispararEvento('flujoCajaActualizado', {
-                        empresaActual: this.empresaActual,
-                        transacciones: this.transacciones.length,
-                        balance: this.calcularBalance()
-                    });
-                });
-            });
-            
-            // ⭐ NUEVO: Cambiar a la última vista de la nueva empresa
-            setTimeout(() => {
-                try {
-                    const nuevaEmpresaId = e.detail?.empresaId || this.empresaActual;
-                    const key = `grizalum_ultima_vista_${nuevaEmpresaId}`;
-                    const ultimaVista = localStorage.getItem(key);
-                    
-                    if (ultimaVista && window.cambiarSeccion) {
-                        console.log(`📍 Cambiando a última vista de ${nuevaEmpresaId}: ${ultimaVista}`);
-                        window.cambiarSeccion(ultimaVista);
-                    }
-                } catch (error) {
-                    console.error('❌ Error cambiando vista:', error);
+                    await window.flujoCajaUI.cargarBalance();
+                    await window.flujoCajaUI.cargarTransacciones();
+                    await window.flujoCajaUI.cargarNivel();
+                    await window.flujoCajaUI.cargarCategorias();
+                    this._log('success', '✅ UI actualizada correctamente');
+                } else {
+                    this._log('warn', '⚠️ flujoCajaUI no disponible');
                 }
-            }, 1000);
+                
+                // 8. Disparar evento para otros componentes
+                this._dispararEvento('flujoCajaActualizado', {
+                    empresaActual: this.empresaActual,
+                    empresaAnterior: empresaAnterior,
+                    transacciones: this.transacciones.length,
+                    balance: this.calcularBalance()
+                });
+                
+                this._log('success', `🎉 Cambio completado: ${nombreAnterior} → ${nombreNueva}`);
+                this._log('info', '🔄 ═════════════════════════════════════════');
+                
+            } catch (error) {
+                this._log('error', '❌ Error durante cambio de empresa:', error);
+                this.cambiandoEmpresa = false;
+                this.inicializado = false;
+            }
         });
         
         // Escuchar cambio de nivel
@@ -242,15 +319,49 @@ class FlujoCaja {
     }
 
     /**
+     * 🔒 LOCK: Esperar si se está cambiando de empresa
+     */
+    async _esperarSiCambiando() {
+        if (!this.cambiandoEmpresa) {
+            return true;
+        }
+
+        this._log('warn', '⏳ Operación en espera - cambiando de empresa...');
+
+        return new Promise((resolve) => {
+            this.esperandoCambio.push(resolve);
+        });
+    }
+
+    /**
      * ═══════════════════════════════════════════════════════════════
-     * CRUD DE TRANSACCIONES
+     * CRUD DE TRANSACCIONES - CON VERIFICACIÓN MULTI-EMPRESA
      * ═══════════════════════════════════════════════════════════════
      */
 
-    agregarTransaccion(datos) {
+    async agregarTransaccion(datos) {
+        // 🔒 LOCK: Esperar si se está cambiando de empresa
+        await this._esperarSiCambiando();
+
+        // 🔒 VERIFICACIÓN: Asegurar que empresa actual está definida
+        if (!this.empresaActual || this.empresaActual === 'null' || this.empresaActual === 'undefined') {
+            this._log('error', '❌ No se puede agregar transacción: empresa no definida');
+            throw new Error('Empresa actual no definida');
+        }
+
+        // 🔒 VERIFICACIÓN: Asegurar que el módulo está inicializado
+        if (!this.inicializado) {
+            this._log('error', '❌ No se puede agregar transacción: módulo no inicializado');
+            throw new Error('Módulo no inicializado');
+        }
+
+        // 🎯 OBTENER empresa actual EN EL MOMENTO de guardar
+        const empresaParaGuardar = this.empresaActual;
+        const nombreEmpresa = this._obtenerNombreEmpresa(empresaParaGuardar);
+
         const transaccion = {
             id: this._generarId(),
-            empresaId: this.empresaActual,
+            empresaId: empresaParaGuardar, // 🔥 CRÍTICO: Guardar con empresa actual
             tipo: datos.tipo, // 'ingreso' o 'gasto'
             monto: parseFloat(datos.monto),
             categoria: datos.categoria,
@@ -262,9 +373,16 @@ class FlujoCaja {
             meta: {
                 creadoPor: 'usuario',
                 fechaCreacion: new Date().toISOString(),
-                fechaModificacion: new Date().toISOString()
+                fechaModificacion: new Date().toISOString(),
+                empresaNombre: nombreEmpresa // Para debugging
             }
         };
+
+        // 🔒 VERIFICACIÓN FINAL: Empresa no cambió durante la operación
+        if (this.empresaActual !== empresaParaGuardar) {
+            this._log('error', '❌ ABORT: Empresa cambió durante operación');
+            throw new Error('Empresa cambió durante operación');
+        }
 
         this.transacciones.unshift(transaccion);
         this._guardarTransacciones();
@@ -274,7 +392,7 @@ class FlujoCaja {
             this.sistemaNiveles.registrarUso(this.empresaActual, 'registroRapido');
         }
         
-        this._log('success', `✅ ${datos.tipo} agregado: S/. ${datos.monto}`);
+        this._log('success', `✅ ${datos.tipo.toUpperCase()} agregado para ${nombreEmpresa}: S/. ${datos.monto} (empresaId: ${transaccion.empresaId})`);
         
         // Disparar evento
         this._dispararEvento('transaccionAgregada', transaccion);
@@ -282,7 +400,10 @@ class FlujoCaja {
         return transaccion;
     }
 
-    editarTransaccion(id, datosNuevos) {
+    async editarTransaccion(id, datosNuevos) {
+        // 🔒 LOCK: Esperar si se está cambiando de empresa
+        await this._esperarSiCambiando();
+
         const index = this.transacciones.findIndex(t => t.id === id);
         
         if (index === -1) {
@@ -290,9 +411,16 @@ class FlujoCaja {
             return false;
         }
 
+        // 🔒 VERIFICACIÓN: La transacción pertenece a esta empresa
+        if (this.transacciones[index].empresaId !== this.empresaActual) {
+            this._log('error', `❌ Intento de editar transacción de otra empresa: ${this.transacciones[index].empresaId}`);
+            return false;
+        }
+
         this.transacciones[index] = {
             ...this.transacciones[index],
             ...datosNuevos,
+            empresaId: this.empresaActual, // 🔒 Mantener empresaId actual
             meta: {
                 ...this.transacciones[index].meta,
                 fechaModificacion: new Date().toISOString()
@@ -301,18 +429,28 @@ class FlujoCaja {
 
         this._guardarTransacciones();
         
-        this._log('info', `Transacción ${id} editada`);
+        const nombreEmpresa = this._obtenerNombreEmpresa(this.empresaActual);
+        this._log('info', `✏️ Transacción ${id} editada en ${nombreEmpresa}`);
         
         this._dispararEvento('transaccionEditada', this.transacciones[index]);
         
         return this.transacciones[index];
     }
 
-    eliminarTransaccion(id) {
+    async eliminarTransaccion(id) {
+        // 🔒 LOCK: Esperar si se está cambiando de empresa
+        await this._esperarSiCambiando();
+
         const index = this.transacciones.findIndex(t => t.id === id);
         
         if (index === -1) {
             this._log('error', 'Transacción no encontrada');
+            return false;
+        }
+
+        // 🔒 VERIFICACIÓN: La transacción pertenece a esta empresa
+        if (this.transacciones[index].empresaId !== this.empresaActual) {
+            this._log('error', `❌ Intento de eliminar transacción de otra empresa: ${this.transacciones[index].empresaId}`);
             return false;
         }
 
@@ -321,7 +459,8 @@ class FlujoCaja {
         
         this._guardarTransacciones();
         
-        this._log('info', `Transacción ${id} eliminada`);
+        const nombreEmpresa = this._obtenerNombreEmpresa(this.empresaActual);
+        this._log('info', `🗑️ Transacción ${id} eliminada de ${nombreEmpresa}`);
         
         this._dispararEvento('transaccionEliminada', transaccionEliminada);
         
@@ -329,11 +468,24 @@ class FlujoCaja {
     }
 
     obtenerTransaccion(id) {
-        return this.transacciones.find(t => t.id === id);
+        const transaccion = this.transacciones.find(t => t.id === id);
+        
+        // 🔒 VERIFICACIÓN: La transacción pertenece a esta empresa
+        if (transaccion && transaccion.empresaId !== this.empresaActual) {
+            this._log('warn', `⚠️ Transacción ${id} pertenece a otra empresa`);
+            return null;
+        }
+        
+        return transaccion;
     }
 
     obtenerTransacciones(filtros = {}) {
         let resultado = [...this.transacciones];
+
+        // 🔒 FILTRO OBLIGATORIO: Solo transacciones de esta empresa
+        resultado = resultado.filter(t => 
+            !t.empresaId || t.empresaId === this.empresaActual
+        );
 
         // Filtrar por tipo
         if (filtros.tipo) {
@@ -397,8 +549,8 @@ class FlujoCaja {
 
     calcularPorCategoria(tipo = null) {
         const transacciones = tipo 
-            ? this.transacciones.filter(t => t.tipo === tipo)
-            : this.transacciones;
+            ? this.obtenerTransacciones({ tipo })
+            : this.obtenerTransacciones();
 
         const porCategoria = {};
 
@@ -455,8 +607,22 @@ class FlujoCaja {
 
     _guardarTransacciones() {
         try {
+            // 🔒 VERIFICACIÓN: Empresa actual definida
+            if (!this.empresaActual || this.empresaActual === 'null' || this.empresaActual === 'undefined') {
+                this._log('error', '❌ No se puede guardar: empresa no definida');
+                return;
+            }
+
+            // 🔒 FILTRO DE SEGURIDAD: Solo guardar transacciones de esta empresa
+            const transaccionesEmpresa = this.transacciones.filter(t => 
+                !t.empresaId || t.empresaId === this.empresaActual
+            );
+
             const key = `grizalum_flujo_caja_${this.empresaActual}`;
-            localStorage.setItem(key, JSON.stringify(this.transacciones));
+            localStorage.setItem(key, JSON.stringify(transaccionesEmpresa));
+            
+            const nombreEmpresa = this._obtenerNombreEmpresa(this.empresaActual);
+            this._log('info', `💾 ${transaccionesEmpresa.length} transacciones guardadas para ${nombreEmpresa}`);
         } catch (error) {
             this._log('error', 'Error guardando transacciones:', error);
         }
@@ -464,6 +630,15 @@ class FlujoCaja {
 
     _generarId() {
         return `tx_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    }
+
+    _obtenerNombreEmpresa(empresaId) {
+        if (!empresaId || !this.gestor || !this.gestor.estado || !this.gestor.estado.empresas) {
+            return empresaId || 'Desconocida';
+        }
+
+        const empresa = this.gestor.estado.empresas[empresaId];
+        return empresa?.nombre || empresaId;
     }
 
     _actualizarComponentesActivos() {
@@ -490,16 +665,19 @@ class FlujoCaja {
     _log(nivel, mensaje, datos = null) {
         if (!this.config.debug && nivel !== 'error' && nivel !== 'success') return;
         
-        const timestamp = new Date().toISOString();
-        const prefijo = `[${timestamp}] [${this.config.componente}]`;
+        const timestamp = new Date().toISOString().split('T')[1].slice(0, -1);
+        const empresaNombre = this._obtenerNombreEmpresa(this.empresaActual);
+        const prefijo = `[${timestamp}] [${this.config.componente}] [${empresaNombre}]`;
         
         if (nivel === 'error') {
-            console.error(`${prefijo}`, mensaje, datos);
+            console.error(`${prefijo}`, mensaje, datos || '');
         } else if (nivel === 'warn') {
-            console.warn(`${prefijo}`, mensaje, datos);
+            console.warn(`${prefijo}`, mensaje, datos || '');
+        } else if (nivel === 'success') {
+            console.log(`%c${prefijo} ${mensaje}`, 'color: #10b981; font-weight: bold', datos || '');
         } else {
-            console.log(`${prefijo}`, mensaje, datos);
-        } 
+            console.log(`${prefijo}`, mensaje, datos || '');
+        }
     }
 
     /**
@@ -510,12 +688,12 @@ class FlujoCaja {
 
     // 🆕 NUEVO: Verificar si está inicializado
     estaListo() {
-        return this.inicializado;
+        return this.inicializado && !this.cambiandoEmpresa;
     }
 
     // 🆕 NUEVO: Esperar a que esté listo
     async esperarInicializacion() {
-        if (this.inicializado) {
+        if (this.estaListo()) {
             return true;
         }
 
@@ -532,11 +710,14 @@ class FlujoCaja {
     obtenerInfo() {
         return {
             empresaActual: this.empresaActual,
+            empresaNombre: this._obtenerNombreEmpresa(this.empresaActual),
             nivel: this.nivel,
             componentesActivos: this.componentesActivos,
             categorias: this.categorias,
             balance: this.calcularBalance(),
-            totalTransacciones: this.transacciones.length
+            totalTransacciones: this.transacciones.length,
+            cambiandoEmpresa: this.cambiandoEmpresa,
+            inicializado: this.inicializado
         };
     }
 
@@ -556,6 +737,7 @@ class FlujoCaja {
     exportarJSON() {
         return {
             empresa: this.empresaActual,
+            empresaNombre: this._obtenerNombreEmpresa(this.empresaActual),
             fecha: new Date().toISOString(),
             transacciones: this.transacciones,
             balance: this.calcularBalance(),
@@ -584,8 +766,11 @@ console.log('✅ [FlujoCaja] Funciones de modal exportadas');
 
 console.log(`
 ╔═══════════════════════════════════════════════════════════════╗
-║  💰 FLUJO DE CAJA v1.0.3 (FIXED)                              ║
+║  💰 FLUJO DE CAJA v2.0 - MULTI-EMPRESA GARANTIZADO           ║
 ║  Sistema adaptativo de gestión financiera                     ║
-║  🔧 Corregido: sintaxis + registrarUso opcional               ║
+║  🔒 100% Separación de datos por empresa                      ║
+║  🔒 Locks para prevenir contaminación                         ║
+║  🔒 Verificación en cada operación                            ║
+║  🎯 Empresa actual desde eventos                              ║
 ╚═══════════════════════════════════════════════════════════════╝
 `);
