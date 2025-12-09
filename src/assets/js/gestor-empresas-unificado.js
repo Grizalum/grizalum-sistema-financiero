@@ -1824,13 +1824,25 @@ aplicarModoVisual(modo) {
         arrow?.classList.remove('rotated');
     }
 
-    _seleccionarEmpresaInicial() {
-        const primeraEmpresa = Object.keys(this.estado.empresas)[0];
-        if (primeraEmpresa) {
-            this.seleccionarEmpresa(primeraEmpresa);
-        }
+    // ✅ DESPUÉS:
+_seleccionarEmpresaInicial() {
+    // 1. Intentar cargar desde localStorage
+    const empresaGuardada = localStorage.getItem('grizalum_empresa_actual');
+    
+    // 2. Verificar que esa empresa exista
+    if (empresaGuardada && this.estado.empresas[empresaGuardada]) {
+        console.log('✅ Restaurando empresa:', empresaGuardada);
+        this.seleccionarEmpresa(empresaGuardada);
+        return;
     }
-
+    
+    // 3. Si no existe, usar la primera disponible
+    const primeraEmpresa = Object.keys(this.estado.empresas)[0];
+    if (primeraEmpresa) {
+        console.log('⚠️ Empresa guardada no existe, usando primera:', primeraEmpresa);
+        this.seleccionarEmpresa(primeraEmpresa);
+    }
+}
     _obtenerEmpresaActual() {
         return this.estado.empresas[this.estado.empresaActual];
     }
