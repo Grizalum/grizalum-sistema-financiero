@@ -632,8 +632,24 @@ class GrizalumApp {
     
     this.handleResponsiveDesign();
     
-    // Mostrar dashboard por defecto
-    this.showSection('dashboard');
+    // ✅ NUEVO: Cargar última vista de la empresa actual
+    let vistaInicial = 'dashboard'; // Default
+    
+    if (window.gestorEmpresas?.estado?.empresaActual) {
+        const empresaActual = window.gestorEmpresas.estado.empresaActual;
+        const key = `grizalum_ultima_vista_${empresaActual}`;
+        const ultimaVista = localStorage.getItem(key);
+        
+        if (ultimaVista && this.sections.has(ultimaVista)) {
+            vistaInicial = ultimaVista;
+            console.log(`✅ Restaurando última vista de ${empresaActual}:`, ultimaVista);
+        } else {
+            console.log(`📍 Sin vista previa para ${empresaActual}, usando dashboard`);
+        }
+    }
+    
+    // Mostrar vista inicial
+    this.showSection(vistaInicial);
     
     console.log('Sistema GRIZALUM completamente operativo');
     console.log(`Secciones registradas: ${this.sections.size}`);
@@ -674,6 +690,12 @@ let grizalumApp = null;
 
 function showSection(sectionId) {
     console.log('Navegando a sección:', sectionId);
+     if (window.gestorEmpresas?.estado?.empresaActual) {
+        const empresaActual = window.gestorEmpresas.estado.empresaActual;
+        const key = `grizalum_ultima_vista_${empresaActual}`;
+        localStorage.setItem(key, sectionId);
+        console.log(`✅ Vista guardada para ${empresaActual}:`, sectionId);
+    }
     
     // Ocultar todas las secciones
     document.querySelectorAll('.dashboard-content').forEach(section => {
