@@ -4,8 +4,8 @@
      ═══════════════════════════════════════════════════════════════ -->
 
 <div class="panel-control-contenedor">
-   <!-- ✅ BANNER DEL PLAN - Compatible con Flujo de Caja -->
-<div id="nivelBanner" class="nivel-banner" style="
+  <!-- ✅ BANNER DEL PLAN DINÁMICO POR EMPRESA -->
+<div id="panelBannerPlan" class="nivel-banner" style="
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     padding: 16px 24px;
     border-radius: 12px;
@@ -16,13 +16,13 @@
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 ">
     <div class="nivel-info" style="display: flex; align-items: center; gap: 16px;">
-        <span class="nivel-icono" style="font-size: 2.5rem;">🌐</span>
+        <span id="planIcono" class="nivel-icono" style="font-size: 2.5rem;">🌐</span>
         <div class="nivel-textos">
-            <div class="nivel-nombre" style="color: white; margin: 0; font-size: 1.1rem; font-weight: 700;">
-                Plan Corporativo
+            <div id="planNombre" class="nivel-nombre" style="color: white; margin: 0; font-size: 1.1rem; font-weight: 700;">
+                Cargando...
             </div>
-            <div id="fraseMotivacional" class="nivel-descripcion" style="color: rgba(255,255,255,0.9); margin: 0; font-size: 0.9rem; margin-top: 4px; font-style: italic; transition: opacity 0.3s ease;">
-                ¡Excelencia corporativa en acción!
+            <div id="planFrase" class="nivel-descripcion" style="color: rgba(255,255,255,0.9); margin: 0; font-size: 0.9rem; margin-top: 4px; font-style: italic;">
+                
             </div>
         </div>
     </div>
@@ -30,6 +30,79 @@
         <span style="color: white; font-weight: 600; font-size: 0.85rem;">✓ Activo</span>
     </div>
 </div>
+
+<script>
+// ✅ CARGAR PLAN DE LA EMPRESA ACTUAL
+(function() {
+    const cargarPlanEmpresa = () => {
+        try {
+            const empresaActual = window.gestorEmpresas?.estado?.empresaActual;
+            const empresas = window.gestorEmpresas?.estado?.empresas;
+            
+            if (!empresaActual || !empresas || !empresas[empresaActual]) {
+                console.warn('⚠️ No hay empresa seleccionada');
+                return;
+            }
+            
+            const empresa = empresas[empresaActual];
+            const plan = empresa.plan || 'corporativo'; // Default
+            
+            // Configuración de planes
+            const planes = {
+                'individual': {
+                    nombre: 'Plan Individual',
+                    icono: '👤',
+                    color: '#3b82f6',
+                    frase: '¡Gestión personal eficiente!'
+                },
+                'empresarial': {
+                    nombre: 'Plan Empresarial',
+                    icono: '🏢',
+                    color: '#10b981',
+                    frase: '¡Potencia empresarial activada!'
+                },
+                'corporativo': {
+                    nombre: 'Plan Corporativo',
+                    icono: '🌐',
+                    color: '#8b5cf6',
+                    frase: '¡Excelencia corporativa en acción!'
+                }
+            };
+            
+            const planConfig = planes[plan] || planes['corporativo'];
+            
+            // Actualizar DOM
+            document.getElementById('planIcono').textContent = planConfig.icono;
+            document.getElementById('planNombre').textContent = planConfig.nombre;
+            document.getElementById('planFrase').textContent = planConfig.frase;
+            document.getElementById('panelBannerPlan').style.background = 
+                `linear-gradient(135deg, ${planConfig.color} 0%, ${planConfig.color}dd 100%)`;
+            
+            console.log(`✅ Banner actualizado: ${empresa.nombre} - ${planConfig.nombre}`);
+            
+        } catch (error) {
+            console.error('❌ Error cargando plan:', error);
+        }
+    };
+    
+    // Ejecutar al cargar
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(cargarPlanEmpresa, 500);
+        });
+    } else {
+        setTimeout(cargarPlanEmpresa, 500);
+    }
+    
+    // Recargar al cambiar empresa
+    document.addEventListener('grizalumCompanyChanged', () => {
+        setTimeout(cargarPlanEmpresa, 200);
+    });
+    
+    // Exponer globalmente
+    window.cargarPlanEmpresa = cargarPlanEmpresa;
+})();
+</script>
      
     <!-- ═══════════════════════════════════════════════════════════ -->
     <!-- SECCIÓN DE MÉTRICAS PRINCIPALES -->
