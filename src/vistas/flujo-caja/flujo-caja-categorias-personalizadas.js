@@ -183,4 +183,43 @@ class CategoriasPersonalizadas {
 // Inicializar globalmente
 window.categoriasPersonalizadas = new CategoriasPersonalizadas();
 
+// ═══════════════════════════════════════════════════════════════
+// CONFIGURAR BOTÓN AGREGAR
+// ═══════════════════════════════════════════════════════════════
+function configurarBotonAgregar() {
+    let intentos = 0;
+    const maxIntentos = 30;
+    
+    const buscarBoton = setInterval(() => {
+        intentos++;
+        const btn = document.getElementById('btnAgregarCategoria');
+        
+        if (btn) {
+            btn.onclick = function() {
+                if (window.abrirModalCategoria) {
+                    window.abrirModalCategoria();
+                } else {
+                    console.error('❌ abrirModalCategoria no disponible');
+                }
+            };
+            clearInterval(buscarBoton);
+            console.log('✅ [CategoríasPersonalizadas] Botón + configurado');
+        } else if (intentos >= maxIntentos) {
+            clearInterval(buscarBoton);
+            console.warn('⚠️ [CategoríasPersonalizadas] Botón + no encontrado');
+        }
+    }, 100);
+}
+
+// Ejecutar al cargar y al cambiar vista
+setTimeout(configurarBotonAgregar, 500);
+setTimeout(configurarBotonAgregar, 1000);
+setTimeout(configurarBotonAgregar, 2000);
+
+document.addEventListener('sectionChanged', (e) => {
+    if (e.detail?.to === 'flujo-caja') {
+        setTimeout(configurarBotonAgregar, 300);
+    }
+});
+
 console.log('✅ [CategoríasPersonalizadas] Módulo cargado');
