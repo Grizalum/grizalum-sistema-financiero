@@ -252,6 +252,164 @@
         </div>
     </div>
 </div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- MODAL AGREGAR CATEGORÍA -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="modalAgregarCategoria" class="modal" style="display: none;">
+    <div class="modal-contenido" style="max-width: 500px;">
+        <div class="modal-header">
+            <h2 id="modalCategoriaTitulo">Nueva Categoría</h2>
+            <button class="modal-cerrar" onclick="cerrarModalCategoria()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <form id="formCategoria" class="modal-body">
+            <!-- TIPO -->
+            <div class="form-grupo">
+                <label class="form-label">Tipo *</label>
+                <div class="tipo-selector">
+                    <label class="tipo-opcion tipo-ingreso">
+                        <input type="radio" name="tipoCategoria" value="ingreso" required checked>
+                        <div class="tipo-card">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>Ingreso</span>
+                        </div>
+                    </label>
+                    <label class="tipo-opcion tipo-gasto">
+                        <input type="radio" name="tipoCategoria" value="gasto" required>
+                        <div class="tipo-card">
+                            <i class="fas fa-arrow-down"></i>
+                            <span>Gasto</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- NOMBRE -->
+            <div class="form-grupo">
+                <label for="inputNombreCategoria" class="form-label">Nombre de la Categoría *</label>
+                <input type="text" id="inputNombreCategoria" class="form-input" 
+                       placeholder="Ej: Venta de pollo asado" required maxlength="50">
+                <small style="color: #6b7280; font-size: 0.75rem; margin-top: 4px; display: block;">
+                    💡 Esta categoría será exclusiva para <strong id="empresaNombreCategoria">tu empresa</strong>
+                </small>
+            </div>
+        </form>
+
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" onclick="cerrarModalCategoria()">
+                <i class="fas fa-times"></i> Cancelar
+            </button>
+            <button type="submit" class="btn-primary" form="formCategoria">
+                <i class="fas fa-save"></i> Agregar Categoría
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// MODAL AGREGAR CATEGORÍA
+// ═══════════════════════════════════════════════════════════════
+
+window.abrirModalCategoria = function() {
+    const modal = document.getElementById('modalAgregarCategoria');
+    const form = document.getElementById('formCategoria');
+    
+    // Obtener tipo actual del modal de transacciones
+    const tipoTransaccion = document.querySelector('#formTransaccion input[name="tipo"]:checked')?.value;
+    
+    // Configurar tipo en modal de categoría
+    if (tipoTransaccion) {
+        const radioCategoria = document.querySelector(`#formCategoria input[name="tipoCategoria"][value="${tipoTransaccion}"]`);
+        if (radioCategoria) {
+            radioCategoria.checked = true;
+        }
+    }
+    
+    // Limpiar input
+    document.getElementById('inputNombreCategoria').value = '';
+    
+    // Mostrar nombre de empresa
+    const empresaNombre = window.gestorEmpresas?.estado?.empresas[window.gestorEmpresas.estado.empresaActual]?.nombre || 'tu empresa';
+    document.getElementById('empresaNombreCategoria').textContent = empresaNombre;
+    
+    // Mostrar modal
+    modal.style.display = 'flex';
+    
+    // Focus en input
+    setTimeout(() => {
+        document.getElementById('inputNombreCategoria').focus();
+    }, 100);
+};
+
+window.cerrarModalCategoria = function() {
+    const modal = document.getElementById('modalAgregarCategoria');
+    modal.style.display = 'none';
+};
+
+// Submit del formulario
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('formCategoria');
+    
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const tipo = document.querySelector('#formCategoria input[name="tipoCategoria"]:checked').value;
+            const nombre = document.getElementById('inputNombreCategoria').value.trim();
+            
+            if (!nombre) {
+                alert('❌ Debes ingresar un nombre para la categoría');
+                return;
+            }
+            
+            try {
+                // Agregar categoría
+                window.categoriasPersonalizadas.agregarCategoria(tipo, nombre);
+                
+                // Recargar select del modal de transacciones
+                const select = document.getElementById('selectCategoria');
+                if (window.GRIZALUM_cargarCategoriasSegunTipo) {
+                    const tipoTransaccion = document.querySelector('#formTransaccion input[name="tipo"]:checked')?.value;
+                    window.GRIZALUM_cargarCategoriasSegunTipo(tipoTransaccion || tipo, select);
+                    
+                    // Seleccionar la nueva categoría
+                    select.value = nombre;
+                }
+                
+                // Cerrar modal
+                cerrarModalCategoria();
+                
+                // Mensaje de éxito
+                console.log(`✅ Categoría "${nombre}" agregada exitosamente`);
+                
+            } catch (error) {
+                alert(`❌ ${error.message}`);
+            }
+        });
+    }
+});
+
+// Cerrar con ESC
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('modalAgregarCategoria');
+        if (modal && modal.style.display === 'flex') {
+            cerrarModalCategoria();
+        }
+    }
+});
+
+// Cerrar al hacer click fuera
+document.getElementById('modalAgregarCategoria')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        cerrarModalCategoria();
+    }
+});
+</script>
     
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <!-- SCRIPTS -->
