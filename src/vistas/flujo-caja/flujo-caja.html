@@ -185,15 +185,23 @@
             </div>
 
             <!-- CATEGORÍA -->
-            <div class="form-grupo">
-                <label for="selectCategoria" class="form-label">Categoría *</label>
-                <select id="selectCategoria" class="form-select" required>
-                    <option value="">Selecciona una categoría</option>
-                    <option value="ventas">Ventas</option>
-                    <option value="servicios">Servicios</option>
-                    <option value="otros">Otros Ingresos</option>
-                </select>
-            </div>
+<div class="form-grupo">
+    <label for="selectCategoria" class="form-label">Categoría *</label>
+    <div style="display: flex; gap: 8px; align-items: flex-start;">
+        <select id="selectCategoria" class="form-select" required style="flex: 1;">
+            <option value="">Selecciona una categoría</option>
+        </select>
+        <button type="button" id="btnAgregarCategoria" class="btn-icono" 
+                style="background: #10b981; color: white; padding: 10px 14px; border-radius: 8px; border: none; cursor: pointer;"
+                title="Agregar categoría personalizada">
+            <i class="fas fa-plus"></i>
+        </button>
+    </div>
+    <!-- Nota informativa -->
+    <small style="color: #6b7280; font-size: 0.75rem; margin-top: 4px; display: block;">
+        💡 Click en <strong>+</strong> para agregar categorías personalizadas
+    </small>
+</div>
 
          <!-- DESCRIPCIÓN -->
             <div class="form-grupo">
