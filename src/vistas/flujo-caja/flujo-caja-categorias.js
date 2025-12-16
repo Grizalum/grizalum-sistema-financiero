@@ -83,7 +83,7 @@
             
             // Marcar si es personalizada
             const esPersonalizada = window.categoriasPersonalizadas.esPersonalizada(tipo, categoria);
-            option.textContent = esPersonalizada ? `${categoria} 🗑️` : categoria;
+            option.textContent = categoria;
             option.dataset.personalizada = esPersonalizada;
             option.dataset.categoria = categoria;
             
