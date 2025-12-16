@@ -339,7 +339,7 @@ const FlujoCajaConfig = {
      * Obtener categorías según industria
      */
     obtenerCategorias(industriaId) {
-        return this.categoriasPorIndustria[industriaId] || this.categoriasPorIndustria.default;
+        return this.categoriasPorIndustria.default;
     }
 };
 
