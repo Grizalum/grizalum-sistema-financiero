@@ -272,5 +272,96 @@
     // Exponer funciones globalmente
     window.mostrarGestionCategorias = mostrarGestionCategorias;
     window.configurarBotonesGestion = configurarBotonesGestion;
+
+    // ═══════════════════════════════════════════════════════════════
+// 🎨 MOSTRAR BOTONES EDITAR/ELIMINAR AL SELECCIONAR CATEGORÍA
+// ═══════════════════════════════════════════════════════════════
+
+function configurarBotonesCategoria() {
+    const select = document.getElementById('selectCategoria');
+    const btnEditar = document.getElementById('btnEditarCategoria');
+    const btnEliminar = document.getElementById('btnEliminarCategoria');
     
+    if (!select || !btnEditar || !btnEliminar) return;
+    
+    // Mostrar botones cuando se selecciona una categoría
+    select.addEventListener('change', function() {
+        if (this.value) {
+            btnEditar.style.display = 'block';
+            btnEliminar.style.display = 'block';
+        } else {
+            btnEditar.style.display = 'none';
+            btnEliminar.style.display = 'none';
+        }
+    });
+    
+    // BOTÓN EDITAR
+    btnEditar.addEventListener('click', function() {
+        const categoriaVieja = select.value;
+        const tipo = document.querySelector('#formTransaccion input[name="tipo"]:checked')?.value;
+        
+        if (!categoriaVieja || !tipo) {
+            alert('❌ Selecciona una categoría primero');
+            return;
+        }
+        
+        const nuevoNombre = prompt(`✏️ Editar categoría:\n\nNombre actual: ${categoriaVieja}\n\nNuevo nombre:`, categoriaVieja);
+        
+        if (nuevoNombre && nuevoNombre.trim() !== '' && nuevoNombre.trim() !== categoriaVieja) {
+            try {
+                // Eliminar la vieja y agregar la nueva
+                window.categoriasPersonalizadas.eliminarCategoria(tipo, categoriaVieja);
+                window.categoriasPersonalizadas.agregarCategoria(tipo, nuevoNombre.trim());
+                
+                // Recargar
+                cargarCategoriasSegunTipo(tipo, select);
+                select.value = nuevoNombre.trim();
+                actualizarSelectFiltro();
+                
+                alert(`✅ Categoría actualizada: "${categoriaVieja}" → "${nuevoNombre.trim()}"`);
+            } catch (error) {
+                alert(`❌ ${error.message}`);
+            }
+        }
+    });
+    
+    // BOTÓN ELIMINAR
+    btnEliminar.addEventListener('click', function() {
+        const categoria = select.value;
+        const tipo = document.querySelector('#formTransaccion input[name="tipo"]:checked')?.value;
+        
+        if (!categoria || !tipo) {
+            alert('❌ Selecciona una categoría primero');
+            return;
+        }
+        
+        if (confirm(`¿Eliminar la categoría "${categoria}"?\n\nEsta acción no se puede deshacer.`)) {
+            try {
+                window.categoriasPersonalizadas.eliminarCategoria(tipo, categoria);
+                
+                // Recargar
+                cargarCategoriasSegunTipo(tipo, select);
+                actualizarSelectFiltro();
+                
+                // Ocultar botones
+                btnEditar.style.display = 'none';
+                btnEliminar.style.display = 'none';
+                
+                alert(`✅ Categoría "${categoria}" eliminada`);
+            } catch (error) {
+                alert(`❌ ${error.message}`);
+            }
+        }
+    });
+    
+    console.log('✅ Botones editar/eliminar configurados');
+}
+
+// Inicializar
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(configurarBotonesCategoria, 500);
+});
+
+window.configurarBotonesCategoria = configurarBotonesCategoria;
+        
 })();
