@@ -188,30 +188,32 @@
             <div class="form-grupo">
                 <label for="selectCategoria" class="form-label">Categoría *</label>
                 <div style="display: flex; gap: 8px; align-items: flex-start;">
-                    <select id="selectCategoria" class="form-select" required style="flex: 1;">
-                        <option value="">Selecciona una categoría</option>
-                    </select>
-                    <button type="button" id="btnAgregarCategoria" class="btn-icono" 
-                            style="background: #10b981; color: white; padding: 10px 14px; border-radius: 8px; border: none; cursor: pointer;"
-                            title="Agregar categoría personalizada">
-                        <i class="fas fa-plus"></i>
-                    </button>
+                        <select id="selectCategoria" class="form-select" required style="flex: 1;">
+                    <option value="">Selecciona una categoría</option>
+                </select>
+                
+                <!-- Botón EDITAR (oculto por defecto) -->
+                <button type="button" id="btnEditarCategoria" class="btn-icono" 
+                        style="background: #3b82f6; color: white; padding: 10px 14px; border-radius: 8px; border: none; cursor: pointer; display: none;"
+                        title="Editar categoría">
+                    <i class="fas fa-edit"></i>
+                </button>
+                
+                <!-- Botón ELIMINAR (oculto por defecto) -->
+                <button type="button" id="btnEliminarCategoria" class="btn-icono" 
+                        style="background: #ef4444; color: white; padding: 10px 14px; border-radius: 8px; border: none; cursor: pointer; display: none;"
+                        title="Eliminar categoría">
+                    <i class="fas fa-trash"></i>
+                </button>
+                
+                <!-- Botón AGREGAR -->
+                <button type="button" id="btnAgregarCategoria" class="btn-icono" 
+                        style="background: #10b981; color: white; padding: 10px 14px; border-radius: 8px; border: none; cursor: pointer;"
+                        title="Agregar categoría">
+                    <i class="fas fa-plus"></i>
+                </button>
                 </div>
                 
-                <!-- 🆕 GESTIÓN DE CATEGORÍAS PERSONALIZADAS -->
-                <div id="gestionCategoriasPersonalizadas" style="margin-top: 12px; display: none;">
-                    <div style="background: rgba(59, 130, 246, 0.1); border: 2px solid rgba(59, 130, 246, 0.3); border-radius: 8px; padding: 12px;">
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                            <strong style="color: #3b82f6; font-size: 0.875rem;">
-                                📋 Mis Categorías Personalizadas
-                            </strong>
-                            <span id="contadorPersonalizadas" style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 700;">0</span>
-                        </div>
-                        <div id="listaCategoriasPersonalizadas" style="display: flex; flex-direction: column; gap: 6px;">
-                            <!-- Aquí se cargarán las categorías -->
-                        </div>
-                    </div>
-                </div>
                 
                 <small style="color: #6b7280; font-size: 0.75rem; margin-top: 4px; display: block;">
                     💡 Click en <strong>+</strong> para agregar categorías personalizadas
