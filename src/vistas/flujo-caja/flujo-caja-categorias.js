@@ -27,6 +27,7 @@
                     configurarSelectModal(selectModal);
                     configurarEventosTipo(selectModal);
                     configurarBotonAgregar();
+                    setTimeout(() => configurarBotonesCategoria(), 200); 
                 }
                 
                 // Configurar select del filtro
