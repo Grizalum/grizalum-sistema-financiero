@@ -265,14 +265,6 @@
     console.log('✅ [Categorías] Módulo v2.0 completamente cargado');
 
 
-    // Actualizar gestión cuando se agregan/eliminan categorías
-    document.addEventListener('grizalumCategoriaAgregada', mostrarGestionCategorias);
-    document.addEventListener('grizalumCategoriaEliminada', mostrarGestionCategorias);
-    
-    // Exponer funciones globalmente
-    window.mostrarGestionCategorias = mostrarGestionCategorias;
-    window.configurarBotonesGestion = configurarBotonesGestion;
-
     // ═══════════════════════════════════════════════════════════════
 // 🎨 MOSTRAR BOTONES EDITAR/ELIMINAR AL SELECCIONAR CATEGORÍA
 // ═══════════════════════════════════════════════════════════════
