@@ -261,6 +261,152 @@
     
     // Iniciar
     iniciar();
+
+    // ═══════════════════════════════════════════════════════════════
+// 🎨 GESTIÓN VISUAL DE CATEGORÍAS PERSONALIZADAS
+// ═══════════════════════════════════════════════════════════════
+
+function mostrarGestionCategorias() {
+    const tipo = document.querySelector('#formTransaccion input[name="tipo"]:checked')?.value;
+    
+    if (!tipo || !window.categoriasPersonalizadas) return;
+    
+    const tipoKey = tipo === 'ingreso' ? 'ingresos' : 'gastos';
+    const personalizadas = window.categoriasPersonalizadas.categoriasPersonalizadas[tipoKey] || [];
+    
+    const gestionDiv = document.getElementById('gestionCategoriasPersonalizadas');
+    const listaDiv = document.getElementById('listaCategoriasPersonalizadas');
+    const contador = document.getElementById('contadorPersonalizadas');
+    
+    if (!gestionDiv || !listaDiv || !contador) return;
+    
+    // Actualizar contador
+    contador.textContent = personalizadas.length;
+    
+    // Mostrar/ocultar sección
+    if (personalizadas.length === 0) {
+        gestionDiv.style.display = 'none';
+        return;
+    }
+    
+    gestionDiv.style.display = 'block';
+    
+    // Limpiar lista
+    listaDiv.innerHTML = '';
+    
+    // Crear items de categorías
+    personalizadas.forEach(categoria => {
+        const item = document.createElement('div');
+        item.style.cssText = `
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 6px;
+            transition: all 0.2s;
+        `;
+        
+        item.innerHTML = `
+            <span style="color: #1f2937; font-weight: 600; font-size: 0.875rem;">${categoria}</span>
+            <div style="display: flex; gap: 6px;">
+                <button type="button" class="btn-editar-categoria" data-categoria="${categoria}" data-tipo="${tipo}"
+                        style="padding: 4px 10px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600; transition: all 0.2s;">
+                    ✏️ Editar
+                </button>
+                <button type="button" class="btn-eliminar-categoria" data-categoria="${categoria}" data-tipo="${tipo}"
+                        style="padding: 4px 10px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600; transition: all 0.2s;">
+                    🗑️ Eliminar
+                </button>
+            </div>
+        `;
+        
+        // Hover effects
+        item.addEventListener('mouseenter', () => {
+            item.style.background = 'rgba(59, 130, 246, 0.05)';
+            item.style.borderColor = 'rgba(59, 130, 246, 0.4)';
+        });
+        
+        item.addEventListener('mouseleave', () => {
+            item.style.background = 'white';
+            item.style.borderColor = 'rgba(59, 130, 246, 0.2)';
+        });
+        
+        listaDiv.appendChild(item);
+    });
+    
+    // Agregar event listeners
+    configurarBotonesGestion();
+}
+
+function configurarBotonesGestion() {
+    // Botones EDITAR
+    document.querySelectorAll('.btn-editar-categoria').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const categoriaVieja = this.dataset.categoria;
+            const tipo = this.dataset.tipo;
+            
+            const nuevoNombre = prompt(`✏️ Editar categoría:\n\nNombre actual: ${categoriaVieja}\n\nNuevo nombre:`, categoriaVieja);
+            
+            if (nuevoNombre && nuevoNombre.trim() !== '' && nuevoNombre.trim() !== categoriaVieja) {
+                try {
+                    // Eliminar la vieja
+                    window.categoriasPersonalizadas.eliminarCategoria(tipo, categoriaVieja);
+                    
+                    // Agregar la nueva
+                    window.categoriasPersonalizadas.agregarCategoria(tipo, nuevoNombre.trim());
+                    
+                    // Recargar
+                    const select = document.getElementById('selectCategoria');
+                    cargarCategoriasSegunTipo(tipo, select);
+                    mostrarGestionCategorias();
+                    
+                    alert(`✅ Categoría actualizada: "${categoriaVieja}" → "${nuevoNombre.trim()}"`);
+                } catch (error) {
+                    alert(`❌ ${error.message}`);
+                }
+            }
+        });
+    });
+    
+    // Botones ELIMINAR
+    document.querySelectorAll('.btn-eliminar-categoria').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const categoria = this.dataset.categoria;
+            const tipo = this.dataset.tipo;
+            
+            if (confirm(`¿Eliminar la categoría "${categoria}"?\n\nEsta acción no se puede deshacer.`)) {
+                try {
+                    window.categoriasPersonalizadas.eliminarCategoria(tipo, categoria);
+                    
+                    // Recargar
+                    const select = document.getElementById('selectCategoria');
+                    cargarCategoriasSegunTipo(tipo, select);
+                    mostrarGestionCategorias();
+                    
+                    alert(`✅ Categoría "${categoria}" eliminada`);
+                } catch (error) {
+                    alert(`❌ ${error.message}`);
+                }
+            }
+        });
+    });
+}
+
+// Mostrar gestión al cambiar tipo
+document.addEventListener('DOMContentLoaded', () => {
+    const radiosTipo = document.querySelectorAll('#formTransaccion input[name="tipo"]');
+    radiosTipo.forEach(radio => {
+        radio.addEventListener('change', () => {
+            setTimeout(mostrarGestionCategorias, 100);
+        });
+    });
+});
+
+// Actualizar gestión cuando se agregan/eliminan categorías
+document.addEventListener('grizalumCategoriaAgregada', mostrarGestionCategorias);
+document.addEventListener('grizalumCategoriaEliminada', mostrarGestionCategorias);
     
     console.log('✅ [Categorías] Módulo v2.0 completamente cargado');
 
