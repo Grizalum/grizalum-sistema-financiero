@@ -219,10 +219,10 @@
         btnEditar.style.display = 'block';
         btnEliminar.style.display = 'block';
         
-        // ✅ BOTÓN EDITAR - UN SOLO EVENT LISTENER
+        // ✅ BOTÓN EDITAR - EJECUTA SOLO UNA VEZ POR CLICK
         btnEditar.addEventListener('click', function handlerEditar(e) {
             e.preventDefault();
-            e.stopPropagation();
+            e.stopImmediatePropagation();
             
             const categoriaVieja = select.value;
             const tipo = document.querySelector('#formTransaccion input[name="tipo"]:checked')?.value;
@@ -250,10 +250,10 @@
             }
         });
         
-        // ✅ BOTÓN ELIMINAR - UN SOLO EVENT LISTENER
+        // ✅ BOTÓN ELIMINAR - EJECUTA SOLO UNA VEZ POR CLICK
         btnEliminar.addEventListener('click', function handlerEliminar(e) {
             e.preventDefault();
-            e.stopPropagation();
+            e.stopImmediatePropagation();
             
             const categoria = select.value;
             const tipo = document.querySelector('#formTransaccion input[name="tipo"]:checked')?.value;
@@ -313,13 +313,12 @@
     });
 
     // ═══════════════════════════════════════════════════════════════
-    // 🚀 INICIALIZACIÓN
+    // 🚀 INICIALIZACIÓN - SOLO UNA VEZ
     // ═══════════════════════════════════════════════════════════════
     function iniciar() {
         console.log('🚀 [Categorías] Iniciando módulo v4.0 FINAL...');
-        setTimeout(inicializarCategorias, 100);
-        setTimeout(inicializarCategorias, 500);
-        setTimeout(inicializarCategorias, 1000);
+        // ✅ SOLO UNA INICIALIZACIÓN
+        setTimeout(inicializarCategorias, 300);
     }
     
     window.GRIZALUM_inicializarCategorias = inicializarCategorias;
