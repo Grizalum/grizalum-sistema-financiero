@@ -1,22 +1,16 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * 💰 GRIZALUM - CATEGORÍAS FLUJO DE CAJA v4.0 FINAL
- * SIN BUGS - PRODUCCIÓN
+ * 💰 GRIZALUM - CATEGORÍAS v5.0 DEFINITIVO - SIN BUGS
  * ═══════════════════════════════════════════════════════════════════
  */
 
 (function() {
     'use strict';
 
-    console.log('📦 [Categorías] Módulo v4.0 FINAL cargado');
+    console.log('📦 [Categorías v5.0] Módulo cargado');
 
     // ═══════════════════════════════════════════════════════════════
-    // 🔒 VARIABLE DE CONTROL - EVITA DUPLICACIÓN DE EVENTOS
-    // ═══════════════════════════════════════════════════════════════
-    let botonesYaConfigurados = false;
-
-    // ═══════════════════════════════════════════════════════════════
-    // 🎯 INICIALIZAR CATEGORÍAS
+    // 🎯 INICIALIZAR
     // ═══════════════════════════════════════════════════════════════
     function inicializarCategorias() {
         console.log('🔧 [Categorías] Inicializando...');
@@ -30,12 +24,7 @@
                     configurarSelectModal(selectModal);
                     configurarEventosTipo(selectModal);
                     configurarBotonAgregar();
-                    
-                    // ✅ SOLO CONFIGURAR BOTONES UNA VEZ
-                    if (!botonesYaConfigurados) {
-                        configurarBotonesCategoria();
-                        botonesYaConfigurados = true;
-                    }
+                    configurarBotonesEditarEliminar();
                 }
                 
                 const selectFiltro = document.getElementById('filtroCategoria');
@@ -54,7 +43,7 @@
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // 🔄 CARGAR CATEGORÍAS SEGÚN TIPO
+    // 🔄 CARGAR CATEGORÍAS
     // ═══════════════════════════════════════════════════════════════
     function cargarCategoriasSegunTipo(tipo, select) {
         if (!select) {
@@ -62,7 +51,7 @@
         }
         
         if (!select || !window.categoriasPersonalizadas) {
-            console.error('❌ [Categorías] Select o sistema no disponible');
+            console.error('❌ Select o sistema no disponible');
             return;
         }
         
@@ -80,51 +69,25 @@
         categorias.forEach(categoria => {
             const option = document.createElement('option');
             option.value = categoria;
-            
-            const esPersonalizada = window.categoriasPersonalizadas.esPersonalizada(tipo, categoria);
             option.textContent = categoria;
-            option.dataset.personalizada = esPersonalizada;
-            option.dataset.categoria = categoria;
-            
             select.appendChild(option);
         });
         
-        console.log(`✅ [Categorías] ${categorias.length} categorías cargadas (${tipo})`);
-    }
-
-    function configurarEliminacionCategorias(select) {
-        select.addEventListener('dblclick', (e) => {
-            const option = e.target;
-            
-            if (option.tagName === 'OPTION' && option.dataset.personalizada === 'true') {
-                const tipo = document.querySelector('input[name="tipo"]:checked')?.value;
-                const categoria = option.dataset.categoria;
-                
-                if (confirm(`¿Eliminar la categoría "${categoria}"?`)) {
-                    try {
-                        window.categoriasPersonalizadas.eliminarCategoria(tipo, categoria);
-                        cargarCategoriasSegunTipo(tipo, select);
-                        actualizarSelectFiltro();
-                    } catch (error) {
-                        alert(error.message);
-                    }
-                }
-            }
-        });
+        console.log(`✅ ${categorias.length} categorías cargadas (${tipo})`);
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // ➕ CONFIGURAR BOTÓN AGREGAR
+    // ➕ BOTÓN AGREGAR
     // ═══════════════════════════════════════════════════════════════
     function configurarBotonAgregar() {
         const btnAgregar = document.getElementById('btnAgregarCategoria');
         
         if (!btnAgregar) {
-            console.warn('⚠️ [Categorías] Botón agregar no encontrado');
+            console.warn('⚠️ Botón agregar no encontrado');
             return;
         }
         
-        // ✅ LIMPIAR EVENTO ANTERIOR
+        // Remover listeners anteriores
         const nuevoBtn = btnAgregar.cloneNode(true);
         btnAgregar.parentNode.replaceChild(nuevoBtn, btnAgregar);
         
@@ -140,9 +103,7 @@
                     
                     const select = document.getElementById('selectCategoria');
                     cargarCategoriasSegunTipo(tipo, select);
-                    
                     actualizarSelectFiltro();
-                    
                     select.value = nombre.trim();
                     
                     alert(`✅ Categoría "${nombre.trim()}" agregada`);
@@ -152,9 +113,99 @@
             }
         });
         
-        console.log('✅ [Categorías] Botón agregar configurado');
+        console.log('✅ Botón agregar configurado');
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    // ✏️❌ BOTONES EDITAR Y ELIMINAR
+    // ═══════════════════════════════════════════════════════════════
+    function configurarBotonesEditarEliminar() {
+        const btnEditar = document.getElementById('btnEditarCategoria');
+        const btnEliminar = document.getElementById('btnEliminarCategoria');
+        
+        if (!btnEditar || !btnEliminar) {
+            console.error('❌ Botones no encontrados');
+            return;
+        }
+        
+        // Mostrar botones
+        btnEditar.style.display = 'block';
+        btnEliminar.style.display = 'block';
+        
+        // Remover listeners anteriores
+        const nuevoEditar = btnEditar.cloneNode(true);
+        const nuevoEliminar = btnEliminar.cloneNode(true);
+        btnEditar.parentNode.replaceChild(nuevoEditar, btnEditar);
+        btnEliminar.parentNode.replaceChild(nuevoEliminar, btnEliminar);
+        
+        // EDITAR
+        nuevoEditar.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            const select = document.getElementById('selectCategoria');
+            const categoriaVieja = select.value;
+            const tipo = document.querySelector('#formTransaccion input[name="tipo"]:checked')?.value;
+            
+            if (!categoriaVieja || !tipo) {
+                alert('❌ Selecciona una categoría primero');
+                return;
+            }
+            
+            const nuevoNombre = prompt(
+                `✏️ Editar categoría:\n\nNombre actual: ${categoriaVieja}\n\nNuevo nombre:`,
+                categoriaVieja
+            );
+            
+            if (nuevoNombre && nuevoNombre.trim() !== '' && nuevoNombre.trim() !== categoriaVieja) {
+                try {
+                    window.categoriasPersonalizadas.eliminarCategoria(tipo, categoriaVieja);
+                    window.categoriasPersonalizadas.agregarCategoria(tipo, nuevoNombre.trim());
+                    
+                    cargarCategoriasSegunTipo(tipo, select);
+                    select.value = nuevoNombre.trim();
+                    actualizarSelectFiltro();
+                    
+                    alert(`✅ Categoría actualizada`);
+                } catch (error) {
+                    alert(`❌ ${error.message}`);
+                }
+            }
+        });
+        
+        // ELIMINAR
+        nuevoEliminar.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            const select = document.getElementById('selectCategoria');
+            const categoria = select.value;
+            const tipo = document.querySelector('#formTransaccion input[name="tipo"]:checked')?.value;
+            
+            if (!categoria || !tipo) {
+                alert('❌ Selecciona una categoría primero');
+                return;
+            }
+            
+            if (confirm(`¿Eliminar "${categoria}"?`)) {
+                try {
+                    window.categoriasPersonalizadas.eliminarCategoria(tipo, categoria);
+                    
+                    cargarCategoriasSegunTipo(tipo, select);
+                    actualizarSelectFiltro();
+                    select.value = '';
+                    
+                    alert(`✅ Categoría eliminada`);
+                } catch (error) {
+                    alert(`❌ ${error.message}`);
+                }
+            }
+        });
+        
+        console.log('✅ Botones editar/eliminar configurados');
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // 🔍 FILTRO
+    // ═══════════════════════════════════════════════════════════════
     function cargarCategoriasEnFiltro(select) {
         if (!select || !window.categoriasPersonalizadas) return;
         
@@ -175,8 +226,6 @@
             option.textContent = categoria;
             select.appendChild(option);
         });
-        
-        console.log(`✅ [Categorías] ${todasCategorias.length} categorías en filtro`);
     }
 
     function actualizarSelectFiltro() {
@@ -186,6 +235,9 @@
         }
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    // 🎛️ EVENTOS DE TIPO
+    // ═══════════════════════════════════════════════════════════════
     function configurarEventosTipo(select) {
         const radiosTipo = document.querySelectorAll('input[name="tipo"]');
         
@@ -193,100 +245,13 @@
             radio.addEventListener('change', (e) => {
                 const tipo = e.target.value;
                 cargarCategoriasSegunTipo(tipo, select);
-                configurarEliminacionCategorias(select);
             });
         });
-        
-        configurarEliminacionCategorias(select);
-    }
-
-    // ═══════════════════════════════════════════════════════════════
-    // 🎨 CONFIGURAR BOTONES EDITAR/ELIMINAR - UNA SOLA VEZ
-    // ═══════════════════════════════════════════════════════════════
-    function configurarBotonesCategoria() {
-        const select = document.getElementById('selectCategoria');
-        const btnEditar = document.getElementById('btnEditarCategoria');
-        const btnEliminar = document.getElementById('btnEliminarCategoria');
-        
-        if (!select || !btnEditar || !btnEliminar) {
-            console.error('❌ [Botones] Elementos no encontrados');
-            return;
-        }
-        
-        console.log('🔧 [Botones] Configurando UNA SOLA VEZ...');
-        
-        // ✅ MOSTRAR BOTONES SIEMPRE
-        btnEditar.style.display = 'block';
-        btnEliminar.style.display = 'block';
-        
-        // ✅ BOTÓN EDITAR - EJECUTA SOLO UNA VEZ POR CLICK
-        btnEditar.addEventListener('click', function handlerEditar(e) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            
-            const categoriaVieja = select.value;
-            const tipo = document.querySelector('#formTransaccion input[name="tipo"]:checked')?.value;
-            
-            if (!categoriaVieja || !tipo) {
-                alert('❌ Selecciona una categoría primero');
-                return;
-            }
-            
-            const nuevoNombre = prompt(`✏️ Editar categoría:\n\nNombre actual: ${categoriaVieja}\n\nNuevo nombre:`, categoriaVieja);
-            
-            if (nuevoNombre && nuevoNombre.trim() !== '' && nuevoNombre.trim() !== categoriaVieja) {
-                try {
-                    window.categoriasPersonalizadas.eliminarCategoria(tipo, categoriaVieja);
-                    window.categoriasPersonalizadas.agregarCategoria(tipo, nuevoNombre.trim());
-                    
-                    cargarCategoriasSegunTipo(tipo, select);
-                    select.value = nuevoNombre.trim();
-                    actualizarSelectFiltro();
-                    
-                    alert(`✅ Categoría actualizada: "${categoriaVieja}" → "${nuevoNombre.trim()}"`);
-                } catch (error) {
-                    alert(`❌ ${error.message}`);
-                }
-            }
-        });
-        
-        // ✅ BOTÓN ELIMINAR - EJECUTA SOLO UNA VEZ POR CLICK
-        btnEliminar.addEventListener('click', function handlerEliminar(e) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            
-            const categoria = select.value;
-            const tipo = document.querySelector('#formTransaccion input[name="tipo"]:checked')?.value;
-            
-            if (!categoria || !tipo) {
-                alert('❌ Selecciona una categoría primero');
-                return;
-            }
-            
-            if (confirm(`¿Eliminar la categoría "${categoria}"?\n\nEsta acción no se puede deshacer.`)) {
-                try {
-                    window.categoriasPersonalizadas.eliminarCategoria(tipo, categoria);
-                    
-                    cargarCategoriasSegunTipo(tipo, select);
-                    actualizarSelectFiltro();
-                    
-                    // Resetear select
-                    select.value = '';
-                    
-                    alert(`✅ Categoría "${categoria}" eliminada`);
-                } catch (error) {
-                    alert(`❌ ${error.message}`);
-                }
-            }
-        });
-        
-        console.log('✅ [Botones] Configuración completa - SIN DUPLICADOS');
     }
 
     // ═══════════════════════════════════════════════════════════════
     // 🔄 EVENTOS GLOBALES
     // ═══════════════════════════════════════════════════════════════
-    
     document.addEventListener('grizalumCategoriaAgregada', () => {
         const select = document.getElementById('selectCategoria');
         const tipo = document.querySelector('input[name="tipo"]:checked')?.value;
@@ -304,28 +269,15 @@
         }
         actualizarSelectFiltro();
     });
-    
-    document.addEventListener('grizalumCompanyChanged', () => {
-        setTimeout(() => {
-            botonesYaConfigurados = false; // Resetear para nueva empresa
-            inicializarCategorias();
-        }, 300);
-    });
 
     // ═══════════════════════════════════════════════════════════════
-    // 🚀 INICIALIZACIÓN - SOLO UNA VEZ
+    // 🚀 INICIAR
     // ═══════════════════════════════════════════════════════════════
-    function iniciar() {
-        console.log('🚀 [Categorías] Iniciando módulo v4.0 FINAL...');
-        // ✅ SOLO UNA INICIALIZACIÓN
-        setTimeout(inicializarCategorias, 300);
-    }
-    
     window.GRIZALUM_inicializarCategorias = inicializarCategorias;
     window.GRIZALUM_cargarCategoriasSegunTipo = cargarCategoriasSegunTipo;
     
-    iniciar();
+    setTimeout(inicializarCategorias, 300);
     
-    console.log('✅ [Categorías] Módulo v4.0 FINAL completamente cargado');
+    console.log('✅ [Categorías v5.0] Completamente cargado');
 
 })();
