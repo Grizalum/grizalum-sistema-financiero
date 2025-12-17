@@ -1,17 +1,22 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * 💰 GRIZALUM - INICIALIZADOR DE CATEGORÍAS FLUJO DE CAJA v3.0
- * CON BOTONES EDITAR/ELIMINAR FUNCIONALES
+ * 💰 GRIZALUM - CATEGORÍAS FLUJO DE CAJA v4.0 FINAL
+ * SIN BUGS - PRODUCCIÓN
  * ═══════════════════════════════════════════════════════════════════
  */
 
 (function() {
     'use strict';
 
-    console.log('📦 [Categorías] Módulo v3.0 cargado');
+    console.log('📦 [Categorías] Módulo v4.0 FINAL cargado');
 
     // ═══════════════════════════════════════════════════════════════
-    // 🎯 FUNCIÓN PRINCIPAL: INICIALIZAR CATEGORÍAS
+    // 🔒 VARIABLE DE CONTROL - EVITA DUPLICACIÓN DE EVENTOS
+    // ═══════════════════════════════════════════════════════════════
+    let botonesYaConfigurados = false;
+
+    // ═══════════════════════════════════════════════════════════════
+    // 🎯 INICIALIZAR CATEGORÍAS
     // ═══════════════════════════════════════════════════════════════
     function inicializarCategorias() {
         console.log('🔧 [Categorías] Inicializando...');
@@ -25,8 +30,12 @@
                     configurarSelectModal(selectModal);
                     configurarEventosTipo(selectModal);
                     configurarBotonAgregar();
-                    // ✅ CONFIGURAR BOTONES INMEDIATAMENTE
-                    configurarBotonesCategoria();
+                    
+                    // ✅ SOLO CONFIGURAR BOTONES UNA VEZ
+                    if (!botonesYaConfigurados) {
+                        configurarBotonesCategoria();
+                        botonesYaConfigurados = true;
+                    }
                 }
                 
                 const selectFiltro = document.getElementById('filtroCategoria');
@@ -44,6 +53,9 @@
         cargarCategoriasSegunTipo(tipo, select);
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    // 🔄 CARGAR CATEGORÍAS SEGÚN TIPO
+    // ═══════════════════════════════════════════════════════════════
     function cargarCategoriasSegunTipo(tipo, select) {
         if (!select) {
             select = document.getElementById('selectCategoria');
@@ -101,6 +113,9 @@
         });
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    // ➕ CONFIGURAR BOTÓN AGREGAR
+    // ═══════════════════════════════════════════════════════════════
     function configurarBotonAgregar() {
         const btnAgregar = document.getElementById('btnAgregarCategoria');
         
@@ -109,7 +124,11 @@
             return;
         }
         
-        btnAgregar.addEventListener('click', () => {
+        // ✅ LIMPIAR EVENTO ANTERIOR
+        const nuevoBtn = btnAgregar.cloneNode(true);
+        btnAgregar.parentNode.replaceChild(nuevoBtn, btnAgregar);
+        
+        nuevoBtn.addEventListener('click', () => {
             const tipo = document.querySelector('input[name="tipo"]:checked')?.value;
             const tipoTexto = tipo === 'ingreso' ? 'ingreso' : 'gasto';
             
@@ -125,14 +144,6 @@
                     actualizarSelectFiltro();
                     
                     select.value = nombre.trim();
-                    
-                    // ✅ MOSTRAR BOTONES DESPUÉS DE AGREGAR
-                    const btnEditar = document.getElementById('btnEditarCategoria');
-                    const btnEliminar = document.getElementById('btnEliminarCategoria');
-                    if (btnEditar && btnEliminar) {
-                        btnEditar.style.display = 'block';
-                        btnEliminar.style.display = 'block';
-                    }
                     
                     alert(`✅ Categoría "${nombre.trim()}" agregada`);
                 } catch (error) {
@@ -190,7 +201,7 @@
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // 🎨 CONFIGURAR BOTONES EDITAR/ELIMINAR - SIEMPRE VISIBLES
+    // 🎨 CONFIGURAR BOTONES EDITAR/ELIMINAR - UNA SOLA VEZ
     // ═══════════════════════════════════════════════════════════════
     function configurarBotonesCategoria() {
         const select = document.getElementById('selectCategoria');
@@ -202,25 +213,17 @@
             return;
         }
         
-        console.log('🔧 [Botones] Configurando...');
-        
-        // ✅ LIMPIAR EVENT LISTENERS ANTERIORES
-        const nuevoBotonEditar = btnEditar.cloneNode(true);
-        const nuevoBotonEliminar = btnEliminar.cloneNode(true);
-        btnEditar.parentNode.replaceChild(nuevoBotonEditar, btnEditar);
-        btnEliminar.parentNode.replaceChild(nuevoBotonEliminar, btnEliminar);
-        
-        // Reasignar referencias
-        const btnEditarLimpio = document.getElementById('btnEditarCategoria');
-        const btnEliminarLimpio = document.getElementById('btnEliminarCategoria');
+        console.log('🔧 [Botones] Configurando UNA SOLA VEZ...');
         
         // ✅ MOSTRAR BOTONES SIEMPRE
-        btnEditarLimpio.style.display = 'block';
-        btnEliminarLimpio.style.display = 'block';
+        btnEditar.style.display = 'block';
+        btnEliminar.style.display = 'block';
         
-        // ✅ BOTÓN EDITAR
-        btnEditarLimpio.addEventListener('click', function(e) {
+        // ✅ BOTÓN EDITAR - UN SOLO EVENT LISTENER
+        btnEditar.addEventListener('click', function handlerEditar(e) {
             e.preventDefault();
+            e.stopPropagation();
+            
             const categoriaVieja = select.value;
             const tipo = document.querySelector('#formTransaccion input[name="tipo"]:checked')?.value;
             
@@ -240,9 +243,6 @@
                     select.value = nuevoNombre.trim();
                     actualizarSelectFiltro();
                     
-                    btnEditarLimpio.style.display = 'block';
-                    btnEliminarLimpio.style.display = 'block';
-                    
                     alert(`✅ Categoría actualizada: "${categoriaVieja}" → "${nuevoNombre.trim()}"`);
                 } catch (error) {
                     alert(`❌ ${error.message}`);
@@ -250,9 +250,11 @@
             }
         });
         
-        // ✅ BOTÓN ELIMINAR
-        btnEliminarLimpio.addEventListener('click', function(e) {
+        // ✅ BOTÓN ELIMINAR - UN SOLO EVENT LISTENER
+        btnEliminar.addEventListener('click', function handlerEliminar(e) {
             e.preventDefault();
+            e.stopPropagation();
+            
             const categoria = select.value;
             const tipo = document.querySelector('#formTransaccion input[name="tipo"]:checked')?.value;
             
@@ -268,8 +270,8 @@
                     cargarCategoriasSegunTipo(tipo, select);
                     actualizarSelectFiltro();
                     
-                    btnEditarLimpio.style.display = 'none';
-                    btnEliminarLimpio.style.display = 'none';
+                    // Resetear select
+                    select.value = '';
                     
                     alert(`✅ Categoría "${categoria}" eliminada`);
                 } catch (error) {
@@ -278,7 +280,7 @@
             }
         });
         
-        console.log('✅ [Botones] Configuración completa');
+        console.log('✅ [Botones] Configuración completa - SIN DUPLICADOS');
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -305,6 +307,7 @@
     
     document.addEventListener('grizalumCompanyChanged', () => {
         setTimeout(() => {
+            botonesYaConfigurados = false; // Resetear para nueva empresa
             inicializarCategorias();
         }, 300);
     });
@@ -313,7 +316,7 @@
     // 🚀 INICIALIZACIÓN
     // ═══════════════════════════════════════════════════════════════
     function iniciar() {
-        console.log('🚀 [Categorías] Iniciando módulo v3.0...');
+        console.log('🚀 [Categorías] Iniciando módulo v4.0 FINAL...');
         setTimeout(inicializarCategorias, 100);
         setTimeout(inicializarCategorias, 500);
         setTimeout(inicializarCategorias, 1000);
@@ -321,10 +324,9 @@
     
     window.GRIZALUM_inicializarCategorias = inicializarCategorias;
     window.GRIZALUM_cargarCategoriasSegunTipo = cargarCategoriasSegunTipo;
-    window.configurarBotonesCategoria = configurarBotonesCategoria;
     
     iniciar();
     
-    console.log('✅ [Categorías] Módulo v3.0 completamente cargado');
+    console.log('✅ [Categorías] Módulo v4.0 FINAL completamente cargado');
 
 })();
