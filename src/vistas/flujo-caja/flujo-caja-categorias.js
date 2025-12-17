@@ -204,12 +204,22 @@
         
         console.log('🔧 [Botones] Configurando...');
         
+        // ✅ LIMPIAR EVENT LISTENERS ANTERIORES
+        const nuevoBotonEditar = btnEditar.cloneNode(true);
+        const nuevoBotonEliminar = btnEliminar.cloneNode(true);
+        btnEditar.parentNode.replaceChild(nuevoBotonEditar, btnEditar);
+        btnEliminar.parentNode.replaceChild(nuevoBotonEliminar, btnEliminar);
+        
+        // Reasignar referencias
+        const btnEditarLimpio = document.getElementById('btnEditarCategoria');
+        const btnEliminarLimpio = document.getElementById('btnEliminarCategoria');
+        
         // ✅ MOSTRAR BOTONES SIEMPRE
-        btnEditar.style.display = 'block';
-        btnEliminar.style.display = 'block';
+        btnEditarLimpio.style.display = 'block';
+        btnEliminarLimpio.style.display = 'block';
         
         // ✅ BOTÓN EDITAR
-        btnEditar.addEventListener('click', function(e) {
+        btnEditarLimpio.addEventListener('click', function(e) {
             e.preventDefault();
             const categoriaVieja = select.value;
             const tipo = document.querySelector('#formTransaccion input[name="tipo"]:checked')?.value;
@@ -230,8 +240,8 @@
                     select.value = nuevoNombre.trim();
                     actualizarSelectFiltro();
                     
-                    btnEditar.style.display = 'block';
-                    btnEliminar.style.display = 'block';
+                    btnEditarLimpio.style.display = 'block';
+                    btnEliminarLimpio.style.display = 'block';
                     
                     alert(`✅ Categoría actualizada: "${categoriaVieja}" → "${nuevoNombre.trim()}"`);
                 } catch (error) {
@@ -241,7 +251,7 @@
         });
         
         // ✅ BOTÓN ELIMINAR
-        btnEliminar.addEventListener('click', function(e) {
+        btnEliminarLimpio.addEventListener('click', function(e) {
             e.preventDefault();
             const categoria = select.value;
             const tipo = document.querySelector('#formTransaccion input[name="tipo"]:checked')?.value;
@@ -258,8 +268,8 @@
                     cargarCategoriasSegunTipo(tipo, select);
                     actualizarSelectFiltro();
                     
-                    btnEditar.style.display = 'none';
-                    btnEliminar.style.display = 'none';
+                    btnEditarLimpio.style.display = 'none';
+                    btnEliminarLimpio.style.display = 'none';
                     
                     alert(`✅ Categoría "${categoria}" eliminada`);
                 } catch (error) {
