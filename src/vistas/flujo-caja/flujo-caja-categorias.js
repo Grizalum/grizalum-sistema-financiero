@@ -183,14 +183,6 @@
                 const tipo = e.target.value;
                 cargarCategoriasSegunTipo(tipo, select);
                 configurarEliminacionCategorias(select);
-                
-                // ✅ OCULTAR BOTONES AL CAMBIAR TIPO
-                const btnEditar = document.getElementById('btnEditarCategoria');
-                const btnEliminar = document.getElementById('btnEliminarCategoria');
-                if (btnEditar && btnEliminar) {
-                    btnEditar.style.display = 'none';
-                    btnEliminar.style.display = 'none';
-                }
             });
         });
         
@@ -198,7 +190,7 @@
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // 🎨 CONFIGURAR BOTONES EDITAR/ELIMINAR
+    // 🎨 CONFIGURAR BOTONES EDITAR/ELIMINAR - SIEMPRE VISIBLES
     // ═══════════════════════════════════════════════════════════════
     function configurarBotonesCategoria() {
         const select = document.getElementById('selectCategoria');
@@ -212,19 +204,9 @@
         
         console.log('🔧 [Botones] Configurando...');
         
-        // ✅ EVENTO CHANGE DEL SELECT
-        select.addEventListener('change', function() {
-            console.log('📝 Categoría seleccionada:', this.value);
-            if (this.value) {
-                btnEditar.style.display = 'block';
-                btnEliminar.style.display = 'block';
-                console.log('✅ Botones mostrados');
-            } else {
-                btnEditar.style.display = 'none';
-                btnEliminar.style.display = 'none';
-                console.log('⚪ Botones ocultos');
-            }
-        });
+        // ✅ MOSTRAR BOTONES SIEMPRE
+        btnEditar.style.display = 'block';
+        btnEliminar.style.display = 'block';
         
         // ✅ BOTÓN EDITAR
         btnEditar.addEventListener('click', function(e) {
