@@ -927,44 +927,70 @@ if (document.readyState === 'loading') {
     };   
 </script> 
 <script>
-// PROTECCIÓN DE MODAL CON SPINNER
+// PROTECCIÓN DE MODAL CON SPINNER - VERSIÓN ROBUSTA
 (function() {
-    const original = window.abrirModalTransaccion;
+    console.log('🛡️ Instalando protección de modal...');
     
-    window.abrirModalTransaccion = function() {
-        const spinner = document.getElementById('modalLoadingSpinner');
+    // Esperar a que TODO esté cargado
+    function instalarProteccion() {
+        // Buscar la función original en múltiples ubicaciones
+        let funcionOriginal = null;
         
-        // Verificar que todo esté listo
-        if (!window.categoriasPersonalizadas || !window.flujoCaja || !window.flujoCajaUI) {
-            console.log('⏳ Esperando sistemas...');
-            setTimeout(window.abrirModalTransaccion, 500);
+        if (window.flujoCajaUI && typeof window.flujoCajaUI.abrirModalTransaccion === 'function') {
+            funcionOriginal = window.flujoCajaUI.abrirModalTransaccion.bind(window.flujoCajaUI);
+        } else if (typeof window.abrirModalTransaccion === 'function') {
+            funcionOriginal = window.abrirModalTransaccion;
+        }
+        
+        if (!funcionOriginal) {
+            console.log('⏳ Esperando función modal...');
+            setTimeout(instalarProteccion, 500);
             return;
         }
         
-        // Abrir modal
-        if (original) {
-            original();
-        } else if (window.flujoCajaUI && window.flujoCajaUI.abrirModalTransaccion) {
-            window.flujoCajaUI.abrirModalTransaccion();
-        }
-        
-        // Mostrar spinner
-        if (spinner) spinner.style.display = 'flex';
-        
-        // Recargar categorías y ocultar spinner
-        setTimeout(() => {
-            const select = document.getElementById('selectCategoria');
-            const tipo = document.querySelector('input[name="tipo"]:checked')?.value || 'ingreso';
+        // Crear nueva función protegida
+        window.abrirModalTransaccion = function() {
+            const spinner = document.getElementById('modalLoadingSpinner');
             
-            if (select && window.GRIZALUM_cargarCategoriasSegunTipo) {
-                window.GRIZALUM_cargarCategoriasSegunTipo(tipo, select);
-                console.log('✅ Categorías cargadas');
+            // Verificar sistemas
+            if (!window.categoriasPersonalizadas || !window.flujoCaja || !window.flujoCajaUI) {
+                console.log('⏳ Esperando sistemas...');
+                if (spinner) spinner.style.display = 'flex';
+                setTimeout(window.abrirModalTransaccion, 500);
+                return;
             }
             
-            // Ocultar spinner
-            if (spinner) spinner.style.display = 'none';
-        }, 1000);
-    };
+            // Llamar función original
+            funcionOriginal();
+            
+            // Mostrar spinner
+            if (spinner) spinner.style.display = 'flex';
+            
+            // Recargar categorías y ocultar spinner
+            setTimeout(() => {
+                const select = document.getElementById('selectCategoria');
+                const tipo = document.querySelector('input[name="tipo"]:checked')?.value || 'ingreso';
+                
+                if (select && window.GRIZALUM_cargarCategoriasSegunTipo) {
+                    window.GRIZALUM_cargarCategoriasSegunTipo(tipo, select);
+                    console.log('✅ Categorías recargadas');
+                }
+                
+                if (spinner) spinner.style.display = 'none';
+            }, 1000);
+        };
+        
+        console.log('✅ Protección de modal instalada correctamente');
+    }
+    
+    // Ejecutar después de que todo cargue
+    if (document.readyState === 'complete') {
+        setTimeout(instalarProteccion, 2000);
+    } else {
+        window.addEventListener('load', () => {
+            setTimeout(instalarProteccion, 2000);
+        });
+    }
 })();
 </script>
 
