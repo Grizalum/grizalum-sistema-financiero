@@ -917,6 +917,31 @@ if (document.readyState === 'loading') {
             console.error('❌ Error recargando:', error);
         }
     };
+
+    // ═══════════════════════════════════════════════════════════════
+// 🛡️ PROTECCIÓN CONTRA PANTALLA EN BLANCO AL ABRIR MODAL RÁPIDO
+// ═══════════════════════════════════════════════════════════════
+(function() {
+    const abrirModalOriginal = window.abrirModalTransaccion;
+    
+    window.abrirModalTransaccion = function() {
+        // Verificar que todo esté listo
+        if (!window.categoriasPersonalizadas || !window.flujoCaja) {
+            console.log('⏳ Esperando sistemas...');
+            setTimeout(window.abrirModalTransaccion, 100);
+            return;
+        }
+        
+        // Todo listo, abrir modal
+        if (abrirModalOriginal) {
+            abrirModalOriginal();
+        } else if (window.flujoCajaUI && window.flujoCajaUI.abrirModalTransaccion) {
+            window.flujoCajaUI.abrirModalTransaccion();
+        }
+    };
+    
+    console.log('✅ Protección de modal activada');
+})();
     
 </script>    
 <!-- ═══════════════════════════════════════════════════════════════ -->
