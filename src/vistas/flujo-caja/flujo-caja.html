@@ -927,29 +927,43 @@ if (document.readyState === 'loading') {
     };   
 </script> 
 <script>
-// PROTECCIÓN DE MODAL
+// PROTECCIÓN DE MODAL CON SPINNER
 (function() {
     const original = window.abrirModalTransaccion;
     
     window.abrirModalTransaccion = function() {
+        const spinner = document.getElementById('modalLoadingSpinner');
+        
+        // Verificar que todo esté listo
         if (!window.categoriasPersonalizadas || !window.flujoCaja || !window.flujoCajaUI) {
+            console.log('⏳ Esperando sistemas...');
             setTimeout(window.abrirModalTransaccion, 500);
             return;
         }
         
+        // Abrir modal
         if (original) {
             original();
         } else if (window.flujoCajaUI && window.flujoCajaUI.abrirModalTransaccion) {
             window.flujoCajaUI.abrirModalTransaccion();
         }
         
+        // Mostrar spinner
+        if (spinner) spinner.style.display = 'flex';
+        
+        // Recargar categorías y ocultar spinner
         setTimeout(() => {
             const select = document.getElementById('selectCategoria');
             const tipo = document.querySelector('input[name="tipo"]:checked')?.value || 'ingreso';
+            
             if (select && window.GRIZALUM_cargarCategoriasSegunTipo) {
                 window.GRIZALUM_cargarCategoriasSegunTipo(tipo, select);
+                console.log('✅ Categorías cargadas');
             }
-        }, 500);
+            
+            // Ocultar spinner
+            if (spinner) spinner.style.display = 'none';
+        }, 1000);
     };
 })();
 </script>
