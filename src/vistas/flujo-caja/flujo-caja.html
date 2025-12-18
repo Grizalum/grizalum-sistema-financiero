@@ -916,44 +916,36 @@ if (document.readyState === 'loading') {
         } catch (error) {
             console.error('❌ Error recargando:', error);
         }
-    };
-
-   // ═══════════════════════════════════════════════════════════════
-// 🛡️ PROTECCIÓN Y RECARGA DE CATEGORÍAS AL ABRIR MODAL
-// ═══════════════════════════════════════════════════════════════
+    };   
+</script> 
+<script>
+// PROTECCIÓN DE MODAL
 (function() {
-    const abrirModalOriginal = window.abrirModalTransaccion;
+    const original = window.abrirModalTransaccion;
     
     window.abrirModalTransaccion = function() {
-        // Verificar que todo esté listo
         if (!window.categoriasPersonalizadas || !window.flujoCaja || !window.flujoCajaUI) {
-            console.log('⏳ Esperando sistemas...');
             setTimeout(window.abrirModalTransaccion, 500);
             return;
         }
         
-        // Todo listo, abrir modal
-        if (abrirModalOriginal) {
-            abrirModalOriginal();
+        if (original) {
+            original();
         } else if (window.flujoCajaUI && window.flujoCajaUI.abrirModalTransaccion) {
             window.flujoCajaUI.abrirModalTransaccion();
         }
         
-        // ✅ RECARGAR CATEGORÍAS DESPUÉS DE ABRIR EL MODAL
         setTimeout(() => {
             const select = document.getElementById('selectCategoria');
             const tipo = document.querySelector('input[name="tipo"]:checked')?.value || 'ingreso';
             if (select && window.GRIZALUM_cargarCategoriasSegunTipo) {
                 window.GRIZALUM_cargarCategoriasSegunTipo(tipo, select);
-                console.log('✅ Categorías recargadas');
             }
         }, 200);
     };
-    
-    console.log('✅ Protección de modal activada');
 })();
-    
-</script>    
+</script>
+
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <!-- SCRIPTS PRINCIPALES DEL FLUJO DE CAJA -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
