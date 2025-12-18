@@ -1,15 +1,16 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * GRIZALUM - MÓDULO FLUJO DE CAJA v2.0
+ * GRIZALUM - MÓDULO FLUJO DE CAJA v2.0 CORREGIDO
  * Sistema adaptativo de gestión de ingresos y gastos
  * VERSIÓN MULTI-EMPRESA GARANTIZADA - 100% SEPARACIÓN DE DATOS
+ * ✅ FIX: Inicialización de categorías correcta
  * ═══════════════════════════════════════════════════════════════════
  */
 
 class FlujoCaja {
     constructor() {
         this.config = {
-            version: '2.0.0', // 🔥 NUEVA VERSIÓN - Multi-empresa garantizado
+            version: '2.0.1', // 🔥 VERSIÓN CORREGIDA
             componente: 'FlujoCaja',
             debug: true
         };
@@ -18,7 +19,12 @@ class FlujoCaja {
         this.nivel = null;
         this.componentesActivos = null;
         this.transacciones = [];
-        this.categorias = {};
+        
+        // ✅ FIX: Inicializar categorías con estructura correcta
+        this.categorias = {
+            ingresos: ['Ventas', 'Servicios', 'Otros Ingresos'],
+            gastos: ['Compras', 'Servicios', 'Gastos Operativos', 'Otros Gastos']
+        };
         
         this.gestor = null;
         this.sistemaNiveles = null;
@@ -36,7 +42,7 @@ class FlujoCaja {
 
     async _inicializar() {
         try {
-            this._log('info', '💰 Flujo de Caja v2.0 inicializando...');
+            this._log('info', '💰 Flujo de Caja v2.0.1 inicializando...');
             
             // Esperar dependencias
             await this._esperarDependencias();
@@ -162,13 +168,27 @@ class FlujoCaja {
             );
         }
 
-        // Obtener categorías según industria
+        // ✅ FIX: Obtener categorías según industria con manejo de errores
         const empresa = this.gestor.estado.empresas[this.empresaActual];
         const industriaId = empresa?.perfilIndustrial || 'default';
-        this.categorias = this.configuracion.obtenerCategorias(industriaId);
+        
+        try {
+            const categoriasObtenidas = this.configuracion.obtenerCategorias(industriaId);
+            
+            // ✅ VERIFICAR que tiene la estructura correcta
+            if (categoriasObtenidas && 
+                Array.isArray(categoriasObtenidas.ingresos) && 
+                Array.isArray(categoriasObtenidas.gastos)) {
+                this.categorias = categoriasObtenidas;
+                this._log('info', `Categorías cargadas para industria: ${industriaId}`);
+            } else {
+                this._log('warn', '⚠️ Categorías con formato incorrecto, usando default');
+            }
+        } catch (error) {
+            this._log('error', 'Error cargando categorías, usando default:', error);
+        }
 
         this._log('info', `Nivel: ${this.nivel.nivel.nombre} (Score: ${this.nivel.score})`);
-        this._log('info', `Categorías cargadas para industria: ${industriaId}`);
     }
 
     async _cargarTransacciones() {
@@ -766,11 +786,12 @@ console.log('✅ [FlujoCaja] Funciones de modal exportadas');
 
 console.log(`
 ╔═══════════════════════════════════════════════════════════════╗
-║  💰 FLUJO DE CAJA v2.0 - MULTI-EMPRESA GARANTIZADO           ║
+║  💰 FLUJO DE CAJA v2.0.1 - MULTI-EMPRESA GARANTIZADO         ║
 ║  Sistema adaptativo de gestión financiera                     ║
 ║  🔒 100% Separación de datos por empresa                      ║
 ║  🔒 Locks para prevenir contaminación                         ║
 ║  🔒 Verificación en cada operación                            ║
 ║  🎯 Empresa actual desde eventos                              ║
+║  ✅ FIX: Inicialización de categorías correcta               ║
 ╚═══════════════════════════════════════════════════════════════╝
 `);
