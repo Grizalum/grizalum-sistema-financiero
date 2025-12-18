@@ -926,9 +926,9 @@ if (document.readyState === 'loading') {
     
     window.abrirModalTransaccion = function() {
         // Verificar que todo esté listo
-        if (!window.categoriasPersonalizadas || !window.flujoCaja) {
+        if (!window.categoriasPersonalizadas || !window.flujoCaja || !window.flujoCajaUI) {
             console.log('⏳ Esperando sistemas...');
-            setTimeout(window.abrirModalTransaccion, 100);
+            setTimeout(window.abrirModalTransaccion, 500);
             return;
         }
         
