@@ -489,6 +489,15 @@ class FlujoCajaUI {
     }
 
     abrirModalTransaccion(modoEdicion = false) {
+    console.log('🚀 Abriendo modal...');
+    
+    // Mostrar spinner inmediatamente
+    const spinner = document.getElementById('modalLoadingSpinner');
+    if (spinner) {
+        spinner.style.display = 'flex';
+        console.log('⏳ Spinner activado');
+    }
+        
         // ✅ Solo resetear si NO estamos editando
         if (!modoEdicion) {
             this.transaccionEditando = null;
@@ -535,6 +544,14 @@ class FlujoCajaUI {
                 }
             };
             document.addEventListener('keydown', cerrarConESC);
+            
+            // Ocultar spinner después de 1 segundo
+            setTimeout(() => {
+                if (spinner) {
+                    spinner.style.display = 'none';
+                    console.log('✅ Spinner ocultado');
+                }
+            }, 1000);
             
             console.log('📋 Modal abierto - Modo:', modoEdicion ? 'EDICIÓN' : 'NUEVA');
         }
