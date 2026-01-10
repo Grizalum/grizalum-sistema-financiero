@@ -405,7 +405,7 @@ class FlujoCaja {
         }
 
         this.transacciones.unshift(transaccion);
-        this._guardarTransacciones();
+        this.guardar();
         
         // ✅ FIX: Verificar que el método exista antes de llamarlo
         if (this.sistemaNiveles && typeof this.sistemaNiveles.registrarUso === 'function') {
@@ -447,7 +447,7 @@ class FlujoCaja {
             }
         };
 
-        this._guardarTransacciones();
+        this.guardar();
         
         const nombreEmpresa = this._obtenerNombreEmpresa(this.empresaActual);
         this._log('info', `✏️ Transacción ${id} editada en ${nombreEmpresa}`);
@@ -477,7 +477,7 @@ class FlujoCaja {
         const transaccionEliminada = this.transacciones[index];
         this.transacciones.splice(index, 1);
         
-        this._guardarTransacciones();
+        this.guardar();
         
         const nombreEmpresa = this._obtenerNombreEmpresa(this.empresaActual);
         this._log('info', `🗑️ Transacción ${id} eliminada de ${nombreEmpresa}`);
@@ -624,7 +624,43 @@ class FlujoCaja {
      * UTILIDADES
      * ═══════════════════════════════════════════════════════════════
      */
+     /**
+ * ═══════════════════════════════════════════════════════════════
+ * PERSISTENCIA - GUARDADO EN LOCALSTORAGE
+ * ═══════════════════════════════════════════════════════════════
+ */
 
+/**
+ * 💾 Guardar transacciones en localStorage
+ * Este método es llamado automáticamente después de cada operación CRUD
+ */
+guardar() {
+    try {
+        // 🔒 VERIFICACIÓN: Empresa actual definida
+        if (!this.empresaActual || this.empresaActual === 'null' || this.empresaActual === 'undefined') {
+            this._log('error', '❌ No se puede guardar: empresa no definida');
+            return false;
+        }
+
+        // 🔒 FILTRO DE SEGURIDAD: Solo guardar transacciones de esta empresa
+        const transaccionesEmpresa = this.transacciones.filter(t => 
+            !t.empresaId || t.empresaId === this.empresaActual
+        );
+
+        const key = `grizalum_flujo_caja_${this.empresaActual}`;
+        
+        // Guardar en localStorage
+        localStorage.setItem(key, JSON.stringify(transaccionesEmpresa));
+        
+        const nombreEmpresa = this._obtenerNombreEmpresa(this.empresaActual);
+        this._log('success', `💾 ${transaccionesEmpresa.length} transacciones guardadas para ${nombreEmpresa}`);
+        
+        return true;
+    } catch (error) {
+        this._log('error', '❌ Error al guardar transacciones:', error);
+        return false;
+    }
+}
     _guardarTransacciones() {
         try {
             // 🔒 VERIFICACIÓN: Empresa actual definida
