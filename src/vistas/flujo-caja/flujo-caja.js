@@ -803,7 +803,20 @@ guardar() {
 }
 
 // Inicialización global
-window.flujoCaja = new FlujoCaja();
+// ✅ Solo crear si no existe (prevenir duplicación al cambiar de vista)
+if (!window.flujoCaja) {
+    window.flujoCaja = new FlujoCaja();
+    console.log('✅ [FlujoCaja] Instancia creada por primera vez');
+} else {
+    console.log('⚠️ [FlujoCaja] Ya existe, reinicializando datos...');
+    // Reinicializar datos si cambió la empresa
+    if (window.flujoCaja._cargarEmpresaActual) {
+        window.flujoCaja._cargarEmpresaActual().then(() => {
+            window.flujoCaja._cargarTransacciones();
+            console.log('✅ [FlujoCaja] Datos actualizados');
+        });
+    }
+}
 
 // ✅ FIX: Crear funciones compatibles del modal
 if (!window.flujoCaja.abrirModal) {
