@@ -7,6 +7,7 @@
  * ═══════════════════════════════════════════════════════════════════
  */
 
+if (typeof FlujoCaja === 'undefined') {
 class FlujoCaja {
     constructor() {
         this.config = {
@@ -800,6 +801,7 @@ guardar() {
             porCategoria: this.calcularPorCategoria()
         };
     }
+}
 }
 
 // Inicialización global
