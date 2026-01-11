@@ -751,12 +751,30 @@ class FlujoCajaUI {
             const transacciones = this.modulo.obtenerTransacciones();
             const balance = this.modulo.calcularBalance();
 
-            const datosExportar = {
-                empresa: this.empresaActual,
-                balance: balance,
-                transacciones: transacciones,
-                nivel: 0
+            // ✅ Obtener puntaje correcto según plan actual
+        let nivelExportar = 0;
+        if (window.FlujoCajaPlanes) {
+            const planActual = window.FlujoCajaPlanes.obtenerPlanActual();
+            
+            // Mapeo de planes a puntajes del exportador
+            const mapeoPlanesAPuntaje = {
+                'individual': 0,      // < 30 = Individual
+                'profesional': 50,    // 30-69 = Profesional
+                'corporativo': 80     // 70+ = Corporativo
             };
+            
+            nivelExportar = mapeoPlanesAPuntaje[planActual.id] || 0;
+            console.log('📊 Exportando con plan:', planActual.nombre, '- Puntaje:', nivelExportar);
+        } else {
+            console.warn('⚠️ FlujoCajaPlanes no disponible, usando nivel por defecto');
+        }
+
+        const datosExportar = {
+            empresa: this.empresaActual,
+            balance: balance,
+            transacciones: transacciones,
+            nivel: nivelExportar
+        };
 
             const exportador = new ExportadorExcelProfesional();
             await exportador.exportar(datosExportar);
