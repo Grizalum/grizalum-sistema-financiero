@@ -138,9 +138,9 @@ class HistorialDescripciones {
             desc.toLowerCase().includes(textoLower)
         );
     }
-}
+ }
+window.HistorialDescripciones = HistorialDescripciones;    
 }    
 
 // Exportar globalmente
-window.HistorialDescripciones = HistorialDescripciones;
 console.log('✅ HistorialDescripciones cargado');
