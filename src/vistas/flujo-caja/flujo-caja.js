@@ -801,12 +801,12 @@ guardar() {
             porCategoria: this.calcularPorCategoria()
         };
     }
-}
+ }
+if (!window.flujoCaja) {    
 }
 
 // Inicialización global
 // ✅ Solo crear si no existe (prevenir duplicación al cambiar de vista)
-if (!window.flujoCaja) {
     window.flujoCaja = new FlujoCaja();
     console.log('✅ [FlujoCaja] Instancia creada por primera vez');
 } else {
