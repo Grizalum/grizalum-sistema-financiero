@@ -914,7 +914,8 @@ class FlujoCajaUI {
             this.mostrarNotificacion('🗑️ Eliminado', 'success');
         }
     }
-}
+ }
+if (!window.FlujoCajaUI) {    
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -922,7 +923,7 @@ class FlujoCajaUI {
 // ═══════════════════════════════════════════════════════════════
 
 // ✅ Solo definir clase si no existe
-if (!window.FlujoCajaUI) {
+
     window.FlujoCajaUI = FlujoCajaUI;
 }
 
