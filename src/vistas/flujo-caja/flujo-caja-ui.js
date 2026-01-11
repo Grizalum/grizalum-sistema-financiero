@@ -919,16 +919,27 @@ class FlujoCajaUI {
 // EXPORTAR E INICIALIZAR
 // ═══════════════════════════════════════════════════════════════
 
-window.FlujoCajaUI = FlujoCajaUI;
-
-let flujoCajaUIInstancia = null;
+// ✅ Solo definir clase si no existe
+if (!window.FlujoCajaUI) {
+    window.FlujoCajaUI = FlujoCajaUI;
+}
 
 function inicializarFlujoCajaUI() {
     console.log('🚀 Inicializando Flujo de Caja UI...');
     
-    if (!flujoCajaUIInstancia) {
-        flujoCajaUIInstancia = new FlujoCajaUI();
-        window.flujoCajaUI = flujoCajaUIInstancia;
+    // ✅ Solo crear instancia si no existe (prevenir duplicación)
+    if (!window.flujoCajaUI) {
+        window.flujoCajaUI = new FlujoCajaUI();
+        console.log('✅ [FlujoCajaUI] Instancia creada por primera vez');
+    } else {
+        console.log('⚠️ [FlujoCajaUI] Ya existe, actualizando datos...');
+        // Actualizar UI en lugar de recrear
+        if (window.flujoCajaUI.cargarBalance) {
+            window.flujoCajaUI.cargarBalance();
+            window.flujoCajaUI.cargarTransacciones();
+            window.flujoCajaUI.cargarNivel();
+            console.log('✅ [FlujoCajaUI] UI actualizada');
+        }
     }
 }
 
