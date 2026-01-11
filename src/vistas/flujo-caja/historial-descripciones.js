@@ -5,6 +5,7 @@
  * ═══════════════════════════════════════════════════════════════════
  */
 
+if (typeof HistorialDescripciones === 'undefined') {
 class HistorialDescripciones {
     constructor() {
         this.empresaActual = null;
@@ -138,6 +139,7 @@ class HistorialDescripciones {
         );
     }
 }
+}    
 
 // Exportar globalmente
 window.HistorialDescripciones = HistorialDescripciones;
