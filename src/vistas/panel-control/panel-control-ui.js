@@ -503,15 +503,18 @@ class PanelControlUI {
                     datasets: [{
                         data: top5.map(c => c.monto),
                         backgroundColor: [
-                            '#ef4444',
-                            '#f59e0b',
-                            '#8b5cf6',
-                            '#06b6d4',
-                            '#ec4899'
-                        ]
+                       '#3b82f6',  // Azul vibrante
+                       '#10b981',  // Verde esmeralda
+                       '#f59e0b',  // Naranja/Amarillo
+                       '#8b5cf6',  // Púrpura
+                       '#ef4444',  // Rojo
+                       '#06b6d4',  // Cyan
+                       '#ec4899',  // Rosa
+                       '#84cc16'   // Lima
+                      ]
                     }]
-                },
-                options: {
+                    },
+                    options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     animation: {
