@@ -927,13 +927,11 @@ if (document.readyState === 'loading') {
     };   
 </script> 
 <script>
-// PROTECCIÓN DE MODAL CON SPINNER - VERSIÓN ROBUSTA
+// PROTECCIÓN DE MODAL CON SPINNER + FIX DE SUBMIT - VERSIÓN DEFINITIVA
 (function() {
-    console.log('🛡️ Instalando protección de modal...');
+    console.log('🛡️ Instalando protección de modal + fix de submit...');
     
-    // Esperar a que TODO esté cargado
     function instalarProteccion() {
-        // Buscar la función original en múltiples ubicaciones
         let funcionOriginal = null;
         
         if (window.flujoCajaUI && typeof window.flujoCajaUI.abrirModalTransaccion === 'function') {
@@ -948,11 +946,10 @@ if (document.readyState === 'loading') {
             return;
         }
         
-        // Crear nueva función protegida
+        // ✅ NUEVA FUNCIÓN CON FIX DE SUBMIT
         window.abrirModalTransaccion = function() {
             const spinner = document.getElementById('modalLoadingSpinner');
             
-            // Verificar sistemas
             if (!window.categoriasPersonalizadas || !window.flujoCaja || !window.flujoCajaUI) {
                 console.log('⏳ Esperando sistemas...');
                 if (spinner) spinner.style.display = 'flex';
@@ -960,13 +957,10 @@ if (document.readyState === 'loading') {
                 return;
             }
             
-            // Llamar función original
             funcionOriginal();
             
-            // Mostrar spinner
             if (spinner) spinner.style.display = 'flex';
             
-            // Recargar categorías y ocultar spinner
             setTimeout(() => {
                 const select = document.getElementById('selectCategoria');
                 const tipo = document.querySelector('input[name="tipo"]:checked')?.value || 'ingreso';
@@ -977,13 +971,46 @@ if (document.readyState === 'loading') {
                 }
                 
                 if (spinner) spinner.style.display = 'none';
+                
+                // 🎯 FIX DEL SUBMIT - ESPERAR A QUE EL FORMULARIO EXISTA
+                let intentos = 0;
+                const esperarForm = setInterval(() => {
+                    intentos++;
+                    const form = document.getElementById('formTransaccion');
+                    
+                    if (form) {
+                        clearInterval(esperarForm);
+                        console.log('✅ Formulario encontrado, instalando event listener');
+                        
+                        // Instalar evento submit correctamente
+                        form.onsubmit = function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            e.stopImmediatePropagation();
+                            
+                            console.log('🚀 Guardando transacción...');
+                            
+                            if (window.flujoCajaUI && window.flujoCajaUI.guardarTransaccion) {
+                                window.flujoCajaUI.guardarTransaccion(e);
+                            } else {
+                                console.error('❌ flujoCajaUI no disponible');
+                            }
+                            
+                            return false;
+                        };
+                        
+                    } else if (intentos >= 20) {
+                        clearInterval(esperarForm);
+                        console.error('❌ Timeout esperando formulario');
+                    }
+                }, 100);
+                
             }, 1000);
         };
         
-        console.log('✅ Protección de modal instalada correctamente');
+        console.log('✅ Protección + fix de submit instalado');
     }
     
-    // Ejecutar después de que todo cargue
     if (document.readyState === 'complete') {
         setTimeout(instalarProteccion, 2000);
     } else {
