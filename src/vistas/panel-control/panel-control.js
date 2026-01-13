@@ -117,6 +117,17 @@ class PanelControl {
         try {
             // Obtener datos del Flujo de Caja
             if (this.flujoCaja && this.flujoCaja.estaListo()) {
+                // 🎯 FIX: Verificar que FlujoCaja esté usando la empresa correcta
+            if (this.flujoCaja.empresaActual !== this.empresaActual) {
+                this._log('warn', `⚠️ FlujoCaja en empresa incorrecta. Esperado: ${this.empresaActual}, Actual: ${this.flujoCaja.empresaActual}`);
+                
+                // Forzar recarga de empresa en FlujoCaja
+                if (this.flujoCaja._cargarEmpresaActual) {
+                    await this.flujoCaja._cargarEmpresaActual();
+                    await this.flujoCaja._cargarTransacciones();
+                    this._log('success', '✅ FlujoCaja sincronizado con empresa correcta');
+                }
+            }
                 const balance = this.flujoCaja.calcularBalance();
                 const transacciones = this.flujoCaja.obtenerTransacciones();
                 
