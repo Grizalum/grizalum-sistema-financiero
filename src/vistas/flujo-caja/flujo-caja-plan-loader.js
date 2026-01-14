@@ -38,9 +38,6 @@
                     <div class="nivel-nombre" style="font-size: 1.25rem; font-weight: 700; color: var(--texto-principal);">
                         Plan ${plan.nombre}
                     </div>
-                    <div class="nivel-score" style="font-size: 0.875rem; color: var(--texto-terciario);">
-                        $${plan.precio}/mes
-                    </div>
                 </div>
             </div>
         `;
