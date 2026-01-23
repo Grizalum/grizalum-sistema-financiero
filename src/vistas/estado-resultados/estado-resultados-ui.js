@@ -1,15 +1,17 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * ESTADO DE RESULTADOS - INTERFAZ DE USUARIO
+ * ESTADO DE RESULTADOS - INTERFAZ DE USUARIO MEJORADA v2.0
  * Maneja toda la interacción con el DOM
+ * Integración con HTML mejorado 2026
  * ═══════════════════════════════════════════════════════════════════
  */
 
-if (!window.EstadoResultadosUI) {
+if (typeof EstadoResultadosUI === 'undefined') {
     class EstadoResultadosUI {
         
     constructor() {
         this.modulo = null;
+        this.comparacionActiva = false;
         this._inicializar();
     }
 
@@ -52,7 +54,9 @@ if (!window.EstadoResultadosUI) {
         botonesPeriodo.forEach(btn => {
             btn.addEventListener('click', () => {
                 const periodo = btn.dataset.periodo;
-                this.cambiarPeriodo(periodo);
+                if (periodo !== 'personalizado') {
+                    this.cambiarPeriodo(periodo);
+                }
             });
         });
 
@@ -60,6 +64,12 @@ if (!window.EstadoResultadosUI) {
         const btnExportar = document.getElementById('btnExportarER');
         if (btnExportar) {
             btnExportar.addEventListener('click', () => this.exportarExcel());
+        }
+
+        // ✅ NUEVO: Botón comparar
+        const btnComparar = document.getElementById('btnComparar');
+        if (btnComparar) {
+            btnComparar.addEventListener('click', () => this.toggleComparacion());
         }
 
         // Escuchar eventos del módulo
@@ -111,6 +121,38 @@ if (!window.EstadoResultadosUI) {
 
     /**
      * ═══════════════════════════════════════════════════════════════
+     * TOGGLE COMPARACIÓN (NUEVO)
+     * ═══════════════════════════════════════════════════════════════
+     */
+
+    toggleComparacion() {
+        this.comparacionActiva = !this.comparacionActiva;
+        
+        const btnComparar = document.getElementById('btnComparar');
+        if (btnComparar) {
+            if (this.comparacionActiva) {
+                btnComparar.classList.add('activo');
+                btnComparar.innerHTML = '<i class="fas fa-balance-scale"></i><span>Ocultar Comparación</span>';
+            } else {
+                btnComparar.classList.remove('activo');
+                btnComparar.innerHTML = '<i class="fas fa-balance-scale"></i><span>Comparar</span>';
+            }
+        }
+
+        // Recargar con/sin comparación
+        if (this.comparacionActiva) {
+            this.cargarComparacion();
+        } else {
+            // Ocultar indicadores de comparación
+            document.querySelectorAll('.er-card-comparacion').forEach(el => {
+                el.innerHTML = '<i class="fas fa-minus"></i><span>Sin datos anteriores</span>';
+                el.className = 'er-card-comparacion';
+            });
+        }
+    }
+
+    /**
+     * ═══════════════════════════════════════════════════════════════
      * CARGAR RESULTADOS
      * ═══════════════════════════════════════════════════════════════
      */
@@ -120,7 +162,7 @@ if (!window.EstadoResultadosUI) {
         
         const resultados = this.modulo.obtenerResultados();
         
-        if (!resultados) {
+        if (!resultados || resultados.totalTransacciones === 0) {
             console.warn('No hay resultados');
             this.mostrarEstadoVacio();
             return;
@@ -130,8 +172,14 @@ if (!window.EstadoResultadosUI) {
         const estadoVacio = document.getElementById('erEstadoVacio');
         if (estadoVacio) estadoVacio.style.display = 'none';
 
+        // ✅ Ocultar skeleton loaders
+        this._ocultarSkeletons();
+
         // Cargar tarjetas resumen
         this.cargarTarjetasResumen(resultados);
+        
+        // ✅ NUEVO: Cargar insights
+        this.cargarInsights(resultados);
         
         // Cargar tabla
         this.cargarTabla(resultados);
@@ -146,12 +194,67 @@ if (!window.EstadoResultadosUI) {
             this.cargarGraficos(resultados);
         }
         
-        // Mostrar comparación (si está activo)
-        if (this.modulo.componenteActivo('comparacionPeriodos')) {
+        // Mostrar comparación si está activa
+        if (this.comparacionActiva && this.modulo.componenteActivo('comparacionPeriodos')) {
             this.cargarComparacion();
         }
 
         console.log('✅ Resultados cargados');
+    }
+
+    /**
+     * ═══════════════════════════════════════════════════════════════
+     * OCULTAR SKELETONS (NUEVO)
+     * ═══════════════════════════════════════════════════════════════
+     */
+
+    _ocultarSkeletons() {
+        document.querySelectorAll('.skeleton-loader').forEach(skeleton => {
+            skeleton.style.display = 'none';
+        });
+    }
+
+    /**
+     * ═══════════════════════════════════════════════════════════════
+     * CARGAR INSIGHTS (NUEVO)
+     * ═══════════════════════════════════════════════════════════════
+     */
+
+    cargarInsights(resultados) {
+        const seccion = document.getElementById('seccionInsights');
+        const textoEl = document.getElementById('insightTexto');
+        
+        if (!seccion || !textoEl || !resultados.insights || resultados.insights.length === 0) {
+            if (seccion) seccion.style.display = 'none';
+            return;
+        }
+
+        // Mostrar el primer insight
+        const insight = resultados.insights[0];
+        
+        textoEl.innerHTML = `${insight.icono} ${insight.mensaje}`;
+        
+        // Aplicar clase según tipo
+        seccion.className = 'er-insights';
+        const card = seccion.querySelector('.er-insight-card');
+        if (card) {
+            card.className = `er-insight-card ${insight.tipo}`;
+        }
+        
+        seccion.style.display = 'block';
+
+        // Rotar insights si hay más de uno
+        if (resultados.insights.length > 1) {
+            let index = 0;
+            setInterval(() => {
+                index = (index + 1) % resultados.insights.length;
+                const nextInsight = resultados.insights[index];
+                textoEl.innerHTML = `${nextInsight.icono} ${nextInsight.mensaje}`;
+                if (card) {
+                    card.className = `er-insight-card ${nextInsight.tipo}`;
+                }
+            }, 10000); // Cambiar cada 10 segundos
+        }
     }
 
     /**
@@ -177,7 +280,13 @@ if (!window.EstadoResultadosUI) {
     actualizarTarjeta(elementoId, monto) {
         const elemento = document.getElementById(elementoId);
         if (elemento) {
-            elemento.textContent = this.formatearMoneda(monto);
+            // ✅ Animación de fade-in
+            elemento.style.opacity = '0';
+            setTimeout(() => {
+                elemento.textContent = this.formatearMoneda(monto);
+                elemento.style.opacity = '1';
+                elemento.style.transition = 'opacity 0.3s ease';
+            }, 100);
             
             // Color según si es positivo o negativo
             if (elementoId === 'erUtilidadNeta') {
@@ -213,6 +322,15 @@ if (!window.EstadoResultadosUI) {
         `;
         
         elemento.className = `er-card-comparacion ${clase}`;
+
+        // ✅ Animación de entrada
+        elemento.style.transform = 'translateY(-10px)';
+        elemento.style.opacity = '0';
+        setTimeout(() => {
+            elemento.style.transform = 'translateY(0)';
+            elemento.style.opacity = '1';
+            elemento.style.transition = 'all 0.3s ease';
+        }, 100);
     }
 
     /**
@@ -282,6 +400,13 @@ if (!window.EstadoResultadosUI) {
         html += this.crearTotalTabla('UTILIDAD NETA', resultados.utilidadNeta, pctNeta, true);
 
         tbody.innerHTML = html;
+
+        // ✅ Animación de entrada
+        tbody.style.opacity = '0';
+        setTimeout(() => {
+            tbody.style.opacity = '1';
+            tbody.style.transition = 'opacity 0.5s ease';
+        }, 200);
     }
 
     crearSeccionTabla(titulo, color) {
@@ -350,7 +475,12 @@ if (!window.EstadoResultadosUI) {
 
         if (barra) {
             const pct = Math.max(0, Math.min(100, porcentaje));
-            barra.style.width = `${pct}%`;
+            // ✅ Animación suave de la barra
+            barra.style.width = '0%';
+            setTimeout(() => {
+                barra.style.width = `${pct}%`;
+                barra.style.transition = 'width 1s cubic-bezier(0.4, 0, 0.2, 1)';
+            }, 200);
         }
     }
 
@@ -365,8 +495,10 @@ if (!window.EstadoResultadosUI) {
         if (seccion) seccion.classList.remove('oculto');
 
         if (window.EstadoResultadosGraficos) {
-            window.EstadoResultadosGraficos.crearGraficoBarras(resultados);
-            window.EstadoResultadosGraficos.crearGraficoTorta(resultados);
+            setTimeout(() => {
+                window.EstadoResultadosGraficos.crearGraficoBarras(resultados);
+                window.EstadoResultadosGraficos.crearGraficoTorta(resultados);
+            }, 500);
         }
     }
 
@@ -414,6 +546,16 @@ if (!window.EstadoResultadosUI) {
         
         const tbody = document.getElementById('erTablaBody');
         if (tbody) tbody.innerHTML = '';
+
+        // Ocultar secciones
+        const seccionRatios = document.getElementById('seccionRatios');
+        if (seccionRatios) seccionRatios.classList.add('oculto');
+
+        const seccionGraficos = document.getElementById('seccionGraficos');
+        if (seccionGraficos) seccionGraficos.classList.add('oculto');
+
+        const seccionInsights = document.getElementById('seccionInsights');
+        if (seccionInsights) seccionInsights.style.display = 'none';
     }
 
     formatearMoneda(monto) {
