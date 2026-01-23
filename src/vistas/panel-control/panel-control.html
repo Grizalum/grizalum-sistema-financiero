@@ -35,9 +35,15 @@
 // ✅ CARGAR PLAN DE LA EMPRESA ACTUAL
 (function() {
     const cargarPlanEmpresa = () => {
-        try {
-            const empresaActual = window.gestorEmpresas?.estado?.empresaActual;
-            const empresas = window.gestorEmpresas?.estado?.empresas;
+    try {
+        // ✅ VERIFICAR QUE ESTAMOS EN PANEL DE CONTROL
+        const planIcono = document.getElementById('planIcono');
+        if (!planIcono) {
+            return; // No ejecutar si no estamos en Panel de Control
+        }
+        
+        const empresaActual = window.gestorEmpresas?.estado?.empresaActual;
+        const empresas = window.gestorEmpresas?.estado?.empresas;
             
             if (!empresaActual || !empresas || !empresas[empresaActual]) {
                 console.warn('⚠️ No hay empresa seleccionada');
