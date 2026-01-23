@@ -104,17 +104,40 @@ if (typeof EstadoResultados === 'undefined') {
         // Obtener nivel de la empresa
         this.nivel = this.sistemaNiveles.obtenerNivelEmpresa(this.empresaActual);
         
+        // ✅ DESARROLLO: Si no hay nivel, usar Corporativo por defecto
         if (!this.nivel) {
-            this._log('warn', 'Empresa sin nivel asignado');
-            return;
+            this._log('warn', '⚠️ Empresa sin nivel - USANDO CORPORATIVO para desarrollo');
+            this.nivel = {
+                score: 100,
+                nivel: { nombre: 'Corporativo', id: 'corporativo' },
+                componentesOcultos: []
+            };
         }
 
         // Obtener componentes activos
         const componentesOcultos = this.nivel.componentesOcultos || [];
-        this.componentesActivos = this.configuracion.obtenerComponentesActivos(
+        const componentesTemp = this.configuracion.obtenerComponentesActivos(
             this.nivel.score,
             componentesOcultos
-        ) || {};
+        );
+        
+        // ✅ PROTECCIÓN: Garantizar que componentesActivos sea un objeto válido
+        this.componentesActivos = componentesTemp && typeof componentesTemp === 'object' 
+            ? componentesTemp 
+            : {
+                core: {
+                    reporteBasico: { id: 'reporteBasico', activo: true, obligatorio: true }
+                },
+                mejorasBasicas: {
+                    filtrosPeriodo: { id: 'filtrosPeriodo', activo: true },
+                    comparacionPeriodos: { id: 'comparacionPeriodos', activo: true }
+                },
+                visualizacionAvanzada: {
+                    ratiosFinancieros: { id: 'ratiosFinancieros', activo: true },
+                    graficosBasicos: { id: 'graficosBasicos', activo: true },
+                    exportarExcel: { id: 'exportarExcel', activo: true }
+                }
+            };
 
         this._log('info', `Empresa: ${this.empresaActual}, Nivel: ${this.nivel.nivel.nombre} (Score: ${this.nivel.score})`);
     }
