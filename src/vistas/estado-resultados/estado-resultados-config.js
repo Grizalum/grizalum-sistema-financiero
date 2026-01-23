@@ -1,14 +1,13 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * ESTADO DE RESULTADOS - CONFIGURACIÓN ADAPTATIVA
+ * ESTADO DE RESULTADOS - CONFIGURACIÓN ADAPTATIVA MEJORADA v2.0
  * Sistema de componentes progresivos según score empresarial
  * ═══════════════════════════════════════════════════════════════════
  */
 
-// ✅ CAMBIO: Agregar if para evitar duplicados
 if (!window.EstadoResultadosConfig) {
     window.EstadoResultadosConfig = {
-    version: '1.0.0',
+    version: '2.0.0',
     
     // ═══════════════════════════════════════════════════════════
     // COMPONENTES ADAPTATIVOS DEL MÓDULO
@@ -215,7 +214,8 @@ if (!window.EstadoResultadosConfig) {
             seccion: 'INGRESOS OPERACIONALES',
             categorias: ['ventas', 'servicios', 'venta pollos', 'venta huevos', 'venta pollitos bb', 
                         'ventas local', 'delivery', 'eventos', 'ventas efectivo', 'ventas tarjeta', 
-                        'ventas online', 'contratos', 'adelantos', 'extras', 'otros ingresos'],
+                        'ventas online', 'contratos', 'adelantos', 'extras', 'otros ingresos',
+                        'ingreso', 'venta'],
             tipo: 'ingreso',
             color: '#10B981'
         },
@@ -224,7 +224,8 @@ if (!window.EstadoResultadosConfig) {
         costos: {
             seccion: 'COSTOS DE VENTA',
             categorias: ['alimento', 'medicinas', 'insumos', 'compra mercadería', 'materiales', 
-                        'mano obra', 'mano de obra', 'costo de productos', 'costo de servicios'],
+                        'mano obra', 'mano de obra', 'costo de productos', 'costo de servicios',
+                        'materia prima', 'compras', 'inventario'],
             tipo: 'gasto',
             color: '#F59E0B'
         },
@@ -235,7 +236,7 @@ if (!window.EstadoResultadosConfig) {
             categorias: ['sueldos', 'salarios', 'personal', 'alquiler', 'servicios', 'marketing', 
                         'publicidad', 'mantenimiento', 'transporte', 'administrativos', 
                         'luz', 'agua', 'internet', 'teléfono', 'limpieza', 'seguridad',
-                        'papelería', 'útiles', 'permisos', 'otros gastos', 'otros'],
+                        'papelería', 'útiles', 'permisos', 'otros gastos', 'otros', 'gasto'],
             tipo: 'gasto',
             color: '#EF4444'
         },
@@ -243,21 +244,30 @@ if (!window.EstadoResultadosConfig) {
         // GASTOS FINANCIEROS
         gastosFinancieros: {
             seccion: 'GASTOS FINANCIEROS',
-            categorias: ['intereses', 'comisiones', 'comisiones bancarias', 'gastos bancarios'],
+            categorias: ['intereses', 'comisiones', 'comisiones bancarias', 'gastos bancarios',
+                        'préstamo', 'crédito', 'financiero'],
             tipo: 'gasto',
             color: '#8B5CF6'
         }
     },
     
     // ═══════════════════════════════════════════════════════════
-    // CLASIFICACIÓN AUTOMÁTICA
+    // CLASIFICACIÓN AUTOMÁTICA MEJORADA
     // ═══════════════════════════════════════════════════════════
     clasificarCategoria(nombreCategoria) {
         const categoriaLower = nombreCategoria.toLowerCase().trim();
         
         // Buscar en cada sección
         for (const [seccion, config] of Object.entries(this.mapeoCategoriasER)) {
-            if (config.categorias.some(cat => categoriaLower.includes(cat) || cat.includes(categoriaLower))) {
+            const encontrado = config.categorias.some(cat => {
+                const catLower = cat.toLowerCase();
+                // Coincidencia exacta o parcial
+                return categoriaLower === catLower || 
+                       categoriaLower.includes(catLower) || 
+                       catLower.includes(categoriaLower);
+            });
+            
+            if (encontrado) {
                 return {
                     seccion: config.seccion,
                     tipo: config.tipo,
@@ -269,15 +279,15 @@ if (!window.EstadoResultadosConfig) {
         
         // Por defecto, si no se encuentra
         return {
-            seccion: 'OTROS',
+            seccion: 'OTROS GASTOS',
             tipo: 'gasto',
             color: '#6B7280',
-            grupo: 'otros'
+            grupo: 'gastosOperativos' // Por defecto a gastos operativos
         };
     },
     
     // ═══════════════════════════════════════════════════════════
-    // CONFIGURACIÓN DE PERÍODOS
+    // CONFIGURACIÓN DE PERÍODOS MEJORADA
     // ═══════════════════════════════════════════════════════════
     periodos: {
         hoy: {
@@ -346,6 +356,29 @@ if (!window.EstadoResultadosConfig) {
                 const fin = new Date(hoy.getFullYear(), 11, 31, 23, 59, 59, 999);
                 return { inicio, fin };
             }
+        },
+        
+        // ✅ NUEVO: Período personalizado
+        personalizado: {
+            id: 'personalizado',
+            nombre: 'Personalizado',
+            icono: '🗓️',
+            calcularRango: (fechaInicio, fechaFin) => {
+                // Acepta strings ISO o Date objects
+                const inicio = typeof fechaInicio === 'string' ? new Date(fechaInicio) : fechaInicio;
+                const fin = typeof fechaFin === 'string' ? new Date(fechaFin) : fechaFin;
+                
+                if (!inicio || !fin || isNaN(inicio) || isNaN(fin)) {
+                    console.warn('Fechas inválidas para período personalizado');
+                    // Fallback a mes actual
+                    return this.periodos.mes.calcularRango();
+                }
+                
+                inicio.setHours(0, 0, 0, 0);
+                fin.setHours(23, 59, 59, 999);
+                
+                return { inicio, fin };
+            }
         }
     },
     
@@ -378,12 +411,19 @@ if (!window.EstadoResultadosConfig) {
         return activos;
     },
     
-    obtenerRangoPeriodo(periodoId) {
+    obtenerRangoPeriodo(periodoId, fechaInicio = null, fechaFin = null) {
         const periodo = this.periodos[periodoId];
+        
         if (!periodo) {
             console.warn(`Período ${periodoId} no encontrado, usando 'mes'`);
             return this.periodos.mes.calcularRango();
         }
+        
+        // Si es personalizado, pasar las fechas
+        if (periodoId === 'personalizado' && fechaInicio && fechaFin) {
+            return periodo.calcularRango(fechaInicio, fechaFin);
+        }
+        
         return periodo.calcularRango();
     },
     
@@ -392,14 +432,36 @@ if (!window.EstadoResultadosConfig) {
         const dias = Math.ceil((rangoActual.fin - rangoActual.inicio) / (1000 * 60 * 60 * 24));
         
         const inicioAnterior = new Date(rangoActual.inicio);
-        inicioAnterior.setDate(inicioAnterior.getDate() - dias);
+        inicioAnterior.setDate(inicioAnterior.getDate() - dias - 1);
         
-        const finAnterior = new Date(rangoActual.fin);
-        finAnterior.setDate(finAnterior.getDate() - dias);
+        const finAnterior = new Date(rangoActual.inicio);
+        finAnterior.setDate(finAnterior.getDate() - 1);
+        finAnterior.setHours(23, 59, 59, 999);
         
         return { inicio: inicioAnterior, fin: finAnterior };
+    },
+    
+    // ✅ NUEVO: Validar rango de fechas
+    validarRangoFechas(fechaInicio, fechaFin) {
+        const inicio = new Date(fechaInicio);
+        const fin = new Date(fechaFin);
+        
+        if (isNaN(inicio) || isNaN(fin)) {
+            return { valido: false, error: 'Fechas inválidas' };
+        }
+        
+        if (inicio > fin) {
+            return { valido: false, error: 'La fecha de inicio debe ser anterior a la fecha fin' };
+        }
+        
+        const diasDiferencia = Math.ceil((fin - inicio) / (1000 * 60 * 60 * 24));
+        if (diasDiferencia > 365) {
+            return { valido: false, error: 'El rango no puede superar 1 año' };
+        }
+        
+        return { valido: true, dias: diasDiferencia };
     }
-    };  // ✅ Cierra el objeto
-}  // ✅ Cierra el if
+    };
+}
 
-console.log('⚙️ [Estado de Resultados] Configuración cargada v1.0.0');
+console.log('⚙️ [Estado de Resultados] Configuración v2.0 cargada - Con soporte personalizado');
