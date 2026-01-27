@@ -101,43 +101,47 @@ if (typeof EstadoResultados === 'undefined') {
             }
         }
 
-        // Obtener nivel de la empresa
-        this.nivel = this.sistemaNiveles.obtenerNivelEmpresa(this.empresaActual);
+        // ✅ DESARROLLO: SIEMPRE usar nivel Corporativo (sin restricciones)
+        this._log('info', '🔓 Modo desarrollo - SIN RESTRICCIONES DE NIVEL');
         
-        // ✅ DESARROLLO: Si no hay nivel, usar Corporativo por defecto
-        if (!this.nivel) {
-            this._log('warn', '⚠️ Empresa sin nivel - USANDO CORPORATIVO para desarrollo');
-            this.nivel = {
-                score: 100,
-                nivel: { nombre: 'Corporativo', id: 'corporativo' },
-                componentesOcultos: []
-            };
-        }
+        this.nivel = {
+            score: 100,
+            nivel: { nombre: 'Corporativo', id: 'corporativo' },
+            componentesOcultos: []
+        };
 
-        // Obtener componentes activos
-        const componentesOcultos = this.nivel.componentesOcultos || [];
-        const componentesTemp = this.configuracion.obtenerComponentesActivos(
-            this.nivel.score,
-            componentesOcultos
-        );
-        
-        // ✅ PROTECCIÓN: Garantizar que componentesActivos sea un objeto válido
-        this.componentesActivos = componentesTemp && typeof componentesTemp === 'object' 
-            ? componentesTemp 
-            : {
-                core: {
-                    reporteBasico: { id: 'reporteBasico', activo: true, obligatorio: true }
-                },
-                mejorasBasicas: {
-                    filtrosPeriodo: { id: 'filtrosPeriodo', activo: true },
-                    comparacionPeriodos: { id: 'comparacionPeriodos', activo: true }
-                },
-                visualizacionAvanzada: {
-                    ratiosFinancieros: { id: 'ratiosFinancieros', activo: true },
-                    graficosBasicos: { id: 'graficosBasicos', activo: true },
-                    exportarExcel: { id: 'exportarExcel', activo: true }
-                }
-            };
+        // ✅ ACTIVAR TODOS LOS COMPONENTES (sin verificar nivel)
+        this.componentesActivos = {
+            core: {
+                reporteBasico: { id: 'reporteBasico', activo: true, obligatorio: true },
+                visualizacionSimple: { id: 'visualizacionSimple', activo: true, obligatorio: true }
+            },
+            mejorasBasicas: {
+                filtrosPeriodo: { id: 'filtrosPeriodo', activo: true },
+                desgloseCategorias: { id: 'desgloseCategorias', activo: true },
+                comparacionPeriodos: { id: 'comparacionPeriodos', activo: true }
+            },
+            visualizacionAvanzada: {
+                ratiosFinancieros: { id: 'ratiosFinancieros', activo: true },
+                graficosBasicos: { id: 'graficosBasicos', activo: true },
+                exportarExcel: { id: 'exportarExcel', activo: true }
+            },
+            analisisIntermedio: {
+                analisisVertical: { id: 'analisisVertical', activo: true },
+                puntoEquilibrio: { id: 'puntoEquilibrio', activo: true },
+                tendenciasHistoricas: { id: 'tendenciasHistoricas', activo: true }
+            },
+            profesional: {
+                analisisHorizontal: { id: 'analisisHorizontal', activo: true },
+                proyecciones: { id: 'proyecciones', activo: true },
+                kpisAvanzados: { id: 'kpisAvanzados', activo: true }
+            },
+            elite: {
+                analisisComparativo: { id: 'analisisComparativo', activo: true },
+                presupuestoVsReal: { id: 'presupuestoVsReal', activo: true },
+                analisisIA: { id: 'analisisIA', activo: true }
+            }
+        };
 
         this._log('info', `Empresa: ${this.empresaActual}, Nivel: ${this.nivel.nivel.nombre} (Score: ${this.nivel.score})`);
     }
