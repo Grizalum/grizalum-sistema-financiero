@@ -2,7 +2,6 @@
  * GRIZALUM - Cargador de Nivel con Sistema de Planes
  * Muestra el plan actual en lugar del score
  */
-
 (function() {
     'use strict';
     
