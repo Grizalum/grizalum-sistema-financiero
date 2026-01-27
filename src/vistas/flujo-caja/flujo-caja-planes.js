@@ -15,7 +15,6 @@ window.FlujoCajaPlanes = (function() {
             id: 'individual',
             nombre: 'Individual',
             icono: '👤',
-            precio: 19,
             color: '#6366f1',
             descripcion: 'Perfecto para uso personal y freelancers',
             limiteTransacciones: 100,
@@ -42,7 +41,6 @@ window.FlujoCajaPlanes = (function() {
             id: 'profesional',
             nombre: 'Profesional',
             icono: '💼',
-            precio: 49,
             color: '#8b5cf6',
             descripcion: 'Para pequeños negocios y profesionales',
             limiteTransacciones: 500,
@@ -69,7 +67,6 @@ window.FlujoCajaPlanes = (function() {
             id: 'empresarial',
             nombre: 'Empresarial',
             icono: '🏢',
-            precio: 99,
             color: '#ec4899',
             descripcion: 'Para empresas medianas con necesidades avanzadas',
             limiteTransacciones: -1, // Ilimitado
@@ -96,7 +93,6 @@ window.FlujoCajaPlanes = (function() {
             id: 'corporativo',
             nombre: 'Corporativo',
             icono: '🌐',
-            precio: 299,
             color: '#f59e0b',
             descripcion: 'Solución completa para grandes empresas',
             limiteTransacciones: -1, // Ilimitado
@@ -299,11 +295,6 @@ window.FlujoCajaPlanes = (function() {
                 <p style="color: #6b7280; margin-bottom: 1.5rem;">
                     Esta funcionalidad requiere el plan ${plan.nombre}
                 </p>
-                <div style="background: #f3f4f6; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                    <div style="font-size: 2rem; font-weight: 700; color: ${plan.color};">
-                        $${plan.precio}<span style="font-size: 1rem; font-weight: 400;">/mes</span>
-                    </div>
-                </div>
                 <button onclick="this.closest('div').parentElement.remove()" style="
                     width: 100%;
                     padding: 0.75rem;
