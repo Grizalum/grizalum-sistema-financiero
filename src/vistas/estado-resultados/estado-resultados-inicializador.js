@@ -68,6 +68,8 @@
                     window.EstadoResultadosGraficos &&
                     window.gestorEmpresas &&
                     window.sistemaNiveles;
+                    window.flujoCaja &&  // ← AGREGAR ESTA LÍNEA
+                    window.flujoCaja.inicializado;  // ← Y ESTA
 
                 if (dependenciasListas) {
                     console.log('✅ [Inicializador] Todas las dependencias cargadas');
