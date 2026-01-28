@@ -22,10 +22,12 @@
         const intervalo = setInterval(() => {
             
             const listo = 
-                window.EstadoResultados &&
-                window.EstadoResultadosUI &&
-                window.EstadoResultadosConfig &&
-                window.gestorEmpresas;
+              window.EstadoResultados &&
+              window.EstadoResultadosUI &&
+              window.EstadoResultadosConfig &&
+              window.gestorEmpresas &&
+              window.flujoCaja &&
+              window.flujoCaja.inicializado;
 
             if (listo) {
                 clearInterval(intervalo);
