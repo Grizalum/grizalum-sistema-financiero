@@ -575,4 +575,15 @@ if (typeof EstadoResultadosUI === 'undefined') {
 }
     
     window.EstadoResultadosUI = EstadoResultadosUI;
-}
+    // Auto-cargar cuando la vista es visible
+document.addEventListener('vistaEstadoResultadosCargada', () => {
+    setTimeout(() => {
+        if (window.estadoResultadosUI && window.estadoResultados) {
+            if (!window.estadoResultados.configuracion) {
+                window.estadoResultados.configuracion = window.EstadoResultadosConfig;
+            }
+            window.estadoResultados.calcularResultados();
+            window.estadoResultadosUI.cargarResultados();
+        }
+    }, 1000);
+});
