@@ -71,7 +71,7 @@ if (typeof EstadoResultados === 'undefined') {
                     
                     this.gestor = window.gestorEmpresas;
                     this.sistemaNiveles = window.sistemaNiveles;
-                    this.configuracion = window.EstadoResultadosConfig;
+                    this.configuracion = window.EstadoResultadosConfig || null;
                     this.flujoCaja = window.flujoCaja; // ✅ NUEVO: Conexión directa
                     
                     this._log('info', '✅ Dependencias conectadas (incluye FlujoCaja)');
