@@ -366,7 +366,7 @@ function registrarModulos() {
         id: 'income-statement',
         nombre: 'Estado de Resultados',
         ruta: 'src/vistas/estado-resultados/estado-resultados.html',
-        nivel: 25,
+        nivel: 0,
 
         dependencias: [
             'src/vistas/estado-resultados/estado-resultados-config.js',
@@ -466,7 +466,7 @@ function registrarModulos() {
         id: 'balance-sheet',
         nombre: 'Balance General',    
         ruta: 'src/vistas/balance-general/balance-general.html',
-        nivel: 25,
+        nivel: 0,
 
         onCargar: async function() {
             await cargarEstilos('src/vistas/balance-general/balance-general.css');
