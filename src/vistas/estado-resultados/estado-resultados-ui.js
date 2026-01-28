@@ -1,8 +1,7 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * ESTADO DE RESULTADOS - INTERFAZ DE USUARIO MEJORADA v2.0
- * Maneja toda la interacción con el DOM
- * Integración con HTML mejorado 2026
+ * ESTADO DE RESULTADOS - INTERFAZ DE USUARIO MEJORADA v2.0 FINAL
+ * Maneja toda la interacción con el DOM - SIN LOOPS
  * ═══════════════════════════════════════════════════════════════════
  */
 
@@ -66,7 +65,7 @@ if (typeof EstadoResultadosUI === 'undefined') {
             btnExportar.addEventListener('click', () => this.exportarExcel());
         }
 
-        // ✅ NUEVO: Botón comparar
+        // Botón comparar
         const btnComparar = document.getElementById('btnComparar');
         if (btnComparar) {
             btnComparar.addEventListener('click', () => this.toggleComparacion());
@@ -84,12 +83,6 @@ if (typeof EstadoResultadosUI === 'undefined') {
 
         console.log('✅ Eventos configurados');
     }
-
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * CAMBIAR PERÍODO
-     * ═══════════════════════════════════════════════════════════════
-     */
 
     cambiarPeriodo(periodoId) {
         console.log('📅 Cambiando a período:', periodoId);
@@ -119,12 +112,6 @@ if (typeof EstadoResultadosUI === 'undefined') {
         }
     }
 
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * TOGGLE COMPARACIÓN (NUEVO)
-     * ═══════════════════════════════════════════════════════════════
-     */
-
     toggleComparacion() {
         this.comparacionActiva = !this.comparacionActiva;
         
@@ -139,23 +126,15 @@ if (typeof EstadoResultadosUI === 'undefined') {
             }
         }
 
-        // Recargar con/sin comparación
         if (this.comparacionActiva) {
             this.cargarComparacion();
         } else {
-            // Ocultar indicadores de comparación
             document.querySelectorAll('.er-card-comparacion').forEach(el => {
                 el.innerHTML = '<i class="fas fa-minus"></i><span>Sin datos anteriores</span>';
                 el.className = 'er-card-comparacion';
             });
         }
     }
-
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * CARGAR RESULTADOS
-     * ═══════════════════════════════════════════════════════════════
-     */
 
     cargarResultados() {
         console.log('📊 Cargando resultados...');
@@ -168,33 +147,22 @@ if (typeof EstadoResultadosUI === 'undefined') {
             return;
         }
 
-        // Ocultar estado vacío
         const estadoVacio = document.getElementById('erEstadoVacio');
         if (estadoVacio) estadoVacio.style.display = 'none';
 
-        // ✅ Ocultar skeleton loaders
         this._ocultarSkeletons();
-
-        // Cargar tarjetas resumen
         this.cargarTarjetasResumen(resultados);
-        
-        // ✅ NUEVO: Cargar insights
         this.cargarInsights(resultados);
-        
-        // Cargar tabla
         this.cargarTabla(resultados);
         
-        // Cargar ratios (si está activo)
         if (this.modulo.componenteActivo('ratiosFinancieros')) {
             this.cargarRatios(resultados);
         }
         
-        // Cargar gráficos (si está activo)
         if (this.modulo.componenteActivo('graficosBasicos')) {
             this.cargarGraficos(resultados);
         }
         
-        // Mostrar comparación si está activa
         if (this.comparacionActiva && this.modulo.componenteActivo('comparacionPeriodos')) {
             this.cargarComparacion();
         }
@@ -202,23 +170,11 @@ if (typeof EstadoResultadosUI === 'undefined') {
         console.log('✅ Resultados cargados');
     }
 
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * OCULTAR SKELETONS (NUEVO)
-     * ═══════════════════════════════════════════════════════════════
-     */
-
     _ocultarSkeletons() {
         document.querySelectorAll('.skeleton-loader').forEach(skeleton => {
             skeleton.style.display = 'none';
         });
     }
-
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * CARGAR INSIGHTS (NUEVO)
-     * ═══════════════════════════════════════════════════════════════
-     */
 
     cargarInsights(resultados) {
         const seccion = document.getElementById('seccionInsights');
@@ -229,12 +185,9 @@ if (typeof EstadoResultadosUI === 'undefined') {
             return;
         }
 
-        // Mostrar el primer insight
         const insight = resultados.insights[0];
-        
         textoEl.innerHTML = `${insight.icono} ${insight.mensaje}`;
         
-        // Aplicar clase según tipo
         seccion.className = 'er-insights';
         const card = seccion.querySelector('.er-insight-card');
         if (card) {
@@ -243,7 +196,6 @@ if (typeof EstadoResultadosUI === 'undefined') {
         
         seccion.style.display = 'block';
 
-        // Rotar insights si hay más de uno
         if (resultados.insights.length > 1) {
             let index = 0;
             setInterval(() => {
@@ -253,34 +205,20 @@ if (typeof EstadoResultadosUI === 'undefined') {
                 if (card) {
                     card.className = `er-insight-card ${nextInsight.tipo}`;
                 }
-            }, 10000); // Cambiar cada 10 segundos
+            }, 10000);
         }
     }
 
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * TARJETAS RESUMEN
-     * ═══════════════════════════════════════════════════════════════
-     */
-
     cargarTarjetasResumen(resultados) {
-        // Ingresos
         this.actualizarTarjeta('erIngresosTotales', resultados.ingresos.total);
-        
-        // Costos
         this.actualizarTarjeta('erCostosTotales', resultados.costos.total);
-        
-        // Gastos
         this.actualizarTarjeta('erGastosTotales', resultados.gastosOperativos.total);
-        
-        // Utilidad Neta
         this.actualizarTarjeta('erUtilidadNeta', resultados.utilidadNeta);
     }
 
     actualizarTarjeta(elementoId, monto) {
         const elemento = document.getElementById(elementoId);
         if (elemento) {
-            // ✅ Animación de fade-in
             elemento.style.opacity = '0';
             setTimeout(() => {
                 elemento.textContent = this.formatearMoneda(monto);
@@ -288,7 +226,6 @@ if (typeof EstadoResultadosUI === 'undefined') {
                 elemento.style.transition = 'opacity 0.3s ease';
             }, 100);
             
-            // Color según si es positivo o negativo
             if (elementoId === 'erUtilidadNeta') {
                 elemento.classList.remove('er-monto-positivo', 'er-monto-negativo');
                 elemento.classList.add(monto >= 0 ? 'er-monto-positivo' : 'er-monto-negativo');
@@ -299,7 +236,6 @@ if (typeof EstadoResultadosUI === 'undefined') {
     cargarComparacion() {
         const comparacion = this.modulo.calcularComparacion();
         
-        // Actualizar cada tarjeta con comparación
         this.actualizarComparacion('erIngresosComparacion', comparacion.ingresos);
         this.actualizarComparacion('erCostosComparacion', comparacion.costos);
         this.actualizarComparacion('erGastosComparacion', comparacion.gastosOperativos);
@@ -323,7 +259,6 @@ if (typeof EstadoResultadosUI === 'undefined') {
         
         elemento.className = `er-card-comparacion ${clase}`;
 
-        // ✅ Animación de entrada
         elemento.style.transform = 'translateY(-10px)';
         elemento.style.opacity = '0';
         setTimeout(() => {
@@ -333,12 +268,6 @@ if (typeof EstadoResultadosUI === 'undefined') {
         }, 100);
     }
 
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * TABLA ESTADO DE RESULTADOS
-     * ═══════════════════════════════════════════════════════════════
-     */
-
     cargarTabla(resultados) {
         const tbody = document.getElementById('erTablaBody');
         if (!tbody) return;
@@ -346,7 +275,6 @@ if (typeof EstadoResultadosUI === 'undefined') {
         const ingresosTotales = resultados.ingresos.total;
         let html = '';
 
-        // INGRESOS
         html += this.crearSeccionTabla('INGRESOS OPERACIONALES', '#10B981');
         resultados.ingresos.porCategoria.forEach(cat => {
             const porcentaje = ingresosTotales > 0 ? (cat.monto / ingresosTotales * 100).toFixed(1) : 0;
@@ -354,7 +282,6 @@ if (typeof EstadoResultadosUI === 'undefined') {
         });
         html += this.crearSubtotalTabla('TOTAL INGRESOS', resultados.ingresos.total, 100);
 
-        // COSTOS
         if (resultados.costos.total > 0) {
             html += this.crearSeccionTabla('COSTOS DE VENTA', '#F59E0B');
             resultados.costos.porCategoria.forEach(cat => {
@@ -365,11 +292,9 @@ if (typeof EstadoResultadosUI === 'undefined') {
                 ingresosTotales > 0 ? (resultados.costos.total / ingresosTotales * 100).toFixed(1) : 0, true);
         }
 
-        // UTILIDAD BRUTA
         const pctBruta = ingresosTotales > 0 ? (resultados.utilidadBruta / ingresosTotales * 100).toFixed(1) : 0;
         html += this.crearTotalTabla('UTILIDAD BRUTA', resultados.utilidadBruta, pctBruta);
 
-        // GASTOS OPERATIVOS
         if (resultados.gastosOperativos.total > 0) {
             html += this.crearSeccionTabla('GASTOS OPERATIVOS', '#EF4444');
             resultados.gastosOperativos.porCategoria.forEach(cat => {
@@ -380,11 +305,9 @@ if (typeof EstadoResultadosUI === 'undefined') {
                 ingresosTotales > 0 ? (resultados.gastosOperativos.total / ingresosTotales * 100).toFixed(1) : 0, true);
         }
 
-        // UTILIDAD OPERATIVA
         const pctOperativa = ingresosTotales > 0 ? (resultados.utilidadOperativa / ingresosTotales * 100).toFixed(1) : 0;
         html += this.crearTotalTabla('UTILIDAD OPERATIVA', resultados.utilidadOperativa, pctOperativa);
 
-        // GASTOS FINANCIEROS
         if (resultados.gastosFinancieros.total > 0) {
             html += this.crearSeccionTabla('GASTOS FINANCIEROS', '#8B5CF6');
             resultados.gastosFinancieros.porCategoria.forEach(cat => {
@@ -395,13 +318,11 @@ if (typeof EstadoResultadosUI === 'undefined') {
                 ingresosTotales > 0 ? (resultados.gastosFinancieros.total / ingresosTotales * 100).toFixed(1) : 0, true);
         }
 
-        // UTILIDAD NETA
         const pctNeta = ingresosTotales > 0 ? (resultados.utilidadNeta / ingresosTotales * 100).toFixed(1) : 0;
         html += this.crearTotalTabla('UTILIDAD NETA', resultados.utilidadNeta, pctNeta, true);
 
         tbody.innerHTML = html;
 
-        // ✅ Animación de entrada
         tbody.style.opacity = '0';
         setTimeout(() => {
             tbody.style.opacity = '1';
@@ -450,12 +371,6 @@ if (typeof EstadoResultadosUI === 'undefined') {
         `;
     }
 
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * RATIOS FINANCIEROS
-     * ═══════════════════════════════════════════════════════════════
-     */
-
     cargarRatios(resultados) {
         const seccion = document.getElementById('seccionRatios');
         if (seccion) seccion.classList.remove('oculto');
@@ -475,7 +390,6 @@ if (typeof EstadoResultadosUI === 'undefined') {
 
         if (barra) {
             const pct = Math.max(0, Math.min(100, porcentaje));
-            // ✅ Animación suave de la barra
             barra.style.width = '0%';
             setTimeout(() => {
                 barra.style.width = `${pct}%`;
@@ -483,12 +397,6 @@ if (typeof EstadoResultadosUI === 'undefined') {
             }, 200);
         }
     }
-
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * GRÁFICOS
-     * ═══════════════════════════════════════════════════════════════
-     */
 
     cargarGraficos(resultados) {
         const seccion = document.getElementById('seccionGraficos');
@@ -501,12 +409,6 @@ if (typeof EstadoResultadosUI === 'undefined') {
             }, 500);
         }
     }
-
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * EXPORTAR EXCEL
-     * ═══════════════════════════════════════════════════════════════
-     */
 
     async exportarExcel() {
         console.log('📥 Exportando a Excel...');
@@ -534,12 +436,6 @@ if (typeof EstadoResultadosUI === 'undefined') {
         }
     }
 
-    /**
-     * ═══════════════════════════════════════════════════════════════
-     * UTILIDADES
-     * ═══════════════════════════════════════════════════════════════
-     */
-
     mostrarEstadoVacio() {
         const estadoVacio = document.getElementById('erEstadoVacio');
         if (estadoVacio) estadoVacio.style.display = 'flex';
@@ -547,7 +443,6 @@ if (typeof EstadoResultadosUI === 'undefined') {
         const tbody = document.getElementById('erTablaBody');
         if (tbody) tbody.innerHTML = '';
 
-        // Ocultar secciones
         const seccionRatios = document.getElementById('seccionRatios');
         if (seccionRatios) seccionRatios.classList.add('oculto');
 
@@ -574,16 +469,5 @@ if (typeof EstadoResultadosUI === 'undefined') {
     }
 }
     
-    window.EstadoResultadosUI = EstadoResultadosUI;
-    // Auto-cargar cuando la vista es visible
-document.addEventListener('vistaEstadoResultadosCargada', () => {
-    setTimeout(() => {
-        if (window.estadoResultadosUI && window.estadoResultados) {
-            if (!window.estadoResultados.configuracion) {
-                window.estadoResultados.configuracion = window.EstadoResultadosConfig;
-            }
-            window.estadoResultados.calcularResultados();
-            window.estadoResultadosUI.cargarResultados();
-        }
-    }, 1000);
-});
+window.EstadoResultadosUI = EstadoResultadosUI;
+}
