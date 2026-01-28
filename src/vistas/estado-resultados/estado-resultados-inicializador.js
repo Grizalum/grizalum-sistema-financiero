@@ -124,32 +124,9 @@
         }
 
         _cargarDatos() {
-            try {
-                console.log('📊 [Inicializador] Cargando datos...');
-
-                // Verificar que el módulo tenga datos
-                if (window.estadoResultados && window.estadoResultados.inicializado) {
-                    
-                    // Recalcular resultados
-                    window.estadoResultados.calcularResultados();
-                    
-                    // Actualizar UI
-                    if (window.estadoResultadosUI && window.estadoResultadosUI.cargarResultados) {
-                        setTimeout(() => {
-                            window.estadoResultadosUI.cargarResultados();
-                            console.log('✅ [Inicializador] Datos cargados y renderizados');
-                        }, 300);
-                    }
-
-                    // Cargar gráficos si están activos
-                    this._cargarGraficos();
-                }
-
-            } catch (error) {
-                console.error('❌ [Inicializador] Error cargando datos:', error);
-            }
+          // ✅ Ya no hace nada - La UI se carga automáticamente
+          console.log('📊 [Inicializador] Sistema listo');
         }
-
         _cargarGraficos() {
             try {
                 if (!window.estadoResultados || !window.estadoResultadosUI) return;
