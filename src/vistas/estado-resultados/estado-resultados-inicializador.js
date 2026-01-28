@@ -97,6 +97,21 @@
 
 })();
 
+// Listener adicional: cuando FlujoCaja esté listo
+document.addEventListener('flujoCajaVisible', () => {
+    console.log('💰 [Inicializador ER] FlujoCaja visible - Recargando datos');
+    
+    setTimeout(() => {
+        if (window.estadoResultados && window.estadoResultadosUI) {
+            if (!window.estadoResultados.configuracion) {
+                window.estadoResultados.configuracion = window.EstadoResultadosConfig;
+            }
+            window.estadoResultados.calcularResultados();
+            window.estadoResultadosUI.cargarResultados();
+        }
+    }, 1000);
+});
+
 console.log(`
 ╔═══════════════════════════════════════════════════════════════╗
 ║  🚀 INICIALIZADOR ESTADO DE RESULTADOS v3.0 FINAL             ║
