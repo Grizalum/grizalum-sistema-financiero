@@ -91,11 +91,8 @@
                     console.log('✅ [Inicializador] Módulo principal creado');
                 }
 
-                // Inicializar UI si no existe
-                if (!window.estadoResultadosUI) {
-                    window.estadoResultadosUI = new window.EstadoResultadosUI();
-                    console.log('✅ [Inicializador] UI creada');
-                }
+                // ✅ SIEMPRE crear nueva instancia de UI
+                  window.estadoResultadosUI = new window.EstadoResultadosUI();
 
                 this.inicializado = true;
                 console.log('🎉 [Inicializador] Sistema completamente inicializado');
