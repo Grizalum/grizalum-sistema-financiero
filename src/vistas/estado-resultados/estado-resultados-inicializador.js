@@ -125,9 +125,29 @@
             this._cargarDatos();
         }
 
-        _cargarDatos() {
-          // ✅ Ya no hace nada - La UI se carga automáticamente
-          console.log('📊 [Inicializador] Sistema listo');
+       _cargarDatos() {
+            try {
+                console.log('📊 [Inicializador] Cargando datos...');
+                
+                setTimeout(() => {
+                    if (window.estadoResultados && window.estadoResultadosUI) {
+                        
+                        if (!window.estadoResultados.configuracion) {
+                            window.estadoResultados.configuracion = window.EstadoResultadosConfig;
+                        }
+                        
+                        window.estadoResultados.calcularResultados();
+                        
+                        setTimeout(() => {
+                            window.estadoResultadosUI.cargarResultados();
+                            console.log('✅ [Inicializador] Datos cargados');
+                        }, 300);
+                    }
+                }, 500);
+                
+            } catch (error) {
+                console.error('❌ [Inicializador] Error:', error);
+            }
         }
         _cargarGraficos() {
             try {
