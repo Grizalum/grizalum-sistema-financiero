@@ -84,14 +84,16 @@ if (typeof EstadoResultados === 'undefined') {
         });
     }
 
-    async _cargarEmpresaActual() {
-        this.empresaActual = this.gestor.estado.empresaActual;
-        
-        if (!this.empresaActual) {
-            this._log('warn', 'No hay empresa seleccionada');
-            return;
-        }
-
+   async _cargarEmpresaActual() {
+    // ✅ Obtener empresa del gestor
+    this.empresaActual = this.gestor?.estado?.empresaActual;
+    
+    // ✅ Si es null, intentar desde localStorage
+    if (!this.empresaActual) {
+        const stored = localStorage.getItem('grizalum_empresa_actual');
+        this.empresaActual = stored || 'avicola';
+        this._log('warn', `Empresa no en gestor, usando: ${this.empresaActual}`);
+    }
         // ✅ SINCRONIZAR con FlujoCaja
         if (this.flujoCaja && this.flujoCaja.empresaActual !== this.empresaActual) {
             this._log('info', '🔄 Sincronizando empresa con FlujoCaja...');
