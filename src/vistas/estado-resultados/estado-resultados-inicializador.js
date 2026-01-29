@@ -54,59 +54,11 @@
             window.estadoResultadosUI = new window.EstadoResultadosUI();
 
             console.log('🎉 [Inicializador ER] Sistema inicializado');
-
-                // Escuchar evento de vista cargada
-                document.addEventListener('vistaEstadoResultadosCargada', cargarDatosEnVista);
-                // ✅ LLAMAR DIRECTAMENTE también (por si el evento no se dispara)
-              setTimeout(() => {
-                   if (document.getElementById('estadoResultadosApp')) {
-                       cargarDatosEnVista();
-                   }
-                }, 2000);
-    
-            } catch (error) {
-                console.error('❌ [Inicializador ER] Error:', error);
-            }
-        }
-    
-        function cargarDatosEnVista() {
-    console.log('👁️ [Inicializador ER] Vista cargada - Cargando datos...');
-
-    setTimeout(() => {
-        try {
-            if (!window.estadoResultados) {
-                console.warn('⚠️ [Inicializador ER] Módulo no disponible');
-                return;
-            }
-
-            // ✅ FORZAR empresa desde localStorage
-            if (!window.estadoResultados.empresaActual) {
-                const stored = localStorage.getItem('grizalum_empresa_actual');
-                window.estadoResultados.empresaActual = stored || 'avicola';
-                console.log('🏢 [Inicializador ER] Empresa forzada:', window.estadoResultados.empresaActual);
-            }
-
-            // ✅ Conectar configuración
-            if (!window.estadoResultados.configuracion) {
-                window.estadoResultados.configuracion = window.EstadoResultadosConfig;
-                console.log('🔧 [Inicializador ER] Configuración conectada');
-            }
-
-            // ✅ Calcular
-            window.estadoResultados.calcularResultados();
-            console.log('📊 [Inicializador ER] Resultados calculados');
             
-            // ✅ CREAR UI si no existe
-            if (!window.estadoResultadosUI) {
-                window.estadoResultadosUI = new window.EstadoResultadosUI();
-                console.log('🎨 [Inicializador ER] UI creada');
-            }
-            
-          } catch (error) {
+        } catch (error) {
             console.error('❌ [Inicializador ER] Error:', error);
         }
-    })
-}
+    }
 
 })();
 
