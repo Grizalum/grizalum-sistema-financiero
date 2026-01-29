@@ -102,10 +102,11 @@
                 console.log('🎨 [Inicializador ER] UI creada');
             }
             
-        } catch (error) {
+          } catch (error) {
             console.error('❌ [Inicializador ER] Error:', error);
         }
-    }
+    })
+}
 
 })();
 
