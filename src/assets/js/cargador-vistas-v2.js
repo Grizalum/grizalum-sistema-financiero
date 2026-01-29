@@ -392,6 +392,37 @@ function registrarModulos() {
                 window.estadoResultadosUI = null;
             }
             
+            // ✅ CARGAR SCRIPTS EXTERNOS PRIMERO
+            console.log('   📦 Cargando scripts externos...');
+            for (const scriptOriginal of scriptsArray) {
+                if (scriptOriginal.src) {
+                    const srcCompleto = scriptOriginal.src;
+                    const nombreArchivo = srcCompleto.split('/').pop().split('?')[0];
+                    
+                    console.log(`   📥 Cargando: ${nombreArchivo}`);
+                    
+                    const script = document.createElement('script');
+                    script.src = srcCompleto;
+                    script.async = false;
+                    document.body.appendChild(script);
+                    
+                    await new Promise((resolve) => {
+                        script.onload = () => {
+                            console.log(`   ✅ Cargado: ${nombreArchivo}`);
+                            resolve();
+                        };
+                        script.onerror = () => {
+                            console.warn(`   ⚠️ Error: ${nombreArchivo}`);
+                            resolve();
+                        };
+                    });
+                }
+            }
+            console.log('   ✅ Scripts externos cargados');
+            
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // ✅ EJECUTAR SCRIPTS INLINE (Plan B)
             for (const scriptOriginal of scriptsArray) {
                 if (!scriptOriginal.src) {
                     const script = document.createElement('script');
