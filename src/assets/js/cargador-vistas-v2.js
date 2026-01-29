@@ -1,7 +1,7 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * GRIZALUM - CARGADOR DE VISTAS v2.2 (CORREGIDO - PANEL UI FIXED)
- * ✅ AHORA CARGA CORRECTAMENTE panel-control-ui.js
+ * GRIZALUM - CARGADOR DE VISTAS v2.3 (ESTADO DE RESULTADOS FIXED)
+ * ✅ Estado de Resultados se reinicializa correctamente
  * ═══════════════════════════════════════════════════════════════════
  */
 
@@ -13,7 +13,7 @@ function registrarModulos() {
     console.log('📦 Registrando módulos...');
 
     // ───────────────────────────────────────────────────────────────
-    // PANEL DE CONTROL (DASHBOARD) - CORREGIDO
+    // PANEL DE CONTROL (DASHBOARD)
     // ───────────────────────────────────────────────────────────────
     window.grizalumModulos.registrar({
         id: 'dashboard',
@@ -29,7 +29,6 @@ function registrarModulos() {
         onCargar: async function() {
             console.log('   📊 Cargando Panel de Control...');
             
-            // 1. Cargar dependencias del Flujo de Caja PRIMERO
             console.log('   📦 Cargando dependencias del Flujo de Caja...');
             await cargarScript('src/vistas/flujo-caja/flujo-caja.js');
             await cargarScript('src/vistas/flujo-caja/historial-descripciones.js');
@@ -37,30 +36,25 @@ function registrarModulos() {
             await cargarScript('src/vistas/flujo-caja/flujo-caja-planes.js');
             await cargarScript('src/vistas/flujo-caja/flujo-caja-categorias.js');
             
-            // Esperar a que FlujoCaja se inicialice
             if (window.flujoCaja) {
                 await window.flujoCaja.esperarInicializacion();
                 console.log('   ✅ Flujo de Caja inicializado');
             }
             
-            // 2. Cargar estilos del Panel de Control
             await cargarEstilos('src/vistas/panel-control/panel-control.css');
             
-            // 3. Cargar Chart.js (ANTES de panel-control-ui.js)
             if (typeof Chart === 'undefined') {
                 console.log('   📊 Cargando Chart.js...');
                 await cargarScript('https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js');
                 console.log('   ✅ Chart.js cargado');
             }
             
-            // 4. Cargar ExcelJS
             if (typeof ExcelJS === 'undefined') {
                 console.log('   📦 Cargando ExcelJS...');
                 await cargarScript('https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js');
                 console.log('   ✅ ExcelJS cargado');
             }
 
-            // 5. Cargar módulos del Panel de Control (EXCEPTO UI que lo carga el HTML)
             await cargarScript('src/vistas/panel-control/panel-control.js');
             await cargarScript('src/vistas/panel-control/panel-control-planes.js');
             await cargarScript('src/vistas/panel-control/panel-control-exportador.js');
@@ -73,10 +67,8 @@ function registrarModulos() {
             
             const contenedor = document.getElementById('contenedorVistas'); 
             
-            // ✅ AGREGAR ESTO AQUÍ - Recargar CSS cada vez que se muestra
-             await cargarEstilos('src/vistas/panel-control/panel-control.css');
+            await cargarEstilos('src/vistas/panel-control/panel-control.css');
             
-            // Loading inicial
             contenedor.innerHTML = `
                 <div style="display: flex; align-items: center; justify-content: center; 
                             min-height: 400px;">
@@ -94,17 +86,14 @@ function registrarModulos() {
             
             await new Promise(resolve => setTimeout(resolve, 100));
             
-            // Cargar HTML
             const html = await fetch('src/vistas/panel-control/panel-control.html').then(r => r.text());
             
-            // Separar scripts del HTML
             const temp = document.createElement('div');
             temp.innerHTML = html;
             const scripts = temp.querySelectorAll('script');
             const scriptsArray = Array.from(scripts);
             scriptsArray.forEach(s => s.remove());
             
-            // Insertar HTML
             contenedor.innerHTML = temp.innerHTML;   
             
             await new Promise(resolve => {
@@ -115,32 +104,26 @@ function registrarModulos() {
                 });
             });
             
-            // ✅ ESPERAR A QUE PANEL CONTROL TENGA DATOS LISTOS
-          console.log('   ⏳ Esperando datos del Panel de Control...');
+            console.log('   ⏳ Esperando datos del Panel de Control...');
 
-        if (window.panelControl) {
+            if (window.panelControl) {
                 let intentos = 0;
                 while (!window.panelControl.estaListo() && intentos < 30) {
-                await new Promise(resolve => setTimeout(resolve, 100));
-                intentos++;
-           }
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    intentos++;
+                }
     
-            if (window.panelControl.estaListo()) {
-              console.log('   ✅ Panel de Control con datos cargados');
-              await new Promise(resolve => setTimeout(resolve, 200));
-           } else {
-            console.warn('   ⚠️ Timeout esperando datos del Panel');
-           }
-       }
-            
-            // ═══════════════════════════════════════════════════════════════
-            // ✅ CORRECCIÓN PRINCIPAL: CARGAR TODOS LOS SCRIPTS EXTERNOS
-            // ═══════════════════════════════════════════════════════════════
+                if (window.panelControl.estaListo()) {
+                    console.log('   ✅ Panel de Control con datos cargados');
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                } else {
+                    console.warn('   ⚠️ Timeout esperando datos del Panel');
+                }
+            }
             
             console.log('   📦 Cargando scripts del HTML...');
             
             for (const scriptOriginal of scriptsArray) {
-                // Scripts inline (sin src)
                 if (!scriptOriginal.src) {
                     const script = document.createElement('script');
                     script.textContent = scriptOriginal.textContent;
@@ -149,12 +132,10 @@ function registrarModulos() {
                     continue;
                 }
                 
-                // Scripts externos (con src)
                 const srcCompleto = scriptOriginal.src;
                 const srcBase = srcCompleto.split('?')[0];
                 const nombreArchivo = srcBase.split('/').pop();
                 
-                // Verificar si ya existe (evitar duplicados)
                 const yaExiste = Array.from(document.querySelectorAll('script[src]')).some(s => {
                     const sSrcBase = s.src.split('?')[0];
                     return sSrcBase === srcBase;
@@ -165,7 +146,6 @@ function registrarModulos() {
                     continue;
                 }
                 
-                // Cargar el script
                 try {
                     console.log(`   📥 Cargando: ${nombreArchivo}`);
                     await cargarScript(srcCompleto);
@@ -175,12 +155,10 @@ function registrarModulos() {
                 }
             }
             
-            // Esperar a que panelControl esté listo
             if (window.panelControl) {
                 await window.panelControl.esperarInicializacion();
             }
 
-            // ✅ ESPERAR A QUE panelControlUI ESTÉ DISPONIBLE
             console.log('   ⏳ Esperando a panelControlUI...');
             let intentos = 0;
             while (!window.panelControlUI && intentos < 50) {
@@ -191,10 +169,8 @@ function registrarModulos() {
             if (window.panelControlUI) {
                 console.log('   ✅ panelControlUI disponible');
                 
-                // Esperar un poco más para que se inicialice completamente
                 await new Promise(resolve => setTimeout(resolve, 500));
                 
-                // Forzar carga de datos y gráficos
                 setTimeout(() => {
                     console.log('   🔄 Inicializando UI del Panel de Control...');
                     
@@ -208,7 +184,6 @@ function registrarModulos() {
                         console.log('   ✅ Gráficos inicializados');
                     }
                     
-                    // Aplicar restricciones de plan
                     if (window.PanelControlPlanes && window.PanelControlPlanes.aplicarRestricciones) {
                         window.PanelControlPlanes.aplicarRestricciones();
                         console.log('   ✅ Restricciones aplicadas');
@@ -250,7 +225,6 @@ function registrarModulos() {
             
             const contenedor = document.getElementById('contenedorVistas');
             
-            // Loading inicial
             contenedor.innerHTML = `
                 <div style="display: flex; align-items: center; justify-content: center; 
                             min-height: 400px;">
@@ -268,17 +242,14 @@ function registrarModulos() {
             
             await new Promise(resolve => setTimeout(resolve, 100));
             
-            // Cargar HTML
             const html = await fetch('src/vistas/flujo-caja/flujo-caja.html').then(r => r.text());
             
-            // Separar scripts del HTML
             const temp = document.createElement('div');
             temp.innerHTML = html;
             const scripts = temp.querySelectorAll('script');
             const scriptsArray = Array.from(scripts);
             scriptsArray.forEach(s => s.remove());
             
-            // Insertar HTML
             contenedor.innerHTML = temp.innerHTML;
             
             await new Promise(resolve => {
@@ -289,7 +260,6 @@ function registrarModulos() {
                 });
             });
             
-            // Ejecutar scripts (evitar duplicados)
             for (const scriptOriginal of scriptsArray) {
                 if (scriptOriginal.src) {
                     const srcSinQuery = scriptOriginal.src.split('?')[0];
@@ -318,12 +288,10 @@ function registrarModulos() {
                 }
             }
             
-            // Esperar inicialización
             if (window.flujoCaja) {
                 await window.flujoCaja.esperarInicializacion();
             }
             
-            // Recargar datos
             setTimeout(() => {
                 window.dispatchEvent(new Event('flujoCajaVisible'));
                 
@@ -347,7 +315,6 @@ function registrarModulos() {
                 
             }, 300);
         
-            // Scroll al inicio
             setTimeout(() => {
                 contenedor.scrollTo({ top: 0, behavior: 'smooth' });
                 console.log('✅ Flujo de Caja cargado');
@@ -360,7 +327,7 @@ function registrarModulos() {
     });
 
     // ───────────────────────────────────────────────────────────────
-    // ESTADO DE RESULTADOS
+    // ESTADO DE RESULTADOS - CORREGIDO
     // ───────────────────────────────────────────────────────────────
     window.grizalumModulos.registrar({
         id: 'income-statement',
@@ -384,7 +351,6 @@ function registrarModulos() {
             
             const contenedor = document.getElementById('contenedorVistas');
             
-            // Loading inicial
             contenedor.innerHTML = `
                 <div style="display: flex; align-items: center; justify-content: center; 
                             min-height: 400px;">
@@ -402,7 +368,6 @@ function registrarModulos() {
             
             await new Promise(resolve => setTimeout(resolve, 100));
             
-            // Cargar HTML
             const html = await fetch('src/vistas/estado-resultados/estado-resultados.html').then(r => r.text());
             
             const temp = document.createElement('div');
@@ -421,36 +386,20 @@ function registrarModulos() {
                 });
             });
             
-            // Ejecutar scripts (evitar duplicados)
+            console.log('   🔄 Reinicializando Estado de Resultados...');
+            
+            if (window.estadoResultadosUI) {
+                window.estadoResultadosUI = null;
+            }
+            
             for (const scriptOriginal of scriptsArray) {
-                if (scriptOriginal.src) {
-                    const srcSinQuery = scriptOriginal.src.split('?')[0];
-                    const yaExiste = Array.from(document.querySelectorAll('script[src]')).some(s => 
-                        s.src.split('?')[0] === srcSinQuery
-                    );
-                    
-                    if (yaExiste) {
-                        console.log(`⏭️ Script ya cargado: ${scriptOriginal.src}`);
-                        continue;
-                    }
-                    
-                    const script = document.createElement('script');
-                    script.src = scriptOriginal.src;
-                    script.async = false;
-                    document.body.appendChild(script);
-                    
-                    await new Promise((resolve, reject) => {
-                        script.onload = resolve;
-                        script.onerror = reject;
-                    });
-                } else {
+                if (!scriptOriginal.src) {
                     const script = document.createElement('script');
                     script.textContent = scriptOriginal.textContent;
                     document.body.appendChild(script);
                 }
             }
             
-            // Disparar evento y scroll
             setTimeout(() => {
                 window.dispatchEvent(new Event('vistaEstadoResultadosCargada'));
                 contenedor.scrollTo({ top: 0, behavior: 'instant' });
@@ -570,7 +519,6 @@ function registrarModulos() {
 
 async function cargarEstilos(url) {
     try {
-        // Eliminar CSS anterior del módulo
         document.querySelectorAll('link[id="vista-css-dinamico"], style[id="vista-css-dinamico"]').forEach(el => {
             el.remove();
         });
@@ -633,15 +581,13 @@ async function cambiarSeccion(seccionId, event) {
         event.stopPropagation();
     }
     
-    console.log(`\n🔄 Cambiando a sección: ${seccionId}`); // ⭐ CORREGIDO: Paréntesis
+    console.log(`\n🔄 Cambiando a sección: ${seccionId}`);
     
-    // Remover active de todos los links
     document.querySelectorAll('.nav-link').forEach(link => {
         link.classList.remove('active');
     });
     
-    // Activar link actual
-    const linkActual = document.querySelector(`[data-section="${seccionId}"]`); // ⭐ CORREGIDO: Paréntesis
+    const linkActual = document.querySelector(`[data-section="${seccionId}"]`);
     if (linkActual) {
         linkActual.classList.add('active');
     }
@@ -650,10 +596,8 @@ async function cambiarSeccion(seccionId, event) {
         event.currentTarget.classList.add('active');
     }
     
-    // Activar módulo
     await window.grizalumModulos.activar(seccionId);
     
-    // ⭐ NUEVO: Guardar última vista POR empresa
     try {
         const empresaId = window.gestorEmpresas?.estado?.empresaActual;
         if (empresaId && empresaId !== 'null' && empresaId !== 'undefined') {
@@ -665,7 +609,6 @@ async function cambiarSeccion(seccionId, event) {
         console.error('❌ Error guardando última vista:', error);
     }
 }
-
 
 // ═══════════════════════════════════════════════════════════════════
 // PASO 4: FUNCIÓN DE RECARGA GLOBAL
@@ -701,14 +644,13 @@ window.recargarFlujoCaja = function() {
 // PASO 5: INICIALIZACIÓN
 // ═══════════════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('🚀 Inicializando sistema de navegación v2.2...');
+    console.log('🚀 Inicializando sistema de navegación v2.3...');
     
     const verificar = () => {
         if (window.grizalumModulos) {
             registrarModulos();
             
             setTimeout(() => {
-                // ⭐ NUEVO: Cargar última vista de la empresa actual
                 let vistaInicial = 'dashboard';
                 
                 try {
@@ -736,7 +678,8 @@ document.addEventListener('DOMContentLoaded', () => {
     verificar();
 });
 
-console.log('✅ Cargador de vistas v2.2 (PANEL UI FIXED) inicializado');
+console.log('✅ Cargador de vistas v2.3 (ER FIXED) inicializado');
+
 // ═══════════════════════════════════════════════════════════════════
 // MODO DESARROLLO: Forzar recarga sin caché
 // ═══════════════════════════════════════════════════════════════════
