@@ -435,7 +435,7 @@ function registrarModulos() {
                 window.dispatchEvent(new Event('vistaEstadoResultadosCargada'));
                 contenedor.scrollTo({ top: 0, behavior: 'instant' });
                 console.log('✅ Estado de Resultados cargado');
-            }, 350);
+            }, 100);
         }
     });
 
