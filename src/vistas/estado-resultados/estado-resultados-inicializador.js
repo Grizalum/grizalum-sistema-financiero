@@ -95,26 +95,20 @@
             // ✅ Calcular
             window.estadoResultados.calcularResultados();
             console.log('📊 [Inicializador ER] Resultados calculados');
-
+            
             // ✅ CREAR UI si no existe
             if (!window.estadoResultadosUI) {
                 window.estadoResultadosUI = new window.EstadoResultadosUI();
                 console.log('🎨 [Inicializador ER] UI creada');
             }
-
-            // ✅ Cargar en UI
-            setTimeout(() => {
-                window.estadoResultadosUI.cargarResultados();
-                console.log('✅ [Inicializador ER] Datos cargados en UI');
-            }, 500);
-
+            
         } catch (error) {
-            console.error('❌ [Inicializador ER] Error cargando datos:', error);
+            console.error('❌ [Inicializador ER] Error:', error);
         }
-    }, 1000);
-}
-    
-    })();
+    }
+
+})();
+
 console.log(`
 ╔═══════════════════════════════════════════════════════════════╗
 ║  🚀 INICIALIZADOR ESTADO DE RESULTADOS v3.0 FINAL             ║
