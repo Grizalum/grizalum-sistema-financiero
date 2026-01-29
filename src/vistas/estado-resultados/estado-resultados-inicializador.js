@@ -55,65 +55,60 @@
 
             console.log('🎉 [Inicializador ER] Sistema inicializado');
 
-            // Escuchar evento de vista cargada
-            document.addEventListener('vistaEstadoResultadosCargada', cargarDatosEnVista);
-
-        } catch (error) {
-            console.error('❌ [Inicializador ER] Error:', error);
-        }
-    }
-
-    function cargarDatosEnVista() {
-        console.log('👁️ [Inicializador ER] Vista cargada - Cargando datos...');
-
-        // Esperar un momento para que todo esté renderizado
-        setTimeout(() => {
-            try {
-                // Verificar que todo existe
-                if (!window.estadoResultados || !window.estadoResultadosUI) {
-                    console.warn('⚠️ [Inicializador ER] Módulos no disponibles');
-                    return;
-                }
-
-                // Conectar configuración si falta
-                if (!window.estadoResultados.configuracion && window.EstadoResultadosConfig) {
-                    window.estadoResultados.configuracion = window.EstadoResultadosConfig;
-                    console.log('🔧 [Inicializador ER] Configuración conectada');
-                }
-
-                // Calcular resultados
-                window.estadoResultados.calcularResultados();
-                console.log('📊 [Inicializador ER] Resultados calculados');
-
-                // Cargar en UI
-                setTimeout(() => {
-                    window.estadoResultadosUI.cargarResultados();
-                    console.log('✅ [Inicializador ER] Datos cargados en UI');
-                }, 300);
-
-            } catch (error) {
-                console.error('❌ [Inicializador ER] Error cargando datos:', error);
-            }
-        }, 500);
-    }
-
-})();
-
-// Listener adicional: cuando FlujoCaja esté listo
-document.addEventListener('flujoCajaVisible', () => {
-    console.log('💰 [Inicializador ER] FlujoCaja visible - Recargando datos');
+                // Escuchar evento de vista cargada
+                document.addEventListener('vistaEstadoResultadosCargada', cargarDatosEnVista);
     
+            } catch (error) {
+                console.error('❌ [Inicializador ER] Error:', error);
+            }
+        }
+    
+        function cargarDatosEnVista() {
+    console.log('👁️ [Inicializador ER] Vista cargada - Cargando datos...');
+
     setTimeout(() => {
-        if (window.estadoResultados && window.estadoResultadosUI) {
+        try {
+            if (!window.estadoResultados) {
+                console.warn('⚠️ [Inicializador ER] Módulo no disponible');
+                return;
+            }
+
+            // ✅ FORZAR empresa desde localStorage
+            if (!window.estadoResultados.empresaActual) {
+                const stored = localStorage.getItem('grizalum_empresa_actual');
+                window.estadoResultados.empresaActual = stored || 'avicola';
+                console.log('🏢 [Inicializador ER] Empresa forzada:', window.estadoResultados.empresaActual);
+            }
+
+            // ✅ Conectar configuración
             if (!window.estadoResultados.configuracion) {
                 window.estadoResultados.configuracion = window.EstadoResultadosConfig;
+                console.log('🔧 [Inicializador ER] Configuración conectada');
             }
+
+            // ✅ Calcular
             window.estadoResultados.calcularResultados();
-            window.estadoResultadosUI.cargarResultados();
+            console.log('📊 [Inicializador ER] Resultados calculados');
+
+            // ✅ CREAR UI si no existe
+            if (!window.estadoResultadosUI) {
+                window.estadoResultadosUI = new window.EstadoResultadosUI();
+                console.log('🎨 [Inicializador ER] UI creada');
+            }
+
+            // ✅ Cargar en UI
+            setTimeout(() => {
+                window.estadoResultadosUI.cargarResultados();
+                console.log('✅ [Inicializador ER] Datos cargados en UI');
+            }, 500);
+
+        } catch (error) {
+            console.error('❌ [Inicializador ER] Error cargando datos:', error);
         }
     }, 1000);
-});
-
+}
+    
+    })();
 console.log(`
 ╔═══════════════════════════════════════════════════════════════╗
 ║  🚀 INICIALIZADOR ESTADO DE RESULTADOS v3.0 FINAL             ║
