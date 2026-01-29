@@ -115,10 +115,11 @@ console.log(`
 ║  Simple, directo, sin complicaciones                         ║
 ╚═══════════════════════════════════════════════════════════════╝
 `);
-// ✅ AUTO-EJECUTAR
-if (document.getElementById('estadoResultadosApp')) {
-    console.log('🚀 [Inicializador ER] Auto-ejecutando...');
-    setTimeout(() => {
+// ✅ AUTO-EJECUTAR - Esperar DOM
+function autoEjecutar() {
+    if (document.getElementById('estadoResultadosApp')) {
+        console.log('🚀 [Inicializador ER] Auto-ejecutando...');
+        
         if (window.estadoResultados) {
             if (!window.estadoResultados.empresaActual) {
                 window.estadoResultados.empresaActual = localStorage.getItem('grizalum_empresa_actual') || 'avicola';
@@ -132,5 +133,11 @@ if (document.getElementById('estadoResultadosApp')) {
                 window.estadoResultadosUI = new window.EstadoResultadosUI();
             }
         }
-    }, 1500);
+    } else {
+        // Reintentar en 500ms
+        setTimeout(autoEjecutar, 500);
+    }
 }
+
+// Intentar cuando se cargue el script
+setTimeout(autoEjecutar, 1000);
