@@ -115,3 +115,10 @@ console.log(`
 ║  Simple, directo, sin complicaciones                         ║
 ╚═══════════════════════════════════════════════════════════════╝
 `);
+// ✅ AUTO-EJECUTAR
+if (document.getElementById('estadoResultadosApp')) {
+    console.log('🚀 [Inicializador ER] Auto-ejecutando...');
+    setTimeout(() => {
+        iniciar();
+    }, 1000);
+}
