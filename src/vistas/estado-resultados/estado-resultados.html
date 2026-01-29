@@ -341,6 +341,39 @@
             }
         });
     </script>
+<!-- ✅ CARGA FORZADA GARANTIZADA -->
+<script>
+setTimeout(() => {
+    console.log('🔄 [Plan B] Forzando carga Estado de Resultados...');
+    
+    if (window.estadoResultados && document.getElementById('estadoResultadosApp')) {
+        
+        if (!window.estadoResultados.empresaActual) {
+            const stored = localStorage.getItem('grizalum_empresa_actual');
+            window.estadoResultados.empresaActual = stored || 'avicola';
+            console.log('✅ [Plan B] Empresa:', window.estadoResultados.empresaActual);
+        }
+        
+        if (!window.estadoResultados.configuracion) {
+            window.estadoResultados.configuracion = window.EstadoResultadosConfig;
+            console.log('✅ [Plan B] Config conectada');
+        }
+        
+        window.estadoResultados.calcularResultados();
+        console.log('✅ [Plan B] Resultados calculados');
+        
+        if (!window.estadoResultadosUI) {
+            window.estadoResultadosUI = new window.EstadoResultadosUI();
+            console.log('✅ [Plan B] UI creada');
+        }
+        
+        setTimeout(() => {
+            window.estadoResultadosUI.cargarResultados();
+            console.log('🎉 [Plan B] ESTADO DE RESULTADOS CARGADO');
+        }, 1000);
+    }
+}, 4000);
+</script>
 
 </body>
 </html>
