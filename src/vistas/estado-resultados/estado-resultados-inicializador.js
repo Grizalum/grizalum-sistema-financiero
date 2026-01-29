@@ -57,6 +57,12 @@
 
                 // Escuchar evento de vista cargada
                 document.addEventListener('vistaEstadoResultadosCargada', cargarDatosEnVista);
+                // ✅ LLAMAR DIRECTAMENTE también (por si el evento no se dispara)
+              setTimeout(() => {
+                   if (document.getElementById('estadoResultadosApp')) {
+                       cargarDatosEnVista();
+                   }
+                }, 2000);
     
             } catch (error) {
                 console.error('❌ [Inicializador ER] Error:', error);
