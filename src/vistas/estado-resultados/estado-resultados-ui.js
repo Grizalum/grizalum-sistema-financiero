@@ -141,11 +141,17 @@ if (typeof EstadoResultadosUI === 'undefined') {
         
         const resultados = this.modulo.obtenerResultados();
         
-        if (!resultados || resultados.totalTransacciones === 0) {
-            console.warn('No hay resultados');
-            this.mostrarEstadoVacio();
-            return;
-        }
+        if (!resultados) {
+        console.warn('⚠️ [UI] No hay objeto resultados');
+        this.mostrarEstadoVacio();
+        return;
+      }
+
+       if (resultados.totalTransacciones === 0) {
+      console.log('ℹ️ [UI] Sin transacciones en este período');
+      this.mostrarEstadoVacio();
+      return;
+     }
 
         const estadoVacio = document.getElementById('erEstadoVacio');
         if (estadoVacio) estadoVacio.style.display = 'none';
