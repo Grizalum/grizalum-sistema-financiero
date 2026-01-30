@@ -141,10 +141,11 @@ if (!window.ModalPeriodoPersonalizado) {
                         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
                         width: 90%;
                         max-width: 600px;
+                        min-height: 400px;
                         max-height: 90vh;
-                        overflow: hidden;
-                        display: flex;
-                        flex-direction: column;
+                        overflow: auto;
+                        position: relative;
+                        z-index: 999999;
                         animation: slideUp 0.3s ease;
                     }
 
