@@ -294,11 +294,14 @@ if (!window.EstadoResultadosConfig) {
             id: 'hoy',
             nombre: 'Hoy',
             icono: '📅',
-            calcularRango: () => {
+           calcularRango: () => {
                 const ahora = new Date();
-                // FIX: Crear fechas independientes sin modificar la original
-                const inicio = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate(), 0, 0, 0, 0);
-                const fin = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate(), 23, 59, 59, 999);
+                // FIX: Usar UTC para que coincida con las transacciones guardadas en UTC
+                const year = ahora.getUTCFullYear();
+                const month = ahora.getUTCMonth();
+                const day = ahora.getUTCDate();
+                const inicio = new Date(Date.UTC(year, month, day, 0, 0, 0, 0));
+                const fin = new Date(Date.UTC(year, month, day, 23, 59, 59, 999));
                 return { inicio, fin };
             }
         },
