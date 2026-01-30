@@ -60,46 +60,48 @@ if (typeof EstadoResultadosUI === 'undefined') {
     });
 
     // ✅ NUEVO: Botón Personalizado
-    const btnPersonalizado = document.querySelector('[data-periodo="personalizado"]');
-    if (btnPersonalizado) {
-        btnPersonalizado.addEventListener('click', () => {
-            if (window.modalPeriodoPersonalizado) {
-                window.modalPeriodoPersonalizado.abrir((fechaInicio, fechaFin) => {
-                    console.log('📅 Período seleccionado:', fechaInicio, 'a', fechaFin);
-                    
+const btnPersonalizado = document.querySelector('[data-periodo="personalizado"]');
+if (btnPersonalizado) {
+    btnPersonalizado.addEventListener('click', () => {
+        if (window.modalPeriodoPersonalizado) {
+            window.modalPeriodoPersonalizado.abrir((fechaInicio, fechaFin) => {
+                console.log('📅 Período seleccionado:', fechaInicio, 'a', fechaFin);
+                
+                // ✅ FIX: Guardar fechas correctamente
+                if (this.modulo) {
                     this.modulo.fechaInicioPersonalizada = fechaInicio;
                     this.modulo.fechaFinPersonalizada = fechaFin;
                     this.modulo.periodoActual = 'personalizado';
                     
-                    const rango = window.EstadoResultadosConfig.obtenerRangoPeriodo(
-                        'personalizado', 
-                        fechaInicio, 
-                        fechaFin
-                    );
-                    
+                    // Calcular resultados con las fechas
                     this.modulo.calcularResultados('personalizado');
                     this.cargarResultados();
                     
+                    // Actualizar botones
                     document.querySelectorAll('.er-filtro-btn').forEach(btn => {
                         btn.classList.remove('activo');
                     });
                     btnPersonalizado.classList.add('activo');
                     
+                    // Actualizar subtítulo
                     const subtitulo = document.getElementById('erPeriodoActual');
-                    if (subtitulo) {
+                    if (subtitulo && window.EstadoResultadosConfig) {
                         subtitulo.textContent = `${
                             window.EstadoResultadosConfig.formatearFechaDisplay(fechaInicio)
                         } - ${
                             window.EstadoResultadosConfig.formatearFechaDisplay(fechaFin)
                         }`;
                     }
-                });
-            } else {
-                console.error('❌ Modal no disponible');
-            }
-        });
-    }
-
+                } else {
+                    console.error('❌ Módulo no disponible');
+                }
+            });
+        } else {
+            console.error('❌ Modal no disponible');
+        }
+    });
+}
+       
     // Botón exportar
     const btnExportar = document.getElementById('btnExportarER');
     if (btnExportar) {
