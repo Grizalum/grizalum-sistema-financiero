@@ -1,13 +1,14 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * ESTADO DE RESULTADOS - CONFIGURACIÓN ADAPTATIVA MEJORADA v2.0
+ * ESTADO DE RESULTADOS - CONFIGURACIÓN ADAPTATIVA v2.1.0
  * Sistema de componentes progresivos según score empresarial
+ * ✅ NUEVO: Período personalizado con modal y comparación mejorada
  * ═══════════════════════════════════════════════════════════════════
  */
 
 if (!window.EstadoResultadosConfig) {
     window.EstadoResultadosConfig = {
-    version: '2.0.0',
+    version: '2.1.0', // ✅ ACTUALIZADO - Período personalizado mejorado
     
     // ═══════════════════════════════════════════════════════════
     // COMPONENTES ADAPTATIVOS DEL MÓDULO
@@ -282,7 +283,7 @@ if (!window.EstadoResultadosConfig) {
             seccion: 'OTROS GASTOS',
             tipo: 'gasto',
             color: '#6B7280',
-            grupo: 'gastosOperativos' // Por defecto a gastos operativos
+            grupo: 'gastosOperativos'
         };
     },
     
@@ -361,7 +362,7 @@ if (!window.EstadoResultadosConfig) {
             }
         },
         
-        // ✅ NUEVO: Período personalizado
+        // ✅ MEJORADO: Período personalizado
         personalizado: {
             id: 'personalizado',
             nombre: 'Personalizado',
@@ -380,6 +381,60 @@ if (!window.EstadoResultadosConfig) {
                 inicio.setHours(0, 0, 0, 0);
                 fin.setHours(23, 59, 59, 999);
                 
+                return { inicio, fin };
+            }
+        }
+    },
+    
+    // ═══════════════════════════════════════════════════════════
+    // ✅ NUEVO: PERÍODOS PREDEFINIDOS PARA COMPARACIÓN
+    // ═══════════════════════════════════════════════════════════
+    periodosComparacion: {
+        'año-actual': {
+            nombre: 'Año Actual (2026)',
+            calcular: () => {
+                const añoActual = new Date().getFullYear();
+                return {
+                    inicio: new Date(añoActual, 0, 1),
+                    fin: new Date(añoActual, 11, 31, 23, 59, 59, 999)
+                };
+            }
+        },
+        'año-anterior': {
+            nombre: 'Año Anterior (2025)',
+            calcular: () => {
+                const añoAnterior = new Date().getFullYear() - 1;
+                return {
+                    inicio: new Date(añoAnterior, 0, 1),
+                    fin: new Date(añoAnterior, 11, 31, 23, 59, 59, 999)
+                };
+            }
+        },
+        'ultimos-12-meses': {
+            nombre: 'Últimos 12 Meses',
+            calcular: () => {
+                const hoy = new Date();
+                const inicio = new Date(hoy);
+                inicio.setMonth(inicio.getMonth() - 12);
+                inicio.setDate(1);
+                inicio.setHours(0, 0, 0, 0);
+                return { inicio, fin: hoy };
+            }
+        },
+        'trimestre-actual': {
+            nombre: 'Trimestre Actual',
+            calcular: () => {
+                return window.EstadoResultadosConfig.periodos.trimestre.calcularRango();
+            }
+        },
+        'trimestre-anterior': {
+            nombre: 'Trimestre Anterior',
+            calcular: () => {
+                const hoy = new Date();
+                const mesActual = hoy.getMonth();
+                const trimestreAnteriorInicio = Math.floor(mesActual / 3) * 3 - 3;
+                const inicio = new Date(hoy.getFullYear(), trimestreAnteriorInicio, 1);
+                const fin = new Date(hoy.getFullYear(), trimestreAnteriorInicio + 3, 0, 23, 59, 59, 999);
                 return { inicio, fin };
             }
         }
@@ -444,7 +499,7 @@ if (!window.EstadoResultadosConfig) {
         return { inicio: inicioAnterior, fin: finAnterior };
     },
     
-    // ✅ NUEVO: Validar rango de fechas
+    // ✅ MEJORADO: Validar rango de fechas
     validarRangoFechas(fechaInicio, fechaFin) {
         const inicio = new Date(fechaInicio);
         const fin = new Date(fechaFin);
@@ -458,13 +513,34 @@ if (!window.EstadoResultadosConfig) {
         }
         
         const diasDiferencia = Math.ceil((fin - inicio) / (1000 * 60 * 60 * 24));
-        if (diasDiferencia > 365) {
-            return { valido: false, error: 'El rango no puede superar 1 año' };
+        
+        // ✅ NUEVO: Permitir hasta 5 años para comparación histórica
+        if (diasDiferencia > 1825) { // 5 años
+            return { valido: false, error: 'El rango no puede superar 5 años' };
         }
         
         return { valido: true, dias: diasDiferencia };
+    },
+    
+    // ✅ NUEVO: Formatear fecha para input type="date"
+    formatearFechaInput(fecha) {
+        const d = fecha instanceof Date ? fecha : new Date(fecha);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    },
+    
+    // ✅ NUEVO: Formatear fecha para mostrar
+    formatearFechaDisplay(fecha) {
+        const d = fecha instanceof Date ? fecha : new Date(fecha);
+        return d.toLocaleDateString('es-PE', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
     }
     };
 }
 
-console.log('⚙️ [Estado de Resultados] Configuración v2.0 cargada - Con soporte personalizado');
+console.log('⚙️ [Estado de Resultados] Configuración v2.1.0 cargada - Período personalizado mejorado');
