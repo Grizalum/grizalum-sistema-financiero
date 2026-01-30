@@ -47,43 +47,83 @@ if (typeof EstadoResultadosUI === 'undefined') {
         });
     }
 
-    configurarEventos() {
-        // Botones de período
-        const botonesPeriodo = document.querySelectorAll('.er-filtro-btn');
-        botonesPeriodo.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const periodo = btn.dataset.periodo;
-                if (periodo !== 'personalizado') {
-                    this.cambiarPeriodo(periodo);
-                }
-            });
+   configurarEventos() {
+    // Botones de período
+    const botonesPeriodo = document.querySelectorAll('.er-filtro-btn');
+    botonesPeriodo.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const periodo = btn.dataset.periodo;
+            if (periodo !== 'personalizado') {
+                this.cambiarPeriodo(periodo);
+            }
         });
+    });
 
-        // Botón exportar
-        const btnExportar = document.getElementById('btnExportarER');
-        if (btnExportar) {
-            btnExportar.addEventListener('click', () => this.exportarExcel());
-        }
-
-        // Botón comparar
-        const btnComparar = document.getElementById('btnComparar');
-        if (btnComparar) {
-            btnComparar.addEventListener('click', () => this.toggleComparacion());
-        }
-
-        // Escuchar eventos del módulo
-        document.addEventListener('grizalumResultadosCalculados', () => {
-            this.cargarResultados();
+    // ✅ NUEVO: Botón Personalizado
+    const btnPersonalizado = document.querySelector('[data-periodo="personalizado"]');
+    if (btnPersonalizado) {
+        btnPersonalizado.addEventListener('click', () => {
+            if (window.modalPeriodoPersonalizado) {
+                window.modalPeriodoPersonalizado.abrir((fechaInicio, fechaFin) => {
+                    console.log('📅 Período seleccionado:', fechaInicio, 'a', fechaFin);
+                    
+                    this.modulo.fechaInicioPersonalizada = fechaInicio;
+                    this.modulo.fechaFinPersonalizada = fechaFin;
+                    this.modulo.periodoActual = 'personalizado';
+                    
+                    const rango = window.EstadoResultadosConfig.obtenerRangoPeriodo(
+                        'personalizado', 
+                        fechaInicio, 
+                        fechaFin
+                    );
+                    
+                    this.modulo.calcularResultados('personalizado');
+                    this.cargarResultados();
+                    
+                    document.querySelectorAll('.er-filtro-btn').forEach(btn => {
+                        btn.classList.remove('activo');
+                    });
+                    btnPersonalizado.classList.add('activo');
+                    
+                    const subtitulo = document.getElementById('erPeriodoActual');
+                    if (subtitulo) {
+                        subtitulo.textContent = `${
+                            window.EstadoResultadosConfig.formatearFechaDisplay(fechaInicio)
+                        } - ${
+                            window.EstadoResultadosConfig.formatearFechaDisplay(fechaFin)
+                        }`;
+                    }
+                });
+            } else {
+                console.error('❌ Modal no disponible');
+            }
         });
-
-        // Escuchar cambio de empresa
-        document.addEventListener('grizalumCompanyChanged', () => {
-            setTimeout(() => this.cargarResultados(), 500);
-        });
-
-        console.log('✅ Eventos configurados');
     }
 
+    // Botón exportar
+    const btnExportar = document.getElementById('btnExportarER');
+    if (btnExportar) {
+        btnExportar.addEventListener('click', () => this.exportarExcel());
+    }
+
+    // Botón comparar
+    const btnComparar = document.getElementById('btnComparar');
+    if (btnComparar) {
+        btnComparar.addEventListener('click', () => this.toggleComparacion());
+    }
+
+    // Escuchar eventos del módulo
+    document.addEventListener('grizalumResultadosCalculados', () => {
+        this.cargarResultados();
+    });
+
+    // Escuchar cambio de empresa
+    document.addEventListener('grizalumCompanyChanged', () => {
+        setTimeout(() => this.cargarResultados(), 500);
+    });
+
+    console.log('✅ Eventos configurados');
+}
     cambiarPeriodo(periodoId) {
         console.log('📅 Cambiando a período:', periodoId);
         
