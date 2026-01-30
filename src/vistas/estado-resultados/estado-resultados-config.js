@@ -295,11 +295,11 @@ if (!window.EstadoResultadosConfig) {
             nombre: 'Hoy',
             icono: '📅',
             calcularRango: () => {
-                const hoy = new Date();
-                hoy.setHours(0, 0, 0, 0);
-                const fin = new Date(hoy);
-                fin.setHours(23, 59, 59, 999);
-                return { inicio: hoy, fin: fin };
+                const ahora = new Date();
+                // FIX: Crear fechas independientes sin modificar la original
+                const inicio = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate(), 0, 0, 0, 0);
+                const fin = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate(), 23, 59, 59, 999);
+                return { inicio, fin };
             }
         },
         
