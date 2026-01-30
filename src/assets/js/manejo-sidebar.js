@@ -754,6 +754,12 @@ function limpiarModalesAbiertos() {
     const modales = document.querySelectorAll('.modal, [class*="modal-"]');
     
     modales.forEach(modal => {
+        // ✅ EXCEPCIÓN: No cerrar el modal de período personalizado
+        if (modal.id === 'modalPeriodoPersonalizado' || modal.closest('#modalPeriodoPersonalizado')) {
+            console.log('  ⏭️ Modal período personalizado: NO cerrar');
+            return;
+        }
+        
         // Solo cerrar modales que NO están dentro del contenido
         if (!modal.closest('#contenedorVistas')) {
             const styles = window.getComputedStyle(modal);
@@ -765,7 +771,6 @@ function limpiarModalesAbiertos() {
         }
     });
 }
-
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // FUNCIÓN: Limpiar al cambiar de módulo
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
