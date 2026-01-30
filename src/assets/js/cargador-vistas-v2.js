@@ -448,6 +448,15 @@ function registrarModulos() {
                     }
                     
                     console.log('✅ [Cargador] Estado de Resultados inicializado');
+                    
+                    // ✅ NUEVO: Inicializar modal período personalizado
+                    if (window.ModalPeriodoPersonalizado && !window.modalPeriodoPersonalizado) {
+                        console.log('📅 Inicializando modal período personalizado...');
+                        setTimeout(() => {
+                            window.modalPeriodoPersonalizado = new window.ModalPeriodoPersonalizado();
+                            console.log('✅ Modal período personalizado listo');
+                        }, 500);
+                    }
                 }
             }, 1500);
             
