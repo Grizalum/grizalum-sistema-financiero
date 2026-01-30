@@ -1,9 +1,10 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * ESTADO DE RESULTADOS - MÓDULO PRINCIPAL v2.1.0 CORREGIDO
+ * ESTADO DE RESULTADOS - MÓDULO PRINCIPAL v2.1.1 CORREGIDO
  * Genera reportes financieros desde transacciones del Flujo de Caja
  * ✅ FIX: Propiedades ingresosTotales, gastosTotales, costosTotales
  * ✅ FIX: Función obtenerTransaccionesFiltradas()
+ * ✅ FIX: Key correcta grizalum_flujo_caja_
  * ═══════════════════════════════════════════════════════════════════
  */
 
@@ -11,7 +12,7 @@ if (typeof EstadoResultados === 'undefined') {
     class EstadoResultados {
         constructor() {
             this.config = {
-                version: '2.1.0', // ✅ ACTUALIZADO
+                version: '2.1.1', // ✅ ACTUALIZADO - Fix key localStorage
                 componente: 'EstadoResultados',
                 debug: true
             };
@@ -224,8 +225,8 @@ if (typeof EstadoResultados === 'undefined') {
                 }
             }
             
-            // Fallback a localStorage
-            const key = `grizalum_transacciones_${empresa}`;
+            // ✅ FIX: Fallback a localStorage con key correcta
+            const key = `grizalum_flujo_caja_${empresa}`;
             const data = localStorage.getItem(key);
             const todasTrans = data ? JSON.parse(data) : [];
             
@@ -276,7 +277,8 @@ if (typeof EstadoResultados === 'undefined') {
          */
         _obtenerTransaccionesDesdeLocalStorage(empresaId, fechaInicio, fechaFin) {
             try {
-                const key = `grizalum_transacciones_${empresaId}`;
+                // ✅ FIX: Usar grizalum_flujo_caja en vez de grizalum_transacciones
+                const key = `grizalum_flujo_caja_${empresaId}`;
                 const dataStr = localStorage.getItem(key);
                 
                 if (!dataStr) {
@@ -581,8 +583,9 @@ if (!window.estadoResultados) {
 
 console.log(`
 ╔═══════════════════════════════════════════════════════════════╗
-║  📊 ESTADO DE RESULTADOS v2.1.0 CORREGIDO                    ║
+║  📊 ESTADO DE RESULTADOS v2.1.1 CORREGIDO                    ║
 ║  ✅ Fix: ingresosTotales, gastosTotales, costosTotales      ║
 ║  ✅ Fix: obtenerTransaccionesFiltradas() agregada           ║
+║  ✅ Fix: Key correcta grizalum_flujo_caja_                  ║
 ╚═══════════════════════════════════════════════════════════════╝
 `);
