@@ -148,10 +148,17 @@ if (typeof EstadoResultadosUI === 'undefined') {
       }
 
        if (resultados.totalTransacciones === 0) {
-      console.log('ℹ️ [UI] Sin transacciones en este período');
-      this.mostrarEstadoVacio();
-      return;
-     }
+    console.log('ℹ️ [UI] Sin transacciones en este período');
+    
+    // ✅ LIMPIAR tarjetas antes de mostrar vacío
+    this.actualizarTarjeta('erIngresosTotales', 0);
+    this.actualizarTarjeta('erCostosTotales', 0);
+    this.actualizarTarjeta('erGastosTotales', 0);
+    this.actualizarTarjeta('erUtilidadNeta', 0);
+    
+    this.mostrarEstadoVacio();
+    return;
+  }
 
         const estadoVacio = document.getElementById('erEstadoVacio');
         if (estadoVacio) estadoVacio.style.display = 'none';
