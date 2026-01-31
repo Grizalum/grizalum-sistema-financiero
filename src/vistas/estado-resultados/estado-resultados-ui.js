@@ -270,41 +270,6 @@ if (btnPersonalizado) {
         }
     }
 
-    cargarComparacion() {
-        const comparacion = this.modulo.calcularComparacion();
-        
-        this.actualizarComparacion('erIngresosComparacion', comparacion.ingresos);
-        this.actualizarComparacion('erCostosComparacion', comparacion.costos);
-        this.actualizarComparacion('erGastosComparacion', comparacion.gastosOperativos);
-        this.actualizarComparacion('erUtilidadComparacion', comparacion.utilidadNeta);
-    }
-
-    actualizarComparacion(elementoId, variacion) {
-        const elemento = document.getElementById(elementoId);
-        if (!elemento) return;
-
-        const icono = variacion.tipo === 'positivo' ? 'fa-arrow-up' : 
-                     variacion.tipo === 'negativo' ? 'fa-arrow-down' : 'fa-minus';
-        
-        const clase = variacion.tipo === 'positivo' ? 'er-comparacion-positivo' : 
-                     variacion.tipo === 'negativo' ? 'er-comparacion-negativo' : '';
-
-        elemento.innerHTML = `
-            <i class="fas ${icono}"></i>
-            <span>${Math.abs(variacion.porcentaje).toFixed(1)}% vs anterior</span>
-        `;
-        
-        elemento.className = `er-card-comparacion ${clase}`;
-
-        elemento.style.transform = 'translateY(-10px)';
-        elemento.style.opacity = '0';
-        setTimeout(() => {
-            elemento.style.transform = 'translateY(0)';
-            elemento.style.opacity = '1';
-            elemento.style.transition = 'all 0.3s ease';
-        }, 100);
-    }
-
     cargarTabla(resultados) {
         const tbody = document.getElementById('erTablaBody');
         if (!tbody) return;
