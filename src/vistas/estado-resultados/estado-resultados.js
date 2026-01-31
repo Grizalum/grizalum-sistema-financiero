@@ -148,7 +148,18 @@ if (typeof EstadoResultados === 'undefined') {
                 this.periodoActual = periodoId;
             }
 
-            const rango = this.configuracion.obtenerRangoPeriodo(this.periodoActual);
+            // ✅ FIX: Si es personalizado, pasar las fechas
+            let rango;
+            if (this.periodoActual === 'personalizado' && this.fechaInicioPersonalizada && this.fechaFinPersonalizada) {
+                rango = this.configuracion.obtenerRangoPeriodo(
+                    'personalizado', 
+                    this.fechaInicioPersonalizada, 
+                    this.fechaFinPersonalizada
+                );
+            } else {
+                rango = this.configuracion.obtenerRangoPeriodo(this.periodoActual);
+            }
+
             const transacciones = this._obtenerTransaccionesDeFlujoCaja(rango.inicio, rango.fin);
             
             this._log('info', `Calculando resultados para ${this.periodoActual} (${transacciones.length} transacciones)`);
