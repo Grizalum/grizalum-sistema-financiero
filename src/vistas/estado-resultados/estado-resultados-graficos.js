@@ -1,16 +1,58 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * ESTADO DE RESULTADOS - GRÁFICOS PROFESIONALES v2.0
+ * ESTADO DE RESULTADOS - GRÁFICOS PROFESIONALES v2.1 FIXED
  * Visualización de datos financieros con Chart.js
  * Colores modernos 2026 + Animaciones suaves
+ * ✅ FIX: Manejo robusto de canvas y verificación de dependencias
  * ═══════════════════════════════════════════════════════════════════
  */
 
 if (!window.EstadoResultadosGraficos) {
     window.EstadoResultadosGraficos = {
         
-    version: '2.0.0',
+    version: '2.1.0',
     graficos: {},
+    _chartJsVerificado: false,
+    
+    /**
+     * ═══════════════════════════════════════════════════════════════
+     * VERIFICAR DEPENDENCIAS
+     * ═══════════════════════════════════════════════════════════════
+     */
+    _verificarDependencias() {
+        if (typeof Chart === 'undefined') {
+            console.error('❌ Chart.js no está cargado. Asegúrate de incluir Chart.js antes de este script.');
+            return false;
+        }
+        
+        if (!this._chartJsVerificado) {
+            console.log('✅ Chart.js detectado v' + (Chart.version || 'unknown'));
+            this._chartJsVerificado = true;
+        }
+        
+        return true;
+    },
+    
+    /**
+     * ═══════════════════════════════════════════════════════════════
+     * ESPERAR A QUE EL CANVAS ESTÉ DISPONIBLE
+     * ═══════════════════════════════════════════════════════════════
+     */
+    async _esperarCanvas(canvasId, maxIntentos = 10, delay = 300) {
+        for (let i = 0; i < maxIntentos; i++) {
+            const canvas = document.getElementById(canvasId);
+            if (canvas) {
+                console.log(`✅ Canvas "${canvasId}" encontrado (intento ${i + 1})`);
+                return canvas;
+            }
+            
+            // Esperar antes del siguiente intento
+            await new Promise(resolve => setTimeout(resolve, delay));
+        }
+        
+        console.warn(`⚠️ Canvas "${canvasId}" no encontrado después de ${maxIntentos} intentos`);
+        return null;
+    },
     
     // ✅ PALETA DE COLORES MODERNA 2026
     colores: {
@@ -49,315 +91,343 @@ if (!window.EstadoResultadosGraficos) {
     
     /**
      * ═══════════════════════════════════════════════════════════════
-     * GRÁFICO DE BARRAS - COMPOSICIÓN MEJORADO
+     * GRÁFICO DE BARRAS - COMPOSICIÓN MEJORADO CON VALIDACIÓN
      * ═══════════════════════════════════════════════════════════════
      */
-    crearGraficoBarras(resultados) {
-        const canvas = document.getElementById('erGraficoBarras');
+    async crearGraficoBarras(resultados) {
+        // ✅ Verificar Chart.js
+        if (!this._verificarDependencias()) {
+            return;
+        }
+        
+        // ✅ Esperar a que el canvas esté disponible
+        const canvas = await this._esperarCanvas('erGraficoBarras');
         if (!canvas) {
-            console.warn('⚠️ Canvas erGraficoBarras no encontrado');
+            console.error('❌ No se pudo crear el gráfico de barras: canvas no disponible');
             return;
         }
 
-        // Destruir gráfico anterior
+        // ✅ Destruir gráfico anterior si existe
         if (this.graficos.barras) {
-            this.graficos.barras.destroy();
+            try {
+                this.graficos.barras.destroy();
+            } catch (e) {
+                console.warn('⚠️ Error al destruir gráfico anterior:', e);
+            }
         }
 
-        const ctx = canvas.getContext('2d');
+        try {
+            const ctx = canvas.getContext('2d');
 
-        // ✅ Crear gradientes
-        const gradienteIngresos = ctx.createLinearGradient(0, 0, 0, 400);
-        gradienteIngresos.addColorStop(0, this.colores.ingresos.gradiente[0]);
-        gradienteIngresos.addColorStop(1, this.colores.ingresos.gradiente[1]);
+            // ✅ Crear gradientes
+            const gradienteIngresos = ctx.createLinearGradient(0, 0, 0, 400);
+            gradienteIngresos.addColorStop(0, this.colores.ingresos.gradiente[0]);
+            gradienteIngresos.addColorStop(1, this.colores.ingresos.gradiente[1]);
 
-        const gradienteCostos = ctx.createLinearGradient(0, 0, 0, 400);
-        gradienteCostos.addColorStop(0, this.colores.costos.gradiente[0]);
-        gradienteCostos.addColorStop(1, this.colores.costos.gradiente[1]);
+            const gradienteCostos = ctx.createLinearGradient(0, 0, 0, 400);
+            gradienteCostos.addColorStop(0, this.colores.costos.gradiente[0]);
+            gradienteCostos.addColorStop(1, this.colores.costos.gradiente[1]);
 
-        const gradienteGastosOp = ctx.createLinearGradient(0, 0, 0, 400);
-        gradienteGastosOp.addColorStop(0, this.colores.gastosOp.gradiente[0]);
-        gradienteGastosOp.addColorStop(1, this.colores.gastosOp.gradiente[1]);
+            const gradienteGastosOp = ctx.createLinearGradient(0, 0, 0, 400);
+            gradienteGastosOp.addColorStop(0, this.colores.gastosOp.gradiente[0]);
+            gradienteGastosOp.addColorStop(1, this.colores.gastosOp.gradiente[1]);
 
-        const gradienteGastosFin = ctx.createLinearGradient(0, 0, 0, 400);
-        gradienteGastosFin.addColorStop(0, this.colores.gastosFin.gradiente[0]);
-        gradienteGastosFin.addColorStop(1, this.colores.gastosFin.gradiente[1]);
+            const gradienteGastosFin = ctx.createLinearGradient(0, 0, 0, 400);
+            gradienteGastosFin.addColorStop(0, this.colores.gastosFin.gradiente[0]);
+            gradienteGastosFin.addColorStop(1, this.colores.gastosFin.gradiente[1]);
 
-        const datos = {
-            labels: ['Resultados'],
-            datasets: [
-                {
-                    label: 'Ingresos',
-                    data: [resultados.ingresos.total],
-                    backgroundColor: gradienteIngresos,
-                    borderColor: this.colores.ingresos.borde,
-                    borderWidth: 3,
-                    borderRadius: 8,
-                    borderSkipped: false
-                },
-                {
-                    label: 'Costos',
-                    data: [resultados.costos.total],
-                    backgroundColor: gradienteCostos,
-                    borderColor: this.colores.costos.borde,
-                    borderWidth: 3,
-                    borderRadius: 8,
-                    borderSkipped: false
-                },
-                {
-                    label: 'Gastos Operativos',
-                    data: [resultados.gastosOperativos.total],
-                    backgroundColor: gradienteGastosOp,
-                    borderColor: this.colores.gastosOp.borde,
-                    borderWidth: 3,
-                    borderRadius: 8,
-                    borderSkipped: false
-                },
-                {
-                    label: 'Gastos Financieros',
-                    data: [resultados.gastosFinancieros.total],
-                    backgroundColor: gradienteGastosFin,
-                    borderColor: this.colores.gastosFin.borde,
-                    borderWidth: 3,
-                    borderRadius: 8,
-                    borderSkipped: false
-                }
-            ]
-        };
-
-        const config = {
-            type: 'bar',
-            data: datos,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                // ✅ Animación suave
-                animation: {
-                    duration: 1500,
-                    easing: 'easeInOutQuart'
-                },
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'bottom',
-                        labels: {
-                            color: this._obtenerColorTexto(),
-                            font: {
-                                size: 13,
-                                weight: 600,
-                                family: "'Inter', sans-serif"
-                            },
-                            padding: 20,
-                            usePointStyle: true,
-                            pointStyle: 'circle'
-                        }
+            const datos = {
+                labels: ['Resultados'],
+                datasets: [
+                    {
+                        label: 'Ingresos',
+                        data: [resultados.ingresos.total],
+                        backgroundColor: gradienteIngresos,
+                        borderColor: this.colores.ingresos.borde,
+                        borderWidth: 3,
+                        borderRadius: 8,
+                        borderSkipped: false
                     },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.9)',
-                        titleColor: '#fff',
-                        bodyColor: '#fff',
-                        borderColor: 'rgba(255, 255, 255, 0.1)',
-                        borderWidth: 1,
-                        padding: 12,
-                        cornerRadius: 8,
-                        titleFont: {
-                            size: 14,
-                            weight: 'bold'
+                    {
+                        label: 'Costos',
+                        data: [resultados.costos.total],
+                        backgroundColor: gradienteCostos,
+                        borderColor: this.colores.costos.borde,
+                        borderWidth: 3,
+                        borderRadius: 8,
+                        borderSkipped: false
+                    },
+                    {
+                        label: 'Gastos Operativos',
+                        data: [resultados.gastosOperativos.total],
+                        backgroundColor: gradienteGastosOp,
+                        borderColor: this.colores.gastosOp.borde,
+                        borderWidth: 3,
+                        borderRadius: 8,
+                        borderSkipped: false
+                    },
+                    {
+                        label: 'Gastos Financieros',
+                        data: [resultados.gastosFinancieros.total],
+                        backgroundColor: gradienteGastosFin,
+                        borderColor: this.colores.gastosFin.borde,
+                        borderWidth: 3,
+                        borderRadius: 8,
+                        borderSkipped: false
+                    }
+                ]
+            };
+
+            const config = {
+                type: 'bar',
+                data: datos,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    // ✅ Animación suave
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeInOutQuart'
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                color: this._obtenerColorTexto(),
+                                font: {
+                                    size: 13,
+                                    weight: 600,
+                                    family: "'Inter', sans-serif"
+                                },
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
                         },
-                        bodyFont: {
-                            size: 13
-                        },
-                        callbacks: {
-                            label: (context) => {
-                                let label = context.dataset.label || '';
-                                if (label) {
-                                    label += ': ';
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            borderWidth: 1,
+                            padding: 12,
+                            cornerRadius: 8,
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
+                            callbacks: {
+                                label: (context) => {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += new Intl.NumberFormat('es-PE', {
+                                        style: 'currency',
+                                        currency: 'PEN'
+                                    }).format(context.parsed.y);
+                                    return label;
                                 }
-                                label += new Intl.NumberFormat('es-PE', {
-                                    style: 'currency',
-                                    currency: 'PEN'
-                                }).format(context.parsed.y);
-                                return label;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            color: this._obtenerColorSecundario(),
-                            font: {
-                                size: 12,
-                                weight: 600
                             }
                         }
                     },
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            color: this._obtenerColorBorde(),
-                            drawBorder: false
-                        },
-                        ticks: {
-                            color: this._obtenerColorSecundario(),
-                            font: {
-                                size: 12
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
                             },
-                            callback: (value) => {
-                                return 'S/. ' + value.toLocaleString('es-PE');
+                            ticks: {
+                                color: this._obtenerColorSecundario(),
+                                font: {
+                                    size: 12,
+                                    weight: 600
+                                }
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: this._obtenerColorBorde(),
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: this._obtenerColorSecundario(),
+                                font: {
+                                    size: 12
+                                },
+                                callback: (value) => {
+                                    return 'S/. ' + value.toLocaleString('es-PE');
+                                }
                             }
                         }
                     }
                 }
-            }
-        };
+            };
 
-        this.graficos.barras = new Chart(ctx, config);
-        console.log('✅ [Gráficos] Gráfico de barras creado (v2.0)');
+            this.graficos.barras = new Chart(ctx, config);
+            console.log('✅ [Gráficos] Gráfico de barras creado exitosamente (v2.1)');
+        } catch (error) {
+            console.error('❌ Error al crear gráfico de barras:', error);
+        }
     },
 
     /**
      * ═══════════════════════════════════════════════════════════════
-     * GRÁFICO DE TORTA - DISTRIBUCIÓN DE GASTOS MEJORADO
+     * GRÁFICO DE TORTA - DISTRIBUCIÓN DE GASTOS MEJORADO CON VALIDACIÓN
      * ═══════════════════════════════════════════════════════════════
      */
-    crearGraficoTorta(resultados) {
-        const canvas = document.getElementById('erGraficoTorta');
+    async crearGraficoTorta(resultados) {
+        // ✅ Verificar Chart.js
+        if (!this._verificarDependencias()) {
+            return;
+        }
+        
+        // ✅ Esperar a que el canvas esté disponible
+        const canvas = await this._esperarCanvas('erGraficoTorta');
         if (!canvas) {
-            console.warn('⚠️ Canvas erGraficoTorta no encontrado');
+            console.error('❌ No se pudo crear el gráfico de torta: canvas no disponible');
             return;
         }
 
-        // Destruir gráfico anterior
+        // ✅ Destruir gráfico anterior si existe
         if (this.graficos.torta) {
-            this.graficos.torta.destroy();
+            try {
+                this.graficos.torta.destroy();
+            } catch (e) {
+                console.warn('⚠️ Error al destruir gráfico anterior:', e);
+            }
         }
 
-        const ctx = canvas.getContext('2d');
+        try {
+            const ctx = canvas.getContext('2d');
 
-        // Preparar datos - Top 6 categorías de gastos
-        const todasCategorias = [
-            ...resultados.costos.porCategoria.map(c => ({ ...c, tipo: 'Costo' })),
-            ...resultados.gastosOperativos.porCategoria.map(c => ({ ...c, tipo: 'Gasto Op.' })),
-            ...resultados.gastosFinancieros.porCategoria.map(c => ({ ...c, tipo: 'Gasto Fin.' }))
-        ];
+            // Preparar datos - Top 6 categorías de gastos
+            const todasCategorias = [
+                ...resultados.costos.porCategoria.map(c => ({ ...c, tipo: 'Costo' })),
+                ...resultados.gastosOperativos.porCategoria.map(c => ({ ...c, tipo: 'Gasto Op.' })),
+                ...resultados.gastosFinancieros.porCategoria.map(c => ({ ...c, tipo: 'Gasto Fin.' }))
+            ];
 
-        const top6 = todasCategorias
-            .sort((a, b) => b.monto - a.monto)
-            .slice(0, 6);
+            const top6 = todasCategorias
+                .sort((a, b) => b.monto - a.monto)
+                .slice(0, 6);
 
-        const otrosMonto = todasCategorias
-            .slice(6)
-            .reduce((sum, cat) => sum + cat.monto, 0);
+            const otrosMonto = todasCategorias
+                .slice(6)
+                .reduce((sum, cat) => sum + cat.monto, 0);
 
-        const labels = top6.map(c => c.categoria);
-        const data = top6.map(c => c.monto);
-        
-        if (otrosMonto > 0) {
-            labels.push('Otros');
-            data.push(otrosMonto);
-        }
+            const labels = top6.map(c => c.categoria);
+            const data = top6.map(c => c.monto);
+            
+            if (otrosMonto > 0) {
+                labels.push('Otros');
+                data.push(otrosMonto);
+            }
 
-        const config = {
-            type: 'doughnut',
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: data,
-                    backgroundColor: this.colores.paleta,
-                    borderColor: this._obtenerColorFondo(),
-                    borderWidth: 4,
-                    hoverOffset: 15
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                // ✅ Animación suave
-                animation: {
-                    duration: 1500,
-                    easing: 'easeInOutQuart',
-                    animateRotate: true,
-                    animateScale: true
+            const config = {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: this.colores.paleta,
+                        borderColor: this._obtenerColorFondo(),
+                        borderWidth: 4,
+                        hoverOffset: 15
+                    }]
                 },
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'right',
-                        labels: {
-                            color: this._obtenerColorTexto(),
-                            font: {
-                                size: 12,
-                                weight: 600,
-                                family: "'Inter', sans-serif"
-                            },
-                            padding: 12,
-                            usePointStyle: true,
-                            pointStyle: 'circle',
-                            generateLabels: (chart) => {
-                                const data = chart.data;
-                                if (data.labels.length && data.datasets.length) {
-                                    return data.labels.map((label, i) => {
-                                        const value = data.datasets[0].data[i];
-                                        const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
-                                        const percentage = ((value / total) * 100).toFixed(1);
-                                        
-                                        return {
-                                            text: `${label} (${percentage}%)`,
-                                            fillStyle: data.datasets[0].backgroundColor[i],
-                                            hidden: false,
-                                            index: i
-                                        };
-                                    });
-                                }
-                                return [];
-                            }
-                        }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    // ✅ Animación suave
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeInOutQuart',
+                        animateRotate: true,
+                        animateScale: true
                     },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.9)',
-                        titleColor: '#fff',
-                        bodyColor: '#fff',
-                        borderColor: 'rgba(255, 255, 255, 0.1)',
-                        borderWidth: 1,
-                        padding: 12,
-                        cornerRadius: 8,
-                        titleFont: {
-                            size: 14,
-                            weight: 'bold'
-                        },
-                        bodyFont: {
-                            size: 13
-                        },
-                        callbacks: {
-                            label: (context) => {
-                                let label = context.label || '';
-                                if (label) {
-                                    label += ': ';
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'right',
+                            labels: {
+                                color: this._obtenerColorTexto(),
+                                font: {
+                                    size: 12,
+                                    weight: 600,
+                                    family: "'Inter', sans-serif"
+                                },
+                                padding: 12,
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                generateLabels: (chart) => {
+                                    const data = chart.data;
+                                    if (data.labels.length && data.datasets.length) {
+                                        return data.labels.map((label, i) => {
+                                            const value = data.datasets[0].data[i];
+                                            const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                            const percentage = ((value / total) * 100).toFixed(1);
+                                            
+                                            return {
+                                                text: `${label} (${percentage}%)`,
+                                                fillStyle: data.datasets[0].backgroundColor[i],
+                                                hidden: false,
+                                                index: i
+                                            };
+                                        });
+                                    }
+                                    return [];
                                 }
-                                const value = context.parsed;
-                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const percentage = ((value / total) * 100).toFixed(1);
-                                
-                                label += new Intl.NumberFormat('es-PE', {
-                                    style: 'currency',
-                                    currency: 'PEN'
-                                }).format(value);
-                                label += ` (${percentage}%)`;
-                                
-                                return label;
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            borderWidth: 1,
+                            padding: 12,
+                            cornerRadius: 8,
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
+                            callbacks: {
+                                label: (context) => {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    const value = context.parsed;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    
+                                    label += new Intl.NumberFormat('es-PE', {
+                                        style: 'currency',
+                                        currency: 'PEN'
+                                    }).format(value);
+                                    label += ` (${percentage}%)`;
+                                    
+                                    return label;
+                                }
                             }
                         }
                     }
                 }
-            }
-        };
+            };
 
-        this.graficos.torta = new Chart(ctx, config);
-        console.log('✅ [Gráficos] Gráfico de torta creado (v2.0)');
+            this.graficos.torta = new Chart(ctx, config);
+            console.log('✅ [Gráficos] Gráfico de torta creado exitosamente (v2.1)');
+        } catch (error) {
+            console.error('❌ Error al crear gráfico de torta:', error);
+        }
     },
 
     /**
@@ -398,7 +468,11 @@ if (!window.EstadoResultadosGraficos) {
     destruirGraficos() {
         Object.values(this.graficos).forEach(grafico => {
             if (grafico) {
-                grafico.destroy();
+                try {
+                    grafico.destroy();
+                } catch (e) {
+                    console.warn('⚠️ Error al destruir gráfico:', e);
+                }
             }
         });
         this.graficos = {};
@@ -406,4 +480,5 @@ if (!window.EstadoResultadosGraficos) {
     }
     };
 }
-console.log('📊 Módulo de gráficos Estado de Resultados v2.0 - Colores 2026 cargado');
+
+console.log('📊 Módulo de gráficos Estado de Resultados v2.1 FIXED cargado');
