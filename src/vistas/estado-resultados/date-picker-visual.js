@@ -2,6 +2,7 @@
  * ═══════════════════════════════════════════════════════════════════
  * DATE PICKER VISUAL - Para Modal Período Personalizado
  * Calendario visual sin dependencias, compatible con todos los navegadores
+ * VERSIÓN CORREGIDA - Sin errores de duplicación
  * ═══════════════════════════════════════════════════════════════════
  */
 
@@ -20,6 +21,9 @@ class DatePickerVisual {
     }
     
     _init() {
+        // Inyectar estilos solo una vez
+        DatePickerVisual._ensureStyles();
+        
         // Hacer el input readonly para prevenir teclado
         this.input.readOnly = true;
         this.input.style.cursor = 'pointer';
@@ -238,11 +242,17 @@ class DatePickerVisual {
         this.input.value = dateString;
         this.selectedDate = new Date(dateString);
     }
-}
-
-// CSS para el date picker
-const datePickerStyles = `
-<style id="datePickerStyles">
+    
+    // ✅ MÉTODO ESTÁTICO para inyectar estilos UNA SOLA VEZ
+    static _ensureStyles() {
+        // Solo inyectar si no existe
+        if (document.getElementById('datePickerStyles')) {
+            return;
+        }
+        
+        const styleElement = document.createElement('style');
+        styleElement.id = 'datePickerStyles';
+        styleElement.textContent = `
 .custom-datepicker {
     background: white;
     border-radius: 12px;
@@ -351,12 +361,14 @@ const datePickerStyles = `
 .datepicker-day.empty {
     cursor: default;
 }
-</style>
-`;
-
-// Inyectar estilos
-if (!document.getElementById('datePickerStyles')) {
-    document.head.insertAdjacentHTML('beforeend', datePickerStyles);
+        `;
+        
+        document.head.appendChild(styleElement);
+    }
 }
 
+// ✅ Exponer la clase globalmente
 window.DatePickerVisual = DatePickerVisual;
+
+// ✅ Inyectar estilos inmediatamente al cargar
+DatePickerVisual._ensureStyles();
