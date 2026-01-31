@@ -57,25 +57,27 @@ if (!window.ModalPeriodoPersonalizado) {
                                 <span>O SELECCIONA FECHAS CUSTOM</span>
                             </div>
 
-                            <!-- Selector de fechas manual -->
+                            <!-- Selector de fechas manual con date picker visual -->
                             <div class="fechas-custom-section">
                                 <div class="fecha-input-group">
                                     <label for="fechaInicio" class="modal-label">📆 Fecha Inicio:</label>
                                     <input 
-                                        type="date" 
+                                        type="text" 
                                         id="fechaInicio" 
                                         class="modal-date-input"
-                                        max="${this._getFechaHoy()}"
+                                        placeholder="Selecciona fecha..."
+                                        readonly
                                     />
                                 </div>
 
                                 <div class="fecha-input-group">
                                     <label for="fechaFin" class="modal-label">📆 Fecha Fin:</label>
                                     <input 
-                                        type="date" 
+                                        type="text" 
                                         id="fechaFin" 
                                         class="modal-date-input"
-                                        max="${this._getFechaHoy()}"
+                                        placeholder="Selecciona fecha..."
+                                        readonly
                                     />
                                 </div>
                             </div>
@@ -147,6 +149,7 @@ if (!window.ModalPeriodoPersonalizado) {
                         position: relative;
                         z-index: 999999;
                         animation: slideUp 0.3s ease;
+                        pointer-events: auto !important;
                     }
 
                     @keyframes slideUp {
@@ -201,6 +204,7 @@ if (!window.ModalPeriodoPersonalizado) {
                         padding: 24px;
                         overflow-y: auto;
                         flex: 1;
+                        pointer-events: auto !important;
                     }
 
                     .modal-label {
@@ -280,11 +284,13 @@ if (!window.ModalPeriodoPersonalizado) {
                         display: grid;
                         grid-template-columns: 1fr 1fr;
                         gap: 16px;
+                        pointer-events: auto !important;
                     }
 
                     .fecha-input-group {
                         display: flex;
                         flex-direction: column;
+                        pointer-events: auto !important;
                     }
 
                     .modal-date-input {
@@ -294,6 +300,9 @@ if (!window.ModalPeriodoPersonalizado) {
                         font-size: 14px;
                         color: #374151;
                         transition: all 0.2s;
+                        pointer-events: auto !important;
+                        position: relative;
+                        z-index: 10;
                     }
 
                     .modal-date-input:focus {
@@ -539,16 +548,29 @@ if (!window.ModalPeriodoPersonalizado) {
             this.callback = callback;
             this.modal.style.display = 'flex';
 
+            // Inicializar date pickers visuales si no existen
+            if (!this.datePickerInicio) {
+                this.datePickerInicio = new window.DatePickerVisual('fechaInicio', {
+                    maxDate: new Date(),
+                    onChange: () => this._validarFechas()
+                });
+            }
+            
+            if (!this.datePickerFin) {
+                this.datePickerFin = new window.DatePickerVisual('fechaFin', {
+                    maxDate: new Date(),
+                    onChange: () => this._validarFechas()
+                });
+            }
+
             // Setear fecha de hoy por defecto en fin
             const inputFin = document.getElementById('fechaFin');
             if (!inputFin.value) {
-                inputFin.value = this._getFechaHoy();
+                const hoy = this._getFechaHoy();
+                this.datePickerFin.setValue(hoy);
             }
 
-            // Focus en primer input
-            setTimeout(() => {
-                document.getElementById('fechaInicio').focus();
-            }, 100);
+            this._validarFechas();
         }
 
         cerrar() {
