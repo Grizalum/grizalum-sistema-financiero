@@ -373,12 +373,9 @@ if (!window.EstadoResultadosConfig) {
                 const fin = typeof fechaFin === 'string' ? new Date(fechaFin) : fechaFin;
                 
                 if (!inicio || !fin || isNaN(inicio) || isNaN(fin)) {
-                    console.warn('⚠️ Fechas inválidas para período personalizado');
-                    // Fallback a mes actual - sin usar 'this'
-                    const hoy = new Date();
-                    const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-                    const finMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0, 23, 59, 59, 999);
-                    return { inicio: inicioMes, fin: finMes };
+                    console.warn('Fechas inválidas para período personalizado');
+                    // Fallback a mes actual
+                    return this.periodos.mes.calcularRango();
                 }
                 
                 inicio.setHours(0, 0, 0, 0);
