@@ -489,13 +489,21 @@ class ModalComparacionPeriodos {
     }
 }
 
-// Inicializar
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        window.modalComparacionPeriodos = new ModalComparacionPeriodos();
-        window.ModalComparacionPeriodos = ModalComparacionPeriodos;
-    });
-} else {
-    window.modalComparacionPeriodos = new ModalComparacionPeriodos();
+// Inicializar (solo si no existe)
+if (typeof window.ModalComparacionPeriodos === 'undefined') {
     window.ModalComparacionPeriodos = ModalComparacionPeriodos;
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!window.modalComparacionPeriodos) {
+                window.modalComparacionPeriodos = new ModalComparacionPeriodos();
+            }
+        });
+    } else {
+        if (!window.modalComparacionPeriodos) {
+            window.modalComparacionPeriodos = new ModalComparacionPeriodos();
+        }
+    }
 }
+
+console.log('📊 Modal Comparación v1.1.0 - Cargado');
