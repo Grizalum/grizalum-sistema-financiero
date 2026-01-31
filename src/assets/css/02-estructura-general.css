@@ -70,16 +70,24 @@
     pointer-events: all;
 }
 
-/* ✅ FIX: Permitir que modales específicos funcionen */
+/* ✅ FIX COMPLETO: Permitir que modal período personalizado funcione */
 .modal-periodo-overlay,
+.modal-periodo-overlay *,
 .modal-periodo-container,
+.modal-periodo-container *,
 .modal-periodo-body,
-.modal-date-input {
+.modal-periodo-body *,
+.modal-date-input,
+.fecha-input-group,
+.fecha-input-group *,
+.fechas-custom-section,
+.fechas-custom-section *,
+input[type="text"]#fechaInicio,
+input[type="text"]#fechaFin,
+.custom-datepicker,
+.custom-datepicker * {
     pointer-events: auto !important;
-}
-
-.modal-container.active {
-    pointer-events: all;
+    cursor: pointer !important;
 }
 
 /* ===== COMPANY SELECTOR ===== */
