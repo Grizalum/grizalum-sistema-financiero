@@ -160,30 +160,6 @@ if (btnPersonalizado) {
         }
     }
 
-    toggleComparacion() {
-        this.comparacionActiva = !this.comparacionActiva;
-        
-        const btnComparar = document.getElementById('btnComparar');
-        if (btnComparar) {
-            if (this.comparacionActiva) {
-                btnComparar.classList.add('activo');
-                btnComparar.innerHTML = '<i class="fas fa-balance-scale"></i><span>Ocultar Comparación</span>';
-            } else {
-                btnComparar.classList.remove('activo');
-                btnComparar.innerHTML = '<i class="fas fa-balance-scale"></i><span>Comparar</span>';
-            }
-        }
-
-        if (this.comparacionActiva) {
-            this.cargarComparacion();
-        } else {
-            document.querySelectorAll('.er-card-comparacion').forEach(el => {
-                el.innerHTML = '<i class="fas fa-minus"></i><span>Sin datos anteriores</span>';
-                el.className = 'er-card-comparacion';
-            });
-        }
-    }
-
     cargarResultados() {
         console.log('📊 Cargando resultados...');
         
