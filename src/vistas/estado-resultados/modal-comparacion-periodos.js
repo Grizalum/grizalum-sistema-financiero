@@ -27,28 +27,28 @@ class ModalComparacionPeriodos {
     
     _crearModal() {
         const htmlModal = `
-            <div id="modalComparacionPeriodos" class="griz-modal-comparacion" style="display: none;">
-                <div class="griz-modal-overlay"></div>
-                <div class="griz-modal-contenedor">
+            <div id="modalComparacionPeriodos" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh; z-index: 9999999999; align-items: center; justify-content: center;">
+                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); z-index: 1;"></div>
+                <div style="position: relative; z-index: 2; background: white; border-radius: 16px; width: 1000px; max-width: 95%; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
                     <!-- Encabezado -->
-                    <div class="griz-modal-header">
-                        <h3>📊 Comparación de Períodos</h3>
-                        <button class="griz-modal-close" id="btnCerrarComparacion">&times;</button>
+                    <div style="padding: 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 16px 16px 0 0; display: flex; align-items: center; justify-content: space-between;">
+                        <h3 style="margin: 0; font-size: 22px; font-weight: 700;">📊 Comparación de Períodos</h3>
+                        <button id="btnCerrarComparacion" style="background: rgba(255,255,255,0.2); border: none; color: white; width: 40px; height: 40px; border-radius: 8px; font-size: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1;">&times;</button>
                     </div>
                     
                     <!-- Cuerpo -->
-                    <div class="griz-modal-body">
+                    <div style="padding: 32px; overflow-y: auto; flex: 1; display: block; visibility: visible; opacity: 1;">
                         <!-- Selector -->
-                        <div id="seccionSelector" class="griz-selector-section">
-                            <div class="griz-section-title">
-                                <span class="griz-step-number">1</span>
-                                <h4>Selecciona los períodos a comparar</h4>
+                        <div id="seccionSelector" style="display: block; visibility: visible; opacity: 1;">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+                                <span style="width: 32px; height: 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px;">1</span>
+                                <h4 style="margin: 0; font-size: 18px; font-weight: 600; color: #1f2937;">Selecciona los períodos a comparar</h4>
                             </div>
                             
-                            <div class="griz-period-grid">
-                                <div class="griz-period-col">
-                                    <label>📅 Período A (Base):</label>
-                                    <select id="selectPeriodoA" class="griz-select">
+                            <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 24px; margin-bottom: 24px;">
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    <label style="font-weight: 600; color: #374151; font-size: 14px;">📅 Período A (Base):</label>
+                                    <select id="selectPeriodoA" style="padding: 12px 16px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; color: #1f2937; background: white; cursor: pointer; display: block; width: 100%; visibility: visible; opacity: 1;">
                                         <option value="">Seleccionar...</option>
                                         <option value="mes-actual">Mes Actual</option>
                                         <option value="mes-anterior">Mes Anterior</option>
@@ -57,14 +57,14 @@ class ModalComparacionPeriodos {
                                         <option value="año-actual">Año Actual</option>
                                         <option value="año-anterior">Año Anterior</option>
                                     </select>
-                                    <div id="infoA" class="griz-info"></div>
+                                    <div id="infoA" style="font-size: 12px; color: #6b7280; padding: 8px 12px; background: #f3f4f6; border-radius: 6px; min-height: 34px;"></div>
                                 </div>
                                 
-                                <div class="griz-vs">VS</div>
+                                <div style="display: flex; align-items: center; justify-content: center; padding-top: 32px; font-size: 24px; font-weight: 900; color: #667eea;">VS</div>
                                 
-                                <div class="griz-period-col">
-                                    <label>📅 Período B (Comparar):</label>
-                                    <select id="selectPeriodoB" class="griz-select">
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    <label style="font-weight: 600; color: #374151; font-size: 14px;">📅 Período B (Comparar):</label>
+                                    <select id="selectPeriodoB" style="padding: 12px 16px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; color: #1f2937; background: white; cursor: pointer; display: block; width: 100%; visibility: visible; opacity: 1;">
                                         <option value="">Seleccionar...</option>
                                         <option value="mes-actual">Mes Actual</option>
                                         <option value="mes-anterior">Mes Anterior</option>
@@ -73,20 +73,20 @@ class ModalComparacionPeriodos {
                                         <option value="año-actual">Año Actual</option>
                                         <option value="año-anterior">Año Anterior</option>
                                     </select>
-                                    <div id="infoB" class="griz-info"></div>
+                                    <div id="infoB" style="font-size: 12px; color: #6b7280; padding: 8px 12px; background: #f3f4f6; border-radius: 6px; min-height: 34px;"></div>
                                 </div>
                             </div>
                             
-                            <button id="btnComparar" class="griz-btn-primary" disabled>
+                            <button id="btnComparar" disabled style="width: 100%; padding: 16px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; opacity: 0.5;">
                                 🔍 Comparar Períodos
                             </button>
                         </div>
                         
                         <!-- Resultados -->
-                        <div id="seccionResultados" class="griz-results-section" style="display: none;">
-                            <div class="griz-section-title">
-                                <span class="griz-step-number">2</span>
-                                <h4>Resultados</h4>
+                        <div id="seccionResultados" style="display: none;">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+                                <span style="width: 32px; height: 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px;">2</span>
+                                <h4 style="margin: 0; font-size: 18px; font-weight: 600; color: #1f2937;">Resultados</h4>
                             </div>
                             
                             <div id="contenidoResultados"></div>
@@ -94,9 +94,9 @@ class ModalComparacionPeriodos {
                     </div>
                     
                     <!-- Footer -->
-                    <div class="griz-modal-footer">
-                        <button id="btnVolver" class="griz-btn-secondary" style="display: none;">← Volver</button>
-                        <button id="btnCerrar" class="griz-btn-secondary">Cerrar</button>
+                    <div style="padding: 20px 32px; border-top: 1px solid #e5e7eb; display: flex; gap: 12px; justify-content: flex-end; background: #f9fafb; border-radius: 0 0 16px 16px;">
+                        <button id="btnVolver" style="display: none; padding: 12px 24px; background: #f3f4f6; color: #374151; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">← Volver</button>
+                        <button id="btnCerrar" style="padding: 12px 24px; background: #f3f4f6; color: #374151; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">Cerrar</button>
                     </div>
                 </div>
             </div>
@@ -349,30 +349,42 @@ class ModalComparacionPeriodos {
     }
     
     _configurarEventos() {
-        // Cerrar
-        document.getElementById('btnCerrarComparacion').addEventListener('click', () => this.cerrar());
-        document.getElementById('btnCerrar').addEventListener('click', () => this.cerrar());
+        // Cerrar con onclick directo
+        const btnCerrar1 = document.getElementById('btnCerrarComparacion');
+        const btnCerrar2 = document.getElementById('btnCerrar');
+        
+        if (btnCerrar1) btnCerrar1.onclick = () => this.cerrar();
+        if (btnCerrar2) btnCerrar2.onclick = () => this.cerrar();
         
         // Selects
         const selectA = document.getElementById('selectPeriodoA');
         const selectB = document.getElementById('selectPeriodoB');
         const btnComparar = document.getElementById('btnComparar');
         
-        selectA.addEventListener('change', () => {
-            this._actualizarInfo('A');
-            this._validar();
-        });
+        if (selectA) {
+            selectA.onchange = () => {
+                this._actualizarInfo('A');
+                this._validar();
+            };
+        }
         
-        selectB.addEventListener('change', () => {
-            this._actualizarInfo('B');
-            this._validar();
-        });
+        if (selectB) {
+            selectB.onchange = () => {
+                this._actualizarInfo('B');
+                this._validar();
+            };
+        }
         
-        // Comparar
-        btnComparar.addEventListener('click', () => this._comparar());
+        // Comparar con onclick directo
+        if (btnComparar) {
+            btnComparar.onclick = () => this._comparar();
+        }
         
         // Volver
-        document.getElementById('btnVolver').addEventListener('click', () => this._volver());
+        const btnVolver = document.getElementById('btnVolver');
+        if (btnVolver) {
+            btnVolver.onclick = () => this._volver();
+        }
     }
     
     _actualizarInfo(letra) {
@@ -393,7 +405,15 @@ class ModalComparacionPeriodos {
         const b = document.getElementById('selectPeriodoB').value;
         const btn = document.getElementById('btnComparar');
         
-        btn.disabled = !(a && b && a !== b);
+        if (a && b && a !== b) {
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            btn.style.cursor = 'pointer';
+        } else {
+            btn.disabled = true;
+            btn.style.opacity = '0.5';
+            btn.style.cursor = 'not-allowed';
+        }
     }
     
     _comparar() {
@@ -460,7 +480,7 @@ class ModalComparacionPeriodos {
         document.getElementById('btnVolver').style.display = 'none';
         this._validar();
         
-        console.log('✅ Modal abierto');
+        console.log('✅ Modal abierto v' + this.version);
     }
     
     cerrar() {
