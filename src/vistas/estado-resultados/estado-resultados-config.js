@@ -477,7 +477,10 @@ if (!window.EstadoResultadosConfig) {
         
         if (!periodo) {
             console.warn(`Período ${periodoId} no encontrado, usando 'mes'`);
-            return this.periodos.mes.calcularRango();
+            const hoy = new Date();
+            const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+            const finMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0, 23, 59, 59, 999);
+            return { inicio: inicioMes, fin: finMes };
         }
         
         // Si es personalizado, pasar las fechas
