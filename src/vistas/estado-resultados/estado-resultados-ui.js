@@ -108,17 +108,17 @@ if (btnPersonalizado) {
         btnExportar.addEventListener('click', () => this.exportarExcel());
     }
 
-    // ✅ Botón comparar - NUEVO MODAL
-    const btnComparar = document.getElementById('btnComparar');
-    if (btnComparar) {
-        btnComparar.addEventListener('click', () => {
-            if (window.modalComparacionPeriodos) {
-                window.modalComparacionPeriodos.abrir();
-            } else {
-                console.error('❌ Modal Comparación no disponible');
-            }
-        });
-    }
+    // ✅ Botón comparar - CON ONCLICK DIRECTO
+const btnComparar = document.getElementById('btnComparar');
+if (btnComparar) {
+    btnComparar.onclick = () => {
+        if (window.modalComparacionPeriodos) {
+            window.modalComparacionPeriodos.abrir();
+        } else {
+            console.error('❌ Modal Comparación no disponible');
+        }
+    };
+}
 
     // Escuchar eventos del módulo
     document.addEventListener('grizalumResultadosCalculados', () => {
