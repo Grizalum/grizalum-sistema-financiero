@@ -428,8 +428,13 @@ if (!window.ModalPeriodoPersonalizado) {
                 btn.classList.remove('active');
             });
 
-            // Marcar como activo
-            event.currentTarget.classList.add('active');
+            // Marcar como activo - usar el botón del evento
+            const botonClickeado = Array.from(document.querySelectorAll('.btn-periodo-rapido'))
+                .find(btn => btn.getAttribute('data-periodo') === periodoId);
+            
+            if (botonClickeado) {
+                botonClickeado.classList.add('active');
+            }
 
             // Obtener rango del período
             const periodoConfig = window.EstadoResultadosConfig.periodosComparacion[periodoId];
@@ -447,6 +452,10 @@ if (!window.ModalPeriodoPersonalizado) {
 
             inputInicio.value = window.EstadoResultadosConfig.formatearFechaInput(rango.inicio);
             inputFin.value = window.EstadoResultadosConfig.formatearFechaInput(rango.fin);
+
+            // Disparar eventos change para que la validación detecte los cambios
+            inputInicio.dispatchEvent(new Event('change', { bubbles: true }));
+            inputFin.dispatchEvent(new Event('change', { bubbles: true }));
 
             this._validarFechas();
         }
@@ -466,8 +475,16 @@ if (!window.ModalPeriodoPersonalizado) {
             errorDiv.style.display = 'none';
             infoDiv.style.display = 'none';
 
-            if (!fechaInicio || !fechaFin) {
+            // Si ambas están vacías, deshabilitar sin mostrar error
+            if (!fechaInicio && !fechaFin) {
                 btnAplicar.disabled = true;
+                return;
+            }
+
+            // Si solo falta una, no deshabilitar aún (usuario puede estar escribiendo)
+            if (!fechaInicio || !fechaFin) {
+                // Permitir que el usuario continúe
+                btnAplicar.disabled = false;
                 return;
             }
 
