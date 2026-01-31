@@ -7,7 +7,7 @@
  */
 
 if (!window.DatePickerVisual) {
-    window.DatePickerVisual = class DatePickerVisual {
+    class DatePickerVisual {
         
     constructor(inputId, options = {}) {
         this.inputId = inputId;
@@ -369,12 +369,15 @@ if (!window.DatePickerVisual) {
     }
 }
 
-}; // ← Cierra la clase window.DatePickerVisual
+}; // ← Cierra la clase
+    
+    // ✅ EXPONER GLOBALMENTE
+    window.DatePickerVisual = DatePickerVisual;
     
     // Inyectar estilos inmediatamente
     DatePickerVisual._ensureStyles();
     
-    console.log('✅ DatePickerVisual declarado exitosamente');
+    console.log('✅ DatePickerVisual creado por consola');
 } else {
-    console.log('ℹ️ DatePickerVisual ya existe, reutilizando instancia');
+    console.log('ℹ️ DatePickerVisual ya existe');
 }
