@@ -70,6 +70,18 @@
     pointer-events: all;
 }
 
+/* ✅ FIX: Permitir que modales específicos funcionen */
+.modal-periodo-overlay,
+.modal-periodo-container,
+.modal-periodo-body,
+.modal-date-input {
+    pointer-events: auto !important;
+}
+
+.modal-container.active {
+    pointer-events: all;
+}
+
 /* ===== COMPANY SELECTOR ===== */
 .company-selector {
     position: relative;
