@@ -489,21 +489,18 @@ class ModalComparacionPeriodos {
     }
 }
 
-// Inicializar (solo si no existe)
-if (typeof window.ModalComparacionPeriodos === 'undefined') {
+// Protección contra doble carga
+(function() {
+    if (window.MODAL_COMPARACION_CARGADO) {
+        console.log('⏭️ Modal Comparación ya cargado, omitiendo...');
+        return;
+    }
+    
+    window.MODAL_COMPARACION_CARGADO = true;
     window.ModalComparacionPeriodos = ModalComparacionPeriodos;
     
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            if (!window.modalComparacionPeriodos) {
-                window.modalComparacionPeriodos = new ModalComparacionPeriodos();
-            }
-        });
-    } else {
-        if (!window.modalComparacionPeriodos) {
-            window.modalComparacionPeriodos = new ModalComparacionPeriodos();
-        }
+    if (!window.modalComparacionPeriodos) {
+        window.modalComparacionPeriodos = new ModalComparacionPeriodos();
+        console.log('✅ Modal Comparación v1.1.0 inicializado');
     }
-}
-
-console.log('📊 Modal Comparación v1.1.0 - Cargado');
+})();
