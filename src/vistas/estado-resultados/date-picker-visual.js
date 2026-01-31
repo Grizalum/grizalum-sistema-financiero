@@ -6,7 +6,9 @@
  * ═══════════════════════════════════════════════════════════════════
  */
 
-class DatePickerVisual {
+if (!window.DatePickerVisual) {
+    window.DatePickerVisual = class DatePickerVisual {
+        
     constructor(inputId, options = {}) {
         this.inputId = inputId;
         this.input = document.getElementById(inputId);
@@ -367,8 +369,12 @@ class DatePickerVisual {
     }
 }
 
-// ✅ Exponer la clase globalmente
-window.DatePickerVisual = DatePickerVisual;
-
-// ✅ Inyectar estilos inmediatamente al cargar
-DatePickerVisual._ensureStyles();
+}; // ← Cierra la clase window.DatePickerVisual
+    
+    // Inyectar estilos inmediatamente
+    DatePickerVisual._ensureStyles();
+    
+    console.log('✅ DatePickerVisual declarado exitosamente');
+} else {
+    console.log('ℹ️ DatePickerVisual ya existe, reutilizando instancia');
+}
