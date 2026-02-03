@@ -289,11 +289,35 @@ if (typeof window.GRIZ_MODAL_COMPARACION_LOADED !== 'undefined') {
             };
         }
         
-        _generarResultados() {
+       _generarResultados() {
             const contenedor = document.getElementById('contenidoResultados');
             const resumen = document.getElementById('resumenPeriodos');
             
             if (!contenedor) return;
+            
+            // ✅ NUEVO: Verificar si hay datos
+            const totalA = this.datosA.ingresos.total + this.datosA.costos.total + this.datosA.gastosOperativos.total;
+            const totalB = this.datosB.ingresos.total + this.datosB.costos.total + this.datosB.gastosOperativos.total;
+            
+            if (totalA === 0 && totalB === 0) {
+                if (resumen) {
+                    resumen.innerHTML = `<strong>${this._nombrePeriodo(this.periodoA)}</strong> vs <strong>${this._nombrePeriodo(this.periodoB)}</strong>`;
+                }
+                contenedor.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px;">
+                        <div style="font-size: 64px; margin-bottom: 16px;">📭</div>
+                        <h3 style="margin: 0 0 12px 0; color: #1f2937;">Sin Transacciones en estos Períodos</h3>
+                        <p style="margin: 0; color: #6b7280; font-size: 14px;">
+                            No hay transacciones registradas en <strong>${this._nombrePeriodo(this.periodoA)}</strong> 
+                            ni en <strong>${this._nombrePeriodo(this.periodoB)}</strong>.
+                        </p>
+                        <p style="margin: 16px 0 0 0; color: #667eea; font-size: 14px;">
+                            💡 Tip: Tus transacciones están en Enero 2026. Intenta comparar "Mes Anterior" vs otro período.
+                        </p>
+                    </div>
+                `;
+                return;
+            }
             
             // Resumen de períodos
             if (resumen) {
@@ -364,7 +388,12 @@ if (typeof window.GRIZ_MODAL_COMPARACION_LOADED !== 'undefined') {
             return ((valorB - valorA) / valorA) * 100;
         }
         
-        _crearCardMetrica(titulo, valorA, valorB, variacion, color) {
+       _crearCardMetrica(titulo, valorA, valorB, variacion, color) {
+            // ✅ Protección contra undefined
+            valorA = valorA || 0;
+            valorB = valorB || 0;
+            variacion = variacion || 0;
+            
             const diferencia = valorB - valorA;
             const signo = diferencia >= 0 ? '+' : '';
             const colorVariacion = diferencia >= 0 ? '#10b981' : '#ef4444';
