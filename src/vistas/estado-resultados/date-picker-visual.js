@@ -365,12 +365,10 @@ if (!window.DatePickerVisual) {
 }
         `;
         
-        document.head.appendChild(styleElement);
+     document.head.appendChild(styleElement);
     }
-}
+} // ← Cierra la clase (SIN punto y coma aquí)
 
-}; // ← Cierra la clase
-    
     // ✅ EXPONER GLOBALMENTE
     window.DatePickerVisual = DatePickerVisual;
     
