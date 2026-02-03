@@ -448,21 +448,29 @@ if (typeof window.GRIZ_MODAL_COMPARACION_LOADED !== 'undefined') {
             return nombres[valor] || valor;
         }
         
-        _formatearMoneda(valor) {
-            return new Intl.NumberFormat('es-PE', {
-                style: 'currency',
-                currency: 'PEN',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(valor);
+       _formatearMoneda(valor) {
+            try {
+                // Fallback para Safari que no soporta Intl correctamente
+                const formatted = Math.abs(valor).toFixed(0);
+                const parts = formatted.toString().split('.');
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                return 'S/. ' + (valor < 0 ? '-' : '') + parts.join('.');
+            } catch (e) {
+                return 'S/. ' + valor.toFixed(0);
+            }
         }
         
-        _formatearFecha(fecha) {
-            return new Intl.DateFormat('es-PE', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric'
-            }).format(fecha);
+       _formatearFecha(fecha) {
+            try {
+                const d = new Date(fecha);
+                const dia = String(d.getDate()).padStart(2, '0');
+                const meses = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+                const mes = meses[d.getMonth()];
+                const año = d.getFullYear();
+                return `${dia} ${mes} ${año}`;
+            } catch (e) {
+                return fecha.toString();
+            }
         }
         
         abrir() {
