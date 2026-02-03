@@ -143,21 +143,19 @@ if (typeof EstadoResultados === 'undefined') {
          * ✅ FIX: Ahora incluye ingresosTotales, gastosTotales, costosTotales
          * ═══════════════════════════════════════════════════════════════
          */
-        calcularResultados(periodoId = null) {
-            if (periodoId) {
-                this.periodoActual = periodoId;
-            }
-
-            // ✅ FIX: Si es personalizado, pasar las fechas
+        calcularResultados(fechaInicio, fechaFin) {
+            // ✅ Aceptar fechas directamente o usar periodoId
             let rango;
-            if (this.periodoActual === 'personalizado' && this.fechaInicioPersonalizada && this.fechaFinPersonalizada) {
-                rango = this.configuracion.obtenerRangoPeriodo(
-                    'personalizado', 
-                    this.fechaInicioPersonalizada, 
-                    this.fechaFinPersonalizada
-                );
+            
+            if (fechaInicio instanceof Date && fechaFin instanceof Date) {
+                // Llamada con fechas directas: calcularResultados(inicio, fin)
+                rango = { inicio: fechaInicio, fin: fechaFin };
+                this.periodoActual = 'personalizado';
             } else {
-                rango = this.configuracion.obtenerRangoPeriodo(this.periodoActual);
+                // Llamada con periodoId: calcularResultados('mes')
+                const periodoId = fechaInicio || this.periodoActual;
+                this.periodoActual = periodoId;
+                rango = this.configuracion.obtenerRangoPeriodo(periodoId);
             }
 
             const transacciones = this._obtenerTransaccionesDeFlujoCaja(rango.inicio, rango.fin);
@@ -178,7 +176,6 @@ if (typeof EstadoResultados === 'undefined') {
             const ratios = this._calcularRatios(ingresos.total, utilidadBruta, utilidadOperativa, utilidadNeta);
             const insights = this._generarInsights(ingresos.total, gastosOperativos.total, utilidadNeta, ratios);
 
-            // ✅ FIX: Agregar propiedades faltantes
             this.resultados = {
                 periodo: this.periodoActual,
                 rango: rango,
@@ -189,10 +186,12 @@ if (typeof EstadoResultados === 'undefined') {
                 utilidadBruta: utilidadBruta,
                 utilidadOperativa: utilidadOperativa,
                 utilidadNeta: utilidadNeta,
+                margenBruto: ratios.margenBruto,
+                margenOperativo: ratios.margenOperativo,
+                margenNeto: ratios.margenNeto,
                 ratios: ratios,
                 insights: insights,
                 totalTransacciones: transacciones.length,
-                // ✅ NUEVAS PROPIEDADES para compatibilidad
                 ingresosTotales: ingresos.total,
                 costosTotales: costos.total,
                 gastosTotales: gastosOperativos.total
@@ -204,50 +203,26 @@ if (typeof EstadoResultados === 'undefined') {
             
             return this.resultados;
         }
-
         /**
          * ═══════════════════════════════════════════════════════════════
          * ✅ NUEVA FUNCIÓN: obtenerTransaccionesFiltradas
          * Retorna transacciones filtradas por período
          * ═══════════════════════════════════════════════════════════════
          */
-        obtenerTransaccionesFiltradas(periodoId = null) {
-            const periodo = periodoId || this.periodoActual;
-            const empresa = this.empresaActual;
-            
-            // Obtener rango del período
-            const rango = this.configuracion.obtenerRangoPeriodo(periodo);
-            if (!rango) {
-                this._log('warn', `Período ${periodo} no válido`);
+       obtenerTransaccionesFiltradas(fechaInicio, fechaFin) {
+            if (!this.flujoCaja) {
+                this._log('warn', 'FlujoCaja no disponible');
                 return [];
             }
             
-            // Intentar desde FlujoCaja primero
-            if (this.flujoCaja) {
-                try {
-                    const todasTrans = this.flujoCaja.obtenerTransacciones();
-                    return todasTrans.filter(t => {
-                        if (!t.fecha) return false;
-                        const fecha = new Date(t.fecha);
-                        return fecha >= rango.inicio && fecha <= rango.fin;
-                    });
-                } catch (error) {
-                    this._log('warn', 'Error obteniendo desde FlujoCaja, usando localStorage');
-                }
-            }
+            const todasTransacciones = this.flujoCaja.obtenerTransacciones();
             
-            // ✅ FIX: Fallback a localStorage con key correcta
-            const key = `grizalum_flujo_caja_${empresa}`;
-            const data = localStorage.getItem(key);
-            const todasTrans = data ? JSON.parse(data) : [];
-            
-            return todasTrans.filter(t => {
-                if (!t.fecha) return false;
-                const fecha = new Date(t.fecha);
-                return fecha >= rango.inicio && fecha <= rango.fin;
+            return todasTransacciones.filter(tx => {
+                if (!tx.fecha) return false;
+                const fechaTx = new Date(tx.fecha);
+                return fechaTx >= fechaInicio && fechaTx <= fechaFin;
             });
         }
-
         /**
          * ═══════════════════════════════════════════════════════════════
          * OBTENER TRANSACCIONES DE FLUJOCAJA (Sin duplicación)
