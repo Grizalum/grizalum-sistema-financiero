@@ -408,6 +408,10 @@ if (typeof window.GRIZ_MODAL_COMPARACION_LOADED !== 'undefined') {
         }
         
         _crearCardMargen(titulo, valorA, valorB) {
+            // ✅ Protección contra undefined
+            valorA = valorA || 0;
+            valorB = valorB || 0;
+            
             const diferencia = valorB - valorA;
             const signo = diferencia >= 0 ? '+' : '';
             const color = diferencia >= 0 ? '#10b981' : '#ef4444';
