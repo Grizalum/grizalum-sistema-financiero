@@ -529,6 +529,12 @@ if (!window.ModalPeriodoPersonalizado) {
                 return;
             }
 
+            // Llamar la función global
+            if (window.aplicarPeriodoPersonalizado) {
+                window.aplicarPeriodoPersonalizado(this.fechaInicio, this.fechaFin);
+            }
+
+            // Callback legacy por si existe
             if (this.callback) {
                 this.callback(this.fechaInicio, this.fechaFin);
             }
@@ -592,6 +598,28 @@ if (!window.ModalPeriodoPersonalizado) {
             });
         }
     }
+    // ═══════════════════════════════════════════════════════════════
+// FUNCIÓN GLOBAL: aplicarPeriodoPersonalizado
+// ═══════════════════════════════════════════════════════════════
+window.aplicarPeriodoPersonalizado = function(fechaInicio, fechaFin) {
+    console.log('📅 Aplicando período personalizado:', fechaInicio, 'hasta', fechaFin);
+    
+    const inicio = new Date(fechaInicio + 'T00:00:00');
+    const fin = new Date(fechaFin + 'T23:59:59');
+    
+    if (!window.estadoResultados.flujoCaja && window.flujoCaja) {
+        window.estadoResultados.flujoCaja = window.flujoCaja;
+    }
+    
+    const resultados = window.estadoResultados.calcularResultados(inicio, fin);
+    
+    if (window.estadoResultadosUI && window.estadoResultadosUI.mostrarResultados) {
+        window.estadoResultadosUI.mostrarResultados(resultados);
+    }
+    
+    console.log('✅ Período aplicado correctamente');
+};
+
 
     // Instancia global
     window.ModalPeriodoPersonalizado = ModalPeriodoPersonalizado;
