@@ -200,29 +200,11 @@ if (!window.ModalPeriodoPersonalizado) {
                         transform: rotate(90deg);
                     }
 
-                    .modal-date-input {
-                        padding: 12px;
-                        border: 2px solid #e5e7eb;
-                        border-radius: 8px;
-                        font-size: 14px;
-                        color: #374151;
-                        transition: all 0.2s;
+                    .modal-periodo-body {
+                        padding: 24px;
+                        overflow-y: auto;
+                        flex: 1;
                         pointer-events: auto !important;
-                        cursor: pointer !important;
-                        position: relative;
-                        z-index: 10;
-                    }
-                      /* ✅ FIX: Forzar pointer events en inputs */
-                    #fechaInicio,
-                    #fechaFin {
-                        pointer-events: auto !important;
-                        cursor: pointer !important;
-                    }
-
-                    .modal-date-input:focus {
-                        outline: none;
-                        border-color: #667eea;
-                        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
                     }
 
                     .modal-label {
