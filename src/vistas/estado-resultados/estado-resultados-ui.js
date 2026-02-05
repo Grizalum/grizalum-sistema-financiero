@@ -59,7 +59,7 @@ if (typeof EstadoResultadosUI === 'undefined') {
         });
     });
 
-    // ✅ NUEVO: Botón Personalizado
+   // ✅ FIX: Botón Personalizado - Solo actualiza UI, el modal ya calcula
 const btnPersonalizado = document.querySelector('[data-periodo="personalizado"]');
 if (btnPersonalizado) {
     btnPersonalizado.addEventListener('click', () => {
@@ -67,15 +67,8 @@ if (btnPersonalizado) {
             window.modalPeriodoPersonalizado.abrir((fechaInicio, fechaFin) => {
                 console.log('📅 Período seleccionado:', fechaInicio, 'a', fechaFin);
                 
-                // ✅ FIX: Guardar fechas correctamente
                 if (this.modulo) {
-                    this.modulo.fechaInicioPersonalizada = fechaInicio;
-                    this.modulo.fechaFinPersonalizada = fechaFin;
                     this.modulo.periodoActual = 'personalizado';
-                    
-                    // Calcular resultados con las fechas
-                    this.modulo.calcularResultados('personalizado');
-                    this.cargarResultados();
                     
                     // Actualizar botones
                     document.querySelectorAll('.er-filtro-btn').forEach(btn => {
