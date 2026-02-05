@@ -1,6 +1,6 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * EXPORTADOR EXCEL PROFESIONAL - ESTADO DE RESULTADOS v2.0
+ * EXPORTADOR EXCEL PROFESIONAL - ESTADO DE RESULTADOS v2.1
  * Genera reportes financieros en Excel con formato profesional
  * GRIZALUM Sistema Financiero
  * ═══════════════════════════════════════════════════════════════════
@@ -11,52 +11,50 @@ if (!window.ExportadorEstadoResultados) {
         
     constructor() {
         this.colores = {
-            primario: '667EEA',
-            verde: '10B981',
-            verdeOscuro: '059669',
-            amarillo: 'F59E0B',
-            rojo: 'EF4444',
-            morado: '8B5CF6',
-            fondoOscuro: '1F2937',
-            fondoClaro: 'F9FAFB',
-            blanco: 'FFFFFF',
-            gris: 'D1D5DB',
-            grisClaro: 'E5E7EB',
-            grisMedio: '6B7280',
-            negro: '111827'
+            primario: 'FF667EEA',
+            verde: 'FF10B981',
+            verdeOscuro: 'FF059669',
+            amarillo: 'FFF59E0B',
+            rojo: 'FFEF4444',
+            rojoOscuro: 'FFDC2626',
+            morado: 'FF8B5CF6',
+            fondoOscuro: 'FF1F2937',
+            fondoClaro: 'FFF9FAFB',
+            blanco: 'FFFFFFFF',
+            gris: 'FFD1D5DB',
+            grisClaro: 'FFE5E7EB',
+            grisMedio: 'FF6B7280',
+            grisTexto: 'FF9CA3AF',
+            negro: 'FF111827'
         };
     }
 
     async exportar(datos) {
         try {
-            console.log('📊 Generando Estado de Resultados en Excel v2.0...');
+            console.log('📊 Generando Estado de Resultados en Excel v2.1...');
 
             const workbook = new ExcelJS.Workbook();
             workbook.creator = 'GRIZALUM Sistema Financiero';
             workbook.created = new Date();
 
-            // Hoja 1: Estado de Resultados
             const hoja1 = workbook.addWorksheet('Estado de Resultados', {
                 views: [{ showGridLines: false }],
-                properties: { tabColor: { argb: 'FF667EEA' } }
+                properties: { tabColor: { argb: '667EEA' } }
             });
             this._crearEstadoResultados(hoja1, datos);
 
-            // Hoja 2: Análisis Financiero
             const hoja2 = workbook.addWorksheet('Análisis Financiero', {
                 views: [{ showGridLines: false }],
-                properties: { tabColor: { argb: 'FF10B981' } }
+                properties: { tabColor: { argb: '10B981' } }
             });
             this._crearAnalisis(hoja2, datos);
 
-            // Hoja 3: Detalle por Categorías
             const hoja3 = workbook.addWorksheet('Detalle Categorías', {
                 views: [{ showGridLines: false }],
-                properties: { tabColor: { argb: 'FFF59E0B' } }
+                properties: { tabColor: { argb: 'F59E0B' } }
             });
             this._crearDetalleCategorias(hoja3, datos);
 
-            // Generar archivo
             const buffer = await workbook.xlsx.writeBuffer();
             const blob = new Blob([buffer], { 
                 type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
@@ -70,7 +68,7 @@ if (!window.ExportadorEstadoResultados) {
             a.click();
             window.URL.revokeObjectURL(url);
 
-            console.log('✅ Excel generado exitosamente');
+            console.log('✅ Excel v2.1 generado exitosamente');
             return true;
 
         } catch (error) {
@@ -84,171 +82,150 @@ if (!window.ExportadorEstadoResultados) {
     // ═══════════════════════════════════════════════════════════════
 
     _crearEstadoResultados(sheet, datos) {
-        const resultados = datos.resultados;
-        const ingresosTotales = resultados.ingresos.total;
+        const r = datos.resultados;
+        const ingTotal = r.ingresos.total;
 
-        // Anchos de columna
-        sheet.getColumn(1).width = 40;
-        sheet.getColumn(2).width = 22;
+        // ── ANCHOS GENEROSOS ──
+        sheet.getColumn(1).width = 42;
+        sheet.getColumn(2).width = 20;
         sheet.getColumn(3).width = 16;
-        sheet.getColumn(4).width = 28;
+        sheet.getColumn(4).width = 24;
+        sheet.getColumn(5).width = 2;
 
-        // ── ENCABEZADO EMPRESA ──
-        sheet.mergeCells('A1:D1');
-        const headerEmpresa = sheet.getCell('A1');
-        headerEmpresa.value = 'GRIZALUM';
-        headerEmpresa.font = { name: 'Arial', size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
-        headerEmpresa.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F2937' } };
-        headerEmpresa.alignment = { horizontal: 'center', vertical: 'middle' };
-        sheet.getRow(1).height = 25;
+        // ── BARRA SUPERIOR ──
+        sheet.mergeCells('A1:E1');
+        const h1 = sheet.getCell('A1');
+        h1.value = 'GRIZALUM  |  Sistema de Control Financiero';
+        h1.font = { name: 'Arial', size: 9, bold: true, color: { argb: this.colores.blanco } };
+        h1.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: this.colores.fondoOscuro } };
+        h1.alignment = { horizontal: 'center', vertical: 'middle' };
+        sheet.getRow(1).height = 24;
 
         // ── TÍTULO ──
-        sheet.mergeCells('A2:D2');
-        const titulo = sheet.getCell('A2');
-        titulo.value = 'ESTADO DE RESULTADOS';
-        titulo.font = { name: 'Arial', size: 16, bold: true, color: { argb: 'FFFFFFFF' } };
-        titulo.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF667EEA' } };
-        titulo.alignment = { horizontal: 'center', vertical: 'middle' };
-        sheet.getRow(2).height = 38;
+        sheet.mergeCells('A2:E2');
+        const h2 = sheet.getCell('A2');
+        h2.value = 'ESTADO DE RESULTADOS';
+        h2.font = { name: 'Arial', size: 18, bold: true, color: { argb: this.colores.blanco } };
+        h2.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: this.colores.primario } };
+        h2.alignment = { horizontal: 'center', vertical: 'middle' };
+        sheet.getRow(2).height = 45;
 
-        // ── SUBTÍTULO CON PERÍODO ──
-        sheet.mergeCells('A3:D3');
-        const subtitulo = sheet.getCell('A3');
-        const rangoTexto = this._obtenerRangoTexto(resultados);
-        subtitulo.value = rangoTexto;
-        subtitulo.font = { name: 'Arial', size: 10, italic: true, color: { argb: 'FFFFFFFF' } };
-        subtitulo.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF667EEA' } };
-        subtitulo.alignment = { horizontal: 'center', vertical: 'middle' };
+        // ── RANGO DE FECHAS ──
+        sheet.mergeCells('A3:E3');
+        const h3 = sheet.getCell('A3');
+        h3.value = this._obtenerRangoTexto(r);
+        h3.font = { name: 'Arial', size: 10, italic: true, color: { argb: this.colores.blanco } };
+        h3.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: this.colores.primario } };
+        h3.alignment = { horizontal: 'center', vertical: 'middle' };
         sheet.getRow(3).height = 22;
 
-        // ── INFORMACIÓN DE LA EMPRESA ──
-        let row = 5;
-        const infoLabels = [
-            ['Empresa:', (datos.empresa || 'N/A').charAt(0).toUpperCase() + (datos.empresa || 'N/A').slice(1)],
-            ['Período:', this._nombrePeriodo(resultados.periodo)],
+        sheet.getRow(4).height = 6;
+
+        // ── INFO EMPRESA ──
+        const info = [
+            ['Empresa:', this._capitalizar(datos.empresa)],
+            ['Período:', this._nombrePeriodo(r.periodo)],
             ['Moneda:', 'Soles (S/.)'],
-            ['Fecha de emisión:', new Date().toLocaleDateString('es-PE', { 
-                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-            })]
+            ['Fecha de emisión:', new Date().toLocaleDateString('es-PE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })]
         ];
-
-        infoLabels.forEach(([label, valor]) => {
-            const cellLabel = sheet.getCell(row, 1);
-            cellLabel.value = label;
-            cellLabel.font = { name: 'Arial', size: 10, bold: true, color: { argb: 'FF6B7280' } };
-            
-            const cellValor = sheet.getCell(row, 2);
-            cellValor.value = valor;
-            cellValor.font = { name: 'Arial', size: 10, color: { argb: 'FF111827' } };
-            row++;
+        info.forEach(([label, val], i) => {
+            const rn = 5 + i;
+            sheet.getCell(rn, 1).value = label;
+            sheet.getCell(rn, 1).font = { name: 'Arial', size: 10, bold: true, color: { argb: this.colores.grisMedio } };
+            sheet.mergeCells(rn, 2, rn, 4);
+            sheet.getCell(rn, 2).value = val;
+            sheet.getCell(rn, 2).font = { name: 'Arial', size: 10, color: { argb: this.colores.negro } };
         });
 
-        row++; // Espacio
+        sheet.getRow(9).height = 10;
 
-        // ── HEADERS DE TABLA ──
-        const headers = ['CONCEPTO', 'MONTO (S/.)', '% INGRESOS', 'OBSERVACIÓN'];
-        headers.forEach((header, i) => {
-            const cell = sheet.getCell(row, i + 1);
-            cell.value = header;
-            cell.font = { name: 'Arial', size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
-            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F2937' } };
+        // ── HEADERS TABLA ──
+        ['CONCEPTO', 'MONTO (S/.)', '% INGRESOS', 'OBSERVACIÓN'].forEach((h, i) => {
+            const cell = sheet.getCell(10, i + 1);
+            cell.value = h;
+            cell.font = { name: 'Arial', size: 10, bold: true, color: { argb: this.colores.blanco } };
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: this.colores.fondoOscuro } };
             cell.alignment = { horizontal: i === 0 ? 'left' : 'center', vertical: 'middle' };
-            cell.border = this._bordes();
+            cell.border = this._borde();
         });
-        sheet.getRow(row).height = 28;
-        row++;
+        sheet.getRow(10).height = 30;
 
-        // ── INGRESOS OPERACIONALES ──
-        row = this._crearSeccion(sheet, row, 'INGRESOS OPERACIONALES', 'FF10B981');
-        
-        if (resultados.ingresos.porCategoria.length > 0) {
-            resultados.ingresos.porCategoria.forEach(cat => {
-                const pct = ingresosTotales > 0 ? (cat.monto / ingresosTotales * 100) : 0;
-                const obs = this._observacionIngreso(cat.categoria, pct);
-                row = this._crearFila(sheet, row, cat.categoria, cat.monto, pct, obs, true);
+        let row = 11;
+
+        // ══════ INGRESOS ══════
+        row = this._seccion(sheet, row, 'INGRESOS OPERACIONALES', this.colores.verde);
+        if (r.ingresos.porCategoria.length > 0) {
+            r.ingresos.porCategoria.forEach(cat => {
+                const pct = ingTotal > 0 ? cat.monto / ingTotal * 100 : 0;
+                row = this._fila(sheet, row, cat.categoria, cat.monto, pct, this._obsIngreso(pct));
             });
         } else {
-            row = this._crearFilaVacia(sheet, row, 'Sin ingresos registrados');
+            row = this._filaVacia(sheet, row, 'Sin ingresos registrados en este período');
         }
-        row = this._crearSubtotal(sheet, row, 'TOTAL INGRESOS', resultados.ingresos.total, 100);
-        row = this._crearEspacioSeparador(sheet, row);
+        row = this._subtotal(sheet, row, 'TOTAL INGRESOS', ingTotal, 100);
+        row = this._espacio(sheet, row);
 
-        // ── COSTOS DE VENTA ──
-        row = this._crearSeccion(sheet, row, 'COSTOS DE VENTA', 'FFF59E0B');
-        
-        if (resultados.costos && resultados.costos.total > 0) {
-            resultados.costos.porCategoria.forEach(cat => {
-                const pct = ingresosTotales > 0 ? (cat.monto / ingresosTotales * 100) : 0;
-                row = this._crearFila(sheet, row, cat.categoria, -cat.monto, pct, '', false);
+        // ══════ COSTOS ══════
+        row = this._seccion(sheet, row, 'COSTOS DE VENTA', this.colores.amarillo);
+        if (r.costos && r.costos.total > 0) {
+            r.costos.porCategoria.forEach(cat => {
+                const pct = ingTotal > 0 ? cat.monto / ingTotal * 100 : 0;
+                row = this._fila(sheet, row, cat.categoria, -cat.monto, pct, '');
             });
-            const pctCostos = ingresosTotales > 0 ? (resultados.costos.total / ingresosTotales * 100) : 0;
-            row = this._crearSubtotal(sheet, row, 'TOTAL COSTOS', -resultados.costos.total, pctCostos);
+            row = this._subtotal(sheet, row, 'TOTAL COSTOS', -r.costos.total, ingTotal > 0 ? r.costos.total / ingTotal * 100 : 0);
         } else {
-            row = this._crearFilaVacia(sheet, row, 'Sin costos de venta registrados');
-            row = this._crearSubtotal(sheet, row, 'TOTAL COSTOS', 0, 0);
+            row = this._filaVacia(sheet, row, 'Sin costos de venta registrados');
+            row = this._subtotal(sheet, row, 'TOTAL COSTOS', 0, 0);
         }
-        row = this._crearEspacioSeparador(sheet, row);
+        row = this._espacio(sheet, row);
 
-        // ── UTILIDAD BRUTA ──
-        const pctBruta = ingresosTotales > 0 ? (resultados.utilidadBruta / ingresosTotales * 100) : 0;
-        row = this._crearTotal(sheet, row, 'UTILIDAD BRUTA', resultados.utilidadBruta, pctBruta, 
-            this._evaluarMargen('Bruto', pctBruta));
-        row = this._crearEspacioSeparador(sheet, row);
+        // ══════ UTILIDAD BRUTA ══════
+        const pctB = ingTotal > 0 ? r.utilidadBruta / ingTotal * 100 : 0;
+        row = this._totalDestacado(sheet, row, 'UTILIDAD BRUTA', r.utilidadBruta, pctB, this._evalMargen('Bruto', pctB));
+        row = this._espacio(sheet, row);
 
-        // ── GASTOS OPERATIVOS ──
-        row = this._crearSeccion(sheet, row, 'GASTOS OPERATIVOS', 'FFEF4444');
-        
-        if (resultados.gastosOperativos && resultados.gastosOperativos.total > 0) {
-            resultados.gastosOperativos.porCategoria.forEach(cat => {
-                const pct = ingresosTotales > 0 ? (cat.monto / ingresosTotales * 100) : 0;
-                row = this._crearFila(sheet, row, cat.categoria, -cat.monto, pct, '', false);
+        // ══════ GASTOS OPERATIVOS ══════
+        row = this._seccion(sheet, row, 'GASTOS OPERATIVOS', this.colores.rojo);
+        if (r.gastosOperativos && r.gastosOperativos.total > 0) {
+            r.gastosOperativos.porCategoria.forEach(cat => {
+                const pct = ingTotal > 0 ? cat.monto / ingTotal * 100 : 0;
+                row = this._fila(sheet, row, cat.categoria, -cat.monto, pct, '');
             });
-            const pctGastos = ingresosTotales > 0 ? (resultados.gastosOperativos.total / ingresosTotales * 100) : 0;
-            row = this._crearSubtotal(sheet, row, 'TOTAL GASTOS OPERATIVOS', -resultados.gastosOperativos.total, pctGastos);
+            row = this._subtotal(sheet, row, 'TOTAL GASTOS OPERATIVOS', -r.gastosOperativos.total, ingTotal > 0 ? r.gastosOperativos.total / ingTotal * 100 : 0);
         } else {
-            row = this._crearFilaVacia(sheet, row, 'Sin gastos operativos registrados');
-            row = this._crearSubtotal(sheet, row, 'TOTAL GASTOS OPERATIVOS', 0, 0);
+            row = this._filaVacia(sheet, row, 'Sin gastos operativos registrados');
+            row = this._subtotal(sheet, row, 'TOTAL GASTOS OPERATIVOS', 0, 0);
         }
-        row = this._crearEspacioSeparador(sheet, row);
+        row = this._espacio(sheet, row);
 
-        // ── UTILIDAD OPERATIVA ──
-        const pctOperativa = ingresosTotales > 0 ? (resultados.utilidadOperativa / ingresosTotales * 100) : 0;
-        row = this._crearTotal(sheet, row, 'UTILIDAD OPERATIVA', resultados.utilidadOperativa, pctOperativa,
-            this._evaluarMargen('Operativo', pctOperativa));
-        row = this._crearEspacioSeparador(sheet, row);
+        // ══════ UTILIDAD OPERATIVA ══════
+        const pctO = ingTotal > 0 ? r.utilidadOperativa / ingTotal * 100 : 0;
+        row = this._totalDestacado(sheet, row, 'UTILIDAD OPERATIVA', r.utilidadOperativa, pctO, this._evalMargen('Operativo', pctO));
+        row = this._espacio(sheet, row);
 
-        // ── GASTOS FINANCIEROS ──
-        if (resultados.gastosFinancieros && resultados.gastosFinancieros.total > 0) {
-            row = this._crearSeccion(sheet, row, 'GASTOS FINANCIEROS', 'FF8B5CF6');
-            resultados.gastosFinancieros.porCategoria.forEach(cat => {
-                const pct = ingresosTotales > 0 ? (cat.monto / ingresosTotales * 100) : 0;
-                row = this._crearFila(sheet, row, cat.categoria, -cat.monto, pct, '', false);
+        // ══════ GASTOS FINANCIEROS ══════
+        if (r.gastosFinancieros && r.gastosFinancieros.total > 0) {
+            row = this._seccion(sheet, row, 'GASTOS FINANCIEROS', this.colores.morado);
+            r.gastosFinancieros.porCategoria.forEach(cat => {
+                const pct = ingTotal > 0 ? cat.monto / ingTotal * 100 : 0;
+                row = this._fila(sheet, row, cat.categoria, -cat.monto, pct, '');
             });
-            const pctFin = ingresosTotales > 0 ? (resultados.gastosFinancieros.total / ingresosTotales * 100) : 0;
-            row = this._crearSubtotal(sheet, row, 'TOTAL GASTOS FINANCIEROS', -resultados.gastosFinancieros.total, pctFin);
-            row = this._crearEspacioSeparador(sheet, row);
+            row = this._subtotal(sheet, row, 'TOTAL GASTOS FINANCIEROS', -r.gastosFinancieros.total, ingTotal > 0 ? r.gastosFinancieros.total / ingTotal * 100 : 0);
+            row = this._espacio(sheet, row);
         }
 
-        // ── UTILIDAD NETA (RESULTADO FINAL) ──
-        const pctNeta = ingresosTotales > 0 ? (resultados.utilidadNeta / ingresosTotales * 100) : 0;
-        row = this._crearResultadoFinal(sheet, row, resultados.utilidadNeta, pctNeta);
+        // ══════ RESULTADO FINAL ══════
+        const pctN = ingTotal > 0 ? r.utilidadNeta / ingTotal * 100 : 0;
+        row = this._resultadoFinal(sheet, row, r.utilidadNeta, pctN);
 
-        // ── PIE DE PÁGINA ──
+        // ── PIE ──
         row += 2;
-        sheet.mergeCells(row, 1, row, 4);
-        const pie = sheet.getCell(row, 1);
-        pie.value = 'Documento generado por GRIZALUM Sistema Financiero | www.grizalum.com';
-        pie.font = { name: 'Arial', size: 8, italic: true, color: { argb: 'FF9CA3AF' } };
-        pie.alignment = { horizontal: 'center' };
+        sheet.mergeCells(row, 1, row, 5);
+        sheet.getCell(row, 1).value = 'Documento generado por GRIZALUM Sistema Financiero';
+        sheet.getCell(row, 1).font = { name: 'Arial', size: 8, italic: true, color: { argb: this.colores.grisTexto } };
+        sheet.getCell(row, 1).alignment = { horizontal: 'center' };
 
-        // Configurar impresión
-        sheet.pageSetup = {
-            paperSize: 9, // A4
-            orientation: 'portrait',
-            fitToPage: true,
-            fitToWidth: 1,
-            margins: { left: 0.5, right: 0.5, top: 0.75, bottom: 0.75 }
-        };
+        sheet.pageSetup = { paperSize: 9, orientation: 'portrait', fitToPage: true, fitToWidth: 1 };
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -256,171 +233,134 @@ if (!window.ExportadorEstadoResultados) {
     // ═══════════════════════════════════════════════════════════════
 
     _crearAnalisis(sheet, datos) {
-        const resultados = datos.resultados;
-        const ingresosTotales = resultados.ingresos.total;
+        const r = datos.resultados;
+        const ing = r.ingresos.total;
 
-        sheet.getColumn(1).width = 30;
-        sheet.getColumn(2).width = 18;
+        sheet.getColumn(1).width = 32;
+        sheet.getColumn(2).width = 20;
         sheet.getColumn(3).width = 18;
-        sheet.getColumn(4).width = 22;
+        sheet.getColumn(4).width = 24;
+        sheet.getColumn(5).width = 2;
 
-        // ── TÍTULO ──
-        sheet.mergeCells('A1:D1');
-        const titulo = sheet.getCell('A1');
-        titulo.value = 'ANÁLISIS FINANCIERO';
-        titulo.font = { name: 'Arial', size: 16, bold: true, color: { argb: 'FFFFFFFF' } };
-        titulo.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF667EEA' } };
-        titulo.alignment = { horizontal: 'center', vertical: 'middle' };
-        sheet.getRow(1).height = 38;
+        // Título
+        sheet.mergeCells('A1:E1');
+        const t1 = sheet.getCell('A1');
+        t1.value = 'ANÁLISIS FINANCIERO';
+        t1.font = { name: 'Arial', size: 18, bold: true, color: { argb: this.colores.blanco } };
+        t1.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: this.colores.primario } };
+        t1.alignment = { horizontal: 'center', vertical: 'middle' };
+        sheet.getRow(1).height = 42;
 
-        sheet.mergeCells('A2:D2');
-        const sub = sheet.getCell('A2');
-        sub.value = (datos.empresa || '').charAt(0).toUpperCase() + (datos.empresa || '').slice(1) + ' | ' + this._obtenerRangoTexto(resultados);
-        sub.font = { name: 'Arial', size: 10, italic: true, color: { argb: 'FFFFFFFF' } };
-        sub.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF667EEA' } };
-        sub.alignment = { horizontal: 'center', vertical: 'middle' };
+        sheet.mergeCells('A2:E2');
+        const t2 = sheet.getCell('A2');
+        t2.value = this._capitalizar(datos.empresa) + '  |  ' + this._obtenerRangoTexto(r);
+        t2.font = { name: 'Arial', size: 10, italic: true, color: { argb: this.colores.blanco } };
+        t2.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: this.colores.primario } };
+        t2.alignment = { horizontal: 'center', vertical: 'middle' };
+        sheet.getRow(2).height = 22;
 
-        // ── RESUMEN EJECUTIVO ──
+        // ── RESUMEN ──
         let row = 4;
         sheet.mergeCells(row, 1, row, 4);
-        const secResumen = sheet.getCell(row, 1);
-        secResumen.value = '  RESUMEN EJECUTIVO';
-        secResumen.font = { name: 'Arial', size: 12, bold: true, color: { argb: 'FFFFFFFF' } };
-        secResumen.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F2937' } };
-        sheet.getRow(row).height = 28;
+        const sec1 = sheet.getCell(row, 1);
+        sec1.value = '  RESUMEN EJECUTIVO';
+        sec1.font = { name: 'Arial', size: 12, bold: true, color: { argb: this.colores.blanco } };
+        sec1.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: this.colores.fondoOscuro } };
+        sec1.alignment = { horizontal: 'left', vertical: 'middle' };
+        sheet.getRow(row).height = 30;
         row++;
 
-        const resumenItems = [
-            ['Ingresos Totales', resultados.ingresos.total, '100%', 'Base de cálculo'],
-            ['(-) Costos de Venta', resultados.costos ? -resultados.costos.total : 0, 
-                ingresosTotales > 0 ? (-(resultados.costos?.total || 0) / ingresosTotales * 100).toFixed(1) + '%' : '0%', ''],
-            ['= Utilidad Bruta', resultados.utilidadBruta, 
-                ingresosTotales > 0 ? (resultados.utilidadBruta / ingresosTotales * 100).toFixed(1) + '%' : '0%',
-                this._evaluarMargen('Bruto', ingresosTotales > 0 ? resultados.utilidadBruta / ingresosTotales * 100 : 0)],
-            ['(-) Gastos Operativos', resultados.gastosOperativos ? -resultados.gastosOperativos.total : 0,
-                ingresosTotales > 0 ? (-(resultados.gastosOperativos?.total || 0) / ingresosTotales * 100).toFixed(1) + '%' : '0%', ''],
-            ['= Utilidad Operativa', resultados.utilidadOperativa,
-                ingresosTotales > 0 ? (resultados.utilidadOperativa / ingresosTotales * 100).toFixed(1) + '%' : '0%',
-                this._evaluarMargen('Operativo', ingresosTotales > 0 ? resultados.utilidadOperativa / ingresosTotales * 100 : 0)],
-            ['(-) Gastos Financieros', resultados.gastosFinancieros ? -resultados.gastosFinancieros.total : 0,
-                ingresosTotales > 0 ? (-(resultados.gastosFinancieros?.total || 0) / ingresosTotales * 100).toFixed(1) + '%' : '0%', ''],
-            ['= UTILIDAD NETA', resultados.utilidadNeta,
-                ingresosTotales > 0 ? (resultados.utilidadNeta / ingresosTotales * 100).toFixed(1) + '%' : '0%',
-                this._evaluarMargen('Neto', ingresosTotales > 0 ? resultados.utilidadNeta / ingresosTotales * 100 : 0)]
+        const lineas = [
+            { c: 'Ingresos Totales', m: ing, p: '100%', o: 'Base de cálculo', b: false },
+            { c: '(-) Costos de Venta', m: -(r.costos?.total||0), p: this._pct(r.costos?.total,ing), o: '', b: false },
+            { c: '= Utilidad Bruta', m: r.utilidadBruta, p: this._pct2(r.utilidadBruta,ing), o: this._evalMargen('Bruto', ing>0?r.utilidadBruta/ing*100:0), b: true },
+            { c: '(-) Gastos Operativos', m: -(r.gastosOperativos?.total||0), p: this._pct(r.gastosOperativos?.total,ing), o: '', b: false },
+            { c: '= Utilidad Operativa', m: r.utilidadOperativa, p: this._pct2(r.utilidadOperativa,ing), o: this._evalMargen('Operativo', ing>0?r.utilidadOperativa/ing*100:0), b: true },
+            { c: '(-) Gastos Financieros', m: -(r.gastosFinancieros?.total||0), p: this._pct(r.gastosFinancieros?.total,ing), o: '', b: false },
+            { c: '═ UTILIDAD NETA', m: r.utilidadNeta, p: this._pct2(r.utilidadNeta,ing), o: this._evalMargen('Neto', ing>0?r.utilidadNeta/ing*100:0), b: true, f: true }
         ];
 
-        resumenItems.forEach(([concepto, monto, pct, eval_], idx) => {
-            const esTotal = concepto.startsWith('=');
-            const esNeto = concepto.includes('NETA');
-            
-            sheet.getCell(row, 1).value = concepto;
-            sheet.getCell(row, 1).font = { name: 'Arial', size: 10, bold: esTotal, 
-                color: { argb: esTotal ? 'FF111827' : 'FF6B7280' } };
-            
-            sheet.getCell(row, 2).value = monto;
-            sheet.getCell(row, 2).numFmt = '"S/. "#,##0.00;[Red]"S/. "-#,##0.00';
-            sheet.getCell(row, 2).font = { name: 'Arial', size: 10, bold: esTotal,
-                color: { argb: monto >= 0 ? 'FF10B981' : 'FFEF4444' } };
+        lineas.forEach(l => {
+            sheet.getCell(row, 1).value = '  ' + l.c;
+            sheet.getCell(row, 1).font = { name: 'Arial', size: l.f ? 12 : 10, bold: l.b, color: { argb: l.b ? this.colores.negro : this.colores.grisMedio } };
+            sheet.getCell(row, 2).value = l.m;
+            sheet.getCell(row, 2).numFmt = '"S/." #,##0.00;[Red]"S/." -#,##0.00;"-"';
+            sheet.getCell(row, 2).font = { name: 'Arial', size: l.f ? 12 : 10, bold: l.b, color: { argb: l.m >= 0 ? this.colores.verde : this.colores.rojo } };
             sheet.getCell(row, 2).alignment = { horizontal: 'right' };
-
-            sheet.getCell(row, 3).value = pct;
+            sheet.getCell(row, 3).value = l.p;
             sheet.getCell(row, 3).font = { name: 'Arial', size: 10 };
             sheet.getCell(row, 3).alignment = { horizontal: 'center' };
-
-            sheet.getCell(row, 4).value = eval_;
+            sheet.getCell(row, 4).value = l.o;
             sheet.getCell(row, 4).font = { name: 'Arial', size: 10 };
             sheet.getCell(row, 4).alignment = { horizontal: 'center' };
-
-            if (esTotal) {
-                [1,2,3,4].forEach(col => {
-                    sheet.getCell(row, col).fill = { type: 'pattern', pattern: 'solid', 
-                        fgColor: { argb: esNeto ? 'FFE0E7FF' : 'FFF3F4F6' } };
-                    sheet.getCell(row, col).border = {
-                        top: { style: 'thin', color: { argb: 'FFD1D5DB' } },
-                        bottom: { style: 'thin', color: { argb: 'FFD1D5DB' } }
-                    };
+            if (l.b) {
+                const bg = l.f ? 'FFE0E7FF' : 'FFF3F4F6';
+                [1,2,3,4].forEach(c => {
+                    sheet.getCell(row, c).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: bg } };
+                    sheet.getCell(row, c).border = { top: { style: 'thin', color: { argb: this.colores.gris } }, bottom: { style: 'thin', color: { argb: this.colores.gris } } };
                 });
             }
-
-            if (esNeto) {
-                sheet.getRow(row).height = 28;
-                sheet.getCell(row, 1).font = { name: 'Arial', size: 12, bold: true };
-                sheet.getCell(row, 2).font = { name: 'Arial', size: 12, bold: true,
-                    color: { argb: monto >= 0 ? 'FF059669' : 'FFEF4444' } };
-            }
-
+            if (l.f) sheet.getRow(row).height = 30;
             row++;
         });
 
-        // ── RATIOS FINANCIEROS ──
+        // ── INDICADORES ──
         row += 2;
         sheet.mergeCells(row, 1, row, 4);
-        const secRatios = sheet.getCell(row, 1);
-        secRatios.value = '  INDICADORES FINANCIEROS';
-        secRatios.font = { name: 'Arial', size: 12, bold: true, color: { argb: 'FFFFFFFF' } };
-        secRatios.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F2937' } };
-        sheet.getRow(row).height = 28;
+        const sec2 = sheet.getCell(row, 1);
+        sec2.value = '  INDICADORES FINANCIEROS';
+        sec2.font = { name: 'Arial', size: 12, bold: true, color: { argb: this.colores.blanco } };
+        sec2.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: this.colores.fondoOscuro } };
+        sec2.alignment = { horizontal: 'left', vertical: 'middle' };
+        sheet.getRow(row).height = 30;
         row++;
 
-        // Headers ratios
         ['Indicador', 'Valor', 'Referencia', 'Estado'].forEach((h, i) => {
             const cell = sheet.getCell(row, i + 1);
             cell.value = h;
-            cell.font = { name: 'Arial', size: 9, bold: true, color: { argb: 'FF6B7280' } };
+            cell.font = { name: 'Arial', size: 9, bold: true, color: { argb: this.colores.grisMedio } };
             cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF3F4F6' } };
             cell.alignment = { horizontal: 'center' };
-            cell.border = { bottom: { style: 'thin', color: { argb: 'FFD1D5DB' } } };
+            cell.border = { bottom: { style: 'thin', color: { argb: this.colores.gris } } };
         });
         row++;
 
-        const ratios = [
-            ['Margen Bruto', resultados.ratios?.margenBruto || 0, '> 40% ideal', 'Bruto'],
-            ['Margen Operativo', resultados.ratios?.margenOperativo || 0, '> 15% ideal', 'Operativo'],
-            ['Margen Neto', resultados.ratios?.margenNeto || 0, '> 10% ideal', 'Neto']
-        ];
-
-        ratios.forEach(([nombre, valor, ref, tipo]) => {
-            sheet.getCell(row, 1).value = nombre;
+        [['Margen Bruto', r.ratios?.margenBruto||0, '> 40% ideal', 'Bruto'],
+         ['Margen Operativo', r.ratios?.margenOperativo||0, '> 15% ideal', 'Operativo'],
+         ['Margen Neto', r.ratios?.margenNeto||0, '> 10% ideal', 'Neto']
+        ].forEach(([n, v, ref, t]) => {
+            sheet.getCell(row, 1).value = '  ' + n;
             sheet.getCell(row, 1).font = { name: 'Arial', size: 10 };
-            
-            sheet.getCell(row, 2).value = valor.toFixed(1) + '%';
-            sheet.getCell(row, 2).font = { name: 'Arial', size: 11, bold: true,
-                color: { argb: valor > 0 ? 'FF10B981' : 'FFEF4444' } };
+            sheet.getCell(row, 2).value = v.toFixed(1) + '%';
+            sheet.getCell(row, 2).font = { name: 'Arial', size: 11, bold: true, color: { argb: v > 0 ? this.colores.verde : this.colores.rojo } };
             sheet.getCell(row, 2).alignment = { horizontal: 'center' };
-
             sheet.getCell(row, 3).value = ref;
-            sheet.getCell(row, 3).font = { name: 'Arial', size: 9, color: { argb: 'FF9CA3AF' } };
+            sheet.getCell(row, 3).font = { name: 'Arial', size: 9, color: { argb: this.colores.grisTexto } };
             sheet.getCell(row, 3).alignment = { horizontal: 'center' };
-
-            sheet.getCell(row, 4).value = this._evaluarMargen(tipo, valor);
+            sheet.getCell(row, 4).value = this._evalMargen(t, v);
+            sheet.getCell(row, 4).font = { name: 'Arial', size: 10 };
             sheet.getCell(row, 4).alignment = { horizontal: 'center' };
-
-            [1,2,3,4].forEach(col => {
-                sheet.getCell(row, col).border = { 
-                    bottom: { style: 'thin', color: { argb: 'FFE5E7EB' } } 
-                };
-            });
+            [1,2,3,4].forEach(c => { sheet.getCell(row, c).border = { bottom: { style: 'thin', color: { argb: this.colores.grisClaro } } }; });
             row++;
         });
 
         // ── DIAGNÓSTICO ──
         row += 2;
         sheet.mergeCells(row, 1, row, 4);
-        const secDiag = sheet.getCell(row, 1);
-        secDiag.value = '  DIAGNÓSTICO';
-        secDiag.font = { name: 'Arial', size: 12, bold: true, color: { argb: 'FFFFFFFF' } };
-        secDiag.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1F2937' } };
-        sheet.getRow(row).height = 28;
+        const sec3 = sheet.getCell(row, 1);
+        sec3.value = '  DIAGNÓSTICO';
+        sec3.font = { name: 'Arial', size: 12, bold: true, color: { argb: this.colores.blanco } };
+        sec3.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: this.colores.fondoOscuro } };
+        sec3.alignment = { horizontal: 'left', vertical: 'middle' };
+        sheet.getRow(row).height = 30;
         row++;
 
-        const diagnosticos = this._generarDiagnosticos(resultados, ingresosTotales);
-        diagnosticos.forEach(diag => {
+        this._diagnosticos(r, ing).forEach(d => {
             sheet.mergeCells(row, 1, row, 4);
-            const cell = sheet.getCell(row, 1);
-            cell.value = '  ' + diag;
-            cell.font = { name: 'Arial', size: 10 };
-            cell.alignment = { wrapText: true, vertical: 'top' };
-            sheet.getRow(row).height = 22;
+            sheet.getCell(row, 1).value = '  ' + d;
+            sheet.getCell(row, 1).font = { name: 'Arial', size: 10 };
+            sheet.getCell(row, 1).alignment = { wrapText: true, vertical: 'top' };
+            sheet.getRow(row).height = 24;
             row++;
         });
     }
@@ -430,364 +370,226 @@ if (!window.ExportadorEstadoResultados) {
     // ═══════════════════════════════════════════════════════════════
 
     _crearDetalleCategorias(sheet, datos) {
-        const resultados = datos.resultados;
+        const r = datos.resultados;
 
         sheet.getColumn(1).width = 8;
-        sheet.getColumn(2).width = 30;
+        sheet.getColumn(2).width = 32;
         sheet.getColumn(3).width = 12;
-        sheet.getColumn(4).width = 18;
+        sheet.getColumn(4).width = 20;
         sheet.getColumn(5).width = 16;
+        sheet.getColumn(6).width = 2;
 
-        // Título
-        sheet.mergeCells('A1:E1');
-        const titulo = sheet.getCell('A1');
-        titulo.value = 'DETALLE POR CATEGORÍAS';
-        titulo.font = { name: 'Arial', size: 16, bold: true, color: { argb: 'FFFFFFFF' } };
-        titulo.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF59E0B' } };
-        titulo.alignment = { horizontal: 'center', vertical: 'middle' };
-        sheet.getRow(1).height = 38;
+        sheet.mergeCells('A1:F1');
+        const t = sheet.getCell('A1');
+        t.value = 'DETALLE POR CATEGORÍAS';
+        t.font = { name: 'Arial', size: 18, bold: true, color: { argb: this.colores.blanco } };
+        t.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: this.colores.amarillo } };
+        t.alignment = { horizontal: 'center', vertical: 'middle' };
+        sheet.getRow(1).height = 42;
 
-        let row = 3;
+        sheet.mergeCells('A2:F2');
+        const t2 = sheet.getCell('A2');
+        t2.value = this._capitalizar(datos.empresa) + '  |  ' + this._obtenerRangoTexto(r);
+        t2.font = { name: 'Arial', size: 10, italic: true, color: { argb: this.colores.blanco } };
+        t2.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: this.colores.amarillo } };
+        t2.alignment = { horizontal: 'center', vertical: 'middle' };
+        sheet.getRow(2).height = 22;
 
-        // Función helper para agregar sección
-        const agregarSeccion = (titulo, categorias, color, esIngreso) => {
-            sheet.mergeCells(row, 1, row, 5);
-            const secCell = sheet.getCell(row, 1);
-            secCell.value = '  ' + titulo;
-            secCell.font = { name: 'Arial', size: 11, bold: true, color: { argb: 'FFFFFFFF' } };
-            secCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: color } };
-            sheet.getRow(row).height = 26;
+        let row = 4;
+
+        const addSec = (titulo, cats, color, esIng) => {
+            sheet.mergeCells(row, 1, row, 6);
+            const s = sheet.getCell(row, 1);
+            s.value = '  ' + titulo;
+            s.font = { name: 'Arial', size: 11, bold: true, color: { argb: this.colores.blanco } };
+            s.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: color } };
+            s.alignment = { horizontal: 'left', vertical: 'middle' };
+            sheet.getRow(row).height = 28;
             row++;
 
-            // Headers
-            ['#', 'Categoría', 'Cant.', 'Monto (S/.)', '% del Total'].forEach((h, i) => {
+            ['#', 'Categoría', 'Cantidad', 'Monto (S/.)', '% del Total'].forEach((h, i) => {
                 const cell = sheet.getCell(row, i + 1);
                 cell.value = h;
-                cell.font = { name: 'Arial', size: 9, bold: true, color: { argb: 'FF6B7280' } };
+                cell.font = { name: 'Arial', size: 9, bold: true, color: { argb: this.colores.grisMedio } };
                 cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF3F4F6' } };
                 cell.alignment = { horizontal: 'center' };
-                cell.border = { bottom: { style: 'thin', color: { argb: 'FFD1D5DB' } } };
+                cell.border = { bottom: { style: 'thin', color: { argb: this.colores.gris } } };
             });
             row++;
 
-            if (categorias && categorias.length > 0) {
-                const total = categorias.reduce((sum, c) => sum + c.monto, 0);
-                categorias.sort((a, b) => b.monto - a.monto).forEach((cat, idx) => {
+            if (cats && cats.length > 0) {
+                const tot = cats.reduce((s, c) => s + c.monto, 0);
+                [...cats].sort((a, b) => b.monto - a.monto).forEach((cat, idx) => {
                     sheet.getCell(row, 1).value = idx + 1;
+                    sheet.getCell(row, 1).font = { name: 'Arial', size: 9, color: { argb: this.colores.grisTexto } };
                     sheet.getCell(row, 1).alignment = { horizontal: 'center' };
-                    sheet.getCell(row, 1).font = { name: 'Arial', size: 9, color: { argb: 'FF9CA3AF' } };
-                    
                     sheet.getCell(row, 2).value = cat.categoria;
                     sheet.getCell(row, 2).font = { name: 'Arial', size: 10 };
-                    
                     sheet.getCell(row, 3).value = cat.cantidad || '-';
-                    sheet.getCell(row, 3).alignment = { horizontal: 'center' };
                     sheet.getCell(row, 3).font = { name: 'Arial', size: 10 };
-                    
-                    sheet.getCell(row, 4).value = esIngreso ? cat.monto : -cat.monto;
-                    sheet.getCell(row, 4).numFmt = '"S/. "#,##0.00;[Red]"S/. "-#,##0.00';
+                    sheet.getCell(row, 3).alignment = { horizontal: 'center' };
+                    sheet.getCell(row, 4).value = esIng ? cat.monto : -cat.monto;
+                    sheet.getCell(row, 4).numFmt = '"S/." #,##0.00;[Red]"S/." -#,##0.00;"-"';
+                    sheet.getCell(row, 4).font = { name: 'Arial', size: 10, color: { argb: esIng ? this.colores.verde : this.colores.rojo } };
                     sheet.getCell(row, 4).alignment = { horizontal: 'right' };
-                    sheet.getCell(row, 4).font = { name: 'Arial', size: 10, 
-                        color: { argb: esIngreso ? 'FF10B981' : 'FFEF4444' } };
-                    
-                    const pct = total > 0 ? (cat.monto / total * 100).toFixed(1) : '0.0';
-                    sheet.getCell(row, 5).value = pct + '%';
-                    sheet.getCell(row, 5).alignment = { horizontal: 'center' };
+                    sheet.getCell(row, 5).value = tot > 0 ? (cat.monto / tot * 100).toFixed(1) + '%' : '0%';
                     sheet.getCell(row, 5).font = { name: 'Arial', size: 10 };
-
-                    // Fondo alternado
-                    if (idx % 2 === 0) {
-                        [1,2,3,4,5].forEach(col => {
-                            sheet.getCell(row, col).fill = { type: 'pattern', pattern: 'solid', 
-                                fgColor: { argb: 'FFF9FAFB' } };
-                        });
-                    }
-
-                    [1,2,3,4,5].forEach(col => {
-                        sheet.getCell(row, col).border = { 
-                            bottom: { style: 'thin', color: { argb: 'FFE5E7EB' } } 
-                        };
-                    });
-
+                    sheet.getCell(row, 5).alignment = { horizontal: 'center' };
+                    if (idx % 2 === 0) [1,2,3,4,5].forEach(c => { sheet.getCell(row, c).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: this.colores.fondoClaro } }; });
+                    [1,2,3,4,5].forEach(c => { sheet.getCell(row, c).border = { bottom: { style: 'thin', color: { argb: this.colores.grisClaro } } }; });
                     row++;
                 });
             } else {
                 sheet.mergeCells(row, 1, row, 5);
                 sheet.getCell(row, 1).value = '  Sin registros en este período';
-                sheet.getCell(row, 1).font = { name: 'Arial', size: 10, italic: true, color: { argb: 'FF9CA3AF' } };
+                sheet.getCell(row, 1).font = { name: 'Arial', size: 10, italic: true, color: { argb: this.colores.grisTexto } };
                 row++;
             }
-
             row++;
         };
 
-        agregarSeccion('INGRESOS', resultados.ingresos.porCategoria, 'FF10B981', true);
-        
-        if (resultados.costos && resultados.costos.porCategoria) {
-            agregarSeccion('COSTOS DE VENTA', resultados.costos.porCategoria, 'FFF59E0B', false);
-        }
-        
-        if (resultados.gastosOperativos && resultados.gastosOperativos.porCategoria) {
-            agregarSeccion('GASTOS OPERATIVOS', resultados.gastosOperativos.porCategoria, 'FFEF4444', false);
-        }
-        
-        if (resultados.gastosFinancieros && resultados.gastosFinancieros.porCategoria && 
-            resultados.gastosFinancieros.porCategoria.length > 0) {
-            agregarSeccion('GASTOS FINANCIEROS', resultados.gastosFinancieros.porCategoria, 'FF8B5CF6', false);
-        }
+        addSec('INGRESOS', r.ingresos.porCategoria, this.colores.verde, true);
+        if (r.costos) addSec('COSTOS DE VENTA', r.costos.porCategoria, this.colores.amarillo, false);
+        if (r.gastosOperativos) addSec('GASTOS OPERATIVOS', r.gastosOperativos.porCategoria, this.colores.rojo, false);
+        if (r.gastosFinancieros?.porCategoria?.length > 0) addSec('GASTOS FINANCIEROS', r.gastosFinancieros.porCategoria, this.colores.morado, false);
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // FUNCIONES AUXILIARES DE FORMATO
+    // HELPERS
     // ═══════════════════════════════════════════════════════════════
 
-    _crearSeccion(sheet, row, titulo, color) {
+    _seccion(sheet, row, titulo, color) {
+        sheet.mergeCells(row, 1, row, 5);
+        const c = sheet.getCell(row, 1);
+        c.value = '  ' + titulo;
+        c.font = { name: 'Arial', bold: true, size: 11, color: { argb: this.colores.blanco } };
+        c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: color } };
+        c.alignment = { horizontal: 'left', vertical: 'middle' };
+        sheet.getRow(row).height = 28;
+        return row + 1;
+    }
+
+    _fila(sheet, row, concepto, monto, pct, obs) {
+        sheet.getCell(row, 1).value = '      ' + concepto;
+        sheet.getCell(row, 1).font = { name: 'Arial', size: 10, color: { argb: this.colores.negro } };
+        sheet.getCell(row, 2).value = monto;
+        sheet.getCell(row, 2).numFmt = '"S/." #,##0.00;[Red]"S/." -#,##0.00;"-"';
+        sheet.getCell(row, 2).font = { name: 'Arial', size: 10, color: { argb: monto < 0 ? this.colores.rojo : this.colores.verde } };
+        sheet.getCell(row, 2).alignment = { horizontal: 'right' };
+        sheet.getCell(row, 3).value = pct.toFixed(1) + '%';
+        sheet.getCell(row, 3).font = { name: 'Arial', size: 10 };
+        sheet.getCell(row, 3).alignment = { horizontal: 'center' };
+        sheet.getCell(row, 4).value = obs || '';
+        sheet.getCell(row, 4).font = { name: 'Arial', size: 9, italic: true, color: { argb: this.colores.grisMedio } };
+        sheet.getCell(row, 4).alignment = { horizontal: 'center' };
+        [1,2,3,4].forEach(c => { sheet.getCell(row, c).border = { bottom: { style: 'thin', color: { argb: this.colores.grisClaro } } }; });
+        if (row % 2 === 0) [1,2,3,4].forEach(c => { sheet.getCell(row, c).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: this.colores.fondoClaro } }; });
+        return row + 1;
+    }
+
+    _filaVacia(sheet, row, texto) {
         sheet.mergeCells(row, 1, row, 4);
-        const cell = sheet.getCell(row, 1);
-        cell.value = '  ' + titulo;
-        cell.font = { name: 'Arial', bold: true, size: 11, color: { argb: 'FFFFFFFF' } };
-        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: color } };
-        cell.alignment = { horizontal: 'left', vertical: 'middle' };
-        cell.border = this._bordes();
+        sheet.getCell(row, 1).value = '      ' + texto;
+        sheet.getCell(row, 1).font = { name: 'Arial', size: 10, italic: true, color: { argb: this.colores.grisTexto } };
+        return row + 1;
+    }
+
+    _subtotal(sheet, row, concepto, monto, pct) {
+        sheet.getCell(row, 1).value = '  ' + concepto;
+        sheet.getCell(row, 2).value = monto;
+        sheet.getCell(row, 2).numFmt = '"S/." #,##0.00;[Red]"S/." -#,##0.00;"-"';
+        sheet.getCell(row, 3).value = (typeof pct === 'number' ? pct.toFixed(1) : pct) + '%';
+        [1,2,3,4].forEach(c => {
+            const cell = sheet.getCell(row, c);
+            cell.font = { name: 'Arial', size: 10, bold: true, color: { argb: this.colores.negro } };
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: this.colores.grisClaro } };
+            cell.border = { top: { style: 'thin', color: { argb: this.colores.gris } }, bottom: { style: 'thin', color: { argb: this.colores.gris } } };
+            if (c === 2) cell.alignment = { horizontal: 'right' };
+            if (c === 3) cell.alignment = { horizontal: 'center' };
+        });
         sheet.getRow(row).height = 26;
         return row + 1;
     }
 
-    _crearFila(sheet, row, concepto, monto, porcentaje, observacion = '', esIngreso = false) {
-        sheet.getCell(row, 1).value = '      ' + concepto;
-        sheet.getCell(row, 1).font = { name: 'Arial', size: 10 };
-        
-        sheet.getCell(row, 2).value = monto;
-        sheet.getCell(row, 2).numFmt = '"S/. "#,##0.00;[Red]"S/. "-#,##0.00';
-        sheet.getCell(row, 2).alignment = { horizontal: 'right' };
-        sheet.getCell(row, 2).font = { name: 'Arial', size: 10, 
-            color: { argb: monto < 0 ? 'FFEF4444' : 'FF10B981' } };
-        
-        sheet.getCell(row, 3).value = porcentaje.toFixed(1) + '%';
-        sheet.getCell(row, 3).font = { name: 'Arial', size: 10 };
-        sheet.getCell(row, 3).alignment = { horizontal: 'center' };
-
-        sheet.getCell(row, 4).value = observacion;
-        sheet.getCell(row, 4).font = { name: 'Arial', size: 9, color: { argb: 'FF6B7280' } };
-        sheet.getCell(row, 4).alignment = { horizontal: 'center' };
-
-        [1, 2, 3, 4].forEach(col => {
-            sheet.getCell(row, col).border = {
-                bottom: { style: 'thin', color: { argb: 'FFE5E7EB' } }
-            };
-        });
-
-        // Fondo alternado sutil
-        if (row % 2 === 0) {
-            [1, 2, 3, 4].forEach(col => {
-                sheet.getCell(row, col).fill = { type: 'pattern', pattern: 'solid', 
-                    fgColor: { argb: 'FFF9FAFB' } };
-            });
-        }
-
-        return row + 1;
-    }
-
-    _crearFilaVacia(sheet, row, texto) {
-        sheet.mergeCells(row, 1, row, 4);
-        const cell = sheet.getCell(row, 1);
-        cell.value = '      ' + texto;
-        cell.font = { name: 'Arial', size: 10, italic: true, color: { argb: 'FF9CA3AF' } };
-        cell.border = { bottom: { style: 'thin', color: { argb: 'FFE5E7EB' } } };
-        return row + 1;
-    }
-
-    _crearSubtotal(sheet, row, concepto, monto, porcentaje) {
-        sheet.getCell(row, 1).value = '  ' + concepto;
-        sheet.getCell(row, 2).value = monto;
-        sheet.getCell(row, 2).numFmt = '"S/. "#,##0.00;[Red]"S/. "-#,##0.00';
-        sheet.getCell(row, 3).value = (typeof porcentaje === 'number' ? porcentaje.toFixed(1) : porcentaje) + '%';
-
-        [1, 2, 3, 4].forEach(col => {
-            const cell = sheet.getCell(row, col);
-            cell.font = { name: 'Arial', size: 10, bold: true, color: { argb: 'FF111827' } };
-            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE5E7EB' } };
-            cell.border = {
-                top: { style: 'thin', color: { argb: 'FFD1D5DB' } },
-                bottom: { style: 'thin', color: { argb: 'FFD1D5DB' } }
-            };
-            if (col === 2) cell.alignment = { horizontal: 'right' };
-            if (col === 3) cell.alignment = { horizontal: 'center' };
-        });
-
-        sheet.getRow(row).height = 24;
-        return row + 1;
-    }
-
-    _crearTotal(sheet, row, concepto, monto, porcentaje, evaluacion = '') {
+    _totalDestacado(sheet, row, concepto, monto, pct, eval_) {
         sheet.getCell(row, 1).value = concepto;
         sheet.getCell(row, 2).value = monto;
-        sheet.getCell(row, 2).numFmt = '"S/. "#,##0.00;[Red]"S/. "-#,##0.00';
-        sheet.getCell(row, 3).value = porcentaje.toFixed(1) + '%';
-        sheet.getCell(row, 4).value = evaluacion;
-
-        const colorFondo = monto >= 0 ? 'FF667EEA' : 'FFEF4444';
-
-        [1, 2, 3, 4].forEach(col => {
-            const cell = sheet.getCell(row, col);
-            cell.font = { name: 'Arial', bold: true, size: 11, color: { argb: 'FFFFFFFF' } };
-            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: colorFondo } };
-            cell.border = this._bordes();
-            if (col === 2) cell.alignment = { horizontal: 'right' };
-            if (col === 3 || col === 4) cell.alignment = { horizontal: 'center' };
+        sheet.getCell(row, 2).numFmt = '"S/." #,##0.00;[Red]"S/." -#,##0.00;"-"';
+        sheet.getCell(row, 3).value = pct.toFixed(1) + '%';
+        sheet.getCell(row, 4).value = eval_;
+        const bg = monto >= 0 ? this.colores.primario : this.colores.rojo;
+        [1,2,3,4].forEach(c => {
+            const cell = sheet.getCell(row, c);
+            cell.font = { name: 'Arial', bold: true, size: 11, color: { argb: this.colores.blanco } };
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: bg } };
+            cell.border = this._borde();
+            if (c === 2) cell.alignment = { horizontal: 'right', vertical: 'middle' };
+            if (c >= 3) cell.alignment = { horizontal: 'center', vertical: 'middle' };
         });
-
-        sheet.getRow(row).height = 30;
+        sheet.getRow(row).height = 32;
         return row + 1;
     }
 
-    _crearResultadoFinal(sheet, row, utilidadNeta, pctNeta) {
-        // Fila de resultado final destacada
-        sheet.mergeCells(row, 1, row, 1);
+    _resultadoFinal(sheet, row, utilNeta, pctNeta) {
+        const pos = utilNeta >= 0;
+        const bg = pos ? this.colores.verdeOscuro : this.colores.rojoOscuro;
         sheet.getCell(row, 1).value = 'RESULTADO DEL PERÍODO';
-
-        sheet.getCell(row, 2).value = utilidadNeta;
-        sheet.getCell(row, 2).numFmt = '"S/. "#,##0.00;[Red]"S/. "-#,##0.00';
+        sheet.getCell(row, 2).value = utilNeta;
+        sheet.getCell(row, 2).numFmt = '"S/." #,##0.00;[Red]"S/." -#,##0.00;"-"';
         sheet.getCell(row, 3).value = pctNeta.toFixed(1) + '%';
-
-        const esPositivo = utilidadNeta >= 0;
-        sheet.getCell(row, 4).value = esPositivo ? 'UTILIDAD' : 'PÉRDIDA';
-
-        const colorFondo = esPositivo ? 'FF059669' : 'FFDC2626';
-
-        [1, 2, 3, 4].forEach(col => {
-            const cell = sheet.getCell(row, col);
-            cell.font = { name: 'Arial', bold: true, size: 13, color: { argb: 'FFFFFFFF' } };
-            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: colorFondo } };
-            cell.border = {
-                top: { style: 'medium', color: { argb: 'FF000000' } },
-                bottom: { style: 'medium', color: { argb: 'FF000000' } },
-                left: { style: 'medium', color: { argb: 'FF000000' } },
-                right: { style: 'medium', color: { argb: 'FF000000' } }
-            };
-            if (col === 2) cell.alignment = { horizontal: 'right', vertical: 'middle' };
-            if (col === 3 || col === 4) cell.alignment = { horizontal: 'center', vertical: 'middle' };
-            if (col === 1) cell.alignment = { horizontal: 'left', vertical: 'middle' };
+        sheet.getCell(row, 4).value = pos ? 'UTILIDAD' : 'PÉRDIDA';
+        [1,2,3,4].forEach(c => {
+            const cell = sheet.getCell(row, c);
+            cell.font = { name: 'Arial', bold: true, size: 14, color: { argb: this.colores.blanco } };
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: bg } };
+            cell.border = { top: { style: 'medium', color: { argb: 'FF000000' } }, bottom: { style: 'medium', color: { argb: 'FF000000' } }, left: { style: 'medium', color: { argb: 'FF000000' } }, right: { style: 'medium', color: { argb: 'FF000000' } } };
+            if (c === 1) cell.alignment = { horizontal: 'left', vertical: 'middle' };
+            if (c === 2) cell.alignment = { horizontal: 'right', vertical: 'middle' };
+            if (c >= 3) cell.alignment = { horizontal: 'center', vertical: 'middle' };
         });
-
-        sheet.getRow(row).height = 35;
+        sheet.getRow(row).height = 40;
         return row + 1;
     }
 
-    _crearEspacioSeparador(sheet, row) {
-        sheet.getRow(row).height = 8;
-        return row + 1;
+    _espacio(sheet, row) { sheet.getRow(row).height = 6; return row + 1; }
+
+    _borde() {
+        return { top: { style: 'thin', color: { argb: this.colores.gris } }, bottom: { style: 'thin', color: { argb: this.colores.gris } }, left: { style: 'thin', color: { argb: this.colores.gris } }, right: { style: 'thin', color: { argb: this.colores.gris } } };
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // FUNCIONES DE UTILIDAD
-    // ═══════════════════════════════════════════════════════════════
-
-    _obtenerRangoTexto(resultados) {
-        if (resultados.rango && resultados.rango.inicio && resultados.rango.fin) {
-            const opts = { year: 'numeric', month: 'long', day: 'numeric' };
-            try {
-                const inicio = new Date(resultados.rango.inicio).toLocaleDateString('es-PE', opts);
-                const fin = new Date(resultados.rango.fin).toLocaleDateString('es-PE', opts);
-                return `Del ${inicio} al ${fin}`;
-            } catch(e) {
-                return `Período: ${resultados.periodo || 'N/A'}`;
-            }
+    _obtenerRangoTexto(r) {
+        if (r.rango?.inicio && r.rango?.fin) {
+            const o = { year: 'numeric', month: 'long', day: 'numeric' };
+            try { return 'Del ' + new Date(r.rango.inicio).toLocaleDateString('es-PE', o) + ' al ' + new Date(r.rango.fin).toLocaleDateString('es-PE', o); } catch(e) {}
         }
-        return `Período: ${resultados.periodo || 'N/A'}`;
+        return 'Período: ' + (r.periodo || 'N/A');
     }
 
-    _nombrePeriodo(periodo) {
-        const nombres = {
-            'hoy': 'Hoy',
-            'semana': 'Semana Actual',
-            'mes': 'Mes Actual',
-            'trimestre': 'Trimestre Actual',
-            'anio': 'Año Actual',
-            'personalizado': 'Personalizado'
-        };
-        return nombres[periodo] || periodo || 'N/A';
-    }
-
-    _observacionIngreso(categoria, porcentaje) {
-        if (porcentaje >= 50) return 'Principal fuente de ingreso';
-        if (porcentaje >= 25) return 'Fuente significativa';
-        if (porcentaje >= 10) return 'Fuente secundaria';
+    _nombrePeriodo(p) { return { hoy:'Hoy', semana:'Semana Actual', mes:'Mes Actual', trimestre:'Trimestre Actual', anio:'Año Actual', personalizado:'Personalizado' }[p] || p || 'N/A'; }
+    _capitalizar(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : 'N/A'; }
+    _pct(v, t) { return t > 0 ? (-Math.abs(v||0) / t * 100).toFixed(1) + '%' : '0%'; }
+    _pct2(v, t) { return t > 0 ? (v / t * 100).toFixed(1) + '%' : '0%'; }
+    _obsIngreso(p) { return p >= 50 ? 'Fuente principal' : p >= 25 ? 'Significativo' : p >= 10 ? 'Secundario' : ''; }
+    _evalMargen(t, v) {
+        if (t==='Bruto') return v>40?'● Excelente':v>20?'● Aceptable':v>0?'● Bajo':'● Crítico';
+        if (t==='Operativo') return v>15?'● Excelente':v>5?'● Aceptable':v>0?'● Bajo':'● Negativo';
+        if (t==='Neto') return v>10?'● Excelente':v>0?'● Aceptable':'● Pérdida';
         return '';
     }
-
-    _evaluarMargen(tipo, valor) {
-        if (tipo === 'Bruto') {
-            if (valor > 40) return '● Excelente';
-            if (valor > 20) return '● Aceptable';
-            if (valor > 0) return '● Bajo';
-            return '● Crítico';
-        } else if (tipo === 'Operativo') {
-            if (valor > 15) return '● Excelente';
-            if (valor > 5) return '● Aceptable';
-            if (valor > 0) return '● Bajo';
-            return '● Negativo';
-        } else if (tipo === 'Neto') {
-            if (valor > 10) return '● Excelente';
-            if (valor > 0) return '● Aceptable';
-            return '● Pérdida';
-        }
-        return '';
+    _diagnosticos(r, ing) {
+        const d = [];
+        if (!ing) { d.push('⚠ No se registraron ingresos en este período.'); d.push('→ Revise que las transacciones estén categorizadas en Flujo de Caja.'); return d; }
+        const mb = r.ratios?.margenBruto||0;
+        d.push(mb>40 ? '✓ Margen bruto saludable ('+mb.toFixed(1)+'%).' : '⚠ Margen bruto bajo ('+mb.toFixed(1)+'%). Renegociar costos.');
+        const pg = ing>0 ? (r.gastosOperativos?.total||0)/ing*100 : 0;
+        d.push(pg>30 ? '⚠ Gastos operativos altos ('+pg.toFixed(1)+'%). Optimizar.' : '✓ Gastos operativos razonables ('+pg.toFixed(1)+'%).');
+        d.push(r.utilidadNeta>0 ? '✓ Cierra con utilidad: S/. '+r.utilidadNeta.toFixed(2) : r.utilidadNeta<0 ? '✗ Cierra con pérdida: S/. '+Math.abs(r.utilidadNeta).toFixed(2) : '→ Punto de equilibrio.');
+        return d;
     }
-
-    _generarDiagnosticos(resultados, ingresosTotales) {
-        const diags = [];
-        
-        if (ingresosTotales === 0) {
-            diags.push('⚠ No se registraron ingresos en este período.');
-            diags.push('→ Revise que las transacciones estén correctamente categorizadas en Flujo de Caja.');
-            return diags;
-        }
-
-        // Margen bruto
-        const margenBruto = resultados.ratios?.margenBruto || 0;
-        if (margenBruto > 40) {
-            diags.push('✓ El margen bruto es saludable (' + margenBruto.toFixed(1) + '%). Los costos directos están controlados.');
-        } else if (margenBruto > 0) {
-            diags.push('⚠ El margen bruto es bajo (' + margenBruto.toFixed(1) + '%). Considere renegociar costos con proveedores.');
-        }
-
-        // Gastos operativos
-        const pctGastos = ingresosTotales > 0 ? ((resultados.gastosOperativos?.total || 0) / ingresosTotales * 100) : 0;
-        if (pctGastos > 30) {
-            diags.push('⚠ Los gastos operativos representan el ' + pctGastos.toFixed(1) + '% de los ingresos. Busque oportunidades de optimización.');
-        } else if (pctGastos > 0) {
-            diags.push('✓ Los gastos operativos están dentro de un rango razonable (' + pctGastos.toFixed(1) + '%).');
-        }
-
-        // Resultado final
-        if (resultados.utilidadNeta > 0) {
-            diags.push('✓ El período cierra con utilidad neta positiva de S/. ' + resultados.utilidadNeta.toFixed(2) + '.');
-        } else if (resultados.utilidadNeta < 0) {
-            diags.push('✗ El período cierra con pérdida neta de S/. ' + Math.abs(resultados.utilidadNeta).toFixed(2) + '. Se requieren acciones correctivas.');
-        } else {
-            diags.push('→ El período cierra en punto de equilibrio (ni ganancia ni pérdida).');
-        }
-
-        return diags;
-    }
-
-    _bordes() {
-        return {
-            top: { style: 'thin', color: { argb: 'FFD1D5DB' } },
-            bottom: { style: 'thin', color: { argb: 'FFD1D5DB' } },
-            left: { style: 'thin', color: { argb: 'FFD1D5DB' } },
-            right: { style: 'thin', color: { argb: 'FFD1D5DB' } }
-        };
-    }
-
-    _fecha() {
-        const hoy = new Date();
-        return `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
-    }
+    _fecha() { const h=new Date(); return h.getFullYear()+'-'+String(h.getMonth()+1).padStart(2,'0')+'-'+String(h.getDate()).padStart(2,'0'); }
 }
     
     window.ExportadorEstadoResultados = ExportadorEstadoResultados;
 }
 
-console.log('✅ Exportador Estado de Resultados v2.0 cargado');
+console.log('✅ Exportador Estado de Resultados v2.1 cargado');
