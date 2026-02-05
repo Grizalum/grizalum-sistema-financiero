@@ -362,20 +362,23 @@ if (!window.EstadoResultadosConfig) {
             }
         },
         
-        // ✅ MEJORADO: Período personalizado
+        // ✅ FIX: Período personalizado - función normal para acceder a this
         personalizado: {
             id: 'personalizado',
             nombre: 'Personalizado',
             icono: '🗓️',
-            calcularRango: (fechaInicio, fechaFin) => {
+            calcularRango: function(fechaInicio, fechaFin) {
                 // Acepta strings ISO o Date objects
                 const inicio = typeof fechaInicio === 'string' ? new Date(fechaInicio) : fechaInicio;
                 const fin = typeof fechaFin === 'string' ? new Date(fechaFin) : fechaFin;
                 
                 if (!inicio || !fin || isNaN(inicio) || isNaN(fin)) {
-                    console.warn('Fechas inválidas para período personalizado');
-                    // Fallback a mes actual
-                    return this.periodos.mes.calcularRango();
+                    console.warn('⚠️ Fechas inválidas para período personalizado, usando mes actual');
+                    // Fallback seguro: calcular mes actual directamente
+                    const hoy = new Date();
+                    const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+                    const finMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0, 23, 59, 59, 999);
+                    return { inicio: inicioMes, fin: finMes };
                 }
                 
                 inicio.setHours(0, 0, 0, 0);
