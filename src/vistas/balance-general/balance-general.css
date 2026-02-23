@@ -1,0 +1,453 @@
+/* ═══════════════════════════════════════════════════════════════ */
+/* BALANCE GENERAL - GRIZALUM Sistema Financiero                  */
+/* ═══════════════════════════════════════════════════════════════ */
+
+/* ── HEADER ── */
+.bg-header-section {
+    margin-bottom: 1.5rem;
+}
+
+.bg-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.bg-header-titulo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.bg-header-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--primario, #667EEA), var(--secundario, #764BA2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.bg-header-icon .bg-logo {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+}
+
+.bg-titulo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--texto-principal, #F9FAFB);
+    margin: 0;
+}
+
+.bg-subtitulo {
+    font-size: 0.9rem;
+    color: var(--texto-terciario, #9CA3AF);
+    margin: 0.2rem 0 0;
+}
+
+.bg-header-acciones {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.bg-btn-accion {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    border: 1px solid var(--borde, rgba(255,255,255,0.1));
+    background: var(--fondo-tarjeta, #1F2937);
+    color: var(--texto-principal, #F9FAFB);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.bg-btn-accion:hover {
+    background: var(--primario, #667EEA);
+    border-color: var(--primario, #667EEA);
+    transform: translateY(-1px);
+}
+
+/* ── FILTROS ── */
+.bg-filtros-container {
+    margin-bottom: 1.5rem;
+}
+
+.bg-filtros-periodo {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.bg-filtro-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--borde, rgba(255,255,255,0.1));
+    background: var(--fondo-tarjeta, #1F2937);
+    color: var(--texto-secundario, #D1D5DB);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.bg-filtro-btn:hover {
+    border-color: var(--primario, #667EEA);
+    color: var(--primario, #667EEA);
+}
+
+.bg-filtro-btn.activo {
+    background: var(--primario, #667EEA);
+    border-color: var(--primario, #667EEA);
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+/* ── ECUACIÓN CONTABLE ── */
+.bg-ecuacion-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.bg-ecuacion-card {
+    flex: 1;
+    min-width: 180px;
+    max-width: 280px;
+    padding: 1.2rem;
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+}
+
+.bg-ecuacion-activos {
+    background: linear-gradient(135deg, #10B981, #059669);
+}
+
+.bg-ecuacion-pasivos {
+    background: linear-gradient(135deg, #EF4444, #DC2626);
+}
+
+.bg-ecuacion-patrimonio {
+    background: linear-gradient(135deg, #667EEA, #764BA2);
+}
+
+.bg-ecuacion-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.85);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.bg-ecuacion-valor {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin: 0.3rem 0;
+}
+
+.bg-ecuacion-icon {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    font-size: 2rem;
+    color: rgba(255,255,255,0.15);
+}
+
+.bg-ecuacion-signo {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--texto-terciario, #9CA3AF);
+}
+
+/* ── STATUS ECUACIÓN ── */
+.bg-ecuacion-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.5rem;
+    border-radius: 10px;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #10B981;
+}
+
+.bg-ecuacion-status.desbalanceado {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #EF4444;
+}
+
+/* ── DETALLE DEL BALANCE ── */
+.bg-detalle-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.bg-seccion {
+    background: var(--fondo-tarjeta, #1F2937);
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--borde, rgba(255,255,255,0.08));
+}
+
+.bg-seccion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+}
+
+.bg-seccion-header h2 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.bg-seccion-total {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #FFFFFF;
+}
+
+.bg-seccion-activos { background: linear-gradient(135deg, #10B981, #059669); }
+.bg-seccion-pasivos { background: linear-gradient(135deg, #EF4444, #DC2626); }
+.bg-seccion-patrimonio { background: linear-gradient(135deg, #667EEA, #764BA2); }
+
+.bg-subseccion {
+    padding: 0 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.bg-subseccion:first-of-type {
+    padding-top: 1rem;
+}
+
+.bg-subseccion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--borde, rgba(255,255,255,0.08));
+    margin-bottom: 0.5rem;
+}
+
+.bg-subseccion-header h3 {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--texto-secundario, #D1D5DB);
+}
+
+.bg-subseccion-total {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--texto-principal, #F9FAFB);
+}
+
+/* ── ITEMS ── */
+.bg-items-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.bg-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    transition: background 0.15s;
+}
+
+.bg-item:hover {
+    background: rgba(255,255,255,0.03);
+}
+
+.bg-item-nombre {
+    font-size: 0.85rem;
+    color: var(--texto-secundario, #D1D5DB);
+}
+
+.bg-item-monto {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--texto-principal, #F9FAFB);
+}
+
+.bg-item-monto.positivo { color: #10B981; }
+.bg-item-monto.negativo { color: #EF4444; }
+
+.bg-item-vacio {
+    padding: 1rem 0.75rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--texto-terciario, #6B7280);
+    font-style: italic;
+}
+
+/* ── RATIOS ── */
+.bg-ratios-container {
+    margin-bottom: 2rem;
+}
+
+.bg-ratios-titulo {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--texto-principal, #F9FAFB);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.bg-ratios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+}
+
+.bg-ratio-card {
+    background: var(--fondo-tarjeta, #1F2937);
+    border-radius: 12px;
+    padding: 1.2rem;
+    border: 1px solid var(--borde, rgba(255,255,255,0.08));
+}
+
+.bg-ratio-nombre {
+    font-size: 0.8rem;
+    color: var(--texto-terciario, #9CA3AF);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.3rem;
+}
+
+.bg-ratio-valor {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--texto-principal, #F9FAFB);
+    margin-bottom: 0.2rem;
+}
+
+.bg-ratio-referencia {
+    font-size: 0.75rem;
+    color: var(--texto-terciario, #6B7280);
+    margin-bottom: 0.6rem;
+}
+
+.bg-ratio-barra {
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.bg-ratio-progreso {
+    height: 100%;
+    border-radius: 2px;
+    background: #10B981;
+    transition: width 0.5s ease;
+    width: 0%;
+}
+
+.bg-ratio-progreso.alerta { background: #F59E0B; }
+.bg-ratio-progreso.peligro { background: #EF4444; }
+
+/* ── ESTADO VACÍO ── */
+.bg-estado-vacio {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    color: var(--texto-terciario, #9CA3AF);
+}
+
+.bg-vacio-icono {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.bg-estado-vacio h3 {
+    color: var(--texto-principal, #F9FAFB);
+    margin-bottom: 0.5rem;
+}
+
+.bg-estado-vacio p {
+    max-width: 400px;
+    margin: 0 auto 1.5rem;
+    font-size: 0.9rem;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+    .bg-ecuacion-container {
+        flex-direction: column;
+    }
+    
+    .bg-ecuacion-card {
+        max-width: 100%;
+    }
+    
+    .bg-ecuacion-signo {
+        font-size: 1.5rem;
+    }
+    
+    .bg-header-top {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .bg-titulo {
+        font-size: 1.4rem;
+    }
+    
+    .bg-ecuacion-valor {
+        font-size: 1.3rem;
+    }
+    
+    .bg-ratios-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .bg-filtros-periodo {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .bg-filtro-btn {
+        white-space: nowrap;
+    }
+    
+    .bg-ratios-grid {
+        grid-template-columns: 1fr;
+    }
+}
