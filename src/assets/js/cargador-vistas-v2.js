@@ -341,8 +341,25 @@ function registrarModulos() {
             'src/vistas/estado-resultados/estado-resultados-graficos.js'
         ],
 
-        onCargar: async function() {
+       onCargar: async function() {
             console.log('   📊 Cargando Estado de Resultados...');
+            
+            // Cargar FlujoCaja si no existe
+            if (!window.flujoCaja) {
+                console.log('   📦 Cargando dependencia FlujoCaja...');
+                try {
+                    await cargarScript('src/vistas/flujo-caja/flujo-caja-categorias.js');
+                    await cargarScript('src/vistas/flujo-caja/flujo-caja-config.js');
+                    await cargarScript('src/vistas/flujo-caja/flujo-caja.js');
+                    if (window.flujoCaja && window.flujoCaja.esperarInicializacion) {
+                        await window.flujoCaja.esperarInicializacion();
+                    }
+                    console.log('   ✅ FlujoCaja cargado');
+                } catch(e) {
+                    console.warn('   ⚠️ FlujoCaja no pudo cargarse:', e.message);
+                }
+            }
+            
             await cargarEstilos('src/vistas/estado-resultados/estado-resultados.css');
         },
 
