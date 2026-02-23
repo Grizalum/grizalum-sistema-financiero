@@ -113,15 +113,19 @@ if (btnComparar) {
     };
 }
 
-    // Escuchar eventos del módulo
-    document.addEventListener('grizalumResultadosCalculados', () => {
-        this.cargarResultados();
-    });
-
-    // Escuchar cambio de empresa
-    document.addEventListener('grizalumCompanyChanged', () => {
-        setTimeout(() => this.cargarResultados(), 500);
-    });
+    // Escuchar eventos del módulo (evitar duplicación de listeners)
+    if (this._onResultadosCalculados) {
+        document.removeEventListener('grizalumResultadosCalculados', this._onResultadosCalculados);
+    }
+    this._onResultadosCalculados = () => this.cargarResultados();
+    document.addEventListener('grizalumResultadosCalculados', this._onResultadosCalculados);
+       
+    // Escuchar cambio de empresa (evitar duplicación)
+    if (this._onCompanyChanged) {
+        document.removeEventListener('grizalumCompanyChanged', this._onCompanyChanged);
+    }
+    this._onCompanyChanged = () => setTimeout(() => this.cargarResultados(), 500);
+    document.addEventListener('grizalumCompanyChanged', this._onCompanyChanged);
 
     console.log('✅ Eventos configurados');
 }
