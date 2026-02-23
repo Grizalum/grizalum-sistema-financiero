@@ -1,0 +1,201 @@
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- BALANCE GENERAL - GRIZALUM Sistema Financiero                -->
+<!-- Situación financiera: Activos, Pasivos y Patrimonio          -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<!-- ENCABEZADO -->
+<div class="bg-header-section">
+    <div class="bg-header-top">
+        <div class="bg-header-titulo">
+            <div class="bg-header-icon">
+                <img src="src/assets/img/logo-grizalum.png" alt="GRIZALUM" class="bg-logo" onerror="this.style.display='none'">
+            </div>
+            <div>
+                <h1 class="bg-titulo">Balance General</h1>
+                <p class="bg-subtitulo" id="bgPeriodoActual">Mes actual</p>
+            </div>
+        </div>
+        <div class="bg-header-acciones">
+            <button class="bg-btn-accion" id="btnExportarBG">
+                <i class="fas fa-file-excel"></i>
+                Exportar Excel
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- FILTROS DE PERÍODO -->
+<div class="bg-filtros-container">
+    <div class="bg-filtros-periodo">
+        <button class="bg-filtro-btn" data-periodo="hoy">
+            <i class="fas fa-clock"></i> Hoy
+        </button>
+        <button class="bg-filtro-btn" data-periodo="semana">
+            <i class="fas fa-calendar-week"></i> Semana
+        </button>
+        <button class="bg-filtro-btn activo" data-periodo="mes">
+            <i class="fas fa-calendar"></i> Mes
+        </button>
+        <button class="bg-filtro-btn" data-periodo="trimestre">
+            <i class="fas fa-calendar-alt"></i> Trimestre
+        </button>
+        <button class="bg-filtro-btn" data-periodo="año">
+            <i class="fas fa-calendar-check"></i> Año
+        </button>
+    </div>
+</div>
+
+<!-- ECUACIÓN CONTABLE -->
+<div class="bg-ecuacion-container">
+    <div class="bg-ecuacion-card bg-ecuacion-activos">
+        <div class="bg-ecuacion-label">ACTIVOS</div>
+        <div class="bg-ecuacion-valor" id="bgTotalActivos">S/ 0.00</div>
+        <div class="bg-ecuacion-icon"><i class="fas fa-building"></i></div>
+    </div>
+    <div class="bg-ecuacion-signo">=</div>
+    <div class="bg-ecuacion-card bg-ecuacion-pasivos">
+        <div class="bg-ecuacion-label">PASIVOS</div>
+        <div class="bg-ecuacion-valor" id="bgTotalPasivos">S/ 0.00</div>
+        <div class="bg-ecuacion-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+    </div>
+    <div class="bg-ecuacion-signo">+</div>
+    <div class="bg-ecuacion-card bg-ecuacion-patrimonio">
+        <div class="bg-ecuacion-label">PATRIMONIO</div>
+        <div class="bg-ecuacion-valor" id="bgTotalPatrimonio">S/ 0.00</div>
+        <div class="bg-ecuacion-icon"><i class="fas fa-crown"></i></div>
+    </div>
+</div>
+
+<!-- INDICADOR DE ECUACIÓN -->
+<div class="bg-ecuacion-status" id="bgEcuacionStatus">
+    <span class="bg-status-icon">✅</span>
+    <span class="bg-status-text">Ecuación contable balanceada</span>
+</div>
+
+<!-- DETALLE DEL BALANCE -->
+<div class="bg-detalle-container">
+    <!-- ACTIVOS -->
+    <div class="bg-seccion">
+        <div class="bg-seccion-header bg-seccion-activos">
+            <h2><i class="fas fa-building"></i> ACTIVOS</h2>
+            <span class="bg-seccion-total" id="bgActivosTotal">S/ 0.00</span>
+        </div>
+        
+        <!-- Activos Corrientes -->
+        <div class="bg-subseccion">
+            <div class="bg-subseccion-header">
+                <h3>Activos Corrientes</h3>
+                <span class="bg-subseccion-total" id="bgActivosCorrientes">S/ 0.00</span>
+            </div>
+            <div class="bg-items-list" id="bgListaActivosCorrientes">
+                <!-- Items dinámicos -->
+            </div>
+        </div>
+
+        <!-- Activos No Corrientes -->
+        <div class="bg-subseccion">
+            <div class="bg-subseccion-header">
+                <h3>Activos No Corrientes</h3>
+                <span class="bg-subseccion-total" id="bgActivosNoCorrientes">S/ 0.00</span>
+            </div>
+            <div class="bg-items-list" id="bgListaActivosNoCorrientes">
+                <!-- Items dinámicos -->
+            </div>
+        </div>
+    </div>
+
+    <!-- PASIVOS -->
+    <div class="bg-seccion">
+        <div class="bg-seccion-header bg-seccion-pasivos">
+            <h2><i class="fas fa-file-invoice-dollar"></i> PASIVOS</h2>
+            <span class="bg-seccion-total" id="bgPasivosTotal">S/ 0.00</span>
+        </div>
+
+        <!-- Pasivos Corrientes -->
+        <div class="bg-subseccion">
+            <div class="bg-subseccion-header">
+                <h3>Pasivos Corrientes</h3>
+                <span class="bg-subseccion-total" id="bgPasivosCorrientes">S/ 0.00</span>
+            </div>
+            <div class="bg-items-list" id="bgListaPasivosCorrientes">
+                <!-- Items dinámicos -->
+            </div>
+        </div>
+
+        <!-- Pasivos No Corrientes -->
+        <div class="bg-subseccion">
+            <div class="bg-subseccion-header">
+                <h3>Pasivos No Corrientes</h3>
+                <span class="bg-subseccion-total" id="bgPasivosNoCorrientes">S/ 0.00</span>
+            </div>
+            <div class="bg-items-list" id="bgListaPasivosNoCorrientes">
+                <!-- Items dinámicos -->
+            </div>
+        </div>
+    </div>
+
+    <!-- PATRIMONIO -->
+    <div class="bg-seccion">
+        <div class="bg-seccion-header bg-seccion-patrimonio">
+            <h2><i class="fas fa-crown"></i> PATRIMONIO</h2>
+            <span class="bg-seccion-total" id="bgPatrimonioTotal">S/ 0.00</span>
+        </div>
+
+        <div class="bg-subseccion">
+            <div class="bg-subseccion-header">
+                <h3>Capital y Resultados</h3>
+                <span class="bg-subseccion-total" id="bgCapitalResultados">S/ 0.00</span>
+            </div>
+            <div class="bg-items-list" id="bgListaPatrimonio">
+                <!-- Items dinámicos -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- RATIOS FINANCIEROS -->
+<div class="bg-ratios-container">
+    <h2 class="bg-ratios-titulo"><i class="fas fa-chart-pie"></i> Indicadores Financieros</h2>
+    <div class="bg-ratios-grid">
+        <div class="bg-ratio-card">
+            <div class="bg-ratio-nombre">Liquidez Corriente</div>
+            <div class="bg-ratio-valor" id="bgRatioLiquidez">0.00</div>
+            <div class="bg-ratio-referencia">Ideal: > 1.5</div>
+            <div class="bg-ratio-barra"><div class="bg-ratio-progreso" id="bgBarraLiquidez"></div></div>
+        </div>
+        <div class="bg-ratio-card">
+            <div class="bg-ratio-nombre">Endeudamiento</div>
+            <div class="bg-ratio-valor" id="bgRatioEndeudamiento">0.0%</div>
+            <div class="bg-ratio-referencia">Ideal: < 60%</div>
+            <div class="bg-ratio-barra"><div class="bg-ratio-progreso" id="bgBarraEndeudamiento"></div></div>
+        </div>
+        <div class="bg-ratio-card">
+            <div class="bg-ratio-nombre">Solvencia</div>
+            <div class="bg-ratio-valor" id="bgRatioSolvencia">0.00</div>
+            <div class="bg-ratio-referencia">Ideal: > 1.0</div>
+            <div class="bg-ratio-barra"><div class="bg-ratio-progreso" id="bgBarraSolvencia"></div></div>
+        </div>
+        <div class="bg-ratio-card">
+            <div class="bg-ratio-nombre">Capital de Trabajo</div>
+            <div class="bg-ratio-valor" id="bgRatioCapitalTrabajo">S/ 0.00</div>
+            <div class="bg-ratio-referencia">Ideal: Positivo</div>
+            <div class="bg-ratio-barra"><div class="bg-ratio-progreso" id="bgBarraCapitalTrabajo"></div></div>
+        </div>
+    </div>
+</div>
+
+<!-- ESTADO VACÍO -->
+<div class="bg-estado-vacio" id="bgEstadoVacio" style="display: none;">
+    <div class="bg-vacio-icono"><i class="fas fa-balance-scale"></i></div>
+    <h3>Sin datos para Balance General</h3>
+    <p>Registra transacciones en Flujo de Caja para generar el Balance General automáticamente.</p>
+    <button class="btn-primary" onclick="cambiarSeccion('cash-flow')">
+        <i class="fas fa-plus"></i>
+        Ir a Flujo de Caja
+    </button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SCRIPTS DEL MÓDULO -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<script src="src/vistas/balance-general/balance-general.js?v=20260223"></script>
