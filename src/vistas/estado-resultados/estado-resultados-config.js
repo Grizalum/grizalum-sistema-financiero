@@ -473,6 +473,9 @@ if (!window.EstadoResultadosConfig) {
     },
     
     obtenerRangoPeriodo(periodoId, fechaInicio = null, fechaFin = null) {
+        // Normalizar aliases
+        if (periodoId === 'anio') periodoId = 'año';
+        
         const periodo = this.periodos[periodoId];
         
         if (!periodo) {
