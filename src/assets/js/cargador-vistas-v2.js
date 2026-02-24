@@ -490,22 +490,106 @@ function registrarModulos() {
     // ───────────────────────────────────────────────────────────────
     window.grizalumModulos.registrar({
         id: 'balance-sheet',
-        nombre: 'Balance General',    
+        nombre: 'Balance General',
         ruta: 'src/vistas/balance-general/balance-general.html',
         nivel: 0,
 
         onCargar: async function() {
+            console.log('   📋 Cargando Balance General...');
+            
+            // Cargar FlujoCaja si no existe
+            if (!window.flujoCaja) {
+                console.log('   📦 Cargando dependencia FlujoCaja...');
+                try {
+                    await cargarScript('src/vistas/flujo-caja/flujo-caja-categorias.js');
+                    await cargarScript('src/vistas/flujo-caja/flujo-caja-config.js');
+                    await cargarScript('src/vistas/flujo-caja/flujo-caja.js');
+                    if (window.flujoCaja && window.flujoCaja.esperarInicializacion) {
+                        await window.flujoCaja.esperarInicializacion();
+                    }
+                    console.log('   ✅ FlujoCaja cargado');
+                } catch(e) {
+                    console.warn('   ⚠️ FlujoCaja no pudo cargarse:', e.message);
+                }
+            }
+            
             await cargarEstilos('src/vistas/balance-general/balance-general.css');
-            await cargarScript('src/vistas/balance-general/balance-general.js');
         },
 
         onMostrar: async function() {
+            console.log('   👁️ Mostrando Balance General...');
+
+            const contenedor = document.getElementById('contenedorVistas');
+
+            // Loading
+            contenedor.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: center; min-height: 400px;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; animation: spin 1s linear infinite;">📋</div>
+                        <p style="color: var(--texto-terciario); margin-top: 1rem;">Cargando Balance General...</p>
+                    </div>
+                </div>
+                <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+            `;
+
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            // Asegurar CSS cargado
+            await cargarEstilos('src/vistas/balance-general/balance-general.css');
+
             const html = await fetch('src/vistas/balance-general/balance-general.html').then(r => r.text());
-            document.getElementById('contenedorVistas').innerHTML = html;
-            
-            if (window.inicializarBalanceGeneral) {
-                window.inicializarBalanceGeneral();
+
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+            const scripts = temp.querySelectorAll('script');
+            const scriptsArray = Array.from(scripts);
+            scriptsArray.forEach(s => s.remove());
+
+            contenedor.innerHTML = temp.innerHTML;
+
+            await new Promise(resolve => {
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        setTimeout(resolve, 100);
+                    });
+                });
+            });
+
+            // Cargar scripts externos
+            for (const scriptOriginal of scriptsArray) {
+                if (scriptOriginal.src) {
+                    const script = document.createElement('script');
+                    script.src = scriptOriginal.src;
+                    script.async = false;
+                    document.body.appendChild(script);
+                    await new Promise((resolve) => {
+                        script.onload = resolve;
+                        script.onerror = resolve;
+                    });
+                }
             }
+
+            // Scripts inline
+            for (const scriptOriginal of scriptsArray) {
+                if (!scriptOriginal.src) {
+                    const script = document.createElement('script');
+                    script.textContent = scriptOriginal.textContent;
+                    document.body.appendChild(script);
+                }
+            }
+
+            // Inicializar
+            setTimeout(() => {
+                window._balanceGeneralCargado = false;
+                if (window.inicializarBalanceGeneral) {
+                    window.inicializarBalanceGeneral();
+                }
+                console.log('✅ Balance General inicializado');
+            }, 500);
+
+            setTimeout(() => {
+                contenedor.scrollTo({ top: 0, behavior: 'instant' });
+            }, 100);
         }
     });
 
