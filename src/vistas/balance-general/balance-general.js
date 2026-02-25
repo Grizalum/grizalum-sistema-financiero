@@ -260,7 +260,7 @@
             return { items, total };
         }
 
-       _obtenerTransacciones() {
+        _obtenerTransacciones() {
             // Intentar FlujoCaja primero
             if (this.flujoCaja && this.flujoCaja.obtenerTransacciones) {
                 const txs = this.flujoCaja.obtenerTransacciones();
@@ -269,7 +269,7 @@
                 }
             }
             
-            // Fallback: localStorage directo (más confiable)
+            // Fallback: localStorage directo
             const key = `grizalum_flujo_caja_${this.empresaActual}`;
             try {
                 const data = JSON.parse(localStorage.getItem(key) || '[]');
