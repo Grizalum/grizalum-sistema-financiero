@@ -1,15 +1,14 @@
+<link rel="stylesheet" href="src/vistas/balance-general/balance-general.css?v=20260225">
+
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <!-- BALANCE GENERAL - GRIZALUM Sistema Financiero                -->
-<!-- Situación financiera: Activos, Pasivos y Patrimonio          -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
 
 <!-- ENCABEZADO -->
 <div class="bg-header-section">
     <div class="bg-header-top">
         <div class="bg-header-titulo">
-            <div class="bg-header-icon">
-                <img src="src/assets/img/logo-grizalum.png" alt="GRIZALUM" class="bg-logo" onerror="this.style.display='none'">
-            </div>
+            <div class="bg-header-icon">⚖️</div>
             <div>
                 <h1 class="bg-titulo">Balance General</h1>
                 <p class="bg-subtitulo" id="bgPeriodoActual">Mes actual</p>
@@ -17,8 +16,7 @@
         </div>
         <div class="bg-header-acciones">
             <button class="bg-btn-accion" id="btnExportarBG">
-                <i class="fas fa-file-excel"></i>
-                Exportar Excel
+                <i class="fas fa-file-excel"></i> Exportar Excel
             </button>
         </div>
     </div>
@@ -72,7 +70,7 @@
     <span class="bg-status-text">Ecuación contable balanceada</span>
 </div>
 
-<!-- DETALLE DEL BALANCE -->
+<!-- DETALLE DEL BALANCE (GRID 2 columnas) -->
 <div class="bg-detalle-container">
     <!-- ACTIVOS -->
     <div class="bg-seccion">
@@ -80,27 +78,19 @@
             <h2><i class="fas fa-building"></i> ACTIVOS</h2>
             <span class="bg-seccion-total" id="bgActivosTotal">S/ 0.00</span>
         </div>
-        
-        <!-- Activos Corrientes -->
         <div class="bg-subseccion">
             <div class="bg-subseccion-header">
                 <h3>Activos Corrientes</h3>
                 <span class="bg-subseccion-total" id="bgActivosCorrientes">S/ 0.00</span>
             </div>
-            <div class="bg-items-list" id="bgListaActivosCorrientes">
-                <!-- Items dinámicos -->
-            </div>
+            <div class="bg-items-list" id="bgListaActivosCorrientes"></div>
         </div>
-
-        <!-- Activos No Corrientes -->
         <div class="bg-subseccion">
             <div class="bg-subseccion-header">
                 <h3>Activos No Corrientes</h3>
                 <span class="bg-subseccion-total" id="bgActivosNoCorrientes">S/ 0.00</span>
             </div>
-            <div class="bg-items-list" id="bgListaActivosNoCorrientes">
-                <!-- Items dinámicos -->
-            </div>
+            <div class="bg-items-list" id="bgListaActivosNoCorrientes"></div>
         </div>
     </div>
 
@@ -110,45 +100,34 @@
             <h2><i class="fas fa-file-invoice-dollar"></i> PASIVOS</h2>
             <span class="bg-seccion-total" id="bgPasivosTotal">S/ 0.00</span>
         </div>
-
-        <!-- Pasivos Corrientes -->
         <div class="bg-subseccion">
             <div class="bg-subseccion-header">
                 <h3>Pasivos Corrientes</h3>
                 <span class="bg-subseccion-total" id="bgPasivosCorrientes">S/ 0.00</span>
             </div>
-            <div class="bg-items-list" id="bgListaPasivosCorrientes">
-                <!-- Items dinámicos -->
-            </div>
+            <div class="bg-items-list" id="bgListaPasivosCorrientes"></div>
         </div>
-
-        <!-- Pasivos No Corrientes -->
         <div class="bg-subseccion">
             <div class="bg-subseccion-header">
                 <h3>Pasivos No Corrientes</h3>
                 <span class="bg-subseccion-total" id="bgPasivosNoCorrientes">S/ 0.00</span>
             </div>
-            <div class="bg-items-list" id="bgListaPasivosNoCorrientes">
-                <!-- Items dinámicos -->
-            </div>
+            <div class="bg-items-list" id="bgListaPasivosNoCorrientes"></div>
         </div>
     </div>
 
-    <!-- PATRIMONIO -->
+    <!-- PATRIMONIO (ancho completo) -->
     <div class="bg-seccion">
         <div class="bg-seccion-header bg-seccion-patrimonio">
             <h2><i class="fas fa-crown"></i> PATRIMONIO</h2>
             <span class="bg-seccion-total" id="bgPatrimonioTotal">S/ 0.00</span>
         </div>
-
         <div class="bg-subseccion">
             <div class="bg-subseccion-header">
                 <h3>Capital y Resultados</h3>
                 <span class="bg-subseccion-total" id="bgCapitalResultados">S/ 0.00</span>
             </div>
-            <div class="bg-items-list" id="bgListaPatrimonio">
-                <!-- Items dinámicos -->
-            </div>
+            <div class="bg-items-list" id="bgListaPatrimonio"></div>
         </div>
     </div>
 </div>
@@ -186,16 +165,13 @@
 
 <!-- ESTADO VACÍO -->
 <div class="bg-estado-vacio" id="bgEstadoVacio" style="display: none;">
-    <div class="bg-vacio-icono"><i class="fas fa-balance-scale"></i></div>
+    <div class="bg-vacio-icono">⚖️</div>
     <h3>Sin datos para Balance General</h3>
     <p>Registra transacciones en Flujo de Caja para generar el Balance General automáticamente.</p>
     <button class="btn-primary" onclick="cambiarSeccion('cash-flow')">
-        <i class="fas fa-plus"></i>
-        Ir a Flujo de Caja
+        <i class="fas fa-plus"></i> Ir a Flujo de Caja
     </button>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════ -->
-<!-- SCRIPTS DEL MÓDULO -->
-<!-- ═══════════════════════════════════════════════════════════════ -->
-<script src="src/vistas/balance-general/balance-general.js?v=20260300"></script>
+<!-- SCRIPTS -->
+<script src="src/vistas/balance-general/balance-general.js?v=20260225"></script>
