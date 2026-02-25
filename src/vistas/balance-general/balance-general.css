@@ -1,1 +1,550 @@
+/* ═══════════════════════════════════════════════════════════════ */
+/* BALANCE GENERAL - GRIZALUM (Tema Oscuro Profesional)           */
+/* Diseño consistente con Estado de Resultados                    */
+/* ═══════════════════════════════════════════════════════════════ */
 
+/* ── HEADER ── */
+.bg-header-section {
+    margin-bottom: 1.5rem;
+}
+
+.bg-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.bg-header-titulo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.bg-header-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.bg-titulo {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--texto-principal, #F9FAFB);
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+.bg-subtitulo {
+    font-size: 0.85rem;
+    color: var(--texto-terciario, #9CA3AF);
+    margin: 0.15rem 0 0;
+}
+
+.bg-header-acciones {
+    display: flex;
+    gap: 0.6rem;
+}
+
+.bg-btn-accion {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.04);
+    color: var(--texto-secundario, #D1D5DB);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.bg-btn-accion:hover {
+    background: rgba(102, 126, 234, 0.15);
+    border-color: rgba(102, 126, 234, 0.4);
+    color: #F9FAFB;
+}
+
+/* ── FILTROS DE PERÍODO ── */
+.bg-filtros-container {
+    margin-bottom: 1.5rem;
+}
+
+.bg-filtros-periodo {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.bg-filtro-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.03);
+    color: var(--texto-terciario, #9CA3AF);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.bg-filtro-btn:hover {
+    background: rgba(255,255,255,0.06);
+    color: var(--texto-secundario, #D1D5DB);
+}
+
+.bg-filtro-btn.activo {
+    background: rgba(102, 126, 234, 0.15);
+    border-color: rgba(102, 126, 234, 0.4);
+    color: #F9FAFB;
+    font-weight: 600;
+}
+
+.bg-filtro-btn i {
+    font-size: 0.7rem;
+}
+
+/* ── ECUACIÓN CONTABLE ── */
+.bg-ecuacion-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.bg-ecuacion-card {
+    flex: 1;
+    min-width: 170px;
+    max-width: 260px;
+    padding: 1.2rem 1rem;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.06);
+}
+
+.bg-ecuacion-activos {
+    background: rgba(255,255,255,0.04);
+    border-left: 3px solid #10B981;
+}
+
+.bg-ecuacion-pasivos {
+    background: rgba(255,255,255,0.04);
+    border-left: 3px solid #EF4444;
+}
+
+.bg-ecuacion-patrimonio {
+    background: rgba(255,255,255,0.04);
+    border-left: 3px solid #667EEA;
+}
+
+.bg-ecuacion-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--texto-terciario, #9CA3AF);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+}
+
+.bg-ecuacion-valor {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--texto-principal, #F9FAFB);
+    letter-spacing: -0.02em;
+}
+
+.bg-ecuacion-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+    color: rgba(255,255,255,0.04);
+}
+
+.bg-ecuacion-signo {
+    font-size: 1.4rem;
+    font-weight: 300;
+    color: var(--texto-terciario, #6B7280);
+}
+
+/* ── STATUS ECUACIÓN ── */
+.bg-ecuacion-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.45rem 1.2rem;
+    border-radius: 8px;
+    background: rgba(16, 185, 129, 0.06);
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    margin-bottom: 1.5rem;
+    font-size: 0.78rem;
+    color: #10B981;
+}
+
+.bg-ecuacion-status.desbalanceado {
+    background: rgba(239, 68, 68, 0.06);
+    border-color: rgba(239, 68, 68, 0.15);
+    color: #EF4444;
+}
+
+/* ── DETALLE: CONTENEDOR GRID ── */
+.bg-detalle-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.bg-detalle-container > .bg-seccion:last-child {
+    grid-column: 1 / -1;
+}
+
+/* ── SECCIONES ── */
+.bg-seccion {
+    background: rgba(255,255,255,0.02);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.06);
+}
+
+.bg-seccion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 1.2rem;
+}
+
+.bg-seccion-header h2 {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.bg-seccion-header h2 i {
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+.bg-seccion-total {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #FFFFFF;
+}
+
+.bg-seccion-activos {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.1));
+    border-bottom: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+.bg-seccion-pasivos {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(220, 38, 38, 0.1));
+    border-bottom: 1px solid rgba(239, 68, 68, 0.15);
+}
+
+.bg-seccion-patrimonio {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.1));
+    border-bottom: 1px solid rgba(102, 126, 234, 0.15);
+}
+
+/* ── SUBSECCIONES ── */
+.bg-subseccion {
+    padding: 0 1.2rem;
+    margin-bottom: 0.6rem;
+}
+
+.bg-subseccion:first-of-type {
+    padding-top: 0.8rem;
+}
+
+.bg-subseccion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    margin-bottom: 0.3rem;
+}
+
+.bg-subseccion-header h3 {
+    margin: 0;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--texto-secundario, #D1D5DB);
+}
+
+.bg-subseccion-total {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--texto-principal, #F9FAFB);
+}
+
+/* ── ITEMS ── */
+.bg-items-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.bg-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    transition: background 0.15s;
+}
+
+.bg-item:hover {
+    background: rgba(255,255,255,0.03);
+}
+
+.bg-item[data-editable="true"] {
+    cursor: pointer;
+}
+
+.bg-item[data-editable="true"]:hover {
+    background: rgba(102, 126, 234, 0.08);
+}
+
+.bg-item[data-editable="true"]::after {
+    content: '✏️';
+    font-size: 0.6rem;
+    opacity: 0;
+    margin-left: 0.3rem;
+    transition: opacity 0.15s;
+}
+
+.bg-item[data-editable="true"]:hover::after {
+    opacity: 0.5;
+}
+
+.bg-item-nombre {
+    font-size: 0.8rem;
+    color: var(--texto-terciario, #9CA3AF);
+}
+
+.bg-item-monto {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--texto-secundario, #D1D5DB);
+    font-variant-numeric: tabular-nums;
+}
+
+.bg-item-monto.positivo { color: #10B981; }
+.bg-item-monto.negativo { color: #EF4444; }
+
+.bg-item-vacio {
+    padding: 0.8rem 0.6rem;
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--texto-terciario, #6B7280);
+    font-style: italic;
+}
+
+/* ── RATIOS FINANCIEROS ── */
+.bg-ratios-container {
+    margin-bottom: 2rem;
+}
+
+.bg-ratios-titulo {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--texto-secundario, #D1D5DB);
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.bg-ratios-titulo i {
+    color: var(--texto-terciario, #9CA3AF);
+    font-size: 0.8rem;
+}
+
+.bg-ratios-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.8rem;
+}
+
+.bg-ratio-card {
+    background: rgba(255,255,255,0.02);
+    border-radius: 10px;
+    padding: 1rem;
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: border-color 0.2s;
+}
+
+.bg-ratio-card:hover {
+    border-color: rgba(255,255,255,0.1);
+}
+
+.bg-ratio-nombre {
+    font-size: 0.68rem;
+    color: var(--texto-terciario, #9CA3AF);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.4rem;
+}
+
+.bg-ratio-valor {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--texto-principal, #F9FAFB);
+    margin-bottom: 0.15rem;
+    letter-spacing: -0.02em;
+}
+
+.bg-ratio-referencia {
+    font-size: 0.68rem;
+    color: var(--texto-terciario, #6B7280);
+    margin-bottom: 0.5rem;
+}
+
+.bg-ratio-barra {
+    height: 3px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.bg-ratio-progreso {
+    height: 100%;
+    border-radius: 2px;
+    background: #10B981;
+    transition: width 0.6s ease;
+    width: 0%;
+}
+
+.bg-ratio-progreso.alerta { background: #F59E0B; }
+.bg-ratio-progreso.peligro { background: #EF4444; }
+
+/* ── ESTADO VACÍO ── */
+.bg-estado-vacio {
+    text-align: center;
+    padding: 4rem 1.5rem;
+}
+
+.bg-vacio-icono {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    opacity: 0.3;
+}
+
+.bg-estado-vacio h3 {
+    color: var(--texto-principal, #F9FAFB);
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.bg-estado-vacio p {
+    max-width: 380px;
+    margin: 0 auto 1.5rem;
+    font-size: 0.85rem;
+    color: var(--texto-terciario, #9CA3AF);
+    line-height: 1.5;
+}
+
+.bg-estado-vacio .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    border: none;
+    background: rgba(102, 126, 234, 0.15);
+    color: #667EEA;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.bg-estado-vacio .btn-primary:hover {
+    background: rgba(102, 126, 234, 0.25);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+    .bg-detalle-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .bg-detalle-container > .bg-seccion:last-child {
+        grid-column: 1;
+    }
+    
+    .bg-ratios-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .bg-ecuacion-container {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .bg-ecuacion-card {
+        max-width: 100%;
+        min-width: auto;
+    }
+    
+    .bg-ecuacion-signo {
+        font-size: 1.1rem;
+    }
+    
+    .bg-header-top {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .bg-titulo {
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .bg-filtros-periodo {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 0.3rem;
+    }
+    
+    .bg-filtro-btn {
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+    
+    .bg-ratios-grid {
+        grid-template-columns: 1fr;
+    }
+}
