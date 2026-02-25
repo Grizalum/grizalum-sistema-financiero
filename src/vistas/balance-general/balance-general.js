@@ -260,19 +260,36 @@
             return { items, total };
         }
 
-        _obtenerTransacciones() {
+       _obtenerTransacciones() {
+            // Intentar FlujoCaja primero
             if (this.flujoCaja && this.flujoCaja.obtenerTransacciones) {
-                return this.flujoCaja.obtenerTransacciones();
+                const txs = this.flujoCaja.obtenerTransacciones();
+                if (txs && txs.length > 0) {
+                    return txs;
+                }
             }
             
-            // Fallback localStorage
+            // Fallback: localStorage directo (más confiable)
             const key = `grizalum_flujo_caja_${this.empresaActual}`;
             try {
                 const data = JSON.parse(localStorage.getItem(key) || '[]');
-                return Array.isArray(data) ? data : [];
-            } catch(e) {
-                return [];
-            }
+                if (Array.isArray(data) && data.length > 0) {
+                    console.log(`📋 [BalanceGeneral] ${data.length} transacciones desde localStorage`);
+                    return data;
+                }
+            } catch(e) {}
+
+            // Fallback 2: key alternativa
+            const key2 = `flujoCaja_${this.empresaActual}`;
+            try {
+                const data2 = JSON.parse(localStorage.getItem(key2) || '{}');
+                if (data2.transacciones && Array.isArray(data2.transacciones)) {
+                    console.log(`📋 [BalanceGeneral] ${data2.transacciones.length} transacciones desde localStorage (alt)`);
+                    return data2.transacciones;
+                }
+            } catch(e) {}
+
+            return [];
         }
 
         _calcularRango(periodo) {
