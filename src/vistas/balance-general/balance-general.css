@@ -1,11 +1,9 @@
 /* ═══════════════════════════════════════════════════════════════ */
-/* BALANCE GENERAL - Solo overrides sobre clases del sistema      */
-/* Reutiliza: .metric-card, .chart-card, .period-btn, .metrics-grid */
+/* BALANCE GENERAL - Overrides mínimos                            */
+/* Hereda de: panel-control.css (metrica-card, grafico-card, etc) */
 /* ═══════════════════════════════════════════════════════════════ */
 
-/* ── HEADER (igual al pattern del sistema) ── */
-.bg-header-section { margin-bottom: 20px; }
-
+/* ── Header ── */
 .bg-header-top {
     display: flex;
     justify-content: space-between;
@@ -17,178 +15,110 @@
 .bg-header-titulo {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
 }
 
-.bg-header-icon {
+.bg-icono-header {
     width: 48px;
     height: 48px;
-    border-radius: 12px;
-    background: var(--fondo-tarjeta, rgba(255, 255, 255, 0.05));
-    border: 1px solid var(--borde-tarjeta, rgba(255, 255, 255, 0.1));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
+    font-size: 22px;
 }
 
 .bg-titulo {
-    font-size: 1.5rem;
+    font-size: 24px;
     font-weight: 700;
+    color: #ffffff;
     margin: 0;
 }
 
 .bg-subtitulo {
-    font-size: 0.85rem;
-    color: #64748b;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
     margin: 2px 0 0;
 }
 
-.bg-btn-accion {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 16px;
-    border-radius: 10px;
-    border: 1px solid var(--borde-tarjeta, rgba(255, 255, 255, 0.1));
-    background: var(--fondo-tarjeta, rgba(255, 255, 255, 0.05));
-    color: inherit;
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.bg-btn-accion:hover {
-    border-color: var(--color-primario, #667EEA);
-    transform: translateY(-1px);
-}
-
-/* ── FILTROS: reutiliza period-btn ── */
-.bg-filtros-container { margin-bottom: 20px; }
-
+/* ── Filtros: usa grafico-controles inline ── */
 .bg-filtros-periodo {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
+    display: inline-flex;
+    margin-bottom: 0;
 }
 
-/* ── ECUACIÓN: 3 columnas usando metrics-grid ── */
+/* Override activo para filtros de balance */
+.bg-filtro-btn.activo {
+    background: var(--color-primario, #667EEA);
+    color: #000;
+    border-color: var(--color-primario, #667EEA);
+    box-shadow: 0 0 16px var(--color-primario, rgba(102, 126, 234, 0.4));
+}
+
+/* ── Ecuación: forzar 3 columnas ── */
 .bg-ecuacion-grid {
     grid-template-columns: repeat(3, 1fr) !important;
-    margin-bottom: 16px !important;
 }
 
-/* ── STATUS ECUACIÓN ── */
-.bg-ecuacion-status {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 8px 20px;
-    border-radius: 10px;
-    background: rgba(16, 185, 129, 0.08);
-    border: 1px solid rgba(16, 185, 129, 0.2);
-    margin-bottom: 24px;
-    font-size: 0.82rem;
-    color: #10B981;
-}
-
-.bg-ecuacion-status.desbalanceado {
-    background: rgba(239, 68, 68, 0.08);
-    border-color: rgba(239, 68, 68, 0.2);
-    color: #EF4444;
-}
-
-/* ── DETALLE: grid 2 columnas con chart-card ── */
-.bg-detalle-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 24px;
-}
-
-.bg-detalle-container .chart-card {
-    height: auto !important;
+/* ── Detalle: grafico-card sin altura fija ── */
+.bg-seccion-card {
     min-height: auto !important;
-    max-height: none !important;
+    height: auto !important;
 }
 
-.bg-seccion-full {
-    grid-column: 1 / -1;
+.bg-detalle-grid {
+    grid-template-columns: repeat(2, 1fr);
 }
 
 .bg-seccion-body {
-    padding: 0 20px 16px;
-}
-
-/* Headers de sección con gradientes sutiles */
-.bg-seccion-header {
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    margin-bottom: 0 !important;
-    padding-bottom: 12px !important;
-}
-
-.bg-seccion-header h3 {
-    font-size: 0.85rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: 0;
-}
-
-.bg-seccion-header h3 i {
-    font-size: 0.8rem;
-    opacity: 0.7;
+    padding: 0 4px;
 }
 
 .bg-seccion-total {
-    font-size: 1.05rem;
+    font-size: 18px;
     font-weight: 800;
+    color: #ffffff;
 }
 
-/* Colores por sección */
-.bg-seccion-activos { border-bottom: 2px solid rgba(16, 185, 129, 0.3) !important; }
-.bg-seccion-activos h3 { color: #10B981; }
+/* Colores por sección en el header */
+.bg-seccion-header-activos {
+    border-bottom-color: rgba(16, 185, 129, 0.2) !important;
+}
 
-.bg-seccion-pasivos { border-bottom: 2px solid rgba(239, 68, 68, 0.3) !important; }
-.bg-seccion-pasivos h3 { color: #EF4444; }
+.bg-seccion-header-pasivos {
+    border-bottom-color: rgba(239, 68, 68, 0.2) !important;
+}
 
-.bg-seccion-patrimonio { border-bottom: 2px solid rgba(102, 126, 234, 0.3) !important; }
-.bg-seccion-patrimonio h3 { color: #667EEA; }
+.bg-seccion-header-patrimonio {
+    border-bottom-color: rgba(139, 92, 246, 0.2) !important;
+}
 
-/* ── SUBSECCIONES ── */
+/* ── Subsecciones ── */
 .bg-subseccion {
-    margin-bottom: 8px;
+    margin-bottom: 12px;
 }
 
 .bg-subseccion-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 6px 0;
+    padding: 8px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     margin-bottom: 4px;
 }
 
 .bg-subseccion-header h4 {
     margin: 0;
-    font-size: 0.8rem;
+    font-size: 13px;
     font-weight: 600;
-    color: #94a3b8;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
 }
 
 .bg-subseccion-total {
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
 }
 
-/* ── ITEMS ── */
+/* ── Items ── */
 .bg-items-list {
     display: flex;
     flex-direction: column;
@@ -198,9 +128,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 5px 8px;
-    border-radius: 6px;
-    transition: all 0.15s ease;
+    padding: 8px 12px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
 }
 
 .bg-item:hover {
@@ -212,18 +142,19 @@
 }
 
 .bg-item[data-editable="true"]:hover {
-    background: rgba(102, 126, 234, 0.08);
-    padding-left: 12px;
+    background: rgba(139, 92, 246, 0.08);
+    padding-left: 16px;
 }
 
 .bg-item-nombre {
-    font-size: 0.8rem;
-    color: #94a3b8;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .bg-item-monto {
-    font-size: 0.82rem;
+    font-size: 14px;
     font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
     font-variant-numeric: tabular-nums;
 }
 
@@ -231,42 +162,20 @@
 .bg-item-monto.negativo { color: #EF4444; }
 
 .bg-item-vacio {
-    padding: 12px 8px;
+    padding: 16px 12px;
     text-align: center;
-    font-size: 0.8rem;
-    color: #64748b;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.4);
     font-style: italic;
 }
 
-/* ── RATIOS: reutiliza metric-card en grid 4 ── */
-.bg-ratios-section { margin-bottom: 32px; }
-
-.bg-ratios-section > .chart-header {
-    border-bottom: none !important;
-    padding-bottom: 8px !important;
-}
-
-.bg-ratios-section > .chart-header h3 {
-    font-size: 0.85rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: #94a3b8;
-}
-
-.bg-ratios-grid .metric-card {
-    height: auto !important;
-    min-height: auto !important;
-    max-height: none !important;
-    padding: 16px !important;
-}
-
+/* ── Barras de progreso en ratios ── */
 .bg-ratio-barra {
-    height: 3px;
+    height: 4px;
     background: rgba(255, 255, 255, 0.06);
     border-radius: 2px;
     overflow: hidden;
-    margin-top: 8px;
+    margin-top: 12px;
 }
 
 .bg-ratio-progreso {
@@ -280,7 +189,7 @@
 .bg-ratio-progreso.alerta { background: #F59E0B; }
 .bg-ratio-progreso.peligro { background: #EF4444; }
 
-/* ── ESTADO VACÍO ── */
+/* ── Estado vacío ── */
 .bg-estado-vacio {
     text-align: center;
     padding: 60px 24px;
@@ -293,20 +202,21 @@
 }
 
 .bg-estado-vacio h3 {
+    color: #ffffff;
     margin-bottom: 8px;
-    font-size: 1.1rem;
+    font-size: 18px;
     font-weight: 600;
 }
 
 .bg-estado-vacio p {
-    max-width: 380px;
-    margin: 0 auto 20px;
-    font-size: 0.85rem;
-    color: #64748b;
-    line-height: 1.5;
+    max-width: 400px;
+    margin: 0 auto 24px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.6;
 }
 
-/* ── RESPONSIVE ── */
+/* ── Responsive ── */
 @media (max-width: 1200px) {
     .bg-ecuacion-grid {
         grid-template-columns: repeat(3, 1fr) !important;
@@ -314,38 +224,22 @@
 }
 
 @media (max-width: 900px) {
-    .bg-detalle-container {
+    .bg-detalle-grid {
         grid-template-columns: 1fr;
     }
-
-    .bg-seccion-full {
-        grid-column: 1;
-    }
     
-    .bg-ratios-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
+    .bg-ecuacion-grid {
+        grid-template-columns: 1fr !important;
     }
 }
 
 @media (max-width: 768px) {
-    .bg-ecuacion-grid {
-        grid-template-columns: 1fr !important;
-    }
-    
     .bg-header-top {
         flex-direction: column;
         align-items: flex-start;
     }
-}
-
-@media (max-width: 480px) {
-    .bg-filtros-periodo {
-        overflow-x: auto;
-        flex-wrap: nowrap;
-        -webkit-overflow-scrolling: touch;
-    }
     
-    .bg-ratios-grid {
-        grid-template-columns: 1fr !important;
+    .bg-filtros-periodo {
+        flex-wrap: wrap;
     }
 }
