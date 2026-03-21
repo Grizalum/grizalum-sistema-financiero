@@ -1,10 +1,10 @@
 /* ═══════════════════════════════════════════════════════════════ */
-/* BALANCE GENERAL - Solo overrides de layout                     */
-/* .metric-card, .chart-card, .period-btn → vienen del sistema   */
+/* BALANCE GENERAL v4 - Pulido profesional                        */
+/* .metric-card, .chart-card, .period-btn → del sistema base      */
 /* ═══════════════════════════════════════════════════════════════ */
 
 /* ── Header ── */
-.bg-header { margin-bottom: 24px; }
+.bg-header { margin-bottom: 20px; }
 
 .bg-header-row {
     display: flex;
@@ -21,49 +21,82 @@
 }
 
 .bg-icon-main {
-    width: 48px !important;
-    height: 48px !important;
-    font-size: 20px !important;
+    width: 52px !important;
+    height: 52px !important;
+    font-size: 22px !important;
+    border-radius: 14px !important;
 }
 
 .bg-page-title {
-    font-size: 24px;
+    font-size: 1.6rem;
     font-weight: 700;
     color: #ffffff;
     margin: 0;
+    letter-spacing: -0.02em;
 }
 
 .bg-page-subtitle {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.5);
-    margin: 2px 0 0;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.45);
+    margin: 3px 0 0;
 }
 
-/* ── Filtros período ── */
+/* ── Filtros período: usa er-filtro-btn style ── */
 .bg-period-bar {
     display: flex;
     gap: 8px;
     margin-bottom: 24px;
     flex-wrap: wrap;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 8px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.bg-period-bar .bg-filtro-btn {
+    padding: 8px 18px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.bg-period-bar .bg-filtro-btn:hover {
+    color: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.bg-period-bar .bg-filtro-btn.activo {
+    background: var(--color-primario, #667EEA);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* ── Ecuación: 3 columnas ── */
 .bg-metrics-3 {
     grid-template-columns: repeat(3, 1fr) !important;
+    gap: 20px !important;
+    margin-bottom: 24px !important;
 }
 
-/* ── Detalle: grid 2 columnas ── */
+/* ── Detalle: 2 columnas + patrimonio full ── */
 .bg-detail-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 20px !important;
     margin-top: 0 !important;
+    margin-bottom: 24px;
 }
 
 .bg-detail-grid .chart-card {
     height: auto !important;
     min-height: auto !important;
     max-height: none !important;
+    padding: 24px !important;
 }
 
 .bg-detail-grid .chart-card.main-chart {
@@ -73,73 +106,94 @@
     max-height: none !important;
 }
 
-/* ── Headers de sección ── */
+.bg-detail-grid .chart-header {
+    margin-bottom: 16px !important;
+    padding-bottom: 14px !important;
+}
+
+/* ── Section titles ── */
 .bg-section-title {
-    font-size: 14px;
+    font-size: 0.85rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     margin: 0;
     color: #ffffff;
 }
 
-.bg-section-title i { font-size: 14px; }
+.bg-section-title i { 
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
 .bg-color-profit i { color: var(--color-utilidad, #10B981); }
+.bg-color-profit { color: var(--color-utilidad, #10B981); }
 .bg-color-expenses i { color: var(--color-gastos, #EF4444); }
+.bg-color-expenses { color: var(--color-gastos, #EF4444); }
 .bg-color-growth i { color: var(--color-crecimiento, #8B5CF6); }
+.bg-color-growth { color: var(--color-crecimiento, #8B5CF6); }
 
 .bg-section-total {
-    font-size: 18px;
+    font-size: 1.1rem;
     font-weight: 800;
     color: #ffffff;
+    font-variant-numeric: tabular-nums;
 }
 
 .bg-section-body {
-    padding: 8px 0;
+    padding: 4px 0;
 }
 
 /* ── Subsecciones ── */
-.bg-sub { margin-bottom: 16px; }
+.bg-sub { 
+    margin-bottom: 20px;
+}
+
+.bg-sub:last-child {
+    margin-bottom: 0;
+}
 
 .bg-sub-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 0;
+    padding: 10px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    margin-bottom: 4px;
+    margin-bottom: 6px;
 }
 
 .bg-sub-label {
-    font-size: 12px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.4);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
 }
 
 .bg-sub-total {
-    font-size: 14px;
+    font-size: 0.85rem;
     font-weight: 700;
-    color: #ffffff;
+    color: rgba(255, 255, 255, 0.9);
+    font-variant-numeric: tabular-nums;
 }
 
 /* ── Items ── */
 .bg-items-list {
     display: flex;
     flex-direction: column;
+    gap: 2px;
 }
 
 .bg-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 12px;
+    padding: 10px 14px;
     border-radius: 10px;
-    transition: all 0.2s ease;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .bg-item:hover {
@@ -151,17 +205,19 @@
 }
 
 .bg-item[data-editable="true"]:hover {
-    background: rgba(139, 92, 246, 0.1);
-    padding-left: 18px;
+    background: rgba(139, 92, 246, 0.08);
+    padding-left: 20px;
+    border-left: 3px solid rgba(139, 92, 246, 0.4);
 }
 
 .bg-item-nombre {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.55);
+    font-weight: 400;
 }
 
 .bg-item-monto {
-    font-size: 14px;
+    font-size: 0.88rem;
     font-weight: 600;
     color: rgba(255, 255, 255, 0.85);
     font-variant-numeric: tabular-nums;
@@ -171,32 +227,43 @@
 .bg-item-monto.negativo { color: var(--color-gastos, #EF4444); }
 
 .bg-item-vacio {
-    padding: 20px 12px;
+    padding: 24px 14px;
     text-align: center;
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.35);
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.3);
     font-style: italic;
 }
 
-/* ── Barras de progreso ── */
+/* ── Barras de progreso (ratios) ── */
 .bg-bar {
     height: 4px;
     background: rgba(255, 255, 255, 0.06);
-    border-radius: 2px;
+    border-radius: 3px;
     overflow: hidden;
-    margin-top: 12px;
+    margin-top: 14px;
 }
 
 .bg-bar-fill {
     height: 100%;
-    border-radius: 2px;
+    border-radius: 3px;
     background: var(--color-utilidad, #10B981);
-    transition: width 0.6s ease;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     width: 0%;
 }
 
-.bg-bar-fill.alerta { background: var(--color-gastos, #F59E0B); }
+.bg-bar-fill.alerta { background: #F59E0B; }
 .bg-bar-fill.peligro { background: #EF4444; }
+
+/* ── Ratios section ── */
+.bg-ratios-section {
+    margin-top: 4px;
+}
+
+.bg-ratios-section > .bg-section-title {
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+}
 
 /* ── Estado vacío ── */
 .bg-empty {
@@ -206,27 +273,38 @@
 
 .bg-empty-icon {
     font-size: 3.5rem;
-    margin-bottom: 16px;
-    opacity: 0.25;
+    margin-bottom: 20px;
+    opacity: 0.2;
 }
 
 .bg-empty h3 {
     color: #ffffff;
-    font-size: 18px;
+    font-size: 1.15rem;
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
 .bg-empty p {
-    max-width: 400px;
-    margin: 0 auto 24px;
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.45);
-    line-height: 1.6;
+    max-width: 420px;
+    margin: 0 auto 28px;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.4);
+    line-height: 1.7;
 }
 
-/* ── Ratios section ── */
-.bg-ratios-section { margin-top: 8px; }
+/* ── Animaciones de entrada ── */
+.bg-detail-grid .chart-card {
+    animation: bgFadeUp 0.5s ease-out backwards;
+}
+
+.bg-detail-grid .chart-card:nth-child(1) { animation-delay: 0.1s; }
+.bg-detail-grid .chart-card:nth-child(2) { animation-delay: 0.2s; }
+.bg-detail-grid .chart-card:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes bgFadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
 /* ── Responsive ── */
 @media (max-width: 1200px) {
@@ -242,4 +320,5 @@
 @media (max-width: 768px) {
     .bg-header-row { flex-direction: column; align-items: flex-start; }
     .bg-period-bar { flex-wrap: wrap; }
+    .bg-page-title { font-size: 1.3rem; }
 }
