@@ -20,7 +20,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 - **🎨 Tema Premium Peruano** - Paleta dorada y colores corporativos
 - **🔔 Sistema de Notificaciones** - Alertas inteligentes en tiempo real
 - **⚡ Micro-interacciones** - Animaciones y efectos premium
-- **🌐 PWA Support** - Instalable como aplicación nativa
+- **🌐 PWA Support** - Instalable como aplicación nativa 
 - **♿ Accesibilidad Completa** - Compatible con lectores de pantalla
 
 #### 📊 **Módulos Implementados**
