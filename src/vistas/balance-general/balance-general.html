@@ -281,3 +281,12 @@
 <script src="src/vistas/balance-general/balance-general-graficos.js?v=20260417"></script>
 <script src="src/vistas/balance-general/balance-general-exportador.js?v=20260417"></script>
 <script src="src/vistas/balance-general/balance-general.js?v=20260417"></script>
+<script>
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            if (window.inicializarBalanceGeneral) {
+                window.inicializarBalanceGeneral();
+            }
+        }, 300);
+    });
+</script>
