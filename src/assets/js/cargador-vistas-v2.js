@@ -514,6 +514,13 @@ function registrarModulos() {
             }
             
             await cargarEstilos('src/vistas/balance-general/balance-general.css');
+            await cargarScript('src/vistas/balance-general/balance-general-config.js?v=20260417');
+            await cargarScript('src/vistas/balance-general/balance-general-calculos.js?v=20260417');
+            await cargarScript('src/vistas/balance-general/balance-general-ui.js?v=20260417');
+            await cargarScript('src/vistas/balance-general/balance-general-graficos.js?v=20260417');
+            await cargarScript('src/vistas/balance-general/balance-general-exportador.js?v=20260417');
+            await cargarScript('src/vistas/balance-general/balance-general.js?v=20260417');
+            console.log('   ✅ Módulos Balance General cargados');
         },
 
         onMostrar: async function() {
