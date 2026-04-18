@@ -587,13 +587,27 @@ function registrarModulos() {
                 }
             }
 
-            // Inicializar
-            setTimeout(() => {
-                window._balanceGeneralCargado = false;
-                if (window.inicializarBalanceGeneral) {
-                    window.inicializarBalanceGeneral();
+           // Inicializar — esperar que los módulos estén listos
+            let intentosBG = 0;
+            const esperarModulosBG = setInterval(() => {
+                intentosBG++;
+                const listos = window.BalanceGeneralConfig
+                    && window.BalanceGeneralCalculos
+                    && window.BalanceGeneralUI
+                    && window.BalanceGeneralGraficos
+                    && window.BalanceGeneralExportador;
+
+                if (listos) {
+                    clearInterval(esperarModulosBG);
+                    window._balanceGeneralCargado = false;
+                    if (window.inicializarBalanceGeneral) {
+                        window.inicializarBalanceGeneral();
+                    }
+                    console.log('✅ Balance General inicializado (intento ' + intentosBG + ')');
+                } else if (intentosBG >= 20) {
+                    clearInterval(esperarModulosBG);
+                    console.error('❌ Balance General: módulos no cargaron después de 10 intentos');
                 }
-                console.log('✅ Balance General inicializado');
             }, 500);
 
             setTimeout(() => {
