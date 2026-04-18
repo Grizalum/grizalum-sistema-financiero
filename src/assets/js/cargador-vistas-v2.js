@@ -555,20 +555,29 @@ function registrarModulos() {
                 });
             });
 
-            // Cargar scripts externos
+ // Cargar scripts externos — verificar duplicados
             for (const scriptOriginal of scriptsArray) {
                 if (scriptOriginal.src) {
+                    const srcBase = scriptOriginal.src.split('?')[0];
+                    const yaExiste = Array.from(document.querySelectorAll('script[src]'))
+                        .some(s => s.src.split('?')[0] === srcBase);
+                    
+                    if (yaExiste) {
+                        console.log(`⏭️ Ya cargado: ${srcBase.split('/').pop()}`);
+                        continue;
+                    }
+                    
                     const script = document.createElement('script');
                     script.src = scriptOriginal.src;
                     script.async = false;
                     document.body.appendChild(script);
+                    
                     await new Promise((resolve) => {
                         script.onload = resolve;
                         script.onerror = resolve;
                     });
                 }
             }
-
             // Scripts inline
             for (const scriptOriginal of scriptsArray) {
                 if (!scriptOriginal.src) {
