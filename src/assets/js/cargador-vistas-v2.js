@@ -623,34 +623,82 @@ function registrarModulos() {
         }
     });
 
-    // ───────────────────────────────────────────────────────────────
-    // CUENTAS BANCARIAS
-    // ───────────────────────────────────────────────────────────────
-    window.grizalumModulos.registrar({
-        id: 'cuentas-bancarias',
-        nombre: 'Cuentas Bancarias',
-        ruta: 'src/vistas/cuentas-bancarias/cuentas-bancarias.html',
-        nivel: 0,
+ // ───────────────────────────────────────────────────────────────
+        // CUENTAS BANCARIAS
+        // ───────────────────────────────────────────────────────────────
+        window.grizalumModulos.registrar({
+            id: 'cuentas-bancarias',
+            nombre: 'Cuentas Bancarias',
+            ruta: 'src/vistas/Cuentas-Bancarias/cuentas-bancarias.html',
+            nivel: 0,
 
-        dependencias: [
-            'src/assets/js/gestor-cuentas-bancarias.js',
-            'src/assets/js/ui-cuentas-bancarias.js'
-        ],
+            onCargar: async function() {
+                console.log('   🏦 Cargando Cuentas Bancarias...');
 
-        onCargar: async function() {
-            await cargarEstilos('src/vistas/cuentas-bancarias/cuentas-bancarias.css');
-        },
+                await cargarEstilos('src/vistas/Cuentas-Bancarias/cuentas-bancarias.css');
+                await cargarScript('src/assets/js/gestor-cuentas-bancarias.js');
+                await cargarScript('src/assets/js/ui-cuentas-bancarias.js');
+                await cargarScript('src/vistas/Cuentas-Bancarias/cuentas-bancarias.js?v=20260504');
 
-        onMostrar: async function() {
-            const html = await fetch('src/vistas/cuentas-bancarias/cuentas-bancarias.html').then(r => r.text());
-            document.getElementById('contenedorVistas').innerHTML = html;
-            
-            setTimeout(() => {
-                if (window.mostrarSeccionCuentasBancarias) {
-                    window.mostrarSeccionCuentasBancarias();
-                }
-            }, 100);
-        }
+                console.log('   ✅ Módulos Cuentas Bancarias cargados');
+            },
+
+            onMostrar: async function() {
+                console.log('   👁️ Mostrando Cuentas Bancarias...');
+
+                const contenedor = document.getElementById('contenedorVistas');
+
+                contenedor.innerHTML = `
+                    <div style="display:flex;align-items:center;justify-content:center;min-height:400px;">
+                        <div style="text-align:center;">
+                            <div style="font-size:3rem;animation:spin 1s linear infinite;">🏦</div>
+                            <p style="color:var(--texto-terciario);margin-top:1rem;">Cargando Cuentas Bancarias...</p>
+                        </div>
+                    </div>
+                    <style>@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}</style>
+                `;
+
+                await new Promise(resolve => setTimeout(resolve, 100));
+                await cargarEstilos('src/vistas/Cuentas-Bancarias/cuentas-bancarias.css');
+
+                const html = await fetch('src/vistas/Cuentas-Bancarias/cuentas-bancarias.html').then(r => r.text());
+
+                const temp = document.createElement('div');
+                temp.innerHTML = html;
+                const scripts = temp.querySelectorAll('script');
+                const scriptsArray = Array.from(scripts);
+                scriptsArray.forEach(s => s.remove());
+
+                contenedor.innerHTML = temp.innerHTML;
+
+                await new Promise(resolve => {
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            setTimeout(resolve, 100);
+                        });
+                    });
+                });
+
+                // Inicializar
+                let intentosCB = 0;
+                const esperarCB = setInterval(() => {
+                    intentosCB++;
+                    if (window.inicializarCuentasBancarias) {
+                        clearInterval(esperarCB);
+                        window._cuentasBancariasCargado = false;
+                        window.inicializarCuentasBancarias();
+                        console.log('✅ Cuentas Bancarias inicializado');
+                    } else if (intentosCB >= 20) {
+                        clearInterval(esperarCB);
+                        console.error('❌ Cuentas Bancarias: no se pudo inicializar');
+                    }
+                }, 300);
+
+                setTimeout(() => {
+                    contenedor.scrollTo({ top: 0, behavior: 'instant' });
+                }, 100);
+            }
+        });
     });
 
     // ───────────────────────────────────────────────────────────────
