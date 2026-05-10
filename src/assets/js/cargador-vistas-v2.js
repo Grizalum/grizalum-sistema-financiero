@@ -696,29 +696,76 @@ function registrarModulos() {
             }
         });
     // ───────────────────────────────────────────────────────────────
-    // INVENTARIO
-    // ───────────────────────────────────────────────────────────────
-    window.grizalumModulos.registrar({
-        id: 'inventory',
-        nombre: 'Inventario',
-        ruta: 'src/vistas/inventario/inventario.html',
-        nivel: 50,
+        // INVENTARIO
+        // ───────────────────────────────────────────────────────────────
+        window.grizalumModulos.registrar({
+            id: 'inventory',
+            nombre: 'Inventario',
+            ruta: 'src/vistas/inventario/inventario.html',
+            nivel: 0,
 
-        onCargar: async function() {
-            await cargarEstilos('src/vistas/inventario/inventario.css');
-            await cargarScript('src/vistas/inventario/inventario.js');
-        },
+            onCargar: async function() {
+                console.log('   📦 Cargando Inventario...');
+                await cargarEstilos('src/vistas/inventario/inventario.css?v=20260510');
+                await cargarScript('src/vistas/inventario/inventario.js?v=20260510');
+                console.log('   ✅ Inventario cargado');
+            },
 
-        onMostrar: async function() {
-            const html = await fetch('src/vistas/inventario/inventario.html').then(r => r.text());
-            document.getElementById('contenedorVistas').innerHTML = html;
-            
-            if (window.inicializarInventario) {
-                window.inicializarInventario();
+            onMostrar: async function() {
+                console.log('   👁️ Mostrando Inventario...');
+
+                const contenedor = document.getElementById('contenedorVistas');
+
+                contenedor.innerHTML = `
+                    <div style="display:flex;align-items:center;justify-content:center;min-height:400px;">
+                        <div style="text-align:center;">
+                            <div style="font-size:3rem;animation:spin 1s linear infinite;">📦</div>
+                            <p style="color:var(--texto-terciario);margin-top:1rem;">Cargando Inventario...</p>
+                        </div>
+                    </div>
+                    <style>@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}</style>
+                `;
+
+                await new Promise(resolve => setTimeout(resolve, 100));
+                await cargarEstilos('src/vistas/inventario/inventario.css?v=20260510');
+
+                const html = await fetch('src/vistas/inventario/inventario.html').then(r => r.text());
+
+                const temp = document.createElement('div');
+                temp.innerHTML = html;
+                const scripts = temp.querySelectorAll('script');
+                const scriptsArray = Array.from(scripts);
+                scriptsArray.forEach(s => s.remove());
+
+                contenedor.innerHTML = temp.innerHTML;
+
+                await new Promise(resolve => {
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            setTimeout(resolve, 100);
+                        });
+                    });
+                });
+
+                let intentosInv = 0;
+                const esperarInv = setInterval(() => {
+                    intentosInv++;
+                    if (window.inicializarInventario) {
+                        clearInterval(esperarInv);
+                        window._inventarioCargado = false;
+                        window.inicializarInventario();
+                        console.log('✅ Inventario inicializado');
+                    } else if (intentosInv >= 20) {
+                        clearInterval(esperarInv);
+                        console.error('❌ Inventario: no se pudo inicializar');
+                    }
+                }, 300);
+
+                setTimeout(() => {
+                    contenedor.scrollTo({ top: 0, behavior: 'instant' });
+                }, 100);
             }
-        }
-    });
-
+        });
     // ───────────────────────────────────────────────────────────────
     // VENTAS
     // ───────────────────────────────────────────────────────────────
