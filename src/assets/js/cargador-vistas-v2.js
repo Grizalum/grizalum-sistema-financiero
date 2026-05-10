@@ -634,19 +634,14 @@ function registrarModulos() {
 
             onCargar: async function() {
                 console.log('   🏦 Cargando Cuentas Bancarias...');
-
                 await cargarEstilos('src/vistas/cuentas-bancarias/cuentas-bancarias.css');
-
-                // Limpiar clases anteriores para evitar duplicados
-                delete window.GestorCuentasBancarias;
-                delete window.UICuentasBancarias;
-                delete window.gestorCuentasBancarias;
-                delete window.uiCuentasBancarias;
-
-                await cargarScript('src/assets/js/gestor-cuentas-bancarias.js?t=' + Date.now());
-                await cargarScript('src/assets/js/ui-cuentas-bancarias.js?t=' + Date.now());
-                await cargarScript('src/vistas/cuentas-bancarias/cuentas-bancarias.js?v=20260504');
-
+                if (!window.GestorCuentasBancarias) {
+                    await cargarScript('src/assets/js/gestor-cuentas-bancarias.js');
+                }
+                if (!window.UICuentasBancarias) {
+                    await cargarScript('src/assets/js/ui-cuentas-bancarias.js');
+                }
+                await cargarScript('src/vistas/cuentas-bancarias/cuentas-bancarias.js?v=20260510');
                 console.log('   ✅ Módulos Cuentas Bancarias cargados');
             },
 
