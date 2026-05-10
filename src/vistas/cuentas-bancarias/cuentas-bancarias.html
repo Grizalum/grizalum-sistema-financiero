@@ -1,0 +1,86 @@
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- CUENTAS BANCARIAS - GRIZALUM Sistema Financiero              -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<link rel="stylesheet" href="src/vistas/Cuentas-Bancarias/cuentas-bancarias.css?v=20260504">
+
+<div id="cuentasBancariasApp" class="cuentas-bancarias-container">
+
+    <!-- ══════ HEADER ══════ -->
+    <header class="cb-header">
+        <div class="cb-titulo">
+            <div class="cb-icono">
+                <i class="fas fa-landmark"></i>
+            </div>
+            <div>
+                <h1>Cuentas Bancarias</h1>
+                <p class="cb-subtitulo">Gestión de cuentas y cajas por empresa</p>
+            </div>
+        </div>
+        <div class="cb-acciones">
+            <button id="btnNuevaCuenta" class="cb-btn cb-btn-primary">
+                <i class="fas fa-plus"></i>
+                <span>Nueva Cuenta</span>
+            </button>
+            <button id="btnExportarCB" class="cb-btn cb-btn-secondary">
+                <i class="fas fa-download"></i>
+                <span>Exportar</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ══════ TARJETAS RESUMEN ══════ -->
+    <section class="cb-resumen">
+        <div class="cb-card-resumen">
+            <div class="cb-card-icono" style="background: linear-gradient(135deg, #10b981, #059669);">
+                <i class="fas fa-wallet"></i>
+            </div>
+            <div class="cb-card-info">
+                <span class="cb-card-label">TOTAL GENERAL</span>
+                <span class="cb-card-monto" id="cbTotalGeneral">S/ 0.00</span>
+                <span class="cb-card-badge" id="cbTotalCuentas">0 cuentas activas</span>
+            </div>
+        </div>
+        <div class="cb-card-resumen">
+            <div class="cb-card-icono" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
+                <i class="fas fa-university"></i>
+            </div>
+            <div class="cb-card-info">
+                <span class="cb-card-label">TOTAL BANCOS</span>
+                <span class="cb-card-monto" id="cbTotalBancos">S/ 0.00</span>
+                <span class="cb-card-badge" id="cbCantBancos">0 cuentas bancarias</span>
+            </div>
+        </div>
+        <div class="cb-card-resumen">
+            <div class="cb-card-icono" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                <i class="fas fa-cash-register"></i>
+            </div>
+            <div class="cb-card-info">
+                <span class="cb-card-label">TOTAL CAJAS</span>
+                <span class="cb-card-monto" id="cbTotalCajas">S/ 0.00</span>
+                <span class="cb-card-badge" id="cbCantCajas">0 cajas registradas</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════ CONTENIDO PRINCIPAL ══════ -->
+    <div id="cuentasBancariasContent" class="cb-contenido">
+        <!-- La UI se inyecta aquí desde ui-cuentas-bancarias.js -->
+    </div>
+
+    <!-- ══════ ESTADO VACÍO ══════ -->
+    <section class="cb-vacio" id="cbEstadoVacio" style="display: none;">
+        <div class="cb-vacio-icono">🏦</div>
+        <h2 class="cb-vacio-titulo">Sin cuentas registradas</h2>
+        <p class="cb-vacio-texto">Agrega tu primera cuenta bancaria o caja para comenzar a gestionar tu dinero.</p>
+        <button class="cb-btn cb-btn-primary" onclick="document.getElementById('btnNuevaCuenta').click()">
+            <i class="fas fa-plus"></i>
+            <span>Agregar Primera Cuenta</span>
+        </button>
+    </section>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SCRIPTS DEL MÓDULO                                            -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<script src="src/vistas/Cuentas-Bancarias/cuentas-bancarias.js?v=20260504"></script>
