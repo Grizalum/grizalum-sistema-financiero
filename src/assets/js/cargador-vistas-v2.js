@@ -629,23 +629,20 @@ function registrarModulos() {
         window.grizalumModulos.registrar({
             id: 'cuentas-bancarias',
             nombre: 'Cuentas Bancarias',
-            ruta: 'src/vistas/Cuentas-Bancarias/cuentas-bancarias.html',
+            ruta: 'src/vistas/cuentas-bancarias/cuentas-bancarias.html',
             nivel: 0,
 
             onCargar: async function() {
                 console.log('   🏦 Cargando Cuentas Bancarias...');
-
-                await cargarEstilos('src/vistas/Cuentas-Bancarias/cuentas-bancarias.css');
+                await cargarEstilos('src/vistas/cuentas-bancarias/cuentas-bancarias.css');
                 await cargarScript('src/assets/js/gestor-cuentas-bancarias.js');
                 await cargarScript('src/assets/js/ui-cuentas-bancarias.js');
-                await cargarScript('src/vistas/Cuentas-Bancarias/cuentas-bancarias.js?v=20260504');
-
+                await cargarScript('src/vistas/cuentas-bancarias/cuentas-bancarias.js?v=20260504');
                 console.log('   ✅ Módulos Cuentas Bancarias cargados');
             },
 
             onMostrar: async function() {
                 console.log('   👁️ Mostrando Cuentas Bancarias...');
-
                 const contenedor = document.getElementById('contenedorVistas');
 
                 contenedor.innerHTML = `
@@ -659,9 +656,9 @@ function registrarModulos() {
                 `;
 
                 await new Promise(resolve => setTimeout(resolve, 100));
-                await cargarEstilos('src/vistas/Cuentas-Bancarias/cuentas-bancarias.css');
+                await cargarEstilos('src/vistas/cuentas-bancarias/cuentas-bancarias.css');
 
-                const html = await fetch('src/vistas/Cuentas-Bancarias/cuentas-bancarias.html').then(r => r.text());
+                const html = await fetch('src/vistas/cuentas-bancarias/cuentas-bancarias.html').then(r => r.text());
 
                 const temp = document.createElement('div');
                 temp.innerHTML = html;
@@ -679,7 +676,6 @@ function registrarModulos() {
                     });
                 });
 
-                // Inicializar
                 let intentosCB = 0;
                 const esperarCB = setInterval(() => {
                     intentosCB++;
@@ -699,7 +695,6 @@ function registrarModulos() {
                 }, 100);
             }
         });
-
     // ───────────────────────────────────────────────────────────────
     // INVENTARIO
     // ───────────────────────────────────────────────────────────────
