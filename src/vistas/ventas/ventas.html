@@ -1,6 +1,6 @@
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <!-- VENTAS - GRIZALUM Sistema Financiero                         -->
-<!-- Control profesional de ventas para empresarios               -->
+<!-- v20260510b — Con selector de inventario y descuento          -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
 
 <div id="ventasApp" class="ventas-container">
@@ -8,9 +8,7 @@
     <!-- ══════ HEADER ══════ -->
     <header class="vt-header">
         <div class="vt-titulo">
-            <div class="vt-icono">
-                <i class="fas fa-shopping-cart"></i>
-            </div>
+            <div class="vt-icono"><i class="fas fa-shopping-cart"></i></div>
             <div>
                 <h1>Ventas</h1>
                 <p class="vt-subtitulo">Control de ventas y clientes</p>
@@ -18,12 +16,10 @@
         </div>
         <div class="vt-acciones">
             <button id="btnNuevaVenta" class="vt-btn vt-btn-primary">
-                <i class="fas fa-plus"></i>
-                <span>Nueva Venta</span>
+                <i class="fas fa-plus"></i><span>Nueva Venta</span>
             </button>
             <button id="btnExportarVentas" class="vt-btn vt-btn-secondary">
-                <i class="fas fa-download"></i>
-                <span>Exportar</span>
+                <i class="fas fa-download"></i><span>Exportar</span>
             </button>
         </div>
     </header>
@@ -92,21 +88,22 @@
         </select>
     </section>
 
-    <!-- ══════ TABLA DE VENTAS ══════ -->
+    <!-- ══════ TABLA ══════ -->
     <section class="vt-tabla-section">
         <div class="vt-tabla-header">
             <h3><i class="fas fa-list"></i> Registro de Ventas</h3>
             <span id="vtContador" class="vt-contador">0 ventas</span>
         </div>
         <div class="vt-tabla-container">
-            <table class="vt-tabla" id="vtTabla">
+            <table class="vt-tabla">
                 <thead>
                     <tr>
                         <th>Fecha</th>
                         <th>Cliente</th>
-                        <th>Producto / Servicio</th>
-                        <th>Cantidad</th>
-                        <th>Precio Unit.</th>
+                        <th>Producto</th>
+                        <th>Cant.</th>
+                        <th>Precio</th>
+                        <th>Descuento</th>
                         <th>Total</th>
                         <th>Pago</th>
                         <th>Estado</th>
@@ -149,6 +146,7 @@
         <div class="vt-modal-body">
             <input type="hidden" id="vtModalId">
             <div class="vt-form-grid">
+
                 <div class="vt-campo">
                     <label>Fecha *</label>
                     <input type="date" id="vtFecha">
@@ -157,18 +155,39 @@
                     <label>Cliente *</label>
                     <input type="text" id="vtCliente" placeholder="Nombre del cliente">
                 </div>
+
+                <!-- Selector de producto del inventario -->
                 <div class="vt-campo vt-campo-full">
-                    <label>Producto / Servicio *</label>
-                    <input type="text" id="vtProducto" placeholder="Descripción del producto o servicio">
+                    <label>Producto del Inventario
+                        <span style="color:#64748b;font-weight:400;text-transform:none;">— selecciona o escribe</span>
+                    </label>
+                    <select id="vtProductoSelector" onchange="window.Ventas.seleccionarProducto(this.value)" class="vt-select" style="width:100%;margin-bottom:0.5rem;">
+                        <option value="">-- Seleccionar del inventario --</option>
+                    </select>
+                    <input type="text" id="vtProducto" placeholder="O escribe el nombre del producto/servicio">
                 </div>
+
                 <div class="vt-campo">
-                    <label>Cantidad</label>
-                    <input type="number" id="vtCantidad" placeholder="1" min="1" step="1" value="1">
+                    <label>Cantidad *</label>
+                    <input type="number" id="vtCantidad" placeholder="1" min="1" step="1" value="1" oninput="window.Ventas.actualizarTotal()">
                 </div>
                 <div class="vt-campo">
                     <label>Precio Unitario (S/.) *</label>
-                    <input type="number" id="vtPrecioUnitario" placeholder="0.00" min="0" step="0.01">
+                    <input type="number" id="vtPrecioUnitario" placeholder="0.00" min="0" step="0.01" oninput="window.Ventas.actualizarTotal()">
                 </div>
+
+                <!-- Descuento -->
+                <div class="vt-campo">
+                    <label>Descuento</label>
+                    <div style="display:flex;gap:0.5rem;">
+                        <input type="number" id="vtDescuento" placeholder="0" min="0" step="0.01" oninput="window.Ventas.actualizarTotal()" style="flex:1;">
+                        <select id="vtTipoDescuento" onchange="window.Ventas.actualizarTotal()" style="width:80px;background:rgba(15,23,42,0.8);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#f1f5f9;padding:0 0.5rem;">
+                            <option value="porcentaje">%</option>
+                            <option value="monto">S/.</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div class="vt-campo">
                     <label>Método de Pago</label>
                     <select id="vtMetodoPago">
@@ -179,6 +198,7 @@
                         <option value="credito">📋 Crédito</option>
                     </select>
                 </div>
+
                 <div class="vt-campo">
                     <label>Estado</label>
                     <select id="vtEstado">
@@ -187,15 +207,23 @@
                         <option value="parcial">⚠️ Pago Parcial</option>
                     </select>
                 </div>
+
                 <div class="vt-campo vt-campo-full">
                     <label>Notas / Referencia</label>
                     <textarea id="vtNotas" placeholder="Número de orden, observaciones..." rows="2"></textarea>
                 </div>
             </div>
+
             <!-- Total calculado -->
             <div class="vt-total-preview">
-                <span>Total de la venta:</span>
-                <span class="vt-total-valor" id="vtTotalPreview">S/ 0.00</span>
+                <div>
+                    <div style="font-size:0.8rem;color:#94a3b8;">Subtotal: <span id="vtSubtotalPreview">S/ 0.00</span></div>
+                    <div style="font-size:0.8rem;color:#f59e0b;">Descuento: <span id="vtDescuentoPreview">S/ 0.00</span></div>
+                </div>
+                <div>
+                    <div style="font-size:0.8rem;color:#64748b;margin-bottom:0.25rem;">TOTAL A COBRAR:</div>
+                    <span class="vt-total-valor" id="vtTotalPreview">S/ 0.00</span>
+                </div>
             </div>
         </div>
         <div class="vt-modal-footer">
@@ -207,4 +235,4 @@
     </div>
 </div>
 
-<script src="src/vistas/ventas/ventas.js?v=20260510"></script>
+<script src="src/vistas/ventas/ventas.js?v=20260510b"></script>
