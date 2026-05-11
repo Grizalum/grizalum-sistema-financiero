@@ -1,0 +1,210 @@
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- VENTAS - GRIZALUM Sistema Financiero                         -->
+<!-- Control profesional de ventas para empresarios               -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<div id="ventasApp" class="ventas-container">
+
+    <!-- ══════ HEADER ══════ -->
+    <header class="vt-header">
+        <div class="vt-titulo">
+            <div class="vt-icono">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div>
+                <h1>Ventas</h1>
+                <p class="vt-subtitulo">Control de ventas y clientes</p>
+            </div>
+        </div>
+        <div class="vt-acciones">
+            <button id="btnNuevaVenta" class="vt-btn vt-btn-primary">
+                <i class="fas fa-plus"></i>
+                <span>Nueva Venta</span>
+            </button>
+            <button id="btnExportarVentas" class="vt-btn vt-btn-secondary">
+                <i class="fas fa-download"></i>
+                <span>Exportar</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ══════ KPIs ══════ -->
+    <section class="vt-kpis">
+        <div class="vt-kpi-card">
+            <div class="vt-kpi-icono" style="background:linear-gradient(135deg,#10b981,#059669);">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="vt-kpi-info">
+                <span class="vt-kpi-label">VENTAS DEL MES</span>
+                <span class="vt-kpi-valor" id="vtVentasMes">S/ 0.00</span>
+                <span class="vt-kpi-sub" id="vtCantVentas">0 ventas registradas</span>
+            </div>
+        </div>
+        <div class="vt-kpi-card">
+            <div class="vt-kpi-icono" style="background:linear-gradient(135deg,#3b82f6,#2563eb);">
+                <i class="fas fa-receipt"></i>
+            </div>
+            <div class="vt-kpi-info">
+                <span class="vt-kpi-label">TICKET PROMEDIO</span>
+                <span class="vt-kpi-valor" id="vtTicketPromedio">S/ 0.00</span>
+                <span class="vt-kpi-sub">Por venta</span>
+            </div>
+        </div>
+        <div class="vt-kpi-card">
+            <div class="vt-kpi-icono" style="background:linear-gradient(135deg,#f59e0b,#d97706);">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="vt-kpi-info">
+                <span class="vt-kpi-label">POR COBRAR</span>
+                <span class="vt-kpi-valor" id="vtPorCobrar" style="color:#f59e0b;">S/ 0.00</span>
+                <span class="vt-kpi-sub" id="vtCantPendientes">0 pendientes</span>
+            </div>
+        </div>
+        <div class="vt-kpi-card">
+            <div class="vt-kpi-icono" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="vt-kpi-info">
+                <span class="vt-kpi-label">CLIENTES</span>
+                <span class="vt-kpi-valor" id="vtTotalClientes">0</span>
+                <span class="vt-kpi-sub">Clientes únicos</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════ FILTROS ══════ -->
+    <section class="vt-filtros">
+        <div class="vt-busqueda">
+            <i class="fas fa-search"></i>
+            <input type="text" id="vtBusqueda" placeholder="Buscar por cliente o producto..." oninput="window.Ventas.filtrar()">
+        </div>
+        <select id="vtFiltroEstado" onchange="window.Ventas.filtrar()" class="vt-select">
+            <option value="todos">Todos los estados</option>
+            <option value="pagado">✅ Pagado</option>
+            <option value="pendiente">⏳ Pendiente</option>
+            <option value="parcial">⚠️ Parcial</option>
+        </select>
+        <select id="vtFiltroPeriodo" onchange="window.Ventas.filtrar()" class="vt-select">
+            <option value="mes">Este mes</option>
+            <option value="semana">Esta semana</option>
+            <option value="hoy">Hoy</option>
+            <option value="todos">Todos</option>
+        </select>
+    </section>
+
+    <!-- ══════ TABLA DE VENTAS ══════ -->
+    <section class="vt-tabla-section">
+        <div class="vt-tabla-header">
+            <h3><i class="fas fa-list"></i> Registro de Ventas</h3>
+            <span id="vtContador" class="vt-contador">0 ventas</span>
+        </div>
+        <div class="vt-tabla-container">
+            <table class="vt-tabla" id="vtTabla">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Cliente</th>
+                        <th>Producto / Servicio</th>
+                        <th>Cantidad</th>
+                        <th>Precio Unit.</th>
+                        <th>Total</th>
+                        <th>Pago</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="vtTablaCuerpo"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ══════ TOP CLIENTES ══════ -->
+    <section class="vt-clientes-section">
+        <div class="vt-tabla-header">
+            <h3><i class="fas fa-trophy"></i> Top Clientes del Mes</h3>
+        </div>
+        <div id="vtTopClientes" class="vt-clientes-lista"></div>
+    </section>
+
+    <!-- ══════ ESTADO VACÍO ══════ -->
+    <section class="vt-vacio" id="vtEstadoVacio" style="display:none;">
+        <div class="vt-vacio-icono">🛒</div>
+        <h2>Sin ventas registradas</h2>
+        <p>Registra tu primera venta para comenzar a controlar tus ingresos.</p>
+        <button class="vt-btn vt-btn-primary" onclick="document.getElementById('btnNuevaVenta').click()">
+            <i class="fas fa-plus"></i> Registrar Primera Venta
+        </button>
+    </section>
+
+</div>
+
+<!-- ══════ MODAL NUEVA VENTA ══════ -->
+<div id="vtModal" class="vt-modal" style="display:none;">
+    <div class="vt-modal-overlay" onclick="window.Ventas.cerrarModal()"></div>
+    <div class="vt-modal-contenido">
+        <div class="vt-modal-header">
+            <h2 id="vtModalTitulo"><i class="fas fa-plus"></i> Nueva Venta</h2>
+            <button onclick="window.Ventas.cerrarModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="vt-modal-body">
+            <input type="hidden" id="vtModalId">
+            <div class="vt-form-grid">
+                <div class="vt-campo">
+                    <label>Fecha *</label>
+                    <input type="date" id="vtFecha">
+                </div>
+                <div class="vt-campo">
+                    <label>Cliente *</label>
+                    <input type="text" id="vtCliente" placeholder="Nombre del cliente">
+                </div>
+                <div class="vt-campo vt-campo-full">
+                    <label>Producto / Servicio *</label>
+                    <input type="text" id="vtProducto" placeholder="Descripción del producto o servicio">
+                </div>
+                <div class="vt-campo">
+                    <label>Cantidad</label>
+                    <input type="number" id="vtCantidad" placeholder="1" min="1" step="1" value="1">
+                </div>
+                <div class="vt-campo">
+                    <label>Precio Unitario (S/.) *</label>
+                    <input type="number" id="vtPrecioUnitario" placeholder="0.00" min="0" step="0.01">
+                </div>
+                <div class="vt-campo">
+                    <label>Método de Pago</label>
+                    <select id="vtMetodoPago">
+                        <option value="efectivo">💵 Efectivo</option>
+                        <option value="transferencia">🏦 Transferencia</option>
+                        <option value="yape">📱 Yape / Plin</option>
+                        <option value="tarjeta">💳 Tarjeta</option>
+                        <option value="credito">📋 Crédito</option>
+                    </select>
+                </div>
+                <div class="vt-campo">
+                    <label>Estado</label>
+                    <select id="vtEstado">
+                        <option value="pagado">✅ Pagado</option>
+                        <option value="pendiente">⏳ Pendiente</option>
+                        <option value="parcial">⚠️ Pago Parcial</option>
+                    </select>
+                </div>
+                <div class="vt-campo vt-campo-full">
+                    <label>Notas / Referencia</label>
+                    <textarea id="vtNotas" placeholder="Número de orden, observaciones..." rows="2"></textarea>
+                </div>
+            </div>
+            <!-- Total calculado -->
+            <div class="vt-total-preview">
+                <span>Total de la venta:</span>
+                <span class="vt-total-valor" id="vtTotalPreview">S/ 0.00</span>
+            </div>
+        </div>
+        <div class="vt-modal-footer">
+            <button class="vt-btn vt-btn-secondary" onclick="window.Ventas.cerrarModal()">Cancelar</button>
+            <button class="vt-btn vt-btn-primary" onclick="window.Ventas.guardarVenta()">
+                <i class="fas fa-save"></i> Guardar Venta
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="src/vistas/ventas/ventas.js?v=20260510"></script>
