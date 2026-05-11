@@ -2,7 +2,7 @@
  * ═══════════════════════════════════════════════════════════════════
  * VENTAS - GRIZALUM Sistema Financiero
  * Control profesional de ventas para empresarios
- * v20260510
+ * v20260510b — Conectado con Inventario y Flujo de Caja
  * ═══════════════════════════════════════════════════════════════════
  */
 
@@ -46,6 +46,107 @@
     }
 
     // ═══════════════════════════════════════════════════════════════
+    // CONEXIÓN CON INVENTARIO
+    // ═══════════════════════════════════════════════════════════════
+
+    function descontarInventario(nombreProducto, cantidad) {
+        try {
+            const empresa = obtenerEmpresa();
+            const keyInv = `grizalum_inventario_${empresa}`;
+            const keyMov = `grizalum_inventario_mov_${empresa}`;
+
+            const productos = JSON.parse(localStorage.getItem(keyInv) || '[]');
+            const movimientos = JSON.parse(localStorage.getItem(keyMov) || '[]');
+
+            // Buscar producto por nombre (coincidencia parcial)
+            const nombreBuscar = nombreProducto.toLowerCase().trim();
+            const idx = productos.findIndex(p =>
+                p.nombre.toLowerCase().includes(nombreBuscar) ||
+                nombreBuscar.includes(p.nombre.toLowerCase())
+            );
+
+            if (idx !== -1) {
+                const producto = productos[idx];
+                if (producto.stockActual >= cantidad) {
+                    productos[idx].stockActual -= cantidad;
+
+                    // Registrar movimiento de salida
+                    movimientos.push({
+                        id: 'mov_' + Date.now(),
+                        productoId: producto.id,
+                        tipo: 'salida',
+                        cantidad: cantidad,
+                        motivo: 'Venta registrada',
+                        fecha: new Date().toISOString()
+                    });
+
+                    localStorage.setItem(keyInv, JSON.stringify(productos));
+                    localStorage.setItem(keyMov, JSON.stringify(movimientos));
+
+                    console.log(`✅ [Ventas→Inventario] Descontado ${cantidad} de "${producto.nombre}". Stock restante: ${productos[idx].stockActual}`);
+                    return { exito: true, producto: producto.nombre, stockRestante: productos[idx].stockActual };
+                } else {
+                    console.warn(`⚠️ [Ventas→Inventario] Stock insuficiente para "${producto.nombre}". Disponible: ${producto.stockActual}`);
+                    return { exito: false, razon: 'stock_insuficiente', disponible: producto.stockActual };
+                }
+            } else {
+                console.log(`ℹ️ [Ventas→Inventario] Producto "${nombreProducto}" no encontrado en inventario — venta registrada sin descontar stock`);
+                return { exito: false, razon: 'no_encontrado' };
+            }
+        } catch (e) {
+            console.warn('[Ventas→Inventario] Error:', e);
+            return { exito: false, razon: 'error' };
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // CONEXIÓN CON FLUJO DE CAJA
+    // ═══════════════════════════════════════════════════════════════
+
+    function registrarEnFlujoCaja(venta) {
+        try {
+            const empresa = obtenerEmpresa();
+            const key = `grizalum_flujo_caja_${empresa}`;
+
+            const transacciones = JSON.parse(localStorage.getItem(key) || '[]');
+
+            const nuevaTransaccion = {
+                id: 'fc_' + Date.now(),
+                tipo: 'ingreso',
+                monto: venta.total,
+                descripcion: `Venta: ${venta.producto} — ${venta.cliente}`,
+                categoria: 'Ventas',
+                fecha: venta.fecha,
+                metodoPago: venta.metodoPago,
+                referencia: venta.id,
+                origen: 'ventas',
+                createdAt: new Date().toISOString()
+            };
+
+            transacciones.push(nuevaTransaccion);
+            localStorage.setItem(key, JSON.stringify(transacciones));
+
+            console.log(`✅ [Ventas→FlujoCaja] Ingreso de S/ ${venta.total} registrado para "${venta.cliente}"`);
+
+            // Si el módulo de Flujo de Caja está activo, refrescarlo
+            if (window.flujoCaja && window.flujoCaja.cargarTransacciones) {
+                setTimeout(() => window.flujoCaja.cargarTransacciones(), 300);
+            }
+            if (window.flujoCajaUI && window.flujoCajaUI.cargarBalance) {
+                setTimeout(() => {
+                    window.flujoCajaUI.cargarBalance();
+                    window.flujoCajaUI.cargarTransacciones();
+                }, 400);
+            }
+
+            return true;
+        } catch (e) {
+            console.warn('[Ventas→FlujoCaja] Error:', e);
+            return false;
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════
     // FILTROS Y CÁLCULOS
     // ═══════════════════════════════════════════════════════════════
 
@@ -76,18 +177,18 @@
     }
 
     function calcularKPIs() {
-        const hoy  = new Date();
-        const mes  = ventas.filter(v => {
+        const hoy = new Date();
+        const mes = ventas.filter(v => {
             const f = new Date(v.fecha);
             return f.getMonth() === hoy.getMonth() && f.getFullYear() === hoy.getFullYear();
         });
 
-        const totalMes     = mes.reduce((s, v) => s + v.total, 0);
-        const cantVentas   = mes.length;
-        const ticketProm   = cantVentas > 0 ? totalMes / cantVentas : 0;
-        const pendientes   = ventas.filter(v => v.estado !== 'pagado');
-        const porCobrar    = pendientes.reduce((s, v) => s + v.total, 0);
-        const clientes     = [...new Set(ventas.map(v => v.cliente.toLowerCase()))].length;
+        const totalMes   = mes.reduce((s, v) => s + v.total, 0);
+        const cantVentas = mes.length;
+        const ticketProm = cantVentas > 0 ? totalMes / cantVentas : 0;
+        const pendientes = ventas.filter(v => v.estado !== 'pagado');
+        const porCobrar  = pendientes.reduce((s, v) => s + v.total, 0);
+        const clientes   = [...new Set(ventas.map(v => v.cliente.toLowerCase()))].length;
 
         return { totalMes, cantVentas, ticketProm, porCobrar, cantPendientes: pendientes.length, clientes };
     }
@@ -122,7 +223,7 @@
     }
 
     function actualizarKPIs() {
-        const k = calcularKPIs();
+        const k   = calcularKPIs();
         const fmt = (v) => 'S/ ' + v.toLocaleString('es-PE', { minimumFractionDigits: 2 });
 
         setText('vtVentasMes', fmt(k.totalMes));
@@ -204,8 +305,8 @@
     }
 
     function toggleEstadoVacio() {
-        const vacio = document.getElementById('vtEstadoVacio');
-        const tabla = document.querySelector('.vt-tabla-section');
+        const vacio    = document.getElementById('vtEstadoVacio');
+        const tabla    = document.querySelector('.vt-tabla-section');
         const clientes = document.querySelector('.vt-clientes-section');
         if (!vacio) return;
 
@@ -251,9 +352,8 @@
         actualizarTotalPreview();
         modal.style.display = 'flex';
 
-        // Actualizar total al cambiar cantidad o precio
-        ['vtCantidad', 'vtPrecioUnitario'].forEach(id => {
-            const el = document.getElementById(id);
+        ['vtCantidad', 'vtPrecioUnitario'].forEach(fieldId => {
+            const el = document.getElementById(fieldId);
             if (el) el.oninput = actualizarTotalPreview;
         });
     }
@@ -277,27 +377,45 @@
         const precio   = parseFloat(getVal('vtPrecioUnitario')) || 0;
         const cantidad = parseFloat(getVal('vtCantidad')) || 1;
 
-        if (!cliente) { alert('El nombre del cliente es obligatorio.'); return; }
+        if (!cliente)  { alert('El nombre del cliente es obligatorio.'); return; }
         if (!producto) { alert('El producto o servicio es obligatorio.'); return; }
         if (precio <= 0) { alert('El precio debe ser mayor a 0.'); return; }
 
         const datos = {
             cliente, producto,
-            fecha:         getVal('vtFecha') || new Date().toISOString().split('T')[0],
+            fecha:          getVal('vtFecha') || new Date().toISOString().split('T')[0],
             cantidad,
             precioUnitario: precio,
-            total:         cantidad * precio,
-            metodoPago:    getVal('vtMetodoPago'),
-            estado:        getVal('vtEstado'),
-            notas:         getVal('vtNotas').trim(),
-            updatedAt:     new Date().toISOString(),
+            total:          cantidad * precio,
+            metodoPago:     getVal('vtMetodoPago'),
+            estado:         getVal('vtEstado'),
+            notas:          getVal('vtNotas').trim(),
+            updatedAt:      new Date().toISOString(),
         };
+
+        const esNueva = !id;
 
         if (id) {
             const idx = ventas.findIndex(v => v.id === id);
             if (idx !== -1) ventas[idx] = { ...ventas[idx], ...datos };
         } else {
-            ventas.push({ id: generarId(), createdAt: new Date().toISOString(), ...datos });
+            const nuevaVenta = { id: generarId(), createdAt: new Date().toISOString(), ...datos };
+            ventas.push(nuevaVenta);
+
+            // ── CONEXIÓN AUTOMÁTICA ──────────────────────────────
+
+            // 1. Descontar del Inventario
+            const resultadoInv = descontarInventario(producto, cantidad);
+            if (resultadoInv.exito) {
+                console.log(`📦 Stock actualizado: ${resultadoInv.producto} → ${resultadoInv.stockRestante} restantes`);
+            }
+
+            // 2. Registrar en Flujo de Caja (solo si está pagado)
+            if (datos.estado === 'pagado') {
+                registrarEnFlujoCaja(nuevaVenta);
+            }
+
+            // ── FIN CONEXIÓN ─────────────────────────────────────
         }
 
         guardarDatos();
@@ -319,6 +437,10 @@
         const idx = ventas.findIndex(v => v.id === id);
         if (idx !== -1) {
             ventas[idx].estado = 'pagado';
+
+            // Registrar en Flujo de Caja al marcar como pagado
+            registrarEnFlujoCaja(ventas[idx]);
+
             guardarDatos();
             renderizar();
         }
@@ -416,6 +538,6 @@
         setTimeout(inicializar, 100);
     }
 
-    console.log('✅ [GRIZALUM] Ventas v20260510 cargado');
+    console.log('✅ [GRIZALUM] Ventas v20260510b — Conectado con Inventario y Flujo de Caja');
 
 })();
