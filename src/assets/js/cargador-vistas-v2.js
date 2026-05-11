@@ -770,7 +770,7 @@ function registrarModulos() {
                 }, 100);
             }
         });
-// ───────────────────────────────────────────────────────────────
+        // ───────────────────────────────────────────────────────────────
         // VENTAS
         // ───────────────────────────────────────────────────────────────
         window.grizalumModulos.registrar({
@@ -840,10 +840,13 @@ function registrarModulos() {
                     contenedor.scrollTo({ top: 0, behavior: 'instant' });
                 }, 100);
             }
-        });
+      });
+
+    console.log('✅ Módulos registrados correctamente');
+}
+
 // ═══════════════════════════════════════════════════════════════════
 // PASO 2: FUNCIONES AUXILIARES
-// ═══════════════════════════════════════════════════════════════════
 
 async function cargarEstilos(url) {
     try {
