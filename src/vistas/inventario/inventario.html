@@ -8,9 +8,7 @@
     <!-- ══════ HEADER ══════ -->
     <header class="inv-header">
         <div class="inv-titulo">
-            <div class="inv-icono">
-                <i class="fas fa-boxes"></i>
-            </div>
+            <div class="inv-icono"><i class="fas fa-boxes"></i></div>
             <div>
                 <h1>Inventario</h1>
                 <p class="inv-subtitulo">Control inteligente de stock</p>
@@ -18,21 +16,18 @@
         </div>
         <div class="inv-acciones">
             <button id="btnAgregarProducto" class="inv-btn inv-btn-primary">
-                <i class="fas fa-plus"></i>
-                <span>Agregar Producto</span>
+                <i class="fas fa-plus"></i><span>Agregar Producto</span>
             </button>
             <button id="btnRegistrarMovimiento" class="inv-btn inv-btn-secondary">
-                <i class="fas fa-exchange-alt"></i>
-                <span>Movimiento</span>
+                <i class="fas fa-exchange-alt"></i><span>Movimiento</span>
             </button>
             <button id="btnExportarInv" class="inv-btn inv-btn-secondary">
-                <i class="fas fa-download"></i>
-                <span>Exportar</span>
+                <i class="fas fa-download"></i><span>Exportar</span>
             </button>
         </div>
     </header>
 
-    <!-- ══════ TARJETAS KPI ══════ -->
+    <!-- ══════ KPIs ══════ -->
     <section class="inv-kpis">
         <div class="inv-kpi-card">
             <div class="inv-kpi-icono" style="background:linear-gradient(135deg,#3b82f6,#2563eb);">
@@ -76,14 +71,14 @@
         </div>
     </section>
 
-    <!-- ══════ ALERTA STOCK BAJO ══════ -->
+    <!-- ══════ ALERTA ══════ -->
     <section id="invAlertaStock" class="inv-alerta" style="display:none;">
         <i class="fas fa-exclamation-triangle"></i>
-        <span id="invAlertaTexto">Productos con stock bajo que necesitan reorden</span>
+        <span id="invAlertaTexto">Productos con stock bajo</span>
         <button onclick="document.getElementById('invFiltroCategoria').value='alerta'; window.Inventario.filtrar();" class="inv-alerta-btn">Ver todos</button>
     </section>
 
-    <!-- ══════ FILTROS Y BÚSQUEDA ══════ -->
+    <!-- ══════ FILTROS ══════ -->
     <section class="inv-filtros">
         <div class="inv-busqueda">
             <i class="fas fa-search"></i>
@@ -104,7 +99,7 @@
         </select>
     </section>
 
-    <!-- ══════ TABLA DE PRODUCTOS ══════ -->
+    <!-- ══════ TABLA ══════ -->
     <section class="inv-tabla-section">
         <div class="inv-tabla-header">
             <h3><i class="fas fa-list"></i> Productos en Inventario</h3>
@@ -116,30 +111,27 @@
                     <tr>
                         <th>Producto</th>
                         <th>Categoría</th>
+                        <th>Presentación</th>
                         <th>Stock Actual</th>
                         <th>Stock Mínimo</th>
-                        <th>Costo Unit.</th>
+                        <th>Precio Venta</th>
                         <th>Valor Total</th>
                         <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody id="invTablaCuerpo">
-                    <!-- Dinámico -->
-                </tbody>
+                <tbody id="invTablaCuerpo"></tbody>
             </table>
         </div>
     </section>
 
-    <!-- ══════ HISTORIAL DE MOVIMIENTOS ══════ -->
+    <!-- ══════ MOVIMIENTOS ══════ -->
     <section class="inv-movimientos-section">
         <div class="inv-tabla-header">
             <h3><i class="fas fa-history"></i> Últimos Movimientos</h3>
             <button onclick="window.Inventario.limpiarMovimientos()" class="inv-btn-link">Limpiar historial</button>
         </div>
-        <div id="invMovimientos" class="inv-movimientos-lista">
-            <!-- Dinámico -->
-        </div>
+        <div id="invMovimientos" class="inv-movimientos-lista"></div>
     </section>
 
     <!-- ══════ ESTADO VACÍO ══════ -->
@@ -154,7 +146,7 @@
 
 </div>
 
-<!-- ══════ MODAL AGREGAR/EDITAR PRODUCTO ══════ -->
+<!-- ══════ MODAL PRODUCTO ══════ -->
 <div id="invModalProducto" class="inv-modal" style="display:none;">
     <div class="inv-modal-overlay" onclick="window.Inventario.cerrarModal()"></div>
     <div class="inv-modal-contenido">
@@ -167,7 +159,7 @@
             <div class="inv-form-grid">
                 <div class="inv-campo">
                     <label>Nombre del Producto *</label>
-                    <input type="text" id="invNombre" placeholder="Ej: Aluminio en lingotes">
+                    <input type="text" id="invNombre" placeholder="Ej: Lingote de aluminio">
                 </div>
                 <div class="inv-campo">
                     <label>Categoría *</label>
@@ -177,41 +169,63 @@
                         <option value="herramienta">Herramienta/Equipo</option>
                     </select>
                 </div>
-                <div class="inv-campo">
-                    <label>Unidad de Medida</label>
-                    <select id="invUnidad">
-                        <option value="kg">Kilogramos (kg)</option>
-                        <option value="unidad">Unidades</option>
-                        <option value="litro">Litros</option>
-                        <option value="metro">Metros</option>
-                        <option value="tonelada">Toneladas</option>
-                        <option value="saco">Sacos</option>
-                        <option value="caja">Cajas</option>
-                    </select>
+
+                <!-- PRESENTACIÓN — campo clave -->
+                <div class="inv-campo inv-campo-full">
+                    <label>Presentación / Unidad de venta *
+                        <span style="color:#64748b;font-weight:400;text-transform:none;">
+                            — ¿Cómo lo vendes o mides?
+                        </span>
+                    </label>
+                    <div style="display:flex;gap:0.75rem;align-items:center;">
+                        <input type="number" id="invCantPresentacion" placeholder="Ej: 20" min="0.01" step="0.01"
+                            style="width:120px;flex-shrink:0;">
+                        <select id="invUnidadPresentacion">
+                            <option value="kg">kg</option>
+                            <option value="g">g (gramos)</option>
+                            <option value="lt">lt (litros)</option>
+                            <option value="ml">ml</option>
+                            <option value="m">m (metros)</option>
+                            <option value="unidad">unidad</option>
+                            <option value="pieza">pieza</option>
+                            <option value="caja">caja</option>
+                            <option value="saco">saco</option>
+                            <option value="botella">botella</option>
+                            <option value="lingote">lingote</option>
+                            <option value="tonelada">tonelada</option>
+                        </select>
+                        <span style="color:#94a3b8;font-size:0.85rem;">por</span>
+                        <input type="text" id="invNombrePresentacion" placeholder="Ej: lingote, botella, saco..."
+                            style="flex:1;">
+                    </div>
+                    <small style="color:#64748b;margin-top:0.25rem;display:block;">
+                        Ejemplo: <b>20 kg por lingote</b> — o — <b>2.5 lt por botella</b> — o — <b>50 kg por saco</b>
+                    </small>
                 </div>
+
                 <div class="inv-campo">
-                    <label>Stock Actual *</label>
-                    <input type="number" id="invStockActual" placeholder="0" min="0" step="0.01">
+                    <label>Stock Actual * <span style="color:#64748b;font-weight:400;text-transform:none;">(en unidades de presentación)</span></label>
+                    <input type="number" id="invStockActual" placeholder="0" min="0" step="1">
                 </div>
                 <div class="inv-campo">
                     <label>Stock Mínimo (Punto de reorden)</label>
-                    <input type="number" id="invStockMinimo" placeholder="0" min="0" step="0.01">
+                    <input type="number" id="invStockMinimo" placeholder="0" min="0" step="1">
                 </div>
                 <div class="inv-campo">
-                    <label>Costo Unitario (S/.)</label>
+                    <label>Costo Unitario (S/.) <span style="color:#64748b;font-weight:400;text-transform:none;">— lo que te costó</span></label>
                     <input type="number" id="invCostoUnitario" placeholder="0.00" min="0" step="0.01">
                 </div>
                 <div class="inv-campo">
-                    <label>Precio de Venta (S/.)</label>
+                    <label>Precio de Venta (S/.) <span style="color:#64748b;font-weight:400;text-transform:none;">— lo que cobras</span></label>
                     <input type="number" id="invPrecioVenta" placeholder="0.00" min="0" step="0.01">
                 </div>
                 <div class="inv-campo">
                     <label>Proveedor</label>
                     <input type="text" id="invProveedor" placeholder="Nombre del proveedor">
                 </div>
-                <div class="inv-campo inv-campo-full">
+                <div class="inv-campo">
                     <label>Descripción / Notas</label>
-                    <textarea id="invDescripcion" placeholder="Notas adicionales..." rows="2"></textarea>
+                    <input type="text" id="invDescripcion" placeholder="Notas adicionales...">
                 </div>
             </div>
         </div>
@@ -265,4 +279,4 @@
     </div>
 </div>
 
-<script src="src/vistas/inventario/inventario.js?v=20260510"></script>
+<script src="src/vistas/inventario/inventario.js?v=20260510b"></script>
