@@ -770,33 +770,77 @@ function registrarModulos() {
                 }, 100);
             }
         });
-    // ───────────────────────────────────────────────────────────────
-    // VENTAS
-    // ───────────────────────────────────────────────────────────────
-    window.grizalumModulos.registrar({
-        id: 'sales',
-        nombre: 'Ventas',
-        ruta: 'src/vistas/ventas/ventas.html',
-        nivel: 50,
+// ───────────────────────────────────────────────────────────────
+        // VENTAS
+        // ───────────────────────────────────────────────────────────────
+        window.grizalumModulos.registrar({
+            id: 'sales',
+            nombre: 'Ventas',
+            ruta: 'src/vistas/ventas/ventas.html',
+            nivel: 0,
 
-        onCargar: async function() {
-            await cargarEstilos('src/vistas/ventas/ventas.css');
-            await cargarScript('src/vistas/ventas/ventas.js');
-        },
+            onCargar: async function() {
+                console.log('   🛒 Cargando Ventas...');
+                await cargarEstilos('src/vistas/ventas/ventas.css?v=20260510');
+                await cargarScript('src/vistas/ventas/ventas.js?v=20260510');
+                console.log('   ✅ Ventas cargado');
+            },
 
-        onMostrar: async function() {
-            const html = await fetch('src/vistas/ventas/ventas.html').then(r => r.text());
-            document.getElementById('contenedorVistas').innerHTML = html;
-            
-            if (window.inicializarVentas) {
-                window.inicializarVentas();
+            onMostrar: async function() {
+                console.log('   👁️ Mostrando Ventas...');
+
+                const contenedor = document.getElementById('contenedorVistas');
+
+                contenedor.innerHTML = `
+                    <div style="display:flex;align-items:center;justify-content:center;min-height:400px;">
+                        <div style="text-align:center;">
+                            <div style="font-size:3rem;animation:spin 1s linear infinite;">🛒</div>
+                            <p style="color:var(--texto-terciario);margin-top:1rem;">Cargando Ventas...</p>
+                        </div>
+                    </div>
+                    <style>@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}</style>
+                `;
+
+                await new Promise(resolve => setTimeout(resolve, 100));
+                await cargarEstilos('src/vistas/ventas/ventas.css?v=20260510');
+
+                const html = await fetch('src/vistas/ventas/ventas.html').then(r => r.text());
+
+                const temp = document.createElement('div');
+                temp.innerHTML = html;
+                const scripts = temp.querySelectorAll('script');
+                const scriptsArray = Array.from(scripts);
+                scriptsArray.forEach(s => s.remove());
+
+                contenedor.innerHTML = temp.innerHTML;
+
+                await new Promise(resolve => {
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            setTimeout(resolve, 100);
+                        });
+                    });
+                });
+
+                let intentosVt = 0;
+                const esperarVt = setInterval(() => {
+                    intentosVt++;
+                    if (window.inicializarVentas) {
+                        clearInterval(esperarVt);
+                        window._ventasCargado = false;
+                        window.inicializarVentas();
+                        console.log('✅ Ventas inicializado');
+                    } else if (intentosVt >= 20) {
+                        clearInterval(esperarVt);
+                        console.error('❌ Ventas: no se pudo inicializar');
+                    }
+                }, 300);
+
+                setTimeout(() => {
+                    contenedor.scrollTo({ top: 0, behavior: 'instant' });
+                }, 100);
             }
-        }
-    });
-
-    console.log('✅ Módulos registrados correctamente');
-}
-
+        });
 // ═══════════════════════════════════════════════════════════════════
 // PASO 2: FUNCIONES AUXILIARES
 // ═══════════════════════════════════════════════════════════════════
