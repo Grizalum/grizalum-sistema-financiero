@@ -195,15 +195,14 @@ const MODULOS = [
         nombre: 'Reportes',
         ruta: 'src/vistas/reportes/reportes.html',
         css: 'src/vistas/reportes/reportes.css?v=20260512',
-        scripts: [
-            'https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js',
-            'src/vistas/reportes/reportes.js?v=20260512b',
-        ],
+        scripts: [],
         inicializar: () => {
             setTimeout(() => {
                 window._reportesCargado = false;
-                window._scriptsYaCargados?.delete('src/vistas/reportes/reportes.js');
-                window.inicializarReportes?.();
+                const s = document.createElement('script');
+                s.src = 'src/vistas/reportes/reportes.js?v=20260512b&t=' + Date.now();
+                s.onload = () => window.inicializarReportes?.();
+                document.head.appendChild(s);
             }, 200);
         }
     },
