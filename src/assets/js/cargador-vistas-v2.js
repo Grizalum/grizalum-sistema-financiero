@@ -197,7 +197,7 @@ const MODULOS = [
         css: 'src/vistas/reportes/reportes.css?v=20260512',
         scripts: [
             'https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js',
-            'src/vistas/reportes/reportes.js?v=20260512',
+            'src/vistas/reportes/reportes.js?v=20260512b',
         ],
         inicializar: () => {
             setTimeout(() => {
