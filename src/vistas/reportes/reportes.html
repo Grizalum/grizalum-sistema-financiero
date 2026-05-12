@@ -1,0 +1,133 @@
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- REPORTES - GRIZALUM Sistema Financiero                       -->
+<!-- Dashboard ejecutivo con datos cruzados                       -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<div id="reportesApp" class="reportes-container">
+
+    <!-- ══════ HEADER ══════ -->
+    <header class="rp-header">
+        <div class="rp-titulo">
+            <div class="rp-icono"><i class="fas fa-chart-bar"></i></div>
+            <div>
+                <h1>Reportes</h1>
+                <p class="rp-subtitulo">Resumen ejecutivo de tu negocio</p>
+            </div>
+        </div>
+        <div class="rp-acciones">
+            <select id="rpPeriodo" onchange="window.Reportes.actualizar()" class="rp-select">
+                <option value="mes">Este mes</option>
+                <option value="semana">Esta semana</option>
+                <option value="hoy">Hoy</option>
+                <option value="todos">Todo el tiempo</option>
+            </select>
+            <button id="btnExportarReporte" class="rp-btn rp-btn-primary">
+                <i class="fas fa-download"></i><span>Exportar</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ══════ KPIs PRINCIPALES ══════ -->
+    <section class="rp-kpis">
+        <div class="rp-kpi-card rp-kpi-ventas">
+            <div class="rp-kpi-icono"><i class="fas fa-shopping-cart"></i></div>
+            <div class="rp-kpi-info">
+                <span class="rp-kpi-label">INGRESOS POR VENTAS</span>
+                <span class="rp-kpi-valor" id="rpTotalVentas">S/ 0.00</span>
+                <span class="rp-kpi-sub" id="rpCantVentas">0 ventas</span>
+            </div>
+        </div>
+        <div class="rp-kpi-card rp-kpi-gastos">
+            <div class="rp-kpi-icono"><i class="fas fa-arrow-down"></i></div>
+            <div class="rp-kpi-info">
+                <span class="rp-kpi-label">GASTOS TOTALES</span>
+                <span class="rp-kpi-valor" id="rpTotalGastos">S/ 0.00</span>
+                <span class="rp-kpi-sub" id="rpCantGastos">0 gastos</span>
+            </div>
+        </div>
+        <div class="rp-kpi-card rp-kpi-utilidad">
+            <div class="rp-kpi-icono"><i class="fas fa-trophy"></i></div>
+            <div class="rp-kpi-info">
+                <span class="rp-kpi-label">UTILIDAD NETA</span>
+                <span class="rp-kpi-valor" id="rpUtilidad">S/ 0.00</span>
+                <span class="rp-kpi-sub" id="rpMargen">0% margen</span>
+            </div>
+        </div>
+        <div class="rp-kpi-card rp-kpi-inventario">
+            <div class="rp-kpi-icono"><i class="fas fa-boxes"></i></div>
+            <div class="rp-kpi-info">
+                <span class="rp-kpi-label">VALOR INVENTARIO</span>
+                <span class="rp-kpi-valor" id="rpValorInventario">S/ 0.00</span>
+                <span class="rp-kpi-sub" id="rpProductosInv">0 productos</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════ FILA 2 — VENTAS + CLIENTES ══════ -->
+    <div class="rp-grid-2">
+
+        <!-- Top Productos más vendidos -->
+        <section class="rp-card">
+            <div class="rp-card-header">
+                <h3><i class="fas fa-star"></i> Productos más vendidos</h3>
+            </div>
+            <div id="rpTopProductos" class="rp-lista"></div>
+        </section>
+
+        <!-- Top Clientes -->
+        <section class="rp-card">
+            <div class="rp-card-header">
+                <h3><i class="fas fa-users"></i> Mejores clientes</h3>
+            </div>
+            <div id="rpTopClientes" class="rp-lista"></div>
+        </section>
+
+    </div>
+
+    <!-- ══════ FILA 3 — FLUJO DE CAJA + STOCK ══════ -->
+    <div class="rp-grid-2">
+
+        <!-- Últimas transacciones -->
+        <section class="rp-card">
+            <div class="rp-card-header">
+                <h3><i class="fas fa-exchange-alt"></i> Últimas transacciones</h3>
+            </div>
+            <div id="rpTransacciones" class="rp-lista"></div>
+        </section>
+
+        <!-- Alertas de stock -->
+        <section class="rp-card">
+            <div class="rp-card-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> Alertas de stock</h3>
+            </div>
+            <div id="rpAlertasStock" class="rp-lista"></div>
+        </section>
+
+    </div>
+
+    <!-- ══════ TABLA RESUMEN DE VENTAS ══════ -->
+    <section class="rp-card rp-tabla-section">
+        <div class="rp-card-header">
+            <h3><i class="fas fa-list"></i> Detalle de ventas del período</h3>
+            <span id="rpContadorVentas" class="rp-contador">0 ventas</span>
+        </div>
+        <div class="rp-tabla-container">
+            <table class="rp-tabla">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Cliente</th>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Descuento</th>
+                        <th>Total</th>
+                        <th>Método</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="rpTablaVentas"></tbody>
+            </table>
+        </div>
+    </section>
+
+</div>
