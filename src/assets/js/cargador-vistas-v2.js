@@ -190,6 +190,22 @@ const MODULOS = [
             }, 200);
         }
     },
+    {
+        id: 'reports',
+        nombre: 'Reportes',
+        ruta: 'src/vistas/reportes/reportes.html',
+        css: 'src/vistas/reportes/reportes.css?v=20260512',
+        scripts: [
+            'https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js',
+            'src/vistas/reportes/reportes.js?v=20260512',
+        ],
+        inicializar: () => {
+            setTimeout(() => {
+                window._reportesCargado = false;
+                window.inicializarReportes?.();
+            }, 200);
+        }
+    },
 ];
 
 // ═══════════════════════════════════════════════════════════════════
