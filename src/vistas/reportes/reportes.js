@@ -394,6 +394,6 @@
         setTimeout(inicializar, 100);
     }
 
-    console.log('✅ [GRIZALUM] Reportes v20260512 cargado');
+    console.log('✅ [GRIZALUM] Reportes v20260512b cargado');
 
 })();
