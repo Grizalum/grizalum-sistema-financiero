@@ -53,6 +53,7 @@ const MODULOS = [
             'src/vistas/panel-control/panel-control-ui.js?v=1763827100',
             'src/vistas/panel-control/panel-control-fix.js?v=1763827100',
             'src/vistas/panel-control/panel-control-banner.js?v=1763827100',
+            'src/vistas/panel-control/panel-control-metas.js?v=20260513',
         ],
         inicializar: () => {
             setTimeout(() => {
