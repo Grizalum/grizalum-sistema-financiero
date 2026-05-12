@@ -206,6 +206,21 @@ const MODULOS = [
             }, 200);
         }
     },
+    {
+        id: 'configuracion',
+        nombre: 'Configuración',
+        ruta: 'src/vistas/configuracion/configuracion.html',
+        css: 'src/vistas/configuracion/configuracion.css',
+        scripts: [
+            'src/vistas/configuracion/configuracion.js?v=20260513',
+        ],
+        inicializar: () => {
+            setTimeout(() => {
+                window._configuracionCargado = false;
+                window.inicializarConfiguracion?.();
+            }, 200);
+        }
+    },
 ];
 
 // ═══════════════════════════════════════════════════════════════════
