@@ -1,1029 +1,450 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- * GRIZALUM - CARGADOR DE VISTAS v2.3 (ESTADO DE RESULTADOS FIXED)
- * ✅ Estado de Resultados se reinicializa correctamente
+ * GRIZALUM - CARGADOR DE VISTAS v3.0
+ * Navegación instantánea — Sin overlays — Precarga en segundo plano
  * ═══════════════════════════════════════════════════════════════════
  */
 
 // ═══════════════════════════════════════════════════════════════════
-// PASO 1: REGISTRAR TODOS LOS MÓDULOS
+// CACHÉ GLOBAL
 // ═══════════════════════════════════════════════════════════════════
 
-function registrarModulos() {
-    console.log('📦 Registrando módulos...');
+const GrizalumCache = {
+    html:      {},
+    css:       {},
+    cargado:   {},
 
-    // ───────────────────────────────────────────────────────────────
-    // PANEL DE CONTROL (DASHBOARD)
-    // ───────────────────────────────────────────────────────────────
-    window.grizalumModulos.registrar({
-        id: 'dashboard',
-        nombre: 'Panel de Control',
-        ruta: 'src/vistas/panel-control/panel-control.html',
-        nivel: 0,
-
-        dependencias: [
-            'src/vistas/flujo-caja/flujo-caja-categorias.js',
-            'src/vistas/flujo-caja/flujo-caja-config.js'
-        ],
-
-        onCargar: async function() {
-            console.log('   📊 Cargando Panel de Control...');
-            
-            console.log('   📦 Cargando dependencias del Flujo de Caja...');
-            await cargarScript('src/vistas/flujo-caja/flujo-caja.js');
-            await cargarScript('src/vistas/flujo-caja/historial-descripciones.js');
-            await cargarScript('src/vistas/flujo-caja/flujo-caja-ui.js');
-            await cargarScript('src/vistas/flujo-caja/flujo-caja-planes.js');
-            await cargarScript('src/vistas/flujo-caja/flujo-caja-categorias.js');
-            
-            if (window.flujoCaja) {
-                await window.flujoCaja.esperarInicializacion();
-                console.log('   ✅ Flujo de Caja inicializado');
-            }
-            
-            await cargarEstilos('src/vistas/panel-control/panel-control.css');
-            
-            if (typeof Chart === 'undefined') {
-                console.log('   📊 Cargando Chart.js...');
-                await cargarScript('https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js');
-                console.log('   ✅ Chart.js cargado');
-            }
-            
-            if (typeof ExcelJS === 'undefined') {
-                console.log('   📦 Cargando ExcelJS...');
-                await cargarScript('https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js');
-                console.log('   ✅ ExcelJS cargado');
-            }
-
-            await cargarScript('src/vistas/panel-control/panel-control.js');
-            await cargarScript('src/vistas/panel-control/panel-control-planes.js');
-            await cargarScript('src/vistas/panel-control/panel-control-exportador.js');
-            
-            console.log('   ✅ Panel de Control (core) cargado');
-        },
-
-        onMostrar: async function() {
-            console.log('   👁️ Mostrando Panel de Control...');
-            
-            const contenedor = document.getElementById('contenedorVistas'); 
-            
-            await cargarEstilos('src/vistas/panel-control/panel-control.css');
-            
-            contenedor.innerHTML = `
-                <div style="display: flex; align-items: center; justify-content: center; 
-                            min-height: 400px;">
-                    <div style="text-align: center;">
-                        <div style="font-size: 3rem; animation: spin 1s linear infinite;">📊</div>
-                        <p style="color: var(--texto-terciario); margin-top: 1rem;">
-                            Cargando Panel de Control...
-                        </p>
-                    </div>
-                </div>
-                <style>
-                    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-                </style>
-            `;
-            
-            await new Promise(resolve => setTimeout(resolve, 100));
-            
-            const html = await fetch('src/vistas/panel-control/panel-control.html').then(r => r.text());
-            
-            const temp = document.createElement('div');
-            temp.innerHTML = html;
-            const scripts = temp.querySelectorAll('script');
-            const scriptsArray = Array.from(scripts);
-            scriptsArray.forEach(s => s.remove());
-            
-            contenedor.innerHTML = temp.innerHTML;   
-            
-            await new Promise(resolve => {
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        setTimeout(resolve, 100);
-                    });
-                });
-            });
-            
-            console.log('   ⏳ Esperando datos del Panel de Control...');
-
-            if (window.panelControl) {
-                let intentos = 0;
-                while (!window.panelControl.estaListo() && intentos < 30) {
-                    await new Promise(resolve => setTimeout(resolve, 100));
-                    intentos++;
+    async precargarHTML(modulos) {
+        await Promise.all(modulos.map(async (mod) => {
+            if (this.html[mod.id]) return;
+            try {
+                const r = await fetch(mod.ruta);
+                if (r.ok) {
+                    this.html[mod.id] = await r.text();
+                    console.log(`📥 [Cache] ${mod.id}`);
                 }
-    
-                if (window.panelControl.estaListo()) {
-                    console.log('   ✅ Panel de Control con datos cargados');
-                    await new Promise(resolve => setTimeout(resolve, 200));
-                } else {
-                    console.warn('   ⚠️ Timeout esperando datos del Panel');
-                }
-            }
-            
-            console.log('   📦 Cargando scripts del HTML...');
-            
-            for (const scriptOriginal of scriptsArray) {
-                if (!scriptOriginal.src) {
-                    const script = document.createElement('script');
-                    script.textContent = scriptOriginal.textContent;
-                    document.body.appendChild(script);
-                    console.log('   ✅ Script inline ejecutado');
-                    continue;
-                }
-                
-                const srcCompleto = scriptOriginal.src;
-                const srcBase = srcCompleto.split('?')[0];
-                const nombreArchivo = srcBase.split('/').pop();
-                
-                const yaExiste = Array.from(document.querySelectorAll('script[src]')).some(s => {
-                    const sSrcBase = s.src.split('?')[0];
-                    return sSrcBase === srcBase;
-                });
-                
-                if (yaExiste) {
-                    console.log(`   ⏭️ Ya cargado: ${nombreArchivo}`);
-                    continue;
-                }
-                
-                try {
-                    console.log(`   📥 Cargando: ${nombreArchivo}`);
-                    await cargarScript(srcCompleto);
-                    console.log(`   ✅ Cargado: ${nombreArchivo}`);
-                } catch (error) {
-                    console.error(`   ❌ Error cargando ${nombreArchivo}:`, error);
-                }
-            }
-            
-            if (window.panelControl) {
-                await window.panelControl.esperarInicializacion();
-            }
-
-            console.log('   ⏳ Esperando a panelControlUI...');
-            let intentos = 0;
-            while (!window.panelControlUI && intentos < 50) {
-                await new Promise(resolve => setTimeout(resolve, 100));
-                intentos++;
-            }
-            
-            if (window.panelControlUI) {
-                console.log('   ✅ panelControlUI disponible');
-                
-                await new Promise(resolve => setTimeout(resolve, 500));
-                
-                setTimeout(() => {
-                    console.log('   🔄 Inicializando UI del Panel de Control...');
-                    
-                    if (window.panelControlUI.cargarDatos) {
-                        window.panelControlUI.cargarDatos();
-                        console.log('   ✅ Datos cargados en UI');
-                    }
-                    
-                    if (window.panelControlUI.inicializarGraficos) {
-                        window.panelControlUI.inicializarGraficos();
-                        console.log('   ✅ Gráficos inicializados');
-                    }
-                    
-                    if (window.PanelControlPlanes && window.PanelControlPlanes.aplicarRestricciones) {
-                        window.PanelControlPlanes.aplicarRestricciones();
-                        console.log('   ✅ Restricciones aplicadas');
-                    }
-                    
-                    window.dispatchEvent(new Event('vistaPanelControlCargada'));
-                    contenedor.scrollTo({ top: 0, behavior: 'smooth' });
-                    console.log('   ✅ Panel de Control completamente listo');
-                }, 200);
-                
-            } else {
-                console.error('   ❌ panelControlUI NO se cargó después de esperar');
-                console.error('   💡 Verifica que panel-control-ui.js no tenga errores');
-            }
-        }
-    });
-
-    // ───────────────────────────────────────────────────────────────
-    // FLUJO DE CAJA
-    // ───────────────────────────────────────────────────────────────
-    window.grizalumModulos.registrar({
-        id: 'cash-flow',
-        nombre: 'Flujo de Caja',
-        ruta: 'src/vistas/flujo-caja/flujo-caja.html',
-        nivel: 0,
-
-        dependencias: [
-            'src/vistas/flujo-caja/flujo-caja-categorias.js',
-            'src/vistas/flujo-caja/flujo-caja-config.js'
-        ],
-
-        onCargar: async function() {
-            console.log('   💰 Cargando Flujo de Caja...');
-            await cargarEstilos('src/vistas/flujo-caja/flujo-caja.css');
-        },
-
-        onMostrar: async function() {
-            console.log('   👁️ Mostrando Flujo de Caja...');
-            
-            const contenedor = document.getElementById('contenedorVistas');
-            
-            contenedor.innerHTML = `
-                <div style="display: flex; align-items: center; justify-content: center; 
-                            min-height: 400px;">
-                    <div style="text-align: center;">
-                        <div style="font-size: 3rem; animation: spin 1s linear infinite;">💰</div>
-                        <p style="color: var(--texto-terciario); margin-top: 1rem;">
-                            Cargando Flujo de Caja...
-                        </p>
-                    </div>
-                </div>
-                <style>
-                    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-                </style>
-            `;
-            
-            await new Promise(resolve => setTimeout(resolve, 100));
-            
-            const html = await fetch('src/vistas/flujo-caja/flujo-caja.html').then(r => r.text());
-            
-            const temp = document.createElement('div');
-            temp.innerHTML = html;
-            const scripts = temp.querySelectorAll('script');
-            const scriptsArray = Array.from(scripts);
-            scriptsArray.forEach(s => s.remove());
-            
-            contenedor.innerHTML = temp.innerHTML;
-            
-            await new Promise(resolve => {
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        setTimeout(resolve, 100);
-                    });
-                });
-            });
-            
-            for (const scriptOriginal of scriptsArray) {
-                if (scriptOriginal.src) {
-                    const srcSinQuery = scriptOriginal.src.split('?')[0];
-                    const yaExiste = Array.from(document.querySelectorAll('script[src]')).some(s => 
-                        s.src.split('?')[0] === srcSinQuery
-                    );
-                    
-                    if (yaExiste) {
-                        console.log(`⏭️ Script ya cargado: ${scriptOriginal.src}`);
-                        continue;
-                    }
-                    
-                    const script = document.createElement('script');
-                    script.src = scriptOriginal.src;
-                    script.async = false;
-                    document.body.appendChild(script);
-                    
-                    await new Promise((resolve, reject) => {
-                        script.onload = resolve;
-                        script.onerror = reject;
-                    });
-                } else {
-                    const script = document.createElement('script');
-                    script.textContent = scriptOriginal.textContent;
-                    document.body.appendChild(script);
-                }
-            }
-            
-            if (window.flujoCaja) {
-                await window.flujoCaja.esperarInicializacion();
-            }
-            
-            setTimeout(() => {
-                window.dispatchEvent(new Event('flujoCajaVisible'));
-                
-                console.log('🔄 Forzando recarga de datos...');
-                
-                let intentos = 0;
-                const forzarRecarga = setInterval(() => {
-                    intentos++;
-                    
-                    if (window.flujoCajaUI && window.flujoCajaUI.modulo) {
-                        console.log('✅ Recargando datos (intento ' + intentos + ')');
-                        window.flujoCajaUI.cargarBalance();
-                        window.flujoCajaUI.cargarTransacciones();
-                        window.flujoCajaUI.cargarNivel();
-                        clearInterval(forzarRecarga);
-                    } else if (intentos > 10) {
-                        console.error('❌ No se pudo recargar datos después de 10 intentos');
-                        clearInterval(forzarRecarga);
-                    }
-                }, 200);
-                
-            }, 300);
-        
-            setTimeout(() => {
-                contenedor.scrollTo({ top: 0, behavior: 'smooth' });
-                console.log('✅ Flujo de Caja cargado');
-            }, 400);
-        },
-        
-        onOcultar: function() {
-            console.log('   👁️‍🗨️ Ocultando Flujo de Caja');
-        }
-    });
-
-    // ───────────────────────────────────────────────────────────────
-    // ESTADO DE RESULTADOS - CORREGIDO
-    // ───────────────────────────────────────────────────────────────
-    window.grizalumModulos.registrar({
-        id: 'income-statement',
-        nombre: 'Estado de Resultados',
-        ruta: 'src/vistas/estado-resultados/estado-resultados.html',
-        nivel: 0,
-
-        dependencias: [
-            'src/vistas/estado-resultados/estado-resultados-config.js',
-            'src/vistas/estado-resultados/estado-resultados-exportador.js',
-            'src/vistas/estado-resultados/estado-resultados-graficos.js'
-        ],
-
-       onCargar: async function() {
-            console.log('   📊 Cargando Estado de Resultados...');
-            
-            // Cargar FlujoCaja si no existe
-            if (!window.flujoCaja) {
-                console.log('   📦 Cargando dependencia FlujoCaja...');
-                try {
-                    await cargarScript('src/vistas/flujo-caja/flujo-caja-categorias.js');
-                    await cargarScript('src/vistas/flujo-caja/flujo-caja-config.js');
-                    await cargarScript('src/vistas/flujo-caja/flujo-caja.js');
-                    if (window.flujoCaja && window.flujoCaja.esperarInicializacion) {
-                        await window.flujoCaja.esperarInicializacion();
-                    }
-                    console.log('   ✅ FlujoCaja cargado');
-                } catch(e) {
-                    console.warn('   ⚠️ FlujoCaja no pudo cargarse:', e.message);
-                }
-            }
-            
-            await cargarEstilos('src/vistas/estado-resultados/estado-resultados.css');
-        },
-
-        onMostrar: async function() {
-            console.log('   👁️ Mostrando Estado de Resultados...');
-            
-            const contenedor = document.getElementById('contenedorVistas');
-            
-            contenedor.innerHTML = `
-                <div style="display: flex; align-items: center; justify-content: center; 
-                            min-height: 400px;">
-                    <div style="text-align: center;">
-                        <div style="font-size: 3rem; animation: spin 1s linear infinite;">📊</div>
-                        <p style="color: var(--texto-terciario); margin-top: 1rem;">
-                            Cargando Estado de Resultados...
-                        </p>
-                    </div>
-                </div>
-                <style>
-                    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-                </style>
-            `;
-            
-            await new Promise(resolve => setTimeout(resolve, 100));
-            
-            const html = await fetch('src/vistas/estado-resultados/estado-resultados.html').then(r => r.text());
-            
-            const temp = document.createElement('div');
-            temp.innerHTML = html;
-            const scripts = temp.querySelectorAll('script');
-            const scriptsArray = Array.from(scripts);
-            scriptsArray.forEach(s => s.remove());
-            
-            contenedor.innerHTML = temp.innerHTML;
-            
-            await new Promise(resolve => {
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        setTimeout(resolve, 100);
-                    });
-                });
-            });
-            
-            console.log('   🔄 Reinicializando Estado de Resultados...');
-            
-            if (window.estadoResultadosUI) {
-                window.estadoResultadosUI = null;
-            }
-            
-            // ✅ CARGAR SCRIPTS EXTERNOS PRIMERO
-            console.log('   📦 Cargando scripts externos...');
-            for (const scriptOriginal of scriptsArray) {
-                if (scriptOriginal.src) {
-                    const srcCompleto = scriptOriginal.src;
-                    const nombreArchivo = srcCompleto.split('/').pop().split('?')[0];
-                    
-                    console.log(`   📥 Cargando: ${nombreArchivo}`);
-                    
-                    const script = document.createElement('script');
-                    script.src = srcCompleto;
-                    script.async = false;
-                    document.body.appendChild(script);
-                    
-                    await new Promise((resolve) => {
-                        script.onload = () => {
-                            console.log(`   ✅ Cargado: ${nombreArchivo}`);
-                            resolve();
-                        };
-                        script.onerror = () => {
-                            console.warn(`   ⚠️ Error: ${nombreArchivo}`);
-                            resolve();
-                        };
-                    });
-                }
-            }
-            console.log('   ✅ Scripts externos cargados');
-            
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            // ✅ EJECUTAR SCRIPTS INLINE (Plan B)
-            for (const scriptOriginal of scriptsArray) {
-                if (!scriptOriginal.src) {
-                    const script = document.createElement('script');
-                    script.textContent = scriptOriginal.textContent;
-                    document.body.appendChild(script);
-                }
-            }
-            // ✅ FORZAR INICIALIZACIÓN MANUAL
-            setTimeout(() => {
-                console.log('🚀 [Cargador] Inicializando Estado de Resultados...');
-                
-                if (window.estadoResultados) {
-                    if (!window.estadoResultados.empresaActual) {
-                        window.estadoResultados.empresaActual = localStorage.getItem('grizalum_empresa_actual') || 'avicola';
-                    }
-                    if (!window.estadoResultados.configuracion) {
-                        window.estadoResultados.configuracion = window.EstadoResultadosConfig;
-                    }
-                    window.estadoResultados.calcularResultados();
-                    
-                    if (!window.estadoResultadosUI) {
-                        window.estadoResultadosUI = new window.EstadoResultadosUI();
-                    }
-                    
-                    console.log('✅ [Cargador] Estado de Resultados inicializado');
-                    
-                    // ✅ NUEVO: Inicializar modal período personalizado
-                    if (window.ModalPeriodoPersonalizado && !window.modalPeriodoPersonalizado) {
-                        console.log('📅 Inicializando modal período personalizado...');
-                        setTimeout(() => {
-                            window.modalPeriodoPersonalizado = new window.ModalPeriodoPersonalizado();
-                            console.log('✅ Modal período personalizado listo');
-                        }, 500);
-                    }
-                }
-            }, 1500);
-            
-            setTimeout(() => {
-                window.dispatchEvent(new Event('vistaEstadoResultadosCargada'));
-                contenedor.scrollTo({ top: 0, behavior: 'instant' });
-                console.log('✅ Estado de Resultados cargado');
-            }, 100);
-        }
-    });
-
-    // ───────────────────────────────────────────────────────────────
-    // BALANCE GENERAL
-    // ───────────────────────────────────────────────────────────────
-    window.grizalumModulos.registrar({
-        id: 'balance-sheet',
-        nombre: 'Balance General',
-        ruta: 'src/vistas/balance-general/balance-general.html',
-        nivel: 0,
-
-        onCargar: async function() {
-            console.log('   📋 Cargando Balance General...');
-            
-            // Cargar FlujoCaja si no existe
-            if (!window.flujoCaja) {
-                console.log('   📦 Cargando dependencia FlujoCaja...');
-                try {
-                    await cargarScript('src/vistas/flujo-caja/flujo-caja-categorias.js');
-                    await cargarScript('src/vistas/flujo-caja/flujo-caja-config.js');
-                    await cargarScript('src/vistas/flujo-caja/flujo-caja.js');
-                    if (window.flujoCaja && window.flujoCaja.esperarInicializacion) {
-                        await window.flujoCaja.esperarInicializacion();
-                    }
-                    console.log('   ✅ FlujoCaja cargado');
-                } catch(e) {
-                    console.warn('   ⚠️ FlujoCaja no pudo cargarse:', e.message);
-                }
-            }
-            
-            await cargarEstilos('src/vistas/balance-general/balance-general.css');
-            await cargarScript('src/vistas/balance-general/balance-general-config.js?v=20260417');
-            await cargarScript('src/vistas/balance-general/balance-general-calculos.js?v=20260417');
-            await cargarScript('src/vistas/balance-general/balance-general-ui.js?v=20260417');
-            await cargarScript('src/vistas/balance-general/balance-general-graficos.js?v=20260417');
-            await cargarScript('src/vistas/balance-general/balance-general-exportador.js?v=20260417');
-            await cargarScript('src/vistas/balance-general/balance-general.js?v=20260417');
-            console.log('   ✅ Módulos Balance General cargados');
-        },
-
-        onMostrar: async function() {
-            console.log('   👁️ Mostrando Balance General...');
-
-            const contenedor = document.getElementById('contenedorVistas');
-
-            // Loading
-            contenedor.innerHTML = `
-                <div style="display: flex; align-items: center; justify-content: center; min-height: 400px;">
-                    <div style="text-align: center;">
-                        <div style="font-size: 3rem; animation: spin 1s linear infinite;">📋</div>
-                        <p style="color: var(--texto-terciario); margin-top: 1rem;">Cargando Balance General...</p>
-                    </div>
-                </div>
-                <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
-            `;
-
-            await new Promise(resolve => setTimeout(resolve, 100));
-
-            // Asegurar CSS cargado
-            await cargarEstilos('src/vistas/balance-general/balance-general.css');
-
-            const html = await fetch('src/vistas/balance-general/balance-general.html').then(r => r.text());
-
-            const temp = document.createElement('div');
-            temp.innerHTML = html;
-            const scripts = temp.querySelectorAll('script');
-            const scriptsArray = Array.from(scripts);
-            scriptsArray.forEach(s => s.remove());
-
-            contenedor.innerHTML = temp.innerHTML;
-
-            await new Promise(resolve => {
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        setTimeout(resolve, 100);
-                    });
-                });
-            });
-
- // Cargar scripts externos — verificar duplicados
-            for (const scriptOriginal of scriptsArray) {
-                if (scriptOriginal.src) {
-                    const srcBase = scriptOriginal.src.split('?')[0];
-                    const yaExiste = Array.from(document.querySelectorAll('script[src]'))
-                        .some(s => s.src.split('?')[0] === srcBase);
-                    
-                    if (yaExiste) {
-                        console.log(`⏭️ Ya cargado: ${srcBase.split('/').pop()}`);
-                        continue;
-                    }
-                    
-                    const script = document.createElement('script');
-                    script.src = scriptOriginal.src;
-                    script.async = false;
-                    document.body.appendChild(script);
-                    
-                    await new Promise((resolve) => {
-                        script.onload = resolve;
-                        script.onerror = resolve;
-                    });
-                }
-            }
-            // Scripts inline
-            for (const scriptOriginal of scriptsArray) {
-                if (!scriptOriginal.src) {
-                    const script = document.createElement('script');
-                    script.textContent = scriptOriginal.textContent;
-                    document.body.appendChild(script);
-                }
-            }
-
-           // Inicializar — esperar que los módulos estén listos
-            let intentosBG = 0;
-            const esperarModulosBG = setInterval(() => {
-                intentosBG++;
-                const listos = window.BalanceGeneralConfig
-                    && window.BalanceGeneralCalculos
-                    && window.BalanceGeneralUI
-                    && window.BalanceGeneralGraficos
-                    && window.BalanceGeneralExportador;
-
-                if (listos) {
-                    clearInterval(esperarModulosBG);
-                    window._balanceGeneralCargado = false;
-                    if (window.inicializarBalanceGeneral) {
-                        window.inicializarBalanceGeneral();
-                    }
-                    console.log('✅ Balance General inicializado (intento ' + intentosBG + ')');
-                } else if (intentosBG >= 20) {
-                    clearInterval(esperarModulosBG);
-                    console.error('❌ Balance General: módulos no cargaron después de 10 intentos');
-                }
-            }, 500);
-
-            setTimeout(() => {
-                contenedor.scrollTo({ top: 0, behavior: 'instant' });
-            }, 100);
-        }
-    });
-
-        // ───────────────────────────────────────────────────────────────
-        // CUENTAS BANCARIAS
-        // ───────────────────────────────────────────────────────────────
-        window.grizalumModulos.registrar({
-            id: 'cuentas-bancarias',
-            nombre: 'Cuentas Bancarias',
-            ruta: 'src/vistas/cuentas-bancarias/cuentas-bancarias.html',
-            nivel: 0,
-
-            onCargar: async function() {
-                console.log('   🏦 Cargando Cuentas Bancarias...');
-                await cargarEstilos('src/vistas/cuentas-bancarias/cuentas-bancarias.css');
-                if (!window.GestorCuentasBancarias) {
-                    await cargarScript('src/assets/js/gestor-cuentas-bancarias.js');
-                }
-                if (!window.UICuentasBancarias) {
-                    await cargarScript('src/assets/js/ui-cuentas-bancarias.js');
-                }
-                await cargarScript('src/vistas/cuentas-bancarias/cuentas-bancarias.js?v=20260510');
-                console.log('   ✅ Módulos Cuentas Bancarias cargados');
-            },
-
-            onMostrar: async function() {
-                console.log('   👁️ Mostrando Cuentas Bancarias...');
-                const contenedor = document.getElementById('contenedorVistas');
-
-                contenedor.innerHTML = `
-                    <div style="display:flex;align-items:center;justify-content:center;min-height:400px;">
-                        <div style="text-align:center;">
-                            <div style="font-size:3rem;animation:spin 1s linear infinite;">🏦</div>
-                            <p style="color:var(--texto-terciario);margin-top:1rem;">Cargando Cuentas Bancarias...</p>
-                        </div>
-                    </div>
-                    <style>@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}</style>
-                `;
-
-                await new Promise(resolve => setTimeout(resolve, 100));
-                await cargarEstilos('src/vistas/cuentas-bancarias/cuentas-bancarias.css');
-
-                const html = await fetch('src/vistas/cuentas-bancarias/cuentas-bancarias.html').then(r => r.text());
-
-                const temp = document.createElement('div');
-                temp.innerHTML = html;
-                const scripts = temp.querySelectorAll('script');
-                const scriptsArray = Array.from(scripts);
-                scriptsArray.forEach(s => s.remove());
-
-                contenedor.innerHTML = temp.innerHTML;
-
-                await new Promise(resolve => {
-                    requestAnimationFrame(() => {
-                        requestAnimationFrame(() => {
-                            setTimeout(resolve, 100);
-                        });
-                    });
-                });
-
-                let intentosCB = 0;
-                const esperarCB = setInterval(() => {
-                    intentosCB++;
-                    if (window.inicializarCuentasBancarias) {
-                        clearInterval(esperarCB);
-                        window._cuentasBancariasCargado = false;
-                        window.inicializarCuentasBancarias();
-                        console.log('✅ Cuentas Bancarias inicializado');
-                    } else if (intentosCB >= 20) {
-                        clearInterval(esperarCB);
-                        console.error('❌ Cuentas Bancarias: no se pudo inicializar');
-                    }
-                }, 300);
-
-                setTimeout(() => {
-                    contenedor.scrollTo({ top: 0, behavior: 'instant' });
-                }, 100);
-            }
-        });
-    // ───────────────────────────────────────────────────────────────
-        // INVENTARIO
-        // ───────────────────────────────────────────────────────────────
-        window.grizalumModulos.registrar({
-            id: 'inventory',
-            nombre: 'Inventario',
-            ruta: 'src/vistas/inventario/inventario.html',
-            nivel: 0,
-
-            onCargar: async function() {
-                console.log('   📦 Cargando Inventario...');
-                await cargarEstilos('src/vistas/inventario/inventario.css?v=20260510');
-                await cargarScript('src/vistas/inventario/inventario.js?v=20260510');
-                console.log('   ✅ Inventario cargado');
-            },
-
-            onMostrar: async function() {
-                console.log('   👁️ Mostrando Inventario...');
-
-                const contenedor = document.getElementById('contenedorVistas');
-
-                contenedor.innerHTML = `
-                    <div style="display:flex;align-items:center;justify-content:center;min-height:400px;">
-                        <div style="text-align:center;">
-                            <div style="font-size:3rem;animation:spin 1s linear infinite;">📦</div>
-                            <p style="color:var(--texto-terciario);margin-top:1rem;">Cargando Inventario...</p>
-                        </div>
-                    </div>
-                    <style>@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}</style>
-                `;
-
-                await new Promise(resolve => setTimeout(resolve, 100));
-                await cargarEstilos('src/vistas/inventario/inventario.css?v=20260510');
-
-                const html = await fetch('src/vistas/inventario/inventario.html').then(r => r.text());
-
-                const temp = document.createElement('div');
-                temp.innerHTML = html;
-                const scripts = temp.querySelectorAll('script');
-                const scriptsArray = Array.from(scripts);
-                scriptsArray.forEach(s => s.remove());
-
-                contenedor.innerHTML = temp.innerHTML;
-
-                await new Promise(resolve => {
-                    requestAnimationFrame(() => {
-                        requestAnimationFrame(() => {
-                            setTimeout(resolve, 100);
-                        });
-                    });
-                });
-
-                let intentosInv = 0;
-                const esperarInv = setInterval(() => {
-                    intentosInv++;
-                    if (window.inicializarInventario) {
-                        clearInterval(esperarInv);
-                        window._inventarioCargado = false;
-                        window.inicializarInventario();
-                        console.log('✅ Inventario inicializado');
-                    } else if (intentosInv >= 20) {
-                        clearInterval(esperarInv);
-                        console.error('❌ Inventario: no se pudo inicializar');
-                    }
-                }, 300);
-
-                setTimeout(() => {
-                    contenedor.scrollTo({ top: 0, behavior: 'instant' });
-                }, 100);
-            }
-        });
-        // ───────────────────────────────────────────────────────────────
-        // VENTAS
-        // ───────────────────────────────────────────────────────────────
-        window.grizalumModulos.registrar({
-            id: 'sales',
-            nombre: 'Ventas',
-            ruta: 'src/vistas/ventas/ventas.html',
-            nivel: 0,
-
-            onCargar: async function() {
-                console.log('   🛒 Cargando Ventas...');
-                await cargarEstilos('src/vistas/ventas/ventas.css?v=20260510');
-                await cargarScript('src/vistas/ventas/ventas.js?v=20260510');
-                console.log('   ✅ Ventas cargado');
-            },
-
-            onMostrar: async function() {
-                console.log('   👁️ Mostrando Ventas...');
-
-                const contenedor = document.getElementById('contenedorVistas');
-
-                contenedor.innerHTML = `
-                    <div style="display:flex;align-items:center;justify-content:center;min-height:400px;">
-                        <div style="text-align:center;">
-                            <div style="font-size:3rem;animation:spin 1s linear infinite;">🛒</div>
-                            <p style="color:var(--texto-terciario);margin-top:1rem;">Cargando Ventas...</p>
-                        </div>
-                    </div>
-                    <style>@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}</style>
-                `;
-
-                await new Promise(resolve => setTimeout(resolve, 100));
-                await cargarEstilos('src/vistas/ventas/ventas.css?v=20260510');
-
-                const html = await fetch('src/vistas/ventas/ventas.html').then(r => r.text());
-
-                const temp = document.createElement('div');
-                temp.innerHTML = html;
-                const scripts = temp.querySelectorAll('script');
-                const scriptsArray = Array.from(scripts);
-                scriptsArray.forEach(s => s.remove());
-
-                contenedor.innerHTML = temp.innerHTML;
-
-                await new Promise(resolve => {
-                    requestAnimationFrame(() => {
-                        requestAnimationFrame(() => {
-                            setTimeout(resolve, 100);
-                        });
-                    });
-                });
-
-                let intentosVt = 0;
-                const esperarVt = setInterval(() => {
-                    intentosVt++;
-                    if (window.inicializarVentas) {
-                        clearInterval(esperarVt);
-                        window._ventasCargado = false;
-                        window.inicializarVentas();
-                        console.log('✅ Ventas inicializado');
-                    } else if (intentosVt >= 20) {
-                        clearInterval(esperarVt);
-                        console.error('❌ Ventas: no se pudo inicializar');
-                    }
-                }, 300);
-
-                setTimeout(() => {
-                    contenedor.scrollTo({ top: 0, behavior: 'instant' });
-                }, 100);
-            }
-      });
-
-    console.log('✅ Módulos registrados correctamente');
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// PASO 2: FUNCIONES AUXILIARES
-
-async function cargarEstilos(url) {
-    try {
-        document.querySelectorAll('link[id="vista-css-dinamico"], style[id="vista-css-dinamico"]').forEach(el => {
-            el.remove();
-        });
-        
-        const response = await fetch(url);
-        
-        if (response.ok) {
-            const cssText = await response.text();
-            
-            const style = document.createElement('style');
-            style.id = 'vista-css-dinamico';
-            style.textContent = cssText;
-            document.head.appendChild(style);
-            
-            console.log(`   ✅ CSS cargado: ${url.split('/').pop()}`);
-            
-            await new Promise(resolve => setTimeout(resolve, 50));
-        } else {
-            console.warn(`   ⚠️ CSS no encontrado: ${url}`);
-        }
-    } catch (error) {
-        console.error(`   ❌ Error cargando CSS:`, error);
-    }
-}
-
-async function cargarScript(url) {
-    return new Promise((resolve, reject) => {
-        const existente = document.querySelector(`script[src="${url}"]`);
-        if (existente) {
-            console.log(`   ℹ️ Script ya cargado: ${url.split('/').pop()}`);
-            resolve();
-            return;
-        }
-        
-        const script = document.createElement('script');
-        script.src = url;
-        script.async = false;
-        
-        script.onload = () => {
-            console.log(`   ✅ Script cargado: ${url.split('/').pop()}`);
-            resolve();
-        };
-        
-        script.onerror = () => {
-            console.error(`   ❌ Error cargando script: ${url}`);
-            reject(new Error(`No se pudo cargar ${url}`));
-        };
-        
-        document.head.appendChild(script);
-    });
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// PASO 3: FUNCIÓN DE NAVEGACIÓN GLOBAL
-// ═══════════════════════════════════════════════════════════════════
-
-async function cambiarSeccion(seccionId, event) {
-    if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-    }
-    
-    console.log(`\n🔄 Cambiando a sección: ${seccionId}`);
-    
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.classList.remove('active');
-    });
-    
-    const linkActual = document.querySelector(`[data-section="${seccionId}"]`);
-    if (linkActual) {
-        linkActual.classList.add('active');
-    }
-    
-    if (event && event.currentTarget) {
-        event.currentTarget.classList.add('active');
-    }
-    
-    await window.grizalumModulos.activar(seccionId);
-    
-    try {
-        const empresaId = window.gestorEmpresas?.estado?.empresaActual;
-        if (empresaId && empresaId !== 'null' && empresaId !== 'undefined') {
-            const key = `grizalum_ultima_vista_${empresaId}`;
-            localStorage.setItem(key, seccionId);
-            console.log(`✅ Vista "${seccionId}" guardada para empresa: ${empresaId}`);
-        }
-    } catch (error) {
-        console.error('❌ Error guardando última vista:', error);
-    }
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// PASO 4: FUNCIÓN DE RECARGA GLOBAL
-// ═══════════════════════════════════════════════════════════════════
-
-window.recargarFlujoCaja = function() {
-    console.log('🔄 [recargarFlujoCaja] Ejecutando...');
-    
-    if (!window.flujoCajaUI) {
-        console.error('❌ flujoCajaUI no disponible');
-        return;
-    }
-    
-    if (!window.flujoCajaUI.modulo) {
-        console.error('❌ Módulo no conectado');
-        return;
-    }
-    
-    try {
-        console.log('📊 Cargando balance...');
-        window.flujoCajaUI.cargarBalance();
-        
-        console.log('📋 Cargando transacciones...');
-        window.flujoCajaUI.cargarTransacciones();
-        
-        console.log('✅ Recarga completada');
-    } catch (error) {
-        console.error('❌ Error:', error);
+            } catch (e) {}
+        }));
     }
 };
 
 // ═══════════════════════════════════════════════════════════════════
-// PASO 5: INICIALIZACIÓN
+// MÓDULOS — Definición completa
 // ═══════════════════════════════════════════════════════════════════
+
+const MODULOS = [
+    {
+        id: 'dashboard',
+        nombre: 'Panel de Control',
+        ruta: 'src/vistas/panel-control/panel-control.html',
+        css: 'src/vistas/panel-control/panel-control.css',
+        scripts: [
+            'src/vistas/flujo-caja/flujo-caja-categorias.js',
+            'src/vistas/flujo-caja/flujo-caja-config.js',
+            'src/vistas/flujo-caja/flujo-caja.js',
+            'src/vistas/flujo-caja/historial-descripciones.js',
+            'src/vistas/flujo-caja/flujo-caja-ui.js',
+            'src/vistas/flujo-caja/flujo-caja-planes.js',
+            'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js',
+            'https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js',
+            'src/vistas/panel-control/panel-control.js',
+            'src/vistas/panel-control/panel-control-planes.js',
+            'src/vistas/panel-control/panel-control-exportador.js',
+            'src/vistas/panel-control/panel-control-ui.js?v=1763827100',
+            'src/vistas/panel-control/panel-control-fix.js?v=1763827100',
+            'src/vistas/panel-control/panel-control-banner.js?v=1763827100',
+        ],
+        inicializar: () => {
+            setTimeout(() => {
+                if (window.panelControlUI) {
+                    window.panelControlUI.cargarDatos?.();
+                    window.panelControlUI.inicializarGraficos?.();
+                }
+                window.PanelControlPlanes?.aplicarRestricciones?.();
+                window.dispatchEvent(new Event('vistaPanelControlCargada'));
+            }, 300);
+        }
+    },
+    {
+        id: 'cash-flow',
+        nombre: 'Flujo de Caja',
+        ruta: 'src/vistas/flujo-caja/flujo-caja.html',
+        css: 'src/vistas/flujo-caja/flujo-caja.css',
+        scripts: [
+            'src/vistas/flujo-caja/flujo-caja-categorias.js',
+            'src/vistas/flujo-caja/flujo-caja-config.js',
+            'src/vistas/flujo-caja/flujo-caja.js',
+            'src/vistas/flujo-caja/historial-descripciones.js',
+            'src/vistas/flujo-caja/flujo-caja-ui.js',
+            'src/vistas/flujo-caja/flujo-caja-planes.js',
+        ],
+        inicializar: () => {
+            window.dispatchEvent(new Event('flujoCajaVisible'));
+            setTimeout(() => {
+                if (window.flujoCajaUI?.modulo) {
+                    window.flujoCajaUI.cargarBalance?.();
+                    window.flujoCajaUI.cargarTransacciones?.();
+                }
+            }, 300);
+        }
+    },
+    {
+        id: 'income-statement',
+        nombre: 'Estado de Resultados',
+        ruta: 'src/vistas/estado-resultados/estado-resultados.html',
+        css: 'src/vistas/estado-resultados/estado-resultados.css',
+        scripts: [
+            'src/vistas/flujo-caja/flujo-caja-categorias.js',
+            'src/vistas/flujo-caja/flujo-caja-config.js',
+            'src/vistas/flujo-caja/flujo-caja.js',
+            'src/vistas/estado-resultados/estado-resultados-config.js',
+            'src/vistas/estado-resultados/estado-resultados.js',
+            'src/vistas/estado-resultados/estado-resultados-ui.js',
+            'src/vistas/estado-resultados/estado-resultados-exportador.js',
+            'src/vistas/estado-resultados/estado-resultados-graficos.js',
+            'src/vistas/estado-resultados/estado-resultados-inicializador.js',
+            'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js',
+            'https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js',
+        ],
+        inicializar: () => {
+            setTimeout(() => {
+                if (window.estadoResultados) {
+                    window.estadoResultados.empresaActual = localStorage.getItem('grizalum_empresa_actual') || 'avicola';
+                    window.estadoResultados.configuracion = window.EstadoResultadosConfig;
+                    window.estadoResultados.calcularResultados?.();
+                    if (!window.estadoResultadosUI && window.EstadoResultadosUI) {
+                        window.estadoResultadosUI = new window.EstadoResultadosUI();
+                    }
+                }
+                window.dispatchEvent(new Event('vistaEstadoResultadosCargada'));
+            }, 500);
+        }
+    },
+    {
+        id: 'balance-sheet',
+        nombre: 'Balance General',
+        ruta: 'src/vistas/balance-general/balance-general.html',
+        css: 'src/vistas/balance-general/balance-general.css',
+        scripts: [
+            'src/vistas/flujo-caja/flujo-caja-categorias.js',
+            'src/vistas/flujo-caja/flujo-caja-config.js',
+            'src/vistas/flujo-caja/flujo-caja.js',
+            'src/vistas/balance-general/balance-general-config.js?v=20260417',
+            'src/vistas/balance-general/balance-general-calculos.js?v=20260417',
+            'src/vistas/balance-general/balance-general-ui.js?v=20260417',
+            'src/vistas/balance-general/balance-general-graficos.js?v=20260417',
+            'src/vistas/balance-general/balance-general-exportador.js?v=20260417',
+            'src/vistas/balance-general/balance-general.js?v=20260417',
+        ],
+        inicializar: () => {
+            setTimeout(() => {
+                window._balanceGeneralCargado = false;
+                window.inicializarBalanceGeneral?.();
+            }, 200);
+        }
+    },
+    {
+        id: 'cuentas-bancarias',
+        nombre: 'Cuentas Bancarias',
+        ruta: 'src/vistas/cuentas-bancarias/cuentas-bancarias.html',
+        css: 'src/vistas/cuentas-bancarias/cuentas-bancarias.css',
+        scripts: [
+            'src/assets/js/gestor-cuentas-bancarias.js',
+            'src/assets/js/ui-cuentas-bancarias.js',
+            'src/vistas/cuentas-bancarias/cuentas-bancarias.js?v=20260510',
+        ],
+        inicializar: () => {
+            setTimeout(() => {
+                window._cuentasBancariasCargado = false;
+                window.inicializarCuentasBancarias?.();
+            }, 200);
+        }
+    },
+    {
+        id: 'inventory',
+        nombre: 'Inventario',
+        ruta: 'src/vistas/inventario/inventario.html',
+        css: 'src/vistas/inventario/inventario.css?v=20260510',
+        scripts: [
+            'src/vistas/inventario/inventario.js?v=20260510b',
+        ],
+        inicializar: () => {
+            setTimeout(() => {
+                window._inventarioCargado = false;
+                window.inicializarInventario?.();
+            }, 200);
+        }
+    },
+    {
+        id: 'sales',
+        nombre: 'Ventas',
+        ruta: 'src/vistas/ventas/ventas.html',
+        css: 'src/vistas/ventas/ventas.css?v=20260510',
+        scripts: [
+            'src/vistas/ventas/ventas.js?v=20260510b',
+        ],
+        inicializar: () => {
+            setTimeout(() => {
+                window._ventasCargado = false;
+                window.inicializarVentas?.();
+            }, 200);
+        }
+    },
+];
+
+// ═══════════════════════════════════════════════════════════════════
+// CARGADOR DE SCRIPTS — Una sola vez por script
+// ═══════════════════════════════════════════════════════════════════
+
+const scriptsYaCargados = new Set();
+
+async function cargarScript(url) {
+    const urlBase = url.split('?')[0];
+    const nombreArchivo = urlBase.split('/').pop();
+
+    if (scriptsYaCargados.has(urlBase)) return;
+
+    const yaExiste = Array.from(document.querySelectorAll('script[src]'))
+        .some(s => s.src.split('?')[0].endsWith(nombreArchivo));
+
+    if (yaExiste) {
+        scriptsYaCargados.add(urlBase);
+        return;
+    }
+
+    scriptsYaCargados.add(urlBase);
+
+    return new Promise((resolve) => {
+        const script = document.createElement('script');
+        script.src = url;
+        script.async = false;
+        script.onload = resolve;
+        script.onerror = resolve;
+        document.head.appendChild(script);
+    });
+}
+
+function aplicarCSS(cssText) {
+    let style = document.getElementById('vista-css-dinamico');
+    if (!style) {
+        style = document.createElement('style');
+        style.id = 'vista-css-dinamico';
+        document.head.appendChild(style);
+    }
+    style.textContent = cssText;
+}
+
+async function cargarEstilos(url) {
+    if (GrizalumCache.css[url]) {
+        aplicarCSS(GrizalumCache.css[url]);
+        return;
+    }
+    try {
+        const r = await fetch(url);
+        if (r.ok) {
+            const css = await r.text();
+            GrizalumCache.css[url] = css;
+            aplicarCSS(css);
+        }
+    } catch (e) {}
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// BARRA DE PROGRESO DISCRETA
+// ═══════════════════════════════════════════════════════════════════
+
+function mostrarBarraProgreso() {
+    let barra = document.getElementById('gz-progress');
+    if (!barra) {
+        const style = document.createElement('style');
+        style.textContent = `
+            #gz-progress {
+                position:fixed;top:0;left:0;height:2px;width:0%;
+                background:linear-gradient(90deg,#10b981,#3b82f6,#8b5cf6);
+                z-index:99999;transition:width 0.4s ease,opacity 0.3s ease;
+                border-radius:0 2px 2px 0;
+            }
+        `;
+        document.head.appendChild(style);
+        barra = document.createElement('div');
+        barra.id = 'gz-progress';
+        document.body.appendChild(barra);
+    }
+    barra.style.opacity = '1';
+    barra.style.width = '0%';
+    setTimeout(() => { barra.style.width = '60%'; }, 10);
+    setTimeout(() => { barra.style.width = '85%'; }, 300);
+}
+
+function ocultarBarraProgreso() {
+    const barra = document.getElementById('gz-progress');
+    if (barra) {
+        barra.style.width = '100%';
+        setTimeout(() => { barra.style.opacity = '0'; barra.style.width = '0%'; }, 300);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// NAVEGACIÓN PRINCIPAL
+// ═══════════════════════════════════════════════════════════════════
+
+let moduloActual = null;
+let cargandoModulo = false;
+
+async function cambiarSeccion(seccionId, event) {
+    if (event) { event.preventDefault(); event.stopPropagation(); }
+    if (seccionId === moduloActual && GrizalumCache.cargado[seccionId]) return;
+    if (cargandoModulo) return;
+
+    cargandoModulo = true;
+
+    // Actualizar sidebar inmediatamente
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    const linkActual = document.querySelector(`[data-section="${seccionId}"]`);
+    if (linkActual) linkActual.classList.add('active');
+    if (event?.currentTarget) event.currentTarget.classList.add('active');
+
+    const modulo = MODULOS.find(m => m.id === seccionId);
+    if (!modulo) { cargandoModulo = false; return; }
+
+    const contenedor = document.getElementById('contenedorVistas');
+    if (!contenedor) { cargandoModulo = false; return; }
+
+    const esPrimeraCarga = !GrizalumCache.cargado[seccionId];
+    if (esPrimeraCarga) mostrarBarraProgreso();
+
+    try {
+        // 1. CSS
+        if (modulo.css) await cargarEstilos(modulo.css);
+
+        // 2. HTML — del caché si ya se precargó
+        let html = GrizalumCache.html[seccionId];
+        if (!html) {
+            const r = await fetch(modulo.ruta);
+            if (r.ok) {
+                html = await r.text();
+                GrizalumCache.html[seccionId] = html;
+            }
+        }
+
+        if (html) {
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+            temp.querySelectorAll('script').forEach(s => s.remove());
+            temp.querySelectorAll('link[rel="stylesheet"]').forEach(l => l.remove());
+            contenedor.innerHTML = temp.innerHTML;
+        }
+
+        // 3. Scripts — solo primera vez
+        if (esPrimeraCarga) {
+            for (const scriptUrl of (modulo.scripts || [])) {
+                await cargarScript(scriptUrl);
+            }
+        }
+
+        // 4. Inicializar
+        modulo.inicializar?.();
+
+        GrizalumCache.cargado[seccionId] = true;
+        moduloActual = seccionId;
+
+        contenedor.scrollTo({ top: 0, behavior: 'instant' });
+
+        // Guardar última vista
+        try {
+            const empresa = window.gestorEmpresas?.estado?.empresaActual;
+            if (empresa && empresa !== 'null' && empresa !== 'undefined') {
+                localStorage.setItem(`grizalum_ultima_vista_${empresa}`, seccionId);
+            }
+        } catch (e) {}
+
+    } catch (e) {
+        console.error(`❌ [v3.0] Error en ${seccionId}:`, e);
+    }
+
+    ocultarBarraProgreso();
+    cargandoModulo = false;
+
+    console.log(`✅ [v3.0] ${seccionId} — ${esPrimeraCarga ? 'primera carga' : 'desde caché'}`);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// COMPATIBILIDAD CON grizalumModulos
+// ═══════════════════════════════════════════════════════════════════
+
+function registrarModulos() {
+    if (!window.grizalumModulos) return;
+    MODULOS.forEach(mod => {
+        window.grizalumModulos.registrar({
+            id:       mod.id,
+            nombre:   mod.nombre,
+            ruta:     mod.ruta,
+            nivel:    0,
+            onCargar: async () => {},
+            onMostrar: async () => { await cambiarSeccion(mod.id); }
+        });
+    });
+    console.log(`✅ [v3.0] ${MODULOS.length} módulos registrados`);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// PRECARGA EN SEGUNDO PLANO
+// ═══════════════════════════════════════════════════════════════════
+
+async function precargarEnSegundoPlano() {
+    console.log('🔄 [v3.0] Precargando HTMLs en segundo plano...');
+    await GrizalumCache.precargarHTML(MODULOS);
+    console.log('✅ [v3.0] Precarga lista — navegación instantánea activada');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// FUNCIONES GLOBALES DE COMPATIBILIDAD
+// ═══════════════════════════════════════════════════════════════════
+
+window.recargarFlujoCaja = function() {
+    if (window.flujoCajaUI?.modulo) {
+        window.flujoCajaUI.cargarBalance?.();
+        window.flujoCajaUI.cargarTransacciones?.();
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// INICIALIZACIÓN
+// ═══════════════════════════════════════════════════════════════════
+
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('🚀 Inicializando sistema de navegación v2.3...');
-    
+    console.log('🚀 [GRIZALUM v3.0] Sistema de navegación instantánea iniciando...');
+
     const verificar = () => {
         if (window.grizalumModulos) {
             registrarModulos();
-            
-            setTimeout(() => {
+
+            setTimeout(async () => {
                 let vistaInicial = 'dashboard';
-                
                 try {
-                    const empresaId = window.gestorEmpresas?.estado?.empresaActual;
-                    if (empresaId && empresaId !== 'null' && empresaId !== 'undefined') {
-                        const key = `grizalum_ultima_vista_${empresaId}`;
-                        const ultimaVista = localStorage.getItem(key);
-                        
-                        if (ultimaVista) {
-                            vistaInicial = ultimaVista;
-                            console.log(`📍 Cargando última vista de ${empresaId}: ${ultimaVista}`);
-                        }
+                    const empresa = window.gestorEmpresas?.estado?.empresaActual;
+                    if (empresa && empresa !== 'null' && empresa !== 'undefined') {
+                        const ultima = localStorage.getItem(`grizalum_ultima_vista_${empresa}`);
+                        if (ultima) vistaInicial = ultima;
                     }
-                } catch (error) {
-                    console.error('❌ Error cargando última vista:', error);
-                }
-                
-                cambiarSeccion(vistaInicial);
+                } catch (e) {}
+
+                await cambiarSeccion(vistaInicial);
+
+                // Precargar resto en segundo plano después de 1.5s
+                setTimeout(precargarEnSegundoPlano, 1500);
+
             }, 500);
         } else {
             setTimeout(verificar, 100);
         }
     };
-    
+
     verificar();
 });
 
-console.log('✅ Cargador de vistas v2.3 (ER FIXED) inicializado');
-
-// ═══════════════════════════════════════════════════════════════════
-// MODO DESARROLLO: Forzar recarga sin caché
-// ═══════════════════════════════════════════════════════════════════
-
-if (window.location.hostname === 'localhost' || window.location.hostname.includes('vercel.app')) {
-    console.log('🔧 Modo desarrollo: timestamps activados');
-    
-    const originalFetch = window.fetch;
-    window.fetch = function(url, options) {
-        if (typeof url === 'string' && (url.endsWith('.html') || url.endsWith('.css') || url.endsWith('.js'))) {
-            const separator = url.includes('?') ? '&' : '?';
-            url = url + separator + 't=' + Date.now();
-        }
-        return originalFetch(url, options);
-    };
+if (window.location.hostname.includes('vercel.app') || window.location.hostname === 'localhost') {
+    console.log('🔧 [v3.0] Modo desarrollo');
 }
+
+console.log('✅ [GRIZALUM] Cargador de Vistas v3.0 cargado');
