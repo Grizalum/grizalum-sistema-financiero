@@ -202,6 +202,7 @@ const MODULOS = [
         inicializar: () => {
             setTimeout(() => {
                 window._reportesCargado = false;
+                window._scriptsYaCargados?.delete('src/vistas/reportes/reportes.js');
                 window.inicializarReportes?.();
             }, 200);
         }
@@ -213,6 +214,7 @@ const MODULOS = [
 // ═══════════════════════════════════════════════════════════════════
 
 const scriptsYaCargados = new Set();
+window._scriptsYaCargados = scriptsYaCargados;
 
 async function cargarScript(url) {
     const urlBase = url.split('?')[0];
