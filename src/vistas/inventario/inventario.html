@@ -170,7 +170,7 @@
                     </select>
                 </div>
 
-                <!-- PRESENTACIÓN — campo clave -->
+               <!-- PRESENTACIÓN — campo clave -->
                 <div class="inv-campo inv-campo-full">
                     <label>Presentación / Unidad de venta *
                         <span style="color:#64748b;font-weight:400;text-transform:none;">
@@ -178,31 +178,30 @@
                         </span>
                     </label>
                     <div style="display:flex;gap:0.75rem;align-items:center;">
-                        <input type="number" id="invCantPresentacion" placeholder="Ej: 20" min="0.01" step="0.01"
-                            style="width:120px;flex-shrink:0;">
-                        <select id="invUnidadPresentacion">
+                        <input type="number" id="invCantPresentacion" placeholder="20" min="0.01" step="0.01"
+                            style="width:80px;flex-shrink:0;background:rgba(15,23,42,0.8);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#f1f5f9;padding:0.7rem 0.875rem;font-size:0.875rem;outline:none;">
+                        <select id="invUnidadPresentacion" style="width:110px;flex-shrink:0;background:rgba(15,23,42,0.8);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#f1f5f9;padding:0.7rem 0.5rem;font-size:0.875rem;outline:none;">
                             <option value="kg">kg</option>
-                            <option value="g">g (gramos)</option>
-                            <option value="lt">lt (litros)</option>
+                            <option value="g">g</option>
+                            <option value="lt">lt</option>
                             <option value="ml">ml</option>
-                            <option value="m">m (metros)</option>
+                            <option value="m">m</option>
                             <option value="unidad">unidad</option>
                             <option value="pieza">pieza</option>
                             <option value="caja">caja</option>
                             <option value="saco">saco</option>
                             <option value="botella">botella</option>
                             <option value="lingote">lingote</option>
-                            <option value="tonelada">tonelada</option>
+                            <option value="tonelada">ton</option>
                         </select>
-                        <span style="color:#94a3b8;font-size:0.85rem;">por</span>
-                        <input type="text" id="invNombrePresentacion" placeholder="Ej: lingote, botella, saco..."
-                            style="flex:1;">
+                        <span style="color:#94a3b8;font-size:0.85rem;flex-shrink:0;">por</span>
+                        <input type="text" id="invNombrePresentacion" placeholder="lingote, saco, botella..."
+                            style="flex:1;background:rgba(15,23,42,0.8);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#f1f5f9;padding:0.7rem 0.875rem;font-size:0.875rem;outline:none;">
                     </div>
                     <small style="color:#64748b;margin-top:0.25rem;display:block;">
                         Ejemplo: <b>20 kg por lingote</b> — o — <b>2.5 lt por botella</b> — o — <b>50 kg por saco</b>
                     </small>
                 </div>
-
                 <div class="inv-campo">
                     <label>Stock Actual * <span style="color:#64748b;font-weight:400;text-transform:none;">(en unidades de presentación)</span></label>
                     <input type="number" id="invStockActual" placeholder="0" min="0" step="1">
