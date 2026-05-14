@@ -452,6 +452,10 @@
     document.addEventListener('grizalumTransaccionAgregada', window.pcmActualizar);
     document.addEventListener('grizalumCompanyChanged', () => setTimeout(window.pcmActualizar, 300));
 
+    // Reinyectarse después de cada recarga del panel
+    document.addEventListener('grizalumPanelControlActualizado', () => setTimeout(inicializar, 400));
+    window.addEventListener('vistaPanelControlCargada', () => setTimeout(inicializar, 400));
+
     // Arrancar
     setTimeout(inicializar, 600);
 
