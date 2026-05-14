@@ -63,6 +63,7 @@ const MODULOS = [
                 }
                 window.PanelControlPlanes?.aplicarRestricciones?.();
                 window.dispatchEvent(new Event('vistaPanelControlCargada'));
+                setTimeout(() => window.pcmActualizar?.(), 800);
             }, 300);
         }
     },
