@@ -447,14 +447,24 @@
         console.log('[PCM] ✅ Sección de metas y ventas cargada');
     }
 
+    // ── OBSERVER — reinyectar cuando .panel-acciones aparece ─────
+    const observer = new MutationObserver(() => {
+        const panel = document.querySelector('.panel-acciones');
+        const yaExiste = document.getElementById('pcm-seccion-metas');
+        if (panel && !yaExiste) {
+            setTimeout(inicializar, 200);
+        }
+    });
+
+    observer.observe(document.getElementById('contenedorVistas') || document.body, {
+        childList: true,
+        subtree: true
+    });
+
     // Escuchar actualizaciones
     document.addEventListener('grizalumConfigGuardada', window.pcmActualizar);
     document.addEventListener('grizalumTransaccionAgregada', window.pcmActualizar);
     document.addEventListener('grizalumCompanyChanged', () => setTimeout(window.pcmActualizar, 300));
-
-    // Reinyectarse después de cada recarga del panel
-    document.addEventListener('grizalumPanelControlActualizado', () => setTimeout(inicializar, 400));
-    window.addEventListener('vistaPanelControlCargada', () => setTimeout(inicializar, 400));
 
     // Arrancar
     setTimeout(inicializar, 600);
