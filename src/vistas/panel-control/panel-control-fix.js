@@ -47,7 +47,7 @@
             if (typeof window.panelControlUI.limpiarYReinicializar === 'function') {
                 window.panelControlUI.limpiarYReinicializar();
                 console.log('   ✅ Recarga completa exitosa');
-                setTimeout(() => window.pcmActualizar?.(), 1200);
+                setTimeout(() => window.pcmActualizar?.(), 2500);
             } else {
                 // Fallback: método manual
                 await window.panelControlUI.cargarDatos();
