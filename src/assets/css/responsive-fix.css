@@ -440,3 +440,26 @@
         min-height: calc(100vh - 56px) !important;
     }
 }
+@media (max-width: 991px) {
+    .app-container {
+        flex-direction: row !important;
+    }
+    
+    .sidebar {
+        width: 280px !important;
+        flex-shrink: 0 !important;
+        position: fixed !important;
+        transform: translateX(-100%) !important;
+        height: 100vh !important;
+    }
+    
+    .sidebar.open {
+        transform: translateX(0) !important;
+    }
+    
+    .main-content {
+        width: 100% !important;
+        margin-left: 0 !important;
+        min-height: 100vh !important;
+    }
+}
