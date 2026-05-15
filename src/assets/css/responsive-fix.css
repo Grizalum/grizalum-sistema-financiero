@@ -422,3 +422,21 @@
         position: fixed !important;
     }
 }
+@media (max-width: 991px) {
+    .app-container {
+        overflow: visible !important;
+        height: auto !important;
+        min-height: 100vh !important;
+    }
+    
+    .main-content {
+        overflow: visible !important;
+        height: auto !important;
+    }
+    
+    .contenedor-vistas {
+        overflow-y: auto !important;
+        height: auto !important;
+        min-height: calc(100vh - 56px) !important;
+    }
+}
