@@ -849,9 +849,9 @@ console.log('💡 Función disponible: window.limpiarOverlays()');
         
         const app = document.querySelector('.app-container');
         if (app) {
-            app.style.setProperty('overflow', 'visible', 'important');
-            app.style.setProperty('overflow-x', 'hidden', 'important');
-            app.style.setProperty('overflow-y', 'visible', 'important');
+            app.style.cssText = app.style.cssText
+                .replace(/overflow[^;]*/g, '')
+                + '; overflow-x: hidden; overflow-y: auto;';
         }
         
         const aiPanel = document.getElementById('aiAssistantPanel');
@@ -862,7 +862,6 @@ console.log('💡 Función disponible: window.limpiarOverlays()');
         console.log('[MobileFix] ✅ Layout corregido');
     }
     
-    // Ejecutar al cargar y al cambiar tamaño
     document.addEventListener('DOMContentLoaded', () => setTimeout(fixMobileLayout, 500));
     window.addEventListener('resize', fixMobileLayout);
     setTimeout(fixMobileLayout, 1000);
