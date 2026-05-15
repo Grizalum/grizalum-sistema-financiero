@@ -841,3 +841,29 @@ window.limpiarOverlays = function() {
 
 console.log('✅ Sistema de limpieza de overlays activado');
 console.log('💡 Función disponible: window.limpiarOverlays()');
+
+// FIX MÓVIL: Corregir overflow del app-container
+(function() {
+    function fixMobileLayout() {
+        if (window.innerWidth > 991) return;
+        
+        const app = document.querySelector('.app-container');
+        if (app) {
+            app.style.setProperty('overflow', 'visible', 'important');
+            app.style.setProperty('overflow-x', 'hidden', 'important');
+            app.style.setProperty('overflow-y', 'visible', 'important');
+        }
+        
+        const aiPanel = document.getElementById('aiAssistantPanel');
+        if (aiPanel) {
+            aiPanel.style.setProperty('position', 'fixed', 'important');
+        }
+        
+        console.log('[MobileFix] ✅ Layout corregido');
+    }
+    
+    // Ejecutar al cargar y al cambiar tamaño
+    document.addEventListener('DOMContentLoaded', () => setTimeout(fixMobileLayout, 500));
+    window.addEventListener('resize', fixMobileLayout);
+    setTimeout(fixMobileLayout, 1000);
+})();
