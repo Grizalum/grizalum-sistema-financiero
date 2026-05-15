@@ -404,3 +404,21 @@
         align-items: center !important;
     }
 }
+/* FIX CRÍTICO: overflow del app-container */
+@media (max-width: 991px) {
+    .app-container {
+        overflow: visible !important;
+        overflow-x: hidden !important;
+        overflow-y: visible !important;
+        min-height: 100vh !important;
+        flex-direction: column !important;
+    }
+
+    body {
+        overflow-x: hidden !important;
+    }
+
+    #aiAssistantPanel {
+        position: fixed !important;
+    }
+}
