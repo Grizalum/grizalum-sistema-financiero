@@ -1,0 +1,412 @@
+/* ================================================================
+   GRIZALUM — RESPONSIVE FIX v1.0
+   Arregla problemas móviles sin pisar estilos existentes
+   ================================================================ */
+
+/* ═══════════════════════════════════════════════════════════════
+   1. FIX CRÍTICO: Espacio en blanco y layout principal
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 991px) {
+
+    /* Quitar margin-left del sidebar en móvil */
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+        max-width: 100vw !important;
+    }
+
+    /* Sidebar oculto por defecto en móvil */
+    .sidebar {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        height: 100vh !important;
+        z-index: 1100 !important;
+        transform: translateX(-100%) !important;
+        transition: transform 0.3s ease !important;
+        overflow-y: auto !important;
+    }
+
+    .sidebar.open {
+        transform: translateX(0) !important;
+    }
+
+    /* Overlay cuando sidebar está abierto */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 1099;
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+
+    /* Contenedor de vistas ocupa todo el ancho */
+    .contenedor-vistas {
+        width: 100% !important;
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   2. HEADER MÓVIL — Compacto y organizado
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+
+    .executive-header {
+        padding: 8px 12px !important;
+        flex-wrap: nowrap !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 8px !important;
+        min-height: 56px !important;
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 1000 !important;
+    }
+
+    /* Ocultar título y subtítulo en móvil */
+    .page-header {
+        display: none !important;
+    }
+
+    /* Ocultar IA insights */
+    .ai-insights {
+        display: none !important;
+    }
+
+    /* Controles del header en fila */
+    .header-controls {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 6px !important;
+        flex: 1 !important;
+        justify-content: flex-end !important;
+        flex-wrap: nowrap !important;
+    }
+
+    /* Selector de empresa compacto */
+    .company-selector,
+    #companySelector {
+        min-width: 0 !important;
+        max-width: 140px !important;
+        flex: 1 !important;
+    }
+
+    .grizalum-empresa-selector,
+    .grizalum-selected-company {
+        min-width: 0 !important;
+        max-width: 140px !important;
+        padding: 6px 10px !important;
+    }
+
+    .grizalum-empresa-nombre,
+    .grizalum-company-name {
+        font-size: 12px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        max-width: 90px !important;
+    }
+
+    .grizalum-empresa-estado,
+    .grizalum-company-status {
+        display: none !important;
+    }
+
+    /* Ocultar selector de período en móvil pequeño */
+    .time-period-selector {
+        display: none !important;
+    }
+
+    /* Botón IA compacto */
+    .ai-header-button {
+        padding: 8px !important;
+        min-width: 36px !important;
+    }
+
+    .ai-header-button span {
+        display: none !important;
+    }
+
+    /* Botón notificaciones compacto */
+    #btnNotificaciones,
+    .notification-center {
+        width: 36px !important;
+        height: 36px !important;
+        padding: 6px !important;
+        flex-shrink: 0 !important;
+    }
+
+    /* Botón menú visible */
+    .mobile-menu-toggle {
+        display: flex !important;
+        flex-shrink: 0 !important;
+        width: 36px !important;
+        height: 36px !important;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   3. PANEL DE CONTROL — KPIs y gráficos en móvil
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+
+    /* KPIs en 2 columnas */
+    .pcm-kpis-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 10px !important;
+    }
+
+    .pcm-kpi-card {
+        padding: 14px !important;
+    }
+
+    .pcm-kpi-valor {
+        font-size: 16px !important;
+    }
+
+    .pcm-kpi-icono {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 14px !important;
+    }
+
+    /* Tarjetas en columna */
+    .pcm-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Salud financiera compacta */
+    .pcm-salud-factores {
+        gap: 4px !important;
+    }
+
+    .pcm-salud-factor {
+        font-size: 11px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .pcm-kpis-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   4. TABLAS — Scroll horizontal en móvil
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+
+    /* Todas las tablas con scroll horizontal */
+    .pv-tabla-wrap,
+    .vt-tabla-wrap,
+    .inv-tabla-wrap,
+    [class*="tabla-wrap"] {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    .pv-tabla,
+    .vt-tabla,
+    [class*="-tabla"] {
+        min-width: 600px !important;
+    }
+
+    /* Containers de módulos */
+    .pv-container,
+    .config-container,
+    [class*="-container"] {
+        padding: 12px !important;
+    }
+
+    /* KPIs de proveedores en 2 columnas */
+    .pv-kpis {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 10px !important;
+    }
+
+    .pv-kpi-card {
+        padding: 12px !important;
+    }
+
+    .pv-kpi-valor {
+        font-size: 16px !important;
+    }
+
+    /* Filtros en columna */
+    .pv-filtros {
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+
+    .pv-busqueda {
+        min-width: 0 !important;
+    }
+
+    /* Header de módulos */
+    .pv-header,
+    .config-header {
+        flex-wrap: wrap !important;
+        gap: 12px !important;
+    }
+
+    .pv-header-acciones {
+        width: 100% !important;
+        justify-content: flex-end !important;
+    }
+
+    /* Modales en pantalla completa */
+    .pv-modal {
+        max-width: 100% !important;
+        max-height: 100vh !important;
+        border-radius: 12px 12px 0 0 !important;
+        margin-top: auto !important;
+    }
+
+    .pv-modal-overlay {
+        align-items: flex-end !important;
+        padding: 0 !important;
+    }
+
+    /* Form rows en columna */
+    .pv-form-row,
+    .config-form-row {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   5. CONFIGURACIÓN — Móvil
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+
+    .config-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .config-card-full {
+        grid-column: 1 !important;
+    }
+
+    .config-acciones {
+        flex-direction: column-reverse !important;
+    }
+
+    .config-btn-primario,
+    .config-btn-secundario {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+
+    .config-categorias-grid {
+        gap: 8px !important;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   6. VENTAS E INVENTARIO — Móvil
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+
+    /* KPIs en 2 columnas */
+    [class*="kpi-grid"],
+    [class*="kpis-grid"] {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 10px !important;
+    }
+
+    /* Botones de acción */
+    [class*="btn-nueva"],
+    [class*="btn-nuevo"],
+    [class*="btn-agregar"] {
+        font-size: 13px !important;
+        padding: 8px 14px !important;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   7. BANNER DEL PLAN — Compacto en móvil
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+
+    #panelBannerPlan {
+        padding: 12px 16px !important;
+        margin-bottom: 16px !important;
+    }
+
+    #panelBannerPlan .nivel-textos {
+        display: none !important;
+    }
+
+    #panelBannerPlan .nivel-icono {
+        font-size: 1.8rem !important;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   8. NOTIFICACIONES — Panel en móvil
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+
+    #grizalumNotificationPanel {
+        width: calc(100vw - 16px) !important;
+        right: 8px !important;
+        left: 8px !important;
+        top: 60px !important;
+        max-height: 80vh !important;
+    }
+
+    #grizalumNotificationBtn {
+        top: 70px !important;
+        right: 12px !important;
+        width: 52px !important;
+        height: 52px !important;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   9. GRÁFICOS DEL PANEL — Móvil
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+
+    .graficos-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        padding: 0 12px 12px !important;
+    }
+
+    .grafico-card {
+        width: 100% !important;
+    }
+
+    .grafico-contenedor {
+        height: 220px !important;
+    }
+
+    .grafico-card.grafico-principal .grafico-contenedor {
+        height: 250px !important;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   10. OVERLAY PARA CERRAR SIDEBAR
+   ═══════════════════════════════════════════════════════════════ */
+.gz-sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1099;
+    cursor: pointer;
+}
+
+.gz-sidebar-overlay.active {
+    display: block;
+}
