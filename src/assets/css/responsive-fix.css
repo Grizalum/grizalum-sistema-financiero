@@ -55,100 +55,74 @@
 /* ═══════════════════════════════════════════════════════════════
    2. HEADER MÓVIL — Compacto y organizado
    ═══════════════════════════════════════════════════════════════ */
-@media (max-width: 767px) {
+@media (max-width: 991px) {
 
     .executive-header {
         padding: 8px 12px !important;
-        flex-wrap: nowrap !important;
         flex-direction: row !important;
+        flex-wrap: nowrap !important;
         align-items: center !important;
         gap: 8px !important;
         min-height: 56px !important;
-        position: sticky !important;
-        top: 0 !important;
-        z-index: 1000 !important;
+        max-height: 56px !important;
+        overflow: hidden !important;
     }
 
-    /* Ocultar título y subtítulo en móvil */
     .page-header {
         display: none !important;
+        height: 0 !important;
+        overflow: hidden !important;
     }
 
-    /* Ocultar IA insights */
-    .ai-insights {
-        display: none !important;
+    .ai-insights { display: none !important; }
+
+    .mobile-menu-toggle {
+        display: flex !important;
+        flex-shrink: 0 !important;
+        width: 40px !important;
+        height: 40px !important;
+        order: 1 !important;
     }
 
-    /* Controles del header en fila */
     .header-controls {
         display: flex !important;
         flex-direction: row !important;
         align-items: center !important;
-        gap: 6px !important;
+        gap: 8px !important;
         flex: 1 !important;
         justify-content: flex-end !important;
-        flex-wrap: nowrap !important;
+        order: 2 !important;
+        overflow: visible !important;
     }
 
-    /* Selector de empresa compacto */
+    /* Selector empresa — visible y compacto */
     .company-selector,
     #companySelector {
-        min-width: 0 !important;
-        max-width: 140px !important;
-        flex: 1 !important;
+        display: block !important;
+        min-width: 120px !important;
+        max-width: 160px !important;
+        flex-shrink: 1 !important;
     }
 
-    .grizalum-empresa-selector,
-    .grizalum-selected-company {
-        min-width: 0 !important;
-        max-width: 140px !important;
-        padding: 6px 10px !important;
-    }
-
-    .grizalum-empresa-nombre,
-    .grizalum-company-name {
-        font-size: 12px !important;
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        max-width: 90px !important;
-    }
-
-    .grizalum-empresa-estado,
-    .grizalum-company-status {
-        display: none !important;
-    }
-
-    /* Ocultar selector de período en móvil pequeño */
+    /* Periodo oculto */
     .time-period-selector {
         display: none !important;
     }
 
-    /* Botón IA compacto */
+    /* IA botón — solo ícono */
+    .ai-header-button span { display: none !important; }
     .ai-header-button {
         padding: 8px !important;
         min-width: 36px !important;
+        flex-shrink: 0 !important;
     }
 
-    .ai-header-button span {
-        display: none !important;
-    }
-
-    /* Botón notificaciones compacto */
+    /* Notificaciones */
     #btnNotificaciones,
     .notification-center {
-        width: 36px !important;
-        height: 36px !important;
-        padding: 6px !important;
+        width: 40px !important;
+        height: 40px !important;
         flex-shrink: 0 !important;
-    }
-
-    /* Botón menú visible */
-    .mobile-menu-toggle {
-        display: flex !important;
-        flex-shrink: 0 !important;
-        width: 36px !important;
-        height: 36px !important;
     }
 }
 
