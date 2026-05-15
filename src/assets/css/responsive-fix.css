@@ -410,3 +410,23 @@
 .gz-sidebar-overlay.active {
     display: block;
 }
+/* FIX CRÍTICO: Forzar ocultamiento en móvil */
+@media (max-width: 991px) {
+    .page-header {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        overflow: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .executive-header {
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        height: 56px !important;
+        max-height: 56px !important;
+        overflow: hidden !important;
+        align-items: center !important;
+    }
+}
