@@ -209,6 +209,21 @@ const MODULOS = [
         }
     },
     {
+        id: 'proveedores',
+        nombre: 'Proveedores',
+        ruta: 'src/vistas/proveedores/proveedores.html',
+        css: 'src/vistas/proveedores/proveedores.css?v=20260515',
+        scripts: [
+            'src/vistas/proveedores/proveedores.js?v=20260515',
+        ],
+        inicializar: () => {
+            setTimeout(() => {
+                window._proveedoresCargado = false;
+                window.inicializarProveedores?.();
+            }, 200);
+        }
+    },
+    {
         id: 'configuracion',
         nombre: 'Configuración',
         ruta: 'src/vistas/configuracion/configuracion.html',
