@@ -434,6 +434,7 @@ function registrarModulos() {
         });
     });
     console.log(`✅ [v3.0] ${MODULOS.length} módulos registrados`);
+    window.grizalumModulos.inicializado = true;
 }
 
 // ═══════════════════════════════════════════════════════════════════
