@@ -188,7 +188,6 @@
     console.log('✅ LoadingHelper listo');
     </script>
 
-
 </head>
 <body>
    <div id="loadingScreen" class="loading-screen">
@@ -231,19 +230,19 @@
            </div>
 
            <div class="nav-menu">
+
+               <!-- ── PANEL PRINCIPAL ── -->
                <div class="nav-section">
                    <div class="nav-section-title">
                        <i class="fas fa-chart-bar"></i>
                        Panel Principal
                    </div>
-                   
                    <div class="nav-item">
                        <a href="#" class="nav-link active" data-section="dashboard" onclick="cambiarSeccion('dashboard', event)">
                            <i class="nav-icon fas fa-tachometer-alt"></i>
                            <span>Panel de Control</span>
                        </a>
                    </div>
-                   
                    <div class="nav-item">
                        <a href="#" class="nav-link" data-section="cash-flow" onclick="cambiarSeccion('cash-flow', event)">
                            <i class="nav-icon fas fa-water"></i>
@@ -252,26 +251,24 @@
                    </div>
                </div>
 
+               <!-- ── CONTABILIDAD ── -->
                <div class="nav-section">
                    <div class="nav-section-title">
                        <i class="fas fa-calculator"></i>
                        Contabilidad
                    </div>
-                   
                    <div class="nav-item">
                        <a href="#" class="nav-link" data-section="income-statement" onclick="cambiarSeccion('income-statement', event)">
                            <i class="nav-icon fas fa-chart-pie"></i>
                            <span>Estado de Resultados</span>
                        </a>
                    </div>
-                   
                    <div class="nav-item">
                        <a href="#" class="nav-link" data-section="balance-sheet" onclick="cambiarSeccion('balance-sheet', event)">
                            <i class="nav-icon fas fa-balance-scale"></i>
                            <span>Balance General</span>
                        </a>
                    </div>
-                   
                    <div class="nav-item">
                        <a href="#" class="nav-link" data-section="cuentas-bancarias" onclick="cambiarSeccion('cuentas-bancarias', event)">
                            <i class="nav-icon fas fa-university"></i>
@@ -280,19 +277,18 @@
                    </div>
                </div>
 
+               <!-- ── OPERACIONES ── -->
                <div class="nav-section">
                    <div class="nav-section-title">
                        <i class="fas fa-warehouse"></i>
                        Operaciones
                    </div>
-                   
                    <div class="nav-item">
                        <a href="#" class="nav-link" data-section="inventory" onclick="cambiarSeccion('inventory', event)">
                            <i class="nav-icon fas fa-boxes"></i>
                            <span>Inventario</span>
                        </a>
                    </div>
-                   
                    <div class="nav-item">
                        <a href="#" class="nav-link" data-section="sales" onclick="cambiarSeccion('sales', event)">
                            <i class="nav-icon fas fa-shopping-cart"></i>
@@ -300,33 +296,33 @@
                        </a>
                    </div>
                    <div class="nav-item">
-                    <a href="#" class="nav-link" data-section="reports" onclick="cambiarSeccion('reports', event)">
-                        <i class="nav-icon fas fa-chart-bar"></i>
-                        <span>Reportes</span>
-                    </a>
-                  </div>
-                    </div>
-                  <div class="nav-item">
-                      <a href="#" class="nav-link" data-section="proveedores"
-                         onclick="cambiarSeccion('proveedores', event)">
-                          <i class="nav-icon fas fa-truck"></i>
-                          <span>Proveedores</span>
-                      </a>
-                  </div>
+                       <a href="#" class="nav-link" data-section="reports" onclick="cambiarSeccion('reports', event)">
+                           <i class="nav-icon fas fa-chart-bar"></i>
+                           <span>Reportes</span>
+                       </a>
+                   </div>
+                   <div class="nav-item">
+                       <a href="#" class="nav-link" data-section="proveedores" onclick="cambiarSeccion('proveedores', event)">
+                           <i class="nav-icon fas fa-truck"></i>
+                           <span>Proveedores</span>
+                       </a>
+                   </div>
                </div>
-                    <div class="nav-section">
+
+               <!-- ── SISTEMA ── -->
+               <div class="nav-section">
                    <div class="nav-section-title">
                        <i class="fas fa-sliders-h"></i>
                        Sistema
                    </div>
                    <div class="nav-item">
-                       <a href="#" class="nav-link" data-section="configuracion"
-                          onclick="cambiarSeccion('configuracion', event)">
+                       <a href="#" class="nav-link" data-section="configuracion" onclick="cambiarSeccion('configuracion', event)">
                            <i class="nav-icon fas fa-cog"></i>
                            <span>Configuración</span>
                        </a>
                    </div>
                </div>
+
            </div>
        </nav>
 
@@ -374,53 +370,49 @@
     </div>  
     
 <!-- ═══════════════════════════════════════════════════════════ -->
-<!-- SCRIPTS DE LA APLICACIÓN -->
+<!-- SCRIPTS DE LA APLICACIÓN                                   -->
+<!-- ORDEN: manejo-errores → módulos → cargador → resto (defer) -->
 <!-- ═══════════════════════════════════════════════════════════ -->
 
-<!-- ✅ NUEVO: SISTEMA DE MÓDULOS Y NIVELES v2.0 (SIN DEFER) -->
+<!-- 1. Captura de errores — PRIMERO, sin defer -->
+<script src="src/assets/js/manejo-errores.js?v=20260523"></script>
+
+<!-- 2. Sistema de módulos y cargador — sin defer (base del sistema) -->
 <script src="src/assets/js/grizalum-sistema-modulos.js"></script>
-<script src="src/assets/js/grizalum-sistema-niveles.js"></script>  
+<script src="src/assets/js/grizalum-sistema-niveles.js"></script>
 <script src="src/assets/js/planes-restricciones.js"></script>
 <script src="src/assets/js/cargador-vistas-v2.js?v=20260511"></script>
-
 <script src="src/assets/js/compatibilidad-navegadores.js"></script>
+<script src="src/assets/js/gestor-empresas-admin-new.js"></script>
+
+<!-- 3. Todo lo demás con defer (no bloquea render) -->
 <script src="src/assets/js/config.js" defer></script>
-<script src="src/assets/js/paletas-automaticas.js" defer></script>    
+<script src="src/assets/js/paletas-automaticas.js" defer></script>
 <script src="src/assets/js/utilidades.js" defer></script>
 <script src="src/assets/js/datos-empresas.js" defer></script>
-<script src="src/assets/js/gestor-cuentas-bancarias.js"></script>
+<script src="src/assets/js/gestor-cuentas-bancarias.js" defer></script>
 <script src="src/assets/js/ui-cuentas-bancarias.js" defer></script>
 <script src="src/assets/js/controlador-periodos.js" defer></script>
 <script src="src/assets/js/graficos-dinamicos.js" defer></script>
-
-<script src="src/assets/js/gestor-empresas-unificado.js" defer></script> 
-<script src="src/assets/js/gestor-empresas-emojis.js" defer></script>    
+<script src="src/assets/js/gestor-empresas-unificado.js" defer></script>
+<script src="src/assets/js/gestor-empresas-emojis.js" defer></script>
 <script src="src/assets/js/gestor-empresas-reportes.js" defer></script>
 <script src="src/assets/js/perfiles-industriales.js" defer></script>
 <script src="src/assets/js/onboarding-inteligente.js" defer></script>
 <script src="src/assets/js/sugerencias-ia.js" defer></script>
 <script src="src/assets/js/dashboard-personalizable.js" defer></script>
 <script src="src/assets/js/gestor-modulos-empresas.js" defer></script>
-
-<!-- <script src="src/assets/js/graficos.js" defer></script> --> 
 <script src="src/assets/js/grizalum-principal.js" defer></script>
-
 <script src="src/assets/js/manejo-sidebar.js" defer></script>
-<script src="src/assets/js/actualizador-metricas.js" defer></script> 
+<script src="src/assets/js/actualizador-metricas.js" defer></script>
 <script src="src/assets/js/notificaciones-manager.js" defer></script>
 <script src="src/assets/js/alertas-inteligentes.js?v=20260514" defer></script>
-
 <script src="src/assets/js/asistente-ia-avanzado.js" defer></script>
-
 <script src="src/assets/js/principal.js" defer></script>
-<script src="src/assets/js/gestor-empresas-admin-new.js"></script>
-
-    
 
 <script>
 window.addEventListener('load', function() {
     document.body.classList.add('loaded');
-    
     setTimeout(function() {
         document.querySelectorAll('.loading-content, .loading-logo, #loading-screen').forEach(function(el) {
             el.style.opacity = '0';
