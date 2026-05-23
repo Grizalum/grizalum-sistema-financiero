@@ -28,7 +28,7 @@ class ManejadorSidebarGRIZALUM {
                 easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
             },
             responsivo: {
-                breakpointMovil: 768,
+               breakpointMovil: 991,
                 autoClose: true
             },
             persistencia: {
