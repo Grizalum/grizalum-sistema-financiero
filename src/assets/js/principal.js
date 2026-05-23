@@ -753,13 +753,9 @@ function changePeriod(period, buttonElement) {
         grizalumApp.changePeriod(period, buttonElement);
     }
 }
-
 function toggleSidebar() {
-    if (grizalumApp) {
-        grizalumApp.toggleSidebar();
-    }
+    return window.sidebarManager?.toggle() || false;
 }
-
 function showNotifications() {
     if (grizalumApp) {
         grizalumApp.showNotifications();
