@@ -362,10 +362,11 @@
     }
 
     .metrica-card {
-        padding: 14px;
-        gap: 12px;
-        border-radius: 14px;
-    }
+    padding: 12px;
+    gap: 10px;
+    border-radius: 14px;
+    min-width: 0;
+}
 
     .metrica-icono {
         width: 44px;
@@ -375,8 +376,15 @@
     }
 
     .metrica-valor {
-        font-size: 18px;
-    }
+    font-size: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+   .metrica-contenido {
+    min-width: 0;
+    overflow: hidden;
+}
 
     .metrica-label {
         font-size: 11px;
