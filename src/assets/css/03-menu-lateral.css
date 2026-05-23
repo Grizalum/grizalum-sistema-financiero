@@ -293,7 +293,7 @@
     .sidebar {
         transform: translateX(-100%);
         z-index: 1100;
-        width: 100vw;
+        width: 85vw;
         max-width: 320px;
     }
     
@@ -340,9 +340,17 @@
     
     .nav-link {
         padding: var(--spacing-sm) var(--spacing-md);
+        color: rgba(255,255,255,0.85) !important;
+    }
+
+    .nav-section-title {
+        color: rgba(255,255,255,0.6) !important;
+    }
+
+    .nav-icon {
+        color: rgba(255,255,255,0.85) !important;
     }
 }
-
 /* ===== MÓVIL PEQUEÑO ===== */
 @media (max-width: 575px) {
     .sidebar {
