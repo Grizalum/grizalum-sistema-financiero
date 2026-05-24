@@ -291,11 +291,11 @@
 /* Estados del sidebar en móvil */
 @media (max-width: 991px) {
     .sidebar {
-        transform: translateX(-100%);
-        z-index: 1100;
-        width: 85vw;
-        max-width: 320px;
-    }
+    transform: translateX(-100%);
+    z-index: 1100;
+    width: 100vw;
+    max-width: 300px;
+}
     
     .sidebar.open {
         transform: translateX(0);
