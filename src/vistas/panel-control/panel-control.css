@@ -430,9 +430,8 @@
     .metricas-principales {
         grid-template-columns: 1fr;
     }
-
     .metrica-valor {
-        font-size: 16px;
+        font-size: 13px;
     }
 }
 
