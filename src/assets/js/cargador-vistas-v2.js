@@ -37,7 +37,7 @@ const MODULOS = [
         id: 'dashboard',
         nombre: 'Panel de Control',
         ruta: 'src/vistas/panel-control/panel-control.html',
-        css: 'src/vistas/panel-control/panel-control.css',
+        css: 'src/vistas/panel-control/panel-control.css?v=20260524',
         scripts: [
             'src/vistas/flujo-caja/flujo-caja-categorias.js',
             'src/vistas/flujo-caja/flujo-caja-config.js',
