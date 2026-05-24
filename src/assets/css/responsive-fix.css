@@ -403,11 +403,10 @@
 
     .executive-header {
         flex-direction: row !important;
-        flex-wrap: nowrap !important;
-        height: 56px !important;
-        max-height: 56px !important;
-        overflow: hidden !important;
-        align-items: center !important;
+        flex-wrap: wrap !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
     }
 }
 /* FIX CRÍTICO: overflow del app-container */
