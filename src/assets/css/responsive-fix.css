@@ -58,15 +58,15 @@
 @media (max-width: 991px) {
 
     .executive-header {
-        padding: 8px 12px !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important;
-        align-items: center !important;
-        gap: 8px !important;
-        min-height: 56px !important;
-        max-height: 56px !important;
-        overflow: hidden !important;
-    }
+    padding: 8px 12px !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 8px !important;
+    min-height: 56px !important;
+    max-height: none !important;
+    overflow: visible !important;
+}
 
     .page-header {
         display: none !important;
@@ -104,10 +104,14 @@
         flex-shrink: 1 !important;
     }
 
-    /* Periodo oculto */
-    .time-period-selector {
-        display: none !important;
-    }
+    /* Periodo visible en móvil */
+.time-period-selector {
+    display: flex !important;
+    width: 100% !important;
+    justify-content: center !important;
+    margin-top: 4px !important;
+    order: 10 !important;
+}
 
     /* IA botón — solo ícono */
     .ai-header-button span { display: none !important; }
