@@ -85,15 +85,16 @@
     }
 
     .header-controls {
-        display: flex !important;
-        flex-direction: row !important;
-        align-items: center !important;
-        gap: 8px !important;
-        flex: 1 !important;
-        justify-content: flex-end !important;
-        order: 2 !important;
-        overflow: visible !important;
-    }
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex: 1 !important;
+    justify-content: flex-end !important;
+    order: 2 !important;
+    overflow: visible !important;
+    flex-wrap: wrap !important;
+}
 
     /* Selector empresa — visible y compacto */
     .company-selector,
@@ -111,6 +112,7 @@
     justify-content: center !important;
     margin-top: 4px !important;
     order: 10 !important;
+    flex-wrap: nowrap !important;
 }
 
     /* IA botón — solo ícono */
