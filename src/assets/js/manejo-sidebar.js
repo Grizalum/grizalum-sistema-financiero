@@ -597,7 +597,9 @@ class ManejadorSidebarGRIZALUM {
             
             @media (max-width: ${this.configuracion.responsivo.breakpointMovil}px) {
                 .sidebar {
-                    transform: translateX(-100%) !important;
+                   transform: translateX(-100%) !important;
+                   width: 100vw !important;
+                   max-width: 300px !important;
                 }
                 
                 .sidebar.open {
