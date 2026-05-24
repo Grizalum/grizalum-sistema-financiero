@@ -175,15 +175,16 @@
     }
     
     /* Selector de período móvil */
-    .time-period-selector {
-        order: 4;
-        width: 100%;
-        justify-content: center;
-        margin-top: 8px;
-        background: var(--gray-100);
-        border-radius: 8px;
-        padding: 4px;
-    }
+   .time-period-selector {
+    order: 4;
+    width: 100%;
+    justify-content: center;
+    margin-top: 4px;
+    background: var(--gray-100);
+    border-radius: 8px;
+    padding: 4px;
+    display: flex !important;
+}
     
     /* Main content móvil */
     .main-content {
