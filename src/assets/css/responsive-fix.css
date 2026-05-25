@@ -485,3 +485,30 @@
         font-size: 12px !important;
     }
 }
+
+/* FIX: Selector empresa compacto en móvil */
+@media (max-width: 991px) {
+    .grizalum-empresa-selector {
+        padding: 6px 10px !important;
+        min-height: 40px !important;
+        max-height: 44px !important;
+    }
+
+    .grizalum-empresa-nombre {
+        font-size: 12px !important;
+        max-width: 80px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+    }
+
+    .grizalum-empresa-estado,
+    .grizalum-empresa-metricas {
+        display: none !important;
+    }
+
+    .grizalum-empresas-container {
+        max-height: 44px !important;
+        overflow: visible !important;
+    }
+}
