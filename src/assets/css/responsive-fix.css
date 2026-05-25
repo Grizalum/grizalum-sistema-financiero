@@ -98,12 +98,13 @@
 
     /* Selector empresa — visible y compacto */
     .company-selector,
-    #companySelector {
-        display: block !important;
-        min-width: 120px !important;
-        max-width: 160px !important;
-        flex-shrink: 1 !important;
-    }
+#companySelector {
+    display: block !important;
+    min-width: 100px !important;
+    max-width: 140px !important;
+    flex-shrink: 1 !important;
+    font-size: 12px !important;
+}
 
     /* Periodo visible en móvil */
 .time-period-selector {
@@ -466,5 +467,21 @@
         width: 100% !important;
         margin-left: 0 !important;
         min-height: 100vh !important;
+    }
+}
+/* FIX: Header móvil - botones período y empresa compactos */
+@media (max-width: 991px) {
+    .period-btn {
+        padding: 5px 6px !important;
+        font-size: 10px !important;
+        min-width: 0 !important;
+        flex: 1 !important;
+    }
+
+    .company-selector,
+    #companySelector {
+        min-width: 100px !important;
+        max-width: 140px !important;
+        font-size: 12px !important;
     }
 }
