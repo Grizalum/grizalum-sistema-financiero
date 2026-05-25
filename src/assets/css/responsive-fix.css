@@ -538,3 +538,17 @@
         position: relative !important;
     }
 }
+@media (max-width: 991px) {
+    .grizalum-empresas-container {
+        position: static !important;
+    }
+
+    #grizalumEmpresasList.show {
+        position: fixed !important;
+        top: 110px !important;
+        left: 10px !important;
+        right: 10px !important;
+        width: auto !important;
+        z-index: 9999999 !important;
+    }
+}
