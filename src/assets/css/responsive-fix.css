@@ -1,22 +1,54 @@
 /* ================================================================
-   GRIZALUM — RESPONSIVE FIX v1.0
-   Arregla problemas móviles sin pisar estilos existentes
+   GRIZALUM — RESPONSIVE FIX v2.0
+   Versión limpia sin conflictos
    ================================================================ */
 
 /* ═══════════════════════════════════════════════════════════════
-   1. FIX CRÍTICO: Espacio en blanco y layout principal
+   1. LAYOUT PRINCIPAL MÓVIL
    ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 991px) {
-
-    /* Quitar margin-left del sidebar en móvil */
     .main-content {
         margin-left: 0 !important;
         width: 100% !important;
         max-width: 100vw !important;
+        overflow: visible !important;
+        height: auto !important;
     }
 
-    /* Sidebar oculto por defecto en móvil */
+    .app-container {
+        flex-direction: row !important;
+        overflow: visible !important;
+        overflow-x: hidden !important;
+        height: auto !important;
+        min-height: 100vh !important;
+    }
+
+    body {
+        overflow-x: hidden !important;
+    }
+
+    .contenedor-vistas {
+        width: 100% !important;
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        height: auto !important;
+        min-height: calc(100vh - 52px) !important;
+        padding-top: 0 !important;
+    }
+
+    #aiAssistantPanel {
+        position: fixed !important;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   2. SIDEBAR MÓVIL
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 991px) {
     .sidebar {
+        width: 280px !important;
+        flex-shrink: 0 !important;
         position: fixed !important;
         left: 0 !important;
         top: 0 !important;
@@ -29,162 +61,274 @@
 
     .sidebar.open {
         transform: translateX(0) !important;
+        box-shadow: 4px 0 40px rgba(0,0,0,0.5) !important;
     }
 
-    /* Overlay cuando sidebar está abierto */
-    .sidebar-overlay {
+    .sidebar-overlay,
+    .gz-sidebar-overlay {
         display: none;
         position: fixed;
         inset: 0;
         background: rgba(0,0,0,0.5);
         z-index: 1099;
+        cursor: pointer;
     }
 
-    .sidebar-overlay.active {
+    .sidebar-overlay.active,
+    .gz-sidebar-overlay.active {
         display: block;
     }
 
-    /* Contenedor de vistas ocupa todo el ancho */
-    .contenedor-vistas {
-        width: 100% !important;
-        max-width: 100vw !important;
-        overflow-x: hidden !important;
+    .nav-link {
+        color: rgba(255,255,255,0.85) !important;
+    }
+
+    .nav-section-title {
+        color: rgba(255,255,255,0.6) !important;
+    }
+
+    .nav-icon {
+        color: rgba(255,255,255,0.85) !important;
     }
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   2. HEADER MÓVIL — Compacto y organizado
+   3. HEADER MÓVIL — Layout final
    ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 991px) {
-
     .executive-header {
-    padding: 8px 12px !important;
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
-    align-items: center !important;
-    gap: 8px !important;
-    min-height: 56px !important;
-    max-height: none !important;
-    overflow: visible !important;
-}
+        background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%) !important;
+        padding: 8px 12px !important;
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        gap: 6px !important;
+        height: 52px !important;
+        max-height: 52px !important;
+        min-height: 52px !important;
+        overflow: visible !important;
+        position: relative !important;
+    }
 
     .page-header {
         display: none !important;
         height: 0 !important;
         overflow: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
     .ai-insights { display: none !important; }
 
     .mobile-menu-toggle {
-        display: flex !important;
         flex-shrink: 0 !important;
-        width: 40px !important;
-        height: 40px !important;
+        background: rgba(255,255,255,0.2) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 8px !important;
+        width: 36px !important;
+        height: 36px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
         order: 1 !important;
     }
 
     .header-controls {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    gap: 8px !important;
-    flex: 1 !important;
-    justify-content: flex-end !important;
-    order: 2 !important;
-    overflow: visible !important;
-    flex-wrap: wrap !important;
-}
-
-    /* Selector empresa — visible y compacto */
-    .company-selector,
-#companySelector {
-    display: block !important;
-    min-width: 100px !important;
-    max-width: 140px !important;
-    flex-shrink: 1 !important;
-    font-size: 12px !important;
-}
-
-    /* Periodo visible en móvil */
-.time-period-selector {
-    display: flex !important;
-    width: 100% !important;
-    justify-content: center !important;
-    margin-top: 4px !important;
-    order: 10 !important;
-    flex-wrap: nowrap !important;
-}
-
-    /* IA botón — solo ícono */
-    .ai-header-button span { display: none !important; }
-    .ai-header-button {
-        padding: 8px !important;
-        min-width: 36px !important;
-        flex-shrink: 0 !important;
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 6px !important;
+        flex-wrap: nowrap !important;
+        overflow: visible !important;
+        order: 2 !important;
+        min-width: 0 !important;
+        height: 36px !important;
+        max-height: 36px !important;
     }
 
-    /* Notificaciones */
-    #btnNotificaciones,
-    .notification-center {
+    /* Selector empresa */
+    .grizalum-empresas-container {
+        flex: 1 !important;
+        position: static !important;
+        min-width: 0 !important;
+        max-width: none !important;
+    }
+
+    .grizalum-empresa-selector {
+        background: rgba(255,255,255,0.15) !important;
+        border: 1px solid rgba(255,255,255,0.3) !important;
+        border-radius: 10px !important;
+        padding: 5px 8px !important;
+        box-shadow: none !important;
+        transform: none !important;
+        transition: none !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        height: 36px !important;
+        max-height: 36px !important;
+        overflow: hidden !important;
+        width: 100% !important;
+    }
+
+    .grizalum-empresa-selector::before { display: none !important; }
+
+    .grizalum-empresa-selector:hover {
+        transform: none !important;
+        box-shadow: none !important;
+        background: rgba(255,255,255,0.25) !important;
+    }
+
+    .grizalum-empresa-avatar {
+        width: 24px !important;
+        height: 24px !important;
+        font-size: 13px !important;
+        flex-shrink: 0 !important;
+        border-radius: 4px !important;
+    }
+
+    .grizalum-empresa-nombre {
+        color: white !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        flex: 1 !important;
+    }
+
+    .grizalum-empresa-estado,
+    .grizalum-empresa-metricas { display: none !important; }
+
+    .grizalum-dropdown-arrow {
+        color: rgba(255,255,255,0.8) !important;
+        font-size: 10px !important;
+    }
+
+    /* Botón IA */
+    .ai-header-button {
+        background: rgba(255,255,255,0.15) !important;
+        border: 1px solid rgba(255,255,255,0.3) !important;
+        border-radius: 8px !important;
+        width: 36px !important;
+        height: 36px !important;
+        flex-shrink: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+    }
+
+    .ai-header-button span { display: none !important; }
+    .ai-header-button i { color: white !important; font-size: 15px !important; }
+
+    /* Selector período */
+    .time-period-selector {
+        background: rgba(255,255,255,0.15) !important;
+        border: 1px solid rgba(255,255,255,0.3) !important;
+        border-radius: 8px !important;
+        flex-shrink: 0 !important;
+        width: auto !important;
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        box-shadow: none !important;
+        border-bottom: none !important;
+        z-index: auto !important;
+        padding: 0 !important;
+        height: 36px !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    .period-btn {
+        padding: 5px 6px !important;
+        font-size: 10px !important;
+        min-width: 0 !important;
+        flex: 1 !important;
+        color: rgba(255,255,255,0.8) !important;
+        background: transparent !important;
+        border: none !important;
+        font-weight: 600 !important;
+    }
+
+    .period-btn.active {
+        background: #d4af37 !important;
+        color: #000 !important;
+        border-radius: 6px !important;
+        font-weight: 700 !important;
+    }
+
+    /* Notificaciones flotante */
+    #btnNotificaciones, .notification-center {
         width: 40px !important;
         height: 40px !important;
         flex-shrink: 0 !important;
+        border-radius: 50% !important;
+        position: fixed !important;
+        top: 60px !important;
+        right: 12px !important;
+        z-index: 9999 !important;
+    }
+
+    /* Panel banner */
+    #panelBannerPlan { z-index: 1 !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   4. DROPDOWN EMPRESA MÓVIL
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 991px) {
+    #grizalumEmpresasList.show {
+        position: fixed !important;
+        top: 110px !important;
+        left: 10px !important;
+        right: 10px !important;
+        width: auto !important;
+        z-index: 9999999 !important;
     }
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   3. PANEL DE CONTROL — KPIs y gráficos en móvil
+   5. PANEL DE CONTROL — KPIs y gráficos
    ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 767px) {
-
-    /* KPIs en 2 columnas */
     .pcm-kpis-grid {
         grid-template-columns: 1fr 1fr !important;
         gap: 10px !important;
     }
 
-    .pcm-kpi-card {
-        padding: 14px !important;
+    .pcm-kpi-card { padding: 14px !important; }
+    .pcm-kpi-valor { font-size: 16px !important; }
+    .pcm-kpi-icono { width: 36px !important; height: 36px !important; font-size: 14px !important; }
+    .pcm-grid { grid-template-columns: 1fr !important; }
+    .pcm-salud-factores { gap: 4px !important; }
+    .pcm-salud-factor { font-size: 11px !important; }
+
+    .graficos-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        padding: 0 12px 12px !important;
     }
 
-    .pcm-kpi-valor {
-        font-size: 16px !important;
-    }
-
-    .pcm-kpi-icono {
-        width: 36px !important;
-        height: 36px !important;
-        font-size: 14px !important;
-    }
-
-    /* Tarjetas en columna */
-    .pcm-grid {
-        grid-template-columns: 1fr !important;
-    }
-
-    /* Salud financiera compacta */
-    .pcm-salud-factores {
-        gap: 4px !important;
-    }
-
-    .pcm-salud-factor {
-        font-size: 11px !important;
-    }
+    .grafico-contenedor { height: 220px !important; }
+    .grafico-card.grafico-principal .grafico-contenedor { height: 250px !important; }
 }
 
 @media (max-width: 480px) {
-    .pcm-kpis-grid {
-        grid-template-columns: 1fr !important;
-    }
+    .pcm-kpis-grid { grid-template-columns: 1fr !important; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   4. TABLAS — Scroll horizontal en móvil
+   6. TABLAS — Scroll horizontal
    ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 767px) {
-
-    /* Todas las tablas con scroll horizontal */
     .pv-tabla-wrap,
     .vt-tabla-wrap,
     .inv-tabla-wrap,
@@ -193,148 +337,51 @@
         -webkit-overflow-scrolling: touch !important;
     }
 
-    .pv-tabla,
-    .vt-tabla,
-    [class*="-tabla"] {
-        min-width: 600px !important;
-    }
-
-    /* Containers de módulos */
-    .pv-container,
-    .config-container,
-    [class*="-container"] {
-        padding: 12px !important;
-    }
-
-    /* KPIs de proveedores en 2 columnas */
-    .pv-kpis {
-        grid-template-columns: 1fr 1fr !important;
-        gap: 10px !important;
-    }
-
-    .pv-kpi-card {
-        padding: 12px !important;
-    }
-
-    .pv-kpi-valor {
-        font-size: 16px !important;
-    }
-
-    /* Filtros en columna */
-    .pv-filtros {
-        flex-direction: column !important;
-        gap: 8px !important;
-    }
-
-    .pv-busqueda {
-        min-width: 0 !important;
-    }
-
-    /* Header de módulos */
-    .pv-header,
-    .config-header {
-        flex-wrap: wrap !important;
-        gap: 12px !important;
-    }
-
-    .pv-header-acciones {
-        width: 100% !important;
-        justify-content: flex-end !important;
-    }
-
-    /* Modales en pantalla completa */
-    .pv-modal {
-        max-width: 100% !important;
-        max-height: 100vh !important;
-        border-radius: 12px 12px 0 0 !important;
-        margin-top: auto !important;
-    }
-
-    .pv-modal-overlay {
-        align-items: flex-end !important;
-        padding: 0 !important;
-    }
-
-    /* Form rows en columna */
-    .pv-form-row,
-    .config-form-row {
-        grid-template-columns: 1fr !important;
-    }
+    .pv-tabla, .vt-tabla, [class*="-tabla"] { min-width: 600px !important; }
+    .pv-container, .config-container, [class*="-container"] { padding: 12px !important; }
+    .pv-kpis { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+    .pv-kpi-card { padding: 12px !important; }
+    .pv-kpi-valor { font-size: 16px !important; }
+    .pv-filtros { flex-direction: column !important; gap: 8px !important; }
+    .pv-busqueda { min-width: 0 !important; }
+    .pv-header, .config-header { flex-wrap: wrap !important; gap: 12px !important; }
+    .pv-header-acciones { width: 100% !important; justify-content: flex-end !important; }
+    .pv-modal { max-width: 100% !important; max-height: 100vh !important; border-radius: 12px 12px 0 0 !important; margin-top: auto !important; }
+    .pv-modal-overlay { align-items: flex-end !important; padding: 0 !important; }
+    .pv-form-row, .config-form-row { grid-template-columns: 1fr !important; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   5. CONFIGURACIÓN — Móvil
+   7. CONFIGURACIÓN
    ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 767px) {
-
-    .config-grid {
-        grid-template-columns: 1fr !important;
-    }
-
-    .config-card-full {
-        grid-column: 1 !important;
-    }
-
-    .config-acciones {
-        flex-direction: column-reverse !important;
-    }
-
-    .config-btn-primario,
-    .config-btn-secundario {
-        width: 100% !important;
-        justify-content: center !important;
-    }
-
-    .config-categorias-grid {
-        gap: 8px !important;
-    }
+    .config-grid { grid-template-columns: 1fr !important; }
+    .config-card-full { grid-column: 1 !important; }
+    .config-acciones { flex-direction: column-reverse !important; }
+    .config-btn-primario, .config-btn-secundario { width: 100% !important; justify-content: center !important; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   6. VENTAS E INVENTARIO — Móvil
+   8. VENTAS E INVENTARIO
    ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 767px) {
-
-    /* KPIs en 2 columnas */
-    [class*="kpi-grid"],
-    [class*="kpis-grid"] {
-        grid-template-columns: 1fr 1fr !important;
-        gap: 10px !important;
-    }
-
-    /* Botones de acción */
-    [class*="btn-nueva"],
-    [class*="btn-nuevo"],
-    [class*="btn-agregar"] {
-        font-size: 13px !important;
-        padding: 8px 14px !important;
-    }
+    [class*="kpi-grid"], [class*="kpis-grid"] { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+    [class*="btn-nueva"], [class*="btn-nuevo"], [class*="btn-agregar"] { font-size: 13px !important; padding: 8px 14px !important; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   7. BANNER DEL PLAN — Compacto en móvil
+   9. BANNER DEL PLAN
    ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 767px) {
-
-    #panelBannerPlan {
-        padding: 12px 16px !important;
-        margin-bottom: 16px !important;
-    }
-
-    #panelBannerPlan .nivel-textos {
-        display: none !important;
-    }
-
-    #panelBannerPlan .nivel-icono {
-        font-size: 1.8rem !important;
-    }
+    #panelBannerPlan { padding: 12px 16px !important; margin-bottom: 16px !important; }
+    #panelBannerPlan .nivel-textos { display: none !important; }
+    #panelBannerPlan .nivel-icono { font-size: 1.8rem !important; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   8. NOTIFICACIONES — Panel en móvil
+   10. NOTIFICACIONES
    ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 767px) {
-
     #grizalumNotificationPanel {
         width: calc(100vw - 16px) !important;
         right: 8px !important;
@@ -352,203 +399,12 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   9. GRÁFICOS DEL PANEL — Móvil
+   11. DROPDOWN EMPRESA — Modal móvil
    ═══════════════════════════════════════════════════════════════ */
-@media (max-width: 767px) {
-
-    .graficos-grid {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 12px !important;
-        padding: 0 12px 12px !important;
-    }
-
-    .grafico-card {
-        width: 100% !important;
-    }
-
-    .grafico-contenedor {
-        height: 220px !important;
-    }
-
-    .grafico-card.grafico-principal .grafico-contenedor {
-        height: 250px !important;
-    }
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   10. OVERLAY PARA CERRAR SIDEBAR
-   ═══════════════════════════════════════════════════════════════ */
-.gz-sidebar-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
-    z-index: 1099;
-    cursor: pointer;
-}
-
-.gz-sidebar-overlay.active {
-    display: block;
-}
-/* FIX CRÍTICO: Forzar ocultamiento en móvil */
 @media (max-width: 991px) {
-    .page-header {
-        display: none !important;
-        visibility: hidden !important;
-        height: 0 !important;
-        overflow: hidden !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-
-    .executive-header {
-        flex-direction: row !important;
-        flex-wrap: wrap !important;
-        height: auto !important;
-        max-height: none !important;
-        overflow: visible !important;
-    }
-}
-/* FIX CRÍTICO: overflow del app-container */
-@media (max-width: 991px) {
-    .app-container {
-        overflow: visible !important;
-        overflow-x: hidden !important;
-        overflow-y: visible !important;
-        min-height: 100vh !important;
-        flex-direction: column !important;
-    }
-
-    body {
-        overflow-x: hidden !important;
-    }
-
-    #aiAssistantPanel {
-        position: fixed !important;
-    }
-}
-@media (max-width: 991px) {
-    .app-container {
-        overflow: visible !important;
-        height: auto !important;
-        min-height: 100vh !important;
-    }
-    
-    .main-content {
-        overflow: visible !important;
-        height: auto !important;
-    }
-    
-    .contenedor-vistas {
-        overflow-y: auto !important;
-        height: auto !important;
-        min-height: calc(100vh - 56px) !important;
-    }
-}
-@media (max-width: 991px) {
-    .app-container {
-        flex-direction: row !important;
-    }
-    
-    .sidebar {
-        width: 280px !important;
-        flex-shrink: 0 !important;
-        position: fixed !important;
-        transform: translateX(-100%) !important;
-        height: 100vh !important;
-    }
-    
-    .sidebar.open {
-        transform: translateX(0) !important;
-    }
-    
-    .main-content {
-        width: 100% !important;
-        margin-left: 0 !important;
-        min-height: 100vh !important;
-    }
-}
-/* FIX: Header móvil - botones período y empresa compactos */
-@media (max-width: 991px) {
-    .period-btn {
-        padding: 5px 6px !important;
-        font-size: 10px !important;
-        min-width: 0 !important;
-        flex: 1 !important;
-    }
-
-    .company-selector,
-    #companySelector {
+    .company-selector, #companySelector {
         min-width: 100px !important;
         max-width: 140px !important;
         font-size: 12px !important;
-    }
-}
-
-/* FIX: Selector empresa compacto en móvil */
-@media (max-width: 991px) {
-    .grizalum-empresa-selector {
-        padding: 6px 10px !important;
-        min-height: 40px !important;
-        max-height: 44px !important;
-    }
-
-    .grizalum-empresa-nombre {
-        font-size: 12px !important;
-        max-width: 80px !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        white-space: nowrap !important;
-    }
-
-    .grizalum-empresa-estado,
-    .grizalum-empresa-metricas {
-        display: none !important;
-    }
-
-    .grizalum-empresas-container {
-        max-height: 44px !important;
-        overflow: visible !important;
-    }
-}
-/* FIX: Header controls una sola línea */
-@media (max-width: 991px) {
-    .header-controls {
-        flex-wrap: nowrap !important;
-        align-items: center !important;
-        height: 44px !important;
-        max-height: 44px !important;
-        overflow: visible !important;
-    }
-
-    .time-period-selector {
-        position: absolute !important;
-        top: 56px !important;
-        left: 0 !important;
-        right: 0 !important;
-        width: 100% !important;
-        z-index: 999 !important;
-        background: white !important;
-        padding: 6px 12px !important;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
-    }
-
-    .executive-header {
-        position: relative !important;
-    }
-}
-@media (max-width: 991px) {
-    .grizalum-empresas-container {
-        position: static !important;
-    }
-
-    #grizalumEmpresasList.show {
-        position: fixed !important;
-        top: 110px !important;
-        left: 10px !important;
-        right: 10px !important;
-        width: auto !important;
-        z-index: 9999999 !important;
     }
 }
