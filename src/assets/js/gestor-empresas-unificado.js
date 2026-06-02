@@ -395,6 +395,24 @@ class GestorEmpresasUnificado {
                     width: 360px;
                 }
             }
+            @media (max-width: 991px) {
+                .grizalum-empresa-selector {
+                    background: rgba(255,255,255,0.15) !important;
+                    border: 1px solid rgba(255,255,255,0.3) !important;
+                    border-radius: 10px !important;
+                    padding: 5px 8px !important;
+                    box-shadow: none !important;
+                    transform: none !important;
+                }
+                .grizalum-empresa-selector::before {
+                    display: none !important;
+                }
+                .grizalum-empresa-selector:hover {
+                    transform: none !important;
+                    box-shadow: none !important;
+                    background: rgba(255,255,255,0.2) !important;
+                }
+            }
         `;
         
         document.head.appendChild(estilos);
