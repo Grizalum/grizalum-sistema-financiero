@@ -232,7 +232,7 @@
             return;
         }
 
-        this.disabled = true;
+     this.disabled = true;
         this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando cuenta...';
 
         const { data, error } = await db.auth.signUp({
@@ -250,13 +250,13 @@
             }
             mostrarMensaje('reg-mensaje', mensajeError, 'error');
         } else {
+            mostrarMensaje('reg-mensaje', '✅ Cuenta creada. Revisa tu correo para confirmar.', 'success');
+        }
 
         this.disabled = false;
         this.innerHTML = '<i class="fas fa-user-plus"></i> Crear cuenta';
     });
-
 })();
 </script>
-
 </body>
 </html>
