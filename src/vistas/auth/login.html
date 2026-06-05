@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #0f1923 0%, #1a2e1a 50%, #0f1923 100%);
@@ -18,162 +17,84 @@
             justify-content: center;
             padding: 20px;
         }
-
-        .login-container {
-            width: 100%;
-            max-width: 420px;
-        }
-
-        .login-logo {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
+        .login-container { width: 100%; max-width: 420px; }
+        .login-logo { text-align: center; margin-bottom: 32px; }
         .login-logo .icon {
-            width: 64px;
-            height: 64px;
+            width: 64px; height: 64px;
             background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
             border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             margin: 0 auto 12px auto;
-            font-size: 28px;
-            color: white;
-            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+            font-size: 28px; color: white;
+            box-shadow: 0 8px 24px rgba(212,175,55,0.4);
         }
-
         .login-logo h1 {
-            font-size: 28px;
-            font-weight: 900;
+            font-size: 28px; font-weight: 900;
             background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-
-        .login-logo p {
-            color: rgba(255,255,255,0.5);
-            font-size: 14px;
-            margin-top: 4px;
-        }
-
+        .login-logo p { color: rgba(255,255,255,0.5); font-size: 14px; margin-top: 4px; }
         .login-card {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
-            padding: 32px;
+            border-radius: 20px; padding: 32px;
             backdrop-filter: blur(20px);
         }
-
         .tabs {
             display: flex;
             background: rgba(0,0,0,0.3);
-            border-radius: 10px;
-            padding: 4px;
+            border-radius: 10px; padding: 4px;
             margin-bottom: 24px;
         }
-
         .tab {
-            flex: 1;
-            padding: 10px;
-            text-align: center;
-            border: none;
-            background: transparent;
+            flex: 1; padding: 10px; text-align: center;
+            border: none; background: transparent;
             color: rgba(255,255,255,0.5);
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.3s;
+            font-size: 14px; font-weight: 600;
+            cursor: pointer; border-radius: 8px;
+            transition: all 0.3s; font-family: 'Inter', sans-serif;
         }
-
         .tab.active {
             background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
             color: #000;
         }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
+        .form-group { margin-bottom: 16px; }
         .form-group label {
-            display: block;
-            color: rgba(255,255,255,0.7);
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 8px;
+            display: block; color: rgba(255,255,255,0.7);
+            font-size: 13px; font-weight: 600; margin-bottom: 8px;
         }
-
         .form-group input {
-            width: 100%;
-            padding: 12px 16px;
+            width: 100%; padding: 12px 16px;
             background: rgba(255,255,255,0.08);
             border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 10px;
-            color: white;
-            font-size: 14px;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.3s;
-            outline: none;
+            border-radius: 10px; color: white;
+            font-size: 14px; font-family: 'Inter', sans-serif;
+            transition: all 0.3s; outline: none;
         }
-
         .form-group input:focus {
             border-color: #d4af37;
-            background: rgba(212, 175, 55, 0.08);
+            background: rgba(212,175,55,0.08);
         }
-
-        .form-group input::placeholder {
-            color: rgba(255,255,255,0.3);
-        }
-
+        .form-group input::placeholder { color: rgba(255,255,255,0.3); }
         .btn-primary {
-            width: 100%;
-            padding: 14px;
+            width: 100%; padding: 14px;
             background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
-            border: none;
-            border-radius: 10px;
-            color: #000;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 8px;
-            transition: all 0.3s;
-            font-family: 'Inter', sans-serif;
+            border: none; border-radius: 10px;
+            color: #000; font-size: 15px; font-weight: 700;
+            cursor: pointer; margin-top: 8px;
+            transition: all 0.3s; font-family: 'Inter', sans-serif;
         }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(212,175,55,0.4); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         .mensaje {
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            margin-top: 16px;
-            display: none;
+            padding: 12px 16px; border-radius: 8px;
+            font-size: 13px; font-weight: 600;
+            margin-top: 16px; display: none;
         }
-
-        .mensaje.error {
-            background: rgba(239, 68, 68, 0.15);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #ef4444;
-        }
-
-        .mensaje.success {
-            background: rgba(16, 185, 129, 0.15);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            color: #10b981;
-        }
-
+        .mensaje.error { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; }
+        .mensaje.success { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #10b981; }
         .form-panel { display: none; }
         .form-panel.active { display: block; }
     </style>
@@ -189,8 +110,8 @@
 
     <div class="login-card">
         <div class="tabs">
-            <button class="tab active" onclick="cambiarTab('login')">Iniciar Sesión</button>
-            <button class="tab" onclick="cambiarTab('registro')">Registrarse</button>
+            <button class="tab active" id="tab-login">Iniciar Sesión</button>
+            <button class="tab" id="tab-registro">Registrarse</button>
         </div>
 
         <!-- LOGIN -->
@@ -203,7 +124,7 @@
                 <label>Contraseña</label>
                 <input type="password" id="login-password" placeholder="••••••••">
             </div>
-            <button class="btn-primary" onclick="iniciarSesion()">
+            <button class="btn-primary" id="btn-login">
                 <i class="fas fa-sign-in-alt"></i> Entrar
             </button>
             <div id="login-mensaje" class="mensaje"></div>
@@ -223,7 +144,7 @@
                 <label>Contraseña</label>
                 <input type="password" id="reg-password" placeholder="Mínimo 8 caracteres">
             </div>
-            <button class="btn-primary" onclick="registrarse()">
+            <button class="btn-primary" id="btn-registro">
                 <i class="fas fa-user-plus"></i> Crear cuenta
             </button>
             <div id="reg-mensaje" class="mensaje"></div>
@@ -231,19 +152,22 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    // ═══ CONFIGURACIÓN SUPABASE ═══
-    const SUPABASE_URL = 'https://qchzawosebbsyitgghtb.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_Uo-6mOdIKmS3BZ0lghZNqw_iH1P3WF9';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+(async () => {
+    // Cargar Supabase dinámicamente
+    await new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+    });
 
-    function cambiarTab(tab) {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
-        event.target.classList.add('active');
-        document.getElementById('panel-' + tab).classList.add('active');
-    }
+    const { createClient } = window.supabase;
+    const db = createClient(
+        'https://qchzawosebbsyitgghtb.supabase.co',
+        'sb_publishable_Uo-6mOdIKmS3BZ0lghZNqw_iH1P3WF9'
+    );
 
     function mostrarMensaje(id, texto, tipo) {
         const el = document.getElementById(id);
@@ -252,68 +176,82 @@
         el.style.display = 'block';
     }
 
-    async function iniciarSesion() {
-        const email = document.getElementById('login-email').value;
+    // Tabs
+    document.getElementById('tab-login').addEventListener('click', function() {
+        document.getElementById('tab-login').classList.add('active');
+        document.getElementById('tab-registro').classList.remove('active');
+        document.getElementById('panel-login').classList.add('active');
+        document.getElementById('panel-registro').classList.remove('active');
+    });
+
+    document.getElementById('tab-registro').addEventListener('click', function() {
+        document.getElementById('tab-registro').classList.add('active');
+        document.getElementById('tab-login').classList.remove('active');
+        document.getElementById('panel-registro').classList.add('active');
+        document.getElementById('panel-login').classList.remove('active');
+    });
+
+    // Login
+    document.getElementById('btn-login').addEventListener('click', async function() {
+        const email = document.getElementById('login-email').value.trim();
         const password = document.getElementById('login-password').value;
 
         if (!email || !password) {
-            mostrarMensaje('login-mensaje', 'Completa todos los campos', 'error');
+            mostrarMensaje('login-mensaje', '⚠️ Completa todos los campos', 'error');
             return;
         }
 
-        const btn = event.target;
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Entrando...';
+        this.disabled = true;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Entrando...';
 
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await db.auth.signInWithPassword({ email, password });
 
         if (error) {
-            mostrarMensaje('login-mensaje', 'Correo o contraseña incorrectos', 'error');
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar';
+            mostrarMensaje('login-mensaje', '❌ Correo o contraseña incorrectos', 'error');
+            this.disabled = false;
+            this.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar';
         } else {
             mostrarMensaje('login-mensaje', '✅ Bienvenido! Redirigiendo...', 'success');
-            setTimeout(() => {
-                window.location.href = '/';
-            }, 1500);
+            setTimeout(() => { window.location.href = '/'; }, 1500);
         }
-    }
+    });
 
-    async function registrarse() {
-        const nombre = document.getElementById('reg-nombre').value;
-        const email = document.getElementById('reg-email').value;
+    // Registro
+    document.getElementById('btn-registro').addEventListener('click', async function() {
+        const nombre = document.getElementById('reg-nombre').value.trim();
+        const email = document.getElementById('reg-email').value.trim();
         const password = document.getElementById('reg-password').value;
 
         if (!nombre || !email || !password) {
-            mostrarMensaje('reg-mensaje', 'Completa todos los campos', 'error');
+            mostrarMensaje('reg-mensaje', '⚠️ Completa todos los campos', 'error');
             return;
         }
 
         if (password.length < 8) {
-            mostrarMensaje('reg-mensaje', 'La contraseña debe tener mínimo 8 caracteres', 'error');
+            mostrarMensaje('reg-mensaje', '⚠️ La contraseña debe tener mínimo 8 caracteres', 'error');
             return;
         }
 
-        const btn = event.target;
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando cuenta...';
+        this.disabled = true;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando cuenta...';
 
-        const { data, error } = await supabase.auth.signUp({
+        const { data, error } = await db.auth.signUp({
             email,
             password,
             options: { data: { nombre } }
         });
 
         if (error) {
-            mostrarMensaje('reg-mensaje', error.message, 'error');
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-user-plus"></i> Crear cuenta';
+            mostrarMensaje('reg-mensaje', '❌ ' + error.message, 'error');
         } else {
             mostrarMensaje('reg-mensaje', '✅ Cuenta creada. Revisa tu correo para confirmar.', 'success');
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-user-plus"></i> Crear cuenta';
         }
-    }
+
+        this.disabled = false;
+        this.innerHTML = '<i class="fas fa-user-plus"></i> Crear cuenta';
+    });
+
+})();
 </script>
 
 </body>
