@@ -137,6 +137,9 @@
                 <label>Contraseña</label>
                 <input type="password" id="login-password" placeholder="••••••••">
             </div>
+            <div style="text-align: right; margin: -6px 0 16px 0;">
+                <a href="#" id="link-recuperar" style="color: rgba(212,175,55,0.85); font-size: 13px; text-decoration: none;">¿Olvidaste tu contraseña?</a>
+            </div>
             <button class="btn-primary" id="btn-login">
                 <i class="fas fa-sign-in-alt"></i> Entrar
             </button>
@@ -228,7 +231,24 @@
             setTimeout(() => { window.location.href = '/'; }, 1500);
         }
     });
-
+    // Recuperar contraseña
+    document.getElementById('link-recuperar').addEventListener('click', async function(e) {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value.trim();
+        if (!email) {
+            mostrarMensaje('login-mensaje', '⚠️ Escribe tu correo arriba y vuelve a tocar el enlace', 'error');
+            return;
+        }
+        const { error } = await db.auth.resetPasswordForEmail(email, {
+            redirectTo: 'https://grizalum-sistema-financiero.vercel.app/src/vistas/auth/reset.html'
+        });
+        if (error) {
+            mostrarMensaje('login-mensaje', '❌ No se pudo enviar. Intenta de nuevo en un rato.', 'error');
+        } else {
+            mostrarMensaje('login-mensaje', '📩 Te enviamos un correo para restablecer tu contraseña. Revísalo (y mira también en spam).', 'success');
+        }
+    });
+    
     // Registro
     document.getElementById('btn-registro').addEventListener('click', async function() {
         const nombre = document.getElementById('reg-nombre').value.trim();
