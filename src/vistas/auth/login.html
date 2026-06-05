@@ -242,10 +242,14 @@
         });
 
         if (error) {
-            mostrarMensaje('reg-mensaje', '❌ ' + error.message, 'error');
+            let mensajeError = '❌ ' + error.message;
+            if (error.message.includes('already registered') || 
+                error.message.includes('already been registered') ||
+                error.message.includes('User already registered')) {
+                mensajeError = '❌ Este correo ya tiene una cuenta. Inicia sesión.';
+            }
+            mostrarMensaje('reg-mensaje', mensajeError, 'error');
         } else {
-            mostrarMensaje('reg-mensaje', '✅ Cuenta creada. Revisa tu correo para confirmar.', 'success');
-        }
 
         this.disabled = false;
         this.innerHTML = '<i class="fas fa-user-plus"></i> Crear cuenta';
