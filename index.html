@@ -4,6 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GRIZALUM | Centro de Control Financiero</title>
+    <!-- ════ CHAPA DE SESIÓN — si no hay login, al login ════ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  window.grizalumDB = window.supabase.createClient(
+    'https://qchzawosebbsyitgghtb.supabase.co',
+    'sb_publishable_Uo-6mOdIKmS3BZ0lghZNqw_iH1P3WF9'
+  );
+  window.grizalumDB.auth.getSession().then(function (res) {
+    if (!res.data.session) {
+      window.location.replace('/src/vistas/auth/login.html');
+    }
+  });
+</script>
     
    <!-- ================================================================
      🎨 ESTILOS MODULARES GRIZALUM v4.0 - ORDEN ESPECÍFICO
