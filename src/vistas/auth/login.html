@@ -4,6 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GRIZALUM | Iniciar Sesión</title>
+    <!-- ════ Si YA tiene sesión, al dashboard ════ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  window.grizalumDB = window.supabase.createClient(
+    'https://qchzawosebbsyitgghtb.supabase.co',
+    'sb_publishable_Uo-6mOdIKmS3BZ0lghZNqw_iH1P3WF9'
+  );
+  window.grizalumDB.auth.getSession().then(function (res) {
+    if (res.data.session) {
+      window.location.replace('/');
+    }
+  });
+</script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
