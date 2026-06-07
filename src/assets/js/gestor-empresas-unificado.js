@@ -1965,15 +1965,49 @@ _seleccionarEmpresaInicial() {
         }
     }
 
-    _guardarEmpresas() {
+   _guardarEmpresas() {
         try {
             localStorage.setItem('grizalum_empresas', JSON.stringify(this.estado.empresas));
             localStorage.setItem('grizalum_empresa_actual', this.estado.empresaActual);
+            this._guardarEnSupabase(); // ← sincroniza con Supabase en segundo plano
         } catch (error) {
             this._log('error', 'Error guardando empresas:', error);
         }
     }
 
+    async _guardarEnSupabase() {
+        try {
+            const db = window.grizalumDB;
+            if (!db) return;                     // sin Supabase, solo localStorage
+            const { data: { user } } = await db.auth.getUser();
+            if (!user) return;                   // sin sesión, no sincroniza
+
+            const filas = Object.entries(this.estado.empresas).map(([slug, emp]) => ({
+                usuario_id: user.id,
+                slug: slug,
+                nombre: emp.nombre || null,
+                icono: emp.icono || null,
+                estado: emp.estado || null,
+                tema:  emp.tema  || null,
+                activa: emp.meta?.activa !== false,
+                datos: emp
+            }));
+
+            if (filas.length === 0) return;
+
+            const { error } = await db
+                .from('empresas')
+                .upsert(filas, { onConflict: 'usuario_id,slug' });
+
+            if (error) {
+                this._log('error', 'Error sincronizando con Supabase:', error);
+            } else {
+                this._log('success', `${filas.length} empresa(s) sincronizada(s) con Supabase`);
+            }
+        } catch (e) {
+            this._log('error', 'Error en sincronización Supabase:', e);
+        }
+    }
     _validarIntegridadEmpresas() {
         Object.entries(this.estado.empresas).forEach(([id, empresa]) => {
             if (!empresa.meta) {
