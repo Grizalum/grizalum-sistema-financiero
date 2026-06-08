@@ -111,23 +111,70 @@ class GestorEmpresasUnificado {
         }
     }
 
-    async _cargarEmpresas() {
+   async _cargarEmpresas() {
         try {
-            const datosGuardados = localStorage.getItem('grizalum_empresas');
-            
-            if (datosGuardados) {
-                this.estado.empresas = JSON.parse(datosGuardados);
-                this._log('info', `Cargadas ${Object.keys(this.estado.empresas).length} empresas`);
-            } else {
-                this.estado.empresas = {};
-                this._log('info', 'Sin empresas registradas. Sistema limpio.');
+            // 1) Primero intentamos cargar desde Supabase (la fuente de verdad)
+            const vinoDeSupabase = await this._cargarDesdeSupabase();
+
+            // 2) Si no se pudo (sin sesión o error), usamos el navegador
+            if (!vinoDeSupabase) {
+                const datosGuardados = localStorage.getItem('grizalum_empresas');
+                if (datosGuardados) {
+                    this.estado.empresas = JSON.parse(datosGuardados);
+                    this._log('info', `Cargadas ${Object.keys(this.estado.empresas).length} empresas (navegador)`);
+                } else {
+                    this.estado.empresas = {};
+                    this._log('info', 'Sin empresas registradas. Sistema limpio.');
+                }
             }
-            
+
             this._validarIntegridadEmpresas();
-            
+
         } catch (error) {
             this._log('error', 'Error cargando empresas:', error);
             this.estado.empresas = {};
+        }
+    }
+
+    async _cargarDesdeSupabase() {
+        try {
+            const db = window.grizalumDB;
+            if (!db) return false;
+            const { data: { user } } = await db.auth.getUser();
+            if (!user) return false;
+
+            const { data, error } = await db
+                .from('empresas')
+                .select('slug, datos')
+                .eq('usuario_id', user.id);
+
+            if (error) {
+                this._log('error', 'Error leyendo de Supabase:', error);
+                return false;
+            }
+
+            // Reconstruir el objeto de empresas: { slug: datos }
+            const empresas = {};
+            (data || []).forEach(fila => {
+                if (fila.slug && fila.datos) empresas[fila.slug] = fila.datos;
+            });
+
+            // Seguro: si Supabase está vacío pero el navegador tiene empresas, no las borramos
+            if (Object.keys(empresas).length === 0) {
+                const local = localStorage.getItem('grizalum_empresas');
+                if (local && Object.keys(JSON.parse(local)).length > 0) {
+                    this._log('warn', 'Supabase vacío; conservando lo del navegador');
+                    return false;
+                }
+            }
+
+            this.estado.empresas = empresas;
+            localStorage.setItem('grizalum_empresas', JSON.stringify(empresas)); // caché
+            this._log('success', `${Object.keys(empresas).length} empresa(s) cargada(s) desde Supabase`);
+            return true;
+        } catch (e) {
+            this._log('error', 'Error cargando desde Supabase:', e);
+            return false;
         }
     }
 
