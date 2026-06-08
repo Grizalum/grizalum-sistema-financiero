@@ -1839,13 +1839,14 @@ aplicarModoVisual(modo) {
     // ELIMINAR EMPRESA
     // ═══════════════════════════════════════════════════════════════
 
-    confirmarEliminarEmpresa(empresaId) {
+   confirmarEliminarEmpresa(empresaId) {
         const empresa = this.estado.empresas[empresaId];
         if (!empresa) return;
 
         if (confirm(`¿Eliminar la empresa "${empresa.nombre}"?\n\nEsta acción no se puede deshacer.`)) {
             delete this.estado.empresas[empresaId];
-            
+            this._eliminarDeSupabase(empresaId); // ← también la borra de la nube
+
             if (this.estado.empresaActual === empresaId) {
                 const primeraEmpresa = Object.keys(this.estado.empresas)[0];
                 if (primeraEmpresa) {
@@ -1854,11 +1855,34 @@ aplicarModoVisual(modo) {
                     this.estado.empresaActual = null;
                 }
             }
-            
+
             this._guardarEmpresas();
             this._renderizarInterfaz();
-            
+
             alert(`✅ Empresa "${empresa.nombre}" eliminada`);
+        }
+    }
+
+    async _eliminarDeSupabase(slug) {
+        try {
+            const db = window.grizalumDB;
+            if (!db) return;
+            const { data: { user } } = await db.auth.getUser();
+            if (!user) return;
+
+            const { error } = await db
+                .from('empresas')
+                .delete()
+                .eq('usuario_id', user.id)
+                .eq('slug', slug);
+
+            if (error) {
+                this._log('error', 'Error eliminando de Supabase:', error);
+            } else {
+                this._log('success', `Empresa "${slug}" eliminada de Supabase`);
+            }
+        } catch (e) {
+            this._log('error', 'Error eliminando de Supabase:', e);
         }
     }
 
