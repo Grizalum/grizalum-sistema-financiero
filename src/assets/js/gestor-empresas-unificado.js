@@ -2061,7 +2061,8 @@ _seleccionarEmpresaInicial() {
                 estado: emp.estado || null,
                 tema:  emp.tema  || null,
                 activa: emp.meta?.activa !== false,
-                datos: emp
+                datos: emp,
+                modulos: this._recolectarModulos(slug) 
             }));
 
             if (filas.length === 0) return;
@@ -2078,6 +2079,20 @@ _seleccionarEmpresaInicial() {
         } catch (e) {
             this._log('error', 'Error en sincronización Supabase:', e);
         }
+    }
+     _recolectarModulos(slug) {
+        const modulos = {};
+        const sufijo = '_' + slug;
+        Object.keys(localStorage).forEach(k => {
+            if (k.startsWith('grizalum_') && k.endsWith(sufijo) && k !== 'grizalum_empresas') {
+                try {
+                    modulos[k] = JSON.parse(localStorage.getItem(k));
+                } catch (e) {
+                    modulos[k] = localStorage.getItem(k);
+                }
+            }
+        });
+        return modulos;
     }
     _validarIntegridadEmpresas() {
         Object.entries(this.estado.empresas).forEach(([id, empresa]) => {
