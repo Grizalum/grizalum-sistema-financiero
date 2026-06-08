@@ -136,7 +136,7 @@ class GestorEmpresasUnificado {
         }
     }
 
-    async _cargarDesdeSupabase() {
+   async _cargarDesdeSupabase() {
         try {
             const db = window.grizalumDB;
             if (!db) return false;
@@ -145,7 +145,7 @@ class GestorEmpresasUnificado {
 
             const { data, error } = await db
                 .from('empresas')
-                .select('slug, datos')
+                .select('slug, datos, modulos')
                 .eq('usuario_id', user.id);
 
             if (error) {
@@ -153,13 +153,19 @@ class GestorEmpresasUnificado {
                 return false;
             }
 
-            // Reconstruir el objeto de empresas: { slug: datos }
             const empresas = {};
             (data || []).forEach(fila => {
-                if (fila.slug && fila.datos) empresas[fila.slug] = fila.datos;
+                if (fila.slug && fila.datos) {
+                    empresas[fila.slug] = fila.datos;
+                    // Devolver las cajas de los módulos al navegador
+                    if (fila.modulos) {
+                        Object.entries(fila.modulos).forEach(([k, v]) => {
+                            localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
+                        });
+                    }
+                }
             });
 
-            // Seguro: si Supabase está vacío pero el navegador tiene empresas, no las borramos
             if (Object.keys(empresas).length === 0) {
                 const local = localStorage.getItem('grizalum_empresas');
                 if (local && Object.keys(JSON.parse(local)).length > 0) {
@@ -169,7 +175,7 @@ class GestorEmpresasUnificado {
             }
 
             this.estado.empresas = empresas;
-            localStorage.setItem('grizalum_empresas', JSON.stringify(empresas)); // caché
+            localStorage.setItem('grizalum_empresas', JSON.stringify(empresas));
             this._log('success', `${Object.keys(empresas).length} empresa(s) cargada(s) desde Supabase`);
             return true;
         } catch (e) {
@@ -177,7 +183,6 @@ class GestorEmpresasUnificado {
             return false;
         }
     }
-
     _crearEstilos() {
         const estilosId = 'grizalum-gestor-empresas-styles';
         
