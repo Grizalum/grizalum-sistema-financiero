@@ -136,12 +136,21 @@ class GestorEmpresasUnificado {
         }
     }
 
-   async _cargarDesdeSupabase() {
+  async _cargarDesdeSupabase() {
         try {
             const db = window.grizalumDB;
             if (!db) return false;
             const { data: { user } } = await db.auth.getUser();
             if (!user) return false;
+
+            // Cargar cajas globales del usuario (ej: cuentas bancarias)
+            const { data: perfil } = await db.from('usuarios')
+                .select('datos_globales').eq('id', user.id).single();
+            if (perfil && perfil.datos_globales) {
+                Object.entries(perfil.datos_globales).forEach(([k, v]) => {
+                    localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
+                });
+            }
 
             const { data, error } = await db
                 .from('empresas')
@@ -157,7 +166,6 @@ class GestorEmpresasUnificado {
             (data || []).forEach(fila => {
                 if (fila.slug && fila.datos) {
                     empresas[fila.slug] = fila.datos;
-                    // Devolver las cajas de los módulos al navegador
                     if (fila.modulos) {
                         Object.entries(fila.modulos).forEach(([k, v]) => {
                             localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
@@ -2054,9 +2062,9 @@ _seleccionarEmpresaInicial() {
     async _guardarEnSupabase() {
         try {
             const db = window.grizalumDB;
-            if (!db) return;                     // sin Supabase, solo localStorage
+            if (!db) return;
             const { data: { user } } = await db.auth.getUser();
-            if (!user) return;                   // sin sesión, no sincroniza
+            if (!user) return;
 
             const filas = Object.entries(this.estado.empresas).map(([slug, emp]) => ({
                 usuario_id: user.id,
@@ -2067,20 +2075,29 @@ _seleccionarEmpresaInicial() {
                 tema:  emp.tema  || null,
                 activa: emp.meta?.activa !== false,
                 datos: emp,
-                modulos: this._recolectarModulos(slug) 
+                modulos: this._recolectarModulos(slug)
             }));
 
-            if (filas.length === 0) return;
-
-            const { error } = await db
-                .from('empresas')
-                .upsert(filas, { onConflict: 'usuario_id,slug' });
-
-            if (error) {
-                this._log('error', 'Error sincronizando con Supabase:', error);
-            } else {
-                this._log('success', `${filas.length} empresa(s) sincronizada(s) con Supabase`);
+            if (filas.length > 0) {
+                const { error } = await db
+                    .from('empresas')
+                    .upsert(filas, { onConflict: 'usuario_id,slug' });
+                if (error) {
+                    this._log('error', 'Error sincronizando con Supabase:', error);
+                } else {
+                    this._log('success', `${filas.length} empresa(s) sincronizada(s) con Supabase`);
+                }
             }
+
+            // Cajas globales del usuario (ej: cuentas bancarias)
+            const clavesGlobales = ['grizalum_cuentas_bancarias_v2'];
+            const globales = {};
+            clavesGlobales.forEach(k => {
+                const v = localStorage.getItem(k);
+                if (v !== null) { try { globales[k] = JSON.parse(v); } catch (e) { globales[k] = v; } }
+            });
+            await db.from('usuarios').update({ datos_globales: globales }).eq('id', user.id);
+
         } catch (e) {
             this._log('error', 'Error en sincronización Supabase:', e);
         }
