@@ -19,25 +19,29 @@
       padding: 20px; color: #fff;
     }
     .card {
-      width: 100%; max-width: 420px;
+      width: 100%; max-width: 440px;
       background: rgba(15, 30, 25, 0.55);
       border: 1px solid rgba(212, 175, 55, 0.25);
       border-radius: 20px;
-      padding: 38px 30px;
+      padding: 40px 32px;
       backdrop-filter: blur(12px);
       box-shadow: 0 20px 60px rgba(0,0,0,0.4);
       text-align: center;
     }
     .logo-img {
-      width: 140px; height: 140px;
-      margin: 0 auto 22px;
+      width: 190px; height: 190px;
+      margin: 0 auto 16px;
       background: #fff;
-      border-radius: 22px;
-      padding: 10px;
-      box-shadow: 0 10px 28px rgba(0,0,0,0.3);
+      border-radius: 26px;
+      padding: 14px;
+      box-shadow: 0 14px 36px rgba(0,0,0,0.38);
     }
     .logo-img img { width: 100%; height: 100%; object-fit: contain; display: block; }
-    .titulo { font-size: 19px; font-weight: 700; color: #fff; margin-bottom: 10px; }
+    .marca-sub {
+      color: #d4af37; font-size: 12px; font-weight: 600;
+      letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 28px;
+    }
+    .titulo { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 10px; }
     .texto { color: #9aa6a0; font-size: 14px; line-height: 1.6; margin-bottom: 26px; }
     .btn {
       width: 100%; padding: 14px; border: none; border-radius: 10px;
@@ -54,6 +58,7 @@
 <body>
   <div class="card">
     <div class="logo-img"><img src="/src/assets/grizalum-logo.png" alt="GRIZALUM"></div>
+    <p class="marca-sub">Control Financiero Empresarial</p>
 
     <div id="contenido"></div>
 
@@ -78,12 +83,12 @@
     if (razon === 'suspendido') {
       cont.innerHTML =
         '<p class="titulo">Tu cuenta está suspendida</p>' +
-        '<p class="texto">Tu acceso fue pausado por el administrador. Si crees que es un error, escríbenos para reactivarla.</p>';
+        '<p class="texto">Tu acceso fue pausado por el administrador. Escríbenos para reactivarla.</p>';
       btn.style.display = 'none';
     } else {
       cont.innerHTML =
         '<p class="titulo">Tu prueba gratuita terminó</p>' +
-        '<p class="texto">Esperamos que GRIZALUM te haya servido. Suscríbete para seguir usando todas tus empresas y tu información.</p>';
+        '<p class="texto">Suscríbete para seguir usando GRIZALUM con todas tus empresas y tu información.</p>';
     }
 
     btn.addEventListener('click', function () {
