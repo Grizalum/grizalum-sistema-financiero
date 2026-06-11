@@ -23,21 +23,20 @@
       background: rgba(15, 30, 25, 0.55);
       border: 1px solid rgba(212, 175, 55, 0.25);
       border-radius: 20px;
-      padding: 40px 30px;
+      padding: 38px 30px;
       backdrop-filter: blur(12px);
       box-shadow: 0 20px 60px rgba(0,0,0,0.4);
       text-align: center;
     }
-    .logo {
-      width: 64px; height: 64px; margin: 0 auto 16px;
-      border-radius: 16px;
-      background: linear-gradient(135deg, #d4af37, #b8941f);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 28px; color: #1a1a1a;
-      box-shadow: 0 8px 24px rgba(212,175,55,0.35);
+    .logo-img {
+      width: 140px; height: 140px;
+      margin: 0 auto 22px;
+      background: #fff;
+      border-radius: 22px;
+      padding: 10px;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.3);
     }
-    h1 { font-size: 26px; font-weight: 800; color: #d4af37; letter-spacing: 1px; }
-    .sub { color: #9aa6a0; font-size: 13px; margin-bottom: 26px; }
+    .logo-img img { width: 100%; height: 100%; object-fit: contain; display: block; }
     .titulo { font-size: 19px; font-weight: 700; color: #fff; margin-bottom: 10px; }
     .texto { color: #9aa6a0; font-size: 14px; line-height: 1.6; margin-bottom: 26px; }
     .btn {
@@ -54,9 +53,7 @@
 </head>
 <body>
   <div class="card">
-    <div class="logo"><i class="fas fa-lock" id="icono"></i></div>
-    <h1>GRIZALUM</h1>
-    <p class="sub">Control Financiero Empresarial</p>
+    <div class="logo-img"><img src="/src/assets/grizalum-logo.png" alt="GRIZALUM"></div>
 
     <div id="contenido"></div>
 
@@ -77,16 +74,13 @@
     const razon = new URLSearchParams(location.search).get('razon');
     const cont = document.getElementById('contenido');
     const btn = document.getElementById('btn-suscribir');
-    const icono = document.getElementById('icono');
 
     if (razon === 'suspendido') {
-      icono.className = 'fas fa-ban';
       cont.innerHTML =
         '<p class="titulo">Tu cuenta está suspendida</p>' +
         '<p class="texto">Tu acceso fue pausado por el administrador. Si crees que es un error, escríbenos para reactivarla.</p>';
       btn.style.display = 'none';
     } else {
-      icono.className = 'fas fa-crown';
       cont.innerHTML =
         '<p class="titulo">Tu prueba gratuita terminó</p>' +
         '<p class="texto">Esperamos que GRIZALUM te haya servido. Suscríbete para seguir usando todas tus empresas y tu información.</p>';
