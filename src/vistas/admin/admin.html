@@ -10,10 +10,8 @@
        ════════════════════════════════════════════════════════ -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // El único correo que puede entrar al panel
     const ADMIN_CORREO = 'ceojoelgrizalum@gmail.com';
 
-    // Mismo proyecto de Supabase que el resto de la app
     window.grizalumDB = window.supabase.createClient(
       'https://qchzawosebbsyitgghtb.supabase.co',
       'sb_publishable_Uo-6mOdIKmS3BZ0lghZNqw_iH1P3WF9'
@@ -21,24 +19,12 @@
 
     window.grizalumDB.auth.getUser().then(function (res) {
       const usuario = res.data.user;
-
-      // 1) No hay sesión → al login
-      if (!usuario) {
-        window.location.replace('/src/vistas/auth/login.html');
-        return;
-      }
-      // 2) Hay sesión pero NO es el admin → a la app normal
-      if (usuario.email !== ADMIN_CORREO) {
-        window.location.replace('/');
-        return;
-      }
-      // 3) Es el admin → mostrar el panel
+      if (!usuario) { window.location.replace('/src/vistas/auth/login.html'); return; }
+      if (usuario.email !== ADMIN_CORREO) { window.location.replace('/'); return; }
       window.__adminCorreo = usuario.email;
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', mostrarPanel);
-      } else {
-        mostrarPanel();
-      }
+      } else { mostrarPanel(); }
     });
 
     function mostrarPanel() {
@@ -48,47 +34,153 @@
       if (verificando) verificando.style.display = 'none';
       if (panel) panel.style.display = 'flex';
       if (correo && window.__adminCorreo) correo.textContent = window.__adminCorreo;
-      cargarMetricas(); // ← llena las tarjetas con datos reales
+      cargarDatos();
     }
 
-    // ════════ MÉTRICAS (tarjetas KPI) ════════
-    async function cargarMetricas() {
+    // ════════ DATOS (una sola carga: KPIs + tabla) ════════
+    let USUARIOS = [], EMPRESAS = [], SUSCRIPCIONES = [], empCount = {}, usuarioDetalleId = null;
+
+    async function cargarDatos() {
       const db = window.grizalumDB;
-
-      // Usuarios registrados
       try {
-        const { count } = await db.from('usuarios').select('*', { count: 'exact', head: true });
-        ponerValor('kpi-usuarios', count ?? 0);
-      } catch (e) { console.error('usuarios', e); ponerValor('kpi-usuarios', '—'); }
+        const r = await Promise.all([
+          db.from('usuarios').select('*').order('fecha_registro', { ascending: false }),
+          db.from('empresas').select('id,usuario_id,nombre,slug,activa,fecha_creacion'),
+          db.from('suscripciones').select('*')
+        ]);
+        const u = r[0], e = r[1], s = r[2];
+        if (u.error) throw u.error;
+        USUARIOS = u.data || [];
+        EMPRESAS = e.error ? [] : (e.data || []);
+        SUSCRIPCIONES = s.error ? [] : (s.data || []);
 
-      // Empresas creadas
-      try {
-        const { count } = await db.from('empresas').select('*', { count: 'exact', head: true });
-        ponerValor('kpi-empresas', count ?? 0);
-      } catch (e) { console.error('empresas', e); ponerValor('kpi-empresas', '—'); }
+        empCount = {};
+        EMPRESAS.forEach(function (emp) { empCount[emp.usuario_id] = (empCount[emp.usuario_id] || 0) + 1; });
 
-      // Suscripciones activas (vacío hasta Culqi)
-      try {
-        const { count } = await db.from('suscripciones')
-          .select('*', { count: 'exact', head: true })
-          .eq('estado', 'activa');
-        ponerValor('kpi-suscripciones', count ?? 0);
-      } catch (e) { console.error('suscripciones', e); ponerValor('kpi-suscripciones', '0'); }
-
-      // Ingreso mensual estimado / MRR (vacío hasta Culqi)
-      try {
-        const { data } = await db.from('suscripciones').select('monto').eq('estado', 'activa');
-        const mrr = (data || []).reduce(function (s, f) { return s + (Number(f.monto) || 0); }, 0);
-        ponerValor('kpi-ingreso', 'S/ ' + mrr.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-      } catch (e) { console.error('ingreso', e); ponerValor('kpi-ingreso', 'S/ 0.00'); }
+        pintarKPIs();
+        pintarTabla();
+      } catch (err) {
+        console.error('Error cargando datos admin', err);
+        const tb = document.getElementById('tbody-usuarios');
+        if (tb) tb.innerHTML = '<tr><td colspan="7" class="vacio">No se pudieron cargar los datos. Revisa la consola (F12).</td></tr>';
+      }
     }
 
-    function ponerValor(id, valor) {
-      const el = document.getElementById(id);
-      if (el) el.textContent = valor;
+    function pintarKPIs() {
+      ponerValor('kpi-usuarios', USUARIOS.length);
+      ponerValor('kpi-empresas', EMPRESAS.length);
+      const activas = SUSCRIPCIONES.filter(function (x) { return x.estado === 'activa'; });
+      ponerValor('kpi-suscripciones', activas.length);
+      const mrr = activas.reduce(function (t, x) { return t + (Number(x.monto) || 0); }, 0);
+      ponerValor('kpi-ingreso', 'S/ ' + mrr.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
     }
 
-    // Cerrar sesión desde el panel
+    function pintarTabla() {
+      const filtro = (document.getElementById('buscador').value || '').toLowerCase().trim();
+      const tb = document.getElementById('tbody-usuarios');
+      const lista = USUARIOS.filter(function (u) {
+        if (!filtro) return true;
+        return (u.nombre || '').toLowerCase().indexOf(filtro) >= 0 ||
+               (u.correo || '').toLowerCase().indexOf(filtro) >= 0;
+      });
+      if (lista.length === 0) {
+        tb.innerHTML = '<tr><td colspan="7" class="vacio">No se encontraron usuarios.</td></tr>';
+        return;
+      }
+      tb.innerHTML = lista.map(function (u) {
+        const emp = empCount[u.id] || 0;
+        const activo = u.activo !== false;
+        const estadoHTML = activo
+          ? '<span class="pill pill-ok">Activo</span>'
+          : '<span class="pill pill-off">Suspendido</span>';
+        return '<tr onclick="abrirDetalle(\'' + u.id + '\')">'
+          + '<td class="td-nombre">' + escapar(u.nombre || '—') + '</td>'
+          + '<td>' + escapar(u.correo || '—') + '</td>'
+          + '<td class="td-centro">' + emp + '</td>'
+          + '<td><span class="pill pill-plan">' + escapar(u.plan || 'free') + '</span></td>'
+          + '<td>' + estadoHTML + '</td>'
+          + '<td>' + fechaCorta(u.fecha_registro) + '</td>'
+          + '<td class="td-ver"><i class="fas fa-chevron-right"></i></td>'
+          + '</tr>';
+      }).join('');
+    }
+
+    function abrirDetalle(id) {
+      const u = USUARIOS.find(function (x) { return x.id === id; });
+      if (!u) return;
+      usuarioDetalleId = id;
+
+      document.getElementById('m-nombre').textContent = u.nombre || '—';
+      document.getElementById('m-correo').textContent = u.correo || '—';
+      document.getElementById('m-plan').textContent = u.plan || 'free';
+      const activo = u.activo !== false;
+      const est = document.getElementById('m-estado');
+      est.textContent = activo ? 'Activo' : 'Suspendido';
+      est.className = 'pill ' + (activo ? 'pill-ok' : 'pill-off');
+      document.getElementById('m-fecha').textContent = fechaCorta(u.fecha_registro);
+
+      // Empresas del usuario
+      const emps = EMPRESAS.filter(function (e) { return e.usuario_id === id; });
+      document.getElementById('m-empresas').innerHTML = emps.length
+        ? emps.map(function (e) {
+            const act = e.activa !== false;
+            return '<div class="item"><div><strong>' + escapar(e.nombre || e.slug || '—') + '</strong>'
+              + '<span class="sub">' + escapar(e.slug || '') + '</span></div>'
+              + '<span class="pill ' + (act ? 'pill-ok' : 'pill-off') + '">' + (act ? 'Activa' : 'Inactiva') + '</span></div>';
+          }).join('')
+        : '<p class="vacio2">Sin empresas.</p>';
+
+      // Pagos del usuario
+      const subs = SUSCRIPCIONES.filter(function (s) { return s.usuario_id === id; });
+      document.getElementById('m-pagos').innerHTML = subs.length
+        ? subs.map(function (s) {
+            return '<div class="item"><div><strong>S/ ' + (Number(s.monto) || 0).toFixed(2) + '</strong>'
+              + '<span class="sub">' + fechaCorta(s.fecha_pago) + '</span></div>'
+              + '<span class="pill pill-plan">' + escapar(s.estado || '—') + '</span></div>';
+          }).join('')
+        : '<p class="vacio2">Sin pagos registrados <span class="kpi-pend" style="margin-left:6px">Pendiente Culqi</span></p>';
+
+      // Acción (protege tu propia cuenta admin)
+      const wrap = document.getElementById('m-accion-wrap');
+      if (u.correo === ADMIN_CORREO) {
+        wrap.innerHTML = '<p class="vacio2"><i class="fas fa-shield-halved" style="color:#d4af37"></i> Esta es tu cuenta de administrador.</p>';
+      } else {
+        wrap.innerHTML = activo
+          ? '<button class="btn-accion btn-suspender" onclick="toggleActivo()"><i class="fas fa-ban"></i> Suspender cuenta</button>'
+          : '<button class="btn-accion btn-activar" onclick="toggleActivo()"><i class="fas fa-circle-check"></i> Activar cuenta</button>';
+      }
+
+      document.getElementById('modal').style.display = 'flex';
+    }
+
+    async function toggleActivo() {
+      const db = window.grizalumDB;
+      const u = USUARIOS.find(function (x) { return x.id === usuarioDetalleId; });
+      if (!u || u.correo === ADMIN_CORREO) return;
+      const nuevo = (u.activo === false); // suspendido -> activar ; activo -> suspender
+      document.getElementById('m-accion-wrap').innerHTML = '<p class="vacio2">Guardando...</p>';
+
+      const resp = await db.from('usuarios').update({ activo: nuevo }).eq('id', u.id).select();
+      if (resp.error) {
+        alert('Error al guardar: ' + resp.error.message);
+        abrirDetalle(u.id); return;
+      }
+      if (!resp.data || resp.data.length === 0) {
+        alert('No se pudo guardar. Falta el permiso de admin en Supabase.\n\nCorre el SQL del PASO A que te pasó Claude y vuelve a intentar.');
+        abrirDetalle(u.id); return;
+      }
+      u.activo = nuevo;
+      pintarTabla();
+      abrirDetalle(u.id);
+    }
+
+    function cerrarModal() { document.getElementById('modal').style.display = 'none'; usuarioDetalleId = null; }
+    function cerrarModalFondo(ev) { if (ev.target.id === 'modal') cerrarModal(); }
+
+    function ponerValor(id, valor) { const el = document.getElementById(id); if (el) el.textContent = valor; }
+    function fechaCorta(iso) { if (!iso) return '—'; try { return new Date(iso).toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: 'numeric' }); } catch (e) { return '—'; } }
+    function escapar(t) { return String(t).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
     async function cerrarSesion() {
       await window.grizalumDB.auth.signOut();
       window.location.replace('/src/vistas/auth/login.html');
@@ -100,127 +192,94 @@
 
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #0f1923 0%, #1a2e1a 50%, #0f1923 100%);
-      min-height: 100vh;
-      color: #e8e8e8;
-    }
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #0f1923 0%, #1a2e1a 50%, #0f1923 100%); min-height: 100vh; color: #e8e8e8; }
 
-    /* ───── Estado mientras verifica el acceso ───── */
-    #verificando {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      color: #9aa6a0;
-    }
-    .spinner {
-      width: 38px; height: 38px;
-      border: 3px solid rgba(212,175,55,0.25);
-      border-top-color: #d4af37;
-      border-radius: 50%;
-      animation: girar 0.8s linear infinite;
-    }
+    #verificando { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; color: #9aa6a0; }
+    .spinner { width: 38px; height: 38px; border: 3px solid rgba(212,175,55,0.25); border-top-color: #d4af37; border-radius: 50%; animation: girar 0.8s linear infinite; }
     @keyframes girar { to { transform: rotate(360deg); } }
 
-    /* ───── Panel (oculto hasta confirmar admin) ───── */
     #panel { display: none; flex-direction: column; min-height: 100vh; }
 
-    /* Barra superior */
-    .topbar {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 16px; padding: 16px 24px;
-      background: rgba(15, 30, 25, 0.65);
-      border-bottom: 1px solid rgba(212, 175, 55, 0.25);
-      backdrop-filter: blur(12px);
-      flex-wrap: wrap;
-    }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 24px; background: rgba(15,30,25,0.65); border-bottom: 1px solid rgba(212,175,55,0.25); backdrop-filter: blur(12px); flex-wrap: wrap; }
     .marca { display: flex; align-items: center; gap: 12px; }
-    .logo {
-      width: 44px; height: 44px; border-radius: 12px;
-      background: linear-gradient(135deg, #d4af37, #b8941f);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px; color: #1a1a1a;
-      box-shadow: 0 6px 18px rgba(212,175,55,0.35);
-    }
+    .logo { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg,#d4af37,#b8941f); display: flex; align-items: center; justify-content: center; font-size: 20px; color: #1a1a1a; box-shadow: 0 6px 18px rgba(212,175,55,0.35); }
     .marca h1 { font-size: 18px; font-weight: 800; color: #d4af37; letter-spacing: 0.5px; }
-    .badge-admin {
-      font-size: 11px; font-weight: 700; letter-spacing: 1px;
-      color: #1a1a1a; background: #d4af37;
-      padding: 3px 8px; border-radius: 6px; margin-left: 8px;
-    }
+    .badge-admin { font-size: 11px; font-weight: 700; letter-spacing: 1px; color: #1a1a1a; background: #d4af37; padding: 3px 8px; border-radius: 6px; margin-left: 8px; }
     .acciones-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .correo-admin { font-size: 13px; color: #9aa6a0; }
-    .btn-top {
-      display: inline-flex; align-items: center; gap: 7px;
-      padding: 9px 14px; border-radius: 9px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.05);
-      color: #e8e8e8; font-size: 13px; font-weight: 600;
-      font-family: 'Inter', sans-serif; cursor: pointer; text-decoration: none;
-    }
+    .btn-top { display: inline-flex; align-items: center; gap: 7px; padding: 9px 14px; border-radius: 9px; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.05); color: #e8e8e8; font-size: 13px; font-weight: 600; font-family: 'Inter',sans-serif; cursor: pointer; text-decoration: none; }
     .btn-top:hover { border-color: #d4af37; color: #fff; }
 
-    /* Contenido */
-    .contenido { flex: 1; padding: 40px 24px; max-width: 1200px; margin: 0 auto; width: 100%; }
+    .contenido { flex: 1; padding: 36px 24px; max-width: 1200px; margin: 0 auto; width: 100%; }
     .saludo { font-size: 26px; font-weight: 800; color: #fff; margin-bottom: 6px; }
     .saludo span { color: #d4af37; }
-    .saludo-sub { color: #9aa6a0; font-size: 14px; margin-bottom: 32px; }
+    .saludo-sub { color: #9aa6a0; font-size: 14px; margin-bottom: 30px; }
 
-    /* ───── Tarjetas KPI ───── */
-    .kpis {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 18px;
-      margin-bottom: 28px;
-    }
-    @media (max-width: 900px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+    .kpis { display: grid; grid-template-columns: repeat(4,1fr); gap: 18px; margin-bottom: 28px; }
+    @media (max-width: 900px) { .kpis { grid-template-columns: repeat(2,1fr); } }
     @media (max-width: 520px) { .kpis { grid-template-columns: 1fr; } }
-    .kpi {
-      background: rgba(15,30,25,0.55);
-      border: 1px solid rgba(212,175,55,0.18);
-      border-radius: 16px;
-      padding: 22px;
-    }
-    .kpi-icono {
-      width: 42px; height: 42px; border-radius: 11px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px; margin-bottom: 14px;
-    }
-    .ic-azul  { background: rgba(99,179,237,0.15);  color: #63b3ed; }
+    .kpi { background: rgba(15,30,25,0.55); border: 1px solid rgba(212,175,55,0.18); border-radius: 16px; padding: 22px; }
+    .kpi-icono { width: 42px; height: 42px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 14px; }
+    .ic-azul { background: rgba(99,179,237,0.15); color: #63b3ed; }
     .ic-verde { background: rgba(126,224,160,0.15); color: #7ee0a0; }
-    .ic-oro   { background: rgba(212,175,55,0.15);  color: #d4af37; }
+    .ic-oro { background: rgba(212,175,55,0.15); color: #d4af37; }
     .kpi-label { font-size: 12px; font-weight: 600; letter-spacing: 0.5px; color: #9aa6a0; text-transform: uppercase; }
     .kpi-valor { font-size: 30px; font-weight: 800; color: #fff; margin-top: 4px; }
-    .kpi-pend {
-      display: inline-block; margin-top: 10px; font-size: 11px;
-      color: #d4af37; background: rgba(212,175,55,0.12);
-      padding: 3px 8px; border-radius: 6px;
-    }
+    .kpi-pend { display: inline-block; margin-top: 10px; font-size: 11px; color: #d4af37; background: rgba(212,175,55,0.12); padding: 3px 8px; border-radius: 6px; }
 
-    .nota {
-      background: rgba(15, 30, 25, 0.55);
-      border: 1px dashed rgba(212, 175, 55, 0.35);
-      border-radius: 16px; padding: 24px;
-      display: flex; align-items: flex-start; gap: 16px;
-    }
-    .nota i { color: #d4af37; font-size: 20px; margin-top: 2px; }
-    .nota .nota-titulo { font-weight: 700; color: #e8e8e8; margin-bottom: 6px; font-size: 15px; }
-    .nota .nota-texto { color: #9aa6a0; font-size: 14px; line-height: 1.6; }
+    .bloque { background: rgba(15,30,25,0.45); border: 1px solid rgba(212,175,55,0.15); border-radius: 16px; overflow: hidden; }
+    .bloque-cab { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 18px 20px; border-bottom: 1px solid rgba(255,255,255,0.06); flex-wrap: wrap; }
+    .bloque-cab h3 { font-size: 16px; font-weight: 700; color: #fff; }
+    .buscador { position: relative; }
+    .buscador input { width: 280px; max-width: 100%; padding: 9px 12px 9px 34px; border-radius: 9px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.05); color: #fff; font-size: 13px; font-family: 'Inter',sans-serif; }
+    .buscador input:focus { outline: none; border-color: #d4af37; }
+    .buscador > i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #7c8a83; font-size: 13px; }
+
+    .tabla-scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 720px; }
+    thead th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #7c8a83; font-weight: 600; padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    tbody td { padding: 14px 16px; font-size: 13.5px; color: #cfd8d3; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    tbody tr { cursor: pointer; transition: background 0.15s; }
+    tbody tr:hover { background: rgba(212,175,55,0.06); }
+    .td-nombre { color: #fff; font-weight: 600; }
+    .td-centro { text-align: center; }
+    .td-ver { text-align: right; color: #7c8a83; }
+    .vacio { text-align: center; color: #7c8a83; padding: 28px !important; }
+
+    .pill { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
+    .pill-ok { background: rgba(126,224,160,0.15); color: #7ee0a0; }
+    .pill-off { background: rgba(255,138,138,0.15); color: #ff8a8a; }
+    .pill-plan { background: rgba(212,175,55,0.15); color: #d4af37; text-transform: capitalize; }
+
+    .modal-fondo { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 50; align-items: center; justify-content: center; padding: 20px; }
+    .modal-caja { width: 100%; max-width: 520px; max-height: 88vh; overflow-y: auto; background: #13211b; border: 1px solid rgba(212,175,55,0.25); border-radius: 18px; padding: 26px; position: relative; }
+    .modal-x { position: absolute; top: 16px; right: 18px; background: none; border: none; color: #9aa6a0; font-size: 26px; cursor: pointer; line-height: 1; }
+    .modal-x:hover { color: #fff; }
+    #m-nombre { font-size: 20px; font-weight: 800; color: #fff; padding-right: 30px; }
+    #m-correo { color: #9aa6a0; font-size: 13px; margin-bottom: 18px; }
+    .m-datos { display: flex; gap: 26px; flex-wrap: wrap; margin-bottom: 6px; }
+    .m-dato-lbl { font-size: 11px; text-transform: uppercase; color: #7c8a83; letter-spacing: 0.5px; }
+    .m-dato-val { font-size: 14px; color: #e8e8e8; margin-top: 4px; font-weight: 600; }
+    .m-seccion-titulo { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #d4af37; font-weight: 700; margin: 20px 0 10px; }
+    .item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; margin-bottom: 8px; }
+    .item strong { color: #fff; font-size: 13.5px; }
+    .item .sub { display: block; color: #7c8a83; font-size: 11.5px; margin-top: 2px; }
+    .vacio2 { color: #7c8a83; font-size: 13px; }
+    #m-accion-wrap { margin-top: 22px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.07); }
+    .btn-accion { display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; font-family: 'Inter',sans-serif; }
+    .btn-suspender { background: rgba(255,138,138,0.15); color: #ff8a8a; border: 1px solid rgba(255,138,138,0.3); }
+    .btn-suspender:hover { background: rgba(255,138,138,0.25); }
+    .btn-activar { background: rgba(126,224,160,0.15); color: #7ee0a0; border: 1px solid rgba(126,224,160,0.3); }
+    .btn-activar:hover { background: rgba(126,224,160,0.25); }
   </style>
 </head>
 <body>
 
-  <!-- Estado mientras verifica el acceso -->
   <div id="verificando">
     <div class="spinner"></div>
     <p>Verificando acceso...</p>
   </div>
 
-  <!-- Panel del admin (solo visible para el dueño) -->
   <div id="panel">
 
     <header class="topbar">
@@ -239,7 +298,7 @@
       <h2 class="saludo">Panel de <span>Administración</span></h2>
       <p class="saludo-sub">Centro de control de GRIZALUM — métricas, usuarios y suscripciones.</p>
 
-      <!-- TARJETAS DE MÉTRICAS -->
+      <!-- MÉTRICAS -->
       <div class="kpis">
         <div class="kpi">
           <div class="kpi-icono ic-azul"><i class="fas fa-users"></i></div>
@@ -265,18 +324,58 @@
         </div>
       </div>
 
-      <div class="nota">
-        <i class="fas fa-circle-info"></i>
-        <div>
-          <div class="nota-titulo">Siguiente paso: la tabla de usuarios</div>
-          <div class="nota-texto">
-            Las tarjetas de arriba ya muestran datos reales de tu base. En el siguiente paso
-            armamos la tabla con la lista de usuarios, su buscador, y cuántas empresas tiene cada uno.
+      <!-- TABLA DE USUARIOS -->
+      <div class="bloque">
+        <div class="bloque-cab">
+          <h3>Usuarios</h3>
+          <div class="buscador">
+            <i class="fas fa-magnifying-glass"></i>
+            <input id="buscador" type="text" placeholder="Buscar por nombre o correo..." oninput="pintarTabla()">
           </div>
         </div>
+        <div class="tabla-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Usuario</th>
+                <th>Correo</th>
+                <th style="text-align:center">Empresas</th>
+                <th>Plan</th>
+                <th>Estado</th>
+                <th>Registro</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tbody-usuarios">
+              <tr><td colspan="7" class="vacio">Cargando...</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-    </main>
 
+    </main>
+  </div>
+
+  <!-- MODAL DETALLE DE USUARIO -->
+  <div id="modal" class="modal-fondo" onclick="cerrarModalFondo(event)">
+    <div class="modal-caja">
+      <button class="modal-x" onclick="cerrarModal()">&times;</button>
+      <div id="m-nombre"></div>
+      <div id="m-correo"></div>
+      <div class="m-datos">
+        <div><div class="m-dato-lbl">Plan</div><div class="m-dato-val" id="m-plan"></div></div>
+        <div><div class="m-dato-lbl">Estado</div><div class="m-dato-val"><span id="m-estado" class="pill"></span></div></div>
+        <div><div class="m-dato-lbl">Registro</div><div class="m-dato-val" id="m-fecha"></div></div>
+      </div>
+
+      <div class="m-seccion-titulo">Empresas</div>
+      <div id="m-empresas"></div>
+
+      <div class="m-seccion-titulo">Pagos</div>
+      <div id="m-pagos"></div>
+
+      <div id="m-accion-wrap"></div>
+    </div>
   </div>
 
 </body>
