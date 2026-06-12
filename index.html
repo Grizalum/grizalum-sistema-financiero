@@ -4,18 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GRIZALUM | Centro de Control Financiero</title>
-    <!-- ════ CHAPA DE SESIÓN — si no hay login, al login ════ -->
+    <!-- ════ CANDADO DE ACCESO — sesión + prueba gratis + suspensión ════ -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   window.grizalumDB = window.supabase.createClient(
     'https://qchzawosebbsyitgghtb.supabase.co',
     'sb_publishable_Uo-6mOdIKmS3BZ0lghZNqw_iH1P3WF9'
   );
-  window.grizalumDB.auth.getSession().then(function (res) {
-    if (!res.data.session) {
-      window.location.replace('/src/vistas/auth/login.html');
-    }
-  });
+
+  (function () {
+    const ADMIN_CORREO = 'ceojoelgrizalum@gmail.com';
+    const DIAS_PRUEBA = 14;
+    const db = window.grizalumDB;
+    const alLogin  = function () { window.location.replace('/src/vistas/auth/login.html'); };
+    const bloquear = function (razon) { window.location.replace('/src/vistas/auth/bloqueado.html?razon=' + razon); };
+
+    db.auth.getSession().then(async function (res) {
+      const session = res.data.session;
+      if (!session) { alLogin(); return; }                 // sin sesión → login
+      const usuario = session.user;
+      if (usuario.email === ADMIN_CORREO) return;           // el admin SIEMPRE entra
+
+      try {
+        const r = await db.from('usuarios').select('activo, fecha_registro').eq('id', usuario.id).maybeSingle();
+        const fila = r.data;
+        if (!fila) return;                                  // sin fila (raro) → no bloqueamos
+
+        if (fila.activo === false) { bloquear('suspendido'); return; }   // suspendido
+
+        const s = await db.from('suscripciones').select('id').eq('usuario_id', usuario.id).eq('estado', 'activa').limit(1);
+        if (s.data && s.data.length > 0) return;            // pagó → entra
+
+        if (fila.fecha_registro) {                          // ¿dentro de la prueba?
+          const dias = (Date.now() - new Date(fila.fecha_registro).getTime()) / 86400000;
+          if (dias <= DIAS_PRUEBA) return;
+        }
+
+        bloquear('prueba');                                 // prueba vencida y sin pago → bloqueo
+      } catch (e) {
+        console.error('Chequeo de acceso falló, se permite el ingreso:', e);
+      }
+    });
+  })();
 </script>
     
    <!-- ================================================================
