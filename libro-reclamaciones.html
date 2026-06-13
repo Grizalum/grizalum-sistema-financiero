@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GRIZALUM | Libro de Reclamaciones</title>
+  <meta name="description" content="Libro de Reclamaciones virtual de GRIZALUM, conforme a la Ley N.° 29571 - Código de Protección y Defensa del Consumidor.">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #f4f6f5; color: #2a2f2c; line-height: 1.6; }
+
+    .hero {
+      background: linear-gradient(135deg, #0f1923 0%, #1a2e1a 50%, #0f1923 100%);
+      color: #fff; text-align: center; padding: 44px 20px 56px;
+    }
+    .logo-img {
+      width: 92px; height: 92px; margin: 0 auto 12px;
+      background: #fff; border-radius: 20px; padding: 9px;
+      box-shadow: 0 14px 36px rgba(0,0,0,0.38);
+    }
+    .logo-img img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .marca-sub { color: #d4af37; font-size: 11.5px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px; }
+    .hero h1 { font-size: 27px; font-weight: 800; }
+    .hero .libro-ico { font-size: 13px; color:#cdd5d0; margin-top:6px; }
+
+    .contenido {
+      max-width: 760px; margin: -32px auto 0; background: #fff;
+      border-radius: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.08); padding: 36px 34px;
+    }
+
+    .aviso {
+      background: #f9f7ef; border-left: 4px solid #d4af37;
+      padding: 14px 16px; border-radius: 8px; font-size: 13.5px; color: #5a6560; margin-bottom: 22px;
+    }
+    .datos-prov {
+      border: 1px solid #eef1ef; border-radius: 10px; padding: 14px 16px;
+      font-size: 13.5px; color: #44504a; margin-bottom: 26px; background:#fbfcfb;
+    }
+    .datos-prov b { color:#2a2f2c; }
+
+    .seccion-tit {
+      font-size: 13px; font-weight: 700; color: #0f1923; text-transform: uppercase;
+      letter-spacing: .5px; margin: 22px 0 12px; padding-bottom: 7px; border-bottom: 2px solid #f0ead6;
+    }
+
+    label.campo { display:block; font-size: 13.5px; font-weight: 600; color:#3a443e; margin-bottom: 5px; }
+    label.campo .req { color:#c0392b; }
+    input, select, textarea {
+      width:100%; padding: 11px 12px; border:1px solid #d8ddd9; border-radius:9px;
+      font-family:'Inter',sans-serif; font-size:14px; color:#2a2f2c; margin-bottom: 14px; background:#fff;
+    }
+    input:focus, select:focus, textarea:focus { outline:none; border-color:#d4af37; }
+    textarea { resize: vertical; min-height: 84px; }
+    .fila { display:grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+
+    .opciones { display:flex; gap:10px; flex-wrap:wrap; margin-bottom: 14px; }
+    .opcion {
+      flex:1; min-width:130px; border:1px solid #d8ddd9; border-radius:10px; padding:12px 14px;
+      cursor:pointer; font-size:14px; display:flex; align-items:center; gap:9px; transition:all .15s;
+    }
+    .opcion:hover { border-color:#d4af37; }
+    .opcion input { width:auto; margin:0; }
+    .opcion.tipo-desc { font-size:12px; color:#8a948e; display:block; margin-top:2px; font-weight:500; }
+    .ayuda { font-size:12.5px; color:#8a948e; margin:-8px 0 16px; }
+
+    .check-menor { display:flex; align-items:center; gap:9px; font-size:13.5px; color:#44504a; margin-bottom:14px; cursor:pointer; }
+    .check-menor input { width:auto; margin:0; }
+
+    .btn-enviar {
+      width:100%; padding:15px; border:none; border-radius:11px;
+      background: linear-gradient(135deg, #d4af37, #c9a227); color:#1a1a1a;
+      font-size:16px; font-weight:800; cursor:pointer; font-family:'Inter',sans-serif; margin-top:6px;
+    }
+    .btn-enviar:hover { filter:brightness(1.05); }
+    .btn-enviar:disabled { opacity:.6; cursor:not-allowed; }
+
+    .nota-legal { font-size:12px; color:#9aa39d; margin-top:16px; text-align:center; }
+    .error-msg { background:#fdeaea; color:#a33; border:1px solid #f3c0c0; padding:11px 14px; border-radius:9px; font-size:13.5px; margin-bottom:16px; display:none; }
+
+    /* Confirmación */
+    .confirma { text-align:center; padding: 18px 6px; }
+    .confirma .ico-ok { font-size:54px; color:#1a7a3a; margin-bottom:14px; }
+    .confirma h2 { font-size:22px; color:#0f1923; margin-bottom:10px; }
+    .confirma p { color:#44504a; font-size:14.5px; margin-bottom:12px; }
+    .codigo-box {
+      background:#0f1923; color:#d4af37; font-weight:800; font-size:20px; letter-spacing:1px;
+      padding:14px; border-radius:12px; margin: 12px 0 18px; display:inline-block;
+    }
+
+    .footer {
+      background: linear-gradient(135deg, #0f1923 0%, #1a2e1a 100%);
+      color: #9aa6a0; text-align: center; padding: 40px 20px 30px; margin-top: 48px;
+    }
+    .footer .marca { color: #d4af37; font-weight: 700; letter-spacing: 1px; margin-bottom: 14px; }
+    .footer-links { display:flex; flex-wrap:wrap; justify-content:center; gap:8px 22px; margin-bottom:18px; }
+    .footer-links a { color:#cdd5d0; text-decoration:none; font-size:14px; }
+    .footer-links a:hover { color:#d4af37; }
+    .footer-redes { margin-bottom:18px; }
+    .footer-redes a { color:#cdd5d0; font-size:18px; margin:0 8px; text-decoration:none; }
+    .footer-redes a:hover { color:#d4af37; }
+    .footer .copy { font-size:12.5px; color:#6b7670; }
+
+    @media (max-width: 560px) {
+      .contenido { padding: 28px 20px; margin: -28px 12px 0; }
+      .fila { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="logo-img"><img src="/src/assets/grizalum-logo.png" alt="GRIZALUM"></div>
+    <p class="marca-sub">Control Financiero Empresarial</p>
+    <h1>📖 Libro de Reclamaciones</h1>
+    <p class="libro-ico">Conforme a la Ley N.° 29571 — Código de Protección y Defensa del Consumidor</p>
+  </header>
+
+  <main class="contenido">
+
+    <div class="aviso">
+      Conforme a lo establecido en el Código de Protección y Defensa del Consumidor (Ley N.° 29571), este establecimiento cuenta con un Libro de Reclamaciones a tu disposición. Completa el formulario para registrar tu reclamo o queja.
+    </div>
+
+    <div class="datos-prov">
+      <b>Proveedor:</b> Joel Ángel Laguna Muñoz (GRIZALUM) &nbsp;·&nbsp; <b>RUC:</b> 10764001465<br>
+      <b>Dirección:</b> Av. El Bosque 226, Urb. Canto Grande, San Juan de Lurigancho, Lima, Perú
+    </div>
+
+    <div class="error-msg" id="error-msg"></div>
+
+    <form id="form-reclamo">
+
+      <!-- TIPO -->
+      <div class="seccion-tit">1. Tipo de solicitud</div>
+      <div class="opciones">
+        <label class="opcion">
+          <input type="radio" name="tipo" value="reclamo" required>
+          <span><b>Reclamo</b><span class="opcion tipo-desc">Disconformidad con el producto o servicio</span></span>
+        </label>
+        <label class="opcion">
+          <input type="radio" name="tipo" value="queja">
+          <span><b>Queja</b><span class="opcion tipo-desc">Malestar por la atención recibida</span></span>
+        </label>
+      </div>
+
+      <!-- CONSUMIDOR -->
+      <div class="seccion-tit">2. Datos del consumidor</div>
+      <label class="campo">Nombre completo <span class="req">*</span></label>
+      <input type="text" id="nombre" placeholder="Escribe tu nombre completo" required>
+
+      <div class="fila">
+        <div>
+          <label class="campo">Tipo de documento <span class="req">*</span></label>
+          <select id="doc_tipo" required>
+            <option value="DNI">DNI</option>
+            <option value="CE">Carné de extranjería</option>
+            <option value="Pasaporte">Pasaporte</option>
+          </select>
+        </div>
+        <div>
+          <label class="campo">Número de documento <span class="req">*</span></label>
+          <input type="text" id="doc" placeholder="Número de tu documento" required>
+        </div>
+      </div>
+
+      <label class="campo">Domicilio <span class="req">*</span></label>
+      <input type="text" id="domicilio" placeholder="Tu dirección" required>
+
+      <div class="fila">
+        <div>
+          <label class="campo">Teléfono <span class="req">*</span></label>
+          <input type="tel" id="telefono" placeholder="Tu número de contacto" required>
+        </div>
+        <div>
+          <label class="campo">Correo electrónico <span class="req">*</span></label>
+          <input type="email" id="email" placeholder="tucorreo@ejemplo.com" required>
+        </div>
+      </div>
+
+      <label class="check-menor">
+        <input type="checkbox" id="es_menor"> Soy menor de edad (se requieren los datos del apoderado)
+      </label>
+      <div id="cont-apoderado" style="display:none;">
+        <label class="campo">Nombre del padre, madre o apoderado</label>
+        <input type="text" id="apoderado" placeholder="Nombre completo del apoderado">
+      </div>
+
+      <!-- BIEN -->
+      <div class="seccion-tit">3. Identificación del bien contratado</div>
+      <div class="opciones">
+        <label class="opcion">
+          <input type="radio" name="bien_tipo" value="producto" required> <b>Producto</b>
+        </label>
+        <label class="opcion">
+          <input type="radio" name="bien_tipo" value="servicio"> <b>Servicio</b>
+        </label>
+      </div>
+
+      <label class="campo">Descripción del bien o servicio <span class="req">*</span></label>
+      <input type="text" id="bien_desc" placeholder="Ej.: Suscripción al plan de GRIZALUM" required>
+
+      <label class="campo">Monto reclamado (S/)</label>
+      <input type="number" id="monto" step="0.01" min="0" placeholder="Opcional">
+
+      <!-- DETALLE -->
+      <div class="seccion-tit">4. Detalle</div>
+      <label class="campo">Detalle del reclamo o queja <span class="req">*</span></label>
+      <textarea id="detalle" placeholder="Cuéntanos qué sucedió" required></textarea>
+
+      <label class="campo">Pedido del consumidor <span class="req">*</span></label>
+      <textarea id="pedido" placeholder="¿Qué solicitas que se haga?" required></textarea>
+
+      <button type="submit" class="btn-enviar" id="btn-enviar">Registrar reclamo</button>
+
+      <p class="nota-legal">La formulación del reclamo no impide acudir a otras vías de solución de controversias ni es requisito previo para interponer una denuncia ante el INDECOPI. El proveedor responderá en un plazo máximo de 15 días hábiles.</p>
+    </form>
+
+    <!-- CONFIRMACIÓN -->
+    <div class="confirma" id="confirma" style="display:none;">
+      <div class="ico-ok"><i class="fas fa-circle-check"></i></div>
+      <h2>¡Reclamo registrado!</h2>
+      <p>Guarda tu código de seguimiento:</p>
+      <div class="codigo-box" id="codigo-text">—</div>
+      <p>Te responderemos al correo que indicaste en un plazo máximo de <b>15 días hábiles</b>. Gracias por ayudarnos a mejorar.</p>
+      <p><a href="/" style="color:#b8941f;font-weight:600;text-decoration:none;">Volver al inicio</a></p>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <div class="marca">GRIZALUM</div>
+    <div class="footer-links">
+      <a href="/">Inicio</a>
+      <a href="/planes.html">Planes y Precios</a>
+      <a href="/contacto.html">Contacto</a>
+      <a href="/terminos.html">Términos y Condiciones</a>
+      <a href="/devoluciones.html">Devoluciones</a>
+      <a href="/libro-reclamaciones.html">Libro de Reclamaciones</a>
+    </div>
+    <div class="footer-redes">
+      <a href="https://www.facebook.com/JoelLagunagt" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+    </div>
+    <div class="copy">© 2026 GRIZALUM — Joel Ángel Laguna Muñoz · RUC 10764001465 · Lima, Perú</div>
+  </footer>
+
+  <script>
+    const db = window.supabase.createClient(
+      'https://qchzawosebbsyitgghtb.supabase.co',
+      'sb_publishable_Uo-6mOdIKmS3BZ0lghZNqw_iH1P3WF9'
+    );
+
+    const form = document.getElementById('form-reclamo');
+    const errorMsg = document.getElementById('error-msg');
+    const btn = document.getElementById('btn-enviar');
+
+    // Mostrar/ocultar apoderado
+    document.getElementById('es_menor').addEventListener('change', function () {
+      document.getElementById('cont-apoderado').style.display = this.checked ? 'block' : 'none';
+    });
+
+    function generarCodigo() {
+      const h = new Date();
+      const ymd = '' + h.getFullYear()
+        + String(h.getMonth() + 1).padStart(2, '0')
+        + String(h.getDate()).padStart(2, '0');
+      const suf = String(Date.now()).slice(-5);
+      return 'REC-' + ymd + '-' + suf;
+    }
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      errorMsg.style.display = 'none';
+
+      const tipo = (document.querySelector('input[name="tipo"]:checked') || {}).value;
+      const bienTipo = (document.querySelector('input[name="bien_tipo"]:checked') || {}).value;
+      const esMenor = document.getElementById('es_menor').checked;
+
+      if (!tipo) { return mostrarError('Selecciona si es un Reclamo o una Queja.'); }
+      if (!bienTipo) { return mostrarError('Indica si se trata de un Producto o un Servicio.'); }
+
+      const codigo = generarCodigo();
+
+      const datos = {
+        codigo: codigo,
+        tipo: tipo,
+        consumidor_nombre: document.getElementById('nombre').value.trim(),
+        consumidor_doc_tipo: document.getElementById('doc_tipo').value,
+        consumidor_doc: document.getElementById('doc').value.trim(),
+        consumidor_domicilio: document.getElementById('domicilio').value.trim(),
+        consumidor_telefono: document.getElementById('telefono').value.trim(),
+        consumidor_email: document.getElementById('email').value.trim(),
+        es_menor: esMenor,
+        apoderado_nombre: esMenor ? document.getElementById('apoderado').value.trim() : null,
+        bien_tipo: bienTipo,
+        bien_descripcion: document.getElementById('bien_desc').value.trim(),
+        monto: document.getElementById('monto').value ? parseFloat(document.getElementById('monto').value) : null,
+        detalle: document.getElementById('detalle').value.trim(),
+        pedido: document.getElementById('pedido').value.trim(),
+        estado: 'pendiente'
+      };
+
+      btn.disabled = true;
+      btn.textContent = 'Registrando...';
+
+      try {
+        const { error } = await db.from('reclamaciones').insert([datos]);
+        if (error) throw error;
+
+        document.getElementById('codigo-text').textContent = codigo;
+        form.style.display = 'none';
+        document.getElementById('confirma').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (err) {
+        console.error(err);
+        mostrarError('Hubo un problema al registrar tu reclamo. Vuelve a intentarlo o escríbenos a ceojoelgrizalum@gmail.com');
+        btn.disabled = false;
+        btn.textContent = 'Registrar reclamo';
+      }
+    });
+
+    function mostrarError(texto) {
+      errorMsg.textContent = texto;
+      errorMsg.style.display = 'block';
+      errorMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  </script>
+
+</body>
+</html>
