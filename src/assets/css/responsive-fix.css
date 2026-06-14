@@ -406,5 +406,10 @@
         min-width: 100px !important;
         max-width: 140px !important;
         font-size: 12px !important;
+        background: transparent !important;
+        backdrop-filter: none !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 2px !important;
     }
 }
