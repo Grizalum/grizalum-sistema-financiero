@@ -241,6 +241,22 @@
         window.location.replace('/src/vistas/auth/login.html');
       }
     }
+
+    // Mostrar el botón "Panel Admin" solo para el correo del dueño
+    window.addEventListener('load', function () {
+      try {
+        var ADMIN = 'ceojoelgrizalum@gmail.com';
+        if (!window.grizalumDB || !window.grizalumDB.auth) return;
+        window.grizalumDB.auth.getSession().then(function (res) {
+          var correo = (res && res.data && res.data.session && res.data.session.user)
+            ? res.data.session.user.email : null;
+          if (correo === ADMIN) {
+            var item = document.getElementById('navItemAdmin');
+            if (item) item.style.display = '';
+          }
+        });
+      } catch (e) { /* silencioso */ }
+    });
     </script>
 
 </head>
@@ -374,6 +390,12 @@
                        <a href="#" class="nav-link" data-section="configuracion" onclick="cambiarSeccion('configuracion', event)">
                            <i class="nav-icon fas fa-cog"></i>
                            <span>Configuración</span>
+                       </a>
+                   </div>
+                   <div class="nav-item" id="navItemAdmin" style="display:none;">
+                       <a href="/src/vistas/admin/admin.html" class="nav-link">
+                           <i class="nav-icon fas fa-user-shield"></i>
+                           <span>Panel Admin</span>
                        </a>
                    </div>
                    <div class="nav-item">
