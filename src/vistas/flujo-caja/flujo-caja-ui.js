@@ -80,21 +80,37 @@ class FlujoCajaUI {
 
     async _esperarModulo() {
         return new Promise((resolve) => {
+            let intentos = 0;
+            const MAX_INTENTOS = 25; // ~5 segundos máximo de espera (25 x 200ms)
             const verificar = () => {
+                intentos++;
                 if (window.flujoCaja) {
                     this.modulo = window.flujoCaja;
-                    
+
                     // ✅ VERIFICAR que el módulo tenga la empresa correcta
                     const infoModulo = this.modulo.obtenerInfo();
-                    if (infoModulo.empresaActual !== this.empresaActual) {
-                        console.warn('⚠️ Módulo tiene empresa diferente. Esperando sincronización...');
-                        setTimeout(verificar, 200);
+                    if (infoModulo.empresaActual === this.empresaActual) {
+                        console.log('✅ Módulo conectado a la UI con empresa:', infoModulo.empresaActual);
+                        resolve();
                         return;
                     }
-                    
-                    console.log('✅ Módulo conectado a la UI con empresa:', infoModulo.empresaActual);
-                    resolve();
+
+                    // Las empresas aún no coinciden: reintentamos, pero con límite
+                    if (intentos >= MAX_INTENTOS) {
+                        // Se agotó la espera (normalmente cuando no hay empresa):
+                        // adoptamos la empresa del módulo y continuamos en vez de quedarnos en bucle.
+                        this.empresaActual = infoModulo.empresaActual;
+                        console.log('ℹ️ Continuando con la empresa del módulo:', infoModulo.empresaActual);
+                        resolve();
+                        return;
+                    }
+                    setTimeout(verificar, 200);
                 } else {
+                    if (intentos >= MAX_INTENTOS) {
+                        console.log('ℹ️ El módulo de flujo de caja no se cargó a tiempo; se continúa igual.');
+                        resolve();
+                        return;
+                    }
                     setTimeout(verificar, 200);
                 }
             };
