@@ -223,6 +223,7 @@
         padding: 0 !important;
         box-shadow: none !important;
         order: 2 !important;
+        margin-right: 46px !important;
     }
 
     .ai-header-button span { display: none !important; }
@@ -233,7 +234,7 @@
         background: rgba(255,255,255,0.12) !important;
         border: 1px solid rgba(255,255,255,0.25) !important;
         border-radius: 10px !important;
-        order: 3 !important;
+        order: 4 !important;
         flex: 0 0 100% !important;
         width: 100% !important;
         position: relative !important;
@@ -272,17 +273,19 @@
         font-weight: 700 !important;
     }
 
-    /* Notificaciones flotante */
-    #btnNotificaciones, .notification-center {
-        width: 40px !important;
-        height: 40px !important;
-        flex-shrink: 0 !important;
-        border-radius: 50% !important;
+    /* Notificaciones — campanita flotante en la esquina superior derecha */
+    #grizalumNotificationBtn, #btnNotificaciones, .notification-center {
         position: fixed !important;
-        top: 60px !important;
+        top: 10px !important;
         right: 12px !important;
+        left: auto !important;
+        bottom: auto !important;
+        width: 38px !important;
+        height: 38px !important;
+        border-radius: 50% !important;
         z-index: 9999 !important;
     }
+    #grizalumNotificationBtn i { font-size: 16px !important; }
 
     /* Panel banner */
     #panelBannerPlan { z-index: 1 !important; }
