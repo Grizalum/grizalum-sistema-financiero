@@ -402,10 +402,11 @@
     }
 
     #grizalumNotificationBtn {
-        top: 70px !important;
+        position: fixed !important;
+        top: 10px !important;
         right: 12px !important;
-        width: 52px !important;
-        height: 52px !important;
+        width: 38px !important;
+        height: 38px !important;
     }
 }
 
